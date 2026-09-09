@@ -40,7 +40,7 @@ export async function GET(request) {
   if (!naverId) return failure(request, "missing-profile");
 
   const supabase = createClient(supabaseUrl, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
-  const email = "naver-" + naverId + "@users.dear-day.local";
+  const email = "naver-" + naverId + "@accounts.dear-day.com";
   const metadata = { provider: "naver", provider_id: naverId };
   const { error: createError } = await supabase.auth.admin.createUser({ email, email_confirm: true, user_metadata: metadata });
 
