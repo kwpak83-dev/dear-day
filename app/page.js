@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getSupabaseBrowserClient } from "../lib/supabase/browser";
 
 const templates = [
   { name: "Blossom", label: "로맨틱", color: "blossom", photo: "신랑 · 신부" },
@@ -16,14 +17,36 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [toast, setToast] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
+  const [authMessage, setAuthMessage] = useState("");
+  const [authLoading, setAuthLoading] = useState("");
 
   const start = () => {
     setAuthOpen(true);
   };
 
-  const chooseLogin = (provider) => {
-    window.localStorage.setItem("dear-day-provider", provider);
-    window.location.href = "/create";
+  const chooseLogin = async (provider) => {
+    if (provider === "naver") {
+      setAuthMessage("네이버 로그인은 다음 단계에서 연결할 예정이에요.");
+      return;
+    }
+
+    const supabase = getSupabaseBrowserClient();
+    if (!supabase) {
+      setAuthMessage("로그인 연결을 준비 중이에요. 잠시 후 다시 시도해주세요.");
+      return;
+    }
+
+    setAuthLoading(provider);
+    setAuthMessage("");
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: `${window.location.origin}/create` },
+    });
+
+    if (error) {
+      setAuthLoading("");
+      setAuthMessage(provider === "kakao" ? "카카오 로그인 설정을 마무리하는 중이에요." : "네이버 로그인 설정을 마무리하는 중이에요.");
+    }
   };
 
   return (
@@ -102,7 +125,7 @@ export default function Home() {
 
       <footer><div className="container footer-inner"><img src="/dear-day-logo.png" alt="디어데이" /><p>우리의 이야기가 가장 아름답게 시작되는 곳</p><span>© 2026 Dear Day. All rights reserved.</span></div></footer>
       {toast && <div className="toast"><Heart /> 준비 중인 기능이에요.</div>}
-      {authOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="간편 로그인"><div className="login-modal"><button className="modal-close" onClick={() => setAuthOpen(false)} aria-label="닫기">×</button><p className="section-kicker">WELCOME TO DEAR DAY</p><h2>3분 만에 시작하는<br /><em>우리의 청첩장</em></h2><p>간편 로그인 후 언제든 수정할 수 있어요.</p><button className="social-login kakao" onClick={() => chooseLogin("카카오")}>💬 <span>카카오로 계속하기</span></button><button className="social-login naver" onClick={() => chooseLogin("네이버")}>N <span>네이버로 계속하기</span></button><small>로그인하면 디어데이 이용약관 및 개인정보 처리방침에 동의하게 됩니다.</small></div></div>}
+      {authOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="간편 로그인"><div className="login-modal"><button className="modal-close" onClick={() => setAuthOpen(false)} aria-label="닫기">×</button><p className="section-kicker">WELCOME TO DEAR DAY</p><h2>3분 만에 시작하는<br /><em>우리의 청첩장</em></h2><p>간편 로그인 후 언제든 수정할 수 있어요.</p><button className="social-login kakao" disabled={Boolean(authLoading)} onClick={() => chooseLogin("kakao")}>💬 <span>{authLoading === "kakao" ? "카카오로 연결 중..." : "카카오로 계속하기"}</span></button><button className="social-login naver" disabled={Boolean(authLoading)} onClick={() => chooseLogin("naver")}>N <span>{authLoading === "naver" ? "네이버로 연결 중..." : "네이버로 계속하기"}</span></button>{authMessage && <p role="status">{authMessage}</p>}<small>로그인하면 디어데이 이용약관 및 개인정보 처리방침에 동의하게 됩니다.</small></div></div>}
     </main>
   );
 }
