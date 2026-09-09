@@ -16,10 +16,13 @@ export default function CreateInvitation() {
   const [saveNotice, setSaveNotice] = useState("");
   const [mapNotice, setMapNotice] = useState("주소를 입력하면 지도를 확인할 수 있어요.");
   const [mapReady, setMapReady] = useState(false);
+  const [placeResults, setPlaceResults] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [eventSlug, setEventSlug] = useState("");
   const mapElement = useRef(null);
   const mapInstance = useRef(null);
 
-  useEffect(() => { setProvider(window.localStorage.getItem("dear-day-provider") || "게스트"); const saved = window.localStorage.getItem("dear-day-draft"); if (saved) setInvitation(JSON.parse(saved)); }, []);
+  useEffect(() => { setProvider(window.localStorage.getItem("dear-day-provider") || "게스트"); const saved = window.localStorage.getItem("dear-day-draft"); if (saved) setInvitation(JSON.parse(saved)); setEventSlug(window.localStorage.getItem("dear-day-event-slug") || ""); }, []);
   useEffect(() => {
     if (!mapClientId || !mapElement.current) return;
     const scriptId = "naver-map-sdk";
@@ -52,6 +55,20 @@ export default function CreateInvitation() {
     });
   }, [invitation.venueAddress, mapReady]);
   const update = (key, value) => setInvitation((current) => ({ ...current, [key]: value }));
+  const searchPlaces = async () => {
+    const query = invitation.venue.trim();
+    if (!query) return setMapNotice("예식장 이름을 입력해 주세요.");
+    setSearching(true);
+    const response = await fetch(`/api/places?q=${encodeURIComponent(query)}`);
+    const data = await response.json();
+    setPlaceResults(data.items || []);
+    setSearching(false);
+  };
+  const selectPlace = (place) => {
+    const address = place.roadAddress || place.address || "";
+    setInvitation((current) => ({ ...current, venue: place.title.replace(/<[^>]+>/g, ""), venueAddress: address }));
+    setPlaceResults([]);
+  };
   const formattedDate = useMemo(() => { const date = new Date(`${invitation.date}T12:00:00`); return Number.isNaN(date.getTime()) ? invitation.date : new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "short" }).format(date); }, [invitation.date]);
   const saveDraft = async () => {
     window.localStorage.setItem("dear-day-draft", JSON.stringify(invitation));
@@ -60,17 +77,20 @@ export default function CreateInvitation() {
     if (!supabase) return setSaveNotice("이 기기 임시 저장 완료");
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return setSaveNotice("이 기기 임시 저장 완료 · 로그인 후 온라인 저장이 가능해요");
-    setSaveNotice("온라인 저장 연결 준비 완료");
+    const slug = eventSlug || `invite-${Date.now().toString(36)}`;
+    const { error } = await supabase.from("events").upsert({ owner_id: session.user.id, kind: "wedding", status: "draft", slug, title: `${invitation.groom} & ${invitation.bride}의 초대장`, starts_at: `${invitation.date}T${invitation.time}:00+09:00`, settings: invitation }, { onConflict: "slug" });
+    if (error) return setSaveNotice("저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
+    window.localStorage.setItem("dear-day-event-slug", slug); setEventSlug(slug); setSaveNotice("온라인 임시 저장 완료"); return slug;
   };
-  const publish = () => { window.localStorage.setItem("dear-day-draft", JSON.stringify(invitation)); setPublished(true); };
-  const copyLink = async () => { await navigator.clipboard?.writeText("dear-day.kr/w/our-special-day"); setCopied(true); window.setTimeout(() => setCopied(false), 1800); };
+  const publish = async () => { const slug = await saveDraft(); if (!slug) return; const supabase = getSupabaseBrowserClient(); const { error } = await supabase.from("events").update({ status: "published", published_at: new Date().toISOString() }).eq("slug", slug); if (error) return setSaveNotice("발행에 실패했어요."); setPublished(true); };
+  const copyLink = async () => { await navigator.clipboard?.writeText(`${window.location.origin}/invite/${eventSlug}`); setCopied(true); window.setTimeout(() => setCopied(false), 1800); };
 
   return <main className="create-page">
     <header className="create-header"><a className="brand" href="/"><img src="/dear-day-logo.png" alt="디어데이" /></a><div className="create-user"><span>{provider}로 시작했어요</span><a href="/">나가기</a></div></header>
     <div className="create-layout">
       <section className="editor-panel">
         <p className="section-kicker">STEP 1 OF 1 · INVITATION EDITOR</p><h1>우리의 이야기를<br /><em>채워볼까요?</em></h1><p className="editor-intro">입력한 내용은 자동으로 미리보기에 반영돼요.</p>
-        <div className="form-section"><h2>기본 정보</h2><div className="field-grid"><Field label="신랑 이름"><input value={invitation.groom} onChange={(e) => update("groom", e.target.value)} /></Field><Field label="신부 이름"><input value={invitation.bride} onChange={(e) => update("bride", e.target.value)} /></Field></div><Field label="예식 날짜"><input type="date" value={invitation.date} onChange={(e) => update("date", e.target.value)} /></Field><Field label="예식 시간"><input type="time" value={invitation.time} onChange={(e) => update("time", e.target.value)} /></Field><Field label="예식 장소"><input placeholder="예: 더가든 웨딩홀 그랜드룸" value={invitation.venue} onChange={(e) => update("venue", e.target.value)} /></Field><Field label="예식장 주소"><input placeholder="도로명 또는 지번 주소를 입력해 주세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} /></Field><div className="venue-map"><div ref={mapElement} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span><a href={`https://map.naver.com/p/search/${encodeURIComponent(invitation.venue || invitation.venueAddress || "웨딩홀")}`} target="_blank" rel="noreferrer">네이버 지도에서 검색 ↗</a></div></div></div>
+        <div className="form-section"><h2>기본 정보</h2><div className="field-grid"><Field label="신랑 이름"><input value={invitation.groom} onChange={(e) => update("groom", e.target.value)} /></Field><Field label="신부 이름"><input value={invitation.bride} onChange={(e) => update("bride", e.target.value)} /></Field></div><Field label="예식 날짜"><input type="date" value={invitation.date} onChange={(e) => update("date", e.target.value)} /></Field><Field label="예식 시간"><input type="time" value={invitation.time} onChange={(e) => update("time", e.target.value)} /></Field><Field label="예식 장소"><div className="place-search"><input placeholder="예식장 이름을 입력해 검색하세요" value={invitation.venue} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results">{placeResults.map((place) => <button type="button" key={place.link} onClick={() => selectPlace(place)}><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></button>)}</div>}<div className="venue-map"><div ref={mapElement} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div></div>
         <div className="form-section"><h2>전하고 싶은 마음</h2><Field label="초대 글"><textarea rows="4" value={invitation.message} onChange={(e) => update("message", e.target.value)} /></Field></div>
         <div className="editor-actions"><button className="save-button" onClick={saveDraft}>임시 저장</button><button className="publish-button" onClick={publish}>청첩장 발행하기 <span>→</span></button></div>{saveNotice && <p role="status">{saveNotice}</p>}
       </section>
