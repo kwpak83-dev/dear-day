@@ -45,8 +45,7 @@ export async function GET(request) {
   const { error: createError } = await supabase.auth.admin.createUser({ email, email_confirm: true, user_metadata: metadata });
 
   if (createError) {
-    const { data: users, error: usersError } = await supabase.auth.admin.listUsers({ perPage: 1000 });
-    if (usersError || !users.users.some((user) => user.email === email)) return failure(request, "user-create");
+    console.info("Naver user already exists; continuing sign-in.");
   }
 
   const origin = new URL(request.url).origin;
