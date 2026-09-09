@@ -15,6 +15,7 @@ export default function CreateInvitation() {
   const [copied, setCopied] = useState(false);
   const [saveNotice, setSaveNotice] = useState("");
   const [mapNotice, setMapNotice] = useState("주소를 입력하면 지도를 확인할 수 있어요.");
+  const [mapReady, setMapReady] = useState(false);
   const mapElement = useRef(null);
   const mapInstance = useRef(null);
 
@@ -25,6 +26,7 @@ export default function CreateInvitation() {
     const createMap = () => {
       if (!window.naver?.maps || mapInstance.current || !mapElement.current) return;
       mapInstance.current = new window.naver.maps.Map(mapElement.current, { center: new window.naver.maps.LatLng(37.5665, 126.978), zoom: 13, zoomControl: false });
+      setMapReady(true);
     };
     const existing = document.getElementById(scriptId);
     if (existing) { existing.addEventListener("load", createMap); createMap(); return () => existing.removeEventListener("load", createMap); }
@@ -48,7 +50,7 @@ export default function CreateInvitation() {
       mapInstance.current.setZoom(16);
       setMapNotice("예식장 위치를 찾았어요.");
     });
-  }, [invitation.venueAddress]);
+  }, [invitation.venueAddress, mapReady]);
   const update = (key, value) => setInvitation((current) => ({ ...current, [key]: value }));
   const formattedDate = useMemo(() => { const date = new Date(`${invitation.date}T12:00:00`); return Number.isNaN(date.getTime()) ? invitation.date : new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "short" }).format(date); }, [invitation.date]);
   const saveDraft = async () => {
