@@ -82,7 +82,7 @@ export default function CreateInvitation() {
     const { error } = eventSlug
       ? await supabase.from("events").update(event).eq("slug", slug)
       : await supabase.from("events").insert(event);
-    if (error) return setSaveNotice("저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
+    if (error) return setSaveNotice(`저장에 실패했어요. 오류 코드: ${error.code || "unknown"}`);
     window.localStorage.setItem("dear-day-event-slug", slug); setEventSlug(slug); setSaveNotice("온라인 임시 저장 완료"); return slug;
   };
   const publish = async () => { const slug = await saveDraft(); if (!slug) return; const supabase = getSupabaseBrowserClient(); const { error } = await supabase.from("events").update({ status: "published", published_at: new Date().toISOString() }).eq("slug", slug); if (error) return setSaveNotice("발행에 실패했어요."); setPublished(true); };
