@@ -20,13 +20,17 @@ export default function Home() {
   const [authMessage, setAuthMessage] = useState("");
   const [authLoading, setAuthLoading] = useState("");
   const [user, setUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();
-    if (!supabase) return;
-    const syncUser = ({ user: nextUser }) => setUser(nextUser || null);
-    supabase.auth.getUser().then(({ data }) => syncUser(data)).catch(() => setUser(null));
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => syncUser(session || {}));
+    if (!supabase) { setAuthReady(true); return; }
+    const syncSession = (session) => setUser(session?.user || null);
+    supabase.auth.getSession()
+      .then(({ data }) => syncSession(data.session))
+      .catch(() => setUser(null))
+      .finally(() => setAuthReady(true));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => syncSession(session));
     return () => subscription.unsubscribe();
   }, []);
 
@@ -36,6 +40,7 @@ export default function Home() {
   }, [user]);
 
   const start = () => {
+    if (!authReady) return;
     if (user) return window.location.assign("/create");
     setAuthOpen(true);
   };
