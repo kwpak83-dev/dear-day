@@ -20,6 +20,7 @@ export default function CreateInvitation() {
   const [placeResults, setPlaceResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [eventSlug, setEventSlug] = useState("");
+  const [submitting, setSubmitting] = useState("");
   const mapElement = useRef(null);
   const mapInstance = useRef(null);
   const mapMarker = useRef(null);
@@ -104,20 +105,42 @@ export default function CreateInvitation() {
     setPlaceResults([]);
   };
   const formattedDate = useMemo(() => { const date = new Date(`${invitation.date}T12:00:00`); return Number.isNaN(date.getTime()) ? invitation.date : new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "short" }).format(date); }, [invitation.date]);
-  const saveDraft = async () => {
-    window.localStorage.setItem("dear-day-draft", JSON.stringify(invitation));
-    setPublished(false);
-    const supabase = getSupabaseBrowserClient();
-    if (!supabase) return setSaveNotice("이 기기 임시 저장 완료");
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return setSaveNotice("이 기기 임시 저장 완료 · 로그인 후 온라인 저장이 가능해요");
-    const slug = eventSlug || `invite-${Date.now().toString(36)}`;
-    const response = await fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ slug, invitation }) });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok) return setSaveNotice(result.error || "저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
-    window.localStorage.setItem("dear-day-event-slug", slug); setEventSlug(slug); setSaveNotice("온라인 임시 저장 완료"); return slug;
+  const saveDraft = async ({ showLoading = true } = {}) => {
+    if (showLoading && submitting) return;
+    if (showLoading) setSubmitting("draft");
+    try {
+      window.localStorage.setItem("dear-day-draft", JSON.stringify(invitation));
+      setPublished(false);
+      const supabase = getSupabaseBrowserClient();
+      if (!supabase) return setSaveNotice("이 기기 임시 저장 완료");
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return setSaveNotice("이 기기 임시 저장 완료 · 로그인 후 온라인 저장이 가능해요");
+      const slug = eventSlug || `invite-${Date.now().toString(36)}`;
+      const response = await fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ slug, invitation }) });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) return setSaveNotice(result.error || "저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
+      window.localStorage.setItem("dear-day-event-slug", slug); setEventSlug(slug); setSaveNotice("온라인 임시 저장 완료"); return slug;
+    } finally {
+      if (showLoading) setSubmitting("");
+    }
   };
-  const publish = async () => { const slug = await saveDraft(); if (!slug) return; const supabase = getSupabaseBrowserClient(); const { data: { session } } = await supabase.auth.getSession(); if (!session) return setSaveNotice("로그인 후 발행할 수 있어요."); const response = await fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ slug, invitation, publish: true }) }); const result = await response.json().catch(() => ({})); if (!response.ok) return setSaveNotice(result.error || "발행에 실패했어요."); setPublished(true); };
+  const publish = async () => {
+    if (submitting) return;
+    setSubmitting("publish");
+    try {
+      const slug = await saveDraft({ showLoading: false });
+      if (!slug) return;
+      const supabase = getSupabaseBrowserClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return setSaveNotice("로그인 후 발행할 수 있어요.");
+      const response = await fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ slug, invitation, publish: true }) });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) return setSaveNotice(result.error || "발행에 실패했어요.");
+      setPublished(true);
+    } finally {
+      setSubmitting("");
+    }
+  };
   const copyLink = async () => { await navigator.clipboard?.writeText(`${window.location.origin}/invite/${eventSlug}`); setCopied(true); window.setTimeout(() => setCopied(false), 1800); };
   const copyAddress = async () => {
     const address = invitation.venueAddress?.trim();
@@ -146,10 +169,11 @@ export default function CreateInvitation() {
         <div className="form-section"><h2>기본 정보</h2><div className="field-grid"><Field label="신랑 이름"><input value={invitation.groom} onChange={(e) => update("groom", e.target.value)} /></Field><Field label="신부 이름"><input value={invitation.bride} onChange={(e) => update("bride", e.target.value)} /></Field></div><Field label="예식 날짜"><input type="date" value={invitation.date} onChange={(e) => update("date", e.target.value)} /></Field><Field label="예식 시간"><input type="time" value={invitation.time} onChange={(e) => update("time", e.target.value)} /></Field><Field label="예식 장소"><div className="place-search"><input placeholder="예식장 이름을 입력해 검색하세요" value={invitation.venue} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "검색"}</button></div>{invitation.venueAddress && <div className="venue-address"><span>{invitation.venueAddress}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}</Field>{placeResults.length > 0 && <div className="place-results">{placeResults.map((place) => <button type="button" key={place.link} onClick={() => selectPlace(place)}><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></button>)}</div>}<div className="venue-map"><div ref={mapElement} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div></div>
         <div className="form-section"><h2>마음 전하실 곳 <small>선택</small></h2><div className="account-editor"><strong>신랑 측</strong><div className="field-grid"><Field label="은행명"><input placeholder="예: 국민은행" value={invitation.groomBank} onChange={(e) => update("groomBank", e.target.value)} /></Field><Field label="예금주"><input placeholder={invitation.groom || "신랑 이름"} value={invitation.groomAccountHolder} onChange={(e) => update("groomAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.groomAccount} onChange={(e) => update("groomAccount", e.target.value)} /></Field></div><div className="account-editor"><strong>신부 측</strong><div className="field-grid"><Field label="은행명"><input placeholder="예: 신한은행" value={invitation.brideBank} onChange={(e) => update("brideBank", e.target.value)} /></Field><Field label="예금주"><input placeholder={invitation.bride || "신부 이름"} value={invitation.brideAccountHolder} onChange={(e) => update("brideAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.brideAccount} onChange={(e) => update("brideAccount", e.target.value)} /></Field></div></div>
         <div className="form-section"><h2>전하고 싶은 마음</h2><Field label="초대 글"><textarea rows="4" value={invitation.message} onChange={(e) => update("message", e.target.value)} /></Field></div>
-        <div className="editor-actions"><button className="save-button" onClick={saveDraft}>임시 저장</button><button className="publish-button" onClick={publish}>청첩장 발행하기 <span>→</span></button></div>{saveNotice && <p role="status">{saveNotice}</p>}
+        <div className="editor-actions"><button className="save-button" onClick={saveDraft} disabled={Boolean(submitting)}>임시 저장</button><button className="publish-button" onClick={publish} disabled={Boolean(submitting)}>청첩장 발행하기 <span>→</span></button></div>{saveNotice && <p role="status">{saveNotice}</p>}
       </section>
       <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div className="preview-content"><p>WEDDING INVITATION</p><div className="preview-flower">✿ &nbsp; ❋ &nbsp; ✿</div><div className="preview-photo"><div /><span>{invitation.groom?.slice(0, 1)} &amp; {invitation.bride?.slice(0, 1)}</span></div><h2>{invitation.groom} <b>&amp;</b> {invitation.bride}</h2><time>{formattedDate}<br />{invitation.time}</time><hr /><strong>{invitation.venue}</strong><blockquote>{invitation.message}</blockquote><button>참석 여부 전달하기</button></div></div></aside>
     </div>
+    {submitting && <div className="save-loading" role="status" aria-live="polite"><div><i /><strong>{submitting === "publish" ? "청첩장을 발행하고 있어요" : "임시 저장하고 있어요"}</strong><span>잠시만 기다려 주세요.</span></div></div>}
     {published && <div className="publish-overlay"><div className="publish-card"><div className="publish-heart">♥</div><p className="section-kicker">YOUR INVITATION IS READY</p><h2>청첩장이<br /><em>완성되었어요!</em></h2><p>이제 소중한 분들에게 링크를 공유해보세요.</p><div className="share-link"><span>/invite/{eventSlug}</span><button onClick={copyLink}>{copied ? "복사됨" : "링크 복사"}</button></div><a className="publish-button full" href={`/invite/${eventSlug}`}>청첩장 열기</a><button className="publish-button full secondary" onClick={() => setPublished(false)}>완료했어요</button></div></div>}
   </main>;
 }
