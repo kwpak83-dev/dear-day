@@ -77,8 +77,6 @@ export default function CreateInvitation() {
     if (!supabase) return setSaveNotice("이 기기 임시 저장 완료");
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return setSaveNotice("이 기기 임시 저장 완료 · 로그인 후 온라인 저장이 가능해요");
-    const { error: profileError } = await supabase.from("profiles").upsert({ id: session.user.id, display_name: session.user.user_metadata?.name || session.user.email?.split("@")[0] || null }, { onConflict: "id" });
-    if (profileError) return setSaveNotice("계정 정보를 준비하지 못했어요. 잠시 후 다시 시도해 주세요.");
     const slug = eventSlug || `invite-${Date.now().toString(36)}`;
     const { error } = await supabase.from("events").upsert({ owner_id: session.user.id, kind: "wedding", status: "draft", slug, title: `${invitation.groom} & ${invitation.bride}의 초대장`, starts_at: `${invitation.date}T${invitation.time}:00+09:00`, settings: invitation }, { onConflict: "slug" });
     if (error) return setSaveNotice("저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
