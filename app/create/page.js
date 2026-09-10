@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 
-const initialInvitation = { groom: "지훈", bride: "서연", date: "2026-10-17", time: "12:30", venue: "더가든 웨딩홀 · 그랜드룸", venueAddress: "", message: "서로의 모든 날을 함께하기로 약속한 저희,\n소중한 분들을 모시고 첫걸음을 내딛고자 합니다." };
+const initialInvitation = { groom: "경원", bride: "보람", date: "2026-10-17", time: "12:30", venue: "더가든 웨딩홀 · 그랜드룸", venueAddress: "", message: "서로의 모든 날을 함께하기로 약속한 저희,\n소중한 분들을 모시고 첫걸음을 내딛고자 합니다." };
 const mapClientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
 
 function Field({ label, children }) { return <label className="form-field"><span>{label}</span>{children}</label>; }
