@@ -21,6 +21,20 @@ export default function CreateInvitation() {
   const [eventSlug, setEventSlug] = useState("");
   const mapElement = useRef(null);
   const mapInstance = useRef(null);
+  const mapMarker = useRef(null);
+
+  const focusMap = (point) => {
+    const maps = window.naver?.maps;
+    const map = mapInstance.current;
+    if (!maps || !map || !point) return false;
+    maps.Event?.trigger(map, "resize");
+    map.setCenter(point);
+    map.setZoom(16);
+    if (mapMarker.current) mapMarker.current.setPosition(point);
+    else mapMarker.current = new maps.Marker({ position: point, map });
+    setMapNotice("예식장 위치를 찾았어요.");
+    return true;
+  };
 
   useEffect(() => { setProvider(window.localStorage.getItem("dear-day-provider") || "게스트"); const saved = window.localStorage.getItem("dear-day-draft"); if (saved) setInvitation(JSON.parse(saved)); setEventSlug(window.localStorage.getItem("dear-day-event-slug") || ""); }, []);
   useEffect(() => {
@@ -63,9 +77,7 @@ export default function CreateInvitation() {
       if (status !== maps.Service.Status.OK || !response.v2.addresses?.[0]) return setMapNotice("주소를 찾지 못했어요. 도로명 주소를 다시 확인해 주세요.");
       const address = response.v2.addresses[0];
       const point = new maps.LatLng(Number(address.y), Number(address.x));
-      mapInstance.current.setCenter(point);
-      mapInstance.current.setZoom(16);
-      setMapNotice("예식장 위치를 찾았어요.");
+      focusMap(point);
     });
   }, [invitation.venueAddress, mapReady]);
   const update = (key, value) => setInvitation((current) => ({ ...current, [key]: value }));
@@ -81,6 +93,13 @@ export default function CreateInvitation() {
   const selectPlace = (place) => {
     const address = place.roadAddress || place.address || "";
     setInvitation((current) => ({ ...current, venue: place.title.replace(/<[^>]+>/g, ""), venueAddress: address }));
+    // Local Search returns WGS84 coordinates multiplied by 10,000,000. Use them
+    // directly so the map follows the selected result even when geocoding is slow.
+    const longitude = Number(place.mapx) / 10000000;
+    const latitude = Number(place.mapy) / 10000000;
+    if (Number.isFinite(longitude) && Number.isFinite(latitude) && longitude && latitude && window.naver?.maps) {
+      focusMap(new window.naver.maps.LatLng(latitude, longitude));
+    }
     setPlaceResults([]);
   };
   const formattedDate = useMemo(() => { const date = new Date(`${invitation.date}T12:00:00`); return Number.isNaN(date.getTime()) ? invitation.date : new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "short" }).format(date); }, [invitation.date]);
