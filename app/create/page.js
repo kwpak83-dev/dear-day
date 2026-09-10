@@ -35,7 +35,7 @@ export default function CreateInvitation() {
     if (existing) { existing.addEventListener("load", createMap); createMap(); return () => existing.removeEventListener("load", createMap); }
     const script = document.createElement("script");
     script.id = scriptId;
-    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${mapClientId}&submodules=geocoder`;
+    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientID=${mapClientId}&submodules=geocoder`;
     script.async = true;
     script.addEventListener("load", createMap);
     document.head.appendChild(script);
