@@ -78,14 +78,12 @@ export default function CreateInvitation() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return setSaveNotice("이 기기 임시 저장 완료 · 로그인 후 온라인 저장이 가능해요");
     const slug = eventSlug || `invite-${Date.now().toString(36)}`;
-    const event = { owner_id: session.user.id, kind: "wedding", status: "draft", slug, title: `${invitation.groom} & ${invitation.bride}의 초대장`, starts_at: `${invitation.date}T${invitation.time}:00+09:00`, settings: invitation };
-    const { error } = eventSlug
-      ? await supabase.from("events").update(event).eq("slug", slug)
-      : await supabase.from("events").insert(event);
-    if (error) return setSaveNotice(`저장에 실패했어요. 오류 코드: ${error.code || "unknown"}`);
+    const response = await fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ slug, invitation }) });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) return setSaveNotice(result.error || "저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
     window.localStorage.setItem("dear-day-event-slug", slug); setEventSlug(slug); setSaveNotice("온라인 임시 저장 완료"); return slug;
   };
-  const publish = async () => { const slug = await saveDraft(); if (!slug) return; const supabase = getSupabaseBrowserClient(); const { error } = await supabase.from("events").update({ status: "published", published_at: new Date().toISOString() }).eq("slug", slug); if (error) return setSaveNotice("발행에 실패했어요."); setPublished(true); };
+  const publish = async () => { const slug = await saveDraft(); if (!slug) return; const supabase = getSupabaseBrowserClient(); const { data: { session } } = await supabase.auth.getSession(); if (!session) return setSaveNotice("로그인 후 발행할 수 있어요."); const response = await fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ slug, invitation, publish: true }) }); const result = await response.json().catch(() => ({})); if (!response.ok) return setSaveNotice(result.error || "발행에 실패했어요."); setPublished(true); };
   const copyLink = async () => { await navigator.clipboard?.writeText(`${window.location.origin}/invite/${eventSlug}`); setCopied(true); window.setTimeout(() => setCopied(false), 1800); };
 
   return <main className="create-page">
