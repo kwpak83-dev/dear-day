@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getSupabaseBrowserClient } from "../lib/supabase/browser";
 
 const templates = [
@@ -19,9 +19,32 @@ export default function Home() {
   const [authOpen, setAuthOpen] = useState(false);
   const [authMessage, setAuthMessage] = useState("");
   const [authLoading, setAuthLoading] = useState("");
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const supabase = getSupabaseBrowserClient();
+    if (!supabase) return;
+    const syncUser = ({ user: nextUser }) => setUser(nextUser || null);
+    supabase.auth.getUser().then(({ data }) => syncUser(data)).catch(() => setUser(null));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => syncUser(session || {}));
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const providerLabel = useMemo(() => {
+    const provider = user?.app_metadata?.provider || user?.user_metadata?.provider;
+    return provider === "kakao" ? "카카오" : provider === "naver" ? "네이버" : "로그인";
+  }, [user]);
 
   const start = () => {
+    if (user) return window.location.assign("/create");
     setAuthOpen(true);
+  };
+
+  const signOut = async () => {
+    const supabase = getSupabaseBrowserClient();
+    if (supabase) await supabase.auth.signOut();
+    setUser(null);
+    setMenuOpen(false);
   };
 
   const chooseLogin = async (provider) => {
@@ -64,12 +87,11 @@ export default function Home() {
             <a href="#features">주요 기능</a>
           </div>
           <div className="nav-actions">
-            <button className="login" onClick={start}>로그인</button>
-            <button className="nav-cta" onClick={start}>무료로 시작하기</button>
+            {user ? <><span className="login-status">{providerLabel} 로그인</span><a className="login" href="/my-invitations">내 초대장</a><button className="logout" onClick={signOut}>로그아웃</button></> : <><button className="login" onClick={start}>로그인</button><button className="nav-cta" onClick={start}>무료로 시작하기</button></>}
           </div>
           <button className="mobile-menu" aria-label="메뉴 열기" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
         </nav>
-        {menuOpen && <div className="mobile-links"><a href="#how">만드는 방법</a><a href="#templates">템플릿</a><a href="#features">주요 기능</a><button onClick={start}>무료로 시작하기</button></div>}
+        {menuOpen && <div className="mobile-links"><a href="#how">만드는 방법</a><a href="#templates">템플릿</a><a href="#features">주요 기능</a>{user ? <><a href="/my-invitations">내 초대장</a><button onClick={signOut}>로그아웃</button></> : <button onClick={start}>무료로 시작하기</button>}</div>}
       </header>
 
       <section className="hero" id="top">
