@@ -7,17 +7,35 @@ function json(body, status = 200) {
   return NextResponse.json(body, { status });
 }
 
-export async function POST(request) {
+async function getAuthenticatedClient(request) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !serviceRoleKey) return json({ error: "저장 서비스를 준비하지 못했어요." }, 503);
+  if (!url || !serviceRoleKey) return { error: "저장 서비스를 준비하지 못했어요.", status: 503 };
 
   const token = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
-  if (!token) return json({ error: "로그인 정보를 찾지 못했어요." }, 401);
+  if (!token) return { error: "로그인 정보를 찾지 못했어요.", status: 401 };
 
   const supabase = createClient(url, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
   const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-  if (authError || !user) return json({ error: "로그인이 만료되었어요. 다시 로그인해 주세요." }, 401);
+  if (authError || !user) return { error: "로그인이 만료되었어요. 다시 로그인해 주세요.", status: 401 };
+  return { supabase, user };
+}
+
+export async function GET(request) {
+  const auth = await getAuthenticatedClient(request);
+  if (auth.error) return json({ error: auth.error }, auth.status);
+  const slug = new URL(request.url).searchParams.get("slug");
+  let query = auth.supabase.from("events").select("slug,title,status,starts_at,updated_at,settings").eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
+  if (slug) query = query.eq("slug", slug).limit(1);
+  const { data, error } = await query;
+  if (error) return json({ error: "초대장을 불러오지 못했어요." }, 500);
+  return json(slug ? { event: data?.[0] || null } : { events: data || [] });
+}
+
+export async function POST(request) {
+  const auth = await getAuthenticatedClient(request);
+  if (auth.error) return json({ error: auth.error }, auth.status);
+  const { supabase, user } = auth;
 
   const body = await request.json().catch(() => null);
   const { slug, invitation, publish = false } = body || {};

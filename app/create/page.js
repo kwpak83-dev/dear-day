@@ -24,6 +24,20 @@ export default function CreateInvitation() {
 
   useEffect(() => { setProvider(window.localStorage.getItem("dear-day-provider") || "게스트"); const saved = window.localStorage.getItem("dear-day-draft"); if (saved) setInvitation(JSON.parse(saved)); setEventSlug(window.localStorage.getItem("dear-day-event-slug") || ""); }, []);
   useEffect(() => {
+    const slug = new URLSearchParams(window.location.search).get("slug");
+    if (!slug) return;
+    const loadEvent = async () => {
+      const supabase = getSupabaseBrowserClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return setSaveNotice("로그인 후 임시저장을 열 수 있어요.");
+      const response = await fetch(`/api/events?slug=${encodeURIComponent(slug)}`, { headers: { Authorization: `Bearer ${session.access_token}` } });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.event) return setSaveNotice(result.error || "초대장을 찾지 못했어요.");
+      setInvitation(result.event.settings || initialInvitation); setEventSlug(result.event.slug); setSaveNotice("임시저장을 불러왔어요.");
+    };
+    loadEvent();
+  }, []);
+  useEffect(() => {
     if (!mapClientId || !mapElement.current) return;
     const scriptId = "naver-map-sdk";
     const createMap = () => {
@@ -87,7 +101,7 @@ export default function CreateInvitation() {
   const copyLink = async () => { await navigator.clipboard?.writeText(`${window.location.origin}/invite/${eventSlug}`); setCopied(true); window.setTimeout(() => setCopied(false), 1800); };
 
   return <main className="create-page">
-    <header className="create-header"><a className="brand" href="/"><img src="/dear-day-logo.png" alt="디어데이" /></a><div className="create-user"><span>{provider}로 시작했어요</span><a href="/">나가기</a></div></header>
+    <header className="create-header"><a className="brand" href="/"><img src="/dear-day-logo.png" alt="디어데이" /></a><div className="create-user"><span>{provider}로 시작했어요</span><a href="/my-invitations">내 초대장</a><a href="/">나가기</a></div></header>
     <div className="create-layout">
       <section className="editor-panel">
         <p className="section-kicker">STEP 1 OF 1 · INVITATION EDITOR</p><h1>우리의 이야기를<br /><em>채워볼까요?</em></h1><p className="editor-intro">입력한 내용은 자동으로 미리보기에 반영돼요.</p>
@@ -97,6 +111,6 @@ export default function CreateInvitation() {
       </section>
       <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div className="preview-content"><p>WEDDING INVITATION</p><div className="preview-flower">✿ &nbsp; ❋ &nbsp; ✿</div><div className="preview-photo"><div /><span>{invitation.groom?.slice(0, 1)} &amp; {invitation.bride?.slice(0, 1)}</span></div><h2>{invitation.groom} <b>&amp;</b> {invitation.bride}</h2><time>{formattedDate}<br />{invitation.time}</time><hr /><strong>{invitation.venue}</strong><blockquote>{invitation.message}</blockquote><button>참석 여부 전달하기</button></div></div></aside>
     </div>
-    {published && <div className="publish-overlay"><div className="publish-card"><div className="publish-heart">♥</div><p className="section-kicker">YOUR INVITATION IS READY</p><h2>청첩장이<br /><em>완성되었어요!</em></h2><p>이제 소중한 분들에게 링크를 공유해보세요.</p><div className="share-link"><span>dear-day.kr/w/our-special-day</span><button onClick={copyLink}>{copied ? "복사됨" : "링크 복사"}</button></div><button className="publish-button full" onClick={() => setPublished(false)}>완료했어요</button></div></div>}
+    {published && <div className="publish-overlay"><div className="publish-card"><div className="publish-heart">♥</div><p className="section-kicker">YOUR INVITATION IS READY</p><h2>청첩장이<br /><em>완성되었어요!</em></h2><p>이제 소중한 분들에게 링크를 공유해보세요.</p><div className="share-link"><span>/invite/{eventSlug}</span><button onClick={copyLink}>{copied ? "복사됨" : "링크 복사"}</button></div><a className="publish-button full" href={`/invite/${eventSlug}`}>청첩장 열기</a><button className="publish-button full secondary" onClick={() => setPublished(false)}>완료했어요</button></div></div>}
   </main>;
 }
