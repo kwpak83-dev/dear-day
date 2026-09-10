@@ -26,8 +26,9 @@ export async function POST(request) {
   const startsAt = `${invitation.date}T${invitation.time}:00+09:00`;
   if (Number.isNaN(new Date(startsAt).getTime())) return json({ error: "예식 날짜 또는 시간을 확인해 주세요." }, 400);
 
-  const { data: existing, error: lookupError } = await supabase.from("events").select("owner_id").eq("slug", slug).maybeSingle();
+  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id").eq("slug", slug).limit(1);
   if (lookupError) return json({ error: "기존 초대장을 확인하지 못했어요." }, 500);
+  const existing = matches?.[0];
   if (existing && existing.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 수정할 수 없어요." }, 403);
 
   const event = {
