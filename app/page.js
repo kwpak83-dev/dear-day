@@ -94,7 +94,7 @@ export default function Home() {
                 <p className="invite-small">WEDDING INVITATION</p>
                 <div className="flower-line">✿ &nbsp; ❋ &nbsp; ✿</div>
                 <div className="couple-photo"><div className="photo-sun" /><div className="photo-hill" /><span>J & S</span></div>
-                <p className="invite-names">지훈 <b>&</b> 서연</p>
+                <p className="invite-names">경원 <b>&</b> 보람</p>
                 <p className="invite-date">2026. 10. 17 SAT · 12:30 PM</p>
                 <div className="invite-rule" />
                 <p className="invite-place">더가든 웨딩홀 · 그랜드룸</p>
