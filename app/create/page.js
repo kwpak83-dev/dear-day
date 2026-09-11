@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 
+import GalleryEditor from "./gallery-editor";
 import { preparePhoto } from "../../lib/prepare-photo";
 
 const initialInvitation = { coverPhotoUrl: "", groom: "경원", bride: "보람", date: "2026-10-17", time: "12:30", venue: "더가든 웨딩홀 · 그랜드룸", venueAddress: "", groomBank: "", groomAccount: "", groomAccountHolder: "", brideBank: "", brideAccount: "", brideAccountHolder: "", message: "서로의 모든 날을 함께하기로 약속한 저희,\n소중한 분들을 모시고 첫걸음을 내딛고자 합니다." };
@@ -23,6 +24,7 @@ export default function CreateInvitation() {
   const [searching, setSearching] = useState(false);
   const [eventSlug, setEventSlug] = useState("");
   const [submitting, setSubmitting] = useState("");
+  const [galleryBusy, setGalleryBusy] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [photoNotice, setPhotoNotice] = useState("");
   const photoBusy = useRef(false);
@@ -43,7 +45,7 @@ export default function CreateInvitation() {
     return true;
   };
 
-  useEffect(() => { setProvider(window.localStorage.getItem("dear-day-provider") || "게스트"); const saved = window.localStorage.getItem("dear-day-draft"); if (saved) setInvitation({ ...initialInvitation, ...JSON.parse(saved) }); setEventSlug(window.localStorage.getItem("dear-day-event-slug") || ""); }, []);
+  useEffect(() => { setProvider(window.localStorage.getItem("dear-day-provider") || "게스트"); const saved = window.localStorage.getItem("dear-day-draft"); if (saved) setInvitation({ ...initialInvitation, ...JSON.parse(saved) }); setEventSlug(new URLSearchParams(window.location.search).get("slug") || window.localStorage.getItem("dear-day-event-slug") || ""); }, []);
   useEffect(() => {
     const slug = new URLSearchParams(window.location.search).get("slug");
     if (!slug) return;
@@ -91,7 +93,7 @@ export default function CreateInvitation() {
   const uploadPhoto = async (event) => {
     const file = event.target.files?.[0];
     event.target.value = "";
-    if (!file || photoBusy.current || submitting) return;
+    if (!file || photoBusy.current || submitting || galleryBusy) return;
     photoBusy.current = true;
     setUploadingPhoto(true);
     setPhotoNotice("사진을 준비하고 있어요.");
@@ -137,7 +139,7 @@ export default function CreateInvitation() {
   };
   const formattedDate = useMemo(() => { const date = new Date(`${invitation.date}T12:00:00`); return Number.isNaN(date.getTime()) ? invitation.date : new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "short" }).format(date); }, [invitation.date]);
   const saveDraft = async ({ showLoading = true } = {}) => {
-    if (photoBusy.current || (showLoading && submitting)) return;
+    if (galleryBusy || photoBusy.current || (showLoading && submitting)) return;
     if (showLoading) setSubmitting("draft");
     try {
       window.localStorage.setItem("dear-day-draft", JSON.stringify(invitation));
@@ -156,7 +158,7 @@ export default function CreateInvitation() {
     }
   };
   const publish = async () => {
-    if (submitting || photoBusy.current) return;
+    if (submitting || photoBusy.current || galleryBusy) return;
     setSubmitting("publish");
     try {
       const slug = await saveDraft({ showLoading: false });
@@ -197,11 +199,12 @@ export default function CreateInvitation() {
     <div className="create-layout">
       <section className="editor-panel">
         <p className="section-kicker">STEP 1 OF 1 · INVITATION EDITOR</p><h1>우리의 이야기를<br /><em>채워볼까요?</em></h1><p className="editor-intro">입력한 내용은 자동으로 미리보기에 반영돼요.</p>
-        <div className="form-section photo-editor"><h2>대표사진 <small>선택</small></h2><p>청첩장 상단에 두 사람의 사진을 담아보세요.</p><Field label={invitation.coverPhotoUrl ? "사진 교체" : "사진 선택"}><input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadPhoto} disabled={uploadingPhoto || Boolean(submitting)} aria-describedby="photo-help" /></Field><p id="photo-help">JPG · PNG · WEBP, 최대 15MB · 사진은 자동으로 크기를 줄여요.</p>{invitation.coverPhotoUrl && <div className="photo-selection"><img src={invitation.coverPhotoUrl} alt="첨부한 대표사진" /><button type="button" className="save-button" disabled={uploadingPhoto || Boolean(submitting)} onClick={() => { update("coverPhotoUrl", ""); setPhotoNotice("사진을 뺐어요. 임시 저장 또는 발행으로 반영해 주세요."); }}>사진 삭제</button></div>}<p className="photo-notice" role="status" aria-live="polite">{photoNotice}</p></div>
+        <div className="form-section photo-editor"><h2>대표사진 <small>선택</small></h2><p>청첩장 상단에 두 사람의 사진을 담아보세요.</p><Field label={invitation.coverPhotoUrl ? "사진 교체" : "사진 선택"}><input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadPhoto} disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} aria-describedby="photo-help" /></Field><p id="photo-help">JPG · PNG · WEBP, 최대 15MB · 사진은 자동으로 크기를 줄여요.</p>{invitation.coverPhotoUrl && <div className="photo-selection"><img src={invitation.coverPhotoUrl} alt="첨부한 대표사진" /><button type="button" className="save-button" disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} onClick={() => { update("coverPhotoUrl", ""); setPhotoNotice("사진을 뺐어요. 임시 저장 또는 발행으로 반영해 주세요."); }}>사진 삭제</button></div>}<p className="photo-notice" role="status" aria-live="polite">{photoNotice}</p></div>
+        <GalleryEditor slug={eventSlug} disabled={Boolean(submitting) || uploadingPhoto} onSaveInvitation={saveDraft} onBusyChange={setGalleryBusy} />
         <div className="form-section"><h2>기본 정보</h2><div className="field-grid"><Field label="신랑 이름"><input value={invitation.groom} onChange={(e) => update("groom", e.target.value)} /></Field><Field label="신부 이름"><input value={invitation.bride} onChange={(e) => update("bride", e.target.value)} /></Field></div><Field label="예식 날짜"><input type="date" value={invitation.date} onChange={(e) => update("date", e.target.value)} /></Field><Field label="예식 시간"><input type="time" value={invitation.time} onChange={(e) => update("time", e.target.value)} /></Field><Field label="예식 장소"><div className="place-search"><input placeholder="예식장 이름을 입력해 검색하세요" value={invitation.venue} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "검색"}</button></div>{invitation.venueAddress && <div className="venue-address"><span>{invitation.venueAddress}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}</Field>{placeResults.length > 0 && <div className="place-results">{placeResults.map((place) => <button type="button" key={place.link} onClick={() => selectPlace(place)}><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></button>)}</div>}<div className="venue-map"><div ref={mapElement} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div></div>
         <div className="form-section"><h2>마음 전하실 곳 <small>선택</small></h2><div className="account-editor"><strong>신랑 측</strong><div className="field-grid"><Field label="은행명"><input placeholder="예: 국민은행" value={invitation.groomBank} onChange={(e) => update("groomBank", e.target.value)} /></Field><Field label="예금주"><input placeholder={invitation.groom || "신랑 이름"} value={invitation.groomAccountHolder} onChange={(e) => update("groomAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.groomAccount} onChange={(e) => update("groomAccount", e.target.value)} /></Field></div><div className="account-editor"><strong>신부 측</strong><div className="field-grid"><Field label="은행명"><input placeholder="예: 신한은행" value={invitation.brideBank} onChange={(e) => update("brideBank", e.target.value)} /></Field><Field label="예금주"><input placeholder={invitation.bride || "신부 이름"} value={invitation.brideAccountHolder} onChange={(e) => update("brideAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.brideAccount} onChange={(e) => update("brideAccount", e.target.value)} /></Field></div></div>
         <div className="form-section"><h2>전하고 싶은 마음</h2><Field label="초대 글"><textarea rows="4" value={invitation.message} onChange={(e) => update("message", e.target.value)} /></Field></div>
-        <div className="editor-actions"><button className="save-button" onClick={saveDraft} disabled={Boolean(submitting) || uploadingPhoto}>임시 저장</button><button className="publish-button" onClick={publish} disabled={Boolean(submitting) || uploadingPhoto}>청첩장 발행하기 <span>→</span></button></div>{saveNotice && <p role="status">{saveNotice}</p>}
+        <div className="editor-actions"><button className="save-button" onClick={saveDraft} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>임시 저장</button><button className="publish-button" onClick={publish} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>청첩장 발행하기 <span>→</span></button></div>{saveNotice && <p role="status">{saveNotice}</p>}
       </section>
       <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div className="preview-content"><p>WEDDING INVITATION</p><div className="preview-flower">✿ &nbsp; ❋ &nbsp; ✿</div><div className="preview-photo">{invitation.coverPhotoUrl ? <img src={invitation.coverPhotoUrl} alt="두 사람의 대표사진" /> : <><div /><span>{invitation.groom?.slice(0, 1)} &amp; {invitation.bride?.slice(0, 1)}</span></>}</div><h2>{invitation.groom} <b>&amp;</b> {invitation.bride}</h2><time>{formattedDate}<br />{invitation.time}</time><hr /><strong>{invitation.venue}</strong><blockquote>{invitation.message}</blockquote><button>참석 여부 전달하기</button></div></div></aside>
     </div>

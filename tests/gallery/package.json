@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "scripts": {
+    "test": "node gallery-sql.cjs && node gallery-server.cjs && node gallery-cron.cjs",
+    "test:browser": "node gallery-browser.cjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "playwright": "1.62.1",
+    "sharp": "0.35.4"
+  }
+}
