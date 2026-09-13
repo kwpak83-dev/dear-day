@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 const slugPattern = /^[a-z0-9-]{4,80}$/;
+const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const eventKinds = new Set([
   "wedding", "first_birthday", "birthday", "baby_shower",
   "bridal_shower", "anniversary", "housewarming", "graduation",
@@ -30,7 +31,7 @@ export async function GET(request) {
   const auth = await getAuthenticatedClient(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
   const slug = new URL(request.url).searchParams.get("slug");
-  let query = auth.supabase.from("events").select("slug,title,status,kind,starts_at,updated_at,settings").eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
+  let query = auth.supabase.from("events").select("slug,title,status,kind,template_id,starts_at,updated_at,settings").eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
   if (slug) query = query.eq("slug", slug).limit(1);
   const { data, error } = await query;
   if (error) return json({ error: "초대장을 불러오지 못했어요." }, 500);
@@ -47,6 +48,9 @@ export async function POST(request) {
   if (!slugPattern.test(slug || "") || !invitation?.date || !invitation?.time) return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
   const eventKind = invitation.eventKind || "wedding";
   if (!eventKinds.has(eventKind)) return json({ error: "지원하지 않는 행사 종류예요." }, 400);
+  const hasTemplateId = Object.prototype.hasOwnProperty.call(invitation, "templateId");
+  const templateId = invitation.templateId || null;
+  if (templateId && !uuidPattern.test(templateId)) return json({ error: "선택한 템플릿 정보가 올바르지 않아요." }, 400);
 
   const startsAt = `${invitation.date}T${invitation.time}:00+09:00`;
   if (Number.isNaN(new Date(startsAt).getTime())) return json({ error: "예식 날짜 또는 시간을 확인해 주세요." }, 400);
@@ -56,8 +60,15 @@ export async function POST(request) {
   const existing = matches?.[0];
   if (existing && existing.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 수정할 수 없어요." }, 403);
 
+  if (templateId) {
+    const { data: templates, error: templateError } = await supabase.from("templates").select("id").eq("id", templateId).limit(1);
+    if (templateError) return json({ error: "템플릿을 확인하지 못했어요." }, 500);
+    if (!templates?.[0]) return json({ error: "선택한 템플릿을 찾지 못했어요." }, 400);
+  }
+
   const event = {
     kind: eventKind,
+    ...(hasTemplateId ? { template_id: templateId } : {}),
     title: `${invitation.groom || "신랑"} & ${invitation.bride || "신부"}의 초대장`,
     starts_at: startsAt,
     settings: invitation,
