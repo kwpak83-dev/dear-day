@@ -45,7 +45,14 @@ export default function CreateInvitation() {
     return true;
   };
 
-  useEffect(() => { setProvider(window.localStorage.getItem("dear-day-provider") || "게스트"); const saved = window.localStorage.getItem("dear-day-draft"); if (saved) setInvitation({ ...initialInvitation, ...JSON.parse(saved) }); setEventSlug(new URLSearchParams(window.location.search).get("slug") || window.localStorage.getItem("dear-day-event-slug") || ""); }, []);
+  useEffect(() => {
+    setProvider(window.localStorage.getItem("dear-day-provider") || "게스트");
+    const saved = window.localStorage.getItem("dear-day-draft");
+    if (saved) setInvitation({ ...initialInvitation, ...JSON.parse(saved) });
+
+    // A URL slug is the only way to enter edit mode. A plain /create starts a new event.
+    setEventSlug(new URLSearchParams(window.location.search).get("slug") || "");
+  }, []);
   useEffect(() => {
     const slug = new URLSearchParams(window.location.search).get("slug");
     if (!slug) return;
@@ -148,7 +155,7 @@ export default function CreateInvitation() {
       if (!supabase) return setSaveNotice("이 기기 임시 저장 완료");
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return setSaveNotice("이 기기 임시 저장 완료 · 로그인 후 온라인 저장이 가능해요");
-      const slug = eventSlug || `invite-${Date.now().toString(36)}`;
+      const slug = eventSlug || `invite-${window.crypto.randomUUID()}`;
       const response = await fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ slug, invitation }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) return setSaveNotice(result.error || "저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
