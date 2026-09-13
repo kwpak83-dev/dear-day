@@ -6,7 +6,7 @@ import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import GalleryEditor from "./gallery-editor";
 import { preparePhoto } from "../../lib/prepare-photo";
 
-const initialInvitation = { coverPhotoUrl: "", groom: "경원", bride: "보람", date: "2026-10-17", time: "12:30", venue: "더가든 웨딩홀 · 그랜드룸", venueAddress: "", groomBank: "", groomAccount: "", groomAccountHolder: "", brideBank: "", brideAccount: "", brideAccountHolder: "", message: "서로의 모든 날을 함께하기로 약속한 저희,\n소중한 분들을 모시고 첫걸음을 내딛고자 합니다." };
+const initialInvitation = { eventKind: "wedding", coverPhotoUrl: "", groom: "경원", bride: "보람", date: "2026-10-17", time: "12:30", venue: "더가든 웨딩홀 · 그랜드룸", venueAddress: "", groomBank: "", groomAccount: "", groomAccountHolder: "", brideBank: "", brideAccount: "", brideAccountHolder: "", message: "서로의 모든 날을 함께하기로 약속한 저희,\n소중한 분들을 모시고 첫걸음을 내딛고자 합니다." };
 const mapClientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
 
 function Field({ label, children }) { return <label className="form-field"><span>{label}</span>{children}</label>; }
@@ -56,7 +56,7 @@ export default function CreateInvitation() {
       const response = await fetch(`/api/events?slug=${encodeURIComponent(slug)}`, { headers: { Authorization: `Bearer ${session.access_token}` } });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.event) return setSaveNotice(result.error || "초대장을 찾지 못했어요.");
-      setInvitation({ ...initialInvitation, ...result.event.settings }); setEventSlug(result.event.slug); setSaveNotice("임시저장을 불러왔어요.");
+      setInvitation({ ...initialInvitation, ...result.event.settings, eventKind: result.event.kind || result.event.settings?.eventKind || "wedding" }); setEventSlug(result.event.slug); setSaveNotice("임시저장을 불러왔어요.");
     };
     loadEvent();
   }, []);

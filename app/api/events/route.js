@@ -2,6 +2,11 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 const slugPattern = /^[a-z0-9-]{4,80}$/;
+const eventKinds = new Set([
+  "wedding", "first_birthday", "birthday", "baby_shower",
+  "bridal_shower", "anniversary", "housewarming", "graduation",
+  "corporate", "party", "other",
+]);
 
 function json(body, status = 200) {
   return NextResponse.json(body, { status });
@@ -25,7 +30,7 @@ export async function GET(request) {
   const auth = await getAuthenticatedClient(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
   const slug = new URL(request.url).searchParams.get("slug");
-  let query = auth.supabase.from("events").select("slug,title,status,starts_at,updated_at,settings").eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
+  let query = auth.supabase.from("events").select("slug,title,status,kind,starts_at,updated_at,settings").eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
   if (slug) query = query.eq("slug", slug).limit(1);
   const { data, error } = await query;
   if (error) return json({ error: "초대장을 불러오지 못했어요." }, 500);
@@ -40,6 +45,8 @@ export async function POST(request) {
   const body = await request.json().catch(() => null);
   const { slug, invitation, publish = false } = body || {};
   if (!slugPattern.test(slug || "") || !invitation?.date || !invitation?.time) return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
+  const eventKind = invitation.eventKind || "wedding";
+  if (!eventKinds.has(eventKind)) return json({ error: "지원하지 않는 행사 종류예요." }, 400);
 
   const startsAt = `${invitation.date}T${invitation.time}:00+09:00`;
   if (Number.isNaN(new Date(startsAt).getTime())) return json({ error: "예식 날짜 또는 시간을 확인해 주세요." }, 400);
@@ -50,6 +57,7 @@ export async function POST(request) {
   if (existing && existing.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 수정할 수 없어요." }, 403);
 
   const event = {
+    kind: eventKind,
     title: `${invitation.groom || "신랑"} & ${invitation.bride || "신부"}의 초대장`,
     starts_at: startsAt,
     settings: invitation,
@@ -57,7 +65,7 @@ export async function POST(request) {
   };
   const { error: saveError } = existing
     ? await supabase.from("events").update(event).eq("slug", slug)
-    : await supabase.from("events").insert({ ...event, owner_id: user.id, kind: "wedding", status: publish ? "published" : "draft", slug });
+    : await supabase.from("events").insert({ ...event, owner_id: user.id, status: publish ? "published" : "draft", slug });
 
   if (saveError) return json({ error: "초대장을 저장하지 못했어요." }, 500);
   return json({ slug });
