@@ -7,7 +7,7 @@ import GalleryEditor from "./gallery-editor";
 import { preparePhoto } from "../../lib/prepare-photo";
 import { EVENT_KIND_OPTIONS, getEventConfig } from "../../lib/event-config";
 
-const initialInvitation = { eventKind: "wedding", templateId: "", eventTitle: "", hostName: "", person1Name: "", person2Name: "", childName: "", parent1Name: "", parent2Name: "", birthDate: "", dueDate: "", age: "", anniversaryYears: "", organizationName: "", programName: "", coverPhotoUrl: "", groom: "경원", bride: "보람", date: "2026-10-17", time: "12:30", venue: "더가든 웨딩홀 · 그랜드룸", venueAddress: "", venueDetail: "", groomBank: "", groomAccount: "", groomAccountHolder: "", brideBank: "", brideAccount: "", brideAccountHolder: "", message: "서로의 모든 날을 함께하기로 약속한 저희,\n소중한 분들을 모시고 첫걸음을 내딛고자 합니다." };
+const initialInvitation = { eventKind: "wedding", templateId: "", eventTitle: "", hostName: "", person1Name: "", person2Name: "", childName: "", parent1Name: "", parent2Name: "", birthDate: "", dueDate: "", age: "", anniversaryYears: "", organizationName: "", programName: "", coverPhotoUrl: "", groom: "경원", bride: "보람", date: "2026-10-17", time: "12:30", venue: "더가든 웨딩홀 · 그랜드룸", venueAddress: "", venueBuilding: "", venueDetail: "", groomBank: "", groomAccount: "", groomAccountHolder: "", brideBank: "", brideAccount: "", brideAccountHolder: "", message: "서로의 모든 날을 함께하기로 약속한 저희,\n소중한 분들을 모시고 첫걸음을 내딛고자 합니다." };
 const mapClientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
 
 function Field({ label, children }) { return <label className="form-field"><span>{label}</span>{children}</label>; }
@@ -34,6 +34,7 @@ export default function CreateInvitation() {
   const mapElement = useRef(null);
   const mapInstance = useRef(null);
   const mapMarker = useRef(null);
+  const lastMappedAddress = useRef("");
 
   const focusMap = (point) => {
     const maps = window.naver?.maps;
@@ -48,7 +49,7 @@ export default function CreateInvitation() {
     return true;
   };
 
-  const geocodeAddress = (value) => {
+  const geocodeAddress = (value, { updateAddress = true } = {}) => {
     const address = value?.trim();
     if (!address) return setMapNotice("기본주소를 입력해 주세요.");
     const maps = window.naver?.maps;
@@ -56,15 +57,18 @@ export default function CreateInvitation() {
     maps.Service.geocode({ query: address }, (status, response) => {
       if (status !== maps.Service.Status.OK || !response.v2.addresses?.[0]) return setMapNotice("주소를 찾지 못했어요. 도로명 주소를 다시 확인해 주세요.");
       const result = response.v2.addresses[0];
+      const buildingName = (result.addressElements || []).find((element) => element.types?.includes("BUILDING_NAME"))?.longName?.trim() || "";
+      let normalizedAddress = (result.roadAddress || result.jibunAddress || address).trim();
+      if (buildingName && normalizedAddress.endsWith(" " + buildingName)) normalizedAddress = normalizedAddress.slice(0, -(buildingName.length + 1)).trim();
+      else if (buildingName && normalizedAddress.endsWith(" (" + buildingName + ")")) normalizedAddress = normalizedAddress.slice(0, -(buildingName.length + 3)).trim();
+      lastMappedAddress.current = updateAddress ? normalizedAddress : address;
+      if (updateAddress) setInvitation((current) => ({ ...current, venueAddress: normalizedAddress, venueBuilding: buildingName }));
       focusMap(new maps.LatLng(Number(result.y), Number(result.x)));
     });
   };
 
   useEffect(() => {
     setProvider(window.localStorage.getItem("dear-day-provider") || "게스트");
-    const saved = window.localStorage.getItem("dear-day-draft");
-    if (saved) setInvitation({ ...initialInvitation, ...JSON.parse(saved) });
-
     // A URL slug is the only way to enter edit mode. A plain /create starts a new event.
     setEventSlug(new URLSearchParams(window.location.search).get("slug") || "");
   }, []);
@@ -114,7 +118,8 @@ export default function CreateInvitation() {
   }, []);
   useEffect(() => {
     if (!invitation.venueAddress?.trim()) return setMapNotice("주소를 입력하면 지도를 확인할 수 있어요.");
-    geocodeAddress(invitation.venueAddress);
+    if (lastMappedAddress.current === invitation.venueAddress.trim()) return;
+    geocodeAddress(invitation.venueAddress, { updateAddress: false });
   }, [invitation.venueAddress, mapReady]);
   const update = (key, value) => setInvitation((current) => ({ ...current, [key]: value }));
   const uploadPhoto = async (event) => {
@@ -154,19 +159,19 @@ export default function CreateInvitation() {
   };
   const selectPlace = (place) => {
     const address = place.roadAddress || place.address || "";
-    setInvitation((current) => ({ ...current, venue: place.title.replace(/<[^>]+>/g, ""), venueAddress: address }));
+    setInvitation((current) => ({ ...current, venue: place.title.replace(/<[^>]+>/g, ""), venueAddress: address, venueBuilding: "" }));
     // Local Search returns WGS84 coordinates multiplied by 10,000,000. Use them
     // directly so the map follows the selected result even when geocoding is slow.
     const longitude = Number(place.mapx) / 10000000;
     const latitude = Number(place.mapy) / 10000000;
     if (Number.isFinite(longitude) && Number.isFinite(latitude) && longitude && latitude && window.naver?.maps) {
-      focusMap(new window.naver.maps.LatLng(latitude, longitude));
+      if (focusMap(new window.naver.maps.LatLng(latitude, longitude))) lastMappedAddress.current = address.trim();
     }
     setPlaceResults([]);
   };
   const eventConfig = getEventConfig(invitation.eventKind);
   const renderConfigField = (field) => {
-    if (field.type === "venue") return <div key={field.key}><Field label="장소명"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "장소 검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results">{placeResults.map((place) => <button type="button" key={place.link} onClick={() => selectPlace(place)}><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></button>)}</div>}<Field label="기본주소"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), geocodeAddress(invitation.venueAddress))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>주소 검색</button></div></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={mapElement} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div></div>;
+    if (field.type === "venue") return <div key={field.key}><Field label="장소명"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "장소 검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results">{placeResults.map((place) => <button type="button" key={[place.mapx, place.mapy, place.title].join("-")} onClick={() => selectPlace(place)}><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></button>)}</div>}<Field label="기본주소"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), geocodeAddress(invitation.venueAddress))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>주소 검색</button></div></Field><Field label="건물명"><input placeholder="주소 검색 결과에 건물명이 있으면 자동으로 입력돼요" value={invitation.venueBuilding || ""} onChange={(e) => update("venueBuilding", e.target.value)} /></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={mapElement} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div></div>;
     if (field.type === "textarea") return <Field key={field.key} label={field.label}><textarea rows="4" value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} /></Field>;
     return <Field key={field.key} label={field.label}><input type={field.type} inputMode={field.inputMode} placeholder={field.placeholder} value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} /></Field>;
   };
@@ -209,7 +214,7 @@ export default function CreateInvitation() {
   };
   const copyLink = async () => { await navigator.clipboard?.writeText(`${window.location.origin}/invite/${eventSlug}`); setCopied(true); window.setTimeout(() => setCopied(false), 1800); };
   const copyAddress = async () => {
-    const address = [invitation.venueAddress, invitation.venueDetail].map((value) => value?.trim()).filter(Boolean).join(" ");
+    const address = [invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].map((value) => value?.trim()).filter(Boolean).join(" ");
     if (!address) return;
     try {
       await navigator.clipboard.writeText(address);
