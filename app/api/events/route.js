@@ -45,15 +45,20 @@ export async function POST(request) {
 
   const body = await request.json().catch(() => null);
   const { slug, invitation, publish = false } = body || {};
-  if (!slugPattern.test(slug || "") || !invitation?.date || !invitation?.time) return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
+  if (!slugPattern.test(slug || "") || !invitation || typeof invitation !== "object" || Array.isArray(invitation) || typeof publish !== "boolean") return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
+  if ((invitation.date !== undefined && typeof invitation.date !== "string") || (invitation.time !== undefined && typeof invitation.time !== "string")) return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
+  if (publish && (!invitation.date || !invitation.time)) return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
   const eventKind = invitation.eventKind || "wedding";
   if (!eventKinds.has(eventKind)) return json({ error: "지원하지 않는 행사 종류예요." }, 400);
   const hasTemplateId = Object.prototype.hasOwnProperty.call(invitation, "templateId");
   const templateId = invitation.templateId || null;
   if (templateId && !uuidPattern.test(templateId)) return json({ error: "선택한 템플릿 정보가 올바르지 않아요." }, 400);
 
-  const startsAt = `${invitation.date}T${invitation.time}:00+09:00`;
-  if (Number.isNaN(new Date(startsAt).getTime())) return json({ error: "예식 날짜 또는 시간을 확인해 주세요." }, 400);
+  let startsAt = null;
+  if (invitation.date && invitation.time) {
+    startsAt = `${invitation.date}T${invitation.time}:00+09:00`;
+    if (Number.isNaN(new Date(startsAt).getTime())) return json({ error: "예식 날짜 또는 시간을 확인해 주세요." }, 400);
+  }
 
   const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id").eq("slug", slug).limit(1);
   if (lookupError) return json({ error: "기존 초대장을 확인하지 못했어요." }, 500);
