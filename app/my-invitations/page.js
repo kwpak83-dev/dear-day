@@ -8,6 +8,9 @@ export default function MyInvitations() {
   const [events, setEvents] = useState([]);
   const [notice, setNotice] = useState("초대장을 불러오는 중이에요.");
   const [loginRequired, setLoginRequired] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deletingSlug, setDeletingSlug] = useState("");
+  const [actionNotice, setActionNotice] = useState("");
 
   useEffect(() => {
     const loadEvents = async () => {
@@ -22,5 +25,56 @@ export default function MyInvitations() {
     loadEvents();
   }, []);
 
-  return <main className="my-page"><header className="create-header"><a className="brand" href="/"><img src="/dear-day-logo.png" alt="디어데이" /></a><div className="create-user"><a href="/create">새 초대장 만들기</a><a href="/">나가기</a></div></header><section className="my-content"><p className="section-kicker">MY INVITATIONS</p><h1>내 초대장</h1><p className="my-intro">임시저장한 초대장을 이어서 편집하거나, 발행한 초대장을 확인하세요.</p>{notice && <div className="my-notice"><p>{notice}</p>{loginRequired && <a className="my-login-button" href="/?login=required">다시 로그인하기</a>}</div>}<div className="invitation-list">{events.map((event) => <article className="invitation-card" key={event.slug}><span className={`status ${event.status}`}>{event.status === "published" ? "발행됨" : "임시저장"}</span><h2>{getInvitationTitle(event.settings, event.kind)}</h2><p>{event.starts_at ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "long", timeStyle: "short" }).format(new Date(event.starts_at)) : "날짜 미정"}</p><div><a href={`/create?slug=${event.slug}`}>편집하기</a>{event.status === "published" && <a href={`/invite/${event.slug}`}>청첩장 보기</a>}</div></article>)}</div></section></main>;
+  const deleteDraft = async () => {
+    if (!deleteTarget || deletingSlug) return;
+    setDeletingSlug(deleteTarget.slug);
+    setActionNotice("");
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setLoginRequired(true);
+        throw new Error("로그인이 만료되었어요. 다시 로그인해 주세요.");
+      }
+      const response = await fetch(`/api/events?slug=${encodeURIComponent(deleteTarget.slug)}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        if (response.status === 401) setLoginRequired(true);
+        throw new Error(result.error || "초대장을 삭제하지 못했어요. 다시 시도해 주세요.");
+      }
+      setEvents((current) => current.filter((event) => event.slug !== deleteTarget.slug));
+      setDeleteTarget(null);
+      setActionNotice("초대장을 삭제했어요.");
+    } catch (error) {
+      setActionNotice(error.message || "초대장을 삭제하지 못했어요. 다시 시도해 주세요.");
+    } finally {
+      setDeletingSlug("");
+    }
+  };
+
+  return <main className="my-page">
+    <header className="create-header"><a className="brand" href="/"><img src="/dear-day-logo.png" alt="디어데이" /></a><div className="create-user"><a href="/create">새 초대장 만들기</a><a href="/">나가기</a></div></header>
+    <section className="my-content">
+      <p className="section-kicker">MY INVITATIONS</p><h1>내 초대장</h1>
+      <p className="my-intro">임시저장한 초대장을 이어서 편집하거나, 발행한 초대장을 확인하세요.</p>
+      {actionNotice && <p className="my-action-notice" role="status" aria-live="polite">{actionNotice}</p>}
+      {notice && <div className="my-notice"><p>{notice}</p>{loginRequired && <a className="my-login-button" href="/?login=required">다시 로그인하기</a>}</div>}
+      <div className="invitation-list">{events.map((event) => <article className="invitation-card" key={event.slug}>
+        <span className={`status ${event.status}`}>{event.status === "published" ? "발행됨" : "임시저장"}</span>
+        <h2>{getInvitationTitle(event.settings, event.kind)}</h2>
+        <p>{event.starts_at ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "long", timeStyle: "short" }).format(new Date(event.starts_at)) : "날짜 미정"}</p>
+        <div><a href={`/create?slug=${event.slug}`}>편집하기</a>{event.status === "published" && <a href={`/invite/${event.slug}`}>초대장 보기</a>}{event.status === "draft" && <button type="button" className="invitation-delete-button" onClick={() => { setActionNotice(""); setDeleteTarget(event); }}>삭제하기</button>}</div>
+      </article>)}</div>
+    </section>
+    {deleteTarget && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="delete-invitation-title">
+      <div className="delete-invitation-modal">
+        <h2 id="delete-invitation-title">이 초대장을 삭제할까요?</h2>
+        <p>삭제한 초대장은 복구할 수 없습니다.</p>
+        <div><button type="button" onClick={() => setDeleteTarget(null)} disabled={Boolean(deletingSlug)}>취소</button><button type="button" className="danger" onClick={deleteDraft} disabled={Boolean(deletingSlug)}>{deletingSlug ? "삭제 중..." : "삭제하기"}</button></div>
+      </div>
+    </div>}
+  </main>;
 }

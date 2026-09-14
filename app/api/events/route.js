@@ -4,12 +4,39 @@ import { getInvitationTitle } from "../../../lib/invitation-title";
 
 const slugPattern = /^[a-z0-9-]{4,80}$/;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const photoBucket = "invitation-photos";
 const eventKinds = new Set([
   "wedding", "first_birthday", "birthday", "baby_shower",
   "bridal_shower", "anniversary", "housewarming", "graduation",
   "corporate", "party", "other",
 ]);
 
+function ownedCoverPath(value, supabaseUrl, ownerId) {
+  if (typeof value !== "string" || !value) return null;
+  try {
+    const photoUrl = new URL(value);
+    const projectUrl = new URL(supabaseUrl);
+    const prefix = `/storage/v1/object/public/${photoBucket}/`;
+    if (photoUrl.origin !== projectUrl.origin || !photoUrl.pathname.startsWith(prefix)) return null;
+    const path = decodeURIComponent(photoUrl.pathname.slice(prefix.length));
+    const parts = path.split("/");
+    return parts.length === 2 && parts[0] === ownerId && /^[0-9a-f-]{36}\.jpg$/i.test(parts[1]) ? path : null;
+  } catch {
+    return null;
+  }
+}
+
+async function removeUnreferencedCover(supabase, path) {
+  const publicUrl = supabase.storage.from(photoBucket).getPublicUrl(path).data.publicUrl;
+  const [media, cover, settings] = await Promise.all([
+    supabase.from("event_media").select("id").eq("storage_path", path).limit(1),
+    supabase.from("events").select("id").eq("cover_image_url", publicUrl).limit(1),
+    supabase.from("events").select("id").eq("settings->>coverPhotoUrl", publicUrl).limit(1),
+  ]);
+  if (media.error || cover.error || settings.error || media.data.length || cover.data.length || settings.data.length) return false;
+  const { error } = await supabase.storage.from(photoBucket).remove([path]);
+  return !error;
+}
 function json(body, status = 200) {
   return NextResponse.json(body, { status });
 }
@@ -86,4 +113,35 @@ export async function POST(request) {
 
   if (saveError) return json({ error: "초대장을 저장하지 못했어요." }, 500);
   return json({ slug });
+}
+export async function DELETE(request) {
+  const auth = await getAuthenticatedClient(request);
+  if (auth.error) return json({ error: auth.error }, auth.status);
+  const slug = new URL(request.url).searchParams.get("slug");
+  if (!slugPattern.test(slug || "")) return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
+
+  const { supabase, user } = auth;
+  const { data: event, error: lookupError } = await supabase.from("events")
+    .select("id,owner_id,status,cover_image_url,settings").eq("slug", slug).maybeSingle();
+  if (lookupError) return json({ error: "초대장을 확인하지 못했어요." }, 500);
+  if (!event) return json({ error: "초대장을 찾지 못했어요." }, 404);
+  if (event.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 삭제할 수 없어요." }, 403);
+  if (event.status !== "draft") return json({ error: "임시저장 초대장만 삭제할 수 있어요." }, 409);
+
+  const coverPaths = [...new Set([event.cover_image_url, event.settings?.coverPhotoUrl]
+    .map((value) => ownedCoverPath(value, process.env.NEXT_PUBLIC_SUPABASE_URL, user.id)).filter(Boolean))];
+  const { data: deleted, error: deleteError } = await supabase.from("events").delete()
+    .eq("id", event.id).eq("owner_id", user.id).eq("status", "draft").select("id").maybeSingle();
+  if (deleteError) return json({ error: "초대장을 삭제하지 못했어요. 다시 시도해 주세요." }, 500);
+  if (!deleted) return json({ error: "초대장 상태가 변경되었어요. 새로고침 후 확인해 주세요." }, 409);
+
+  let cleanupPending = false;
+  for (const path of coverPaths) {
+    try {
+      if (!await removeUnreferencedCover(supabase, path)) cleanupPending = true;
+    } catch {
+      cleanupPending = true;
+    }
+  }
+  return json({ deleted: true, slug, cleanupPending });
 }
