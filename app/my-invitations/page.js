@@ -11,6 +11,7 @@ export default function MyInvitations() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deletingSlug, setDeletingSlug] = useState("");
   const [actionNotice, setActionNotice] = useState("");
+  const [deleteError, setDeleteError] = useState("");
 
   useEffect(() => {
     const loadEvents = async () => {
@@ -29,6 +30,7 @@ export default function MyInvitations() {
     if (!deleteTarget || deletingSlug) return;
     setDeletingSlug(deleteTarget.slug);
     setActionNotice("");
+    setDeleteError("");
     try {
       const supabase = getSupabaseBrowserClient();
       const { data: { session } } = await supabase.auth.getSession();
@@ -49,7 +51,7 @@ export default function MyInvitations() {
       setDeleteTarget(null);
       setActionNotice("초대장을 삭제했어요.");
     } catch (error) {
-      setActionNotice(error.message || "초대장을 삭제하지 못했어요. 다시 시도해 주세요.");
+      setDeleteError(error.message || "초대장을 삭제하지 못했어요. 다시 시도해 주세요.");
     } finally {
       setDeletingSlug("");
     }
@@ -66,13 +68,14 @@ export default function MyInvitations() {
         <span className={`status ${event.status}`}>{event.status === "published" ? "발행됨" : "임시저장"}</span>
         <h2>{getInvitationTitle(event.settings, event.kind)}</h2>
         <p>{event.starts_at ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "long", timeStyle: "short" }).format(new Date(event.starts_at)) : "날짜 미정"}</p>
-        <div><a href={`/create?slug=${event.slug}`}>편집하기</a>{event.status === "published" && <a href={`/invite/${event.slug}`}>초대장 보기</a>}{event.status === "draft" && <button type="button" className="invitation-delete-button" onClick={() => { setActionNotice(""); setDeleteTarget(event); }}>삭제하기</button>}</div>
+        <div><a href={`/create?slug=${event.slug}`}>편집하기</a>{event.status === "published" && <a href={`/invite/${event.slug}`}>초대장 보기</a>}{event.status === "draft" && <button type="button" className="invitation-delete-button" onClick={() => { setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}>삭제하기</button>}</div>
       </article>)}</div>
     </section>
     {deleteTarget && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="delete-invitation-title">
       <div className="delete-invitation-modal">
         <h2 id="delete-invitation-title">이 초대장을 삭제할까요?</h2>
         <p>삭제한 초대장은 복구할 수 없습니다.</p>
+        {deleteError && <p className="delete-invitation-error" role="alert">{deleteError}</p>}
         <div><button type="button" onClick={() => setDeleteTarget(null)} disabled={Boolean(deletingSlug)}>취소</button><button type="button" className="danger" onClick={deleteDraft} disabled={Boolean(deletingSlug)}>{deletingSlug ? "삭제 중..." : "삭제하기"}</button></div>
       </div>
     </div>}

@@ -132,7 +132,10 @@ export async function DELETE(request) {
     .map((value) => ownedCoverPath(value, process.env.NEXT_PUBLIC_SUPABASE_URL, user.id)).filter(Boolean))];
   const { data: deleted, error: deleteError } = await supabase.from("events").delete()
     .eq("id", event.id).eq("owner_id", user.id).eq("status", "draft").select("id").maybeSingle();
-  if (deleteError) return json({ error: "초대장을 삭제하지 못했어요. 다시 시도해 주세요." }, 500);
+  if (deleteError) {
+    console.error("Draft invitation delete failed", { code: deleteError.code, message: deleteError.message, details: deleteError.details, hint: deleteError.hint });
+    return json({ error: "초대장을 삭제하지 못했어요. 다시 시도해 주세요." }, 500);
+  }
   if (!deleted) return json({ error: "초대장 상태가 변경되었어요. 새로고침 후 확인해 주세요." }, 409);
 
   let cleanupPending = false;
