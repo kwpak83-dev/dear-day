@@ -2,14 +2,36 @@
 
 import { useEffect, useRef, useState } from "react";
 
+const SWIPE_THRESHOLD = 50;
+
 export default function Gallery({ photos, idPrefix = "public-gallery" }) {
   const [active, setActive] = useState(null);
   const titleId = `${idPrefix}-title`;
   const dialog = useRef(null);
   const opener = useRef(null);
+  const swipeStart = useRef(null);
   const open = active !== null;
   const close = () => { dialog.current?.close(); setActive(null); };
-  const step = delta => setActive(index => (index + delta + photos.length) % photos.length);
+  const step = (delta, bounded = false) => setActive(index => {
+    if (index === null) return index;
+    const next = index + delta;
+    return bounded ? Math.max(0, Math.min(photos.length - 1, next)) : (next + photos.length) % photos.length;
+  });
+  const startSwipe = event => {
+    if (event.touches.length !== 1) { swipeStart.current = null; return; }
+    const touch = event.touches[0];
+    swipeStart.current = { x: touch.clientX, y: touch.clientY };
+  };
+  const endSwipe = event => {
+    const start = swipeStart.current;
+    swipeStart.current = null;
+    if (!start || event.changedTouches.length !== 1) return;
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - start.x;
+    const deltaY = touch.clientY - start.y;
+    if (Math.abs(deltaX) < SWIPE_THRESHOLD || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+    step(deltaX < 0 ? 1 : -1, true);
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -32,7 +54,7 @@ export default function Gallery({ photos, idPrefix = "public-gallery" }) {
     }}>
       {open && <div className="gallery-viewer">
         <div className="gallery-viewer-bar"><span aria-live="polite">{active + 1} / {photos.length}</span><button type="button" onClick={close} aria-label="사진 보기 닫기" autoFocus>닫기 ✕</button></div>
-        <div className="gallery-viewer-image">
+        <div className="gallery-viewer-image" onTouchStart={startSwipe} onTouchEnd={endSwipe} onTouchCancel={() => { swipeStart.current = null; }}>
           <img key={photos[active].id} src={photos[active].url} alt={`초대장의 소중한 순간 ${active + 1}`} decoding="async" draggable={false} />
         </div>
         <div className="gallery-viewer-controls"><button type="button" onClick={() => step(-1)} disabled={photos.length < 2} aria-label="이전 사진">← 이전</button><button type="button" onClick={() => step(1)} disabled={photos.length < 2} aria-label="다음 사진">다음 →</button></div>
