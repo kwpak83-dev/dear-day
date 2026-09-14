@@ -1,4 +1,4 @@
-export default function TemplateContent({ presentation, variant }) {
+export default function TemplateContent({ presentation, variant, placeActions, children }) {
   const { kindLabel, title, detail, note, schedule, venue, address, message, coverPhotoUrl } = presentation;
   const hasPlace = Boolean(venue || address);
 
@@ -18,8 +18,10 @@ export default function TemplateContent({ presentation, variant }) {
       {hasPlace && <div className="invitation-template-place">
         {venue && <strong>{venue}</strong>}
         {address && <span>{address}</span>}
+        {placeActions}
       </div>}
       {message && <blockquote>{message}</blockquote>}
     </section>
+    {children && <div className="invitation-template-sections">{children}</div>}
   </article>;
 }

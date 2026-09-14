@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export default function Gallery({ photos }) {
+export default function Gallery({ photos, idPrefix = "public-gallery" }) {
   const [active, setActive] = useState(null);
+  const titleId = `${idPrefix}-title`;
   const dialog = useRef(null);
   const opener = useRef(null);
   const open = active !== null;
@@ -20,8 +21,8 @@ export default function Gallery({ photos }) {
 
   if (!photos.length) return null;
 
-  return <section className="invitation-gallery" aria-labelledby="public-gallery-title">
-    <p className="gallery-kicker">OUR MOMENTS</p><h2 id="public-gallery-title">우리의 순간들</h2>
+  return <section className="invitation-gallery" aria-labelledby={titleId}>
+    <p className="gallery-kicker">OUR MOMENTS</p><h2 id={titleId}>우리의 순간들</h2>
     <div className="public-gallery-grid">{photos.map((photo, index) => <button type="button" className="public-gallery-photo" key={photo.id} aria-label={`${index + 1}번 사진 전체보기`} onClick={event => { opener.current = event.currentTarget; setActive(index); }}>
       <img src={photo.url} alt={`초대장의 소중한 순간 ${index + 1}`} loading="lazy" decoding="async" width="400" height="400" />
     </button>)}</div>

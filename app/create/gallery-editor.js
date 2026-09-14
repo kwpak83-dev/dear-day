@@ -5,7 +5,7 @@ import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import { preparePhoto } from "../../lib/prepare-photo";
 
 const LIMIT = 20;
-export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusyChange }) {
+export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusyChange, onPhotosChange }) {
   const [photos, setPhotos] = useState([]);
   const [pending, setPending] = useState(0);
   const [loaded, setLoaded] = useState(false);
@@ -50,6 +50,7 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
     }).catch(error => { if (!cancelled) setNotice(error.message); });
     return () => { cancelled = true; };
   }, [slug]);
+  useEffect(() => { onPhotosChange?.(photos); }, [photos, onPhotosChange]);
   useEffect(() => {
     if (!busy) return;
     const warn = event => { event.preventDefault(); event.returnValue = ""; };

@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import InvitationRenderer from "../../components/invitation/invitation-renderer";
+import Gallery from "../invite/[slug]/gallery";
+import AccountCopy from "../invite/[slug]/account-copy";
 
 import GalleryEditor from "./gallery-editor";
 import { preparePhoto } from "../../lib/prepare-photo";
@@ -12,6 +14,33 @@ const initialInvitation = { eventKind: "wedding", templateId: "", eventTitle: ""
 const mapClientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
 
 function Field({ label, children }) { return <label className="form-field"><span>{label}</span>{children}</label>; }
+
+const parseBirthDate = value => {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || "");
+  return match ? { year: match[1], month: match[2], day: match[3] } : { year: "", month: "", day: "" };
+};
+
+function BirthDateField({ label, value, onChange }) {
+  const [parts, setParts] = useState(() => parseBirthDate(value));
+  useEffect(() => { setParts(parseBirthDate(value)); }, [value]);
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 101 }, (_, index) => String(currentYear - index));
+  if (parts.year && !years.includes(parts.year)) years.push(parts.year);
+  const dayCount = parts.year && parts.month ? new Date(Number(parts.year), Number(parts.month), 0).getDate() : 31;
+  const updatePart = (key, selected) => {
+    const next = { ...parts, [key]: selected };
+    const nextDayCount = next.year && next.month ? new Date(Number(next.year), Number(next.month), 0).getDate() : 31;
+    if (next.day && Number(next.day) > nextDayCount) next.day = String(nextDayCount).padStart(2, "0");
+    setParts(next);
+    onChange(next.year && next.month && next.day ? `${next.year}-${next.month}-${next.day}` : "");
+  };
+
+  return <fieldset className="form-field birth-date-field"><legend>{label}</legend><div>
+    <select aria-label={`${label} 연도`} value={parts.year} onChange={event => updatePart("year", event.target.value)}><option value="">연도</option>{years.map(year => <option key={year} value={year}>{year}년</option>)}</select>
+    <select aria-label={`${label} 월`} value={parts.month} onChange={event => updatePart("month", event.target.value)}><option value="">월</option>{Array.from({ length: 12 }, (_, index) => String(index + 1).padStart(2, "0")).map(month => <option key={month} value={month}>{Number(month)}월</option>)}</select>
+    <select aria-label={`${label} 일`} value={parts.day} onChange={event => updatePart("day", event.target.value)}><option value="">일</option>{Array.from({ length: dayCount }, (_, index) => String(index + 1).padStart(2, "0")).map(day => <option key={day} value={day}>{Number(day)}일</option>)}</select>
+  </div></fieldset>;
+}
 
 export default function CreateInvitation() {
   const [invitation, setInvitation] = useState(initialInvitation);
@@ -30,6 +59,7 @@ export default function CreateInvitation() {
   const [templateNotice, setTemplateNotice] = useState("");
   const [submitting, setSubmitting] = useState("");
   const [galleryBusy, setGalleryBusy] = useState(false);
+  const [galleryPhotos, setGalleryPhotos] = useState([]);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [photoNotice, setPhotoNotice] = useState("");
   const photoBusy = useRef(false);
@@ -191,7 +221,9 @@ export default function CreateInvitation() {
     setPlaceResults([]);
   };
   const eventConfig = getEventConfig(invitation.eventKind);
+  const hasPreviewAccounts = Boolean(eventConfig.accountMode && (invitation.groomAccount?.trim() || invitation.brideAccount?.trim()));
   const renderConfigField = (field) => {
+    if (field.key === "birthDate") return <BirthDateField key={field.key} label={field.label} value={invitation.birthDate || ""} onChange={value => update("birthDate", value)} />;
     if (field.type === "venue") return <div key={field.key}><Field label="장소명"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "장소 검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results">{placeResults.map((place) => <button type="button" key={[place.mapx, place.mapy, place.title].join("-")} onClick={() => selectPlace(place)}><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></button>)}<p className="place-search-guide">검색 결과는 최대 5개까지 보여드려요. 원하는 장소가 없다면 지역명과 함께 검색해 주세요.</p></div>}<Field label="기본주소"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), geocodeAddress(invitation.venueAddress))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>주소 검색</button></div></Field><Field label="건물명"><input placeholder="주소 검색 결과에 건물명이 있으면 자동으로 입력돼요" value={invitation.venueBuilding || ""} onChange={(e) => update("venueBuilding", e.target.value)} /></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={setMapContainer} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div></div>;
     if (field.type === "textarea") return <Field key={field.key} label={field.label}><textarea rows="4" value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} /></Field>;
     return <Field key={field.key} label={field.label}><input type={field.type} inputMode={field.inputMode} placeholder={field.placeholder} value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} /></Field>;
@@ -261,16 +293,16 @@ export default function CreateInvitation() {
         <div className="form-section"><h2>행사 종류</h2><Field label="초대장 종류"><select value={invitation.eventKind} onChange={(e) => update("eventKind", e.target.value)}>{EVENT_KIND_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></Field></div>
         <div className="form-section template-picker"><h2>템플릿 <small>개발용</small></h2>{templateOptions.length ? <div className="template-picker-grid">{templateOptions.map((template, index) => { const selected = invitation.templateId === template.id; return <button key={template.id} type="button" className={`template-choice${selected ? " selected" : ""}`} aria-pressed={selected} onClick={() => update("templateId", template.id)}><span className={`template-choice-preview preview-${(index % 3) + 1}`} aria-hidden="true"><i /><b>Dear Day</b><em>Invitation</em></span><strong>{template.name}</strong><span className="template-choice-status">{selected ? "✓ 선택됨" : "선택하기"}</span></button>; })}</div> : <p className="template-picker-empty">템플릿을 불러오는 중이에요.</p>}{templateNotice && <p className="photo-notice" role="status">{templateNotice}</p>}</div>
         <div className="form-section photo-editor"><h2>대표사진 <small>선택</small></h2><p>초대장에 보여줄 대표사진을 등록해보세요.</p><Field label={invitation.coverPhotoUrl ? "사진 교체" : "사진 선택"}><input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadPhoto} disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} aria-describedby="photo-help" /></Field><p id="photo-help">JPG · PNG · WEBP, 최대 15MB · 사진은 자동으로 크기를 줄여요.</p>{invitation.coverPhotoUrl && <div className="photo-selection"><img src={invitation.coverPhotoUrl} alt="첨부한 대표사진" /><button type="button" className="save-button" disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} onClick={() => { update("coverPhotoUrl", ""); setPhotoNotice("사진을 뺐어요. 임시 저장 또는 발행으로 반영해 주세요."); }}>사진 삭제</button></div>}<p className="photo-notice" role="status" aria-live="polite">{photoNotice}</p></div>
-        <GalleryEditor slug={eventSlug} disabled={Boolean(submitting) || uploadingPhoto} onSaveInvitation={saveDraft} onBusyChange={setGalleryBusy} />
+        <GalleryEditor slug={eventSlug} disabled={Boolean(submitting) || uploadingPhoto} onSaveInvitation={saveDraft} onBusyChange={setGalleryBusy} onPhotosChange={setGalleryPhotos} />
         {eventConfig.sections.map((section) => <div className="form-section" key={section.id}><h2>{section.title}</h2>{section.rows.map((row, rowIndex) => row.length > 1 ? <div className="field-grid" key={rowIndex}>{row.map(renderConfigField)}</div> : row.map(renderConfigField))}</div>)}
         {eventConfig.accountMode && <div className="form-section"><h2>마음 전하실 곳 <small>선택</small></h2><div className="account-editor"><strong>{eventConfig.accountMode === "parents" ? "부모/보호자 1" : "신랑 측"}</strong><div className="field-grid"><Field label="은행명"><input placeholder="예: 국민은행" value={invitation.groomBank} onChange={(e) => update("groomBank", e.target.value)} /></Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent1Name || "예금주 이름" : invitation.groom || "신랑 이름"} value={invitation.groomAccountHolder} onChange={(e) => update("groomAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.groomAccount} onChange={(e) => update("groomAccount", e.target.value)} /></Field></div><div className="account-editor"><strong>{eventConfig.accountMode === "parents" ? "부모/보호자 2" : "신부 측"}</strong><div className="field-grid"><Field label="은행명"><input placeholder="예: 신한은행" value={invitation.brideBank} onChange={(e) => update("brideBank", e.target.value)} /></Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent2Name || "예금주 이름" : invitation.bride || "신부 이름"} value={invitation.brideAccountHolder} onChange={(e) => update("brideAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.brideAccount} onChange={(e) => update("brideAccount", e.target.value)} /></Field></div></div>}
         <div className="editor-actions"><button type="button" className="save-button preview-button" onClick={() => setPreviewOpen(true)}>미리보기</button><button className="save-button" onClick={saveDraft} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>임시 저장</button><button className="publish-button" onClick={publish} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>청첩장 발행하기 <span>→</span></button></div>{saveNotice && <p role="status">{saveNotice}</p>}
       </section>
-      <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div className="preview-content"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} /></div></div></aside>
+      <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div className="preview-content"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId}>{(galleryPhotos.length > 0 || hasPreviewAccounts) && <><Gallery photos={galleryPhotos} idPrefix="live-preview-gallery" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /></>}</InvitationRenderer></div></div></aside>
     </div>
     {previewOpen && <div className="full-preview-overlay" role="dialog" aria-modal="true" aria-label="초대장 전체 미리보기" onKeyDown={(event) => { if (event.key === "Escape") setPreviewOpen(false); }}>
       <div className="full-preview-toolbar"><strong>DearDay Preview</strong><button type="button" onClick={() => setPreviewOpen(false)} autoFocus>편집으로 돌아가기</button></div>
-      <div className="full-preview-scroll"><div className="full-preview-document full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} /></div></div>
+      <div className="full-preview-scroll"><div className="full-preview-document full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId}>{(galleryPhotos.length > 0 || hasPreviewAccounts) && <><Gallery photos={galleryPhotos} idPrefix="full-preview-gallery" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /></>}</InvitationRenderer></div></div>
     </div>}
     {submitting && <div className="save-loading" role="status" aria-live="polite"><div><i /><strong>{submitting === "publish" ? "청첩장을 발행하고 있어요" : "임시 저장하고 있어요"}</strong><span>잠시만 기다려 주세요.</span></div></div>}
     {published && <div className="publish-overlay"><div className="publish-card"><div className="publish-heart">♥</div><p className="section-kicker">YOUR INVITATION IS READY</p><h2>청첩장이<br /><em>완성되었어요!</em></h2><p>이제 소중한 분들에게 링크를 공유해보세요.</p><div className="share-link"><span>/invite/{eventSlug}</span><button onClick={copyLink}>{copied ? "복사됨" : "링크 복사"}</button></div><a className="publish-button full" href={`/invite/${eventSlug}`}>청첩장 열기</a><button className="publish-button full secondary" onClick={() => setPublished(false)}>완료했어요</button></div></div>}
