@@ -259,3 +259,4 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   .modern-section,.modern-001 .public-accounts{padding-right:20px;padding-left:20px}
   .modern-couple-grid p{padding-right:7px;padding-left:7px}
 }
+.my-notice>p{margin:0}.my-login-button{display:inline-flex;align-items:center;justify-content:center;max-width:100%;margin-top:14px;padding:11px 20px;border-radius:999px;background:#ee7881;color:#fff;font-size:13px;font-weight:700;text-decoration:none;box-sizing:border-box}

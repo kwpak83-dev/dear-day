@@ -24,6 +24,10 @@ export default function Home() {
     return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("login") === "required") setAuthOpen(true);
+  }, []);
+
   const providerLabel = useMemo(() => {
     const provider = user?.app_metadata?.provider || user?.user_metadata?.provider;
     return provider === "kakao" ? "카카오" : provider === "naver" ? "네이버" : "로그인";
