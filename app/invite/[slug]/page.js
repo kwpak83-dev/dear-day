@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
 import InvitationRenderer from "../../../components/invitation/invitation-renderer";
+import InvitationMap from "../../../components/invitation/invitation-map";
 import Gallery from "./gallery";
 import AccountCopy from "./account-copy";
 import AddressCopy from "./address-copy";
@@ -28,7 +29,7 @@ export default async function InvitationPage({ params }) {
   const galleryPhotos = (galleryRows || []).map(row => ({ id: row.id, url: supabase.storage.from("invitation-photos").getPublicUrl(row.storage_path).data.publicUrl }));
 
   return <main className="public-invitation shared-public-invitation">
-    <div className="full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} placeActions={<AddressCopy invitation={invitation} />}>
+    <div className="full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} placeActions={<><AddressCopy invitation={invitation} /><InvitationMap address={invitation.venueAddress} /></>}>
       <div className="public-invitation-sections"><Gallery photos={galleryPhotos} /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><LinkCopy /><footer>디어데이와 함께하는 소중한 순간</footer></div>
     </InvitationRenderer></div>
   </main>;

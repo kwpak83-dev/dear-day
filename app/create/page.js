@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import InvitationRenderer from "../../components/invitation/invitation-renderer";
+import InvitationMap from "../../components/invitation/invitation-map";
 import Gallery from "../invite/[slug]/gallery";
 import AccountCopy from "../invite/[slug]/account-copy";
 
@@ -284,7 +285,7 @@ export default function CreateInvitation() {
     setAddressCopied(true);
     window.setTimeout(() => setAddressCopied(false), 1800);
   };
-  const previewPlaceActions = () => invitation.venueAddress ? <div className="public-address-copy"><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button><span role="status" aria-live="polite">{addressCopied ? "주소가 복사되었습니다." : ""}</span></div> : null;
+  const previewPlaceActions = () => invitation.venueAddress ? <><div className="public-address-copy"><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button><span role="status" aria-live="polite">{addressCopied ? "주소가 복사되었습니다." : ""}</span></div><InvitationMap address={invitation.venueAddress} /></> : null;
 
   return <main className="create-page">
     <header className="create-header"><a className="brand" href="/"><img src="/dear-day-logo.png" alt="디어데이" /></a><div className="create-user"><span>{provider}로 시작했어요</span><a href="/my-invitations">내 초대장</a><a href="/">나가기</a></div></header>

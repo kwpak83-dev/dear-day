@@ -1,0 +1,77 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
+let mapsSdkPromise;
+
+function loadNaverMaps() {
+  if (window.naver?.maps?.Service?.geocode) return Promise.resolve(window.naver.maps);
+  if (mapsSdkPromise) return mapsSdkPromise;
+
+  mapsSdkPromise = new Promise((resolve, reject) => {
+    const finish = () => window.naver?.maps?.Service?.geocode ? resolve(window.naver.maps) : reject(new Error("Naver Maps SDK unavailable"));
+    const existing = document.getElementById("naver-map-sdk");
+    if (existing) {
+      existing.addEventListener("load", finish, { once: true });
+      existing.addEventListener("error", reject, { once: true });
+      return;
+    }
+
+    const clientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
+    if (!clientId) return reject(new Error("Naver Maps client ID unavailable"));
+    const script = document.createElement("script");
+    script.id = "naver-map-sdk";
+    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${clientId}&submodules=geocoder`;
+    script.async = true;
+    script.addEventListener("load", finish, { once: true });
+    script.addEventListener("error", reject, { once: true });
+    document.head.appendChild(script);
+  }).catch((error) => {
+    mapsSdkPromise = undefined;
+    throw error;
+  });
+
+  return mapsSdkPromise;
+}
+
+export default function InvitationMap({ address }) {
+  const canvasRef = useRef(null);
+  const [position, setPosition] = useState(null);
+  const normalizedAddress = address?.trim() || "";
+
+  useEffect(() => {
+    let active = true;
+    setPosition(null);
+    if (!normalizedAddress) return () => { active = false; };
+
+    loadNaverMaps().then((maps) => {
+      maps.Service.geocode({ query: normalizedAddress }, (status, response) => {
+        const result = response?.v2?.addresses?.[0];
+        if (!active || status !== maps.Service.Status.OK || !result) return;
+        const latitude = Number(result.y);
+        const longitude = Number(result.x);
+        if (Number.isFinite(latitude) && Number.isFinite(longitude)) setPosition({ latitude, longitude });
+      });
+    }).catch(() => {});
+
+    return () => { active = false; };
+  }, [normalizedAddress]);
+
+  useEffect(() => {
+    if (!position || !canvasRef.current || !window.naver?.maps) return;
+    const maps = window.naver.maps;
+    const point = new maps.LatLng(position.latitude, position.longitude);
+    const map = new maps.Map(canvasRef.current, { center: point, zoom: 16, zoomControl: false });
+    const marker = new maps.Marker({ position: point, map });
+    maps.Event?.trigger(map, "resize");
+    map.setCenter(point);
+
+    return () => {
+      marker.setMap(null);
+      map.destroy?.();
+    };
+  }, [position]);
+
+  if (!normalizedAddress || !position) return null;
+  return <div className="invitation-map" aria-label={`${normalizedAddress} 지도`}><div ref={canvasRef} className="invitation-map-canvas" /></div>;
+}

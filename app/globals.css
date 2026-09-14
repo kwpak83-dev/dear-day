@@ -260,3 +260,5 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   .modern-couple-grid p{padding-right:7px;padding-left:7px}
 }
 .my-notice>p{margin:0}.my-login-button{display:inline-flex;align-items:center;justify-content:center;max-width:100%;margin-top:14px;padding:11px 20px;border-radius:999px;background:#ee7881;color:#fff;font-size:13px;font-weight:700;text-decoration:none;box-sizing:border-box}
+
+.invitation-map{width:100%;min-width:0;height:190px;margin-top:18px;overflow:hidden;border:1px solid #ead8ce;border-radius:10px;background:#f8ede7;box-sizing:border-box}.invitation-map-canvas{width:100%;height:100%;min-width:0}.preview-content .invitation-map{height:145px;margin-top:14px;border-radius:7px}
