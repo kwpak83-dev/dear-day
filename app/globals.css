@@ -61,3 +61,96 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .invitation-template-sections{min-width:0;margin-top:38px}.preview-content .invitation-template-sections{margin-top:25px}.preview-content .invitation-gallery{margin:24px 0}.preview-content .invitation-gallery h2{margin:7px 0 13px;font-size:17px}.preview-content .public-gallery-grid{gap:6px}.preview-content .public-gallery-photo{border-radius:5px}.preview-content .public-accounts{margin:24px 0 0;padding:17px 8px}.preview-content .public-accounts h2{font-size:15px}.preview-content .public-account-card{padding:10px 0}.preview-content .public-account-card strong,.preview-content .public-account-card span{font-size:9px}.preview-content .public-account-card button{padding:7px;font-size:8px}.birth-date-field{min-width:0;border:0;padding:0}.birth-date-field legend{margin-bottom:8px;padding:0;font-size:12px;font-weight:700;color:#755d52}.birth-date-field>div{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px}.public-address-copy{display:flex;min-height:37px;align-items:center;justify-content:center;gap:10px;margin:0 0 28px}.public-address-copy button{border:0;border-radius:7px;background:#ef786c;color:#fff;padding:9px 12px;font-size:11px;font-weight:700;white-space:nowrap}.public-address-copy span{min-width:0;color:#8b7165;font-size:11px;line-height:1.4}.shared-public-invitation .invitation-template-sections{margin-top:0;padding-top:28px}
 @media (max-width:380px){.birth-date-field>div{grid-template-columns:minmax(0,42fr) minmax(0,29fr) minmax(0,29fr);gap:4px}.birth-date-field select{min-width:0;padding-right:5px;padding-left:5px;font-size:13px}.birth-date-field select:nth-child(n+2){padding-right:2px;padding-left:2px;font-size:12px}.public-address-copy{align-items:flex-start;flex-direction:column}}
 .public-share-copy{display:flex;min-height:52px;align-items:center;justify-content:center;gap:10px;margin:36px 0 20px}.public-share-copy button{border:0;border-radius:9px;background:#ef786c;color:#fff;padding:11px 16px;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer}.public-share-copy span{min-width:0;color:#8b7165;font-size:11px;line-height:1.4}
+
+/* Romantic 001 sales template */
+.romantic-001{
+  --romantic-ivory:#fffaf2;
+  --romantic-cream:#f9eee7;
+  --romantic-blush:#efd8d6;
+  --romantic-rose:#b97879;
+  --romantic-gold:#bd927b;
+  --romantic-brown:#5f4540;
+  min-width:0;
+  overflow-x:hidden;
+  padding:0;
+  background:var(--romantic-ivory);
+  color:var(--romantic-brown);
+  font-family:Georgia,"Batang","Apple SD Gothic Neo",serif;
+  text-align:center;
+}
+.full-invitation-renderer .romantic-001{padding:0}
+.romantic-masthead{padding:34px 24px 22px}
+.romantic-masthead p{margin:0;color:var(--romantic-rose);font:600 10px/1.4 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.27em}
+.romantic-masthead span{display:block;margin-top:12px;color:var(--romantic-gold);font-size:12px;letter-spacing:.35em}
+.romantic-hero{min-width:0;padding:0 clamp(18px,6vw,34px) 52px}
+.romantic-hero-photo,.romantic-hero-fallback{width:100%;margin:0;overflow:hidden;border:1px solid rgba(185,133,121,.3);border-radius:150px 150px 22px 22px;aspect-ratio:4/5;background:linear-gradient(145deg,#f8e7e1,#ecd4d2 55%,#f5e9df);box-shadow:0 18px 38px rgba(104,67,60,.12)}
+.romantic-hero-photo img{display:block;width:100%;height:100%;object-fit:cover}
+.romantic-hero-fallback{display:grid;place-items:center}
+.romantic-hero-fallback span{display:grid;width:64px;height:64px;place-items:center;border:1px solid rgba(185,120,121,.35);border-radius:50%;color:var(--romantic-rose);font-size:22px}
+.romantic-hero-copy{min-width:0;padding:30px 8px 0}
+.romantic-hero-copy h2{margin:0;color:var(--romantic-brown);font-size:28px;font-weight:400;line-height:1.35;overflow-wrap:anywhere}
+.romantic-couple-title{display:flex;min-width:0;align-items:center;justify-content:center;gap:13px}
+.romantic-couple-title span{min-width:0;overflow-wrap:anywhere}
+.romantic-couple-title i{flex:none;color:var(--romantic-rose);font-size:15px;font-style:normal}
+.romantic-detail,.romantic-note{margin:9px 0 0;color:#866a63;font:12px/1.7 Arial,"Apple SD Gothic Neo",sans-serif;overflow-wrap:anywhere}
+.romantic-hero-copy time{display:block;margin-top:17px;color:#86655f;font:600 11px/1.8 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.08em;overflow-wrap:anywhere}
+.romantic-section{min-width:0;padding:58px clamp(24px,8vw,42px)}
+.romantic-message{background:#f9ede8}
+.romantic-section-heading span{display:block;color:var(--romantic-rose);font-size:12px}
+.romantic-section-heading p{margin:8px 0 7px;color:var(--romantic-gold);font:600 9px/1.4 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.22em}
+.romantic-section-heading h3{margin:0;color:var(--romantic-brown);font-size:23px;font-weight:400;line-height:1.4}
+.romantic-section-heading i{display:block;width:36px;height:1px;margin:15px auto 0;background:var(--romantic-rose);opacity:.45}
+.romantic-message blockquote{margin:27px 0 0;white-space:pre-line;color:#6e544d;font:14px/2 Arial,"Apple SD Gothic Neo",sans-serif;overflow-wrap:anywhere}
+.romantic-couple{background:var(--romantic-ivory)}
+.romantic-couple-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:27px}
+.romantic-couple-grid p{min-width:0;margin:0;padding:22px 10px;border:1px solid rgba(185,146,123,.28);border-radius:18px;background:#fffdf9}
+.romantic-couple-grid small{display:block;color:var(--romantic-gold);font:600 9px/1.4 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.18em}
+.romantic-couple-grid strong{display:block;margin-top:9px;color:var(--romantic-brown);font-size:19px;font-weight:400;line-height:1.4;overflow-wrap:anywhere}
+.romantic-information{background:linear-gradient(180deg,#f8ebe6,#fff8f0)}
+.romantic-information>time,.romantic-information>strong,.romantic-information>p{display:block;margin:0;overflow-wrap:anywhere}
+.romantic-information>time{margin-top:27px;color:#765852;font:600 12px/1.8 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.05em}
+.romantic-information>strong{margin-top:18px;color:var(--romantic-brown);font:600 16px/1.6 Arial,"Apple SD Gothic Neo",sans-serif}
+.romantic-information>p{margin-top:7px;color:#846a62;font:12px/1.8 Arial,"Apple SD Gothic Neo",sans-serif}
+.romantic-001 .public-address-copy{margin:19px 0 0}
+.romantic-001 .public-address-copy button,.romantic-001 .public-share-copy button,.romantic-001 .public-account-card button{background:var(--romantic-rose);box-shadow:none}
+.romantic-001 .invitation-template-sections{min-width:0;margin:0}
+.romantic-001 .public-invitation-sections{min-width:0;padding:0}
+.romantic-001 .invitation-gallery{margin:0;padding:58px clamp(18px,6vw,32px);background:#fffaf2}
+.romantic-001 .invitation-gallery .gallery-kicker{margin:0;color:var(--romantic-gold);font:600 9px/1.4 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.24em}
+.romantic-001 .invitation-gallery h2{margin:9px 0 27px;color:var(--romantic-brown);font-size:24px;font-weight:400}
+.romantic-001 .public-gallery-grid{gap:10px}
+.romantic-001 .public-gallery-photo{border:1px solid rgba(185,146,123,.22);border-radius:16px;background:var(--romantic-blush);box-shadow:0 8px 20px rgba(100,65,58,.09)}
+.romantic-001 .public-accounts{margin:0;padding:58px clamp(22px,7vw,38px);border:0;background:#f8ebe6;text-align:left}
+.romantic-001 .public-accounts h2{margin:0 0 25px;color:var(--romantic-brown);font:400 24px/1.4 Georgia,"Batang",serif;text-align:center}
+.romantic-001 .public-accounts h2::before{content:"ACCOUNT";display:block;margin-bottom:8px;color:var(--romantic-gold);font:600 9px/1.4 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.24em}
+.romantic-001 .public-account-card{padding:17px 0;border-color:rgba(185,146,123,.3)}
+.romantic-001 .public-account-card>p{color:var(--romantic-rose)}
+.romantic-001 .public-account-card strong,.romantic-001 .public-account-card span{color:var(--romantic-brown);overflow-wrap:anywhere}
+.romantic-001 .public-share-copy{margin:0;padding:42px 22px 25px;background:var(--romantic-ivory)}
+.romantic-001 .public-invitation-sections>footer{display:none}
+.romantic-footer{display:flex;min-height:150px;align-items:center;justify-content:center;flex-direction:column;gap:9px;padding:38px 22px;background:#6a4c47;color:#f9eae0}
+.romantic-footer span{font-size:23px;font-style:italic}
+.romantic-footer i{color:#d7aaa0;font-size:11px;font-style:normal}
+.romantic-footer b{font:600 9px/1.4 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.24em;text-transform:uppercase}
+.preview-content .romantic-001 .romantic-masthead{padding:24px 14px 16px}
+.preview-content .romantic-001 .romantic-hero{padding-right:13px;padding-bottom:34px;padding-left:13px}
+.preview-content .romantic-001 .romantic-hero-copy{padding-top:21px}
+.preview-content .romantic-001 .romantic-hero-copy h2{font-size:22px}
+.preview-content .romantic-001 .romantic-section{padding:38px 14px}
+.preview-content .romantic-001 .romantic-section-heading h3{font-size:19px}
+.preview-content .romantic-001 .romantic-message blockquote{font-size:11px}
+.preview-content .romantic-001 .romantic-couple-grid{gap:7px}
+.preview-content .romantic-001 .romantic-couple-grid p{padding:16px 5px}
+.preview-content .romantic-001 .romantic-couple-grid strong{font-size:15px}
+.preview-content .romantic-001 .invitation-gallery,.preview-content .romantic-001 .public-accounts{padding:38px 13px}
+.preview-content .romantic-001 .invitation-gallery h2,.preview-content .romantic-001 .public-accounts h2{font-size:19px}
+.preview-content .romantic-001 .public-gallery-grid{gap:7px}
+.preview-content .romantic-001 .romantic-footer{min-height:105px;padding:27px 14px}
+@media (max-width:360px){
+  .romantic-hero{padding-right:14px;padding-left:14px}
+  .romantic-section{padding-right:20px;padding-left:20px}
+  .romantic-couple-title{gap:9px}
+  .romantic-hero-copy h2{font-size:25px}
+  .romantic-couple-grid{gap:8px}
+  .romantic-couple-grid p{padding-right:7px;padding-left:7px}
+}

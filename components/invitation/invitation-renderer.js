@@ -18,5 +18,5 @@ export const TEMPLATE_REGISTRY = {
 export default function InvitationRenderer({ invitation, eventKind, templateId, placeActions, children }) {
   const Template = TEMPLATE_REGISTRY[templateId] || ClassicTemplate;
   const presentation = getInvitationPresentation(invitation, eventKind);
-  return <Template presentation={presentation} placeActions={placeActions}>{children}</Template>;
+  return <Template presentation={presentation} eventKind={eventKind || invitation.eventKind || "wedding"} placeActions={placeActions}>{children}</Template>;
 }
