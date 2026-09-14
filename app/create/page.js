@@ -17,6 +17,7 @@ export default function CreateInvitation() {
   const [invitation, setInvitation] = useState(initialInvitation);
   const [provider, setProvider] = useState("");
   const [published, setPublished] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [addressCopied, setAddressCopied] = useState(false);
   const [saveNotice, setSaveNotice] = useState("");
@@ -73,6 +74,12 @@ export default function CreateInvitation() {
     // A URL slug is the only way to enter edit mode. A plain /create starts a new event.
     setEventSlug(new URLSearchParams(window.location.search).get("slug") || "");
   }, []);
+  useEffect(() => {
+    if (!previewOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [previewOpen]);
   useEffect(() => {
     const slug = new URLSearchParams(window.location.search).get("slug");
     if (!slug) return;
@@ -257,10 +264,14 @@ export default function CreateInvitation() {
         <GalleryEditor slug={eventSlug} disabled={Boolean(submitting) || uploadingPhoto} onSaveInvitation={saveDraft} onBusyChange={setGalleryBusy} />
         {eventConfig.sections.map((section) => <div className="form-section" key={section.id}><h2>{section.title}</h2>{section.rows.map((row, rowIndex) => row.length > 1 ? <div className="field-grid" key={rowIndex}>{row.map(renderConfigField)}</div> : row.map(renderConfigField))}</div>)}
         {eventConfig.accountMode && <div className="form-section"><h2>마음 전하실 곳 <small>선택</small></h2><div className="account-editor"><strong>{eventConfig.accountMode === "parents" ? "부모/보호자 1" : "신랑 측"}</strong><div className="field-grid"><Field label="은행명"><input placeholder="예: 국민은행" value={invitation.groomBank} onChange={(e) => update("groomBank", e.target.value)} /></Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent1Name || "예금주 이름" : invitation.groom || "신랑 이름"} value={invitation.groomAccountHolder} onChange={(e) => update("groomAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.groomAccount} onChange={(e) => update("groomAccount", e.target.value)} /></Field></div><div className="account-editor"><strong>{eventConfig.accountMode === "parents" ? "부모/보호자 2" : "신부 측"}</strong><div className="field-grid"><Field label="은행명"><input placeholder="예: 신한은행" value={invitation.brideBank} onChange={(e) => update("brideBank", e.target.value)} /></Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent2Name || "예금주 이름" : invitation.bride || "신부 이름"} value={invitation.brideAccountHolder} onChange={(e) => update("brideAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.brideAccount} onChange={(e) => update("brideAccount", e.target.value)} /></Field></div></div>}
-        <div className="editor-actions"><button className="save-button" onClick={saveDraft} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>임시 저장</button><button className="publish-button" onClick={publish} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>청첩장 발행하기 <span>→</span></button></div>{saveNotice && <p role="status">{saveNotice}</p>}
+        <div className="editor-actions"><button type="button" className="save-button preview-button" onClick={() => setPreviewOpen(true)}>미리보기</button><button className="save-button" onClick={saveDraft} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>임시 저장</button><button className="publish-button" onClick={publish} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>청첩장 발행하기 <span>→</span></button></div>{saveNotice && <p role="status">{saveNotice}</p>}
       </section>
       <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div className="preview-content"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} /></div></div></aside>
     </div>
+    {previewOpen && <div className="full-preview-overlay" role="dialog" aria-modal="true" aria-label="초대장 전체 미리보기" onKeyDown={(event) => { if (event.key === "Escape") setPreviewOpen(false); }}>
+      <div className="full-preview-toolbar"><strong>DearDay Preview</strong><button type="button" onClick={() => setPreviewOpen(false)} autoFocus>편집으로 돌아가기</button></div>
+      <div className="full-preview-scroll"><div className="full-preview-document full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} /></div></div>
+    </div>}
     {submitting && <div className="save-loading" role="status" aria-live="polite"><div><i /><strong>{submitting === "publish" ? "청첩장을 발행하고 있어요" : "임시 저장하고 있어요"}</strong><span>잠시만 기다려 주세요.</span></div></div>}
     {published && <div className="publish-overlay"><div className="publish-card"><div className="publish-heart">♥</div><p className="section-kicker">YOUR INVITATION IS READY</p><h2>청첩장이<br /><em>완성되었어요!</em></h2><p>이제 소중한 분들에게 링크를 공유해보세요.</p><div className="share-link"><span>/invite/{eventSlug}</span><button onClick={copyLink}>{copied ? "복사됨" : "링크 복사"}</button></div><a className="publish-button full" href={`/invite/${eventSlug}`}>청첩장 열기</a><button className="publish-button full secondary" onClick={() => setPublished(false)}>완료했어요</button></div></div>}
   </main>;

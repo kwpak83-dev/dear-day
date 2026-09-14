@@ -23,7 +23,7 @@ export default function Gallery({ photos }) {
   return <section className="invitation-gallery" aria-labelledby="public-gallery-title">
     <p className="gallery-kicker">OUR MOMENTS</p><h2 id="public-gallery-title">우리의 순간들</h2>
     <div className="public-gallery-grid">{photos.map((photo, index) => <button type="button" className="public-gallery-photo" key={photo.id} aria-label={`${index + 1}번 사진 전체보기`} onClick={event => { opener.current = event.currentTarget; setActive(index); }}>
-      <img src={photo.url} alt={`두 사람의 소중한 순간 ${index + 1}`} loading="lazy" decoding="async" width="400" height="400" />
+      <img src={photo.url} alt={`초대장의 소중한 순간 ${index + 1}`} loading="lazy" decoding="async" width="400" height="400" />
     </button>)}</div>
     <dialog ref={dialog} className="gallery-lightbox" aria-label="갤러리 사진 전체보기" onCancel={event => { event.preventDefault(); close(); }} onClose={() => setActive(null)} onKeyDown={event => {
       if (event.key === "ArrowLeft") { event.preventDefault(); step(-1); }
@@ -32,7 +32,7 @@ export default function Gallery({ photos }) {
       {open && <div className="gallery-viewer">
         <div className="gallery-viewer-bar"><span aria-live="polite">{active + 1} / {photos.length}</span><button type="button" onClick={close} aria-label="사진 보기 닫기" autoFocus>닫기 ✕</button></div>
         <div className="gallery-viewer-image">
-          <img key={photos[active].id} src={photos[active].url} alt={`두 사람의 소중한 순간 ${active + 1}`} decoding="async" draggable={false} />
+          <img key={photos[active].id} src={photos[active].url} alt={`초대장의 소중한 순간 ${active + 1}`} decoding="async" draggable={false} />
         </div>
         <div className="gallery-viewer-controls"><button type="button" onClick={() => step(-1)} disabled={photos.length < 2} aria-label="이전 사진">← 이전</button><button type="button" onClick={() => step(1)} disabled={photos.length < 2} aria-label="다음 사진">다음 →</button></div>
       </div>}
