@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { getInvitationTitle } from "../../../lib/invitation-title";
 
 const slugPattern = /^[a-z0-9-]{4,80}$/;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -74,7 +75,7 @@ export async function POST(request) {
   const event = {
     kind: eventKind,
     ...(hasTemplateId ? { template_id: templateId } : {}),
-    title: `${invitation.groom || "신랑"} & ${invitation.bride || "신부"}의 초대장`,
+    title: getInvitationTitle(invitation, eventKind),
     starts_at: startsAt,
     settings: invitation,
     ...(publish ? { status: "published", published_at: new Date().toISOString() } : {}),

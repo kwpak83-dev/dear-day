@@ -21,7 +21,7 @@ export default function CreateInvitation() {
   const [addressCopied, setAddressCopied] = useState(false);
   const [saveNotice, setSaveNotice] = useState("");
   const [mapNotice, setMapNotice] = useState("주소를 입력하면 지도를 확인할 수 있어요.");
-  const [mapReady, setMapReady] = useState(false);
+  const [mapRevision, setMapRevision] = useState(0);
   const [placeResults, setPlaceResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [eventSlug, setEventSlug] = useState("");
@@ -32,7 +32,7 @@ export default function CreateInvitation() {
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [photoNotice, setPhotoNotice] = useState("");
   const photoBusy = useRef(false);
-  const mapElement = useRef(null);
+  const [mapContainer, setMapContainer] = useState(null);
   const mapInstance = useRef(null);
   const mapMarker = useRef(null);
   const lastMappedAddress = useRef("");
@@ -100,28 +100,41 @@ export default function CreateInvitation() {
     loadTemplates();
   }, []);
   useEffect(() => {
-    if (!mapClientId || !mapElement.current) return;
+    if (!mapClientId || !mapContainer) return;
     const scriptId = "naver-map-sdk";
+    let disposed = false;
     const createMap = () => {
-      if (!window.naver?.maps || mapInstance.current || !mapElement.current) return;
-      mapInstance.current = new window.naver.maps.Map(mapElement.current, { center: new window.naver.maps.LatLng(37.5665, 126.978), zoom: 13, zoomControl: false });
-      setMapReady(true);
+      if (disposed || !window.naver?.maps) return;
+      mapInstance.current?.destroy?.();
+      mapMarker.current = null;
+      lastMappedAddress.current = "";
+      mapInstance.current = new window.naver.maps.Map(mapContainer, { center: new window.naver.maps.LatLng(37.5665, 126.978), zoom: 13, zoomControl: false });
+      setMapRevision((current) => current + 1);
     };
     const existing = document.getElementById(scriptId);
-    if (existing) { existing.addEventListener("load", createMap); createMap(); return () => existing.removeEventListener("load", createMap); }
-    const script = document.createElement("script");
-    script.id = scriptId;
-    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${mapClientId}&submodules=geocoder`;
-    script.async = true;
-    script.addEventListener("load", createMap);
-    document.head.appendChild(script);
-    return () => script.removeEventListener("load", createMap);
-  }, []);
+    if (existing) existing.addEventListener("load", createMap);
+    else {
+      const script = document.createElement("script");
+      script.id = scriptId;
+      script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${mapClientId}&submodules=geocoder`;
+      script.async = true;
+      script.addEventListener("load", createMap);
+      document.head.appendChild(script);
+    }
+    createMap();
+    return () => {
+      disposed = true;
+      document.getElementById(scriptId)?.removeEventListener("load", createMap);
+      mapInstance.current?.destroy?.();
+      mapInstance.current = null;
+      mapMarker.current = null;
+    };
+  }, [mapContainer]);
   useEffect(() => {
     if (!invitation.venueAddress?.trim()) return setMapNotice("주소를 입력하면 지도를 확인할 수 있어요.");
     if (lastMappedAddress.current === invitation.venueAddress.trim()) return;
     geocodeAddress(invitation.venueAddress, { updateAddress: false });
-  }, [invitation.venueAddress, mapReady]);
+  }, [invitation.venueAddress, mapRevision]);
   const update = (key, value) => setInvitation((current) => ({ ...current, [key]: value }));
   const uploadPhoto = async (event) => {
     const file = event.target.files?.[0];
@@ -172,7 +185,7 @@ export default function CreateInvitation() {
   };
   const eventConfig = getEventConfig(invitation.eventKind);
   const renderConfigField = (field) => {
-    if (field.type === "venue") return <div key={field.key}><Field label="장소명"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "장소 검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results">{placeResults.map((place) => <button type="button" key={[place.mapx, place.mapy, place.title].join("-")} onClick={() => selectPlace(place)}><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></button>)}<p className="place-search-guide">검색 결과는 최대 5개까지 보여드려요. 원하는 장소가 없다면 지역명과 함께 검색해 주세요.</p></div>}<Field label="기본주소"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), geocodeAddress(invitation.venueAddress))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>주소 검색</button></div></Field><Field label="건물명"><input placeholder="주소 검색 결과에 건물명이 있으면 자동으로 입력돼요" value={invitation.venueBuilding || ""} onChange={(e) => update("venueBuilding", e.target.value)} /></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={mapElement} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div></div>;
+    if (field.type === "venue") return <div key={field.key}><Field label="장소명"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "장소 검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results">{placeResults.map((place) => <button type="button" key={[place.mapx, place.mapy, place.title].join("-")} onClick={() => selectPlace(place)}><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></button>)}<p className="place-search-guide">검색 결과는 최대 5개까지 보여드려요. 원하는 장소가 없다면 지역명과 함께 검색해 주세요.</p></div>}<Field label="기본주소"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), geocodeAddress(invitation.venueAddress))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>주소 검색</button></div></Field><Field label="건물명"><input placeholder="주소 검색 결과에 건물명이 있으면 자동으로 입력돼요" value={invitation.venueBuilding || ""} onChange={(e) => update("venueBuilding", e.target.value)} /></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={setMapContainer} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div></div>;
     if (field.type === "textarea") return <Field key={field.key} label={field.label}><textarea rows="4" value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} /></Field>;
     return <Field key={field.key} label={field.label}><input type={field.type} inputMode={field.inputMode} placeholder={field.placeholder} value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} /></Field>;
   };
