@@ -53,14 +53,14 @@ export default function Home() {
           <div className="hero-copy">
             <p className="eyebrow"><Heart /> THE MOST BEAUTIFUL INVITATION</p>
             <h1>우리의 특별한 날을,<br /><em>가장 쉽게</em></h1>
-            <p className="hero-description">몇 분 만에 완성하는 감성 모바일 청첩장.<br />소중한 마음을 예쁘게 전해보세요.</p>
+            <p className="hero-description">몇 분 만에 완성하는 감성 모바일 초대장.<br />소중한 마음을 예쁘게 전해보세요.</p>
             <div className="hero-buttons">
               <button className="primary-button" onClick={start}>무료로 청첩장 만들기 <span>→</span></button>
               <a className="text-button" href="#templates">템플릿 둘러보기 <span>↓</span></a>
             </div>
             <div className="mini-proof"><div className="avatars"><i>J</i><i>S</i><i>♡</i></div><span>나만의 이야기를<br /><strong>디어데이</strong>에 담아보세요</span></div>
           </div>
-          <div className="hero-visual" aria-label="모바일 청첩장 미리보기">
+          <div className="hero-visual" aria-label="모바일 초대장 미리보기">
             <div className="sparkle s1">✦</div><div className="sparkle s2">✧</div><div className="sparkle s3">✦</div>
             <div className="phone-shadow" />
             <div className="phone">
