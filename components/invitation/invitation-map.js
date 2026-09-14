@@ -9,23 +9,40 @@ function loadNaverMaps() {
   if (mapsSdkPromise) return mapsSdkPromise;
 
   mapsSdkPromise = new Promise((resolve, reject) => {
-    const finish = () => window.naver?.maps?.Service?.geocode ? resolve(window.naver.maps) : reject(new Error("Naver Maps SDK unavailable"));
+    let settled = false;
+    const startedAt = Date.now();
+    const fail = () => {
+      if (settled) return;
+      settled = true;
+      reject(new Error("Naver Maps SDK unavailable"));
+    };
+    const waitUntilReady = () => {
+      if (settled) return;
+      if (window.naver?.maps?.Service?.geocode) {
+        settled = true;
+        resolve(window.naver.maps);
+        return;
+      }
+      if (Date.now() - startedAt >= 10000) return fail();
+      window.setTimeout(waitUntilReady, 50);
+    };
+
     const existing = document.getElementById("naver-map-sdk");
     if (existing) {
-      existing.addEventListener("load", finish, { once: true });
-      existing.addEventListener("error", reject, { once: true });
+      existing.addEventListener("error", fail, { once: true });
+      waitUntilReady();
       return;
     }
 
     const clientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
-    if (!clientId) return reject(new Error("Naver Maps client ID unavailable"));
+    if (!clientId) return fail();
     const script = document.createElement("script");
     script.id = "naver-map-sdk";
     script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${clientId}&submodules=geocoder`;
     script.async = true;
-    script.addEventListener("load", finish, { once: true });
-    script.addEventListener("error", reject, { once: true });
+    script.addEventListener("error", fail, { once: true });
     document.head.appendChild(script);
+    waitUntilReady();
   }).catch((error) => {
     mapsSdkPromise = undefined;
     throw error;
