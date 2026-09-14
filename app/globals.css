@@ -263,3 +263,99 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 .invitation-map{width:100%;min-width:0;height:190px;margin-top:18px;overflow:hidden;border:1px solid #ead8ce;border-radius:10px;background:#f8ede7;box-sizing:border-box}.invitation-map-canvas{width:100%;height:100%;min-width:0}.preview-content .invitation-map{height:145px;margin-top:14px;border-radius:7px}
 .my-action-notice{margin:22px 0 0;color:#8b7165;font-size:13px;line-height:1.6}.invitation-card .invitation-delete-button{border:0;background:transparent;color:#9a7d70;padding:0;font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:4px;cursor:pointer}.delete-invitation-modal{width:min(100%,390px);padding:34px 28px;border-radius:20px;background:#fffaf5;box-shadow:0 28px 70px rgba(54,35,27,.25);box-sizing:border-box;text-align:center}.delete-invitation-modal h2{margin:0;font-size:25px}.delete-invitation-modal p{margin:13px 0 25px;color:#8b7165;font-size:13px;line-height:1.6}.delete-invitation-modal>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.delete-invitation-modal button{min-width:0;padding:12px 10px;border:0;border-radius:10px;background:#f1e1d8;color:#765449;font-size:13px;font-weight:700;cursor:pointer}.delete-invitation-modal button.danger{background:#ef786c;color:#fff}.delete-invitation-modal button:disabled{opacity:.55;cursor:default}@media(max-width:380px){.delete-invitation-modal{padding:29px 20px}.delete-invitation-modal h2{font-size:22px}}.delete-invitation-modal .delete-invitation-error{margin:-12px 0 18px;color:#c94f48;font-weight:700}
+/* Classic 001 sales template */
+.classic-001{
+  --classic-ivory:#fbf8f0;
+  --classic-paper:#fffdf8;
+  --classic-ink:#51483b;
+  --classic-muted:#887c69;
+  --classic-gold:#aa8d56;
+  --classic-line:#d9ceb9;
+  display:flex;
+  min-width:0;
+  overflow-x:hidden;
+  flex-direction:column;
+  padding:0;
+  background:var(--classic-ivory);
+  color:var(--classic-ink);
+  font-family:Georgia,"Times New Roman","Batang",serif;
+  text-align:center;
+}
+.full-invitation-renderer .classic-001{padding:0}
+.classic-masthead{order:0;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:22px clamp(20px,7vw,38px);border-bottom:1px solid rgba(170,141,86,.34);background:rgba(255,253,248,.94)}
+.classic-masthead b{font-size:18px;font-weight:400;letter-spacing:.01em}
+.classic-masthead span{color:var(--classic-gold);font:8px/1.5 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.24em;text-align:right}
+.classic-hero{order:1;position:relative;min-width:0;isolation:isolate}
+.classic-hero figure{position:relative;width:100%;margin:0;overflow:hidden;aspect-ratio:4/5;background:#e9e1d3}
+.classic-hero figure::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(64,52,34,.03) 28%,rgba(45,37,25,.53) 100%)}
+.classic-hero figure img{display:block;width:100%;height:100%;object-fit:cover}
+.classic-hero-copy{min-width:0}
+.classic-hero.has-photo .classic-hero-copy{position:absolute;z-index:1;right:0;bottom:0;left:0;padding:44px clamp(24px,8vw,44px);color:#fff;text-shadow:0 1px 12px rgba(35,27,17,.28)}
+.classic-hero.no-photo{display:grid;min-height:540px;place-items:center;padding:74px clamp(24px,9vw,50px);background:radial-gradient(circle at 18% 16%,rgba(160,174,139,.12),transparent 28%),radial-gradient(circle at 85% 84%,rgba(170,141,86,.1),transparent 30%),var(--classic-ivory)}
+.classic-hero.no-photo::before,.classic-hero.no-photo::after{content:"";position:absolute;width:72px;height:110px;border:1px solid rgba(126,143,106,.2);border-radius:50%;transform:rotate(35deg)}
+.classic-hero.no-photo::before{top:34px;left:-35px}
+.classic-hero.no-photo::after{right:-38px;bottom:30px;transform:rotate(-35deg)}
+.classic-hero-copy>small{display:block;font:10px/1.6 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.16em}
+.classic-hero-copy>p{margin:17px 0 0;color:var(--classic-gold);font:italic 43px/1.05 Georgia,"Times New Roman",serif;letter-spacing:-.04em}
+.classic-hero-copy>i{display:block;width:1px;height:32px;margin:22px auto;background:currentColor;opacity:.45}
+.classic-hero-copy h2{margin:0;font-size:22px;font-weight:400;line-height:1.5;overflow-wrap:anywhere}
+.classic-couple-title{display:flex;min-width:0;align-items:center;justify-content:center;gap:13px}
+.classic-couple-title span{min-width:0;overflow-wrap:anywhere}
+.classic-couple-title em{flex:none;color:var(--classic-gold);font-size:16px;font-weight:400}
+.classic-detail,.classic-note,.classic-hero-copy time,.classic-hero-copy strong{display:block;margin-top:9px;font:11px/1.7 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.04em;overflow-wrap:anywhere}
+.classic-hero-copy strong{font-weight:700}
+.classic-section{min-width:0;padding:68px clamp(25px,9vw,50px);border-bottom:1px solid rgba(170,141,86,.3)}
+.classic-message{order:2;background:linear-gradient(155deg,#fffdf8,#f7f1e5)}
+.classic-information{order:3;background:var(--classic-paper)}
+.classic-section-heading p{margin:0;color:var(--classic-gold);font:8px/1.4 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.3em}
+.classic-section-heading h3{margin:10px 0 0;font-size:24px;font-weight:400;letter-spacing:-.03em}
+.classic-section-heading i{display:block;margin:17px 0 0;color:var(--classic-gold);font-size:18px;font-style:normal}
+.classic-message blockquote{margin:31px 0 0;white-space:pre-line;color:#6f6454;font:14px/2.05 Georgia,"Batang",serif;overflow-wrap:anywhere}
+.classic-message>strong,.classic-message>time{display:block;margin-top:28px;font-size:14px;font-weight:400;overflow-wrap:anywhere}
+.classic-message>time{margin-top:7px;color:var(--classic-muted);font:10px/1.6 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.08em}
+.classic-information-body{margin-top:31px}
+.classic-information-body>time,.classic-information-body>strong,.classic-information-body>p{display:block;margin:0;overflow-wrap:anywhere}
+.classic-information-body>time{font-size:15px;line-height:1.7}
+.classic-information-body>strong{margin-top:20px;font-size:15px;line-height:1.6}
+.classic-information-body>p{margin-top:7px;color:var(--classic-muted);font:12px/1.8 Arial,"Apple SD Gothic Neo",sans-serif}
+.classic-001 .public-address-copy{margin:20px 0 0}
+.classic-001 .public-address-copy button,.classic-001 .public-share-copy button,.classic-001 .public-account-card button{border:1px solid var(--classic-gold);border-radius:999px;background:transparent;color:#816a40;box-shadow:none}
+.classic-001 .invitation-map{border-color:var(--classic-line);border-radius:3px;background:#eee7da}
+.classic-001 .invitation-template-sections,.classic-001 .public-invitation-sections{display:contents}
+.classic-001 .invitation-gallery{order:4;margin:0;padding:68px clamp(18px,7vw,38px);border-bottom:1px solid rgba(170,141,86,.3);background:#f7f2e8}
+.classic-001 .invitation-gallery .gallery-kicker{margin:0;color:var(--classic-gold);font:8px/1.4 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.3em}
+.classic-001 .invitation-gallery h2{margin:9px 0 28px;color:var(--classic-ink);font-size:24px;font-weight:400}
+.classic-001 .public-gallery-grid{gap:8px}
+.classic-001 .public-gallery-photo{border:1px solid rgba(170,141,86,.22);border-radius:2px;background:#e9e1d3;box-shadow:none}
+.classic-001 .public-accounts{order:5;margin:0;padding:68px clamp(25px,9vw,50px);border:0;border-bottom:1px solid rgba(170,141,86,.3);background:var(--classic-paper);text-align:left}
+.classic-001 .public-accounts h2{margin:0 0 29px;color:var(--classic-ink);font:400 24px/1.4 Georgia,"Batang",serif;text-align:center}
+.classic-001 .public-accounts h2::before{content:"ACCOUNT";display:block;margin-bottom:9px;color:var(--classic-gold);font:8px/1.4 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.3em}
+.classic-001 .public-account-card{padding:18px 0;border-color:var(--classic-line)}
+.classic-001 .public-account-card>p{color:var(--classic-muted);letter-spacing:.1em}
+.classic-001 .public-account-card strong,.classic-001 .public-account-card span{color:var(--classic-ink);overflow-wrap:anywhere}
+.classic-001 .public-share-copy{order:6;margin:0;padding:37px 22px;background:var(--classic-ivory)}
+.classic-001 .public-invitation-sections>footer{display:none}
+.classic-footer{order:7;display:flex;min-height:210px;align-items:center;justify-content:center;flex-direction:column;padding:50px 24px;background:#f2ede2;color:var(--classic-ink)}
+.classic-footer>i{color:#78846c;font-size:25px;font-style:normal}
+.classic-footer>span{margin-top:15px;color:var(--classic-gold);font:italic 34px/1.1 Georgia,"Times New Roman",serif}
+.classic-footer>small{margin-top:12px;color:var(--classic-muted);font:10px/1.7 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.05em}
+.classic-footer>b{margin-top:24px;font-size:11px;font-weight:400;letter-spacing:.08em}
+.preview-content .classic-001 .classic-masthead{padding:17px 13px}
+.preview-content .classic-001 .classic-masthead b{font-size:14px}
+.preview-content .classic-001 .classic-hero.has-photo .classic-hero-copy{padding:29px 16px}
+.preview-content .classic-001 .classic-hero.no-photo{min-height:370px;padding:48px 17px}
+.preview-content .classic-001 .classic-hero-copy>p{font-size:32px}
+.preview-content .classic-001 .classic-hero-copy>i{height:24px;margin:15px auto}
+.preview-content .classic-001 .classic-hero-copy h2{font-size:17px}
+.preview-content .classic-001 .classic-section,.preview-content .classic-001 .invitation-gallery,.preview-content .classic-001 .public-accounts{padding:43px 15px}
+.preview-content .classic-001 .classic-section-heading h3,.preview-content .classic-001 .invitation-gallery h2,.preview-content .classic-001 .public-accounts h2{font-size:19px}
+.preview-content .classic-001 .classic-message blockquote{font-size:11px}
+.preview-content .classic-001 .public-gallery-grid{gap:5px}
+.preview-content .classic-001 .classic-footer{min-height:150px;padding:34px 16px}
+.preview-content .classic-001 .classic-footer>span{font-size:27px}
+@media(max-width:360px){
+  .classic-masthead{padding-right:18px;padding-left:18px}
+  .classic-hero.no-photo{min-height:500px;padding-right:20px;padding-left:20px}
+  .classic-section,.classic-001 .public-accounts{padding-right:20px;padding-left:20px}
+  .classic-couple-title{gap:8px}
+}
