@@ -15,10 +15,8 @@ export default function RomanticTemplate({ presentation, eventKind, placeActions
       <span aria-hidden="true">· ♡ ·</span>
     </header>
 
-    <section className="romantic-hero">
-      {coverPhotoUrl
-        ? <figure className="romantic-hero-photo"><img src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} /></figure>
-        : <div className="romantic-hero-fallback" aria-hidden="true"><span>♡</span></div>}
+    <section className={`romantic-hero${coverPhotoUrl ? " has-photo" : " no-photo"}`}>
+      {coverPhotoUrl && <figure className="romantic-hero-photo"><img src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} /></figure>}
       <div className="romantic-hero-copy">
         {title && (couple.length === 2
           ? <h2 className="romantic-couple-title"><span>{couple[0]}</span><i aria-hidden="true">♡</i><span>{couple[1]}</span></h2>
