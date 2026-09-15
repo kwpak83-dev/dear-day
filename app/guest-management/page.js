@@ -49,8 +49,9 @@ export default function GuestManagement() {
       const encodedName = disposition.match(/filename\*=UTF-8''([^;]+)/i)?.[1];
       const filename = encodedName ? decodeURIComponent(encodedName) : "DearDay_RSVP.xlsx";
       const objectUrl = URL.createObjectURL(await response.blob());
-      const link = document.createElement("a"); link.href = objectUrl; link.download = filename; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(objectUrl);
-      setDownloadNotice("Excel 파일을 다운로드했습니다.");
+      const link = document.createElement("a"); link.href = objectUrl; link.download = filename; document.body.appendChild(link); link.click();
+      window.setTimeout(() => { link.remove(); URL.revokeObjectURL(objectUrl); }, 60_000);
+      setDownloadNotice("Excel 다운로드 요청을 시작했습니다. 저장 여부는 브라우저 다운로드 목록에서 확인해 주세요.");
     } catch (error) { setDownloadNotice(error.message || "Excel 파일을 만들지 못했어요."); }
     finally { setDownloading(false); }
   };
