@@ -18,6 +18,8 @@ export default function GuestManagement() {
   const [loginRequired, setLoginRequired] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [downloadNotice, setDownloadNotice] = useState("");
+  const [guestbookEntries, setGuestbookEntries] = useState([]);
+  const [guestbookNotice, setGuestbookNotice] = useState("");
 
   const load = useCallback(async (slug = "", nextFilter = "all") => {
     setNotice("하객 정보를 불러오는 중이에요.");
@@ -35,6 +37,29 @@ export default function GuestManagement() {
   const chooseEvent = (slug) => { setSelectedSlug(slug); setFilter("all"); load(slug, "all"); };
   const chooseFilter = (value) => { setFilter(value); load(selectedSlug, value); };
   const selectedEvent = events.find((event) => event.slug === selectedSlug);
+  const loadGuestbook = useCallback(async (slug) => {
+    if (!slug) return;
+    const supabase = getSupabaseBrowserClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+    const response = await fetch(`/api/guestbook/manage?slug=${encodeURIComponent(slug)}`, { headers: { Authorization: `Bearer ${session.access_token}` } });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) return setGuestbookNotice(result.error || "방명록을 불러오지 못했어요.");
+    setGuestbookEntries(result.entries || []);
+    setGuestbookNotice(result.guestbookEnabled ? "" : "방명록이 OFF 상태예요. 기존 글은 계속 관리할 수 있어요.");
+  }, []);
+  useEffect(() => { loadGuestbook(selectedSlug); }, [selectedSlug, loadGuestbook]);
+  const deleteGuestbookEntry = async (entry) => {
+    if (!window.confirm(`${entry.authorName}님의 방명록을 삭제할까요?`)) return;
+    const supabase = getSupabaseBrowserClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return setGuestbookNotice("로그인이 만료되었어요. 다시 로그인해 주세요.");
+    const response = await fetch("/api/guestbook/manage", { method: "DELETE", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ slug: selectedSlug, entryId: entry.id }) });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) return setGuestbookNotice(result.error || "방명록을 삭제하지 못했어요.");
+    setGuestbookEntries((current) => current.filter((item) => item.id !== entry.id));
+    setGuestbookNotice("방명록을 삭제했습니다.");
+  };
   const downloadExcel = async () => {
     if (!selectedSlug || downloading) return;
     if (!summary.total) return setDownloadNotice("다운로드할 참석 여부가 없습니다.");
@@ -63,6 +88,7 @@ export default function GuestManagement() {
       <div className="guest-summary"><article><span>전체 응답</span><strong>{summary.total}건</strong></article><article><span>참석 응답</span><strong>{summary.attending}건</strong></article><article><span>불참 응답</span><strong>{summary.notAttending}건</strong></article><article><span>참석 예정 인원</span><strong>{summary.partySize}명</strong></article></div>
       <div className="guest-list-heading"><div className="guest-filters">{FILTERS.map(([value, label]) => <button type="button" key={value} className={filter === value ? "active" : ""} aria-pressed={filter === value} onClick={() => chooseFilter(value)}>{label}</button>)}</div><div className="guest-list-actions"><span>{filteredCount}건</span><button type="button" onClick={downloadExcel} disabled={downloading || !summary.total}>{downloading ? "파일 생성 중..." : "Excel 다운로드"}</button></div></div>{downloadNotice && <p className="guest-download-notice" role="status" aria-live="polite">{downloadNotice}</p>}
       {rsvps.length ? <div className="guest-rsvp-list">{rsvps.map((rsvp) => <article key={rsvp.id}><header><strong>{rsvp.guestName}</strong><span className={`guest-rsvp-status ${rsvp.status}`}>{rsvp.status === "attending" ? "참석" : "불참"}</span></header><dl><div><dt>참석 인원</dt><dd>{rsvp.status === "attending" ? `${rsvp.partySize}명` : "-"}</dd></div><div><dt>연락처</dt><dd>{rsvp.phone || "-"}</dd></div><div className="guest-message"><dt>전달사항</dt><dd>{rsvp.message || "-"}</dd></div><div><dt>제출 시각</dt><dd>{formatDateTime(rsvp.createdAt)}</dd></div><div><dt>최근 수정</dt><dd>{formatDateTime(rsvp.updatedAt)}</dd></div></dl></article>)}</div> : <p className="guest-empty">아직 전달된 참석 여부가 없습니다.</p>}
+      <section className="guestbook-management"><div className="guestbook-management-heading"><div><p className="section-kicker">GUESTBOOK</p><h2>방명록 관리</h2></div><span>{guestbookEntries.length}건</span></div>{guestbookNotice && <p className="guestbook-notice" role="status">{guestbookNotice}</p>}{guestbookEntries.length ? <div className="guestbook-management-list">{guestbookEntries.map((entry) => <article key={entry.id}><header><strong>{entry.authorName}</strong><time>{formatDateTime(entry.createdAt)}</time></header><p>{entry.message}</p><button type="button" onClick={() => deleteGuestbookEntry(entry)}>삭제</button></article>)}</div> : <p className="guest-empty">아직 남겨진 방명록이 없습니다.</p>}</section>
     </>}
   </section></main>;
 }
