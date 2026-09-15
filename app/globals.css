@@ -385,3 +385,12 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   .payment-card,.publish-confirm-card{padding:30px 20px;border-radius:18px}
   .payment-card h2,.publish-confirm-card h2{font-size:25px}
 }
+/* GAP ⑧-A shared link copy and native share actions */
+.share-actions{display:flex;min-width:0;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px}
+.share-actions-notice{flex:1 0 100%;min-height:16px;text-align:center}
+.publish-card>.share-actions{margin:0 0 13px}
+.publish-card>.share-actions button{border:0;border-radius:9px;background:#ef786c;color:#fff;padding:11px 16px;font-size:12px;font-weight:700}
+.invitation-card>div{flex-wrap:wrap;align-items:center}
+.invitation-card .invitation-card-share{display:inline-flex;margin:0;gap:14px}
+.invitation-card .invitation-card-share button{border:0;background:transparent;color:#d9695e;padding:0;font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:4px}
+.invitation-card .invitation-card-share .share-actions-notice{color:#8b7165;font-size:11px;text-decoration:none}

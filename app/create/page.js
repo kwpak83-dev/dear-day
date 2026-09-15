@@ -4,11 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import InvitationRenderer from "../../components/invitation/invitation-renderer";
 import InvitationMap from "../../components/invitation/invitation-map";
+import ShareActions from "../../components/share-actions";
 import Gallery from "../invite/[slug]/gallery";
 import AccountCopy from "../invite/[slug]/account-copy";
 
 import GalleryEditor from "./gallery-editor";
 import { preparePhoto } from "../../lib/prepare-photo";
+import { getInvitationTitle } from "../../lib/invitation-title";
 import { EVENT_KIND_OPTIONS, getEventConfig, getMissingRequiredFields } from "../../lib/event-config";
 
 const initialInvitation = { eventKind: "wedding", templateId: "", eventTitle: "", hostName: "", person1Name: "", person2Name: "", childName: "", parent1Name: "", parent2Name: "", birthDate: "", dueDate: "", age: "", anniversaryYears: "", organizationName: "", programName: "", coverPhotoUrl: "", groom: "", bride: "", date: "", time: "", venue: "", venueAddress: "", venueBuilding: "", venueDetail: "", groomBank: "", groomAccount: "", groomAccountHolder: "", brideBank: "", brideAccount: "", brideAccountHolder: "", message: "" };
@@ -53,7 +55,6 @@ export default function CreateInvitation() {
   const [paymentComplete, setPaymentComplete] = useState(false);
   const [publishConfirmOpen, setPublishConfirmOpen] = useState(false);
   const [flowNotice, setFlowNotice] = useState("");
-  const [copied, setCopied] = useState(false);
   const [addressCopied, setAddressCopied] = useState(false);
   const [saveNotice, setSaveNotice] = useState("");
   const [mapNotice, setMapNotice] = useState("주소를 입력하면 지도를 확인할 수 있어요.");
@@ -321,7 +322,6 @@ export default function CreateInvitation() {
       setSubmitting("");
     }
   };
-  const copyLink = async () => { await navigator.clipboard?.writeText(`${window.location.origin}/invite/${eventSlug}`); setCopied(true); window.setTimeout(() => setCopied(false), 1800); };
   const copyAddress = async () => {
     const address = [invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].map((value) => value?.trim()).filter(Boolean).join(" ");
     if (!address) return;
@@ -366,6 +366,6 @@ export default function CreateInvitation() {
     {paymentComplete && <div className="publish-overlay" role="dialog" aria-modal="true" aria-labelledby="payment-complete-title"><div className="publish-card"><div className="publish-heart">✓</div><p className="section-kicker">PAYMENT COMPLETE</p><h2 id="payment-complete-title">결제가 완료되었습니다.</h2><p>아직 초대장은 공개되지 않았습니다.<br />내용을 최종 확인한 후 발행해 주세요.</p><button type="button" className="save-button full" onClick={() => { setPaymentComplete(false); setPreviewOpen(true); }}>최종 미리보기</button><button type="button" className="publish-button full" onClick={requestPublish}>초대장 발행하기</button></div></div>}
     {publishConfirmOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="publish-confirm-title"><div className="publish-confirm-card"><h2 id="publish-confirm-title">초대장을 발행하시겠습니까?</h2><p>발행하면 초대장 링크가 활성화됩니다.</p>{flowNotice && <p className="payment-error" role="alert">{flowNotice}</p>}<div><button type="button" className="save-button" onClick={() => setPublishConfirmOpen(false)}>취소</button><button type="button" className="publish-button" onClick={publish}>발행하기</button></div></div></div>}
     {submitting && <div className="save-loading" role="status" aria-live="polite"><div><i /><strong>{submitting === "publish" ? "초대장을 발행하고 있어요" : submitting === "payment" ? "테스트 결제를 처리하고 있어요" : "초대장을 저장하고 있어요"}</strong><span>잠시만 기다려 주세요.</span></div></div>}
-    {published && <div className="publish-overlay"><div className="publish-card"><div className="publish-heart">♥</div><p className="section-kicker">YOUR INVITATION IS READY</p><h2>초대장이<br /><em>발행되었습니다.</em></h2><p>이제 소중한 분들에게 링크를 공유해보세요.</p><div className="share-link"><span>/invite/{eventSlug}</span><button onClick={copyLink}>{copied ? "복사됨" : "링크 복사"}</button></div><a className="publish-button full" href={`/invite/${eventSlug}`}>초대장 보기</a><button className="publish-button full secondary" onClick={() => setPublished(false)}>완료했어요</button></div></div>}
+    {published && <div className="publish-overlay"><div className="publish-card"><div className="publish-heart">♥</div><p className="section-kicker">YOUR INVITATION IS READY</p><h2>초대장이<br /><em>발행되었습니다.</em></h2><p>이제 소중한 분들에게 링크를 공유해보세요.</p><ShareActions path={`/invite/${eventSlug}`} title={getInvitationTitle(invitation, invitation.eventKind)} showPath /><a className="publish-button full" href={`/invite/${eventSlug}`}>초대장 보기</a><button className="publish-button full secondary" onClick={() => setPublished(false)}>완료했어요</button></div></div>}
   </main>;
 }
