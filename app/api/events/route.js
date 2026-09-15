@@ -59,7 +59,7 @@ export async function GET(request) {
   const auth = await getAuthenticatedClient(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
   const slug = new URL(request.url).searchParams.get("slug");
-  let query = auth.supabase.from("events").select("slug,title,status,kind,template_id,starts_at,updated_at,settings").eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
+  let query = auth.supabase.from("events").select("slug,title,status,kind,template_id,starts_at,paid_at,published_at,service_started_at,updated_at,settings").eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
   if (slug) query = query.eq("slug", slug).limit(1);
   const { data, error } = await query;
   if (error) return json({ error: "초대장을 불러오지 못했어요." }, 500);
@@ -88,7 +88,7 @@ export async function POST(request) {
     if (Number.isNaN(new Date(startsAt).getTime())) return json({ error: "예식 날짜 또는 시간을 확인해 주세요." }, 400);
   }
 
-  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id").eq("slug", slug).limit(1);
+  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id,status,paid_at,published_at,service_started_at").eq("slug", slug).limit(1);
   if (lookupError) return json({ error: "기존 초대장을 확인하지 못했어요." }, 500);
   const existing = matches?.[0];
   if (existing && existing.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 수정할 수 없어요." }, 403);
@@ -105,14 +105,26 @@ export async function POST(request) {
     title: getInvitationTitle(invitation, eventKind),
     starts_at: startsAt,
     settings: invitation,
-    ...(publish ? { status: "published", published_at: new Date().toISOString() } : {}),
   };
-  const { error: saveError } = existing
-    ? await supabase.from("events").update(event).eq("slug", slug)
-    : await supabase.from("events").insert({ ...event, owner_id: user.id, status: publish ? "published" : "draft", slug });
+
+  if (publish && !existing) return json({ error: "초대장을 먼저 임시 저장해 주세요." }, 409);
+  if (publish && existing.status === "draft") return json({ error: "결제 완료 후 초대장을 발행할 수 있어요." }, 409);
+  if (publish && existing.status !== "paid" && existing.status !== "published") return json({ error: "현재 상태에서는 초대장을 발행할 수 없어요." }, 409);
+
+  const firstPublishedAt = existing?.published_at || new Date().toISOString();
+  const publishedEvent = publish && existing.status === "paid"
+    ? { ...event, status: "published", published_at: firstPublishedAt, service_started_at: existing.service_started_at || firstPublishedAt }
+    : event;
+  const saveQuery = existing
+    ? supabase.from("events").update(publishedEvent).eq("slug", slug).eq("owner_id", user.id)
+    : supabase.from("events").insert({ ...event, owner_id: user.id, status: "draft", slug });
+  const { data: saved, error: saveError } = publish && existing.status === "paid"
+    ? await saveQuery.eq("status", "paid").select("status").maybeSingle()
+    : await saveQuery.select("status").maybeSingle();
 
   if (saveError) return json({ error: "초대장을 저장하지 못했어요." }, 500);
-  return json({ slug });
+  if (!saved) return json({ error: "초대장 상태가 변경되었어요. 새로고침 후 다시 시도해 주세요." }, 409);
+  return json({ slug, status: saved.status });
 }
 export async function DELETE(request) {
   const auth = await getAuthenticatedClient(request);

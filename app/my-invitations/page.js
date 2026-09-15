@@ -4,6 +4,13 @@ import { useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import { getInvitationTitle } from "../../lib/invitation-title";
 
+const STATUS_LABELS = {
+  draft: "제작중",
+  paid: "결제완료 · 미발행",
+  published: "발행완료",
+  archived: "만료",
+};
+
 export default function MyInvitations() {
   const [events, setEvents] = useState([]);
   const [notice, setNotice] = useState("초대장을 불러오는 중이에요.");
@@ -65,7 +72,7 @@ export default function MyInvitations() {
       {actionNotice && <p className="my-action-notice" role="status" aria-live="polite">{actionNotice}</p>}
       {notice && <div className="my-notice"><p>{notice}</p>{loginRequired && <a className="my-login-button" href="/?login=required">다시 로그인하기</a>}</div>}
       <div className="invitation-list">{events.map((event) => <article className="invitation-card" key={event.slug}>
-        <span className={`status ${event.status}`}>{event.status === "published" ? "발행됨" : "임시저장"}</span>
+        <span className={`status ${event.status}`}>{STATUS_LABELS[event.status] || event.status}</span>
         <h2>{getInvitationTitle(event.settings, event.kind)}</h2>
         <p>{event.starts_at ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "long", timeStyle: "short" }).format(new Date(event.starts_at)) : "날짜 미정"}</p>
         <div><a href={`/create?slug=${event.slug}`}>편집하기</a>{event.status === "published" && <a href={`/invite/${event.slug}`}>초대장 보기</a>}{event.status === "draft" && <button type="button" className="invitation-delete-button" onClick={() => { setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}>삭제하기</button>}</div>
