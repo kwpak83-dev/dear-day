@@ -10,8 +10,9 @@ import RsvpForm from "./rsvp-form";
 import Guestbook from "./guestbook";
 import { getInvitationTitle } from "../../../lib/invitation-title";
 
-export default async function InvitationPage({ params }) {
+export default async function InvitationPage({ params, searchParams }) {
   const { slug } = await params;
+  const ownerView = (await searchParams)?.from === "owner";
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !serviceRoleKey) notFound();
@@ -32,6 +33,7 @@ export default async function InvitationPage({ params }) {
   const galleryPhotos = (galleryRows || []).map(row => ({ id: row.id, url: supabase.storage.from("invitation-photos").getPublicUrl(row.storage_path).data.publicUrl }));
 
   return <main className="public-invitation shared-public-invitation">
+    {ownerView && <nav className="owner-return-nav" aria-label="DearDay 관리 화면으로 돌아가기"><a href="/my-invitations">내 초대장</a><a href="/">DearDay 홈</a></nav>}
     <div className="full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} placeActions={<><AddressCopy invitation={invitation} /><InvitationMap address={invitation.venueAddress} /></>}>
       <div className="public-invitation-sections"><Gallery photos={galleryPhotos} /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} />{invitation.rsvpEnabled === true && <RsvpForm slug={slug} startsAt={event.starts_at} />}{invitation.guestbookEnabled !== false && <Guestbook slug={slug} />}<LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} /><footer>디어데이와 함께하는 소중한 순간</footer></div>
     </InvitationRenderer></div>
