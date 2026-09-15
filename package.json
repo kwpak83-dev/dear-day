@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
+    "exceljs": "4.4.0",
     "next": "latest",
     "qrcode": "^1.5.4",
     "react": "latest",
