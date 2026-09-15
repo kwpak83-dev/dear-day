@@ -66,7 +66,7 @@ export default function MyInvitations() {
   };
 
   return <main className="my-page">
-    <header className="create-header"><a className="brand" href="/"><img src="/dear-day-logo.png" alt="디어데이" /></a><div className="create-user"><a href="/create">새 초대장 만들기</a><a href="/">나가기</a></div></header>
+    <header className="create-header"><a className="brand" href="/"><img src="/dear-day-logo.png" alt="디어데이" /></a><div className="create-user"><a href="/guest-management">하객 관리</a><a href="/create">새 초대장 만들기</a><a href="/">나가기</a></div></header>
     <section className="my-content">
       <p className="section-kicker">MY INVITATIONS</p><h1>내 초대장</h1>
       <p className="my-intro">임시저장한 초대장을 이어서 편집하거나, 발행한 초대장을 확인하세요.</p>
@@ -76,7 +76,7 @@ export default function MyInvitations() {
         <span className={`status ${event.status}`}>{STATUS_LABELS[event.status] || event.status}</span>
         <h2>{getInvitationTitle(event.settings, event.kind)}</h2>
         <p>{event.starts_at ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "long", timeStyle: "short" }).format(new Date(event.starts_at)) : "날짜 미정"}</p>
-        <div><a href={`/create?slug=${event.slug}`}>편집하기</a>{event.status === "paid" && <><a href={`/create?slug=${event.slug}&preview=final`}>최종 미리보기</a><a href={`/create?slug=${event.slug}&publish=ready`}>초대장 발행하기</a></>}{event.status === "published" && <><a href={`/invite/${event.slug}`}>초대장 보기</a><ShareActions path={`/invite/${event.slug}`} title={getInvitationTitle(event.settings, event.kind)} className="invitation-card-share" /></>}{event.status === "draft" && <button type="button" className="invitation-delete-button" onClick={() => { setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}>삭제하기</button>}</div>
+        <div><a href={`/create?slug=${event.slug}`}>편집하기</a>{event.status === "paid" && <><a href={`/create?slug=${event.slug}&preview=final`}>최종 미리보기</a><a href={`/create?slug=${event.slug}&publish=ready`}>초대장 발행하기</a></>}{event.status === "published" && <><a href={`/invite/${event.slug}`}>초대장 보기</a><a href={`/guest-management?slug=${event.slug}`}>하객 관리</a><ShareActions path={`/invite/${event.slug}`} title={getInvitationTitle(event.settings, event.kind)} className="invitation-card-share" /></>}{event.status === "draft" && <button type="button" className="invitation-delete-button" onClick={() => { setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}>삭제하기</button>}</div>
       </article>)}</div>
     </section>
     {deleteTarget && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="delete-invitation-title">
