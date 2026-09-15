@@ -6,6 +6,7 @@ import Gallery from "./gallery";
 import AccountCopy from "./account-copy";
 import AddressCopy from "./address-copy";
 import LinkCopy from "./link-copy";
+import RsvpForm from "./rsvp-form";
 import { getInvitationTitle } from "../../../lib/invitation-title";
 
 export default async function InvitationPage({ params }) {
@@ -14,7 +15,7 @@ export default async function InvitationPage({ params }) {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !serviceRoleKey) notFound();
   const supabase = createClient(url, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
-  const { data: events } = await supabase.from("events").select("id,kind,template_id,settings").eq("slug", slug).eq("status", "published").limit(1);
+  const { data: events } = await supabase.from("events").select("id,kind,template_id,starts_at,settings").eq("slug", slug).eq("status", "published").limit(1);
   const event = events?.[0];
   if (!event) notFound();
   const settings = event.settings || {};
@@ -31,7 +32,7 @@ export default async function InvitationPage({ params }) {
 
   return <main className="public-invitation shared-public-invitation">
     <div className="full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} placeActions={<><AddressCopy invitation={invitation} /><InvitationMap address={invitation.venueAddress} /></>}>
-      <div className="public-invitation-sections"><Gallery photos={galleryPhotos} /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} /><footer>디어데이와 함께하는 소중한 순간</footer></div>
+      <div className="public-invitation-sections"><Gallery photos={galleryPhotos} /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} />{invitation.rsvpEnabled === true && <RsvpForm slug={slug} startsAt={event.starts_at} />}<LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} /><footer>디어데이와 함께하는 소중한 순간</footer></div>
     </InvitationRenderer></div>
   </main>;
 }
