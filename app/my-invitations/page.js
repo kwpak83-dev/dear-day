@@ -75,7 +75,7 @@ export default function MyInvitations() {
         <span className={`status ${event.status}`}>{STATUS_LABELS[event.status] || event.status}</span>
         <h2>{getInvitationTitle(event.settings, event.kind)}</h2>
         <p>{event.starts_at ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "long", timeStyle: "short" }).format(new Date(event.starts_at)) : "날짜 미정"}</p>
-        <div><a href={`/create?slug=${event.slug}`}>편집하기</a>{event.status === "published" && <a href={`/invite/${event.slug}`}>초대장 보기</a>}{event.status === "draft" && <button type="button" className="invitation-delete-button" onClick={() => { setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}>삭제하기</button>}</div>
+        <div><a href={`/create?slug=${event.slug}`}>편집하기</a>{event.status === "paid" && <><a href={`/create?slug=${event.slug}&preview=final`}>최종 미리보기</a><a href={`/create?slug=${event.slug}&publish=ready`}>초대장 발행하기</a></>}{event.status === "published" && <a href={`/invite/${event.slug}`}>초대장 보기</a>}{event.status === "draft" && <button type="button" className="invitation-delete-button" onClick={() => { setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}>삭제하기</button>}</div>
       </article>)}</div>
     </section>
     {deleteTarget && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="delete-invitation-title">

@@ -9,7 +9,7 @@ import AccountCopy from "../invite/[slug]/account-copy";
 
 import GalleryEditor from "./gallery-editor";
 import { preparePhoto } from "../../lib/prepare-photo";
-import { EVENT_KIND_OPTIONS, getEventConfig } from "../../lib/event-config";
+import { EVENT_KIND_OPTIONS, getEventConfig, getMissingRequiredFields } from "../../lib/event-config";
 
 const initialInvitation = { eventKind: "wedding", templateId: "", eventTitle: "", hostName: "", person1Name: "", person2Name: "", childName: "", parent1Name: "", parent2Name: "", birthDate: "", dueDate: "", age: "", anniversaryYears: "", organizationName: "", programName: "", coverPhotoUrl: "", groom: "", bride: "", date: "", time: "", venue: "", venueAddress: "", venueBuilding: "", venueDetail: "", groomBank: "", groomAccount: "", groomAccountHolder: "", brideBank: "", brideAccount: "", brideAccountHolder: "", message: "" };
 const mapClientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
@@ -48,6 +48,11 @@ export default function CreateInvitation() {
   const [provider, setProvider] = useState("");
   const [published, setPublished] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [eventStatus, setEventStatus] = useState("draft");
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [paymentComplete, setPaymentComplete] = useState(false);
+  const [publishConfirmOpen, setPublishConfirmOpen] = useState(false);
+  const [flowNotice, setFlowNotice] = useState("");
   const [copied, setCopied] = useState(false);
   const [addressCopied, setAddressCopied] = useState(false);
   const [saveNotice, setSaveNotice] = useState("");
@@ -106,11 +111,11 @@ export default function CreateInvitation() {
     setEventSlug(new URLSearchParams(window.location.search).get("slug") || "");
   }, []);
   useEffect(() => {
-    if (!previewOpen) return;
+    if (!previewOpen && !checkoutOpen && !paymentComplete && !publishConfirmOpen && !published) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = previousOverflow; };
-  }, [previewOpen]);
+  }, [previewOpen, checkoutOpen, paymentComplete, publishConfirmOpen, published]);
   useEffect(() => {
     const slug = new URLSearchParams(window.location.search).get("slug");
     if (!slug) return;
@@ -121,7 +126,14 @@ export default function CreateInvitation() {
       const response = await fetch(`/api/events?slug=${encodeURIComponent(slug)}`, { headers: { Authorization: `Bearer ${session.access_token}` } });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.event) return setSaveNotice(result.error || "초대장을 찾지 못했어요.");
-      setInvitation({ ...initialInvitation, ...result.event.settings, eventKind: result.event.kind || result.event.settings?.eventKind || "wedding", templateId: result.event.template_id || result.event.settings?.templateId || "" }); setEventSlug(result.event.slug); setSaveNotice("임시저장을 불러왔어요.");
+      const status = result.event.status || "draft";
+      setInvitation({ ...initialInvitation, ...result.event.settings, eventKind: result.event.kind || result.event.settings?.eventKind || "wedding", templateId: result.event.template_id || result.event.settings?.templateId || "" });
+      setEventSlug(result.event.slug);
+      setEventStatus(status);
+      setSaveNotice(status === "paid" ? "결제완료 초대장을 불러왔어요." : status === "published" ? "발행된 초대장을 불러왔어요." : "임시저장을 불러왔어요.");
+      const query = new URLSearchParams(window.location.search);
+      if (status === "paid" && query.get("preview") === "final") setPreviewOpen(true);
+      if (status === "paid" && query.get("publish") === "ready") setPublishConfirmOpen(true);
     };
     loadEvent();
   }, []);
@@ -244,23 +256,66 @@ export default function CreateInvitation() {
       const response = await fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ slug, invitation }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) return setSaveNotice(result.error || "저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
-      window.localStorage.setItem("dear-day-event-slug", slug); setEventSlug(slug); setSaveNotice("온라인 임시 저장 완료"); return slug;
+      window.localStorage.setItem("dear-day-event-slug", slug); setEventSlug(slug); setEventStatus(result.status || "draft"); setSaveNotice(result.status === "paid" ? "결제완료 상태로 저장했어요." : result.status === "published" ? "발행된 초대장을 저장했어요." : "온라인 임시 저장 완료"); return slug;
     } finally {
       if (showLoading) setSubmitting("");
     }
   };
+  const validateForPublish = () => {
+    const missingFields = getMissingRequiredFields(invitation, invitation.eventKind);
+    if (!missingFields.length) return true;
+    setFlowNotice(`발행을 위해 필요한 정보를 확인해 주세요. (${missingFields.join(", ")})`);
+    return false;
+  };
+  const preparePayment = async () => {
+    setFlowNotice("");
+    if (!validateForPublish()) return;
+    const slug = await saveDraft();
+    if (!slug) return;
+    setPreviewOpen(false);
+    setCheckoutOpen(true);
+  };
+  const runMockPayment = async () => {
+    if (submitting || !eventSlug) return;
+    setSubmitting("payment");
+    setFlowNotice("");
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return setFlowNotice("로그인 후 테스트 결제를 진행할 수 있어요.");
+      const response = await fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ slug: eventSlug, action: "mock-payment" }) });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) return setFlowNotice(result.missingFields?.length ? `${result.error} (${result.missingFields.join(", ")})` : result.error || "테스트 결제를 완료하지 못했어요.");
+      setEventStatus("paid");
+      setCheckoutOpen(false);
+      setPaymentComplete(true);
+    } finally {
+      setSubmitting("");
+    }
+  };
+  const requestPublish = () => {
+    setFlowNotice("");
+    if (!validateForPublish()) return;
+    if (eventStatus !== "paid") return setFlowNotice("결제 완료 후 초대장을 발행할 수 있어요.");
+    setPreviewOpen(false);
+    setPaymentComplete(false);
+    setPublishConfirmOpen(true);
+  };
   const publish = async () => {
-    if (submitting || photoBusy.current || galleryBusy) return;
+    if (submitting || photoBusy.current || galleryBusy || eventStatus !== "paid") return;
     setSubmitting("publish");
+    setFlowNotice("");
     try {
       const slug = await saveDraft({ showLoading: false });
       if (!slug) return;
       const supabase = getSupabaseBrowserClient();
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return setSaveNotice("로그인 후 발행할 수 있어요.");
+      if (!session) return setFlowNotice("로그인 후 발행할 수 있어요.");
       const response = await fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ slug, invitation, publish: true }) });
       const result = await response.json().catch(() => ({}));
-      if (!response.ok) return setSaveNotice(result.error || "발행에 실패했어요.");
+      if (!response.ok) return setFlowNotice(result.missingFields?.length ? `${result.error} (${result.missingFields.join(", ")})` : result.error || "발행에 실패했어요.");
+      setEventStatus("published");
+      setPublishConfirmOpen(false);
       setPublished(true);
     } finally {
       setSubmitting("");
@@ -298,15 +353,19 @@ export default function CreateInvitation() {
         <GalleryEditor slug={eventSlug} disabled={Boolean(submitting) || uploadingPhoto} onSaveInvitation={saveDraft} onBusyChange={setGalleryBusy} onPhotosChange={setGalleryPhotos} />
         {eventConfig.sections.map((section) => <div className="form-section" key={section.id}><h2>{section.title}</h2>{section.rows.map((row, rowIndex) => row.length > 1 ? <div className="field-grid" key={rowIndex}>{row.map(renderConfigField)}</div> : row.map(renderConfigField))}</div>)}
         {eventConfig.accountMode && <div className="form-section"><h2>마음 전하실 곳 <small>선택</small></h2><div className="account-editor"><strong>{eventConfig.accountMode === "parents" ? "부모/보호자 1" : "신랑 측"}</strong><div className="field-grid"><Field label="은행명"><input placeholder="예: 국민은행" value={invitation.groomBank} onChange={(e) => update("groomBank", e.target.value)} /></Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent1Name || "예금주 이름" : invitation.groom || "신랑 이름"} value={invitation.groomAccountHolder} onChange={(e) => update("groomAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.groomAccount} onChange={(e) => update("groomAccount", e.target.value)} /></Field></div><div className="account-editor"><strong>{eventConfig.accountMode === "parents" ? "부모/보호자 2" : "신부 측"}</strong><div className="field-grid"><Field label="은행명"><input placeholder="예: 신한은행" value={invitation.brideBank} onChange={(e) => update("brideBank", e.target.value)} /></Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent2Name || "예금주 이름" : invitation.bride || "신부 이름"} value={invitation.brideAccountHolder} onChange={(e) => update("brideAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.brideAccount} onChange={(e) => update("brideAccount", e.target.value)} /></Field></div></div>}
-        <div className="editor-actions"><button type="button" className="save-button preview-button" onClick={() => setPreviewOpen(true)}>미리보기</button><button className="save-button" onClick={saveDraft} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>임시 저장</button><button className="publish-button" onClick={publish} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>청첩장 발행하기 <span>→</span></button></div>{saveNotice && <p role="status">{saveNotice}</p>}
+        <div className="editor-actions"><button type="button" className="save-button preview-button" onClick={() => { setFlowNotice(""); setPreviewOpen(true); }}>미리보기</button><button className="save-button" onClick={saveDraft} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>저장하기</button></div>{saveNotice && <p role="status">{saveNotice}</p>}
       </section>
       <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div className="preview-content"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} placeActions={previewPlaceActions()}>{(galleryPhotos.length > 0 || hasPreviewAccounts) && <><Gallery photos={galleryPhotos} idPrefix="live-preview-gallery" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /></>}</InvitationRenderer></div></div></aside>
     </div>
-    {previewOpen && <div className="full-preview-overlay" role="dialog" aria-modal="true" aria-label="초대장 전체 미리보기" onKeyDown={(event) => { if (event.key === "Escape") setPreviewOpen(false); }}>
-      <div className="full-preview-toolbar"><strong>DearDay Preview</strong><button type="button" onClick={() => setPreviewOpen(false)} autoFocus>편집으로 돌아가기</button></div>
+    {previewOpen && <div className="full-preview-overlay" role="dialog" aria-modal="true" aria-label={eventStatus === "draft" ? "초대장 전체 미리보기" : "초대장 최종 미리보기"} onKeyDown={(event) => { if (event.key === "Escape") setPreviewOpen(false); }}>
+      <div className="full-preview-toolbar"><strong>{eventStatus === "draft" ? "DearDay Preview" : "최종 미리보기"}</strong><div><button type="button" className="secondary" onClick={() => setPreviewOpen(false)} autoFocus>계속 수정하기</button>{eventStatus === "draft" && <button type="button" onClick={preparePayment}>발행 준비하기</button>}{eventStatus === "paid" && <button type="button" onClick={requestPublish}>초대장 발행하기</button>}</div></div>
+      {flowNotice && <p className="full-preview-notice" role="alert">{flowNotice}</p>}
       <div className="full-preview-scroll"><div className="full-preview-document full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} placeActions={previewPlaceActions()}>{(galleryPhotos.length > 0 || hasPreviewAccounts) && <><Gallery photos={galleryPhotos} idPrefix="full-preview-gallery" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /></>}</InvitationRenderer></div></div>
     </div>}
-    {submitting && <div className="save-loading" role="status" aria-live="polite"><div><i /><strong>{submitting === "publish" ? "청첩장을 발행하고 있어요" : "임시 저장하고 있어요"}</strong><span>잠시만 기다려 주세요.</span></div></div>}
-    {published && <div className="publish-overlay"><div className="publish-card"><div className="publish-heart">♥</div><p className="section-kicker">YOUR INVITATION IS READY</p><h2>청첩장이<br /><em>완성되었어요!</em></h2><p>이제 소중한 분들에게 링크를 공유해보세요.</p><div className="share-link"><span>/invite/{eventSlug}</span><button onClick={copyLink}>{copied ? "복사됨" : "링크 복사"}</button></div><a className="publish-button full" href={`/invite/${eventSlug}`}>청첩장 열기</a><button className="publish-button full secondary" onClick={() => setPublished(false)}>완료했어요</button></div></div>}
+    {checkoutOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="payment-title"><div className="payment-card"><p className="section-kicker">TEST PAYMENT</p><h2 id="payment-title">발행 준비 안내</h2><dl><div><dt>템플릿</dt><dd>{templateOptions.find((template) => template.id === invitation.templateId)?.name || "선택한 템플릿"}</dd></div><div><dt>행사 종류</dt><dd>{eventConfig.label}</dd></div><div><dt>결제 금액</dt><dd>테스트 결제</dd></div></dl><p className="test-payment-notice"><strong>개발용 테스트 결제입니다.</strong> 실제 결제가 발생하지 않습니다.</p><p>테스트 결제 후에도 초대장은 공개되지 않으며, 최종 확인 후 직접 발행해야 합니다.</p>{flowNotice && <p className="payment-error" role="alert">{flowNotice}</p>}<div className="payment-actions"><button type="button" className="save-button" onClick={() => setCheckoutOpen(false)}>계속 수정하기</button><button type="button" className="publish-button" onClick={runMockPayment}>테스트 결제하기</button></div></div></div>}
+    {paymentComplete && <div className="publish-overlay" role="dialog" aria-modal="true" aria-labelledby="payment-complete-title"><div className="publish-card"><div className="publish-heart">✓</div><p className="section-kicker">PAYMENT COMPLETE</p><h2 id="payment-complete-title">결제가 완료되었습니다.</h2><p>아직 초대장은 공개되지 않았습니다.<br />내용을 최종 확인한 후 발행해 주세요.</p><button type="button" className="save-button full" onClick={() => { setPaymentComplete(false); setPreviewOpen(true); }}>최종 미리보기</button><button type="button" className="publish-button full" onClick={requestPublish}>초대장 발행하기</button></div></div>}
+    {publishConfirmOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="publish-confirm-title"><div className="publish-confirm-card"><h2 id="publish-confirm-title">초대장을 발행하시겠습니까?</h2><p>발행하면 초대장 링크가 활성화됩니다.</p>{flowNotice && <p className="payment-error" role="alert">{flowNotice}</p>}<div><button type="button" className="save-button" onClick={() => setPublishConfirmOpen(false)}>취소</button><button type="button" className="publish-button" onClick={publish}>발행하기</button></div></div></div>}
+    {submitting && <div className="save-loading" role="status" aria-live="polite"><div><i /><strong>{submitting === "publish" ? "초대장을 발행하고 있어요" : submitting === "payment" ? "테스트 결제를 처리하고 있어요" : "초대장을 저장하고 있어요"}</strong><span>잠시만 기다려 주세요.</span></div></div>}
+    {published && <div className="publish-overlay"><div className="publish-card"><div className="publish-heart">♥</div><p className="section-kicker">YOUR INVITATION IS READY</p><h2>초대장이<br /><em>발행되었습니다.</em></h2><p>이제 소중한 분들에게 링크를 공유해보세요.</p><div className="share-link"><span>/invite/{eventSlug}</span><button onClick={copyLink}>{copied ? "복사됨" : "링크 복사"}</button></div><a className="publish-button full" href={`/invite/${eventSlug}`}>초대장 보기</a><button className="publish-button full secondary" onClick={() => setPublished(false)}>완료했어요</button></div></div>}
   </main>;
 }

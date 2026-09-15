@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { getInvitationTitle } from "../../../lib/invitation-title";
+import { getMissingRequiredFields } from "../../../lib/event-config";
 
 const slugPattern = /^[a-z0-9-]{4,80}$/;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -72,12 +73,40 @@ export async function POST(request) {
   const { supabase, user } = auth;
 
   const body = await request.json().catch(() => null);
-  const { slug, invitation, publish = false } = body || {};
-  if (!slugPattern.test(slug || "") || !invitation || typeof invitation !== "object" || Array.isArray(invitation) || typeof publish !== "boolean") return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
+  const { slug, invitation, publish = false, action = "save" } = body || {};
+  if (!slugPattern.test(slug || "") || typeof publish !== "boolean") return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
+
+  if (action === "mock-payment") {
+    const { data: paymentEvent, error: paymentLookupError } = await supabase.from("events")
+      .select("id,owner_id,status,kind,template_id,settings,paid_at").eq("slug", slug).eq("owner_id", user.id).maybeSingle();
+    if (paymentLookupError) return json({ error: "초대장을 확인하지 못했어요." }, 500);
+    if (!paymentEvent) return json({ error: "초대장을 찾지 못했어요." }, 404);
+    if (paymentEvent.status === "paid") return json({ slug, status: "paid", paidAt: paymentEvent.paid_at });
+    if (paymentEvent.status === "published") return json({ error: "이미 발행된 초대장이에요." }, 409);
+    if (paymentEvent.status !== "draft") return json({ error: "현재 상태에서는 테스트 결제를 진행할 수 없어요." }, 409);
+    const paymentInvitation = { ...(paymentEvent.settings || {}), eventKind: paymentEvent.kind, templateId: paymentEvent.template_id || paymentEvent.settings?.templateId || "" };
+    const missingFields = getMissingRequiredFields(paymentInvitation, paymentEvent.kind);
+    if (missingFields.length) return json({ error: "발행을 위해 필요한 정보를 확인해 주세요.", missingFields }, 400);
+
+    const paidAt = paymentEvent.paid_at || new Date().toISOString();
+    const { data: paidEvent, error: paymentError } = await supabase.from("events").update({ status: "paid", paid_at: paidAt })
+      .eq("id", paymentEvent.id).eq("owner_id", user.id).eq("status", "draft").select("status,paid_at").maybeSingle();
+    if (paymentError) return json({ error: "테스트 결제를 완료하지 못했어요." }, 500);
+    if (paidEvent) return json({ slug, status: paidEvent.status, paidAt: paidEvent.paid_at });
+
+    const { data: current } = await supabase.from("events").select("status,paid_at").eq("id", paymentEvent.id).eq("owner_id", user.id).maybeSingle();
+    if (current?.status === "paid") return json({ slug, status: current.status, paidAt: current.paid_at });
+    return json({ error: "초대장 상태가 변경되었어요. 새로고침 후 다시 시도해 주세요." }, 409);
+  }
+
+  if (action !== "save" || !invitation || typeof invitation !== "object" || Array.isArray(invitation)) return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
   if ((invitation.date !== undefined && typeof invitation.date !== "string") || (invitation.time !== undefined && typeof invitation.time !== "string")) return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
-  if (publish && (!invitation.date || !invitation.time)) return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
   const eventKind = invitation.eventKind || "wedding";
   if (!eventKinds.has(eventKind)) return json({ error: "지원하지 않는 행사 종류예요." }, 400);
+  if (publish) {
+    const missingFields = getMissingRequiredFields(invitation, eventKind);
+    if (missingFields.length) return json({ error: "발행을 위해 필요한 정보를 확인해 주세요.", missingFields }, 400);
+  }
   const hasTemplateId = Object.prototype.hasOwnProperty.call(invitation, "templateId");
   const templateId = invitation.templateId || null;
   if (templateId && !uuidPattern.test(templateId)) return json({ error: "선택한 템플릿 정보가 올바르지 않아요." }, 400);
@@ -123,6 +152,10 @@ export async function POST(request) {
     : await saveQuery.select("status").maybeSingle();
 
   if (saveError) return json({ error: "초대장을 저장하지 못했어요." }, 500);
+  if (!saved && publish) {
+    const { data: current } = await supabase.from("events").select("status,published_at,service_started_at").eq("slug", slug).eq("owner_id", user.id).maybeSingle();
+    if (current?.status === "published") return json({ slug, status: current.status, publishedAt: current.published_at, serviceStartedAt: current.service_started_at });
+  }
   if (!saved) return json({ error: "초대장 상태가 변경되었어요. 새로고침 후 다시 시도해 주세요." }, 409);
   return json({ slug, status: saved.status });
 }

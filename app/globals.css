@@ -359,3 +359,28 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   .classic-section,.classic-001 .public-accounts{padding-right:20px;padding-left:20px}
   .classic-couple-title{gap:8px}
 }
+/* GAP ⑦-B mock payment and final publication flow */
+.full-preview-toolbar>div{display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.full-preview-toolbar button.secondary{background:#f1e1d8;color:#765449}
+.full-preview-notice{z-index:1;margin:0;padding:10px 18px;background:#fff1ec;color:#b64f47;font-size:12px;font-weight:700;text-align:center}
+.payment-card,.publish-confirm-card{width:min(100%,430px);min-width:0;padding:38px 34px;border-radius:22px;background:#fffaf5;box-shadow:0 28px 70px rgba(54,35,27,.25);box-sizing:border-box}
+.payment-card h2,.publish-confirm-card h2{margin:8px 0 20px;font-size:29px;text-align:center}
+.payment-card>p:not(.section-kicker),.publish-confirm-card>p{color:#8d7468;font-size:13px;line-height:1.65;text-align:center}
+.payment-card dl{margin:0 0 20px;border-top:1px solid #ead8ce}
+.payment-card dl>div{display:grid;grid-template-columns:90px minmax(0,1fr);gap:12px;padding:13px 3px;border-bottom:1px solid #ead8ce;text-align:left}
+.payment-card dt{color:#9b8176;font-size:12px}
+.payment-card dd{min-width:0;margin:0;color:#5f4439;font-size:13px;font-weight:700;overflow-wrap:anywhere}
+.payment-card .test-payment-notice{margin:20px 0 10px;padding:13px;border-radius:10px;background:#fff0e8;color:#80594d}
+.test-payment-notice strong{display:block;margin-bottom:3px;color:#d36358}
+.payment-actions,.publish-confirm-card>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:22px}
+.payment-actions button,.publish-confirm-card button{min-width:0}
+.payment-error{margin:12px 0 0!important;color:#c94f48!important;font-weight:700}
+.save-button.full{display:flex;width:100%;min-height:48px;margin-top:6px;align-items:center;justify-content:center}
+.create-page .save-loading{z-index:90}
+@media(max-width:520px){
+  .full-preview-toolbar{align-items:flex-start;gap:9px;padding-right:12px;padding-left:12px}
+  .full-preview-toolbar>div{min-width:0;gap:6px}
+  .full-preview-toolbar button{padding:9px 8px;font-size:11px}
+  .payment-card,.publish-confirm-card{padding:30px 20px;border-radius:18px}
+  .payment-card h2,.publish-confirm-card h2{font-size:25px}
+}
