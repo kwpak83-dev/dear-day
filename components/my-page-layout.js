@@ -2,7 +2,7 @@ const menuItems = [
   { key: "invitations", label: "내 초대장", href: "/my-invitations" },
   { key: "guests", label: "하객 관리", href: "/guest-management" },
   { key: "billing", label: "결제 / 보관" },
-  { key: "profile", label: "내 정보" },
+  { key: "profile", label: "내 정보", href: "/my-profile" },
   { key: "inquiries", label: "문의내역" },
 ];
 
