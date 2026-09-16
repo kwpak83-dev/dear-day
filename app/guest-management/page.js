@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
+import MyPageLayout from "../../components/my-page-layout";
 
 const FILTERS = [["all", "전체"], ["attending", "참석"], ["not_attending", "불참"]];
 const emptySummary = { total: 0, attending: 0, notAttending: 0, partySize: 0 };
@@ -81,7 +82,7 @@ export default function GuestManagement() {
     finally { setDownloading(false); }
   };
 
-  return <main className="guest-management-page"><header className="create-header"><a className="brand" href="/"><img src="/dear-day-logo.png" alt="디어데이" /></a><div className="create-user"><a href="/my-invitations">내 초대장</a><a href="/">나가기</a></div></header><section className="guest-management-content">
+  return <MyPageLayout current="guests"><section className="guest-management-content">
     <p className="section-kicker">GUEST MANAGEMENT</p><h1>하객 관리</h1><p className="guest-management-intro">초대장에 전달된 참석 여부를 확인하세요.</p>
     {notice && <div className="my-notice"><p>{notice}</p>{loginRequired && <a className="my-login-button" href="/?login=required&returnUrl=%2Fguest-management">다시 로그인하기</a>}</div>}
     {events.length > 0 && <><label className="guest-event-select"><span>초대장 선택</span><select value={selectedSlug} onChange={(event) => chooseEvent(event.target.value)}>{events.map((event) => <option key={event.slug} value={event.slug}>{event.title}</option>)}</select></label>{selectedEvent && <p className="guest-rsvp-state">RSVP {selectedEvent.rsvpEnabled ? "ON" : "OFF · 기존 응답은 계속 확인할 수 있어요."}</p>}
@@ -90,5 +91,5 @@ export default function GuestManagement() {
       {rsvps.length ? <div className="guest-rsvp-list">{rsvps.map((rsvp) => <article key={rsvp.id}><header><strong>{rsvp.guestName}</strong><span className={`guest-rsvp-status ${rsvp.status}`}>{rsvp.status === "attending" ? "참석" : "불참"}</span></header><dl><div><dt>참석 인원</dt><dd>{rsvp.status === "attending" ? `${rsvp.partySize}명` : "-"}</dd></div><div><dt>연락처</dt><dd>{rsvp.phone || "-"}</dd></div><div className="guest-message"><dt>전달사항</dt><dd>{rsvp.message || "-"}</dd></div><div><dt>제출 시각</dt><dd>{formatDateTime(rsvp.createdAt)}</dd></div><div><dt>최근 수정</dt><dd>{formatDateTime(rsvp.updatedAt)}</dd></div></dl></article>)}</div> : <p className="guest-empty">아직 전달된 참석 여부가 없습니다.</p>}
       <section className="guestbook-management"><div className="guestbook-management-heading"><div><p className="section-kicker">GUESTBOOK</p><h2>방명록 관리</h2></div><span>{guestbookEntries.length}건</span></div>{guestbookNotice && <p className="guestbook-notice" role="status">{guestbookNotice}</p>}{guestbookEntries.length ? <div className="guestbook-management-list">{guestbookEntries.map((entry) => <article key={entry.id}><header><strong>{entry.authorName}</strong><time>{formatDateTime(entry.createdAt)}</time></header><p>{entry.message}</p><button type="button" onClick={() => deleteGuestbookEntry(entry)}>삭제</button></article>)}</div> : <p className="guest-empty">아직 남겨진 방명록이 없습니다.</p>}</section>
     </>}
-  </section></main>;
+  </section></MyPageLayout>;
 }

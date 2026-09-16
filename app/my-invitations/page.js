@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import { getInvitationTitle } from "../../lib/invitation-title";
 import ShareActions from "../../components/share-actions";
+import MyPageLayout from "../../components/my-page-layout";
 
 const STATUS_LABELS = {
   draft: "제작중",
@@ -92,8 +93,8 @@ export default function MyInvitations() {
     }
   };
 
-  return <main className="my-page">
-    <header className="create-header"><a className="brand" href="/"><img src="/dear-day-logo.png" alt="디어데이" /></a><div className="create-user"><a href="/guest-management">하객 관리</a><a href="/create">새 초대장 만들기</a><a href="/">나가기</a></div></header>
+  return <MyPageLayout current="invitations">
+
     <section className="my-content">
       <p className="section-kicker">MY INVITATIONS</p><h1>내 초대장</h1>
       <p className="my-intro">임시저장한 초대장을 이어서 편집하거나, 발행한 초대장을 확인하세요.</p>
@@ -122,5 +123,5 @@ export default function MyInvitations() {
         <div><button type="button" onClick={() => setDeleteTarget(null)} disabled={Boolean(deletingSlug)}>취소</button><button type="button" className="danger" onClick={deleteDraft} disabled={Boolean(deletingSlug)}>{deletingSlug ? "삭제 중..." : "삭제하기"}</button></div>
       </div>
     </div>}
-  </main>;
+  </MyPageLayout>;
 }
