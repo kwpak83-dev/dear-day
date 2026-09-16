@@ -13,11 +13,14 @@ const getProviderLabel = (user) => {
 
 const getDisplayName = (user) => {
   const metadata = user?.user_metadata || {};
+  if (metadata.provider === "naver") return metadata.name || metadata.nickname || "";
   return metadata.full_name || metadata.name || metadata.user_name || metadata.nickname || "";
 };
 
 const getDisplayEmail = (user) => {
-  const email = user?.email || user?.user_metadata?.email || "";
+  const email = user?.user_metadata?.provider === "naver"
+    ? user.user_metadata.email || ""
+    : user?.email || user?.user_metadata?.email || "";
   return email.endsWith("@accounts.dear-day.com") ? "" : email;
 };
 

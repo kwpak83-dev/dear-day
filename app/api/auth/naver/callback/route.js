@@ -43,7 +43,16 @@ export async function GET(request) {
 
   const supabase = createClient(supabaseUrl, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
   const email = "naver-" + naverId + "@accounts.dear-day.com";
-  const metadata = { provider: "naver", provider_id: naverId };
+  const profileValue = (value, maxLength) => typeof value === "string" && value.trim().length <= maxLength ? value.trim() || null : null;
+  const naverProfile = profile.response;
+  const profileEmail = profileValue(naverProfile.email, 254);
+  const metadata = {
+    provider: "naver",
+    provider_id: naverId,
+    name: profileValue(naverProfile.name, 100),
+    nickname: profileValue(naverProfile.nickname, 100),
+    email: profileEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profileEmail) ? profileEmail : null,
+  };
   const { error: createError } = await supabase.auth.admin.createUser({ email, email_confirm: true, user_metadata: metadata });
 
   if (createError) {
@@ -52,7 +61,11 @@ export async function GET(request) {
 
   const origin = new URL(request.url).origin;
   const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({ type: "magiclink", email, options: { redirectTo: origin + returnPath } });
-  if (linkError || !linkData?.properties?.action_link) return failure(request, "session-link");
+  if (linkError || !linkData?.properties?.action_link || !linkData.user?.id) return failure(request, "session-link");
+  const { error: updateError } = await supabase.auth.admin.updateUserById(linkData.user.id, {
+    user_metadata: { ...linkData.user.user_metadata, ...metadata },
+  });
+  if (updateError) return failure(request, "profile-sync");
 
   const response = NextResponse.redirect(linkData.properties.action_link);
   response.cookies.set("dear-day-naver-state", "", { maxAge: 0, path: "/" });
