@@ -6,8 +6,7 @@ import Gallery from "./gallery";
 import AccountCopy from "./account-copy";
 import AddressCopy from "./address-copy";
 import LinkCopy from "./link-copy";
-import RsvpForm from "./rsvp-form";
-import Guestbook from "./guestbook";
+import OptionalInvitationSections from "./optional-invitation-sections";
 import { getInvitationTitle } from "../../../lib/invitation-title";
 
 export default async function InvitationPage({ params, searchParams }) {
@@ -35,7 +34,7 @@ export default async function InvitationPage({ params, searchParams }) {
   return <main className="public-invitation shared-public-invitation">
     {ownerView && <nav className="owner-return-nav" aria-label="DearDay 관리 화면으로 돌아가기"><a href="/my-invitations">내 초대장</a><a href="/">DearDay 홈</a></nav>}
     <div className="full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} placeActions={<><AddressCopy invitation={invitation} /><InvitationMap address={invitation.venueAddress} /></>}>
-      <div className="public-invitation-sections"><Gallery photos={galleryPhotos} /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} />{invitation.rsvpEnabled === true && <RsvpForm slug={slug} startsAt={event.starts_at} />}{invitation.guestbookEnabled !== false && <Guestbook slug={slug} />}<LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} /><footer>디어데이와 함께하는 소중한 순간</footer></div>
+      <div className="public-invitation-sections"><Gallery photos={galleryPhotos} /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} slug={slug} startsAt={event.starts_at} /><LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} /><footer>디어데이와 함께하는 소중한 순간</footer></div>
     </InvitationRenderer></div>
   </main>;
 }
