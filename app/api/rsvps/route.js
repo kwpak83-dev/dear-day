@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { isPublicPeriodExpired } from "../../../lib/invitation-retention";
 
 const slugPattern = /^[a-z0-9-]{4,80}$/;
 const tokenPattern = /^[A-Za-z0-9_-]{43}$/;
@@ -39,9 +40,10 @@ function validateFields(fields) {
   return "";
 }
 async function getEvent(supabase, slug) {
-  const { data, error } = await supabase.from("events").select("id,starts_at,settings").eq("slug", slug).eq("status", "published").maybeSingle();
+  const { data, error } = await supabase.from("events").select("id,status,starts_at,service_expires_at,grace_ends_at,settings").eq("slug", slug).eq("status", "published").maybeSingle();
   if (error) return { error: "초대장을 확인하지 못했어요.", status: 500 };
   if (!data) return { error: "공개된 초대장을 찾지 못했어요.", status: 404 };
+  if (isPublicPeriodExpired(data)) return { error: "초대장 이용기간이 종료되어 참석 여부를 처리할 수 없어요.", status: 410 };
   if (data.settings?.rsvpEnabled !== true) return { error: "현재 RSVP 접수가 비활성화되어 있어요.", status: 403 };
   const startsAt = data.starts_at ? new Date(data.starts_at).getTime() : NaN;
   if (!Number.isFinite(startsAt)) return { error: "행사 시간을 확인할 수 없어 참석 여부를 처리할 수 없어요.", status: 409 };

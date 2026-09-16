@@ -1,6 +1,7 @@
 import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { isPublicPeriodExpired } from "../../../lib/invitation-retention";
 
 const slugPattern = /^[a-z0-9-]{4,80}$/;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -28,13 +29,11 @@ function passwordMatches(password, stored) {
   return timingSafeEqual(scryptSync(password, salt, 32), Buffer.from(expected, "hex"));
 }
 async function getEvent(supabase, slug) {
-  const { data, error } = await supabase.from("events").select("id,starts_at,ends_at,settings").eq("slug", slug).eq("status", "published").maybeSingle();
+  const { data, error } = await supabase.from("events").select("id,status,starts_at,service_expires_at,grace_ends_at,settings").eq("slug", slug).eq("status", "published").maybeSingle();
   if (error) return { error: "초대장을 확인하지 못했어요.", status: 500 };
   if (!data) return { error: "공개된 초대장을 찾지 못했어요.", status: 404 };
   if (data.settings?.guestbookEnabled === false) return { error: "현재 방명록이 비활성화되어 있어요.", status: 403 };
-  const fallbackEnd = data.starts_at ? new Date(data.starts_at).getTime() + 14 * 24 * 60 * 60 * 1000 : NaN;
-  const activeUntil = data.ends_at ? new Date(data.ends_at).getTime() : fallbackEnd;
-  if (!Number.isFinite(activeUntil) || activeUntil <= Date.now()) return { error: "초대장 이용기간이 종료되어 방명록을 이용할 수 없어요.", status: 410 };
+  if (isPublicPeriodExpired(data)) return { error: "초대장 이용기간이 종료되어 방명록을 이용할 수 없어요.", status: 410 };
   return { event: data };
 }
 function validate(body) {

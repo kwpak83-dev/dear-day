@@ -5,6 +5,7 @@ import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import { getInvitationTitle } from "../../lib/invitation-title";
 import ShareActions from "../../components/share-actions";
 import MyPageLayout from "../../components/my-page-layout";
+import { getRetentionState } from "../../lib/invitation-retention";
 
 const STATUS_LABELS = {
   draft: "제작중",
@@ -14,6 +15,15 @@ const STATUS_LABELS = {
   archived: "만료",
 };
 
+function retentionNotice(event) {
+  const { phase, expiresAt, graceEndsAt } = getRetentionState(event);
+  if (phase === "not-applicable") return "";
+  if (phase === "unknown") return "이용기간 확인 필요";
+  const format = (value) => new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium" }).format(new Date(value));
+  if (phase === "active") return `정상 이용중 · 만료일 ${format(expiresAt)}`;
+  if (phase === "grace-period") return `이용기간 만료 · 유예기간 (종료일 ${format(graceEndsAt)})`;
+  return `이용기간 만료 · 유예기간 종료 ${format(graceEndsAt)}`;
+}
 export default function MyInvitations() {
   const [events, setEvents] = useState([]);
   const [notice, setNotice] = useState("초대장을 불러오는 중이에요.");
@@ -104,6 +114,7 @@ export default function MyInvitations() {
         <span className={`status ${event.status}`}>{STATUS_LABELS[event.status] || event.status}</span>
         <h2>{getInvitationTitle(event.settings, event.kind)}</h2>
         <p>{event.starts_at ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "long", timeStyle: "short" }).format(new Date(event.starts_at)) : "날짜 미정"}</p>
+        {retentionNotice(event) && <p>{retentionNotice(event)}</p>}
         <div><a href={`/create?slug=${event.slug}`}>편집하기</a>{event.status === "paid" && <><a href={`/create?slug=${event.slug}&preview=final`}>최종 미리보기</a><a href={`/create?slug=${event.slug}&publish=ready`}>초대장 발행하기</a></>}{event.status === "published" && <><a href={`/invite/${event.slug}?from=owner`}>초대장 보기</a><a href={`/guest-management?slug=${event.slug}`}>하객 관리</a><ShareActions path={`/invite/${event.slug}`} title={getInvitationTitle(event.settings, event.kind)} className="invitation-card-share" /><button type="button" className="invitation-state-button" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>발행 중지</button></>}{event.status === "suspended" && <button type="button" className="invitation-state-button restore" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>다시 발행하기</button>}{event.status === "draft" && <button type="button" className="invitation-delete-button" onClick={() => { setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}>삭제하기</button>}</div>
       </article>)}</div>
     </section>

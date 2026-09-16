@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { getInvitationTitle } from "../../../lib/invitation-title";
 import { getMissingRequiredFields } from "../../../lib/event-config";
+import { calculateRetentionDates } from "../../../lib/invitation-retention";
 
 const slugPattern = /^[a-z0-9-]{4,80}$/;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -60,7 +61,7 @@ export async function GET(request) {
   const auth = await getAuthenticatedClient(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
   const slug = new URL(request.url).searchParams.get("slug");
-  let query = auth.supabase.from("events").select("slug,title,status,kind,template_id,starts_at,paid_at,published_at,service_started_at,updated_at,settings").eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
+  let query = auth.supabase.from("events").select("slug,title,status,kind,template_id,starts_at,paid_at,published_at,service_started_at,service_expires_at,grace_ends_at,updated_at,settings").eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
   if (slug) query = query.eq("slug", slug).limit(1);
   const { data, error } = await query;
   if (error) return json({ error: "초대장을 불러오지 못했어요." }, 500);
@@ -134,7 +135,7 @@ export async function POST(request) {
     if (Number.isNaN(new Date(startsAt).getTime())) return json({ error: "예식 날짜 또는 시간을 확인해 주세요." }, 400);
   }
 
-  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id,status,paid_at,published_at,service_started_at").eq("slug", slug).limit(1);
+  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id,status,paid_at,published_at,service_started_at,service_expires_at").eq("slug", slug).limit(1);
   if (lookupError) return json({ error: "기존 초대장을 확인하지 못했어요." }, 500);
   const existing = matches?.[0];
   if (existing && existing.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 수정할 수 없어요." }, 403);
@@ -145,7 +146,13 @@ export async function POST(request) {
     if (!templates?.[0]) return json({ error: "선택한 템플릿을 찾지 못했어요." }, 400);
   }
 
+  const retentionDates = (publish && existing?.status === "paid") || ["published", "suspended"].includes(existing?.status)
+    ? calculateRetentionDates(startsAt, existing?.service_expires_at)
+    : null;
+  if (publish && existing?.status === "paid" && !retentionDates) return json({ error: "행사 날짜와 시간을 확인해 주세요." }, 400);
+
   const event = {
+    ...(retentionDates || {}),
     kind: eventKind,
     ...(hasTemplateId ? { template_id: templateId } : {}),
     title: getInvitationTitle(invitation, eventKind),
