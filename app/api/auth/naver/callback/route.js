@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { getSafeAuthReturnPath } from "../../../../../lib/auth-return-url";
 
 const NAVER_TOKEN_URL = "https://nid.naver.com/oauth2.0/token";
 const NAVER_PROFILE_URL = "https://openapi.naver.com/v1/nid/me";
@@ -14,6 +15,7 @@ export async function GET(request) {
   const code = searchParams.get("code");
   const state = searchParams.get("state");
   const expectedState = request.cookies.get("dear-day-naver-state")?.value;
+  const returnPath = getSafeAuthReturnPath(request.cookies.get("dear-day-naver-return")?.value);
   const clientId = process.env.NAVER_CLIENT_ID;
   const clientSecret = process.env.NAVER_CLIENT_SECRET;
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -49,10 +51,11 @@ export async function GET(request) {
   }
 
   const origin = new URL(request.url).origin;
-  const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({ type: "magiclink", email, options: { redirectTo: origin + "/create" } });
+  const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({ type: "magiclink", email, options: { redirectTo: origin + returnPath } });
   if (linkError || !linkData?.properties?.action_link) return failure(request, "session-link");
 
   const response = NextResponse.redirect(linkData.properties.action_link);
   response.cookies.set("dear-day-naver-state", "", { maxAge: 0, path: "/" });
+  response.cookies.set("dear-day-naver-return", "", { maxAge: 0, path: "/" });
   return response;
 }

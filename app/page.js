@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { getSupabaseBrowserClient } from "../lib/supabase/browser";
+import { DEFAULT_AUTH_RETURN_PATH, getSafeAuthReturnPath } from "../lib/auth-return-url";
 
 const invitationTypes = [["Wedding", "결혼식", "꽃다발", "wedding"], ["1st Birthday", "돌잔치", "첫돌", "first"], ["Birthday", "생일", "케이크", "birthday"], ["Gathering", "모임 / 동창회", "건배", "gathering"], ["Party", "파티", "파티", "party"], ["Custom", "직접 만들기", "✉", "custom"]];
 const steps = [["01", "▧", "템플릿 선택", "마음에 드는 디자인을 골라주세요."], ["02", "✎", "내용 입력", "날짜, 장소, 사진 등 간단히 입력하세요."], ["03", "➤", "완성하고 공유", "카카오톡, 링크로 바로 공유하세요."]];
@@ -14,6 +15,7 @@ export default function Home() {
   const [notice, setNotice] = useState("");
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
+  const [authReturnPath, setAuthReturnPath] = useState(DEFAULT_AUTH_RETURN_PATH);
 
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();
@@ -25,20 +27,26 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("login") === "required") setAuthOpen(true);
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get("login") === "required") {
+      setAuthReturnPath(getSafeAuthReturnPath(searchParams.get("returnUrl")));
+      setAuthOpen(true);
+    }
   }, []);
 
   const providerLabel = useMemo(() => {
     const provider = user?.app_metadata?.provider || user?.user_metadata?.provider;
     return provider === "kakao" ? "카카오" : provider === "naver" ? "네이버" : "로그인";
   }, [user]);
-  const start = () => { if (!authReady) return; if (user) return window.location.assign("/create"); setAuthOpen(true); };
+  const openLogin = (returnPath = DEFAULT_AUTH_RETURN_PATH) => { setAuthReturnPath(getSafeAuthReturnPath(returnPath)); setAuthOpen(true); };
+  const start = () => { if (!authReady) return; if (user) return window.location.assign("/create"); openLogin("/create"); };
   const chooseLogin = async (provider) => {
-    if (provider === "naver") { setAuthLoading(provider); window.location.assign("/api/auth/naver"); return; }
+    const returnPath = getSafeAuthReturnPath(authReturnPath);
+    if (provider === "naver") { setAuthLoading(provider); window.location.assign(`/api/auth/naver?returnUrl=${encodeURIComponent(returnPath)}`); return; }
     const supabase = getSupabaseBrowserClient();
     if (!supabase) return setAuthMessage("로그인 연결을 준비 중이에요. 잠시 후 다시 시도해주세요.");
     setAuthLoading(provider); setAuthMessage("");
-    const { error } = await supabase.auth.signInWithOAuth({ provider, options: { redirectTo: `${window.location.origin}/create` } });
+    const { error } = await supabase.auth.signInWithOAuth({ provider, options: { redirectTo: `${window.location.origin}${returnPath}` } });
     if (error) { setAuthLoading(""); setAuthMessage("카카오 로그인 설정을 확인해주세요."); }
   };
   const signOut = async () => { const supabase = getSupabaseBrowserClient(); if (supabase) await supabase.auth.signOut(); setUser(null); setMenuOpen(false); };
@@ -48,9 +56,9 @@ export default function Home() {
     <header className="landing-header">
       <a className="landing-brand" href="#top" aria-label="디어데이 홈"><span className="brand-mark">♡</span><span><b>Dear Day</b><small>모든 특별한 날을 위한 초대장</small></span></a>
       <nav className="landing-nav"><a href="#templates">템플릿</a><a href="#how">이용방법</a><button onClick={comingSoon}>요금제</button><a href="#story">Dear Day 이야기</a></nav>
-      <div className="landing-actions">{user ? <><span>{providerLabel} 로그인</span><a href="/my-invitations">내 초대장</a><button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => setAuthOpen(true)}>로그인</button></>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>
+      <div className="landing-actions">{user ? <><span>{providerLabel} 로그인</span><a href="/my-invitations">내 초대장</a><button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>
       <button className="landing-menu" aria-label="메뉴 열기" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
-      {menuOpen && <div className="landing-mobile-nav"><a href="#templates" onClick={() => setMenuOpen(false)}>템플릿</a><a href="#how" onClick={() => setMenuOpen(false)}>이용방법</a><button onClick={comingSoon}>요금제</button><a href="#story" onClick={() => setMenuOpen(false)}>Dear Day 이야기</a>{user ? <><a href="/my-invitations">내 초대장</a><button onClick={signOut}>로그아웃</button></> : <button onClick={() => setAuthOpen(true)}>로그인</button>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>}
+      {menuOpen && <div className="landing-mobile-nav"><a href="#templates" onClick={() => setMenuOpen(false)}>템플릿</a><a href="#how" onClick={() => setMenuOpen(false)}>이용방법</a><button onClick={comingSoon}>요금제</button><a href="#story" onClick={() => setMenuOpen(false)}>Dear Day 이야기</a>{user ? <><a href="/my-invitations">내 초대장</a><button onClick={signOut}>로그아웃</button></> : <button onClick={() => openLogin()}>로그인</button>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>}
     </header>
 
     <section className="landing-hero" id="top"><div className="hero-lights" /><div className="hero-arch" /><div className="hero-flowers hero-flowers-one" /><div className="hero-flowers hero-flowers-two" /><div className="landing-shell hero-copy-v2"><p>SPECIAL DAYS,<br />MORE MEANINGFUL</p><hr /><h1>소중한 순간을<br />더 특별하게</h1><span>결혼식부터 돌잔치, 생일, 모임, 파티까지<br />몇 분 만에 만드는 나만의 모바일 초대장</span><button className="landing-primary" onClick={start}>지금, 시작하기 <b>→</b></button><small>EVERY MOMENT DESERVES AN INVITATION</small></div></section>
