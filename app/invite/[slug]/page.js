@@ -16,9 +16,13 @@ export default async function InvitationPage({ params, searchParams }) {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !serviceRoleKey) notFound();
   const supabase = createClient(url, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
-  const { data: events } = await supabase.from("events").select("id,kind,template_id,starts_at,ends_at,settings").eq("slug", slug).eq("status", "published").limit(1);
+  const { data: events } = await supabase.from("events").select("id,status,kind,template_id,starts_at,ends_at,settings").eq("slug", slug).in("status", ["published", "suspended"]).limit(1);
   const event = events?.[0];
   if (!event) notFound();
+  if (event.status === "suspended") return <main className="public-invitation suspended-invitation">
+    {ownerView && <nav className="owner-return-nav" aria-label="DearDay 관리 화면으로 돌아가기"><a href="/my-invitations">내 초대장</a><a href="/">DearDay 홈</a></nav>}
+    <section><p className="section-kicker">DEARDAY INVITATION</p><h1>현재 공개가 중지된<br />초대장입니다.</h1><p>초대장 소유자가 다시 발행하면<br />같은 주소에서 확인할 수 있습니다.</p></section>
+  </main>;
   const settings = event.settings || {};
   const invitation = {
     ...settings,

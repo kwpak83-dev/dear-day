@@ -76,6 +76,23 @@ export async function POST(request) {
   const { slug, invitation, publish = false, action = "save" } = body || {};
   if (!slugPattern.test(slug || "") || typeof publish !== "boolean") return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
 
+  if (action === "suspend" || action === "restore") {
+    const sourceStatus = action === "suspend" ? "published" : "suspended";
+    const targetStatus = action === "suspend" ? "suspended" : "published";
+    const { data: ownedEvent, error: lookupError } = await supabase.from("events")
+      .select("id,status").eq("slug", slug).eq("owner_id", user.id).maybeSingle();
+    if (lookupError) return json({ error: "초대장을 확인하지 못했어요." }, 500);
+    if (!ownedEvent) return json({ error: "초대장을 찾지 못했어요." }, 404);
+    if (ownedEvent.status === targetStatus) return json({ slug, status: targetStatus });
+    if (ownedEvent.status !== sourceStatus) return json({ error: "현재 상태에서는 발행 상태를 변경할 수 없어요." }, 409);
+
+    const { data: changed, error: changeError } = await supabase.from("events").update({ status: targetStatus })
+      .eq("id", ownedEvent.id).eq("owner_id", user.id).eq("status", sourceStatus).select("status").maybeSingle();
+    if (changeError) return json({ error: action === "suspend" ? "초대장 발행을 중지하지 못했어요." : "초대장을 다시 발행하지 못했어요." }, 500);
+    if (!changed) return json({ error: "초대장 상태가 변경되었어요. 새로고침 후 다시 시도해 주세요." }, 409);
+    return json({ slug, status: changed.status });
+  }
+
   if (action === "mock-payment") {
     const { data: paymentEvent, error: paymentLookupError } = await supabase.from("events")
       .select("id,owner_id,status,kind,template_id,settings,paid_at").eq("slug", slug).eq("owner_id", user.id).maybeSingle();
