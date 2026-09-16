@@ -58,6 +58,7 @@ export default function CreateInvitation() {
   const [flowNotice, setFlowNotice] = useState("");
   const [addressCopied, setAddressCopied] = useState(false);
   const [saveNotice, setSaveNotice] = useState("" );
+  const [saveToastVisible, setSaveToastVisible] = useState(false);
   const [loginRequired, setLoginRequired] = useState(false);
   const [mapNotice, setMapNotice] = useState("주소를 입력하면 지도를 확인할 수 있어요.");
   const [mapRevision, setMapRevision] = useState(0);
@@ -72,6 +73,7 @@ export default function CreateInvitation() {
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [photoNotice, setPhotoNotice] = useState("");
   const photoBusy = useRef(false);
+  const saveToastTimer = useRef(null);
   const [mapContainer, setMapContainer] = useState(null);
   const mapInstance = useRef(null);
   const mapMarker = useRef(null);
@@ -123,6 +125,7 @@ export default function CreateInvitation() {
       }
     }
   }, []);
+  useEffect(() => () => window.clearTimeout(saveToastTimer.current), []);
   useEffect(() => {
     if (!previewOpen && !checkoutOpen && !paymentComplete && !publishConfirmOpen && !published) return;
     const previousOverflow = document.body.style.overflow;
@@ -263,8 +266,14 @@ export default function CreateInvitation() {
     return <Field key={field.key} label={field.label}><input type={field.type} inputMode={field.inputMode} placeholder={field.placeholder} value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} /></Field>;
   };
 
-  const saveDraft = async ({ showLoading = true } = {}) => {
+  const showDraftSavedToast = () => {
+    window.clearTimeout(saveToastTimer.current);
+    setSaveToastVisible(true);
+    saveToastTimer.current = window.setTimeout(() => setSaveToastVisible(false), 3800);
+  };
+  const saveDraft = async ({ showLoading = true, showSuccessToast = false } = {}) => {
     if (galleryBusy || photoBusy.current || (showLoading && submitting)) return;
+    if (showSuccessToast) { window.clearTimeout(saveToastTimer.current); setSaveToastVisible(false); }
     if (showLoading) setSubmitting("draft");
     try {
       window.localStorage.setItem("dear-day-draft", JSON.stringify(invitation));
@@ -277,7 +286,11 @@ export default function CreateInvitation() {
       const response = await fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ slug, invitation }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) return setSaveNotice(result.error || "저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
-      setLoginRequired(false); window.localStorage.setItem("dear-day-event-slug", slug); setEventSlug(slug); setEventStatus(result.status || "draft"); setSaveNotice(result.status === "paid" ? "결제완료 상태로 저장했어요." : result.status === "published" ? "발행된 초대장을 저장했어요." : "온라인 임시 저장 완료"); return slug;
+      const savedStatus = result.status || "draft";
+      setLoginRequired(false); window.localStorage.setItem("dear-day-event-slug", slug); setEventSlug(slug); setEventStatus(savedStatus);
+      if (savedStatus === "draft" && showSuccessToast) { setSaveNotice(""); showDraftSavedToast(); }
+      else setSaveNotice(savedStatus === "paid" ? "결제완료 상태로 저장했어요." : savedStatus === "published" ? "발행된 초대장을 저장했어요." : "");
+      return slug;
     } finally {
       if (showLoading) setSubmitting("");
     }
@@ -382,7 +395,7 @@ export default function CreateInvitation() {
         <div className="form-section rsvp-setting"><h2>참석 여부 확인 <small>선택</small></h2><label><input type="checkbox" checked={invitation.rsvpEnabled === true} onChange={(event) => update("rsvpEnabled", event.target.checked)} /><span><strong>공개 초대장에서 RSVP 받기</strong><small>하객이 로그인 없이 참석 여부를 전달할 수 있어요.</small></span></label></div>
         <div className="form-section rsvp-setting"><h2>방명록 <small>선택</small></h2><label><input type="checkbox" checked={invitation.guestbookEnabled !== false} onChange={(event) => update("guestbookEnabled", event.target.checked)} /><span><strong>공개 초대장에서 방명록 받기</strong><small>하객이 로그인 없이 메시지를 남길 수 있어요. OFF로 바꿔도 기존 글은 유지돼요.</small></span></label></div>
         {eventConfig.accountMode && <div className="form-section"><h2>마음 전하실 곳 <small>선택</small></h2><div className="account-editor"><strong>{eventConfig.accountMode === "parents" ? "부모/보호자 1" : "신랑 측"}</strong><div className="field-grid"><Field label="은행명"><input placeholder="예: 국민은행" value={invitation.groomBank} onChange={(e) => update("groomBank", e.target.value)} /></Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent1Name || "예금주 이름" : invitation.groom || "신랑 이름"} value={invitation.groomAccountHolder} onChange={(e) => update("groomAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.groomAccount} onChange={(e) => update("groomAccount", e.target.value)} /></Field></div><div className="account-editor"><strong>{eventConfig.accountMode === "parents" ? "부모/보호자 2" : "신부 측"}</strong><div className="field-grid"><Field label="은행명"><input placeholder="예: 신한은행" value={invitation.brideBank} onChange={(e) => update("brideBank", e.target.value)} /></Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent2Name || "예금주 이름" : invitation.bride || "신부 이름"} value={invitation.brideAccountHolder} onChange={(e) => update("brideAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.brideAccount} onChange={(e) => update("brideAccount", e.target.value)} /></Field></div></div>}
-        <div className="editor-actions"><button type="button" className="save-button preview-button" onClick={() => { setFlowNotice(""); setPreviewOpen(true); }}>미리보기</button><button className="save-button" onClick={saveDraft} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>저장하기</button></div>{saveNotice && <p role="status">{saveNotice}</p>}{loginRequired && <button type="button" className="save-button" onClick={continueAfterLogin}>로그인하고 계속하기</button>}
+        <div className="editor-actions"><button type="button" className="save-button preview-button" onClick={() => { setFlowNotice(""); setPreviewOpen(true); }}>미리보기</button><button className="save-button" onClick={() => saveDraft({ showSuccessToast: true })} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>저장하기</button></div>{saveNotice && <p role="status">{saveNotice}</p>}{loginRequired && <button type="button" className="save-button" onClick={continueAfterLogin}>로그인하고 계속하기</button>}
       </section>
       <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div className="preview-content"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} placeActions={previewPlaceActions()}><><Gallery photos={galleryPhotos} idPrefix="live-preview-gallery" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} preview /></></InvitationRenderer></div></div></aside>
     </div>
@@ -395,6 +408,7 @@ export default function CreateInvitation() {
     {paymentComplete && <div className="publish-overlay" role="dialog" aria-modal="true" aria-labelledby="payment-complete-title"><div className="publish-card"><div className="publish-heart">✓</div><p className="section-kicker">PAYMENT COMPLETE</p><h2 id="payment-complete-title">결제가 완료되었습니다.</h2><p>아직 초대장은 공개되지 않았습니다.<br />내용을 최종 확인한 후 발행해 주세요.</p><button type="button" className="save-button full" onClick={() => { setPaymentComplete(false); setPreviewOpen(true); }}>최종 미리보기</button><button type="button" className="publish-button full" onClick={requestPublish}>초대장 발행하기</button></div></div>}
     {publishConfirmOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="publish-confirm-title"><div className="publish-confirm-card"><h2 id="publish-confirm-title">초대장을 발행하시겠습니까?</h2><p>발행하면 초대장 링크가 활성화됩니다.</p>{flowNotice && <p className="payment-error" role="alert">{flowNotice}</p>}<div><button type="button" className="save-button" onClick={() => setPublishConfirmOpen(false)}>취소</button><button type="button" className="publish-button" onClick={publish}>발행하기</button></div></div></div>}
     {submitting && <div className="save-loading" role="status" aria-live="polite"><div><i /><strong>{submitting === "publish" ? "초대장을 발행하고 있어요" : submitting === "payment" ? "테스트 결제를 처리하고 있어요" : "초대장을 저장하고 있어요"}</strong><span>잠시만 기다려 주세요.</span></div></div>}
+    {saveToastVisible && <div className="save-success-toast" role="status" aria-live="polite"><strong>임시 저장이 완료되었습니다.</strong><span>발행하려면 미리보기 → 발행 준비하기를 진행해 주세요.</span></div>}
     {published && <div className="publish-overlay"><div className="publish-card"><div className="publish-heart">♥</div><p className="section-kicker">YOUR INVITATION IS READY</p><h2>초대장이<br /><em>발행되었습니다.</em></h2><p>이제 소중한 분들에게 링크를 공유해보세요.</p><ShareActions path={`/invite/${eventSlug}`} title={getInvitationTitle(invitation, invitation.eventKind)} showPath /><a className="publish-button full" href={`/invite/${eventSlug}?from=owner`}>초대장 보기</a><button className="publish-button full secondary" onClick={() => setPublished(false)}>완료했어요</button></div></div>}
   </main>;
 }
