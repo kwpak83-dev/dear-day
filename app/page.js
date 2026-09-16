@@ -35,8 +35,10 @@ export default function Home() {
   }, []);
 
   const providerLabel = useMemo(() => {
-    const provider = user?.app_metadata?.provider || user?.user_metadata?.provider;
-    return provider === "kakao" ? "카카오" : provider === "naver" ? "네이버" : "로그인";
+    const providers = [user?.user_metadata?.provider, user?.app_metadata?.provider];
+    if (providers.includes("kakao")) return "카카오 로그인";
+    if (providers.includes("naver")) return "네이버 로그인";
+    return "로그인";
   }, [user]);
   const openLogin = (returnPath = DEFAULT_AUTH_RETURN_PATH) => { setAuthReturnPath(getSafeAuthReturnPath(returnPath)); setAuthOpen(true); };
   const start = () => { if (!authReady) return; if (user) return window.location.assign("/create"); openLogin("/create"); };
@@ -56,7 +58,7 @@ export default function Home() {
     <header className="landing-header">
       <a className="landing-brand" href="#top" aria-label="디어데이 홈"><span className="brand-mark">♡</span><span><b>Dear Day</b><small>모든 특별한 날을 위한 초대장</small></span></a>
       <nav className="landing-nav"><a href="#templates">템플릿</a><a href="#how">이용방법</a><button onClick={comingSoon}>요금제</button><a href="#story">Dear Day 이야기</a></nav>
-      <div className="landing-actions">{user ? <><span>{providerLabel} 로그인</span><a href="/my-invitations">내 초대장</a><button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>
+      <div className="landing-actions">{user ? <><span>{providerLabel}</span><a href="/my-invitations">내 초대장</a><button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>
       <button className="landing-menu" aria-label="메뉴 열기" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
       {menuOpen && <div className="landing-mobile-nav"><a href="#templates" onClick={() => setMenuOpen(false)}>템플릿</a><a href="#how" onClick={() => setMenuOpen(false)}>이용방법</a><button onClick={comingSoon}>요금제</button><a href="#story" onClick={() => setMenuOpen(false)}>Dear Day 이야기</a>{user ? <><a href="/my-invitations">내 초대장</a><button onClick={signOut}>로그아웃</button></> : <button onClick={() => openLogin()}>로그인</button>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>}
     </header>
