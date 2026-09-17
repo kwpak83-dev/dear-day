@@ -135,15 +135,21 @@ export async function POST(request) {
     if (Number.isNaN(new Date(startsAt).getTime())) return json({ error: "예식 날짜 또는 시간을 확인해 주세요." }, 400);
   }
 
-  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id,status,paid_at,published_at,service_started_at,service_expires_at").eq("slug", slug).limit(1);
+  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id,status,template_id,template_version_id,paid_at,published_at,service_started_at,service_expires_at").eq("slug", slug).limit(1);
   if (lookupError) return json({ error: "기존 초대장을 확인하지 못했어요." }, 500);
   const existing = matches?.[0];
   if (existing && existing.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 수정할 수 없어요." }, 403);
 
+  let templateVersionId = existing?.template_version_id || null;
   if (templateId) {
-    const { data: templates, error: templateError } = await supabase.from("templates").select("id").eq("id", templateId).limit(1);
+    const { data: templates, error: templateError } = await supabase.from("templates").select("id,current_sale_version_id").eq("id", templateId).limit(1);
     if (templateError) return json({ error: "템플릿을 확인하지 못했어요." }, 500);
     if (!templates?.[0]) return json({ error: "선택한 템플릿을 찾지 못했어요." }, 400);
+    if (!existing || existing.template_id !== templateId) {
+      templateVersionId = templates[0].current_sale_version_id || null;
+    }
+  } else if (hasTemplateId) {
+    templateVersionId = null;
   }
 
   const retentionDates = (publish && existing?.status === "paid") || ["published", "suspended"].includes(existing?.status)
@@ -154,7 +160,7 @@ export async function POST(request) {
   const event = {
     ...(retentionDates || {}),
     kind: eventKind,
-    ...(hasTemplateId ? { template_id: templateId } : {}),
+    ...(hasTemplateId ? { template_id: templateId, template_version_id: templateVersionId } : {}),
     title: getInvitationTitle(invitation, eventKind),
     starts_at: startsAt,
     settings: invitation,
