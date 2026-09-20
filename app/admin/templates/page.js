@@ -101,8 +101,8 @@ export default function AdminTemplatesPage() {
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "저장하기"}</button><button type="button" className="save-button" disabled={saving} onClick={cancel}>취소</button></div>
       </form>}
       {editing === "new" && <p>먼저 템플릿 기본정보를 저장한 뒤 Asset을 등록할 수 있어요.</p>}
-      {editing && editing !== "new" && <TemplateVersions key={editing} templateId={editing} assetRevision={assetRevision} assetChangesPending={assetChangesPending} />}
-      {editing && editing !== "new" && <TemplateAssets key={editing} templateId={editing} onOperation={(operation) => { assetOperations.current.push(operation); setAssetChangesPending(true); setAssetRevision((value) => value + 1); }} onBusyChange={(busy) => { assetBusy.current = busy; }} />}
+      {editing && editing !== "new" && <TemplateVersions key={`versions-${editing}`} templateId={editing} assetRevision={assetRevision} assetChangesPending={assetChangesPending} />}
+      {editing && editing !== "new" && <TemplateAssets key={`assets-${editing}`} templateId={editing} onOperation={(operation) => { assetOperations.current.push(operation); setAssetChangesPending(true); setAssetRevision((value) => value + 1); }} onBusyChange={(busy) => { assetBusy.current = busy; }} />}
       {state.templates.length ? <div style={{ display: "grid", gap: 12, marginTop: 16 }}>{state.templates.map((template) => <article key={template.id} style={cardStyle}><h2 style={{ margin: "0 0 10px", fontSize: 18 }}>{template.name}</h2><dl style={{ display: "grid", gridTemplateColumns: "110px 1fr", gap: "6px 10px", margin: "0 0 12px" }}><dt>Template key</dt><dd style={{ margin: 0, overflowWrap: "anywhere" }}>{template.template_key}</dd><dt>상태</dt><dd style={{ margin: 0 }}>{statusOptions.find(([value]) => value === template.status)?.[1] || template.status}</dd><dt>노출</dt><dd style={{ margin: 0 }}>{template.is_visible ? "노출" : "숨김"}</dd></dl><button type="button" className="save-button" onClick={() => openForm(template)}>수정하기</button></article>)}</div> : <p>등록된 템플릿이 없습니다.</p>}
     </>}
   </main>;
