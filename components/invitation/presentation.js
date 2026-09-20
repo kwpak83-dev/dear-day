@@ -4,6 +4,15 @@ const clean = (value) => typeof value === "string" ? value.trim() : value == nul
 const join = (values, separator = " · ") => values.map(clean).filter(Boolean).join(separator);
 const titledPerson = (title, person) => join(title && person ? [title, person] : [title || person]);
 
+function parentRelation(item, parentFields, personField, relation) {
+  const person = clean(item[personField]);
+  if (!person) return "";
+  const parents = parentFields.map(([nameField, deceasedField]) => {
+    const name = clean(item[nameField]);
+    return name ? `${item[deceasedField] === true ? "故 " : ""}${name}` : "";
+  }).filter(Boolean);
+  return parents.length ? `${parents.join(" · ")}의 ${relation} ${person}` : "";
+}
 function formatDate(value) {
   const raw = clean(value);
   if (!raw) return "";
@@ -13,7 +22,11 @@ function formatDate(value) {
 }
 
 const EVENT_PRESENTERS = {
-  wedding: (item) => ({ title: join([item.groom, item.bride], " & ") }),
+  wedding: (item) => ({
+    title: join([item.groom, item.bride], " & "),
+    groomRelation: parentRelation(item, [["groomFatherName", "groomFatherDeceased"], ["groomMotherName", "groomMotherDeceased"]], "groom", "아들"),
+    brideRelation: parentRelation(item, [["brideFatherName", "brideFatherDeceased"], ["brideMotherName", "brideMotherDeceased"]], "bride", "딸"),
+  }),
   first_birthday: (item) => ({ title: clean(item.childName), detail: join([item.parent1Name, item.parent2Name]), note: item.birthDate ? "생일 " + formatDate(item.birthDate) : "" }),
   birthday: (item) => ({ title: clean(item.person1Name), detail: item.age ? clean(item.age) + "번째 생일" : "" }),
   baby_shower: (item) => ({ title: clean(item.childName), detail: join([item.parent1Name, item.parent2Name]), note: item.dueDate ? "출산 예정일 " + formatDate(item.dueDate) : "" }),
@@ -36,6 +49,8 @@ export function getInvitationPresentation(invitation = {}, eventKind) {
     title: clean(event.title),
     detail: clean(event.detail),
     note: clean(event.note),
+    groomRelation: clean(event.groomRelation),
+    brideRelation: clean(event.brideRelation),
     schedule: join([formatDate(invitation.date), invitation.time]),
     venue: clean(invitation.venue),
     address: join([invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail], " "),

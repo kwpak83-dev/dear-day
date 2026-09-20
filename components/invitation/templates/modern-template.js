@@ -3,7 +3,7 @@ function SectionHeading({ eyebrow, children }) {
 }
 
 export default function ModernTemplate({ presentation, eventKind, placeActions, children }) {
-  const { kindLabel, title, detail, note, schedule, venue, address, message, coverPhotoUrl } = presentation;
+  const { kindLabel, title, detail, note, schedule, venue, address, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map(value => value.trim()).filter(Boolean) : [];
   const hasCouple = wedding && couple.length > 0;
@@ -20,6 +20,10 @@ export default function ModernTemplate({ presentation, eventKind, placeActions, 
       <div className="modern-hero-copy">
         <p>{wedding ? "A NEW BEGINNING" : kindLabel}</p>
         {title && <h2>{title}</h2>}
+        {(groomRelation || brideRelation) && <div className="wedding-parent-relations">
+          {groomRelation && <p>{groomRelation}</p>}
+          {brideRelation && <p>{brideRelation}</p>}
+        </div>}
         {detail && <span>{detail}</span>}
         {note && <span>{note}</span>}
         {schedule && <time>{schedule}</time>}

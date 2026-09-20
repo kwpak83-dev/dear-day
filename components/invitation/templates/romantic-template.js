@@ -3,7 +3,7 @@ function SectionHeading({ eyebrow, children }) {
 }
 
 export default function RomanticTemplate({ presentation, eventKind, placeActions, children }) {
-  const { kindLabel, title, detail, note, schedule, venue, address, message, coverPhotoUrl } = presentation;
+  const { kindLabel, title, detail, note, schedule, venue, address, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map(value => value.trim()).filter(Boolean) : [];
   const hasCouple = wedding && couple.length > 0;
@@ -21,6 +21,10 @@ export default function RomanticTemplate({ presentation, eventKind, placeActions
         {title && (couple.length === 2
           ? <h2 className="romantic-couple-title"><span>{couple[0]}</span><i aria-hidden="true">♡</i><span>{couple[1]}</span></h2>
           : <h2>{title}</h2>)}
+        {(groomRelation || brideRelation) && <div className="wedding-parent-relations">
+          {groomRelation && <p>{groomRelation}</p>}
+          {brideRelation && <p>{brideRelation}</p>}
+        </div>}
         {detail && <p className="romantic-detail">{detail}</p>}
         {note && <p className="romantic-note">{note}</p>}
         {schedule && <time>{schedule}</time>}

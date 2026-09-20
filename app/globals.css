@@ -674,3 +674,8 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   margin: 0;
   padding: 0;
 }
+.wedding-parent-relations{max-width:100%;min-width:0;margin-top:12px}
+.wedding-parent-relations p,.modern-hero-copy .wedding-parent-relations p{margin:3px 0 0;font:11px/1.7 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:0;overflow-wrap:anywhere}
+.romantic-hero-copy .wedding-parent-relations{color:#866a63}
+.modern-hero.no-photo .wedding-parent-relations{color:var(--modern-muted)}
+.classic-hero.no-photo .wedding-parent-relations{color:var(--classic-muted)}
