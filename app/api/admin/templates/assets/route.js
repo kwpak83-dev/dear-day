@@ -5,6 +5,7 @@ const bucket = "template-assets";
 const maxBytes = 15 * 1024 * 1024;
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const folders = { thumbnail: "sales", long_preview: "sales", background: "backgrounds", hero_frame: "hero", decoration: "decorations", screen_effect: "effects", texture: "textures" };
+const singleActiveTypes = new Set(["thumbnail", "long_preview", "hero_frame", "screen_effect", "texture"]);
 const extensions = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
 const fail = (error, status) => Response.json({ error }, { status });
 const receiptSecret = () => process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -78,7 +79,7 @@ export async function POST(request) {
   const bytes = new Uint8Array(await file.arrayBuffer());
   if (!validImage(bytes, file.type)) return fail("올바른 이미지 파일을 선택해 주세요.", 400);
   let previous = [];
-  if (type !== "decoration" && type !== "background") {
+  if (singleActiveTypes.has(type)) {
     const result = await auth.client.from("template_assets").select("id").eq("template_id", templateId).eq("asset_type", type).eq("is_active", true);
     if (result.error) return fail("기존 Asset을 확인하지 못했어요.", 500);
     previous = result.data || [];
@@ -112,14 +113,60 @@ export async function PATCH(request) {
   const auth = await getAdmin(request);
   if (auth.error) return fail(auth.error, auth.status);
   const body = await request.json().catch(() => null);
-  if (!uuid.test(body?.templateId || "") || !uuid.test(body?.assetId || "")) return fail("Asset 정보가 올바르지 않아요.", 400);
+  if (!uuid.test(body?.templateId || "") || !uuid.test(body?.assetId || "") ||
+      !["activate", "deactivate"].includes(body?.action)) return fail("Asset 정보가 올바르지 않아요.", 400);
   const invalid = await checkTemplate(auth.client, body.templateId);
   if (invalid) return invalid;
-  const { error, count } = await auth.client.from("template_assets").update({ is_active: false }, { count: "exact" })
-    .eq("id", body.assetId).eq("template_id", body.templateId).eq("is_active", true);
-  if (error) return fail("Asset을 비활성화하지 못했어요.", 500);
-  if (count !== 1) return fail("활성 Asset을 찾지 못했어요.", 409);
-  return Response.json({ id: body.assetId, receipt: signOperation({ kind: "deactivate", userId: auth.user.id, templateId: body.templateId, id: body.assetId }) });
+  const { data: asset, error: lookupError } = await auth.client.from("template_assets")
+    .select("id,asset_type,is_active").eq("id", body.assetId).eq("template_id", body.templateId).maybeSingle();
+  if (lookupError) return fail("Asset을 확인하지 못했어요.", 500);
+  if (!asset || !folders[asset.asset_type]) return fail("Asset을 찾지 못했어요.", 404);
+  if (asset.is_active === (body.action === "activate")) return fail("Asset 상태가 이미 변경됐어요. 목록을 다시 확인해 주세요.", 409);
+
+  if (body.action === "deactivate") {
+    const { error, count } = await auth.client.from("template_assets").update({ is_active: false }, { count: "exact" })
+      .eq("id", asset.id).eq("template_id", body.templateId).eq("is_active", true);
+    if (error) return fail("Asset을 비활성화하지 못했어요.", 500);
+    if (count !== 1) return fail("활성 Asset을 찾지 못했어요.", 409);
+    return Response.json({ id: asset.id, receipt: signOperation({ kind: "deactivate", userId: auth.user.id, templateId: body.templateId, id: asset.id }) });
+  }
+
+  let previous = [];
+  if (singleActiveTypes.has(asset.asset_type)) {
+    const result = await auth.client.from("template_assets").select("id").eq("template_id", body.templateId)
+      .eq("asset_type", asset.asset_type).eq("is_active", true);
+    if (result.error) return fail("기존 Asset을 확인하지 못했어요.", 500);
+    previous = result.data || [];
+  }
+  const activated = await auth.client.from("template_assets").update({ is_active: true }, { count: "exact" })
+    .eq("id", asset.id).eq("template_id", body.templateId).eq("is_active", false);
+  if (activated.error) return fail("Asset을 활성화하지 못했어요.", 500);
+  if (activated.count !== 1) return fail("비활성 Asset을 찾지 못했어요.", 409);
+  if (previous.length) {
+    const replaced = await auth.client.from("template_assets").update({ is_active: false }, { count: "exact" })
+      .eq("template_id", body.templateId).eq("asset_type", asset.asset_type)
+      .in("id", previous.map((row) => row.id)).eq("is_active", true);
+    if (replaced.error || replaced.count !== previous.length) {
+      const rollback = await auth.client.from("template_assets").update({ is_active: false }, { count: "exact" })
+        .eq("id", asset.id).eq("template_id", body.templateId).eq("is_active", true);
+      const prior = await auth.client.from("template_assets").select("id,is_active")
+        .eq("template_id", body.templateId).eq("asset_type", asset.asset_type)
+        .in("id", previous.map((row) => row.id));
+      const inactive = prior.data?.filter((row) => !row.is_active).map((row) => row.id) || [];
+      const restored = inactive.length
+        ? await auth.client.from("template_assets").update({ is_active: true }, { count: "exact" })
+          .eq("template_id", body.templateId).eq("asset_type", asset.asset_type).in("id", inactive).eq("is_active", false)
+        : null;
+      return fail(rollback.error || rollback.count !== 1 || prior.error ||
+        prior.data?.length !== previous.length || restored?.error || (restored && restored.count !== inactive.length)
+        ? "Asset 교체에 실패했고 활성 상태를 확인해야 해요."
+        : "기존 Asset 교체를 완료하지 못했어요. 다시 시도해 주세요.", 409);
+    }
+  }
+  return Response.json({ id: asset.id, receipt: signOperation({
+    kind: "activate", userId: auth.user.id, templateId: body.templateId,
+    id: asset.id, previous: previous.map((row) => row.id),
+  }) });
 }
 
 export async function DELETE(request) {
@@ -142,6 +189,34 @@ export async function DELETE(request) {
       if (restored.error || restored.count !== 1) return fail("기존 Asset 상태를 복원하지 못했어요.", 500);
     }
     return Response.json({ restored: operation.id });
+  }
+
+  if (operation.kind === "activate") {
+    if (!Array.isArray(operation.previous) || !operation.previous.every((id) => uuid.test(id))) {
+      return fail("Asset 취소 정보가 올바르지 않아요.", 400);
+    }
+    const { data: asset, error } = await auth.client.from("template_assets").select("id,asset_type,is_active")
+      .eq("id", operation.id).eq("template_id", body.templateId).maybeSingle();
+    if (error || !asset || !folders[asset.asset_type]) return fail("기존 Asset을 확인하지 못했어요.", 409);
+    if (operation.previous.length) {
+      if (!singleActiveTypes.has(asset.asset_type)) return fail("Asset 취소 정보가 올바르지 않아요.", 400);
+      const { data: previous, error: previousError } = await auth.client.from("template_assets")
+        .select("id,asset_type,is_active").eq("template_id", body.templateId).in("id", operation.previous);
+      if (previousError || previous?.length !== operation.previous.length ||
+          previous.some((row) => row.asset_type !== asset.asset_type)) return fail("기존 Asset을 확인하지 못했어요.", 409);
+      const inactive = previous.filter((row) => !row.is_active).map((row) => row.id);
+      if (inactive.length) {
+        const restored = await auth.client.from("template_assets").update({ is_active: true }, { count: "exact" })
+          .eq("template_id", body.templateId).eq("asset_type", asset.asset_type).in("id", inactive).eq("is_active", false);
+        if (restored.error || restored.count !== inactive.length) return fail("기존 Asset 상태를 복원하지 못했어요.", 500);
+      }
+    }
+    if (asset.is_active) {
+      const reverted = await auth.client.from("template_assets").update({ is_active: false }, { count: "exact" })
+        .eq("id", asset.id).eq("template_id", body.templateId).eq("is_active", true);
+      if (reverted.error || reverted.count !== 1) return fail("Asset 활성화를 취소하지 못했어요.", 500);
+    }
+    return Response.json({ restored: asset.id });
   }
 
   if (operation.kind !== "upload" || typeof operation.path !== "string" ||

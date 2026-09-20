@@ -60,18 +60,20 @@ export default function TemplateAssets({ templateId, onOperation, onBusyChange }
     } catch (error) { setNotice(error.message); }
     finally { setBusy(false); onBusyChange(false); if (inputs.current[type]) inputs.current[type].value = ""; }
   };
-  const deactivate = async (asset) => {
-    if (busy || !window.confirm("이 Asset을 비활성화할까요? Storage 파일은 보존됩니다.")) return;
+  const changeActive = async (asset) => {
+    const action = asset.is_active ? "deactivate" : "activate";
+    if (busy || (action === "deactivate" && !window.confirm("이 Asset을 비활성화할까요? Storage 파일은 보존됩니다."))) return;
     setBusy(true); onBusyChange(true); setNotice("");
     try {
       const response = await fetch("/api/admin/templates/assets", {
         method: "PATCH", headers: { ...(await authorization()), "Content-Type": "application/json" },
-        body: JSON.stringify({ templateId, assetId: asset.id }),
+        body: JSON.stringify({ templateId, assetId: asset.id, action }),
       });
       const result = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(result.error || "Asset을 비활성화하지 못했어요.");
+      if (!response.ok) throw new Error(result.error || "Asset 상태를 변경하지 못했어요.");
       onOperation({ id: result.id, receipt: result.receipt });
-      await load(); setNotice("Asset을 비활성화했습니다.");
+      await load();
+      setNotice(action === "activate" ? "Asset을 활성화했습니다." : "Asset을 비활성화했습니다.");
     } catch (error) { setNotice(error.message); }
     finally { setBusy(false); onBusyChange(false); }
   };
@@ -88,7 +90,7 @@ export default function TemplateAssets({ templateId, onOperation, onBusyChange }
         {rows.map((asset) => <article className="admin-template-asset-row" key={asset.id}>
           {asset.url && <img src={asset.url} alt={`${label} 미리보기`} loading="lazy" />}
           <div><strong>{asset.name || asset.storage_path.split("/").pop()}</strong><p>{asset.is_active ? "사용 중" : "비활성"} · {asset.width || "-"} × {asset.height || "-"}</p></div>
-          {asset.is_active && <button type="button" className="save-button" disabled={busy} onClick={() => deactivate(asset)}>비활성화</button>}
+          <button type="button" className="save-button" disabled={busy} onClick={() => changeActive(asset)}>{asset.is_active ? "비활성화" : "활성화"}</button>
         </article>)}
         <input ref={(element) => { inputs.current[type] = element; }} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={(event) => upload(type, event.target.files?.[0])} />
         <button type="button" className="save-button" disabled={busy} onClick={() => inputs.current[type]?.click()}>
