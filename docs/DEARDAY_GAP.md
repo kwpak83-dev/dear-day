@@ -42,8 +42,8 @@
 | ⑪-D | 문의내역 / 문의하기 | 🟢 완료 |
 | ⑪-E | Naver 내 정보 프로필 보완 | 🟢 완료 |
 | ⑫ | 보관기간 / 만료 / 유료연장 / 알림 | 🟢 완료 |
-| **⑬-T1** | **템플릿 DB + Storage + Asset/Config 구조** | **🟡 진행** |
-| **⑬-T2** | **관리자 템플릿 등록/수정 UI** | **🟡 NEXT** |
+| **⑬-T1** | **템플릿 DB + Storage + Asset/Config 구조** | **🟢 기반 완료** |
+| **⑬-T2** | **관리자 템플릿 등록/수정 UI** | **🟡 진행 — C1/C2 완료, C3 NEXT** |
 | ⑬-T3 | Asset/Config ↔ InvitationRenderer 연결 | 🔴 |
 | ⑬-T4 | 실제 Renderer 미리보기 + 버전/판매상태 관리 | 🔴 |
 | ⑬-A | 판매용 템플릿 20~30개 확대 | 🔴 |
@@ -158,15 +158,22 @@
 - 🟢 Template key 검증 및 앞뒤 공백 처리
 - 🟢 관리자용 템플릿 Asset 영역 및 모바일 대응 UI
 - 🟢 판매 썸네일, 긴 판매 미리보기, 배경, Hero 프레임, 장식, 화면효과, Texture 업로드
-- 🟢 단일 슬롯 Asset 교체 및 기존 Asset 비활성화
-- 🟢 장식 Asset 다중 등록
 - 🟢 JPG/PNG/WebP 및 15MB 업로드 제한
 - 🟢 운영 DB의 `template_assets.mime_type` 컬럼 기준 metadata 저장
-- 🟢 취소 시 편집 세션에서 새로 업로드한 Asset rollback용 DELETE 요청 동작 확인
-- 🟡 Asset 취소 rollback 세부 TC 및 T2 Config 편집 기능 마무리 중
-- 🔴 Asset 위치 X/Y, 크기, opacity, rotation, z-order 등 Renderer Config 편집
-- 🔴 Hero 비율/마스크 및 typography/색상/섹션 순서·기본 ON/OFF 등 디자인 Config 편집
-- 🔴 scroll reveal, 화면효과, BGM, Safe Area 등 고급 Config 편집
+- 🟢 Asset 취소 rollback 동작 및 운영 TC 완료
+- 🟢 Background/Decoration은 multi-active, 나머지 단일 슬롯형 Asset은 single-active 교체 정책
+- 🟢 기존 Asset 활성화/비활성화 양방향 전환 및 동일 Asset ID 재사용
+- 🟢 TemplateVersions/TemplateAssets React key 충돌로 인한 중복 렌더링 HOTFIX 완료
+- 🟢 Draft Version 생성/재사용 및 `template_versions.config` 저장 기반
+- 🟢 **C1 Decoration Config**: slot, X/Y, size, rotation, opacity, zIndex, visible 저장/복원 및 운영 TC 완료
+- 🟢 **C2 Background + Hero Config**: 전체 Background와 Hero의 독립 Asset 선택, overlay, Hero mode/aspectRatio/X/Y/zoom/frame 저장/복원 및 운영 TC 완료
+- 🟢 C2 저장 시 C1 Decoration Config 보존 확인
+- 🟢 동일 Background Asset을 전체 Background와 Hero에서 함께 재사용 가능하며, 필요 시 서로 다른 Background Asset도 선택 가능
+- 🟢 판매용 Asset은 기존 기본 7종 체계를 유지하고, 디자인상 필요한 템플릿만 추가 Background Asset을 선택적으로 등록하는 정책
+- 🟡 **C3 Typography + Colors — NEXT**
+- 🔴 C4 Sections 순서 / 기본 ON·OFF
+- 🔴 C5 scroll reveal / 화면효과 / BGM / Safe Area
+- 🔴 C6 Asset/Config 실제 InvitationRenderer 연결은 ⑬-T3에서 진행
 
 
 - 관리자에서 `새 템플릿 등록` 화면을 제공하고 템플릿명, 가격/판매 상태, 태그, 표시 순서, 배지 등을 관리한다.
