@@ -45,7 +45,7 @@ export async function GET(request) {
   if (!uuid.test(templateId || "")) return fail("템플릿 정보가 올바르지 않아요.", 400);
   const result = await readVersions(auth.serverClient, templateId);
   if (result.error) return result.error;
-  return Response.json({ current: result.current && { id: result.current.id, version: result.current.version, status: result.current.status }, draft: result.draft && { id: result.draft.id, version: result.draft.version } });
+  return Response.json({ current: result.current && { id: result.current.id, version: result.current.version, status: result.current.status }, draft: result.draft && { id: result.draft.id, version: result.draft.version, decorations: Array.isArray(result.draft.config?.decorations) ? result.draft.config.decorations : [] } });
 }
 
 export async function POST(request) {
@@ -75,4 +75,64 @@ export async function POST(request) {
   }
   if (error) return fail("Draft 버전을 만들지 못했어요. 관리자 권한과 DB 정책을 확인해 주세요.", 500);
   return Response.json({ draft: { id: draft.id, version: draft.version }, reused: false }, { status: 201 });
+}
+
+const decorationSlots = new Set(["hero", "section", "background"]);
+const decimal = (value, min, max) => typeof value === "number" && Number.isFinite(value) && value >= min && value <= max;
+
+function validDecorations(value) {
+  if (!Array.isArray(value) || value.length > 100) return false;
+  const ids = new Set();
+  for (const item of value) {
+    if (!item || typeof item !== "object" || Array.isArray(item) ||
+        !uuid.test(item.assetId || "") || ids.has(item.assetId) ||
+        !decorationSlots.has(item.slot) ||
+        !decimal(item.xPercent, 0, 100) || !decimal(item.yPercent, 0, 100) ||
+        !decimal(item.widthPercent, 1, 100) || !decimal(item.rotationDeg, -180, 180) ||
+        !decimal(item.opacity, 0, 1) ||
+        !Number.isInteger(item.zIndex) || item.zIndex < 0 || item.zIndex > 20 ||
+        typeof item.visible !== "boolean" ||
+        Object.keys(item).some((key) => !["assetId", "slot", "xPercent", "yPercent", "widthPercent", "rotationDeg", "opacity", "zIndex", "visible"].includes(key))) return false;
+    ids.add(item.assetId);
+  }
+  return true;
+}
+
+export async function PATCH(request) {
+  const auth = await getAdmin(request);
+  if (auth.error) return fail(auth.error, auth.status);
+  const body = await request.json().catch(() => null);
+  if (!uuid.test(body?.templateId || "") || !uuid.test(body?.draftId || "") ||
+      !validDecorations(body?.decorations)) return fail("장식 배치값을 확인해 주세요.", 400);
+  const result = await readVersions(auth.serverClient, body.templateId);
+  if (result.error) return result.error;
+  if (!result.draft || result.draft.id !== body.draftId ||
+      result.current?.id === body.draftId) return fail("해당 템플릿의 편집 Draft만 수정할 수 있어요.", 409);
+  if (!result.draft.config || typeof result.draft.config !== "object" ||
+      Array.isArray(result.draft.config)) return fail("기존 Config 형식을 확인해 주세요.", 409);
+
+  const ids = body.decorations.map((item) => item.assetId);
+  if (ids.length) {
+    const { data: assets, error: assetError } = await auth.adminClient.from("template_assets")
+      .select("id,template_id,asset_type,is_active").in("id", ids);
+    if (assetError) return fail("장식 Asset을 확인하지 못했어요.", 500);
+    if (assets?.length !== ids.length || assets.some((asset) =>
+      asset.template_id !== body.templateId || asset.asset_type !== "decoration" || !asset.is_active)) {
+      return fail("현재 템플릿의 활성 장식 Asset만 저장할 수 있어요.", 400);
+    }
+  }
+
+  const decorations = body.decorations.map((item) => ({
+    assetId: item.assetId, slot: item.slot, xPercent: item.xPercent,
+    yPercent: item.yPercent, widthPercent: item.widthPercent,
+    rotationDeg: item.rotationDeg, opacity: item.opacity,
+    zIndex: item.zIndex, visible: item.visible,
+  }));
+  const config = { ...result.draft.config, decorations };
+  const { error, count } = await auth.adminClient.from("template_versions")
+    .update({ config }, { count: "exact" })
+    .eq("id", body.draftId).eq("template_id", body.templateId).eq("status", "draft");
+  if (error) return fail("장식 배치를 저장하지 못했어요.", 500);
+  if (count !== 1) return fail("편집 Draft를 수정하지 못했어요. 다시 불러와 주세요.", 409);
+  return Response.json({ draftId: body.draftId, decorations });
 }
