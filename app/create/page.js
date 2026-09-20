@@ -14,6 +14,73 @@ import { preparePhoto } from "../../lib/prepare-photo";
 import { getInvitationTitle } from "../../lib/invitation-title";
 import { EVENT_KIND_OPTIONS, getEventConfig, getMissingRequiredFields } from "../../lib/event-config";
 
+const BANK_OPTIONS = [
+  { name: "국민은행", logo: "/banks/kb.png" },
+  { name: "신한은행", logo: "/banks/shinhan.png" },
+  { name: "하나은행", logo: "/banks/hana.png" },
+  { name: "우리은행", logo: "/banks/woori.png" },
+
+  { name: "농협은행", logo: "/banks/nh.png" },
+  { name: "기업은행", logo: "/banks/ibk.png" },
+  { name: "카카오뱅크", logo: "/banks/kakaobank.png" },
+  { name: "케이뱅크", logo: "/banks/kbank.png" },
+
+  { name: "SC제일은행", logo: "/banks/sc.png" },
+  { name: "부산은행", logo: "/banks/busan.png" },
+  { name: "새마을금고", logo: "/banks/mg.png" },
+  { name: "iM뱅크", logo: "/banks/imbank.png" },
+];
+function BankSelector({ value, onChange }) {
+  const isPresetBank = BANK_OPTIONS.some((bank) => bank.name === value);
+  const [directMode, setDirectMode] = useState(
+    Boolean(value) && !isPresetBank
+  );
+
+  return (
+    <div className="bank-selector">
+      <div className="bank-grid">
+        {BANK_OPTIONS.map((bank) => (
+          <button
+            key={bank.name}
+            type="button"
+            className={`bank-option ${
+              value === bank.name ? "selected" : ""
+            }`}
+            onClick={() => {
+              setDirectMode(false);
+              onChange(bank.name);
+            }}
+          >
+            <img src={bank.logo} alt="" />
+            <span>{bank.name}</span>
+          </button>
+        ))}
+      </div>
+
+      {directMode ? (
+        <input
+          type="text"
+          className="bank-direct-input"
+          placeholder="은행명을 직접 입력하세요"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          autoFocus
+        />
+      ) : (
+        <button
+          type="button"
+          className="bank-direct-button"
+          onClick={() => {
+            setDirectMode(true);
+            onChange("");
+          }}
+        >
+          직접입력
+        </button>
+      )}
+    </div>
+  );
+}
 const initialInvitation = { eventKind: "wedding", templateId: "", rsvpEnabled: true, guestbookEnabled: true, eventTitle: "", hostName: "", person1Name: "", person2Name: "", childName: "", parent1Name: "", parent2Name: "", birthDate: "", dueDate: "", age: "", anniversaryYears: "", organizationName: "", programName: "", coverPhotoUrl: "", groom: "", bride: "", date: "", time: "", venue: "", venueAddress: "", venueBuilding: "", venueDetail: "", groomBank: "", groomAccount: "", groomAccountHolder: "", brideBank: "", brideAccount: "", brideAccountHolder: "", message: "" };
 const mapClientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
 
@@ -396,7 +463,17 @@ export default function CreateInvitation() {
         {eventConfig.sections.map((section) => <div className="form-section" key={section.id}><h2>{section.title}</h2>{section.rows.map((row, rowIndex) => row.length > 1 ? <div className="field-grid" key={rowIndex}>{row.map(renderConfigField)}</div> : row.map(renderConfigField))}</div>)}
         <div className="form-section rsvp-setting"><h2>참석 여부 확인 <small>선택</small></h2><label><input type="checkbox" checked={invitation.rsvpEnabled === true} onChange={(event) => update("rsvpEnabled", event.target.checked)} /><span><strong>공개 초대장에서 RSVP 받기</strong><small>하객이 로그인 없이 참석 여부를 전달할 수 있어요.</small></span></label></div>
         <div className="form-section rsvp-setting"><h2>방명록 <small>선택</small></h2><label><input type="checkbox" checked={invitation.guestbookEnabled !== false} onChange={(event) => update("guestbookEnabled", event.target.checked)} /><span><strong>공개 초대장에서 방명록 받기</strong><small>하객이 로그인 없이 메시지를 남길 수 있어요. OFF로 바꿔도 기존 글은 유지돼요.</small></span></label></div>
-        {eventConfig.accountMode && <div className="form-section"><h2>마음 전하실 곳 <small>선택</small></h2><div className="account-editor"><strong>{eventConfig.accountMode === "parents" ? "부모/보호자 1" : "신랑 측"}</strong><div className="field-grid"><Field label="은행명"><input placeholder="예: 국민은행" value={invitation.groomBank} onChange={(e) => update("groomBank", e.target.value)} /></Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent1Name || "예금주 이름" : invitation.groom || "신랑 이름"} value={invitation.groomAccountHolder} onChange={(e) => update("groomAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.groomAccount} onChange={(e) => update("groomAccount", e.target.value)} /></Field></div><div className="account-editor"><strong>{eventConfig.accountMode === "parents" ? "부모/보호자 2" : "신부 측"}</strong><div className="field-grid"><Field label="은행명"><input placeholder="예: 신한은행" value={invitation.brideBank} onChange={(e) => update("brideBank", e.target.value)} /></Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent2Name || "예금주 이름" : invitation.bride || "신부 이름"} value={invitation.brideAccountHolder} onChange={(e) => update("brideAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.brideAccount} onChange={(e) => update("brideAccount", e.target.value)} /></Field></div></div>}
+        {eventConfig.accountMode && <div className="form-section"><h2>마음 전하실 곳 <small>선택</small></h2><div className="account-editor"><strong>{eventConfig.accountMode === "parents" ? "부모/보호자 1" : "신랑 측"}</strong><div className="field-grid"><Field label="은행명">
+  <BankSelector
+    value={invitation.groomBank}
+    onChange={(bankName) => update("groomBank", bankName)}
+  />
+</Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent1Name || "예금주 이름" : invitation.groom || "신랑 이름"} value={invitation.groomAccountHolder} onChange={(e) => update("groomAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.groomAccount} onChange={(e) => update("groomAccount", e.target.value)} /></Field></div><div className="account-editor"><strong>{eventConfig.accountMode === "parents" ? "부모/보호자 2" : "신부 측"}</strong><div className="field-grid"><Field label="은행명">
+  <BankSelector
+    value={invitation.brideBank}
+    onChange={(bankName) => update("brideBank", bankName)}
+  />
+</Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent2Name || "예금주 이름" : invitation.bride || "신부 이름"} value={invitation.brideAccountHolder} onChange={(e) => update("brideAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.brideAccount} onChange={(e) => update("brideAccount", e.target.value)} /></Field></div></div>}
         <div className="editor-actions"><button type="button" className="save-button preview-button" onClick={() => { setFlowNotice(""); setPreviewOpen(true); }}>미리보기</button><button className="save-button" onClick={() => saveDraft({ showSuccessToast: true })} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>저장하기</button></div>{saveNotice && <p role="status">{saveNotice}</p>}{loginRequired && <button type="button" className="save-button" onClick={continueAfterLogin}>로그인하고 계속하기</button>}
       </section>
       <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div className="preview-content"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} placeActions={previewPlaceActions()}><><Gallery photos={galleryPhotos} idPrefix="live-preview-gallery" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} preview /></></InvitationRenderer></div></div></aside>
