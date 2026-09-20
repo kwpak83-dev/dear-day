@@ -45,7 +45,7 @@ export async function GET(request) {
   if (!uuid.test(templateId || "")) return fail("템플릿 정보가 올바르지 않아요.", 400);
   const result = await readVersions(auth.serverClient, templateId);
   if (result.error) return result.error;
-  return Response.json({ current: result.current && { id: result.current.id, version: result.current.version, status: result.current.status }, draft: result.draft && { id: result.draft.id, version: result.draft.version, decorations: Array.isArray(result.draft.config?.decorations) ? result.draft.config.decorations : [] } });
+  return Response.json({ current: result.current && { id: result.current.id, version: result.current.version, status: result.current.status }, draft: result.draft && { id: result.draft.id, version: result.draft.version, decorations: Array.isArray(result.draft.config?.decorations) ? result.draft.config.decorations : [], background: result.draft.config?.background ?? null, hero: result.draft.config?.hero ?? null } });
 }
 
 export async function POST(request) {
@@ -102,6 +102,7 @@ export async function PATCH(request) {
   const auth = await getAdmin(request);
   if (auth.error) return fail(auth.error, auth.status);
   const body = await request.json().catch(() => null);
+  if (isRecord(body) && ("background" in body || "hero" in body)) return saveBackgroundHero(auth, body);
   if (!uuid.test(body?.templateId || "") || !uuid.test(body?.draftId || "") ||
       !validDecorations(body?.decorations)) return fail("장식 배치값을 확인해 주세요.", 400);
   const result = await readVersions(auth.serverClient, body.templateId);
@@ -140,4 +141,70 @@ export async function PATCH(request) {
 if (error) return fail("장식 배치를 저장하지 못했어요.", 500);
 if (!updated) return fail("편집 Draft를 수정하지 못했어요. 다시 불러와 주세요.", 409);
   return Response.json({ draftId: body.draftId, decorations });
+}
+
+const isRecord = (value) => value && typeof value === "object" && !Array.isArray(value);
+const hexColor = (value) => typeof value === "string" && /^#[0-9a-fA-F]{6}$/.test(value);
+const optionalId = (value) => value === null || (typeof value === "string" && uuid.test(value));
+const hasOnlyKeys = (value, keys) => isRecord(value) && Object.keys(value).every((key) => keys.includes(key)) && keys.every((key) => Object.hasOwn(value, key));
+const heroModes = new Set(["photo", "frame", "illustration"]);
+const heroRatios = new Set(["4:5", "1:1", "3:4", "16:9"]);
+
+function validBackground(value) {
+  return hasOnlyKeys(value, ["color", "assetId", "overlayColor", "overlayOpacity"]) &&
+    hexColor(value.color) && optionalId(value.assetId) &&
+    hexColor(value.overlayColor) && decimal(value.overlayOpacity, 0, 1);
+}
+
+function validHero(value) {
+  return hasOnlyKeys(value, ["mode", "aspectRatio", "positionX", "positionY", "zoom", "backgroundAssetId", "frameAssetId", "overlayColor", "overlayOpacity"]) &&
+    heroModes.has(value.mode) && heroRatios.has(value.aspectRatio) &&
+    decimal(value.positionX, 0, 100) && decimal(value.positionY, 0, 100) &&
+    decimal(value.zoom, 1, 3) && optionalId(value.backgroundAssetId) &&
+    optionalId(value.frameAssetId) && hexColor(value.overlayColor) &&
+    decimal(value.overlayOpacity, 0, 1);
+}
+
+async function saveBackgroundHero(auth, body) {
+  if (!uuid.test(body.templateId || "") || !uuid.test(body.draftId || "") ||
+      !validBackground(body.background) || !validHero(body.hero)) {
+    return fail("Background/Hero 설정값을 확인해 주세요.", 400);
+  }
+  const result = await readVersions(auth.serverClient, body.templateId);
+  if (result.error) return result.error;
+  if (!result.draft || result.draft.id !== body.draftId ||
+      result.current?.id === body.draftId) return fail("해당 템플릿의 편집 Draft만 수정할 수 있어요.", 409);
+  if (!isRecord(result.draft.config)) return fail("기존 Config 형식을 확인해 주세요.", 409);
+
+  const expected = new Map();
+  for (const id of [body.background.assetId, body.hero.backgroundAssetId]) {
+    if (id) expected.set(id, "background");
+  }
+  if (body.hero.frameAssetId) expected.set(body.hero.frameAssetId, "hero_frame");
+  if (expected.size) {
+    const { data: assets, error } = await auth.adminClient.from("template_assets")
+      .select("id,template_id,asset_type,is_active").in("id", [...expected.keys()]);
+    if (error) return fail("Background/Hero Asset을 확인하지 못했어요.", 500);
+    if (assets?.length !== expected.size || assets.some((asset) =>
+      asset.template_id !== body.templateId || asset.asset_type !== expected.get(asset.id) || !asset.is_active)) {
+      return fail("현재 템플릿의 활성 Background/Hero Asset만 저장할 수 있어요.", 400);
+    }
+  }
+
+  const previous = result.draft.config;
+  const config = {
+    ...previous,
+    background: { ...(isRecord(previous.background) ? previous.background : {}), ...body.background },
+    hero: { ...(isRecord(previous.hero) ? previous.hero : {}), ...body.hero },
+  };
+  const { data: updated, error } = await auth.adminClient.from("template_versions")
+    .update({ config })
+    .eq("id", body.draftId)
+    .eq("template_id", body.templateId)
+    .eq("status", "draft")
+    .select("id")
+    .maybeSingle();
+  if (error) return fail("Background/Hero 설정을 저장하지 못했어요.", 500);
+  if (!updated) return fail("편집 Draft를 수정하지 못했어요. 다시 불러와 주세요.", 409);
+  return Response.json({ draftId: body.draftId, background: config.background, hero: config.hero });
 }

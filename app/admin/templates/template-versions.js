@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 
 const slots = [["hero", "Hero"], ["section", "섹션"], ["background", "배경"]];
@@ -16,15 +16,44 @@ const placementFor = (assetId, saved) => {
   }
   return base;
 };
+const backgroundDefaults = { color: "#ffffff", assetId: null, overlayColor: "#000000", overlayOpacity: 0 };
+const heroDefaults = { mode: "photo", aspectRatio: "4:5", positionX: 50, positionY: 50, zoom: 1, backgroundAssetId: null, frameAssetId: null, overlayColor: "#000000", overlayOpacity: 0 };
+const fromConfig = (defaults, saved) => Object.fromEntries(Object.keys(defaults).map((key) => [key, saved && typeof saved === "object" && saved[key] !== undefined ? saved[key] : defaults[key]]));
+const colorValue = (value) => /^#[0-9a-fA-F]{6}$/.test(value) ? value : "#000000";
+
+function ColorControl({ label, value, onChange }) {
+  return <label style={field}>{label}<div style={{ display: "flex", gap: 6, minWidth: 0 }}>
+    <input type="color" style={{ width: 38, height: 34, flex: "none" }} value={colorValue(value)} onChange={(event) => onChange(event.target.value)} aria-label={label} />
+    <input style={{ ...input, minWidth: 0, flex: "1 1 0" }} type="text" required maxLength={7} pattern="#[0-9a-fA-F]{6}" value={value} onChange={(event) => onChange(event.target.value)} />
+  </div></label>;
+}
+
+function AssetSelect({ label, assets, value, onChange }) {
+  const selected = assets.find((asset) => asset.id === value);
+  return <label style={field}>{label}<select style={input} value={value || ""} onChange={(event) => onChange(event.target.value || null)}>
+    <option value="">사용 안 함</option>
+    {assets.map((asset) => <option key={asset.id} value={asset.id}>{asset.name || asset.id}</option>)}
+  </select>{value && !selected && <span role="alert">저장된 Asset이 비활성 상태입니다. 다른 Asset 또는 사용 안 함을 선택해 주세요.</span>}{selected?.url && <img src={selected.url} alt={`${label} 미리보기`} loading="lazy" style={{ width: 72, height: 72, objectFit: "contain" }} />}</label>;
+}
+
+function NumberControl({ label, value, min, max, step = 1, onChange }) {
+  return <label style={field}>{label}<input style={input} type="number" required min={min} max={max} step={step} value={value} onChange={(event) => onChange(Number(event.target.value))} /></label>;
+}
 const field = { display: "grid", gap: 4, minWidth: 0 };
 const input = { width: "100%", boxSizing: "border-box" };
 
 export default function TemplateVersions({ templateId, assetRevision = 0, assetChangesPending = false }) {
   const [state, setState] = useState({ loading: true, current: null, draft: null, assets: [], error: "" });
+  const loaded = useRef(null);
   const [placements, setPlacements] = useState([]);
+  const [background, setBackground] = useState(backgroundDefaults);
+  const [hero, setHero] = useState(heroDefaults);
   const [creating, setCreating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
+  const backgroundAssets = state.assets.filter((asset) => asset.asset_type === "background");
+  const frameAssets = state.assets.filter((asset) => asset.asset_type === "hero_frame");
+  const decorationAssets = state.assets.filter((asset) => asset.asset_type === "decoration");
 
   const authorization = async () => {
     const client = getSupabaseBrowserClient();
@@ -42,14 +71,17 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     const assets = await assetResponse.json().catch(() => ({}));
     if (!versionResponse.ok) throw new Error(versions.error || "버전 정보를 불러오지 못했어요.");
     if (!assetResponse.ok) throw new Error(assets.error || "장식 Asset을 불러오지 못했어요.");
-    const active = (assets.assets || []).filter((asset) => asset.asset_type === "decoration" && asset.is_active);
-    setPlacements((previous) => active.map((asset) =>
+    const active = (assets.assets || []).filter((asset) => asset.is_active);
+    setBackground((previous) => preservePlacements ? previous : fromConfig(backgroundDefaults, versions.draft?.background));
+    setHero((previous) => preservePlacements ? previous : fromConfig(heroDefaults, versions.draft?.hero));
+    setPlacements((previous) => active.filter((asset) => asset.asset_type === "decoration").map((asset) =>
       placementFor(asset.id, (preservePlacements ? previous.find((item) => item.assetId === asset.id) : null) ||
         versions.draft?.decorations?.find((item) => item.assetId === asset.id))));
     setState({ loading: false, current: versions.current, draft: versions.draft, assets: active, error: "" });
+    loaded.current = templateId;
   };
   useEffect(() => {
-    load(assetRevision > 0).catch((error) => setState((previous) => ({ ...previous, loading: false, error: error.message })));
+    load(loaded.current === templateId).catch((error) => setState((previous) => ({ ...previous, loading: false, error: error.message })));
   }, [templateId, assetRevision]);
 
   const createDraft = async () => {
@@ -67,6 +99,22 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     finally { setCreating(false); }
   };
 
+  const saveBackgroundHero = async (event) => {
+    event.preventDefault();
+    if (saving || !state.draft) return;
+    if (assetChangesPending) { setNotice("Asset 변경을 기본정보 저장으로 확정한 뒤 Background/Hero 설정을 저장해 주세요."); return; }
+    setSaving(true); setNotice("");
+    try {
+      const response = await fetch("/api/admin/templates/versions", {
+        method: "PATCH", headers: { ...(await authorization()), "Content-Type": "application/json" },
+        body: JSON.stringify({ templateId, draftId: state.draft.id, background, hero }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "Background/Hero 설정을 저장하지 못했어요.");
+      setNotice("Draft Background/Hero 설정을 저장했습니다.");
+    } catch (error) { setNotice(error.message); }
+    finally { setSaving(false); }
+  };
   const update = (assetId, key, value) => setPlacements((current) =>
     current.map((item) => item.assetId === assetId ? { ...item, [key]: value } : item));
   const saveDecorations = async (event) => {
@@ -94,10 +142,41 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
       {!state.draft && <button type="button" className="save-button" disabled={creating} onClick={createDraft}>{creating ? "만드는 중..." : "새 Draft 버전 만들기"}</button>}
       {state.draft && <>
         <p>이 Draft가 Config 편집 대상입니다. 현재 판매 버전과 기존 초대장은 변경되지 않습니다.</p>
+        <form onSubmit={saveBackgroundHero} style={{ display: "grid", gap: 14, marginBottom: 28 }}>
+          <fieldset style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 12 }}>
+            <legend>Background 설정</legend>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10 }}>
+              <ColorControl label="배경색" value={background.color} onChange={(color) => setBackground({ ...background, color })} />
+              <AssetSelect label="배경 이미지 Asset" assets={backgroundAssets} value={background.assetId} onChange={(assetId) => setBackground({ ...background, assetId })} />
+              <ColorControl label="Overlay 색상" value={background.overlayColor} onChange={(overlayColor) => setBackground({ ...background, overlayColor })} />
+              <NumberControl label="Overlay 투명도" value={background.overlayOpacity} min={0} max={1} step={0.05} onChange={(overlayOpacity) => setBackground({ ...background, overlayOpacity })} />
+            </div>
+          </fieldset>
+          <fieldset style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 12 }}>
+            <legend>Hero 설정</legend>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10 }}>
+              <label style={field}>Hero mode<select style={input} value={hero.mode} onChange={(event) => setHero({ ...hero, mode: event.target.value })}>
+                <option value="photo">사진 중심형</option><option value="frame">컨셉 프레임형</option><option value="illustration">포스터/일러스트형</option>
+              </select></label>
+              <label style={field}>Hero 비율<select style={input} value={hero.aspectRatio} onChange={(event) => setHero({ ...hero, aspectRatio: event.target.value })}>
+                {["4:5", "1:1", "3:4", "16:9"].map((ratio) => <option key={ratio} value={ratio}>{ratio}</option>)}
+              </select></label>
+              <NumberControl label="사진 X 위치 %" value={hero.positionX} min={0} max={100} onChange={(positionX) => setHero({ ...hero, positionX })} />
+              <NumberControl label="사진 Y 위치 %" value={hero.positionY} min={0} max={100} onChange={(positionY) => setHero({ ...hero, positionY })} />
+              <NumberControl label="사진 Zoom" value={hero.zoom} min={1} max={3} step={0.05} onChange={(zoom) => setHero({ ...hero, zoom })} />
+              <AssetSelect label="Hero Background Asset" assets={backgroundAssets} value={hero.backgroundAssetId} onChange={(backgroundAssetId) => setHero({ ...hero, backgroundAssetId })} />
+              <AssetSelect label="Hero Frame Asset" assets={frameAssets} value={hero.frameAssetId} onChange={(frameAssetId) => setHero({ ...hero, frameAssetId })} />
+              <ColorControl label="Hero Overlay 색상" value={hero.overlayColor} onChange={(overlayColor) => setHero({ ...hero, overlayColor })} />
+              <NumberControl label="Hero Overlay 투명도" value={hero.overlayOpacity} min={0} max={1} step={0.05} onChange={(overlayOpacity) => setHero({ ...hero, overlayOpacity })} />
+            </div>
+          </fieldset>
+          {assetChangesPending && <p>Asset 변경을 확정한 뒤 Background/Hero 설정을 저장할 수 있어요.</p>}
+          <button type="submit" className="save-button" disabled={saving || assetChangesPending}>{saving ? "저장 중..." : "Background + Hero 저장"}</button>
+        </form>
         <h3>Decoration 배치 설정</h3>
-        {!state.assets.length ? <p>활성 장식 Asset이 없습니다. 아래 Asset 영역에서 장식을 등록해 주세요.</p> :
+        {!decorationAssets.length ? <p>활성 장식 Asset이 없습니다. 아래 Asset 영역에서 장식을 등록해 주세요.</p> :
           <form onSubmit={saveDecorations} style={{ display: "grid", gap: 16 }}>
-            {state.assets.map((asset) => {
+            {decorationAssets.map((asset) => {
               const placement = placements.find((item) => item.assetId === asset.id) || defaults(asset.id);
               return <div key={asset.id} style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: 12, minWidth: 0 }}>
                 <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
