@@ -38,7 +38,7 @@ export async function GET(request) {
   const invalid = await checkTemplate(auth.client, id);
   if (invalid) return invalid;
   const { data, error } = await auth.client.from("template_assets")
-    .select("id,asset_type,name,storage_bucket,storage_path,mime,width,height,file_size,sort_order,is_active,created_at")
+    .select("id,asset_type,name,storage_bucket,storage_path,mime_type,width,height,file_size,sort_order,is_active,created_at")
     .eq("template_id", id).order("created_at", { ascending: false });
   if (error) return fail("Asset 목록을 불러오지 못했어요.", 500);
   return Response.json({ assets: (data || []).map((row) => ({
@@ -69,7 +69,7 @@ export async function POST(request) {
   if (uploadError) return fail("이미지 업로드에 실패했어요.", 500);
   const { error: insertError } = await auth.client.from("template_assets").insert({
     id, template_id: templateId, asset_type: type, name: file.name.slice(0, 200),
-    storage_bucket: bucket, storage_path: path, mime: file.type, width, height,
+    storage_bucket: bucket, storage_path: path, mime_type: file.type, width, height,
     file_size: file.size, is_active: true, created_by: auth.user.id,
   });
   if (insertError) {
