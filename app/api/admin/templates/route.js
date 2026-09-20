@@ -81,8 +81,9 @@ export async function PATCH(request) {
   if (fields.status !== existing.status || fields.is_visible !== existing.is_visible) {
     updates.is_active = fields.status === "on_sale" && fields.is_visible;
   }
-  const { error } = await auth.adminClient.from("templates").update(updates).eq("id", body.id);
+  const { error, count } = await auth.adminClient.from("templates").update(updates, { count: "exact" }).eq("id", body.id);
   if (error) return json({ error: "템플릿을 수정하지 못했어요." }, 500);
+  if (count !== 1) return json({ error: count === 0 ? "템플릿을 수정할 수 없어요. 관리자 권한 또는 RLS 정책을 확인해 주세요." : "템플릿 수정 결과가 올바르지 않아요." }, 409);
 
   return json({ id: body.id });
 }
