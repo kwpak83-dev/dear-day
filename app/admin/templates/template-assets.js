@@ -92,7 +92,7 @@ export default function TemplateAssets({ templateId, onOperation, onBusyChange }
         </article>)}
         <input ref={(element) => { inputs.current[type] = element; }} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={(event) => upload(type, event.target.files?.[0])} />
         <button type="button" className="save-button" disabled={busy} onClick={() => inputs.current[type]?.click()}>
-          {busy ? "처리 중..." : type === "decoration" ? "+ Asset 추가" : active.length ? "교체 업로드" : "업로드"}
+          {busy ? "처리 중..." : (type === "decoration" || type === "background") ? "+ Asset 추가" : active.length ? "교체 업로드" : "업로드"}
         </button>
       </div>;
     })}

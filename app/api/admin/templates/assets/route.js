@@ -78,7 +78,7 @@ export async function POST(request) {
   const bytes = new Uint8Array(await file.arrayBuffer());
   if (!validImage(bytes, file.type)) return fail("올바른 이미지 파일을 선택해 주세요.", 400);
   let previous = [];
-  if (type !== "decoration") {
+  if (type !== "decoration" && type !== "background") {
     const result = await auth.client.from("template_assets").select("id").eq("template_id", templateId).eq("asset_type", type).eq("is_active", true);
     if (result.error) return fail("기존 Asset을 확인하지 못했어요.", 500);
     previous = result.data || [];
