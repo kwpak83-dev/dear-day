@@ -129,10 +129,15 @@ export async function PATCH(request) {
     zIndex: item.zIndex, visible: item.visible,
   }));
   const config = { ...result.draft.config, decorations };
-  const { error, count } = await auth.adminClient.from("template_versions")
-    .update({ config }, { count: "exact" })
-    .eq("id", body.draftId).eq("template_id", body.templateId).eq("status", "draft");
-  if (error) return fail("장식 배치를 저장하지 못했어요.", 500);
-  if (count !== 1) return fail("편집 Draft를 수정하지 못했어요. 다시 불러와 주세요.", 409);
+  const { data: updated, error } = await auth.adminClient.from("template_versions")
+  .update({ config })
+  .eq("id", body.draftId)
+  .eq("template_id", body.templateId)
+  .eq("status", "draft")
+  .select("id")
+  .maybeSingle();
+
+if (error) return fail("장식 배치를 저장하지 못했어요.", 500);
+if (!updated) return fail("편집 Draft를 수정하지 못했어요. 다시 불러와 주세요.", 409);
   return Response.json({ draftId: body.draftId, decorations });
 }
