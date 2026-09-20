@@ -35,52 +35,43 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   align-items: center;
 }
 
-.deceased-check {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: 8px;
-  font-style: normal;
-  font-weight: 500;
-  white-space: nowrap;
-  width: auto;
-}
-
-.deceased-check input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  flex: 0 0 auto;
-  cursor: pointer;
-  accent-color: currentColor;
-}
-.form-field input.deceased-checkbox {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  min-width: 16px;
-  padding: 0;
-  margin: 0;
-  border-radius: 3px;
-  flex: 0 0 16px;
-}
-
 .parent-name-label {
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #755d52;
 }
 
 .parent-name-label .deceased-check {
   display: inline-flex;
+  flex-direction: row;
   align-items: center;
   gap: 4px;
   width: auto;
   margin: 0;
+  padding: 0;
+  white-space: nowrap;
+  cursor: pointer;
+  font-weight: 500;
 }
 
-.parent-name-label .deceased-check span {
-  display: inline;
+.form-field .parent-name-label .deceased-check .deceased-checkbox {
+  display: inline-block;
+  flex: 0 0 16px;
+  width: 16px;
+  min-width: 16px;
+  max-width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+}
+
+.parent-name-label .deceased-check > span {
+  display: inline-block;
   width: auto;
   margin: 0;
+  padding: 0;
 }
