@@ -385,3 +385,30 @@
 - 상품/가격/이용권과 연결되는 경우 `docs/DEARDAY_PRODUCT_PLAN_SPEC.md`
 
 이 문서의 규격은 현재 MVP를 무조건 한 번에 재작성하라는 의미가 아니다. 기존 공통 Renderer 구조를 유지하면서 ⑬ 관리자 페이지와 ⑬-A 판매용 템플릿 확대 단계에서 점진적으로 데이터/설정 기반 구조로 확장한다.
+
+
+## 35. 현재 구현 체크포인트 / Config 단계 (2026-09-20)
+
+⑬-T2 관리자 템플릿 편집은 다음 단계로 나누어 진행한다.
+
+- **C1 Decoration Config — 완료**: 장식 Asset의 slot, X/Y, size, rotation, opacity, zIndex, visible을 Draft Version config에 저장/복원한다.
+- **C2 Background + Hero Config — 완료**: 전체 Background와 Hero Background를 독립 설정하며 color/asset/overlay와 Hero mode/aspectRatio/positionX/positionY/zoom/frame을 Draft Version config에 저장/복원한다.
+- **C3 Typography + Colors — 다음 작업**: Hero Title, Section Title, Body, Caption/Small 등 역할별 폰트·크기·굵기·행간·자간·정렬과 기본/제목/포인트/버튼 등 색상 설정을 안전 범위 내에서 관리자 편집 가능하게 한다.
+- **C4 Sections**: 공통 섹션의 기본 순서와 기본 ON/OFF를 템플릿 config로 관리한다.
+- **C5 Effects/BGM/Safe Area**: scroll reveal, 추천 화면효과, 추천 BGM, Safe Area 등 고급 config를 관리한다.
+- **C6 Renderer 연결**: C1~C5에서 저장한 config를 기존 공통 InvitationRenderer에 연결한다. C6는 ⑬-T3의 핵심 구현으로 취급한다.
+
+### Background Asset 운영 정책
+
+- `background`과 `decoration` Asset은 여러 개를 동시에 active 상태로 둘 수 있다.
+- 전체 Background의 `background.assetId`와 Hero의 `hero.backgroundAssetId`는 서로 독립적으로 선택한다.
+- 같은 Background Asset ID를 전체 Background와 Hero에서 함께 사용하는 것을 기본적으로 허용한다.
+- 같은 이미지를 사용하더라도 전체 Background와 Hero의 overlay color/opacity 등 표현값을 독립 조정해 자연스럽게 연결할 수 있다.
+- 판매용 템플릿의 Asset 개수를 7개로 하드코딩하지 않는다. 기존 7종 기본 체계는 유지하되, 별도 Hero Background가 디자인상 필요한 경우에만 추가 Background Asset을 등록한다.
+- 따라서 모든 기존 판매용 템플릿에 일괄적으로 8번째 Asset을 추가 생성하지 않는다.
+
+### Draft Config 보존 원칙
+
+- C1~C5는 동일한 `template_versions.config`를 단계적으로 확장한다.
+- 한 Config 영역을 저장할 때 다른 영역의 기존 값을 삭제하거나 초기화하지 않는다.
+- 실질적 디자인 변경은 Draft Version에서 편집하고, 판매중 버전 및 기존 발행 초대장의 version pin을 직접 변경하지 않는다.
