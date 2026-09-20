@@ -73,6 +73,10 @@ export async function POST(request) {
     file_size: file.size, is_active: true, created_by: auth.user.id,
   });
   if (insertError) {
+    console.error("Template asset metadata insert failed", {
+      code: insertError.code, message: insertError.message,
+      details: insertError.details, hint: insertError.hint,
+    });
     const { error: rollbackError } = await auth.client.storage.from(bucket).remove([path]);
     return fail(rollbackError ? "Asset 저장에 실패했고 업로드 파일 정리가 필요해요." : "Asset 정보를 저장하지 못했어요. 다시 시도해 주세요.", 500);
   }
