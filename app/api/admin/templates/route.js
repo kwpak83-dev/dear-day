@@ -31,11 +31,11 @@ function readFields(body) {
   if (!body || typeof body !== "object" || Array.isArray(body)) return null;
   const { name, template_key: templateKey, description, status, is_visible: isVisible, sort_order: sortOrder } = body;
   if (typeof name !== "string" || !name.trim() || name.trim().length > 100) return null;
-  if (typeof templateKey !== "string" || !/^[a-z0-9][a-z0-9_-]{2,79}$/.test(templateKey)) return null;
+  if (typeof templateKey !== "string" || !/^[a-z0-9][a-z0-9_-]{2,79}$/.test(templateKey.trim())) return null;
   if (typeof description !== "string" || description.length > 2000) return null;
   if (!statuses.has(status) || typeof isVisible !== "boolean") return null;
   if (!Number.isInteger(sortOrder) || sortOrder < -10000 || sortOrder > 10000) return null;
-  return { name: name.trim(), template_key: templateKey, description: description.trim(), status, is_visible: isVisible, sort_order: sortOrder };
+  return { name: name.trim(), template_key: templateKey.trim(), description: description.trim(), status, is_visible: isVisible, sort_order: sortOrder };
 }
 
 export async function GET(request) {

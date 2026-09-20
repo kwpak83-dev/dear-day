@@ -39,7 +39,7 @@ export default function AdminTemplatesPage() {
       const supabase = getSupabaseBrowserClient();
       const { data: { session } } = supabase ? await supabase.auth.getSession() : { data: {} };
       if (!session) { setNotice("로그인이 필요합니다."); return; }
-      const response = await fetch("/api/admin/templates", { method: editing === "new" ? "POST" : "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ ...form, ...(editing !== "new" ? { id: editing } : {}) }) });
+      const response = await fetch("/api/admin/templates", { method: editing === "new" ? "POST" : "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ ...form, template_key: form.template_key.trim(), ...(editing !== "new" ? { id: editing } : {}) }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) { setNotice(result.error || "저장하지 못했어요."); return; }
       await load();
@@ -54,10 +54,10 @@ export default function AdminTemplatesPage() {
     {state.loading ? <p>템플릿 목록을 불러오는 중이에요.</p> : state.error ? <section className="my-notice"><p>{state.error}</p>{state.status === 401 && <a className="my-login-button" href="/?login=required&returnUrl=%2Fadmin%2Ftemplates">로그인하기</a>}</section> : <>
       <button type="button" className="save-button" onClick={() => openForm()}>새 템플릿 등록</button>
       {notice && <p role="status">{notice}</p>}
-      {editing && <form onSubmit={save} style={{ ...cardStyle, display: "grid", gap: 12, margin: "16px 0" }}>
+      {editing && <form className="admin-template-form" onSubmit={save} style={{ ...cardStyle, display: "grid", gap: 12, margin: "16px 0" }}>
         <h2 style={{ margin: 0 }}>{editing === "new" ? "새 템플릿 등록" : "템플릿 수정"}</h2>
         <label style={fieldStyle}>템플릿명<input style={inputStyle} required maxLength={100} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
-        <label style={fieldStyle}>Template key<input style={inputStyle} required minLength={3} maxLength={80} pattern="[a-z0-9][a-z0-9_-]{2,79}" value={form.template_key} disabled={editing !== "new"} onChange={(e) => setForm({ ...form, template_key: e.target.value })} /></label>
+        <label style={fieldStyle}>Template key<input style={inputStyle} required minLength={3} maxLength={80} pattern="[a-z0-9](?:[a-z0-9]|_|-){2,79}" value={form.template_key} disabled={editing !== "new"} onChange={(e) => setForm({ ...form, template_key: e.target.value.trim() })} /></label>
         <label style={fieldStyle}>설명<textarea style={inputStyle} maxLength={2000} rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></label>
         <label style={fieldStyle}>상태<select style={inputStyle} value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>{statusOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
         <label><input type="checkbox" checked={form.is_visible} onChange={(e) => setForm({ ...form, is_visible: e.target.checked })} /> 노출</label>

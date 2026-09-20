@@ -622,3 +622,5 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
     border-radius: 20px;
   }
 }
+.admin-template-form :is(input:not([type=checkbox]),textarea,select){border:1px solid #d9c5b9;border-radius:8px;background:#fff;padding:10px;color:#60483e}
+.admin-template-form :is(input:not([type=checkbox]),textarea,select):focus{border-color:#b77f6d;outline:2px solid #f0d7cc;outline-offset:1px}
