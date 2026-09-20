@@ -457,62 +457,168 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   width: 100%;
 }
 
+.bank-select-trigger {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 12px;
+  border: 1px solid #eaded8;
+  border-radius: 10px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: #5f514b;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.bank-select-arrow {
+  flex: none;
+  color: #a78c80;
+  font-size: 12px;
+}
+
+/* 화면 전체를 덮는 반투명 배경 */
+.bank-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* 모바일 Bottom Sheet */
+.bank-sheet {
+  width: 100%;
+  max-width: 540px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 18px 16px 24px;
+  background: #fffaf7;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -8px 30px rgba(70, 45, 35, 0.15);
+}
+
+.bank-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.bank-sheet-header strong {
+  font-size: 17px;
+  color: #4f4039;
+}
+
+.bank-sheet-close {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #6d5a51;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
 .bank-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
 }
 
 .bank-option {
   min-width: 0;
-  height: 76px;
-  padding: 8px 4px;
+  height: 82px;
+  padding: 8px 3px;
   border: 1px solid #eaded8;
-  border-radius: 10px;
+  border-radius: 11px;
   background: #fff;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 7px;
+  cursor: pointer;
 }
 
 .bank-option img {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   object-fit: contain;
 }
 
 .bank-option span {
   width: 100%;
+  color: #5f514b;
   font-size: 11px;
   line-height: 1.2;
-  color: #5f514b;
   text-align: center;
   white-space: nowrap;
 }
 
 .bank-option.selected {
   border-color: #c98f7b;
-  background: #fff7f3;
+  background: #fff3ed;
   box-shadow: 0 0 0 1px #c98f7b;
 }
 
 .bank-direct-button {
   width: 100%;
-  margin-top: 10px;
-  padding: 11px;
+  min-height: 44px;
+  margin-top: 12px;
   border: 1px dashed #cdbbb2;
-  border-radius: 9px;
+  border-radius: 10px;
   background: #fff;
   color: #725e54;
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
 }
 
+.bank-direct-area {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 .bank-direct-input {
-  width: 100%;
-  margin-top: 10px;
+  flex: 1;
+  min-width: 0;
+  margin: 0;
   box-sizing: border-box;
+}
+
+.bank-direct-confirm {
+  flex: none;
+  min-width: 64px;
+  border: 0;
+  border-radius: 9px;
+  background: #8f6f61;
+  color: #fff;
+  padding: 0 14px;
+  cursor: pointer;
+}
+
+.bank-direct-confirm:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* PC에서는 가운데 팝업 형태 */
+@media (min-width: 768px) {
+  .bank-sheet-overlay {
+    align-items: center;
+    padding: 24px;
+  }
+
+  .bank-sheet {
+    max-width: 500px;
+    border-radius: 20px;
+  }
 }
