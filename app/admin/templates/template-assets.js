@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 
 const types = [
@@ -17,13 +17,12 @@ const imageSize = (file) => new Promise((resolve, reject) => {
   image.src = url;
 });
 
-const TemplateAssets = forwardRef(function TemplateAssets({ templateId }, ref) {
+export default function TemplateAssets({ templateId, onOperation, onBusyChange }) {
   const [assets, setAssets] = useState([]);
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const inputs = useRef({});
-  const operations = useRef([]);
   const authorization = async () => {
     const supabase = getSupabaseBrowserClient();
     const { data: { session } } = supabase ? await supabase.auth.getSession() : { data: {} };
@@ -41,37 +40,12 @@ const TemplateAssets = forwardRef(function TemplateAssets({ templateId }, ref) {
     setLoading(true); setAssets([]); setNotice("");
     load().catch((error) => setNotice(error.message)).finally(() => setLoading(false));
   }, [templateId]);
-  useImperativeHandle(ref, () => ({
-    hasChanges: () => operations.current.length > 0,
-    isBusy: () => busy || loading,
-    commit: () => { operations.current = []; },
-    rollback: async () => {
-      if (busy || loading) throw new Error("Asset 처리가 끝난 뒤 취소해 주세요.");
-      setBusy(true); setNotice("");
-      try {
-        while (operations.current.length) {
-          const operation = operations.current[operations.current.length - 1];
-          const response = await fetch("/api/admin/templates/assets", {
-            method: "DELETE", headers: { ...(await authorization()), "Content-Type": "application/json" },
-            body: JSON.stringify({ templateId, receipt: operation.receipt }),
-          });
-          const result = await response.json().catch(() => ({}));
-          if (!response.ok) throw new Error(result.error || "Asset 변경을 취소하지 못했어요.");
-          operations.current.pop();
-        }
-      } catch (error) {
-        await load().catch(() => {});
-        setNotice(error.message);
-        throw error;
-      } finally { setBusy(false); }
-    },
-  }));
   const upload = async (type, file) => {
     if (!file || busy) return;
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > maxBytes || !file.size) {
       setNotice("15MB 이하의 JPG, PNG, WebP 이미지를 선택해 주세요."); return;
     }
-    setBusy(true); setNotice("");
+    setBusy(true); onBusyChange(true); setNotice("");
     try {
       const size = await imageSize(file);
       const form = new FormData();
@@ -80,15 +54,15 @@ const TemplateAssets = forwardRef(function TemplateAssets({ templateId }, ref) {
       const response = await fetch("/api/admin/templates/assets", { method: "POST", headers: await authorization(), body: form });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "Asset 업로드에 실패했어요.");
-      operations.current.push({ id: result.id, receipt: result.receipt });
+      onOperation({ id: result.id, receipt: result.receipt });
       await load();
       setNotice("Asset을 등록했습니다.");
     } catch (error) { setNotice(error.message); }
-    finally { setBusy(false); if (inputs.current[type]) inputs.current[type].value = ""; }
+    finally { setBusy(false); onBusyChange(false); if (inputs.current[type]) inputs.current[type].value = ""; }
   };
   const deactivate = async (asset) => {
     if (busy || !window.confirm("이 Asset을 비활성화할까요? Storage 파일은 보존됩니다.")) return;
-    setBusy(true); setNotice("");
+    setBusy(true); onBusyChange(true); setNotice("");
     try {
       const response = await fetch("/api/admin/templates/assets", {
         method: "PATCH", headers: { ...(await authorization()), "Content-Type": "application/json" },
@@ -96,10 +70,10 @@ const TemplateAssets = forwardRef(function TemplateAssets({ templateId }, ref) {
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "Asset을 비활성화하지 못했어요.");
-      operations.current.push({ id: result.id, receipt: result.receipt });
+      onOperation({ id: result.id, receipt: result.receipt });
       await load(); setNotice("Asset을 비활성화했습니다.");
     } catch (error) { setNotice(error.message); }
-    finally { setBusy(false); }
+    finally { setBusy(false); onBusyChange(false); }
   };
   return <section className="admin-template-assets">
     <h2>템플릿 Asset</h2>
@@ -123,6 +97,4 @@ const TemplateAssets = forwardRef(function TemplateAssets({ templateId }, ref) {
       </div>;
     })}
   </section>;
-});
-
-export default TemplateAssets;
+}

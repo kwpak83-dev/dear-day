@@ -16,7 +16,8 @@ export default function AdminTemplatesPage() {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
-  const assetRef = useRef(null);
+  const assetOperations = useRef([]);
+  const assetBusy = useRef(false);
 
   const load = async () => {
     const supabase = getSupabaseBrowserClient();
@@ -29,7 +30,8 @@ export default function AdminTemplatesPage() {
   useEffect(() => { load().catch(() => setState({ loading: false, error: "템플릿 목록을 불러오지 못했어요.", status: 500, templates: [] })); }, []);
 
   const openForm = (template = null) => {
-    if (editing && (assetRef.current?.hasChanges() || assetRef.current?.isBusy())) { setNotice("진행 중인 편집을 저장하거나 취소해 주세요."); return; }
+    if (editing && (assetOperations.current.length || assetBusy.current)) { setNotice("진행 중인 편집을 저장하거나 취소해 주세요."); return; }
+    assetOperations.current = [];
     setEditing(template ? template.id : "new");
     setForm(template ? { name: template.name, template_key: template.template_key, description: template.description || "", status: template.status, is_visible: template.is_visible, sort_order: template.sort_order } : { ...emptyForm });
     setNotice("");
@@ -37,7 +39,7 @@ export default function AdminTemplatesPage() {
   const save = async (event) => {
     event.preventDefault();
     if (saving) return;
-    if (assetRef.current?.isBusy()) { setNotice("Asset 처리가 끝난 뒤 저장해 주세요."); return; }
+    if (assetBusy.current) { setNotice("Asset 처리가 끝난 뒤 저장해 주세요."); return; }
     setSaving(true); setNotice("");
     try {
       const supabase = getSupabaseBrowserClient();
@@ -46,7 +48,7 @@ export default function AdminTemplatesPage() {
       const response = await fetch("/api/admin/templates", { method: editing === "new" ? "POST" : "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ ...form, template_key: form.template_key.trim(), ...(editing !== "new" ? { id: editing } : {}) }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) { setNotice(result.error || "저장하지 못했어요."); return; }
-      assetRef.current?.commit();
+      assetOperations.current = [];
       await load();
       setEditing(null);
       setNotice("템플릿 기본정보를 저장했습니다.");
@@ -56,9 +58,24 @@ export default function AdminTemplatesPage() {
 
   const cancel = async () => {
     if (saving) return;
+    if (assetBusy.current) { setNotice("Asset 처리가 끝난 뒤 취소해 주세요."); return; }
     setSaving(true); setNotice("");
     try {
-      await assetRef.current?.rollback();
+      while (assetOperations.current.length) {
+        const operation = assetOperations.current[assetOperations.current.length - 1];
+        if (!operation.receipt) throw new Error("Asset 취소 정보가 없어 화면을 닫지 않았어요.");
+        const supabase = getSupabaseBrowserClient();
+        const { data: { session } } = supabase ? await supabase.auth.getSession() : { data: {} };
+        if (!session) throw new Error("다시 로그인한 뒤 취소해 주세요.");
+        const response = await fetch("/api/admin/templates/assets", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+          body: JSON.stringify({ templateId: editing, receipt: operation.receipt }),
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.error || "Asset 변경을 취소하지 못했어요.");
+        assetOperations.current.pop();
+      }
       setEditing(null);
     } catch (error) {
       setNotice(error.message || "Asset 변경을 취소하지 못했어요. 다시 시도해 주세요.");
@@ -80,7 +97,7 @@ export default function AdminTemplatesPage() {
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "저장하기"}</button><button type="button" className="save-button" disabled={saving} onClick={cancel}>취소</button></div>
       </form>}
       {editing === "new" && <p>먼저 템플릿 기본정보를 저장한 뒤 Asset을 등록할 수 있어요.</p>}
-      {editing && editing !== "new" && <TemplateAssets ref={assetRef} key={editing} templateId={editing} />}
+      {editing && editing !== "new" && <TemplateAssets key={editing} templateId={editing} onOperation={(operation) => assetOperations.current.push(operation)} onBusyChange={(busy) => { assetBusy.current = busy; }} />}
       {state.templates.length ? <div style={{ display: "grid", gap: 12, marginTop: 16 }}>{state.templates.map((template) => <article key={template.id} style={cardStyle}><h2 style={{ margin: "0 0 10px", fontSize: 18 }}>{template.name}</h2><dl style={{ display: "grid", gridTemplateColumns: "110px 1fr", gap: "6px 10px", margin: "0 0 12px" }}><dt>Template key</dt><dd style={{ margin: 0, overflowWrap: "anywhere" }}>{template.template_key}</dd><dt>상태</dt><dd style={{ margin: 0 }}>{statusOptions.find(([value]) => value === template.status)?.[1] || template.status}</dd><dt>노출</dt><dd style={{ margin: 0 }}>{template.is_visible ? "노출" : "숨김"}</dd></dl><button type="button" className="save-button" onClick={() => openForm(template)}>수정하기</button></article>)}</div> : <p>등록된 템플릿이 없습니다.</p>}
     </>}
   </main>;
