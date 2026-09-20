@@ -403,6 +403,7 @@ export default function CreateInvitation() {
 
       <label className="deceased-check">
         <input
+          className="deceased-checkbox"
           type="checkbox"
           checked={Boolean(invitation[field.deceasedKey])}
           onChange={(e) => update(field.deceasedKey, e.target.checked)}

@@ -54,3 +54,33 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   cursor: pointer;
   accent-color: currentColor;
 }
+.form-field input.deceased-checkbox {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  padding: 0;
+  margin: 0;
+  border-radius: 3px;
+  flex: 0 0 16px;
+}
+
+.parent-name-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.parent-name-label .deceased-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: auto;
+  margin: 0;
+}
+
+.parent-name-label .deceased-check span {
+  display: inline;
+  width: auto;
+  margin: 0;
+}
