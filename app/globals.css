@@ -624,3 +624,12 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 }
 .admin-template-form :is(input:not([type=checkbox]),textarea,select){border:1px solid #d9c5b9;border-radius:8px;background:#fff;padding:10px;color:#60483e}
 .admin-template-form :is(input:not([type=checkbox]),textarea,select):focus{border-color:#b77f6d;outline:2px solid #f0d7cc;outline-offset:1px}
+.admin-template-assets{border:1px solid #eadfd8;border-radius:14px;padding:16px;background:#fff;margin:16px 0}
+.admin-template-assets h2{margin:0 0 8px}
+.admin-template-asset-slot{border-top:1px solid #eadfd8;padding:16px 0}
+.admin-template-asset-slot h3{margin:0 0 8px;font-size:17px}
+.admin-template-asset-row{display:flex;align-items:center;gap:12px;min-width:0;padding:10px 0}
+.admin-template-asset-row img{width:88px;height:88px;object-fit:contain;background:#f8f5f2;border-radius:8px;flex:none}
+.admin-template-asset-row div{min-width:0;flex:1;overflow-wrap:anywhere}
+.admin-template-asset-row p{margin:4px 0 0}
+@media(max-width:480px){.admin-template-asset-row{flex-wrap:wrap}.admin-template-asset-row button{width:100%}}

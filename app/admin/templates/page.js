@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
+import TemplateAssets from "./template-assets";
 
 const statusOptions = [["draft", "제작중"], ["review", "검수대기"], ["sale_ready", "판매가능"], ["on_sale", "판매중"], ["stopped", "판매중지"], ["archived", "보관"]];
 const emptyForm = { name: "", template_key: "", description: "", status: "draft", is_visible: false, sort_order: 0 };
@@ -64,6 +65,8 @@ export default function AdminTemplatesPage() {
         <label style={fieldStyle}>표시 순서<input style={inputStyle} type="number" min={-10000} max={10000} required value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })} /></label>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "저장하기"}</button><button type="button" className="save-button" disabled={saving} onClick={() => { setEditing(null); setNotice(""); }}>취소</button></div>
       </form>}
+      {editing === "new" && <p>먼저 템플릿 기본정보를 저장한 뒤 Asset을 등록할 수 있어요.</p>}
+      {editing && editing !== "new" && <TemplateAssets key={editing} templateId={editing} />}
       {state.templates.length ? <div style={{ display: "grid", gap: 12, marginTop: 16 }}>{state.templates.map((template) => <article key={template.id} style={cardStyle}><h2 style={{ margin: "0 0 10px", fontSize: 18 }}>{template.name}</h2><dl style={{ display: "grid", gridTemplateColumns: "110px 1fr", gap: "6px 10px", margin: "0 0 12px" }}><dt>Template key</dt><dd style={{ margin: 0, overflowWrap: "anywhere" }}>{template.template_key}</dd><dt>상태</dt><dd style={{ margin: 0 }}>{statusOptions.find(([value]) => value === template.status)?.[1] || template.status}</dd><dt>노출</dt><dd style={{ margin: 0 }}>{template.is_visible ? "노출" : "숨김"}</dd></dl><button type="button" className="save-button" onClick={() => openForm(template)}>수정하기</button></article>)}</div> : <p>등록된 템플릿이 없습니다.</p>}
     </>}
   </main>;
