@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 
 const bucket = "template-assets";
@@ -7,6 +7,25 @@ const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 const folders = { thumbnail: "sales", long_preview: "sales", background: "backgrounds", hero_frame: "hero", decoration: "decorations", screen_effect: "effects", texture: "textures" };
 const extensions = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
 const fail = (error, status) => Response.json({ error }, { status });
+const receiptSecret = () => process.env.SUPABASE_SERVICE_ROLE_KEY;
+function signOperation(operation) {
+  const payload = Buffer.from(JSON.stringify({ ...operation, expires: Date.now() + 2 * 60 * 60 * 1000 })).toString("base64url");
+  const signature = createHmac("sha256", receiptSecret()).update(payload).digest("base64url");
+  return `${payload}.${signature}`;
+}
+function readOperation(receipt, userId, templateId) {
+  if (typeof receipt !== "string") return null;
+  const [payload, signature, extra] = receipt.split(".");
+  if (!payload || !signature || extra) return null;
+  const expected = createHmac("sha256", receiptSecret()).update(payload).digest();
+  let actual;
+  try { actual = Buffer.from(signature, "base64url"); } catch { return null; }
+  if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) return null;
+  try {
+    const operation = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
+    return operation.userId === userId && operation.templateId === templateId && operation.expires > Date.now() ? operation : null;
+  } catch { return null; }
+}
 async function getAdmin(request) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL, key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const token = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
@@ -87,7 +106,7 @@ export async function POST(request) {
       return fail("새 Asset은 저장됐지만 기존 Asset 교체를 완료하지 못했어요. 목록을 확인해 주세요.", 409);
     }
   }
-  return Response.json({ id }, { status: 201 });
+  return Response.json({ id, receipt: signOperation({ kind: "upload", userId: auth.user.id, templateId, id, path, previous: previous.map((row) => row.id) }) }, { status: 201 });
 }
 export async function PATCH(request) {
   const auth = await getAdmin(request);
@@ -100,6 +119,61 @@ export async function PATCH(request) {
     .eq("id", body.assetId).eq("template_id", body.templateId).eq("is_active", true);
   if (error) return fail("Asset을 비활성화하지 못했어요.", 500);
   if (count !== 1) return fail("활성 Asset을 찾지 못했어요.", 409);
-  return Response.json({ id: body.assetId });
+  return Response.json({ id: body.assetId, receipt: signOperation({ kind: "deactivate", userId: auth.user.id, templateId: body.templateId, id: body.assetId }) });
+}
+
+export async function DELETE(request) {
+  const auth = await getAdmin(request);
+  if (auth.error) return fail(auth.error, auth.status);
+  const body = await request.json().catch(() => null);
+  if (!uuid.test(body?.templateId || "")) return fail("템플릿 정보가 올바르지 않아요.", 400);
+  const operation = readOperation(body?.receipt, auth.user.id, body.templateId);
+  if (!operation || !uuid.test(operation.id || "")) return fail("이번 편집 세션의 Asset 변경만 취소할 수 있어요.", 403);
+  const invalid = await checkTemplate(auth.client, body.templateId);
+  if (invalid) return invalid;
+
+  if (operation.kind === "deactivate") {
+    const { data, error } = await auth.client.from("template_assets").select("id,is_active")
+      .eq("id", operation.id).eq("template_id", body.templateId).maybeSingle();
+    if (error || !data) return fail("기존 Asset을 확인하지 못했어요.", 409);
+    if (!data.is_active) {
+      const restored = await auth.client.from("template_assets").update({ is_active: true }, { count: "exact" })
+        .eq("id", operation.id).eq("template_id", body.templateId).eq("is_active", false);
+      if (restored.error || restored.count !== 1) return fail("기존 Asset 상태를 복원하지 못했어요.", 500);
+    }
+    return Response.json({ restored: operation.id });
+  }
+
+  if (operation.kind !== "upload" || typeof operation.path !== "string" ||
+      !operation.path.startsWith(`${body.templateId}/`) ||
+      !Array.isArray(operation.previous) || !operation.previous.every((id) => uuid.test(id))) {
+    return fail("Asset 취소 정보가 올바르지 않아요.", 400);
+  }
+  const { data: asset, error: lookupError } = await auth.client.from("template_assets")
+    .select("id,storage_bucket,storage_path,created_by").eq("id", operation.id)
+    .eq("template_id", body.templateId).maybeSingle();
+  if (lookupError) return fail("새 Asset을 확인하지 못했어요.", 500);
+  if (asset && (asset.storage_bucket !== bucket || asset.storage_path !== operation.path || asset.created_by !== auth.user.id)) {
+    return fail("이번 편집 세션에 추가된 Asset이 아니에요.", 403);
+  }
+  if (asset) {
+    const removed = await auth.client.from("template_assets").delete({ count: "exact" })
+      .eq("id", operation.id).eq("template_id", body.templateId).eq("storage_path", operation.path);
+    if (removed.error || removed.count !== 1) return fail("새 Asset 정보를 폐기하지 못했어요.", 500);
+  }
+  const { error: storageError } = await auth.client.storage.from(bucket).remove([operation.path]);
+  if (storageError) return fail("Asset 정보는 폐기됐지만 파일 정리가 필요해요. 다시 취소해 주세요.", 500);
+  if (operation.previous.length) {
+    const { data: previous, error } = await auth.client.from("template_assets").select("id,is_active")
+      .eq("template_id", body.templateId).in("id", operation.previous);
+    if (error || previous?.length !== operation.previous.length) return fail("기존 Asset 복원에 실패했어요. 다시 취소해 주세요.", 500);
+    const inactive = previous.filter((row) => !row.is_active).map((row) => row.id);
+    if (inactive.length) {
+      const restored = await auth.client.from("template_assets").update({ is_active: true }, { count: "exact" })
+        .eq("template_id", body.templateId).in("id", inactive);
+      if (restored.error || restored.count !== inactive.length) return fail("기존 Asset 복원에 실패했어요. 다시 취소해 주세요.", 500);
+    }
+  }
+  return Response.json({ removed: operation.id });
 }
 
