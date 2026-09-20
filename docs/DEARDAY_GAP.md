@@ -42,8 +42,8 @@
 | ⑪-D | 문의내역 / 문의하기 | 🟢 완료 |
 | ⑪-E | Naver 내 정보 프로필 보완 | 🟢 완료 |
 | ⑫ | 보관기간 / 만료 / 유료연장 / 알림 | 🟢 완료 |
-| **⑬-T1** | **템플릿 DB + Storage + Asset/Config 구조** | **🔴 NEXT** |
-| ⑬-T2 | 관리자 템플릿 등록/수정 UI | 🔴 |
+| **⑬-T1** | **템플릿 DB + Storage + Asset/Config 구조** | **🟡 진행** |
+| **⑬-T2** | **관리자 템플릿 등록/수정 UI** | **🟡 NEXT** |
 | ⑬-T3 | Asset/Config ↔ InvitationRenderer 연결 | 🔴 |
 | ⑬-T4 | 실제 Renderer 미리보기 + 버전/판매상태 관리 | 🔴 |
 | ⑬-A | 판매용 템플릿 20~30개 확대 | 🔴 |
@@ -55,7 +55,7 @@
 | ⑮ | 전체 통합 TC / 보안·안정화 / 오픈 준비 | 🔴 |
 | ⑯ | DearDay 정식 오픈 | 🔴 |
 
-> **현재 개발 우선순위:** `⑬-T1 → ⑬-T2 → ⑬-T3 → ⑬-T4 → ⑬-A → ⑫-A → ⑫-B → ⑬ → ⑬-B → ⑭ → ⑮ → ⑯`
+> **현재 개발 우선순위:** `⑬-T2 Config 편집 마무리 → ⑬-T3 → ⑬-T4 → ⑬-A → ⑫-A → ⑫-B → ⑬ → ⑬-B → ⑭ → ⑮ → ⑯`
 >
 > 템플릿 시스템을 먼저 데이터 기반으로 완성해, 이후 판매용 템플릿 추가는 가능한 한 Codex 코드 수정·GitHub commit·Vercel 재배포 없이 관리자 페이지에서 처리하는 것을 목표로 한다.
 
@@ -151,6 +151,23 @@
 - 일반적인 신규 디자인 등록을 위해 코드 수정이나 재배포가 필요하지 않도록 Storage 경로와 config를 데이터 기반으로 관리한다.
 
 ## ⑬-T2 관리자 템플릿 등록/수정 UI
+
+### 현재 구현 상태 (2026-09-20)
+
+- 🟢 템플릿 기본정보 등록·수정, 상태·노출·정렬순서 관리
+- 🟢 Template key 검증 및 앞뒤 공백 처리
+- 🟢 관리자용 템플릿 Asset 영역 및 모바일 대응 UI
+- 🟢 판매 썸네일, 긴 판매 미리보기, 배경, Hero 프레임, 장식, 화면효과, Texture 업로드
+- 🟢 단일 슬롯 Asset 교체 및 기존 Asset 비활성화
+- 🟢 장식 Asset 다중 등록
+- 🟢 JPG/PNG/WebP 및 15MB 업로드 제한
+- 🟢 운영 DB의 `template_assets.mime_type` 컬럼 기준 metadata 저장
+- 🟢 취소 시 편집 세션에서 새로 업로드한 Asset rollback용 DELETE 요청 동작 확인
+- 🟡 Asset 취소 rollback 세부 TC 및 T2 Config 편집 기능 마무리 중
+- 🔴 Asset 위치 X/Y, 크기, opacity, rotation, z-order 등 Renderer Config 편집
+- 🔴 Hero 비율/마스크 및 typography/색상/섹션 순서·기본 ON/OFF 등 디자인 Config 편집
+- 🔴 scroll reveal, 화면효과, BGM, Safe Area 등 고급 Config 편집
+
 
 - 관리자에서 `새 템플릿 등록` 화면을 제공하고 템플릿명, 가격/판매 상태, 태그, 표시 순서, 배지 등을 관리한다.
 - Asset 슬롯별 업로드, 미리보기, 교체, 삭제를 지원하며 필요한 경우 `+ Asset 추가` 방식으로 확장 가능하게 한다.
