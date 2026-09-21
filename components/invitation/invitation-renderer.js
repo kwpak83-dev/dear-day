@@ -3,6 +3,7 @@ import ModernTemplate from "./templates/modern-template";
 import RomanticTemplate from "./templates/romantic-template";
 import { getInvitationPresentation } from "./presentation";
 import { normalizeTemplateConfig } from "../../lib/template-config";
+import TemplateBgm from "./template-bgm";
 
 export const TEMPLATE_IDS = {
   classic: "10000000-0000-4000-8000-000000000001",
@@ -20,5 +21,6 @@ export default function InvitationRenderer({ invitation, eventKind, templateId, 
   const Template = TEMPLATE_REGISTRY[templateId] || ClassicTemplate;
   const presentation = getInvitationPresentation(invitation, eventKind);
   const normalizedConfig = normalizeTemplateConfig(templateConfig);
-  return <Template presentation={presentation} templateConfig={normalizedConfig} templateAssets={templateAssets} eventKind={eventKind || invitation.eventKind || "wedding"} placeActions={placeActions}>{children}</Template>;
+  const bgmUrl = normalizedConfig.bgm?.mode === "asset" ? templateAssets?.[normalizedConfig.bgm.assetId] : null;
+  return <Template presentation={presentation} templateConfig={normalizedConfig} templateAssets={templateAssets} eventKind={eventKind || invitation.eventKind || "wedding"} placeActions={placeActions} bgmControl={<TemplateBgm src={bgmUrl} />}>{children}</Template>;
 }

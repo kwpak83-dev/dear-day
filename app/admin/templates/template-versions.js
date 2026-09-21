@@ -41,7 +41,7 @@ const sectionsFromConfig = (saved) => Array.isArray(saved) && saved.length === s
   saved.every((item) => sectionLabels.some(([key]) => key === item?.key) && typeof item.enabled === "boolean")
     ? saved.map(({ key, enabled }) => ({ key, enabled })) : defaultSections();
 const effectsDefaults = { scrollReveal: "none" };
-const bgmDefaults = { mode: "none" };
+const bgmDefaults = { mode: "none", assetId: null };
 const safeAreaDefaults = { top: 24, right: 16, bottom: 24, left: 16 };
 const colorValue = (value) => /^#[0-9a-fA-F]{6}$/.test(value) ? value : "#000000";
 
@@ -84,6 +84,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   const backgroundAssets = state.assets.filter((asset) => asset.asset_type === "background");
   const frameAssets = state.assets.filter((asset) => asset.asset_type === "hero_frame");
   const decorationAssets = state.assets.filter((asset) => asset.asset_type === "decoration");
+  const bgmAssets = state.assets.filter((asset) => asset.asset_type === "bgm");
 
   const authorization = async () => {
     const client = getSupabaseBrowserClient();
@@ -350,9 +351,10 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
             <label style={field}>Scroll Effect<select style={input} value={effects.scrollReveal} onChange={(event) => setEffects({ scrollReveal: event.target.value })}>
               <option value="none">없음</option><option value="fade">Fade</option><option value="fade-up">Fade Up</option>
             </select></label>
-            <label style={field}>BGM<select style={input} value={bgm.mode} onChange={(event) => setBgm({ mode: event.target.value })}>
-              <option value="none">사용 안 함</option>
-            </select><small>현재 음원 시스템이 없어 추천값만 비활성 상태로 저장합니다.</small></label>
+            <label style={field}>BGM<select style={input} value={bgm.assetId || ""} onChange={(event) => setBgm(event.target.value ? { mode: "asset", assetId: event.target.value } : { mode: "none", assetId: null })}>
+              <option value="">사용 안 함</option>
+              {bgmAssets.map((asset) => <option key={asset.id} value={asset.id}>{asset.name || asset.id}</option>)}
+            </select><small>브라우저 정책에 따라 사용자가 직접 재생 버튼을 눌러야 합니다.</small></label>
             <fieldset style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 12 }}>
               <legend>Safe Area (px)</legend>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: 10 }}>

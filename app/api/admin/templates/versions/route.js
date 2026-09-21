@@ -179,7 +179,8 @@ const scrollRevealValues = new Set(["none", "fade", "fade-up"]);
 
 function validEffectsBgmSafeArea(effects, bgm, safeArea) {
   return hasOnlyKeys(effects, ["scrollReveal"]) && scrollRevealValues.has(effects.scrollReveal) &&
-    hasOnlyKeys(bgm, ["mode"]) && bgm.mode === "none" &&
+    ((hasOnlyKeys(bgm, ["mode", "assetId"]) && bgm.mode === "none" && bgm.assetId === null) ||
+      (hasOnlyKeys(bgm, ["mode", "assetId"]) && bgm.mode === "asset" && uuid.test(bgm.assetId || ""))) &&
     hasOnlyKeys(safeArea, ["top", "right", "bottom", "left"]) &&
     [safeArea.top, safeArea.right, safeArea.bottom, safeArea.left].every((value) =>
       Number.isInteger(value) && value >= 0 && value <= 120);
@@ -196,6 +197,15 @@ async function saveEffectsBgmSafeArea(auth, body) {
   if (!result.draft || result.draft.id !== body.draftId ||
       result.current?.id === body.draftId) return fail("해당 템플릿의 편집 Draft만 수정할 수 있어요.", 409);
   if (!isRecord(result.draft.config)) return fail("기존 Config 형식을 확인해 주세요.", 409);
+
+  if (body.bgm.mode === "asset") {
+    const { data: asset, error: assetError } = await auth.adminClient.from("template_assets")
+      .select("id,template_id,asset_type,is_active").eq("id", body.bgm.assetId).maybeSingle();
+    if (assetError) return fail("BGM Asset을 확인하지 못했어요.", 500);
+    if (!asset || asset.template_id !== body.templateId || asset.asset_type !== "bgm" || !asset.is_active) {
+      return fail("현재 템플릿의 활성 BGM Asset만 저장할 수 있어요.", 400);
+    }
+  }
 
   const effects = { ...body.effects };
   const bgm = { ...body.bgm };

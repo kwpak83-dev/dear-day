@@ -4,9 +4,9 @@ import { createClient } from "@supabase/supabase-js";
 const bucket = "template-assets";
 const maxBytes = 15 * 1024 * 1024;
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const folders = { thumbnail: "sales", long_preview: "sales", background: "backgrounds", hero_frame: "hero", decoration: "decorations", screen_effect: "effects", texture: "textures" };
-const singleActiveTypes = new Set(["thumbnail", "long_preview", "hero_frame", "screen_effect", "texture"]);
-const extensions = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
+const folders = { thumbnail: "sales", long_preview: "sales", background: "backgrounds", hero_frame: "hero", decoration: "decorations", screen_effect: "effects", texture: "textures", bgm: "audio" };
+const singleActiveTypes = new Set(["thumbnail", "long_preview", "hero_frame", "screen_effect", "texture", "bgm"]);
+const extensions = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "audio/mpeg": "mp3" };
 const fail = (error, status) => Response.json({ error }, { status });
 const receiptSecret = () => process.env.SUPABASE_SERVICE_ROLE_KEY;
 function signOperation(operation) {
@@ -50,6 +50,11 @@ function validImage(bytes, mime) {
   if (mime === "image/png") return bytes.length > 8 && Buffer.from(bytes.subarray(0, 8)).equals(Buffer.from([137,80,78,71,13,10,26,10]));
   return mime === "image/webp" && bytes.length > 12 && Buffer.from(bytes.subarray(0,4)).toString() === "RIFF" && Buffer.from(bytes.subarray(8,12)).toString() === "WEBP";
 }
+function validAudio(bytes, mime) {
+  if (mime !== "audio/mpeg" || bytes.length < 3) return false;
+  return Buffer.from(bytes.subarray(0, 3)).toString() === "ID3" ||
+    (bytes[0] === 255 && (bytes[1] & 224) === 224);
+}
 export async function GET(request) {
   const auth = await getAdmin(request);
   if (auth.error) return fail(auth.error, auth.status);
@@ -70,14 +75,20 @@ export async function POST(request) {
   if (auth.error) return fail(auth.error, auth.status);
   const form = await request.formData().catch(() => null);
   const templateId = form?.get("templateId"), type = form?.get("assetType"), file = form?.get("file");
-  const width = Number(form?.get("width")), height = Number(form?.get("height"));
+  const widthValue = form?.get("width"), heightValue = form?.get("height");
+  const width = widthValue === null ? null : Number(widthValue), height = heightValue === null ? null : Number(heightValue);
+  const isAudio = type === "bgm";
   if (typeof templateId !== "string" || !uuid.test(templateId) || typeof type !== "string" || !folders[type]) return fail("Asset 정보가 올바르지 않아요.", 400);
-  if (!(file instanceof File) || !extensions[file.type] || !file.size || file.size > maxBytes) return fail("15MB 이하의 JPG, PNG, WebP 이미지를 선택해 주세요.", 400);
-  if (!Number.isSafeInteger(width) || width < 1 || !Number.isSafeInteger(height) || height < 1) return fail("이미지 크기를 확인하지 못했어요.", 400);
+  if (!(file instanceof File) || !extensions[file.type] || !file.size || file.size > maxBytes || (isAudio ? file.type !== "audio/mpeg" : !file.type.startsWith("image/"))) {
+    return fail(isAudio ? "15MB 이하의 MP3 파일을 선택해 주세요." : "15MB 이하의 JPG, PNG, WebP 이미지를 선택해 주세요.", 400);
+  }
+  if (!isAudio && (!Number.isSafeInteger(width) || width < 1 || !Number.isSafeInteger(height) || height < 1)) return fail("이미지 크기를 확인하지 못했어요.", 400);
   const invalid = await checkTemplate(auth.client, templateId);
   if (invalid) return invalid;
   const bytes = new Uint8Array(await file.arrayBuffer());
-  if (!validImage(bytes, file.type)) return fail("올바른 이미지 파일을 선택해 주세요.", 400);
+  if (isAudio ? !validAudio(bytes, file.type) : !validImage(bytes, file.type)) {
+    return fail(isAudio ? "올바른 MP3 파일을 선택해 주세요." : "올바른 이미지 파일을 선택해 주세요.", 400);
+  }
   let previous = [];
   if (singleActiveTypes.has(type)) {
     const result = await auth.client.from("template_assets").select("id").eq("template_id", templateId).eq("asset_type", type).eq("is_active", true);
@@ -86,10 +97,10 @@ export async function POST(request) {
   }
   const id = randomUUID(), path = `${templateId}/${folders[type]}/${id}.${extensions[file.type]}`;
   const { error: uploadError } = await auth.client.storage.from(bucket).upload(path, bytes, { contentType: file.type, upsert: false });
-  if (uploadError) return fail("이미지 업로드에 실패했어요.", 500);
+  if (uploadError) return fail(isAudio ? "MP3 업로드에 실패했어요." : "이미지 업로드에 실패했어요.", 500);
   const { error: insertError } = await auth.client.from("template_assets").insert({
     id, template_id: templateId, asset_type: type, name: file.name.slice(0, 200),
-    storage_bucket: bucket, storage_path: path, mime_type: file.type, width, height,
+    storage_bucket: bucket, storage_path: path, mime_type: file.type, width: isAudio ? null : width, height: isAudio ? null : height,
     file_size: file.size, is_active: true, created_by: auth.user.id,
   });
   if (insertError) {

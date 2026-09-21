@@ -5,7 +5,7 @@ function ClassicHeading({ eyebrow, children }) {
   return <header className="classic-section-heading"><p>{eyebrow}</p><h3>{children}</h3><i aria-hidden="true">❦</i></header>;
 }
 
-export default function ClassicTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, children }) {
+export default function ClassicTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, bgmControl, children }) {
   const { kindLabel, title, detail, note, schedule, venue, address, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map((value) => value.trim()).filter(Boolean) : [];
@@ -15,6 +15,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
   return <article className={`invitation-template invitation-template-classic classic-001${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.heroConfigured ? " dd-template-hero-configured" : ""}${renderConfig.typographyConfigured ? " dd-template-typography" : ""}${renderConfig.colorsConfigured ? " dd-template-colors" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}${renderConfig.decorationsConfigured ? " dd-template-decorated" : ""}${renderConfig.sectionClasses}${renderConfig.safeAreaClass}`} style={renderConfig.rootStyle}>
     <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="background" />
     <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} />
+    {bgmControl}
     <header className="classic-masthead"><b>DearDay</b><span>{wedding ? "WEDDING INVITATION" : kindLabel}</span></header>
 
     <section className={`classic-hero${coverPhotoUrl ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>

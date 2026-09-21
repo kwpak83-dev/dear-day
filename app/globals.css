@@ -798,3 +798,9 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-safe-area .public-rsvp{padding-right:max(clamp(20px,7vw,38px),var(--dd-safe-right));padding-left:max(clamp(20px,7vw,38px),var(--dd-safe-left))}
 .dd-template-safe-area .guestbook-section{padding-right:max(clamp(18px,6vw,34px),var(--dd-safe-right));padding-left:max(clamp(18px,6vw,34px),var(--dd-safe-left))}
 .dd-template-safe-area .public-share-copy{padding-right:max(22px,var(--dd-safe-right));padding-left:max(22px,var(--dd-safe-left))}
+
+/* Template BGM */
+.dd-template-bgm{position:sticky;top:10px;z-index:30;display:flex;justify-content:flex-end;gap:6px;height:0;padding:0 10px;pointer-events:none}
+.dd-template-bgm button{pointer-events:auto;border:1px solid rgba(120,91,79,.28);border-radius:999px;background:rgba(255,255,255,.92);color:#5f463c;padding:7px 10px;font:600 11px/1.2 Arial,"Apple SD Gothic Neo",sans-serif;box-shadow:0 3px 10px rgba(62,41,32,.12)}
+.dd-template-bgm button:disabled{opacity:.48;cursor:default}
+.dd-template-bgm small{position:absolute;top:34px;right:10px;max-width:calc(100% - 20px);padding:5px 8px;border-radius:6px;background:rgba(255,255,255,.94);color:#8b3f35;font-size:11px;pointer-events:auto}

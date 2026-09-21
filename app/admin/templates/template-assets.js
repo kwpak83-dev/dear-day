@@ -6,7 +6,7 @@ import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 const types = [
   ["thumbnail", "판매 목록 썸네일"], ["long_preview", "긴 판매용 미리보기"],
   ["background", "배경"], ["hero_frame", "Hero 프레임"], ["decoration", "장식"],
-  ["screen_effect", "화면 효과"], ["texture", "Texture"],
+  ["screen_effect", "화면 효과"], ["texture", "Texture"], ["bgm", "BGM (MP3)"],
 ];
 const maxBytes = 15 * 1024 * 1024;
 const imageSize = (file) => new Promise((resolve, reject) => {
@@ -42,15 +42,17 @@ export default function TemplateAssets({ templateId, onOperation, onBusyChange }
   }, [templateId]);
   const upload = async (type, file) => {
     if (!file || busy) return;
-    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > maxBytes || !file.size) {
-      setNotice("15MB 이하의 JPG, PNG, WebP 이미지를 선택해 주세요."); return;
+    const audio = type === "bgm";
+    const allowed = audio ? file.type === "audio/mpeg" : ["image/jpeg", "image/png", "image/webp"].includes(file.type);
+    if (!allowed || file.size > maxBytes || !file.size) {
+      setNotice(audio ? "15MB 이하의 MP3 파일을 선택해 주세요." : "15MB 이하의 JPG, PNG, WebP 이미지를 선택해 주세요."); return;
     }
     setBusy(true); onBusyChange(true); setNotice("");
     try {
-      const size = await imageSize(file);
+      const size = audio ? null : await imageSize(file);
       const form = new FormData();
       form.set("templateId", templateId); form.set("assetType", type); form.set("file", file);
-      form.set("width", String(size.width)); form.set("height", String(size.height));
+      if (size) { form.set("width", String(size.width)); form.set("height", String(size.height)); }
       const response = await fetch("/api/admin/templates/assets", { method: "POST", headers: await authorization(), body: form });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "Asset 업로드에 실패했어요.");
@@ -86,13 +88,13 @@ export default function TemplateAssets({ templateId, onOperation, onBusyChange }
       const active = rows.filter((asset) => asset.is_active);
       return <div className="admin-template-asset-slot" key={type}>
         <h3>{label}</h3>
-        {!active.length && <p>등록된 이미지 없음</p>}
+        {!active.length && <p>{type === "bgm" ? "등록된 음원 없음" : "등록된 이미지 없음"}</p>}
         {rows.map((asset) => <article className="admin-template-asset-row" key={asset.id}>
-          {asset.url && <img src={asset.url} alt={`${label} 미리보기`} loading="lazy" />}
-          <div><strong>{asset.name || asset.storage_path.split("/").pop()}</strong><p>{asset.is_active ? "사용 중" : "비활성"} · {asset.width || "-"} × {asset.height || "-"}</p></div>
+          {asset.url && (asset.asset_type === "bgm" ? <audio src={asset.url} controls preload="none" aria-label={`${label} 미리듣기`} /> : <img src={asset.url} alt={`${label} 미리보기`} loading="lazy" />)}
+          <div><strong>{asset.name || asset.storage_path.split("/").pop()}</strong><p>{asset.is_active ? "사용 중" : "비활성"}{asset.asset_type === "bgm" ? ` · ${Math.ceil((asset.file_size || 0) / 1024)}KB` : ` · ${asset.width || "-"} × ${asset.height || "-"}`}</p></div>
           <button type="button" className="save-button" disabled={busy} onClick={() => changeActive(asset)}>{asset.is_active ? "비활성화" : "활성화"}</button>
         </article>)}
-        <input ref={(element) => { inputs.current[type] = element; }} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={(event) => upload(type, event.target.files?.[0])} />
+        <input ref={(element) => { inputs.current[type] = element; }} type="file" accept={type === "bgm" ? "audio/mpeg,.mp3" : "image/jpeg,image/png,image/webp"} hidden onChange={(event) => upload(type, event.target.files?.[0])} />
         <button type="button" className="save-button" disabled={busy} onClick={() => inputs.current[type]?.click()}>
           {busy ? "처리 중..." : (type === "decoration" || type === "background") ? "+ Asset 추가" : active.length ? "교체 업로드" : "업로드"}
         </button>
