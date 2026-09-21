@@ -88,7 +88,7 @@ export default function AdminTemplatesPage() {
   return <main style={{ maxWidth: 880, margin: "0 auto", padding: "32px 16px 64px" }}>
     <p className="section-kicker">ADMIN · TEMPLATES</p><h1>템플릿 관리</h1>
     {state.loading ? <p>템플릿 목록을 불러오는 중이에요.</p> : state.error ? <section className="my-notice"><p>{state.error}</p>{state.status === 401 && <a className="my-login-button" href="/?login=required&returnUrl=%2Fadmin%2Ftemplates">로그인하기</a>}</section> : <>
-      <button type="button" className="save-button" onClick={() => openForm()}>새 템플릿 등록</button>
+      {editing ? <button type="button" className="save-button" disabled={saving} onClick={cancel}>← 템플릿 목록으로</button> : <button type="button" className="save-button" onClick={() => openForm()}>새 템플릿 등록</button>}
       {notice && <p role="status">{notice}</p>}
       {editing && <form className="admin-template-form" onSubmit={save} style={{ ...cardStyle, display: "grid", gap: 12, margin: "16px 0" }}>
         <h2 style={{ margin: 0 }}>{editing === "new" ? "새 템플릿 등록" : "템플릿 수정"}</h2>
@@ -103,7 +103,7 @@ export default function AdminTemplatesPage() {
       {editing === "new" && <p>먼저 템플릿 기본정보를 저장한 뒤 Asset을 등록할 수 있어요.</p>}
       {editing && editing !== "new" && <TemplateVersions key={`versions-${editing}`} templateId={editing} assetRevision={assetRevision} assetChangesPending={assetChangesPending} />}
       {editing && editing !== "new" && <TemplateAssets key={`assets-${editing}`} templateId={editing} onOperation={(operation) => { assetOperations.current.push(operation); setAssetChangesPending(true); setAssetRevision((value) => value + 1); }} onBusyChange={(busy) => { assetBusy.current = busy; }} />}
-      {state.templates.length ? <div style={{ display: "grid", gap: 12, marginTop: 16 }}>{state.templates.map((template) => <article key={template.id} style={cardStyle}><h2 style={{ margin: "0 0 10px", fontSize: 18 }}>{template.name}</h2><dl style={{ display: "grid", gridTemplateColumns: "110px 1fr", gap: "6px 10px", margin: "0 0 12px" }}><dt>Template key</dt><dd style={{ margin: 0, overflowWrap: "anywhere" }}>{template.template_key}</dd><dt>상태</dt><dd style={{ margin: 0 }}>{statusOptions.find(([value]) => value === template.status)?.[1] || template.status}</dd><dt>노출</dt><dd style={{ margin: 0 }}>{template.is_visible ? "노출" : "숨김"}</dd></dl><button type="button" className="save-button" onClick={() => openForm(template)}>수정하기</button></article>)}</div> : <p>등록된 템플릿이 없습니다.</p>}
+      {!editing && (state.templates.length ? <div style={{ display: "grid", gap: 12, marginTop: 16 }}>{state.templates.map((template) => <article key={template.id} style={cardStyle}><h2 style={{ margin: "0 0 10px", fontSize: 18 }}>{template.name}</h2><dl style={{ display: "grid", gridTemplateColumns: "110px 1fr", gap: "6px 10px", margin: "0 0 12px" }}><dt>Template key</dt><dd style={{ margin: 0, overflowWrap: "anywhere" }}>{template.template_key}</dd><dt>상태</dt><dd style={{ margin: 0 }}>{statusOptions.find(([value]) => value === template.status)?.[1] || template.status}</dd><dt>노출</dt><dd style={{ margin: 0 }}>{template.is_visible ? "노출" : "숨김"}</dd></dl><button type="button" className="save-button" onClick={() => openForm(template)}>수정하기</button></article>)}</div> : <p>등록된 템플릿이 없습니다.</p>)}
     </>}
   </main>;
 }
