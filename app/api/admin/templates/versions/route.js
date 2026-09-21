@@ -45,7 +45,7 @@ export async function GET(request) {
   if (!uuid.test(templateId || "")) return fail("템플릿 정보가 올바르지 않아요.", 400);
   const result = await readVersions(auth.serverClient, templateId);
   if (result.error) return result.error;
-  return Response.json({ current: result.current && { id: result.current.id, version: result.current.version, status: result.current.status }, draft: result.draft && { id: result.draft.id, version: result.draft.version, decorations: Array.isArray(result.draft.config?.decorations) ? result.draft.config.decorations : [], background: result.draft.config?.background ?? null, hero: result.draft.config?.hero ?? null } });
+  return Response.json({ current: result.current && { id: result.current.id, version: result.current.version, status: result.current.status }, draft: result.draft && { id: result.draft.id, version: result.draft.version, decorations: Array.isArray(result.draft.config?.decorations) ? result.draft.config.decorations : [], background: result.draft.config?.background ?? null, hero: result.draft.config?.hero ?? null, typography: result.draft.config?.typography ?? null, colors: result.draft.config?.colors ?? null } });
 }
 
 export async function POST(request) {
@@ -102,6 +102,7 @@ export async function PATCH(request) {
   const auth = await getAdmin(request);
   if (auth.error) return fail(auth.error, auth.status);
   const body = await request.json().catch(() => null);
+  if (isRecord(body) && ("typography" in body || "colors" in body)) return saveTypographyColors(auth, body);
   if (isRecord(body) && ("background" in body || "hero" in body)) return saveBackgroundHero(auth, body);
   if (!uuid.test(body?.templateId || "") || !uuid.test(body?.draftId || "") ||
       !validDecorations(body?.decorations)) return fail("장식 배치값을 확인해 주세요.", 400);
@@ -207,4 +208,60 @@ async function saveBackgroundHero(auth, body) {
   if (error) return fail("Background/Hero 설정을 저장하지 못했어요.", 500);
   if (!updated) return fail("편집 Draft를 수정하지 못했어요. 다시 불러와 주세요.", 409);
   return Response.json({ draftId: body.draftId, background: config.background, hero: config.hero });
+}
+
+const typographyRoles = ["heroTitle", "sectionTitle", "body", "caption"];
+const typographyFields = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "textAlign"];
+const colorFields = ["text", "title", "muted", "accent", "buttonBackground", "buttonText", "divider"];
+const fontFamilies = new Set(["serif", "sans"]);
+const fontWeights = new Set([300, 400, 500, 600, 700]);
+const textAlignments = new Set(["left", "center", "right"]);
+
+function validTypography(value) {
+  return hasOnlyKeys(value, typographyRoles) && typographyRoles.every((role) => {
+    const style = value[role];
+    return hasOnlyKeys(style, typographyFields) &&
+      fontFamilies.has(style.fontFamily) &&
+      Number.isInteger(style.fontSize) && decimal(style.fontSize, 10, 64) &&
+      fontWeights.has(style.fontWeight) &&
+      decimal(style.lineHeight, 1, 2.5) &&
+      decimal(style.letterSpacing, -2, 10) &&
+      textAlignments.has(style.textAlign);
+  });
+}
+
+function validColors(value) {
+  return hasOnlyKeys(value, colorFields) && colorFields.every((field) => hexColor(value[field]));
+}
+
+async function saveTypographyColors(auth, body) {
+  if (!hasOnlyKeys(body, ["templateId", "draftId", "typography", "colors"]) ||
+      !uuid.test(body.templateId || "") || !uuid.test(body.draftId || "") ||
+      !validTypography(body.typography) || !validColors(body.colors)) {
+    return fail("Typography/Colors 설정값을 확인해 주세요.", 400);
+  }
+  const result = await readVersions(auth.serverClient, body.templateId);
+  if (result.error) return result.error;
+  if (!result.draft || result.draft.id !== body.draftId ||
+      result.current?.id === body.draftId) return fail("해당 템플릿의 편집 Draft만 수정할 수 있어요.", 409);
+  if (!isRecord(result.draft.config)) return fail("기존 Config 형식을 확인해 주세요.", 409);
+
+  const previous = result.draft.config;
+  const existingTypography = isRecord(previous.typography) ? previous.typography : {};
+  const typography = { ...existingTypography };
+  for (const role of typographyRoles) {
+    typography[role] = { ...(isRecord(existingTypography[role]) ? existingTypography[role] : {}), ...body.typography[role] };
+  }
+  const colors = { ...(isRecord(previous.colors) ? previous.colors : {}), ...body.colors };
+  const config = { ...previous, typography, colors };
+  const { data: updated, error } = await auth.adminClient.from("template_versions")
+    .update({ config })
+    .eq("id", body.draftId)
+    .eq("template_id", body.templateId)
+    .eq("status", "draft")
+    .select("id")
+    .maybeSingle();
+  if (error) return fail("Typography/Colors 설정을 저장하지 못했어요.", 500);
+  if (!updated) return fail("편집 Draft를 수정하지 못했어요. 다시 불러와 주세요.", 409);
+  return Response.json({ draftId: body.draftId, typography, colors });
 }

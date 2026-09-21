@@ -18,7 +18,17 @@ const placementFor = (assetId, saved) => {
 };
 const backgroundDefaults = { color: "#ffffff", assetId: null, overlayColor: "#000000", overlayOpacity: 0 };
 const heroDefaults = { mode: "photo", aspectRatio: "4:5", positionX: 50, positionY: 50, zoom: 1, backgroundAssetId: null, frameAssetId: null, overlayColor: "#000000", overlayOpacity: 0 };
+const typographyDefaults = {
+  heroTitle: { fontFamily: "serif", fontSize: 32, fontWeight: 400, lineHeight: 1.3, letterSpacing: 0, textAlign: "center" },
+  sectionTitle: { fontFamily: "serif", fontSize: 22, fontWeight: 500, lineHeight: 1.4, letterSpacing: 0, textAlign: "center" },
+  body: { fontFamily: "sans", fontSize: 16, fontWeight: 400, lineHeight: 1.7, letterSpacing: 0, textAlign: "center" },
+  caption: { fontFamily: "sans", fontSize: 13, fontWeight: 400, lineHeight: 1.5, letterSpacing: 0, textAlign: "center" },
+};
+const colorDefaults = { text: "#333333", title: "#222222", muted: "#777777", accent: "#b78b72", buttonBackground: "#b78b72", buttonText: "#ffffff", divider: "#e8e2de" };
+const typographyRoles = [["heroTitle", "Hero Title"], ["sectionTitle", "Section Title"], ["body", "Body"], ["caption", "Caption / Small"]];
+const colorLabels = [["text", "기본 글자색"], ["title", "제목 색상"], ["muted", "보조 글자색"], ["accent", "포인트 색상"], ["buttonBackground", "버튼 배경"], ["buttonText", "버튼 글자"], ["divider", "구분선"]];
 const fromConfig = (defaults, saved) => Object.fromEntries(Object.keys(defaults).map((key) => [key, saved && typeof saved === "object" && saved[key] !== undefined ? saved[key] : defaults[key]]));
+const typographyFromConfig = (saved) => Object.fromEntries(typographyRoles.map(([role]) => [role, fromConfig(typographyDefaults[role], saved?.[role])]));
 const colorValue = (value) => /^#[0-9a-fA-F]{6}$/.test(value) ? value : "#000000";
 
 function ColorControl({ label, value, onChange }) {
@@ -48,6 +58,8 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   const [placements, setPlacements] = useState([]);
   const [background, setBackground] = useState(backgroundDefaults);
   const [hero, setHero] = useState(heroDefaults);
+  const [typography, setTypography] = useState(typographyDefaults);
+  const [colors, setColors] = useState(colorDefaults);
   const [creating, setCreating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
@@ -74,6 +86,8 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     const active = (assets.assets || []).filter((asset) => asset.is_active);
     setBackground((previous) => preservePlacements ? previous : fromConfig(backgroundDefaults, versions.draft?.background));
     setHero((previous) => preservePlacements ? previous : fromConfig(heroDefaults, versions.draft?.hero));
+    setTypography((previous) => preservePlacements ? previous : typographyFromConfig(versions.draft?.typography));
+    setColors((previous) => preservePlacements ? previous : fromConfig(colorDefaults, versions.draft?.colors));
     setPlacements((previous) => active.filter((asset) => asset.asset_type === "decoration").map((asset) =>
       placementFor(asset.id, (preservePlacements ? previous.find((item) => item.assetId === asset.id) : null) ||
         versions.draft?.decorations?.find((item) => item.assetId === asset.id))));
@@ -115,6 +129,25 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     } catch (error) { setNotice(error.message); }
     finally { setSaving(false); }
   };
+  const saveTypographyColors = async (event) => {
+    event.preventDefault();
+    if (saving || !state.draft) return;
+    if (assetChangesPending) { setNotice("Asset 변경을 기본정보 저장으로 확정한 뒤 Typography/Colors 설정을 저장해 주세요."); return; }
+    setSaving(true); setNotice("");
+    try {
+      const response = await fetch("/api/admin/templates/versions", {
+        method: "PATCH", headers: { ...(await authorization()), "Content-Type": "application/json" },
+        body: JSON.stringify({ templateId, draftId: state.draft.id, typography, colors }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "Typography/Colors 설정을 저장하지 못했어요.");
+      setNotice("Draft Typography/Colors 설정을 저장했습니다.");
+    } catch (error) { setNotice(error.message); }
+    finally { setSaving(false); }
+  };
+  const updateTypography = (role, key, value) => setTypography((current) => ({
+    ...current, [role]: { ...current[role], [key]: value },
+  }));
   const update = (assetId, key, value) => setPlacements((current) =>
     current.map((item) => item.assetId === assetId ? { ...item, [key]: value } : item));
   const saveDecorations = async (event) => {
@@ -198,6 +231,37 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
             {assetChangesPending && <p>Asset 변경을 확정한 뒤 이 배치를 저장할 수 있어요.</p>}
             <button type="submit" className="save-button" disabled={saving || assetChangesPending}>{saving ? "저장 중..." : "Draft 장식 배치 저장"}</button>
           </form>}
+        <section style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: 12, marginTop: 28, minWidth: 0 }}>
+          <h3>Typography + Colors Config</h3>
+          <form onSubmit={saveTypographyColors} style={{ display: "grid", gap: 16 }}>
+            <h4 style={{ margin: 0 }}>Typography</h4>
+            {typographyRoles.map(([role, label]) => (
+              <fieldset key={role} style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 12 }}>
+                <legend>{label}</legend>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
+                  <label style={field}>Font<select style={input} value={typography[role].fontFamily} onChange={(event) => updateTypography(role, "fontFamily", event.target.value)}>
+                    <option value="serif">Serif (Georgia 계열)</option><option value="sans">Sans (Arial 계열)</option>
+                  </select></label>
+                  <NumberControl label="Size (px)" value={typography[role].fontSize} min={10} max={64} onChange={(value) => updateTypography(role, "fontSize", value)} />
+                  <label style={field}>Weight<select style={input} value={typography[role].fontWeight} onChange={(event) => updateTypography(role, "fontWeight", Number(event.target.value))}>
+                    {[300, 400, 500, 600, 700].map((weight) => <option key={weight} value={weight}>{weight}</option>)}
+                  </select></label>
+                  <NumberControl label="Line Height" value={typography[role].lineHeight} min={1} max={2.5} step="any" onChange={(value) => updateTypography(role, "lineHeight", value)} />
+                  <NumberControl label="Letter Spacing (px)" value={typography[role].letterSpacing} min={-2} max={10} step="any" onChange={(value) => updateTypography(role, "letterSpacing", value)} />
+                  <label style={field}>Align<select style={input} value={typography[role].textAlign} onChange={(event) => updateTypography(role, "textAlign", event.target.value)}>
+                    <option value="left">왼쪽</option><option value="center">가운데</option><option value="right">오른쪽</option>
+                  </select></label>
+                </div>
+              </fieldset>
+            ))}
+            <h4 style={{ margin: 0 }}>Colors</h4>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 10 }}>
+              {colorLabels.map(([key, label]) => <ColorControl key={key} label={label} value={colors[key]} onChange={(value) => setColors((current) => ({ ...current, [key]: value }))} />)}
+            </div>
+            {assetChangesPending && <p>Asset 변경을 확정한 뒤 Typography/Colors 설정을 저장할 수 있어요.</p>}
+            <button type="submit" className="save-button" disabled={saving || assetChangesPending}>{saving ? "저장 중..." : "Typography + Colors 저장"}</button>
+          </form>
+        </section>
       </>}
     </>}
     {(state.error || notice) && <p role="status">{state.error || notice}</p>}
