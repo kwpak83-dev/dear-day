@@ -13,7 +13,7 @@ const sampleInvitation = {
   date: "2026-10-10", time: "14:00", venue: "디어데이 웨딩홀",
   venueAddress: "서울특별시 중구 세종대로 110",
   message: "저희 두 사람이 소중한 분들을 모시고 새로운 시작을 함께하려 합니다.",
-  coverPhotoUrl: "/moment-1.png", rsvpEnabled: true, guestbookEnabled: true,
+  coverPhotoUrl: "/templates/modern-001/preview.png", rsvpEnabled: true, guestbookEnabled: true,
 };
 
 const draftConfig = (draft) => draft ? ({
