@@ -39,6 +39,9 @@ const sectionsFromConfig = (saved) => Array.isArray(saved) && saved.length === s
   new Set(saved.map((item) => item?.key)).size === sectionLabels.length &&
   saved.every((item) => sectionLabels.some(([key]) => key === item?.key) && typeof item.enabled === "boolean")
     ? saved.map(({ key, enabled }) => ({ key, enabled })) : defaultSections();
+const effectsDefaults = { scrollReveal: "none" };
+const bgmDefaults = { mode: "none" };
+const safeAreaDefaults = { top: 24, right: 16, bottom: 24, left: 16 };
 const colorValue = (value) => /^#[0-9a-fA-F]{6}$/.test(value) ? value : "#000000";
 
 function ColorControl({ label, value, onChange }) {
@@ -71,6 +74,9 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   const [typography, setTypography] = useState(typographyDefaults);
   const [colors, setColors] = useState(colorDefaults);
   const [sections, setSections] = useState(defaultSections);
+  const [effects, setEffects] = useState(effectsDefaults);
+  const [bgm, setBgm] = useState(bgmDefaults);
+  const [safeArea, setSafeArea] = useState(safeAreaDefaults);
   const [creating, setCreating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
@@ -100,6 +106,9 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     setTypography((previous) => preservePlacements ? previous : typographyFromConfig(versions.draft?.typography));
     setColors((previous) => preservePlacements ? previous : fromConfig(colorDefaults, versions.draft?.colors));
     setSections((previous) => preservePlacements ? previous : sectionsFromConfig(versions.draft?.sections));
+    setEffects((previous) => preservePlacements ? previous : fromConfig(effectsDefaults, versions.draft?.effects));
+    setBgm((previous) => preservePlacements ? previous : fromConfig(bgmDefaults, versions.draft?.bgm));
+    setSafeArea((previous) => preservePlacements ? previous : fromConfig(safeAreaDefaults, versions.draft?.safeArea));
     setPlacements((previous) => active.filter((asset) => asset.asset_type === "decoration").map((asset) =>
       placementFor(asset.id, (preservePlacements ? previous.find((item) => item.assetId === asset.id) : null) ||
         versions.draft?.decorations?.find((item) => item.assetId === asset.id))));
@@ -177,6 +186,22 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "Sections 설정을 저장하지 못했어요.");
       setNotice("Draft Sections 설정을 저장했습니다.");
+    } catch (error) { setNotice(error.message); }
+    finally { setSaving(false); }
+  };
+  const saveEffectsBgmSafeArea = async (event) => {
+    event.preventDefault();
+    if (saving || !state.draft) return;
+    if (assetChangesPending) { setNotice("Asset 변경을 기본정보 저장으로 확정한 뒤 Effects/BGM/Safe Area 설정을 저장해 주세요."); return; }
+    setSaving(true); setNotice("");
+    try {
+      const response = await fetch("/api/admin/templates/versions", {
+        method: "PATCH", headers: { ...(await authorization()), "Content-Type": "application/json" },
+        body: JSON.stringify({ templateId, draftId: state.draft.id, effects, bgm, safeArea }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "Effects/BGM/Safe Area 설정을 저장하지 못했어요.");
+      setNotice("Draft Effects/BGM/Safe Area 설정을 저장했습니다.");
     } catch (error) { setNotice(error.message); }
     finally { setSaving(false); }
   };
@@ -310,6 +335,26 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
             </div>)}
             {assetChangesPending && <p>Asset 변경을 확정한 뒤 Sections 설정을 저장할 수 있어요.</p>}
             <button type="submit" className="save-button" disabled={saving || assetChangesPending}>{saving ? "저장 중..." : "Sections 저장"}</button>
+          </form>
+        </section>
+        <section style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: 12, marginTop: 28, minWidth: 0 }}>
+          <h3>Effects / BGM / Safe Area Config</h3>
+          <form onSubmit={saveEffectsBgmSafeArea} style={{ display: "grid", gap: 16 }}>
+            <label style={field}>Scroll Effect<select style={input} value={effects.scrollReveal} onChange={(event) => setEffects({ scrollReveal: event.target.value })}>
+              <option value="none">없음</option><option value="fade">Fade</option><option value="fade-up">Fade Up</option>
+            </select></label>
+            <label style={field}>BGM<select style={input} value={bgm.mode} onChange={(event) => setBgm({ mode: event.target.value })}>
+              <option value="none">사용 안 함</option>
+            </select><small>현재 음원 시스템이 없어 추천값만 비활성 상태로 저장합니다.</small></label>
+            <fieldset style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 12 }}>
+              <legend>Safe Area (px)</legend>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: 10 }}>
+                {[['top', 'Top'], ['right', 'Right'], ['bottom', 'Bottom'], ['left', 'Left']].map(([key, label]) =>
+                  <NumberControl key={key} label={label} value={safeArea[key]} min={0} max={120} onChange={(value) => setSafeArea((current) => ({ ...current, [key]: value }))} />)}
+              </div>
+            </fieldset>
+            {assetChangesPending && <p>Asset 변경을 확정한 뒤 Effects/BGM/Safe Area 설정을 저장할 수 있어요.</p>}
+            <button type="submit" className="save-button" disabled={saving || assetChangesPending}>{saving ? "저장 중..." : "Effects / BGM / Safe Area 저장"}</button>
           </form>
         </section>
       </>}
