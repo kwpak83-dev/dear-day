@@ -800,7 +800,9 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-safe-area .public-share-copy{padding-right:max(22px,var(--dd-safe-right));padding-left:max(22px,var(--dd-safe-left))}
 
 /* Template BGM */
-.dd-template-bgm{position:sticky;top:10px;z-index:30;display:flex;justify-content:flex-end;gap:6px;height:0;padding:0 10px;pointer-events:none}
-.dd-template-bgm button{pointer-events:auto;border:1px solid rgba(120,91,79,.28);border-radius:999px;background:rgba(255,255,255,.92);color:#5f463c;padding:7px 10px;font:600 11px/1.2 Arial,"Apple SD Gothic Neo",sans-serif;box-shadow:0 3px 10px rgba(62,41,32,.12)}
-.dd-template-bgm button:disabled{opacity:.48;cursor:default}
-.dd-template-bgm small{position:absolute;top:34px;right:10px;max-width:calc(100% - 20px);padding:5px 8px;border-radius:6px;background:rgba(255,255,255,.94);color:#8b3f35;font-size:11px;pointer-events:auto}
+.dd-template-bgm{position:sticky;top:max(12px,env(safe-area-inset-top));z-index:30;display:flex;width:100%;height:0;box-sizing:border-box;justify-content:flex-end;padding:0 12px;pointer-events:none}
+.dd-template-bgm .dd-template-bgm-toggle{display:grid;width:36px;height:36px;place-items:center;padding:0;pointer-events:auto;border:1px solid rgba(80,72,68,.22);border-radius:50%;background:rgba(255,255,255,.9);color:var(--dd-color-text,#4c4541);box-shadow:0 2px 8px rgba(42,37,34,.12);cursor:pointer}
+.dd-template-bgm .dd-template-bgm-toggle:hover,.dd-template-bgm .dd-template-bgm-toggle:focus-visible{border-color:rgba(80,72,68,.42);background:rgba(255,255,255,.98)}
+.dd-template-bgm .dd-template-bgm-toggle:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+.dd-template-bgm .dd-template-bgm-toggle span{display:block;font:700 15px/1 Arial,"Apple SD Gothic Neo",sans-serif;transform:translateY(-.5px)}
+.dd-template-bgm small{position:absolute;top:42px;right:12px;max-width:calc(100% - 24px);padding:5px 8px;border-radius:6px;background:rgba(255,255,255,.94);color:#8b3f35;font-size:11px;pointer-events:auto}
