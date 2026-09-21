@@ -1,0 +1,71 @@
+function rgba(hex, opacity) {
+  if (!hex || typeof opacity !== "number") return null;
+  const value = hex.slice(1);
+  const channels = [0, 2, 4].map((offset) => parseInt(value.slice(offset, offset + 2), 16));
+  return `rgba(${channels.join(", ")}, ${opacity})`;
+}
+
+const fontStack = (value) => value === "serif"
+  ? 'Georgia, "Batang", serif'
+  : value === "sans" ? 'Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif' : null;
+const set = (target, name, value, unit = "") => {
+  if (value !== null && value !== undefined) target[name] = `${value}${unit}`;
+};
+
+export function getTemplateConfigRenderProps(config, assets = {}) {
+  const rootStyle = {};
+  const heroStyle = {};
+  const heroMediaStyle = {};
+  const heroImageStyle = {};
+  const background = config?.background;
+  const hero = config?.hero;
+  const typography = config?.typography;
+  const colors = config?.colors;
+  const backgroundUrl = background?.assetId ? assets[background.assetId] : null;
+  const heroBackgroundUrl = hero?.backgroundAssetId ? assets[hero.backgroundAssetId] : null;
+
+  if (background) {
+    if (background.color) rootStyle.backgroundColor = background.color;
+    const overlay = rgba(background.overlayColor, background.overlayOpacity);
+    const layers = [overlay ? `linear-gradient(${overlay}, ${overlay})` : null,
+      backgroundUrl ? `url("${backgroundUrl}")` : null].filter(Boolean);
+    if (layers.length) {
+      rootStyle.backgroundImage = layers.join(", ");
+      rootStyle.backgroundSize = "cover";
+      rootStyle.backgroundPosition = "center";
+    }
+  }
+  if (heroBackgroundUrl) {
+    heroStyle.backgroundImage = `url("${heroBackgroundUrl}")`;
+    heroStyle.backgroundSize = "cover";
+    heroStyle.backgroundPosition = "center";
+  }
+  if (hero?.aspectRatio) heroMediaStyle.aspectRatio = hero.aspectRatio.replace(":", " / ");
+  if (hero && hero.positionX !== null && hero.positionY !== null) heroImageStyle.objectPosition = `${hero.positionX}% ${hero.positionY}%`;
+  if (hero && hero.zoom !== null) heroImageStyle.transform = `scale(${hero.zoom})`;
+
+  for (const [role, prefix] of [["heroTitle", "hero-title"], ["sectionTitle", "section-title"], ["body", "body"], ["caption", "caption"]]) {
+    const item = typography?.[role];
+    if (!item) continue;
+    set(rootStyle, `--dd-${prefix}-font`, fontStack(item.fontFamily));
+    set(rootStyle, `--dd-${prefix}-size`, item.fontSize, "px");
+    set(rootStyle, `--dd-${prefix}-weight`, item.fontWeight);
+    set(rootStyle, `--dd-${prefix}-line-height`, item.lineHeight);
+    set(rootStyle, `--dd-${prefix}-letter-spacing`, item.letterSpacing, "px");
+    set(rootStyle, `--dd-${prefix}-align`, item.textAlign);
+  }
+  for (const [key, variable] of [["text", "text"], ["title", "title"], ["muted", "muted"], ["accent", "accent"], ["buttonBackground", "button-bg"], ["buttonText", "button-text"], ["divider", "divider"]]) {
+    set(rootStyle, `--dd-color-${variable}`, colors?.[key]);
+  }
+  const configured = Boolean(background || hero || typography || colors);
+  return { configured, backgroundConfigured: Boolean(background), rootStyle, heroStyle, heroMediaStyle, heroImageStyle };
+}
+
+export function TemplateConfigHeroLayers({ config, assets = {} }) {
+  const frameUrl = config?.hero?.frameAssetId ? assets[config.hero.frameAssetId] : null;
+  const overlay = rgba(config?.hero?.overlayColor, config?.hero?.overlayOpacity);
+  return <>
+    {overlay && <span className="dd-template-hero-overlay" style={{ background: overlay }} aria-hidden="true" />}
+    {frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
+  </>;
+}

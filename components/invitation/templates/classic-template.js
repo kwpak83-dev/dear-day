@@ -1,18 +1,22 @@
+import { getTemplateConfigRenderProps, TemplateConfigHeroLayers } from "../template-config-render";
+
 function ClassicHeading({ eyebrow, children }) {
   return <header className="classic-section-heading"><p>{eyebrow}</p><h3>{children}</h3><i aria-hidden="true">❦</i></header>;
 }
 
-export default function ClassicTemplate({ presentation, eventKind, placeActions, children }) {
+export default function ClassicTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, children }) {
   const { kindLabel, title, detail, note, schedule, venue, address, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map((value) => value.trim()).filter(Boolean) : [];
   const hasInformation = Boolean(schedule || venue || address);
+  const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
 
-  return <article className="invitation-template invitation-template-classic classic-001">
+  return <article className={`invitation-template invitation-template-classic classic-001${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}`} style={renderConfig.rootStyle}>
     <header className="classic-masthead"><b>DearDay</b><span>{wedding ? "WEDDING INVITATION" : kindLabel}</span></header>
 
-    <section className={`classic-hero${coverPhotoUrl ? " has-photo" : " no-photo"}`}>
-      {coverPhotoUrl && <figure><img src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} /></figure>}
+    <section className={`classic-hero${coverPhotoUrl ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
+      {coverPhotoUrl && <figure style={renderConfig.heroMediaStyle}><img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} /></figure>}
+      <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} />
       <div className="classic-hero-copy">
         <small>{wedding ? "소중한 분들을 초대합니다" : kindLabel}</small>
         <p>{wedding ? "Wedding Day" : kindLabel}</p>

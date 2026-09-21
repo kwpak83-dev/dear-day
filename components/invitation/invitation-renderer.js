@@ -16,9 +16,9 @@ export const TEMPLATE_REGISTRY = {
   [TEMPLATE_IDS.modern]: ModernTemplate,
 };
 
-export default function InvitationRenderer({ invitation, eventKind, templateId, templateConfig, placeActions, children }) {
+export default function InvitationRenderer({ invitation, eventKind, templateId, templateConfig, templateAssets, placeActions, children }) {
   const Template = TEMPLATE_REGISTRY[templateId] || ClassicTemplate;
   const presentation = getInvitationPresentation(invitation, eventKind);
   const normalizedConfig = normalizeTemplateConfig(templateConfig);
-  return <Template presentation={presentation} templateConfig={normalizedConfig} eventKind={eventKind || invitation.eventKind || "wedding"} placeActions={placeActions}>{children}</Template>;
+  return <Template presentation={presentation} templateConfig={normalizedConfig} templateAssets={templateAssets} eventKind={eventKind || invitation.eventKind || "wedding"} placeActions={placeActions}>{children}</Template>;
 }

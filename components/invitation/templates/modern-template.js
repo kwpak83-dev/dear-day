@@ -1,22 +1,26 @@
+import { getTemplateConfigRenderProps, TemplateConfigHeroLayers } from "../template-config-render";
+
 function SectionHeading({ eyebrow, children }) {
   return <header className="modern-section-heading"><p>{eyebrow}</p><h3>{children}</h3><i aria-hidden="true" /></header>;
 }
 
-export default function ModernTemplate({ presentation, eventKind, placeActions, children }) {
+export default function ModernTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, children }) {
   const { kindLabel, title, detail, note, schedule, venue, address, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map(value => value.trim()).filter(Boolean) : [];
   const hasCouple = wedding && couple.length > 0;
   const hasInformation = Boolean(schedule || venue || address);
+  const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
 
-  return <article className="invitation-template invitation-template-modern modern-001">
+  return <article className={`invitation-template invitation-template-modern modern-001${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}`} style={renderConfig.rootStyle}>
     <header className="modern-masthead">
       <b>DearDay</b>
       <span>{wedding ? "WEDDING INVITATION" : kindLabel}</span>
     </header>
 
-    <section className={`modern-hero${coverPhotoUrl ? " has-photo" : " no-photo"}`}>
-      {coverPhotoUrl && <figure><img src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} /></figure>}
+    <section className={`modern-hero${coverPhotoUrl ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
+      {coverPhotoUrl && <figure style={renderConfig.heroMediaStyle}><img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} /></figure>}
+      <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} />
       <div className="modern-hero-copy">
         <p>{wedding ? "A NEW BEGINNING" : kindLabel}</p>
         {title && <h2>{title}</h2>}
