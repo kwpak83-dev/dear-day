@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import InvitationRenderer from "../../../components/invitation/invitation-renderer";
+import InvitationMap from "../../../components/invitation/invitation-map";
 import OptionalInvitationSections from "../../invite/[slug]/optional-invitation-sections";
 import { resolveTemplateAssetUrls } from "../../../lib/template-config";
 
@@ -51,7 +52,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
       <div className="admin-draft-preview-scroll">
         <div className="admin-draft-preview-device full-invitation-renderer" style={{ width }}>
           <InvitationRenderer invitation={invitation} eventKind="wedding" templateId={templateId} templateConfig={config} templateAssets={resolvedAssets}
-            placeActions={<div className="public-address-copy"><button type="button" disabled>주소 복사</button></div>}>
+            placeActions={<><div className="public-address-copy"><button type="button" disabled>주소 복사</button></div><InvitationMap key={width} address={invitation.venueAddress} /></>}>
             <PreviewSections />
           </InvitationRenderer>
         </div>
