@@ -212,6 +212,7 @@ export default function CreateInvitation() {
   const mapInstance = useRef(null);
   const mapMarker = useRef(null);
   const lastMappedAddress = useRef("");
+  const livePreviewRef = useRef(null);
   const templateSelectionChanged = useRef(false);
 
   const focusMap = (point) => {
@@ -261,6 +262,9 @@ export default function CreateInvitation() {
     }
   }, []);
   useEffect(() => () => window.clearTimeout(saveToastTimer.current), []);
+  useEffect(() => {
+    if (livePreviewRef.current) livePreviewRef.current.scrollTop = 0;
+  }, [invitation.coverPhotoUrl, invitation.templateId, templateRender.config]);
   useEffect(() => {
     if (!previewOpen && !checkoutOpen && !paymentComplete && !publishConfirmOpen && !published) return;
     const previousOverflow = document.body.style.overflow;
@@ -572,7 +576,7 @@ export default function CreateInvitation() {
 </Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent2Name || "예금주 이름" : invitation.bride || "신부 이름"} value={invitation.brideAccountHolder} onChange={(e) => update("brideAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.brideAccount} onChange={(e) => update("brideAccount", e.target.value)} /></Field></div></div>}
         <div className="editor-actions"><button type="button" className="save-button preview-button" onClick={() => { setFlowNotice(""); setPreviewOpen(true); }}>미리보기</button><button className="save-button" onClick={() => saveDraft({ showSuccessToast: true })} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>저장하기</button></div>{saveNotice && <p role="status">{saveNotice}</p>}{loginRequired && <button type="button" className="save-button" onClick={continueAfterLogin}>로그인하고 계속하기</button>}
       </section>
-      <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div className="preview-content"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} templateConfig={templateRender.config} templateAssets={templateRender.assets} placeActions={previewPlaceActions()}><><Gallery photos={galleryPhotos} idPrefix="live-preview-gallery" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} preview /></></InvitationRenderer></div></div></aside>
+      <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div ref={livePreviewRef} className="preview-content full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} templateConfig={templateRender.config} templateAssets={templateRender.assets} placeActions={previewPlaceActions()}><><Gallery photos={galleryPhotos} idPrefix="live-preview-gallery" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} preview /></></InvitationRenderer></div></div></aside>
     </div>
     {previewOpen && <div className="full-preview-overlay" role="dialog" aria-modal="true" aria-label={eventStatus === "draft" ? "초대장 전체 미리보기" : "초대장 최종 미리보기"} onKeyDown={(event) => { if (event.key === "Escape") setPreviewOpen(false); }}>
       <div className="full-preview-toolbar"><strong>{eventStatus === "draft" ? "DearDay Preview" : "최종 미리보기"}</strong><div><button type="button" className="secondary" onClick={() => setPreviewOpen(false)} autoFocus>계속 수정하기</button>{eventStatus === "draft" && <button type="button" onClick={preparePayment}>발행 준비하기</button>}{eventStatus === "paid" && <button type="button" onClick={requestPublish}>초대장 발행하기</button>}</div></div>
