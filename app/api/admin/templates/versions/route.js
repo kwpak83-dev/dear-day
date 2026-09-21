@@ -26,7 +26,7 @@ async function getAdmin(request) {
 
 async function readVersions(serverClient, templateId) {
   const { data: template, error: templateError } = await serverClient.from("templates")
-    .select("id,current_sale_version_id").eq("id", templateId).maybeSingle();
+    .select("id,status,is_visible,is_active,current_sale_version_id").eq("id", templateId).maybeSingle();
   if (templateError) return { error: fail("템플릿을 확인하지 못했어요.", 500) };
   if (!template) return { error: fail("템플릿을 찾지 못했어요.", 404) };
   const { data: versions, error: versionsError } = await serverClient.from("template_versions")
@@ -45,7 +45,7 @@ export async function GET(request) {
   if (!uuid.test(templateId || "")) return fail("템플릿 정보가 올바르지 않아요.", 400);
   const result = await readVersions(auth.serverClient, templateId);
   if (result.error) return result.error;
-  return Response.json({ current: result.current && { id: result.current.id, version: result.current.version, status: result.current.status }, draft: result.draft && { id: result.draft.id, version: result.draft.version, decorations: Array.isArray(result.draft.config?.decorations) ? result.draft.config.decorations : [], background: result.draft.config?.background ?? null, hero: result.draft.config?.hero ?? null, typography: result.draft.config?.typography ?? null, colors: result.draft.config?.colors ?? null, sections: result.draft.config?.sections ?? null, effects: result.draft.config?.effects ?? null, bgm: result.draft.config?.bgm ?? null, safeArea: result.draft.config?.safeArea ?? null } });
+  return Response.json({ template: { status: result.template.status, isVisible: result.template.is_visible, isActive: result.template.is_active }, current: result.current && { id: result.current.id, version: result.current.version, status: result.current.status }, draft: result.draft && { id: result.draft.id, version: result.draft.version, decorations: Array.isArray(result.draft.config?.decorations) ? result.draft.config.decorations : [], background: result.draft.config?.background ?? null, hero: result.draft.config?.hero ?? null, typography: result.draft.config?.typography ?? null, colors: result.draft.config?.colors ?? null, sections: result.draft.config?.sections ?? null, effects: result.draft.config?.effects ?? null, bgm: result.draft.config?.bgm ?? null, safeArea: result.draft.config?.safeArea ?? null } });
 }
 
 export async function POST(request) {
@@ -56,6 +56,44 @@ export async function POST(request) {
   if (!uuid.test(templateId || "")) return fail("템플릿 정보가 올바르지 않아요.", 400);
   const result = await readVersions(auth.serverClient, templateId);
   if (result.error) return result.error;
+
+  if (body.action === "promote") {
+    if (!uuid.test(body.draftId || "") || !result.draft || result.draft.id !== body.draftId || result.current?.id === body.draftId) {
+      return fail("확정할 편집 Draft를 다시 확인해 주세요.", 409);
+    }
+    const promoted = await auth.adminClient.from("template_versions")
+      .update({ status: "active" }, { count: "exact" })
+      .eq("id", body.draftId).eq("template_id", templateId).eq("status", "draft");
+    if (promoted.error) return fail("Draft를 판매 버전으로 확정하지 못했어요.", 500);
+    if (promoted.count !== 1) return fail("Draft 상태가 변경되었어요. 다시 불러와 주세요.", 409);
+
+    const templateStatus = ["on_sale", "stopped"].includes(result.template.status) ? result.template.status : "sale_ready";
+    const changed = await auth.adminClient.from("templates")
+      .update({ current_sale_version_id: body.draftId, status: templateStatus }, { count: "exact" })
+      .eq("id", templateId);
+    if (changed.error || changed.count !== 1) {
+      const rollback = await auth.adminClient.from("template_versions")
+        .update({ status: "draft" }, { count: "exact" })
+        .eq("id", body.draftId).eq("template_id", templateId).eq("status", "active");
+      if (rollback.error || rollback.count !== 1) console.error("Template version promotion rollback failed", { templateId, draftId: body.draftId });
+      return fail("판매 버전 연결을 완료하지 못했어요. 다시 시도해 주세요.", 500);
+    }
+    return Response.json({ current: { id: result.draft.id, version: result.draft.version, status: "active" }, templateStatus });
+  }
+
+  if (body.action === "set-sale-status") {
+    if (!new Set(["on_sale", "stopped"]).has(body.status)) return fail("판매 상태를 확인해 주세요.", 400);
+    if (body.status === "on_sale" && !result.current) return fail("판매 버전을 먼저 확정해 주세요.", 409);
+    const updates = body.status === "on_sale"
+      ? { status: "on_sale", is_visible: true, is_active: true }
+      : { status: "stopped", is_active: false };
+    const changed = await auth.adminClient.from("templates").update(updates, { count: "exact" }).eq("id", templateId);
+    if (changed.error) return fail("템플릿 판매 상태를 변경하지 못했어요.", 500);
+    if (changed.count !== 1) return fail("템플릿 판매 상태가 변경되었어요. 다시 불러와 주세요.", 409);
+    return Response.json({ status: body.status, isVisible: body.status === "on_sale" ? true : result.template.is_visible, isActive: body.status === "on_sale" });
+  }
+
+  if (body.action !== undefined && body.action !== "create-draft") return fail("지원하지 않는 버전 작업이에요.", 400);
   if (result.draft) return Response.json({ draft: { id: result.draft.id, version: result.draft.version }, reused: true });
 
   const source = result.current || result.versions[0] || null;

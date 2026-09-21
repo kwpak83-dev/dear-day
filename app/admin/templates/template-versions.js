@@ -66,8 +66,8 @@ function NumberControl({ label, value, min, max, step = 1, onChange }) {
 const field = { display: "grid", gap: 4, minWidth: 0 };
 const input = { width: "100%", boxSizing: "border-box" };
 
-export default function TemplateVersions({ templateId, assetRevision = 0, assetChangesPending = false }) {
-  const [state, setState] = useState({ loading: true, current: null, draft: null, assets: [], allAssets: [], error: "" });
+export default function TemplateVersions({ templateId, assetRevision = 0, assetChangesPending = false, onWorkflowChange }) {
+  const [state, setState] = useState({ loading: true, template: null, current: null, draft: null, assets: [], allAssets: [], error: "" });
   const loaded = useRef(null);
   const [placements, setPlacements] = useState([]);
   const [background, setBackground] = useState(backgroundDefaults);
@@ -79,6 +79,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   const [bgm, setBgm] = useState(bgmDefaults);
   const [safeArea, setSafeArea] = useState(safeAreaDefaults);
   const [creating, setCreating] = useState(false);
+  const [workflowBusy, setWorkflowBusy] = useState(false);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
   const backgroundAssets = state.assets.filter((asset) => asset.asset_type === "background");
@@ -114,7 +115,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     setPlacements((previous) => active.filter((asset) => asset.asset_type === "decoration").map((asset) =>
       placementFor(asset.id, (preservePlacements ? previous.find((item) => item.assetId === asset.id) : null) ||
         versions.draft?.decorations?.find((item) => item.assetId === asset.id))));
-    setState({ loading: false, current: versions.current, draft: versions.draft, assets: active, allAssets: assets.assets || [], error: "" });
+    setState({ loading: false, template: versions.template, current: versions.current, draft: versions.draft, assets: active, allAssets: assets.assets || [], error: "" });
     loaded.current = templateId;
   };
   useEffect(() => {
@@ -134,6 +135,29 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
       await load(false);
     } catch (error) { setNotice(error.message); }
     finally { setCreating(false); }
+  };
+
+  const runWorkflow = async (action, extra = {}) => {
+    if (workflowBusy || creating || saving) return;
+    if (assetChangesPending) { setNotice("Asset 변경을 기본정보 저장으로 확정한 뒤 Version 작업을 진행해 주세요."); return; }
+    setWorkflowBusy(true); setNotice("");
+    try {
+      const response = await fetch("/api/admin/templates/versions", {
+        method: "POST", headers: { ...(await authorization()), "Content-Type": "application/json" },
+        body: JSON.stringify({ templateId, action, ...extra }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "Version 작업을 완료하지 못했어요.");
+      await load(false);
+      if (action === "promote") {
+        onWorkflowChange?.({ status: result.templateStatus });
+        setNotice(`v${result.current.version}을 판매 버전으로 확정했습니다.`);
+      } else {
+        onWorkflowChange?.({ status: result.status, is_visible: result.isVisible });
+        setNotice(result.status === "on_sale" ? "템플릿 판매를 시작했습니다." : "템플릿 판매를 중지했습니다.");
+      }
+    } catch (error) { setNotice(error.message); }
+    finally { setWorkflowBusy(false); }
   };
 
   const saveBackgroundHero = async (event) => {
@@ -239,8 +263,14 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     <TemplateDraftPreview templateId={templateId} draft={state.draft} assets={state.allAssets} loading={state.loading} />
     {state.loading ? <p>버전 정보를 불러오는 중이에요.</p> : <>
       <p>현재 판매 버전: {state.current ? `v${state.current.version}` : "없음"}</p>
-      <p>편집 Draft: {state.draft ? `v${state.draft.version}` : "없음"}</p>
-      {!state.draft && <button type="button" className="save-button" disabled={creating} onClick={createDraft}>{creating ? "만드는 중..." : "새 Draft 버전 만들기"}</button>}
+      <p>현재 편집 Draft: {state.draft ? `v${state.draft.version}` : "없음"}</p>
+      <p>템플릿 판매 상태: {state.template?.status === "on_sale" ? "판매중" : state.template?.status === "stopped" ? "판매중지" : "판매 준비중"}</p>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
+        {!state.draft && <button type="button" className="save-button" disabled={creating || workflowBusy} onClick={createDraft}>{creating ? "만드는 중..." : "새 Draft 버전 만들기"}</button>}
+        {state.draft && <button type="button" className="save-button" disabled={workflowBusy || assetChangesPending} onClick={() => runWorkflow("promote", { draftId: state.draft.id })}>{workflowBusy ? "처리 중..." : "판매 버전으로 확정"}</button>}
+        {state.current && state.template?.status !== "on_sale" && <button type="button" className="save-button" disabled={workflowBusy} onClick={() => runWorkflow("set-sale-status", { status: "on_sale" })}>판매 시작</button>}
+        {state.template?.status === "on_sale" && <button type="button" className="save-button" disabled={workflowBusy} onClick={() => runWorkflow("set-sale-status", { status: "stopped" })}>판매 중지</button>}
+      </div>
       {state.draft && <>
         <p>이 Draft가 Config 편집 대상입니다. 현재 판매 버전과 기존 초대장은 변경되지 않습니다.</p>
         <form onSubmit={saveBackgroundHero} style={{ display: "grid", gap: 14, marginBottom: 28 }}>
