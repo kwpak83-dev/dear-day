@@ -44,8 +44,8 @@
 | ⑫ | 보관기간 / 만료 / 유료연장 / 알림 | 🟢 완료 |
 | **⑬-T1** | **템플릿 DB + Storage + Asset/Config 구조** | **🟢 기반 완료** |
 | **⑬-T2** | **관리자 템플릿 등록/수정 UI** | **🟢 C1~C5 완료 / 운영 TC 완료** |
-| ⑬-T3 | Asset/Config ↔ InvitationRenderer 연결 | 🟡 진행 — C6-1/C6-2 구현, 관리자 Draft Live Preview 선행 NEXT |
-| ⑬-T4 | 실제 Renderer 미리보기 + 버전/판매상태 관리 | 🟡 일부 선행 — 관리자 Draft Live Preview를 C6 중간 단계로 앞당김 |
+| ⑬-T3 | Asset/Config ↔ InvitationRenderer 연결 | 🟡 마무리 단계 — C6-1~C6-4 및 관리자 Draft Live Preview 구현·운영 TC 완료, C6 통합 회귀 NEXT |
+| ⑬-T4 | 실제 Renderer 미리보기 + 버전/판매상태 관리 | 🟡 일부 선행 — 관리자 Draft Live Preview 완료, 버전/판매상태 workflow 마무리 예정 |
 | ⑬-A | 판매용 템플릿 20~30개 확대 | 🔴 |
 | ⑫-A | 상품/요금제 구조 + 단건·다회 이용권 상품 기반 | 🔴 |
 | ⑫-B | 이용권 구매분·사용량·잔여수량·유효기간 관리 | 🔴 |
@@ -55,7 +55,7 @@
 | ⑮ | 전체 통합 TC / 보안·안정화 / 오픈 준비 | 🔴 |
 | ⑯ | DearDay 정식 오픈 | 🔴 |
 
-> **현재 개발 우선순위 (2026-09-21):** `C6 관리자 Draft Live Preview 선행 → C6-2 실화면 검증 → C6-3 Decoration + Sections → C6-4 Effects/Safe Area → C6 통합 회귀 → ⑬-T4 버전/판매상태 마무리 → ⑬-A → ⑫-A → ⑫-B → ⑬ → ⑬-B → ⑭ → ⑮ → ⑯`
+> **현재 개발 우선순위 (2026-09-21):** `C6 통합 회귀 → ⑬-T4 버전/판매상태 마무리 → ⑬-A → ⑫-A → ⑫-B → ⑬ → ⑬-B → ⑭ → ⑮ → ⑯`
 >
 > 템플릿 시스템을 먼저 데이터 기반으로 완성해, 이후 판매용 템플릿 추가는 가능한 한 Codex 코드 수정·GitHub commit·Vercel 재배포 없이 관리자 페이지에서 처리하는 것을 목표로 한다.
 
@@ -174,8 +174,11 @@
 - 🟢 **C4 Sections Config**: Hero 제외 6개 공통 섹션 순서/기본 ON·OFF 저장/복원 및 운영 TC 완료
 - 🟢 **C5 Effects / BGM / Safe Area Config**: scroll reveal enum, BGM 최소 기반(mode=none), Safe Area 저장/복원 및 운영 TC 완료
 - 🟢 **C6-1 Renderer Config Normalization Foundation**: C1~C5 Config 공통 정규화 기반 추가, 기존 공개 화면 회귀 TC 완료
-- 🟡 **C6-2 Pinned Version Renderer 연결**: 공개 초대장이 event.template_version_id 기준 config를 읽고 Background/Hero/Typography/Colors를 적용하도록 구현 완료. 다만 현재 테스트 템플릿은 판매 버전이 없어 Draft 설정의 실화면 검증 경로가 없으므로 운영 시각 TC는 보류
-- 🟡 **관리자 Draft Live Preview — NEXT (순서 선행)**: 원래 T4/C6 후반 계획이었으나, 판매 버전 생성 없이 Draft 디자인을 실제 InvitationRenderer로 검증하기 위해 C6-3보다 먼저 구현한다
+- 🟢 **C6-2 Pinned Version Renderer 연결**: 공개 초대장이 event.template_version_id 기준 config를 읽고 Background/Hero/Typography/Colors를 적용하도록 구현 완료. 공개 pinned 경로는 유지하면서 관리자 Draft Live Preview에서 Draft C2/C3의 실제 Renderer 시각 검증 완료
+- 🟢 **관리자 Draft Live Preview**: 실제 `InvitationRenderer`와 fixture 데이터를 사용해 판매 버전 없이 Draft Config/Asset을 검증하는 경로 구현 및 운영 TC 완료. 390px/540px 전환, 내부 스크롤, Naver 지도, read-only RSVP/방명록 보호 확인
+- 🟢 **C6-3 Decoration + Sections**: Decoration의 slot/X/Y/size/rotation/opacity/zIndex/visible을 실제 Renderer에 적용하고, 6개 공통 Section의 표시/숨김/순서를 실제 DOM에 적용. Admin Draft Preview 운영 TC 완료
+- 🟢 **C6-4 Effects + Safe Area**: `none/fade/fade-up` Scroll Reveal과 0~120px Safe Area를 실제 Renderer에 적용. Admin 내부 스크롤 Observer root, reduced-motion/fallback, Background/Hero full-bleed 보호, 390px/540px overflow 운영 TC 완료
+- 🟡 **C6 통합 회귀 — NEXT**: C6-1~C6-4를 묶어 Background/Hero/Typography/Colors/Decoration/Sections/Effects/Safe Area 상호작용과 기존 기능 회귀를 최종 확인한다
 
 
 - 관리자에서 `새 템플릿 등록` 화면을 제공하고 템플릿명, 가격/판매 상태, 태그, 표시 순서, 배지 등을 관리한다.
@@ -202,7 +205,7 @@
 - 따라서 판매 버전을 억지로 만들거나 DB를 직접 조작하지 않고, **관리자 Draft Live Preview를 선행 구현**한다.
 - Live Preview는 별도 가짜 Renderer가 아니라 실제 `InvitationRenderer`를 재사용한다. Draft Config와 Draft가 참조하는 Asset을 사용하되 공개 발행 경로의 pinned Version 규칙은 변경하지 않는다.
 - MVP Preview는 시각 확인용이며 Drag/Resize 직접 편집기는 만들지 않는다. 기존 숫자/선택 Config 입력을 유지한다.
-- Preview 선행 완료 후 C6-2의 Background/Hero/Typography/Colors 실화면 TC를 수행하고, 이어 C6-3 Decoration+Sections → C6-4 Effects/Safe Area → C6 통합 회귀 순으로 진행한다.
+- Draft Live Preview, C6-2 실화면 검증, C6-3 Decoration+Sections, C6-4 Effects/Safe Area까지 완료했다. 다음 단계는 C6 통합 회귀이며, 완료 후 ⑬-T4 버전/판매상태 관리로 진행한다.
 - BGM은 현재 실제 음원 시스템이 없으므로 `mode=none` 기반만 유지하며 실제 재생은 별도 후속 기능으로 둔다.
 
 ## ⑬-T4 실제 Renderer 미리보기 + 버전/판매상태 관리
