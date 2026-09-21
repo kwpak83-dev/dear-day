@@ -45,7 +45,7 @@ export async function GET(request) {
   if (!uuid.test(templateId || "")) return fail("템플릿 정보가 올바르지 않아요.", 400);
   const result = await readVersions(auth.serverClient, templateId);
   if (result.error) return result.error;
-  return Response.json({ current: result.current && { id: result.current.id, version: result.current.version, status: result.current.status }, draft: result.draft && { id: result.draft.id, version: result.draft.version, decorations: Array.isArray(result.draft.config?.decorations) ? result.draft.config.decorations : [], background: result.draft.config?.background ?? null, hero: result.draft.config?.hero ?? null, typography: result.draft.config?.typography ?? null, colors: result.draft.config?.colors ?? null } });
+  return Response.json({ current: result.current && { id: result.current.id, version: result.current.version, status: result.current.status }, draft: result.draft && { id: result.draft.id, version: result.draft.version, decorations: Array.isArray(result.draft.config?.decorations) ? result.draft.config.decorations : [], background: result.draft.config?.background ?? null, hero: result.draft.config?.hero ?? null, typography: result.draft.config?.typography ?? null, colors: result.draft.config?.colors ?? null, sections: result.draft.config?.sections ?? null } });
 }
 
 export async function POST(request) {
@@ -102,6 +102,7 @@ export async function PATCH(request) {
   const auth = await getAdmin(request);
   if (auth.error) return fail(auth.error, auth.status);
   const body = await request.json().catch(() => null);
+  if (isRecord(body) && "sections" in body) return saveSections(auth, body);
   if (isRecord(body) && ("typography" in body || "colors" in body)) return saveTypographyColors(auth, body);
   if (isRecord(body) && ("background" in body || "hero" in body)) return saveBackgroundHero(auth, body);
   if (!uuid.test(body?.templateId || "") || !uuid.test(body?.draftId || "") ||
@@ -145,6 +146,34 @@ if (!updated) return fail("편집 Draft를 수정하지 못했어요. 다시 불
 }
 
 const isRecord = (value) => value && typeof value === "object" && !Array.isArray(value);
+const sectionKeys = ["invitation", "location", "gallery", "account", "rsvp", "guestbook"];
+
+function validSections(value) {
+  return Array.isArray(value) && value.length === sectionKeys.length &&
+    new Set(value.map((item) => item?.key)).size === sectionKeys.length &&
+    value.every((item) => hasOnlyKeys(item, ["key", "enabled"]) &&
+      sectionKeys.includes(item.key) && typeof item.enabled === "boolean");
+}
+
+async function saveSections(auth, body) {
+  if (!hasOnlyKeys(body, ["templateId", "draftId", "sections"]) ||
+      !uuid.test(body.templateId || "") || !uuid.test(body.draftId || "") ||
+      !validSections(body.sections)) return fail("Sections 설정값을 확인해 주세요.", 400);
+  const result = await readVersions(auth.serverClient, body.templateId);
+  if (result.error) return result.error;
+  if (!result.draft || result.draft.id !== body.draftId ||
+      result.current?.id === body.draftId) return fail("해당 템플릿의 편집 Draft만 수정할 수 있어요.", 409);
+  if (!isRecord(result.draft.config)) return fail("기존 Config 형식을 확인해 주세요.", 409);
+
+  const sections = body.sections.map(({ key, enabled }) => ({ key, enabled }));
+  const config = { ...result.draft.config, sections };
+  const { data: updated, error } = await auth.adminClient.from("template_versions")
+    .update({ config }).eq("id", body.draftId).eq("template_id", body.templateId)
+    .eq("status", "draft").select("id").maybeSingle();
+  if (error) return fail("Sections 설정을 저장하지 못했어요.", 500);
+  if (!updated) return fail("편집 Draft를 수정하지 못했어요. 다시 불러와 주세요.", 409);
+  return Response.json({ draftId: body.draftId, sections });
+}
 const hexColor = (value) => typeof value === "string" && /^#[0-9a-fA-F]{6}$/.test(value);
 const optionalId = (value) => value === null || (typeof value === "string" && uuid.test(value));
 const hasOnlyKeys = (value, keys) => isRecord(value) && Object.keys(value).every((key) => keys.includes(key)) && keys.every((key) => Object.hasOwn(value, key));

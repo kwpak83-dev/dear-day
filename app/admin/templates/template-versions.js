@@ -29,6 +29,16 @@ const typographyRoles = [["heroTitle", "Hero Title"], ["sectionTitle", "Section 
 const colorLabels = [["text", "기본 글자색"], ["title", "제목 색상"], ["muted", "보조 글자색"], ["accent", "포인트 색상"], ["buttonBackground", "버튼 배경"], ["buttonText", "버튼 글자"], ["divider", "구분선"]];
 const fromConfig = (defaults, saved) => Object.fromEntries(Object.keys(defaults).map((key) => [key, saved && typeof saved === "object" && saved[key] !== undefined ? saved[key] : defaults[key]]));
 const typographyFromConfig = (saved) => Object.fromEntries(typographyRoles.map(([role]) => [role, fromConfig(typographyDefaults[role], saved?.[role])]));
+const sectionLabels = [
+  ["invitation", "초대글"], ["location", "오시는 길"],
+  ["gallery", "갤러리"], ["account", "마음 전하실 곳"],
+  ["rsvp", "참석 여부"], ["guestbook", "방명록"],
+];
+const defaultSections = () => sectionLabels.map(([key]) => ({ key, enabled: true }));
+const sectionsFromConfig = (saved) => Array.isArray(saved) && saved.length === sectionLabels.length &&
+  new Set(saved.map((item) => item?.key)).size === sectionLabels.length &&
+  saved.every((item) => sectionLabels.some(([key]) => key === item?.key) && typeof item.enabled === "boolean")
+    ? saved.map(({ key, enabled }) => ({ key, enabled })) : defaultSections();
 const colorValue = (value) => /^#[0-9a-fA-F]{6}$/.test(value) ? value : "#000000";
 
 function ColorControl({ label, value, onChange }) {
@@ -60,6 +70,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   const [hero, setHero] = useState(heroDefaults);
   const [typography, setTypography] = useState(typographyDefaults);
   const [colors, setColors] = useState(colorDefaults);
+  const [sections, setSections] = useState(defaultSections);
   const [creating, setCreating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
@@ -88,6 +99,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     setHero((previous) => preservePlacements ? previous : fromConfig(heroDefaults, versions.draft?.hero));
     setTypography((previous) => preservePlacements ? previous : typographyFromConfig(versions.draft?.typography));
     setColors((previous) => preservePlacements ? previous : fromConfig(colorDefaults, versions.draft?.colors));
+    setSections((previous) => preservePlacements ? previous : sectionsFromConfig(versions.draft?.sections));
     setPlacements((previous) => active.filter((asset) => asset.asset_type === "decoration").map((asset) =>
       placementFor(asset.id, (preservePlacements ? previous.find((item) => item.assetId === asset.id) : null) ||
         versions.draft?.decorations?.find((item) => item.assetId === asset.id))));
@@ -142,6 +154,29 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "Typography/Colors 설정을 저장하지 못했어요.");
       setNotice("Draft Typography/Colors 설정을 저장했습니다.");
+    } catch (error) { setNotice(error.message); }
+    finally { setSaving(false); }
+  };
+  const moveSection = (index, offset) => setSections((current) => {
+    const target = index + offset;
+    if (target < 0 || target >= current.length) return current;
+    const next = [...current];
+    [next[index], next[target]] = [next[target], next[index]];
+    return next;
+  });
+  const saveSections = async (event) => {
+    event.preventDefault();
+    if (saving || !state.draft) return;
+    if (assetChangesPending) { setNotice("Asset 변경을 기본정보 저장으로 확정한 뒤 Sections 설정을 저장해 주세요."); return; }
+    setSaving(true); setNotice("");
+    try {
+      const response = await fetch("/api/admin/templates/versions", {
+        method: "PATCH", headers: { ...(await authorization()), "Content-Type": "application/json" },
+        body: JSON.stringify({ templateId, draftId: state.draft.id, sections }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "Sections 설정을 저장하지 못했어요.");
+      setNotice("Draft Sections 설정을 저장했습니다.");
     } catch (error) { setNotice(error.message); }
     finally { setSaving(false); }
   };
@@ -260,6 +295,21 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
             </div>
             {assetChangesPending && <p>Asset 변경을 확정한 뒤 Typography/Colors 설정을 저장할 수 있어요.</p>}
             <button type="submit" className="save-button" disabled={saving || assetChangesPending}>{saving ? "저장 중..." : "Typography + Colors 저장"}</button>
+          </form>
+        </section>
+        <section style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: 12, marginTop: 28, minWidth: 0 }}>
+          <h3>Sections Config</h3>
+          <p>Hero는 항상 맨 위에 표시됩니다. 아래 설정은 템플릿의 기본 구성만 저장합니다.</p>
+          <form onSubmit={saveSections} style={{ display: "grid", gap: 10 }}>
+            {sections.map((section, index) => <div key={section.key} style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", border: "1px solid #eadfd8", borderRadius: 8, padding: 10, minWidth: 0 }}>
+              <span style={{ minWidth: 24 }}>{index + 1}.</span>
+              <strong style={{ flex: "1 1 100px" }}>{sectionLabels.find(([key]) => key === section.key)?.[1]}</strong>
+              <button type="button" aria-label={`${sectionLabels.find(([key]) => key === section.key)?.[1]} 위로 이동`} disabled={index === 0} onClick={() => moveSection(index, -1)}>↑</button>
+              <button type="button" aria-label={`${sectionLabels.find(([key]) => key === section.key)?.[1]} 아래로 이동`} disabled={index === sections.length - 1} onClick={() => moveSection(index, 1)}>↓</button>
+              <label style={{ display: "flex", alignItems: "center", gap: 4 }}>표시 <input type="checkbox" checked={section.enabled} onChange={(event) => setSections((current) => current.map((item) => item.key === section.key ? { ...item, enabled: event.target.checked } : item))} /></label>
+            </div>)}
+            {assetChangesPending && <p>Asset 변경을 확정한 뒤 Sections 설정을 저장할 수 있어요.</p>}
+            <button type="submit" className="save-button" disabled={saving || assetChangesPending}>{saving ? "저장 중..." : "Sections 저장"}</button>
           </form>
         </section>
       </>}
