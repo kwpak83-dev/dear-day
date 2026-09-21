@@ -55,7 +55,7 @@
 | ⑮ | 전체 통합 TC / 보안·안정화 / 오픈 준비 | 🔴 |
 | ⑯ | DearDay 정식 오픈 | 🔴 |
 
-> **현재 개발 우선순위 (2026-09-21):** `BGM 실제 음원 기반 기능 → ⑬-T4 버전/판매상태 마무리 → ⑬-A → ⑫-A → ⑫-B → ⑬ → ⑬-B → ⑭ → ⑮ → ⑯`
+> **현재 개발 우선순위 (2026-09-21):** `BGM 실제 음원 기반 기능 완료 → ⑬-T4 버전/판매상태 마무리 → ⑬-A → ⑫-A → ⑫-B → ⑬ → ⑬-B → ⑭ → ⑮ → ⑯`
 >
 > 템플릿 시스템을 먼저 데이터 기반으로 완성해, 이후 판매용 템플릿 추가는 가능한 한 Codex 코드 수정·GitHub commit·Vercel 재배포 없이 관리자 페이지에서 처리하는 것을 목표로 한다.
 
@@ -180,6 +180,8 @@
 - 🟢 **C6-4 Effects + Safe Area**: `none/fade/fade-up` Scroll Reveal과 0~120px Safe Area를 실제 Renderer에 적용. Admin 내부 스크롤 Observer root, reduced-motion/fallback, Background/Hero full-bleed 보호, 390px/540px overflow 운영 TC 완료
 - 🟢 **C6 통합 회귀 완료**: Background/Hero/Typography/Colors/Decoration/Sections/Effects/Safe Area 상호작용과 기존 기능 경로를 점검했다. Background/Hero만 설정해도 Typography/Colors override가 활성화될 수 있던 조건을 분리하고, 불완전한 Typography/Colors Config는 기존 템플릿 디자인을 유지하도록 보강했다
 - 🟡 **Hero mode 후속 개선 기록**: `hero.mode`는 현재 `photo/frame/illustration` 값을 저장·정규화하지만 Renderer 렌더 분기에는 아직 사용하지 않는다. Hero Background Asset은 정상 렌더되지만 full-cover 고객 대표사진 아래에 위치해 거의 가려질 수 있다. 실제 판매 템플릿 단계에서 mode별 사진/Background/Frame 구성을 정의하고, 필요 시 Admin Draft Preview에 대표사진 표시 ON/OFF 또는 Background-only 확인 기능을 추가한다
+- 🟢 **BGM 실제 음원 기능 완료**: 관리자 MP3 Asset 업로드, Draft Config 선택/저장, 공통 `InvitationRenderer → TemplateBgm` 재생/정지 연결 및 운영 TC 완료. Vercel 4.5MB Function payload 제한을 피하기 위해 BGM binary는 관리자 브라우저에서 Supabase Storage로 직접 업로드하고 작은 metadata JSON만 API로 전달한다. 최대 15MB, `audio/mpeg`, 관리자 JWT/RLS 및 서버 metadata 재검증/rollback을 유지한다.
+- 🟢 **BGM UX 운영 검증 완료**: autoplay 없이 초기 정지, 36px 원형 플로팅 토글(`♪`/`■`), 정지 시 `currentTime=0`, 390/540 Draft Preview, 스크롤 고정, 폭 전환 시 중복 재생 방지까지 확인했다. Admin Draft Preview와 Public Invitation은 동일한 공통 `TemplateBgm` 컴포넌트를 사용한다.
 
 
 - 관리자에서 `새 템플릿 등록` 화면을 제공하고 템플릿명, 가격/판매 상태, 태그, 표시 순서, 배지 등을 관리한다.
@@ -206,8 +208,8 @@
 - 따라서 판매 버전을 억지로 만들거나 DB를 직접 조작하지 않고, **관리자 Draft Live Preview를 선행 구현**한다.
 - Live Preview는 별도 가짜 Renderer가 아니라 실제 `InvitationRenderer`를 재사용한다. Draft Config와 Draft가 참조하는 Asset을 사용하되 공개 발행 경로의 pinned Version 규칙은 변경하지 않는다.
 - MVP Preview는 시각 확인용이며 Drag/Resize 직접 편집기는 만들지 않는다. 기존 숫자/선택 Config 입력을 유지한다.
-- Draft Live Preview, C6-2 실화면 검증, C6-3 Decoration+Sections, C6-4 Effects/Safe Area 및 C6 통합 회귀까지 완료했다. `hero.mode` 실제 렌더 분기와 full-cover 대표사진에 가려지는 Hero Background 확인 UX는 후속 개선으로 기록한다. 다음은 실제 음원 기반 BGM 기능을 검증한 뒤 ⑬-T4 버전/판매상태 관리로 진행한다.
-- BGM은 현재 실제 음원 시스템이 없으므로 `mode=none` 기반만 유지하며 실제 재생은 별도 후속 기능으로 둔다.
+- Draft Live Preview, C6-2 실화면 검증, C6-3 Decoration+Sections, C6-4 Effects/Safe Area 및 C6 통합 회귀까지 완료했다. `hero.mode` 실제 렌더 분기와 full-cover 대표사진에 가려지는 Hero Background 확인 UX는 후속 개선으로 기록한다.
+- BGM 실제 음원 기능까지 완료했다. MP3 Asset 업로드, Draft Config 연결, 공통 Renderer 재생/정지, 플로팅 토글 UI, 390/540 및 스크롤/중복재생 운영 TC를 통과했다. 다음은 ⑬-T4 버전/판매상태 관리로 진행한다.
 
 ## ⑬-T4 실제 Renderer 미리보기 + 버전/판매상태 관리
 
