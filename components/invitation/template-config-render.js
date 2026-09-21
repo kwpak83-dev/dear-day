@@ -31,8 +31,14 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
       backgroundUrl ? `url("${backgroundUrl}")` : null].filter(Boolean);
     if (layers.length) {
       rootStyle.backgroundImage = layers.join(", ");
-      rootStyle.backgroundSize = "cover";
-      rootStyle.backgroundPosition = "center";
+      if (backgroundUrl) {
+        rootStyle.backgroundSize = "100% auto";
+        rootStyle.backgroundPosition = "top center";
+        rootStyle.backgroundRepeat = "repeat-y";
+      } else {
+        rootStyle.backgroundSize = "cover";
+        rootStyle.backgroundPosition = "center";
+      }
     }
   }
   if (heroBackgroundUrl) {
