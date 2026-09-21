@@ -530,3 +530,16 @@
 - Codex에는 전체 요구사항을 한 번에 구현시키지 않고 작은 작업 단위로 나눈다.
 - 각 단계 구현 후 테스트하고 다음 단계로 진행한다.
 - 다음 개발 단계는 **현재 GitHub 코드와 본 요구사항의 GAP 분석** 후 작업목록을 만드는 것이다.
+
+
+## 24. 템플릿 Renderer 현재 진행 순서 (2026-09-21)
+
+- 관리자 템플릿 Config C1~C5 저장/복원은 운영 TC까지 완료했다.
+- C6-1 Config normalization 기반과 C6-2 pinned Version 기반 공개 Renderer 연결을 구현했다.
+- C6-2 공개 렌더링은 이벤트에 저장된 `template_version_id`를 기준으로 하며 현재 판매 Version을 자동 추적하지 않는다.
+- 현재 개발용 템플릿은 판매 Version이 없고 Draft만 있어, Draft Config를 공개 발행본으로 시각 검증하기 어렵다.
+- 이를 해결하기 위해 관리자 **Draft Live Preview를 다음 작업으로 선행**한다. Preview는 실제 `InvitationRenderer`를 재사용하고 현재 Draft Config/Asset을 표시해야 한다.
+- 관리자 Preview는 디자인 검증 도구이며 MVP에서 Drag/Resize 편집기를 만들지 않는다. 설정은 기존 Config 입력 UI에서 수정하고 Preview로 확인한다.
+- 공개 초대장과 관리자 Preview의 Version 경계는 분리한다: 공개는 pinned Version, 관리자 Preview는 명시적으로 선택된 편집 Draft.
+- 이후 순서는 `Draft Live Preview → C6-2 실화면 TC → C6-3 Decoration+Sections → C6-4 Effects/Safe Area → C6 통합 회귀 → T4 버전/판매상태 관리`로 한다.
+- 실제 BGM 재생/음원 관리 기능은 현재 범위가 아니며, BGM Config는 확장 기반만 유지한다.

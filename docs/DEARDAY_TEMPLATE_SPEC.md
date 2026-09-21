@@ -412,3 +412,16 @@
 - C1~C5는 동일한 `template_versions.config`를 단계적으로 확장한다.
 - 한 Config 영역을 저장할 때 다른 영역의 기존 값을 삭제하거나 초기화하지 않는다.
 - 실질적 디자인 변경은 Draft Version에서 편집하고, 판매중 버전 및 기존 발행 초대장의 version pin을 직접 변경하지 않는다.
+
+
+## 관리자 Draft Live Preview 선행 체크포인트 (2026-09-21)
+
+- C1~C5 관리자 Draft Config 저장 기반은 완료되었다: Decoration, Background/Hero, Typography/Colors, Sections, Effects/BGM/Safe Area.
+- C6-1에서 Template Config normalization 기반을 추가했고, C6-2에서 공개 초대장이 이벤트에 pin된 `template_version_id`의 Config를 읽어 Background/Hero/Typography/Colors를 적용하는 경로를 구현했다.
+- 공개 렌더링은 `current_sale_version_id`를 따라가지 않으며, 과거 pinned Version이 참조하는 Asset은 현재 `is_active=false`여도 유효한 참조라면 보호한다.
+- 현재 테스트 템플릿은 판매 버전 없이 Draft만 존재하므로, Draft 디자인의 실화면 검증을 위해 관리자 Live Preview를 C6 후반에서 **C6-3 이전으로 선행**한다.
+- 관리자 Live Preview는 실제 `InvitationRenderer`를 그대로 재사용해야 하며 별도의 축약/가짜 Renderer를 만들지 않는다.
+- Preview 입력은 현재 편집 중인 Draft Version Config + 해당 Template Asset + 안전한 샘플 invitation data를 사용한다. 공개 발행본의 pinned Version 데이터 흐름은 변경하지 않는다.
+- Config 입력은 기존 숫자/선택 UI를 유지하고 Preview에서 결과를 확인한다. MVP에서 직접 Drag/Resize 편집은 구현하지 않는다.
+- Preview 선행 후 진행 순서: C6-2 시각 TC → C6-3 Decoration/Sections → C6-4 Effects/Safe Area → C6 통합 회귀 → T4 버전/판매상태 마무리.
+- BGM은 실제 음원/플레이어 기반이 없으므로 현재 `mode=none`만 유지하며 Live Preview에서 재생 기능을 새로 만들지 않는다.
