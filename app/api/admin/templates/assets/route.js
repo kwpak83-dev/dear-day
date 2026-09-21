@@ -50,11 +50,6 @@ function validImage(bytes, mime) {
   if (mime === "image/png") return bytes.length > 8 && Buffer.from(bytes.subarray(0, 8)).equals(Buffer.from([137,80,78,71,13,10,26,10]));
   return mime === "image/webp" && bytes.length > 12 && Buffer.from(bytes.subarray(0,4)).toString() === "RIFF" && Buffer.from(bytes.subarray(8,12)).toString() === "WEBP";
 }
-function validAudio(bytes, mime) {
-  if (mime !== "audio/mpeg" || bytes.length < 3) return false;
-  return Buffer.from(bytes.subarray(0, 3)).toString() === "ID3" ||
-    (bytes[0] === 255 && (bytes[1] & 224) === 224);
-}
 export async function GET(request) {
   const auth = await getAdmin(request);
   if (auth.error) return fail(auth.error, auth.status);
@@ -70,55 +65,106 @@ export async function GET(request) {
     ...row, url: row.storage_bucket === bucket ? auth.client.storage.from(bucket).getPublicUrl(row.storage_path).data.publicUrl : null,
   })) });
 }
-export async function POST(request) {
-  const auth = await getAdmin(request);
-  if (auth.error) return fail(auth.error, auth.status);
-  const form = await request.formData().catch(() => null);
-  const templateId = form?.get("templateId"), type = form?.get("assetType"), file = form?.get("file");
-  const widthValue = form?.get("width"), heightValue = form?.get("height");
-  const width = widthValue === null ? null : Number(widthValue), height = heightValue === null ? null : Number(heightValue);
-  const isAudio = type === "bgm";
-  if (typeof templateId !== "string" || !uuid.test(templateId) || typeof type !== "string" || !folders[type]) return fail("Asset 정보가 올바르지 않아요.", 400);
-  if (!(file instanceof File) || !extensions[file.type] || !file.size || file.size > maxBytes || (isAudio ? file.type !== "audio/mpeg" : !file.type.startsWith("image/"))) {
-    return fail(isAudio ? "15MB 이하의 MP3 파일을 선택해 주세요." : "15MB 이하의 JPG, PNG, WebP 이미지를 선택해 주세요.", 400);
-  }
-  if (!isAudio && (!Number.isSafeInteger(width) || width < 1 || !Number.isSafeInteger(height) || height < 1)) return fail("이미지 크기를 확인하지 못했어요.", 400);
-  const invalid = await checkTemplate(auth.client, templateId);
-  if (invalid) return invalid;
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  if (isAudio ? !validAudio(bytes, file.type) : !validImage(bytes, file.type)) {
-    return fail(isAudio ? "올바른 MP3 파일을 선택해 주세요." : "올바른 이미지 파일을 선택해 주세요.", 400);
-  }
+async function registerUploadedAsset(auth, asset) {
   let previous = [];
-  if (singleActiveTypes.has(type)) {
-    const result = await auth.client.from("template_assets").select("id").eq("template_id", templateId).eq("asset_type", type).eq("is_active", true);
-    if (result.error) return fail("기존 Asset을 확인하지 못했어요.", 500);
+  if (singleActiveTypes.has(asset.type)) {
+    const result = await auth.client.from("template_assets").select("id")
+      .eq("template_id", asset.templateId).eq("asset_type", asset.type).eq("is_active", true);
+    if (result.error) {
+      await auth.client.storage.from(bucket).remove([asset.path]);
+      return fail("기존 Asset을 확인하지 못했어요.", 500);
+    }
     previous = result.data || [];
   }
-  const id = randomUUID(), path = `${templateId}/${folders[type]}/${id}.${extensions[file.type]}`;
-  const { error: uploadError } = await auth.client.storage.from(bucket).upload(path, bytes, { contentType: file.type, upsert: false });
-  if (uploadError) return fail(isAudio ? "MP3 업로드에 실패했어요." : "이미지 업로드에 실패했어요.", 500);
   const { error: insertError } = await auth.client.from("template_assets").insert({
-    id, template_id: templateId, asset_type: type, name: file.name.slice(0, 200),
-    storage_bucket: bucket, storage_path: path, mime_type: file.type, width: isAudio ? null : width, height: isAudio ? null : height,
-    file_size: file.size, is_active: true, created_by: auth.user.id,
+    id: asset.id, template_id: asset.templateId, asset_type: asset.type, name: asset.name,
+    storage_bucket: bucket, storage_path: asset.path, mime_type: asset.mimeType,
+    width: asset.width, height: asset.height, file_size: asset.fileSize,
+    is_active: true, created_by: auth.user.id,
   });
   if (insertError) {
     console.error("Template asset metadata insert failed", {
       code: insertError.code, message: insertError.message,
       details: insertError.details, hint: insertError.hint,
     });
-    const { error: rollbackError } = await auth.client.storage.from(bucket).remove([path]);
+    const { error: rollbackError } = await auth.client.storage.from(bucket).remove([asset.path]);
     return fail(rollbackError ? "Asset 저장에 실패했고 업로드 파일 정리가 필요해요." : "Asset 정보를 저장하지 못했어요. 다시 시도해 주세요.", 500);
   }
   if (previous.length) {
     const { error, count } = await auth.client.from("template_assets").update({ is_active: false }, { count: "exact" }).in("id", previous.map((row) => row.id));
     if (error || count !== previous.length) {
-      await auth.client.from("template_assets").update({ is_active: false }).eq("id", id);
+      if (asset.type === "bgm") {
+        await auth.client.from("template_assets").update({ is_active: true })
+          .eq("template_id", asset.templateId).in("id", previous.map((row) => row.id));
+        await auth.client.from("template_assets").delete().eq("id", asset.id).eq("template_id", asset.templateId);
+        await auth.client.storage.from(bucket).remove([asset.path]);
+        return fail("기존 BGM 교체를 완료하지 못해 새 음원을 취소했어요. 다시 시도해 주세요.", 409);
+      }
+      await auth.client.from("template_assets").update({ is_active: false }).eq("id", asset.id);
       return fail("새 Asset은 저장됐지만 기존 Asset 교체를 완료하지 못했어요. 목록을 확인해 주세요.", 409);
     }
   }
-  return Response.json({ id, receipt: signOperation({ kind: "upload", userId: auth.user.id, templateId, id, path, previous: previous.map((row) => row.id) }) }, { status: 201 });
+  return Response.json({ id: asset.id, receipt: signOperation({
+    kind: "upload", userId: auth.user.id, templateId: asset.templateId,
+    id: asset.id, path: asset.path, previous: previous.map((row) => row.id),
+  }) }, { status: 201 });
+}
+
+export async function POST(request) {
+  const auth = await getAdmin(request);
+  if (auth.error) return fail(auth.error, auth.status);
+
+  if (request.headers.get("content-type")?.includes("application/json")) {
+    const body = await request.json().catch(() => null);
+    const expectedPath = `${body?.templateId}/audio/${body?.id}.mp3`;
+    if (body?.directUpload !== true || !uuid.test(body?.templateId || "") || body?.assetType !== "bgm" ||
+        !uuid.test(body?.id || "") || body?.storagePath !== expectedPath || body?.mimeType !== "audio/mpeg" ||
+        typeof body?.name !== "string" || !body.name.trim() || body.name.length > 200 ||
+        !Number.isSafeInteger(body?.fileSize) || body.fileSize < 1 || body.fileSize > maxBytes) {
+      return fail("BGM Asset 정보가 올바르지 않아요.", 400);
+    }
+    const invalid = await checkTemplate(auth.client, body.templateId);
+    if (invalid) {
+      await auth.client.storage.from(bucket).remove([body.storagePath]);
+      return invalid;
+    }
+    const folder = `${body.templateId}/audio`;
+    const fileName = `${body.id}.mp3`;
+    const { data: objects, error: objectError } = await auth.client.storage.from(bucket)
+      .list(folder, { limit: 2, search: fileName });
+    const stored = objects?.find((item) => item.name === fileName);
+    const storedSize = Number(stored?.metadata?.size);
+    const storedMime = stored?.metadata?.mimetype;
+    if (objectError || !stored || storedSize !== body.fileSize || storedMime !== "audio/mpeg") {
+      await auth.client.storage.from(bucket).remove([body.storagePath]);
+      return fail("업로드된 MP3 파일을 확인하지 못했어요.", 409);
+    }
+    return registerUploadedAsset(auth, {
+      templateId: body.templateId, type: "bgm", id: body.id, path: body.storagePath,
+      name: body.name.trim(), mimeType: "audio/mpeg", width: null, height: null, fileSize: body.fileSize,
+    });
+  }
+
+  const form = await request.formData().catch(() => null);
+  const templateId = form?.get("templateId"), type = form?.get("assetType"), file = form?.get("file");
+  const widthValue = form?.get("width"), heightValue = form?.get("height");
+  const width = widthValue === null ? null : Number(widthValue), height = heightValue === null ? null : Number(heightValue);
+  if (typeof templateId !== "string" || !uuid.test(templateId) || typeof type !== "string" || !folders[type] || type === "bgm") return fail("Asset 정보가 올바르지 않아요.", 400);
+  if (!(file instanceof File) || !extensions[file.type] || !file.type.startsWith("image/") || !file.size || file.size > maxBytes) {
+    return fail("15MB 이하의 JPG, PNG, WebP 이미지를 선택해 주세요.", 400);
+  }
+  if (!Number.isSafeInteger(width) || width < 1 || !Number.isSafeInteger(height) || height < 1) return fail("이미지 크기를 확인하지 못했어요.", 400);
+  const invalid = await checkTemplate(auth.client, templateId);
+  if (invalid) return invalid;
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  if (!validImage(bytes, file.type)) return fail("올바른 이미지 파일을 선택해 주세요.", 400);
+  const id = randomUUID(), path = `${templateId}/${folders[type]}/${id}.${extensions[file.type]}`;
+  const { error: uploadError } = await auth.client.storage.from(bucket).upload(path, bytes, { contentType: file.type, upsert: false });
+  if (uploadError) return fail("이미지 업로드에 실패했어요.", 500);
+  return registerUploadedAsset(auth, {
+    templateId, type, id, path, name: file.name.slice(0, 200), mimeType: file.type,
+    width, height, fileSize: file.size,
+  });
 }
 export async function PATCH(request) {
   const auth = await getAdmin(request);

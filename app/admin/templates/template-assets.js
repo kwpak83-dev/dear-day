@@ -49,13 +49,37 @@ export default function TemplateAssets({ templateId, onOperation, onBusyChange }
     }
     setBusy(true); onBusyChange(true); setNotice("");
     try {
-      const size = audio ? null : await imageSize(file);
-      const form = new FormData();
-      form.set("templateId", templateId); form.set("assetType", type); form.set("file", file);
-      if (size) { form.set("width", String(size.width)); form.set("height", String(size.height)); }
-      const response = await fetch("/api/admin/templates/assets", { method: "POST", headers: await authorization(), body: form });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(result.error || "Asset 업로드에 실패했어요.");
+      let result;
+      if (audio) {
+        const signature = new Uint8Array(await file.slice(0, 3).arrayBuffer());
+        const validMp3 = new TextDecoder().decode(signature) === "ID3" ||
+          (signature[0] === 255 && (signature[1] & 224) === 224);
+        if (!validMp3) throw new Error("올바른 MP3 파일을 선택해 주세요.");
+        const client = getSupabaseBrowserClient();
+        if (!client) throw new Error("업로드 서비스를 준비하지 못했어요.");
+        const id = crypto.randomUUID();
+        const storagePath = `${templateId}/audio/${id}.mp3`;
+        const { error: uploadError } = await client.storage.from("template-assets")
+          .upload(storagePath, file, { contentType: file.type, upsert: false });
+        if (uploadError) throw new Error("MP3 업로드에 실패했어요.");
+        const response = await fetch("/api/admin/templates/assets", {
+            method: "POST", headers: { ...(await authorization()), "Content-Type": "application/json" },
+            body: JSON.stringify({
+              directUpload: true, templateId, assetType: "bgm", id, storagePath,
+              name: file.name, mimeType: file.type, fileSize: file.size,
+            }),
+          });
+        result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.error || "BGM 정보를 저장하지 못했어요.");
+      } else {
+        const size = await imageSize(file);
+        const form = new FormData();
+        form.set("templateId", templateId); form.set("assetType", type); form.set("file", file);
+        form.set("width", String(size.width)); form.set("height", String(size.height));
+        const response = await fetch("/api/admin/templates/assets", { method: "POST", headers: await authorization(), body: form });
+        result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.error || "Asset 업로드에 실패했어요.");
+      }
       onOperation({ id: result.id, receipt: result.receipt });
       await load();
       setNotice("Asset을 등록했습니다.");
