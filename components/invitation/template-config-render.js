@@ -57,8 +57,18 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   for (const [key, variable] of [["text", "text"], ["title", "title"], ["muted", "muted"], ["accent", "accent"], ["buttonBackground", "button-bg"], ["buttonText", "button-text"], ["divider", "divider"]]) {
     set(rootStyle, `--dd-color-${variable}`, colors?.[key]);
   }
+  const sections = config?.sections;
+  if (sections) {
+    sections.forEach((section, index) => {
+      rootStyle[`--dd-section-${section.key}-order`] = (index + 1) * 10;
+    });
+  }
+  const sectionClasses = sections
+    ? ` dd-template-sections-configured${sections.filter((section) => !section.enabled).map((section) => ` dd-section-hidden-${section.key}`).join("")}`
+    : "";
+  const decorationsConfigured = Boolean(config?.decorations?.length);
   const configured = Boolean(background || hero || typography || colors);
-  return { configured, backgroundConfigured: Boolean(background), rootStyle, heroStyle, heroMediaStyle, heroImageStyle };
+  return { configured, backgroundConfigured: Boolean(background), decorationsConfigured, sectionClasses, rootStyle, heroStyle, heroMediaStyle, heroImageStyle };
 }
 
 export function TemplateConfigHeroLayers({ config, assets = {} }) {
@@ -68,4 +78,21 @@ export function TemplateConfigHeroLayers({ config, assets = {} }) {
     {overlay && <span className="dd-template-hero-overlay" style={{ background: overlay }} aria-hidden="true" />}
     {frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
   </>;
+}
+
+export function TemplateConfigDecorations({ config, assets = {}, slot }) {
+  const decorations = config?.decorations?.filter((item) => item.visible && item.slot === slot && assets[item.assetId]) || [];
+  if (!decorations.length) return null;
+  return <div className={`dd-template-decoration-layer dd-template-decoration-layer-${slot}`} aria-hidden="true">
+    {decorations.map((item) => <img
+      key={item.assetId}
+      className="dd-template-decoration"
+      src={assets[item.assetId]}
+      alt=""
+      style={{
+        left: `${item.xPercent}%`, top: `${item.yPercent}%`, width: `${item.widthPercent}%`,
+        transform: `rotate(${item.rotationDeg}deg)`, opacity: item.opacity, zIndex: item.zIndex,
+      }}
+    />)}
+  </div>;
 }

@@ -714,3 +714,45 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .admin-draft-preview-device{max-width:100%;margin:0 auto;background:#fffaf5;box-shadow:0 10px 28px rgba(70,43,35,.14);transition:width .2s ease}
 .admin-draft-preview-device .invitation-template{min-height:0}.admin-draft-preview-device button:disabled{cursor:default}
 @media(max-width:600px){.admin-draft-preview-toolbar{align-items:flex-start;flex-direction:column}.admin-draft-preview-widths{width:100%}.admin-draft-preview-widths button{flex:1}.admin-draft-preview-scroll{max-height:70vh;padding:10px 6px}}
+
+/* Template Config C6-3: decorations and configurable invitation sections */
+.dd-template-decorated{position:relative;isolation:isolate}
+.dd-template-decoration-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.dd-template-decoration-layer-background{z-index:0}
+.dd-template-decoration-layer-hero{z-index:1}
+.dd-template-decoration-layer-section{z-index:0}
+.dd-template-decoration{position:absolute;display:block;max-width:none;height:auto;transform-origin:center;pointer-events:none;user-select:none}
+.dd-template-decorated>.romantic-masthead,.dd-template-decorated>.modern-masthead,.dd-template-decorated>.classic-masthead,
+.dd-template-decorated>.romantic-hero,.dd-template-decorated>.modern-hero,.dd-template-decorated>.classic-hero,
+.dd-template-decorated>.romantic-section,.dd-template-decorated>.modern-section,.dd-template-decorated>.classic-section,
+.dd-template-decorated>.romantic-footer,.dd-template-decorated>.modern-footer,.dd-template-decorated>.classic-footer,
+.dd-template-decorated .invitation-gallery,.dd-template-decorated .public-accounts,.dd-template-decorated .public-rsvp,
+.dd-template-decorated .guestbook-section,.dd-template-decorated .public-share-copy{position:relative;z-index:1}
+.dd-template-decorated .romantic-message>:not(.dd-template-decoration-layer),
+.dd-template-decorated .modern-message>:not(.dd-template-decoration-layer),
+.dd-template-decorated .classic-message>:not(.dd-template-decoration-layer){position:relative;z-index:1}
+
+.dd-template-sections-configured{display:flex;flex-direction:column}
+.dd-template-sections-configured .invitation-template-sections,
+.dd-template-sections-configured .public-invitation-sections{display:contents}
+.dd-template-sections-configured .romantic-masthead,.dd-template-sections-configured .modern-masthead,.dd-template-sections-configured .classic-masthead{order:-20}
+.dd-template-sections-configured .romantic-hero,.dd-template-sections-configured .modern-hero,.dd-template-sections-configured .classic-hero{order:-10}
+.dd-template-sections-configured .romantic-message,.dd-template-sections-configured .modern-message,.dd-template-sections-configured .classic-message{order:var(--dd-section-invitation-order)}
+.dd-template-sections-configured .romantic-information,.dd-template-sections-configured .modern-information,.dd-template-sections-configured .classic-information{order:var(--dd-section-location-order)}
+.dd-template-sections-configured .invitation-gallery{order:var(--dd-section-gallery-order)}
+.dd-template-sections-configured .public-accounts{order:var(--dd-section-account-order)}
+.dd-template-sections-configured .public-rsvp{order:var(--dd-section-rsvp-order)}
+.dd-template-sections-configured .guestbook-section{order:var(--dd-section-guestbook-order)}
+.dd-template-sections-configured .romantic-couple,.dd-template-sections-configured .modern-couple{order:calc(var(--dd-section-invitation-order) + 1)}
+.dd-template-sections-configured .public-share-copy{order:900}
+.dd-template-sections-configured .romantic-footer,.dd-template-sections-configured .modern-footer,.dd-template-sections-configured .classic-footer{order:1000}
+.dd-template-sections-configured.dd-section-hidden-invitation .romantic-message,
+.dd-template-sections-configured.dd-section-hidden-invitation .modern-message,
+.dd-template-sections-configured.dd-section-hidden-invitation .classic-message,
+.dd-template-sections-configured.dd-section-hidden-location .romantic-information,
+.dd-template-sections-configured.dd-section-hidden-location .modern-information,
+.dd-template-sections-configured.dd-section-hidden-location .classic-information,
+.dd-template-sections-configured.dd-section-hidden-gallery .invitation-gallery,
+.dd-template-sections-configured.dd-section-hidden-account .public-accounts,
+.dd-template-sections-configured.dd-section-hidden-rsvp .public-rsvp,
+.dd-template-sections-configured.dd-section-hidden-guestbook .guestbook-section{display:none}

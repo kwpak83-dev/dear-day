@@ -1,4 +1,4 @@
-import { getTemplateConfigRenderProps, TemplateConfigHeroLayers } from "../template-config-render";
+import { getTemplateConfigRenderProps, TemplateConfigDecorations, TemplateConfigHeroLayers } from "../template-config-render";
 
 function SectionHeading({ eyebrow, children }) {
   return <header className="romantic-section-heading"><span aria-hidden="true">♡</span><p>{eyebrow}</p><h3>{children}</h3><i aria-hidden="true" /></header>;
@@ -12,7 +12,8 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
   const hasInformation = Boolean(schedule || venue || address);
   const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
 
-  return <article className={`invitation-template invitation-template-romantic romantic-001${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}`} style={renderConfig.rootStyle}>
+  return <article className={`invitation-template invitation-template-romantic romantic-001${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}${renderConfig.decorationsConfigured ? " dd-template-decorated" : ""}${renderConfig.sectionClasses}`} style={renderConfig.rootStyle}>
+    <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="background" />
     <header className="romantic-masthead">
       <p>{wedding ? "WEDDING INVITATION" : kindLabel}</p>
       <span aria-hidden="true">· ♡ ·</span>
@@ -21,6 +22,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
     <section className={`romantic-hero${coverPhotoUrl ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
       {coverPhotoUrl && <figure className="romantic-hero-photo" style={renderConfig.heroMediaStyle}><img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} /></figure>}
       <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} />
+      <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />
       <div className="romantic-hero-copy">
         {title && (couple.length === 2
           ? <h2 className="romantic-couple-title"><span>{couple[0]}</span><i aria-hidden="true">♡</i><span>{couple[1]}</span></h2>
@@ -36,6 +38,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
     </section>
 
     {message && <section className="romantic-section romantic-message">
+      <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="section" />
       <SectionHeading eyebrow="A SPECIAL MESSAGE">초대의 글</SectionHeading>
       <blockquote>{message}</blockquote>
     </section>}

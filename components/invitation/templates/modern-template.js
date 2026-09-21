@@ -1,4 +1,4 @@
-import { getTemplateConfigRenderProps, TemplateConfigHeroLayers } from "../template-config-render";
+import { getTemplateConfigRenderProps, TemplateConfigDecorations, TemplateConfigHeroLayers } from "../template-config-render";
 
 function SectionHeading({ eyebrow, children }) {
   return <header className="modern-section-heading"><p>{eyebrow}</p><h3>{children}</h3><i aria-hidden="true" /></header>;
@@ -12,7 +12,8 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
   const hasInformation = Boolean(schedule || venue || address);
   const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
 
-  return <article className={`invitation-template invitation-template-modern modern-001${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}`} style={renderConfig.rootStyle}>
+  return <article className={`invitation-template invitation-template-modern modern-001${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}${renderConfig.decorationsConfigured ? " dd-template-decorated" : ""}${renderConfig.sectionClasses}`} style={renderConfig.rootStyle}>
+    <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="background" />
     <header className="modern-masthead">
       <b>DearDay</b>
       <span>{wedding ? "WEDDING INVITATION" : kindLabel}</span>
@@ -21,6 +22,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
     <section className={`modern-hero${coverPhotoUrl ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
       {coverPhotoUrl && <figure style={renderConfig.heroMediaStyle}><img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} /></figure>}
       <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} />
+      <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />
       <div className="modern-hero-copy">
         <p>{wedding ? "A NEW BEGINNING" : kindLabel}</p>
         {title && <h2>{title}</h2>}
@@ -35,6 +37,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
     </section>
 
     {message && <section className="modern-section modern-message">
+      <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="section" />
       <SectionHeading eyebrow="INVITATION">초대의 글</SectionHeading>
       <blockquote>{message}</blockquote>
     </section>}
