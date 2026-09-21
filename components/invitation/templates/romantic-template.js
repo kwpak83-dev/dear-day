@@ -1,3 +1,4 @@
+import TemplateConfigEffects from "../template-config-effects";
 import { getTemplateConfigRenderProps, TemplateConfigDecorations, TemplateConfigHeroLayers } from "../template-config-render";
 
 function SectionHeading({ eyebrow, children }) {
@@ -12,8 +13,9 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
   const hasInformation = Boolean(schedule || venue || address);
   const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
 
-  return <article className={`invitation-template invitation-template-romantic romantic-001${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}${renderConfig.decorationsConfigured ? " dd-template-decorated" : ""}${renderConfig.sectionClasses}`} style={renderConfig.rootStyle}>
+  return <article className={`invitation-template invitation-template-romantic romantic-001${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}${renderConfig.decorationsConfigured ? " dd-template-decorated" : ""}${renderConfig.sectionClasses}${renderConfig.safeAreaClass}`} style={renderConfig.rootStyle}>
     <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="background" />
+    <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} />
     <header className="romantic-masthead">
       <p>{wedding ? "WEDDING INVITATION" : kindLabel}</p>
       <span aria-hidden="true">· ♡ ·</span>

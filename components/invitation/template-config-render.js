@@ -67,8 +67,13 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     ? ` dd-template-sections-configured${sections.filter((section) => !section.enabled).map((section) => ` dd-section-hidden-${section.key}`).join("")}`
     : "";
   const decorationsConfigured = Boolean(config?.decorations?.length);
+  const safeArea = config?.safeArea;
+  if (safeArea) {
+    for (const side of ["top", "right", "bottom", "left"]) rootStyle[`--dd-safe-${side}`] = `${safeArea[side]}px`;
+  }
+  const safeAreaClass = safeArea ? " dd-template-safe-area" : "";
   const configured = Boolean(background || hero || typography || colors);
-  return { configured, backgroundConfigured: Boolean(background), decorationsConfigured, sectionClasses, rootStyle, heroStyle, heroMediaStyle, heroImageStyle };
+  return { configured, backgroundConfigured: Boolean(background), decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle };
 }
 
 export function TemplateConfigHeroLayers({ config, assets = {} }) {
