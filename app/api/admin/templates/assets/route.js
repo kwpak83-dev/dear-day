@@ -58,7 +58,7 @@ export async function GET(request) {
   const invalid = await checkTemplate(auth.client, id);
   if (invalid) return invalid;
   const { data, error } = await auth.client.from("template_assets")
-    .select("id,asset_type,name,storage_bucket,storage_path,mime_type,width,height,file_size,sort_order,is_active,created_at")
+    .select("id,template_id,asset_type,name,storage_bucket,storage_path,mime_type,width,height,file_size,sort_order,is_active,created_at")
     .eq("template_id", id).order("created_at", { ascending: false });
   if (error) return fail("Asset 목록을 불러오지 못했어요.", 500);
   return Response.json({ assets: (data || []).map((row) => ({
