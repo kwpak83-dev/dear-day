@@ -705,3 +705,12 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-configured .classic-section,.dd-template-configured .modern-section,.dd-template-configured .public-accounts,.dd-template-configured .public-rsvp,.dd-template-configured .guestbook-section{border-color:var(--dd-color-divider,inherit)}
 
 .dd-template-configured .classic-information-body :where(p,strong,time,span),.dd-template-configured .romantic-information :where(p,strong,time,span),.dd-template-configured .modern-information-body :where(p,strong,time,span),.dd-template-configured .public-account-card :where(p,strong,span),.dd-template-configured .public-rsvp :where(p,label,legend,input,select,textarea),.dd-template-configured .guestbook-section :where(p,label,input,textarea){color:var(--dd-color-text,inherit);font-family:var(--dd-body-font,inherit);font-size:var(--dd-body-size,inherit);font-weight:var(--dd-body-weight,inherit);line-height:var(--dd-body-line-height,inherit);letter-spacing:var(--dd-body-letter-spacing,inherit);text-align:var(--dd-body-align,inherit)}
+.admin-draft-preview{margin:16px 0 22px;border:1px solid #dfd2ca;border-radius:12px;background:#f8f4f1;overflow:hidden}
+.admin-draft-preview-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:#fff;border-bottom:1px solid #e7ddd7}
+.admin-draft-preview-toolbar h3,.admin-draft-preview-toolbar p{margin:0}.admin-draft-preview-toolbar p{margin-top:3px;color:#876f64;font-size:12px}
+.admin-draft-preview-widths{display:flex;gap:6px;flex:none}.admin-draft-preview-widths button{border:1px solid #d9c5b9;border-radius:7px;background:#fff;padding:7px 9px;color:#60483e}.admin-draft-preview-widths button.active{border-color:#a86f5d;background:#f3dfd6;font-weight:700}
+.admin-draft-preview-status{margin:0;padding:28px 16px;text-align:center;color:#806b62}
+.admin-draft-preview-scroll{max-height:720px;overflow:auto;padding:16px 10px;background:#e9e1dc;overscroll-behavior:contain}
+.admin-draft-preview-device{max-width:100%;margin:0 auto;background:#fffaf5;box-shadow:0 10px 28px rgba(70,43,35,.14);transition:width .2s ease}
+.admin-draft-preview-device .invitation-template{min-height:0}.admin-draft-preview-device button:disabled{cursor:default}
+@media(max-width:600px){.admin-draft-preview-toolbar{align-items:flex-start;flex-direction:column}.admin-draft-preview-widths{width:100%}.admin-draft-preview-widths button{flex:1}.admin-draft-preview-scroll{max-height:70vh;padding:10px 6px}}

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
+import TemplateDraftPreview from "./template-draft-preview";
 
 const slots = [["hero", "Hero"], ["section", "섹션"], ["background", "배경"]];
 const defaults = (assetId) => ({
@@ -66,7 +67,7 @@ const field = { display: "grid", gap: 4, minWidth: 0 };
 const input = { width: "100%", boxSizing: "border-box" };
 
 export default function TemplateVersions({ templateId, assetRevision = 0, assetChangesPending = false }) {
-  const [state, setState] = useState({ loading: true, current: null, draft: null, assets: [], error: "" });
+  const [state, setState] = useState({ loading: true, current: null, draft: null, assets: [], allAssets: [], error: "" });
   const loaded = useRef(null);
   const [placements, setPlacements] = useState([]);
   const [background, setBackground] = useState(backgroundDefaults);
@@ -112,7 +113,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     setPlacements((previous) => active.filter((asset) => asset.asset_type === "decoration").map((asset) =>
       placementFor(asset.id, (preservePlacements ? previous.find((item) => item.assetId === asset.id) : null) ||
         versions.draft?.decorations?.find((item) => item.assetId === asset.id))));
-    setState({ loading: false, current: versions.current, draft: versions.draft, assets: active, error: "" });
+    setState({ loading: false, current: versions.current, draft: versions.draft, assets: active, allAssets: assets.assets || [], error: "" });
     loaded.current = templateId;
   };
   useEffect(() => {
@@ -146,6 +147,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "Background/Hero 설정을 저장하지 못했어요.");
+      await load(false);
       setNotice("Draft Background/Hero 설정을 저장했습니다.");
     } catch (error) { setNotice(error.message); }
     finally { setSaving(false); }
@@ -162,6 +164,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "Typography/Colors 설정을 저장하지 못했어요.");
+      await load(false);
       setNotice("Draft Typography/Colors 설정을 저장했습니다.");
     } catch (error) { setNotice(error.message); }
     finally { setSaving(false); }
@@ -185,6 +188,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "Sections 설정을 저장하지 못했어요.");
+      await load(false);
       setNotice("Draft Sections 설정을 저장했습니다.");
     } catch (error) { setNotice(error.message); }
     finally { setSaving(false); }
@@ -201,6 +205,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "Effects/BGM/Safe Area 설정을 저장하지 못했어요.");
+      await load(false);
       setNotice("Draft Effects/BGM/Safe Area 설정을 저장했습니다.");
     } catch (error) { setNotice(error.message); }
     finally { setSaving(false); }
@@ -222,6 +227,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "장식 배치를 저장하지 못했어요.");
+      await load(false);
       setNotice("Draft 장식 배치를 저장했습니다.");
     } catch (error) { setNotice(error.message); }
     finally { setSaving(false); }
@@ -229,6 +235,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
 
   return <section style={{ border: "1px solid #eadfd8", borderRadius: 14, padding: 16, background: "#fff", margin: "16px 0" }}>
     <h2 style={{ marginTop: 0 }}>템플릿 버전</h2>
+    <TemplateDraftPreview templateId={templateId} draft={state.draft} assets={state.allAssets} loading={state.loading} />
     {state.loading ? <p>버전 정보를 불러오는 중이에요.</p> : <>
       <p>현재 판매 버전: {state.current ? `v${state.current.version}` : "없음"}</p>
       <p>편집 Draft: {state.draft ? `v${state.draft.version}` : "없음"}</p>

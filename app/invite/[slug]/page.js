@@ -9,7 +9,7 @@ import LinkCopy from "./link-copy";
 import OptionalInvitationSections from "./optional-invitation-sections";
 import { getInvitationTitle } from "../../../lib/invitation-title";
 import { isPublicPeriodExpired } from "../../../lib/invitation-retention";
-import { getTemplateAssetReferences } from "../../../lib/template-config";
+import { getTemplateAssetReferences, resolveTemplateAssetUrls } from "../../../lib/template-config";
 
 export default async function InvitationPage({ params, searchParams }) {
   const { slug } = await params;
@@ -46,16 +46,12 @@ export default async function InvitationPage({ params, searchParams }) {
       templateConfig = pinnedVersion.config;
       const references = getTemplateAssetReferences(templateConfig);
       if (references.length) {
-        const expectedTypes = new Map(references.map((item) => [item.id, item.type]));
         const { data: assets, error: assetError } = await supabase.from("template_assets")
           .select("id,template_id,asset_type,storage_bucket,storage_path")
-          .eq("template_id", event.template_id).in("id", [...expectedTypes.keys()]);
+          .eq("template_id", event.template_id).in("id", references.map((item) => item.id));
         if (assetError) console.error("Pinned template asset query failed:", assetError.code);
-        templateAssets = Object.fromEntries((assets || []).filter((asset) =>
-          asset.template_id === event.template_id && asset.storage_bucket === "template-assets" &&
-          typeof asset.storage_path === "string" && asset.storage_path.startsWith(`${event.template_id}/`) &&
-          expectedTypes.get(asset.id) === asset.asset_type
-        ).map((asset) => [asset.id, supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl]));
+        templateAssets = resolveTemplateAssetUrls(templateConfig, assets, event.template_id, (asset) =>
+          supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl);
       }
     }
   }
