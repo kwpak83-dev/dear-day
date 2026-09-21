@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getInvitationTitle } from "../../../lib/invitation-title";
 import { getMissingRequiredFields } from "../../../lib/event-config";
 import { calculateRetentionDates } from "../../../lib/invitation-retention";
+import { getTemplateAssetReferences, resolveTemplateAssetUrls } from "../../../lib/template-config";
 
 const slugPattern = /^[a-z0-9-]{4,80}$/;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -57,15 +58,36 @@ async function getAuthenticatedClient(request) {
   return { supabase, user };
 }
 
+async function getTemplateRenderData(supabase, templateId, versionId) {
+  if (!templateId || !versionId) return { templateConfig: null, templateAssets: {} };
+  const { data: version, error } = await supabase.from("template_versions")
+    .select("id,template_id,status,config").eq("id", versionId).eq("template_id", templateId).maybeSingle();
+  if (error || !version || version.status === "draft") return { templateConfig: null, templateAssets: {} };
+  const references = getTemplateAssetReferences(version.config);
+  if (!references.length) return { templateConfig: version.config, templateAssets: {} };
+  const { data: assets, error: assetError } = await supabase.from("template_assets")
+    .select("id,template_id,asset_type,storage_bucket,storage_path")
+    .eq("template_id", templateId).in("id", references.map((item) => item.id));
+  if (assetError) return { templateConfig: version.config, templateAssets: {} };
+  return {
+    templateConfig: version.config,
+    templateAssets: resolveTemplateAssetUrls(version.config, assets, templateId, (asset) =>
+      supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl),
+  };
+}
+
 export async function GET(request) {
   const auth = await getAuthenticatedClient(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
   const slug = new URL(request.url).searchParams.get("slug");
-  let query = auth.supabase.from("events").select("slug,title,status,kind,template_id,starts_at,paid_at,published_at,service_started_at,service_expires_at,grace_ends_at,updated_at,settings").eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
+  let query = auth.supabase.from("events").select("slug,title,status,kind,template_id,template_version_id,starts_at,paid_at,published_at,service_started_at,service_expires_at,grace_ends_at,updated_at,settings").eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
   if (slug) query = query.eq("slug", slug).limit(1);
   const { data, error } = await query;
   if (error) return json({ error: "초대장을 불러오지 못했어요." }, 500);
-  return json(slug ? { event: data?.[0] || null } : { events: data || [] });
+  if (!slug) return json({ events: data || [] });
+  const event = data?.[0] || null;
+  const renderData = event ? await getTemplateRenderData(auth.supabase, event.template_id, event.template_version_id) : { templateConfig: null, templateAssets: {} };
+  return json({ event, ...renderData });
 }
 
 export async function POST(request) {
@@ -74,8 +96,8 @@ export async function POST(request) {
   const { supabase, user } = auth;
 
   const body = await request.json().catch(() => null);
-  const { slug, invitation, publish = false, action = "save" } = body || {};
-  if (!slugPattern.test(slug || "") || typeof publish !== "boolean") return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
+  const { slug, invitation, publish = false, action = "save", templateSelectionChanged = false } = body || {};
+  if (!slugPattern.test(slug || "") || typeof publish !== "boolean" || typeof templateSelectionChanged !== "boolean") return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
 
   if (action === "suspend" || action === "restore") {
     const sourceStatus = action === "suspend" ? "published" : "suspended";
@@ -142,11 +164,13 @@ export async function POST(request) {
 
   let templateVersionId = existing?.template_version_id || null;
   if (templateId) {
-    const { data: templates, error: templateError } = await supabase.from("templates").select("id,current_sale_version_id").eq("id", templateId).limit(1);
+    const { data: templates, error: templateError } = await supabase.from("templates").select("id,current_sale_version_id,is_active").eq("id", templateId).limit(1);
     if (templateError) return json({ error: "템플릿을 확인하지 못했어요." }, 500);
     if (!templates?.[0]) return json({ error: "선택한 템플릿을 찾지 못했어요." }, 400);
-    if (!existing || existing.template_id !== templateId) {
-      templateVersionId = templates[0].current_sale_version_id || null;
+    const shouldPinCurrentVersion = !existing || existing.template_id !== templateId || templateSelectionChanged;
+    if (shouldPinCurrentVersion) {
+      if (!templates[0].is_active || !templates[0].current_sale_version_id) return json({ error: "현재 판매 중인 템플릿을 선택해 주세요." }, 409);
+      templateVersionId = templates[0].current_sale_version_id;
     }
   } else if (hasTemplateId) {
     templateVersionId = null;
