@@ -45,7 +45,7 @@
 | **⑬-T1** | **템플릿 DB + Storage + Asset/Config 구조** | **🟢 기반 완료** |
 | **⑬-T2** | **관리자 템플릿 등록/수정 UI** | **🟢 C1~C5 완료 / 운영 TC 완료** |
 | ⑬-T3 | Asset/Config ↔ InvitationRenderer 연결 | 🟢 완료 — C6-1~C6-4, 관리자 Draft Live Preview, C6 통합 회귀 완료 |
-| ⑬-T4 | 실제 Renderer 미리보기 + 버전/판매상태 관리 | 🟡 일부 선행 — 관리자 Draft Live Preview 완료, 버전/판매상태 workflow 마무리 예정 |
+| ⑬-T4 | 실제 Renderer 미리보기 + 버전/판매상태 관리 | 🟢 완료 — Draft→판매 Version 확정, 판매중지/재개, Event pinning, 사용자/Public Renderer 운영 TC 완료 |
 | ⑬-A | 판매용 템플릿 20~30개 확대 | 🔴 |
 | ⑫-A | 상품/요금제 구조 + 단건·다회 이용권 상품 기반 | 🔴 |
 | ⑫-B | 이용권 구매분·사용량·잔여수량·유효기간 관리 | 🔴 |
@@ -55,7 +55,7 @@
 | ⑮ | 전체 통합 TC / 보안·안정화 / 오픈 준비 | 🔴 |
 | ⑯ | DearDay 정식 오픈 | 🔴 |
 
-> **현재 개발 우선순위 (2026-09-21):** `BGM 실제 음원 기반 기능 완료 → ⑬-T4 버전/판매상태 마무리 → ⑬-A → ⑫-A → ⑫-B → ⑬ → ⑬-B → ⑭ → ⑮ → ⑯`
+> **현재 개발 우선순위 (2026-09-21):** `⑬-A 판매용 템플릿 확대(우선 실전 마스터 템플릿 검증) → ⑫-A → ⑫-B → ⑬ → ⑬-B → ⑭ → ⑮ → ⑯`
 >
 > 템플릿 시스템을 먼저 데이터 기반으로 완성해, 이후 판매용 템플릿 추가는 가능한 한 Codex 코드 수정·GitHub commit·Vercel 재배포 없이 관리자 페이지에서 처리하는 것을 목표로 한다.
 
@@ -211,15 +211,22 @@
 - Draft Live Preview, C6-2 실화면 검증, C6-3 Decoration+Sections, C6-4 Effects/Safe Area 및 C6 통합 회귀까지 완료했다. `hero.mode` 실제 렌더 분기와 full-cover 대표사진에 가려지는 Hero Background 확인 UX는 후속 개선으로 기록한다.
 - BGM 실제 음원 기능까지 완료했다. MP3 Asset 업로드, Draft Config 연결, 공통 Renderer 재생/정지, 플로팅 토글 UI, 390/540 및 스크롤/중복재생 운영 TC를 통과했다. 다음은 ⑬-T4 버전/판매상태 관리로 진행한다.
 
-## ⑬-T4 실제 Renderer 미리보기 + 버전/판매상태 관리
+## ⑬-T4 실제 Renderer 미리보기 + 버전/판매상태 관리 — 완료 (2026-09-21)
 
-- 관리자 미리보기, 사용자 전체 미리보기, 실제 공개 발행본이 동일한 `InvitationRenderer`를 사용하도록 한다.
-- 관리자에서 320~360, 375~390, 412~430, 540px 등 주요 모바일 폭을 확인할 수 있게 한다.
-- 템플릿 workflow는 `제작중 → 검수대기 → 판매가능 → 판매중`을 기본으로 하고 판매중지/재개를 지원한다.
-- 배경, typography, 색상, Hero, 장식, 섹션 구조, animation 등 실질적 디자인 변경은 새 버전을 생성하는 방향을 기본으로 한다.
-- 기존 초대장/구매가 참조하는 템플릿 버전과 Asset은 물리 삭제하지 않고 보호한다.
-- 첫 실전 TC는 현재 제작 중인 계절형 Asset 세트를 관리자에서 등록해 실제 사용자 미리보기와 공개 Renderer까지 동일하게 표시되는지 확인한다.
-- ⑬-T4 완료 후 일반적인 신규 판매 템플릿은 `이미지 제작/검증 → 관리자 업로드 → 설정 → Renderer 미리보기 → 판매 시작` 흐름으로 운영하며 Codex/GitHub/Vercel 재배포를 요구하지 않는 것을 합격 기준으로 한다.
+- 관리자 Draft Live Preview, 사용자 우측 LIVE Preview, 사용자 전체 미리보기, 실제 공개 발행본이 공통 `InvitationRenderer`를 사용한다.
+- Draft가 있으면 재사용하고, 없으면 현재 판매 Version의 Config/schema version을 복사해 다음 번호 Draft를 생성한다.
+- 관리자에서 Draft를 `판매 버전으로 확정`하면 해당 Version을 `active`로 전환하고 `templates.current_sale_version_id`를 갱신한다. 기존 Event의 `events.template_version_id`는 일괄 변경하지 않는다.
+- 신규 Event/다른 템플릿 선택/동일 템플릿 명시적 재선택 시에만 현재 판매 Version으로 pin하며, 기존 Event의 단순 내용 수정·저장은 기존 pinned Version을 유지한다.
+- 판매 시작은 `status=on_sale, is_visible=true, is_active=true`, 판매 중지는 `status=stopped, is_active=false`를 사용하며 Version/Asset/기존 Event는 보존한다. 판매 재개도 운영 TC를 통과했다.
+- 실제 운영 TC에서 v1 기존 초대장이 v2 판매 확정 후에도 v1을 유지하고, 명시적 재선택 시 v2로 전환되는 것을 확인했다.
+- 사용자 LIVE Preview의 내부 스크롤 위치 때문에 Hero가 누락돼 보이던 문제를 수정했다. 대표사진/템플릿/pinned Config 변경 시 상단 Hero부터 표시되고 Footer까지 내부 스크롤되는 것을 운영에서 확인했다.
+- v2 판매 Version의 Background/Hero Background/Hero Frame/Decoration/BGM/Effects/Safe Area Config와 실제 `template_assets` 참조를 Production DB에서 검증했다.
+- Public Invitation에서 Asset 기반 요소만 누락되던 HOTFIX의 root cause는 `template_assets`에 대한 `service_role` SELECT table privilege 부족으로 발생한 PostgreSQL `42501`이었다.
+- migration `202609210003_grant_template_assets_select.sql`로 `grant select on table public.template_assets to service_role;`을 추가하고 Production DB에도 동일 권한을 적용했다. anon/authenticated 범위와 RLS policy는 변경하지 않았다.
+- HOTFIX 후 실제 공개 v2 초대장에서 Whole Background, Hero Frame, Decoration 등 Asset 기반 디자인이 정상 렌더링되고 Effects도 정상 동작하는 것을 운영 화면에서 확인했다. BGM은 v2 Config/Asset 및 공통 Renderer 연결이 유지된다.
+- Public 렌더링은 계속 `events.template_version_id`에 pin된 Version을 사용하며 `current_sale_version_id`를 직접 따라가지 않는다. 과거 pinned Version/Asset 보호 원칙도 유지한다.
+- Hero Background는 고객 대표사진 아래 레이어라 full-cover 사진에 가려질 수 있으며, `hero.mode` 실제 렌더 분기는 후속 개선으로 유지한다.
+- T4 완료 기준을 충족했으므로 다음 단계는 ⑬-A 판매용 템플릿 확대다. 우선 실전 판매 품질의 마스터 템플릿 1개를 현재 Renderer/관리자 설정만으로 제작해 디자인 완성도와 추가 Renderer capability 필요 여부를 검증한다.
 
 ## ⑬-A 판매용 템플릿 20~30개 확대
 
