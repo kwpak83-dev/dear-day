@@ -73,7 +73,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   }
   const safeAreaClass = safeArea ? " dd-template-safe-area" : "";
   const configured = Boolean(background || hero || typography || colors);
-  return { configured, backgroundConfigured: Boolean(background), decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle };
+  return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), backgroundConfigured: Boolean(background), decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle };
 }
 
 export function TemplateConfigHeroLayers({ config, assets = {} }) {
