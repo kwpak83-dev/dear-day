@@ -47,6 +47,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroStyle.backgroundImage = `url("${heroBackgroundUrl}")`;
     heroStyle.backgroundSize = "cover";
     heroStyle.backgroundPosition = "center";
+    heroMediaStyle.background = "transparent";
   }
   if (hero?.aspectRatio) heroMediaStyle.aspectRatio = hero.aspectRatio.replace(":", " / ");
   if (hero && hero.positionX !== null && hero.positionY !== null) heroImageStyle.objectPosition = `${hero.positionX}% ${hero.positionY}%`;
