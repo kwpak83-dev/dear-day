@@ -46,7 +46,7 @@
 | **⑬-T2** | **관리자 템플릿 등록/수정 UI** | **🟢 C1~C5 완료 / 운영 TC 완료** |
 | ⑬-T3 | Asset/Config ↔ InvitationRenderer 연결 | 🟢 완료 — C6-1~C6-4, 관리자 Draft Live Preview, C6 통합 회귀 완료 |
 | ⑬-T4 | 실제 Renderer 미리보기 + 버전/판매상태 관리 | 🟢 완료 — Draft→판매 Version 확정, 판매중지/재개, Event pinning, 사용자/Public Renderer 운영 TC 완료 |
-| ⑬-A | 판매용 템플릿 20~30개 확대 | 🔴 |
+| ⑬-A | 판매용 템플릿 20~30개 확대 | 🟡 진행 중 — Warm Ivory 첫 실전 마스터 E2E 검증 완료 |
 | ⑫-A | 상품/요금제 구조 + 단건·다회 이용권 상품 기반 | 🔴 |
 | ⑫-B | 이용권 구매분·사용량·잔여수량·유효기간 관리 | 🔴 |
 | ⑬ | 관리자 페이지 나머지 운영 기능 | 🔴 |
@@ -229,6 +229,16 @@
 - T4 완료 기준을 충족했으므로 다음 단계는 ⑬-A 판매용 템플릿 확대다. 우선 실전 판매 품질의 마스터 템플릿 1개를 현재 Renderer/관리자 설정만으로 제작해 디자인 완성도와 추가 Renderer capability 필요 여부를 검증한다.
 
 ## ⑬-A 판매용 템플릿 20~30개 확대
+
+### Warm Ivory 첫 실전 마스터 템플릿 E2E 검증 완료 (2026-09-22)
+
+- 관리자 Draft에서 Warm Ivory Asset/Config 및 Whole Background 렌더링을 확인했다. Whole Background는 `background-size: 100% auto`, `background-position: top center`, `background-repeat: repeat-y` 기준으로 긴 초대장 전체에 정상 적용된다.
+- 신규 Event에서 DB 판매 템플릿 Warm Ivory를 선택하면 저장 전 LIVE Preview에 정상 반영된다. DB 조회 대기 중 Classic fallback이 잠깐 표시되던 현상을 제거했고, 빠르게 다른 템플릿을 선택해도 이전 비동기 응답이 현재 선택을 덮어쓰지 않는 것을 운영 TC에서 확인했다.
+- Warm Ivory 선택 후 저장, 전체 미리보기, Mock 결제, 최종 발행, Public `/invite/[slug]`까지 동일 디자인이 정상 유지되는 것을 확인했다.
+- Version Pinning 실전 TC를 완료했다. Warm Ivory 판매 v3로 발행한 기존 Event를 유지한 채 Draft v4의 Background Overlay를 눈에 띄게 변경했고, Draft 수정 상태에서도 기존 Public 초대장은 v3를 유지했다.
+- 이후 v4를 새 판매 Version으로 확정해 `current_sale_version_id`가 v4가 된 뒤에도 기존 발행 Event/Public 초대장은 `events.template_version_id`에 pin된 v3 디자인을 그대로 유지했다.
+- 따라서 첫 실전 마스터 템플릿의 관리자 등록 → 판매 Version → 사용자 선택/미리보기 → 저장 → 결제/발행 → Public Renderer → 과거 Version pinning까지 End-to-End 운영 검증을 통과했다.
+- ⑬-A 전체 목표인 판매용 템플릿 20~30개 확대는 아직 진행 중이며, Warm Ivory 검증 완료를 기준으로 후속 판매 템플릿을 관리자 중심으로 확대한다.
 
 - ⑬-T1~T4에서 완성한 공통 템플릿 규격과 관리자 등록 기능을 사용해 판매용 템플릿을 20~30개 수준으로 확대한다.
 - 신규 판매용 디자인은 관리자 페이지에서 직접 등록·수정·비활성화할 수 있는 공통 템플릿 규격을 기준으로 제작한다.
