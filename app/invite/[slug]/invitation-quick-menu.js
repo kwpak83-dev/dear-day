@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import RsvpForm from "./rsvp-form";
 import Guestbook from "./guestbook";
 
@@ -35,14 +35,15 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt }) {
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
 
   useEffect(() => {
-    if (visible || !triggerRef.current) return;
+    const trigger = document.getElementById("invitation-quick-menu-trigger");
+    if (visible || !trigger) return;
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
         setVisible(true);
         observer.disconnect();
       }
     }, { threshold: 0.1 });
-    observer.observe(triggerRef.current);
+    observer.observe(trigger);
     return () => observer.disconnect();
   }, [visible]);
 

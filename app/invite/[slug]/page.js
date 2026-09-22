@@ -66,5 +66,6 @@ export default async function InvitationPage({ params, searchParams }) {
     <div className="full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} templateConfig={templateConfig} templateAssets={templateAssets} placeActions={<><AddressCopy invitation={invitation} /><InvitationMap address={invitation.venueAddress} /></>}>
       <div className="public-invitation-sections"><Gallery photos={galleryPhotos} /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} slug={slug} startsAt={event.starts_at} /><LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} /><footer>디어데이와 함께하는 소중한 순간</footer></div>
     </InvitationRenderer></div>
+    <span id="invitation-quick-menu-trigger" className="invitation-quick-menu-trigger" aria-hidden="true" />
   </main>;
 }
