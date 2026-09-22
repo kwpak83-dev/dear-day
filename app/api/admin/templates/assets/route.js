@@ -63,13 +63,28 @@ export async function GET(request) {
   if (!uuid.test(id || "")) return fail("템플릿 정보가 올바르지 않아요.", 400);
   const invalid = await checkTemplate(auth.client, id);
   if (invalid) return invalid;
-  const { data, error } = await auth.client.from("template_assets")
-    .select("id,template_id,asset_type,name,storage_bucket,storage_path,mime_type,width,height,file_size,sort_order,is_active,created_at")
-    .eq("template_id", id).order("created_at", { ascending: false });
-  if (error) return fail("Asset 목록을 불러오지 못했어요.", 500);
-  return Response.json({ assets: (data || []).map((row) => ({
-    ...row, url: row.storage_bucket === bucket ? auth.client.storage.from(bucket).getPublicUrl(row.storage_path).data.publicUrl : null,
-  })) });
+  const [assetsResult, templateResult, versionsResult] = await Promise.all([
+    auth.client.from("template_assets")
+      .select("id,template_id,asset_type,name,storage_bucket,storage_path,mime_type,width,height,file_size,sort_order,is_active,created_at")
+      .eq("template_id", id).order("created_at", { ascending: false }),
+    auth.client.from("templates").select("current_sale_version_id").eq("id", id).maybeSingle(),
+    auth.client.from("template_versions").select("id,version,status,config").eq("template_id", id).order("version"),
+  ]);
+  if (assetsResult.error) return fail("Asset 목록을 불러오지 못했어요.", 500);
+  if (templateResult.error || !templateResult.data || versionsResult.error) return fail("Asset Version 사용 현황을 불러오지 못했어요.", 500);
+  const versions = versionsResult.data || [];
+  return Response.json({ assets: (assetsResult.data || []).map((row) => {
+    const references = versions.filter((version) => configReferencesAsset(version.config, row.id));
+    return {
+      ...row,
+      url: row.storage_bucket === bucket ? auth.client.storage.from(bucket).getPublicUrl(row.storage_path).data.publicUrl : null,
+      version_usage: {
+        current_sale: references.filter((version) => version.id === templateResult.data.current_sale_version_id).map((version) => version.version),
+        draft: references.filter((version) => version.status === "draft" && version.id !== templateResult.data.current_sale_version_id).map((version) => version.version),
+        past: references.filter((version) => version.id !== templateResult.data.current_sale_version_id && version.status !== "draft").map((version) => version.version),
+      },
+    };
+  }) });
 }
 async function registerUploadedAsset(auth, asset) {
   let previous = [];
