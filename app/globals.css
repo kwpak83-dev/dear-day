@@ -806,3 +806,4 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-bgm .dd-template-bgm-toggle:focus-visible{outline:2px solid currentColor;outline-offset:2px}
 .dd-template-bgm .dd-template-bgm-toggle span{display:block;font:700 15px/1 Arial,"Apple SD Gothic Neo",sans-serif;transform:translateY(-.5px)}
 .dd-template-bgm small{position:absolute;top:42px;right:12px;max-width:calc(100% - 24px);padding:5px 8px;border-radius:6px;background:rgba(255,255,255,.94);color:#8b3f35;font-size:11px;pointer-events:auto}
+.dd-template-background.classic-001 .classic-footer{background:inherit}
