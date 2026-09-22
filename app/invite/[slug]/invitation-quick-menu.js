@@ -27,7 +27,6 @@ function BottomSheet({ title, onClose, children }) {
 }
 
 export default function InvitationQuickMenu({ invitation, slug, startsAt }) {
-  const triggerRef = useRef(null);
   const [visible, setVisible] = useState(false);
   const [sheet, setSheet] = useState(null);
   const rsvpEnabled = invitation.rsvpEnabled === true;
@@ -56,7 +55,6 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt }) {
   if (!rsvpEnabled && !guestbookEnabled && !hasLocation) return null;
 
   return <>
-    <span className="invitation-quick-menu-trigger" ref={triggerRef} aria-hidden="true" />
     {visible && <nav className="invitation-quick-menu" aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true">✓</b><span>참석 여부</span></button>}
       {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true">⌖</b><span>오시는 길</span></button>}
