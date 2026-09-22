@@ -24,6 +24,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   const colors = config?.colors;
   const backgroundUrl = background?.assetId ? assets[background.assetId] : null;
   const heroBackgroundUrl = hero?.backgroundAssetId ? assets[hero.backgroundAssetId] : null;
+  const showCoverPhoto = hero?.mode !== "illustration";
 
   if (background) {
     if (background.color) rootStyle.backgroundColor = background.color;
@@ -88,7 +89,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   }
   const safeAreaClass = safeArea ? " dd-template-safe-area" : "";
   const configured = Boolean(background || hero || typography || colors);
-  return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), backgroundConfigured: Boolean(background), decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle };
+  return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), backgroundConfigured: Boolean(background), decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle, showCoverPhoto, illustrationMode: hero?.mode === "illustration", heroBackgroundConfigured: Boolean(heroBackgroundUrl) };
 }
 
 export function TemplateConfigHeroLayers({ config, assets = {} }) {
@@ -96,7 +97,7 @@ export function TemplateConfigHeroLayers({ config, assets = {} }) {
   const overlay = rgba(config?.hero?.overlayColor, config?.hero?.overlayOpacity);
   return <>
     {overlay && <span className="dd-template-hero-overlay" style={{ background: overlay }} aria-hidden="true" />}
-    {frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
+    {config?.hero?.mode !== "photo" && frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
   </>;
 }
 

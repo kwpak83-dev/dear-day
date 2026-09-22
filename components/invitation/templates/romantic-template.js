@@ -13,6 +13,9 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
   const hasInformation = Boolean(schedule || venue || address);
   const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
   const showHero = (key) => templateConfig?.hero?.display?.[key] !== false;
+  const showCoverPhoto = Boolean(coverPhotoUrl && renderConfig.showCoverPhoto);
+  const showIllustration = Boolean(renderConfig.illustrationMode && renderConfig.heroBackgroundConfigured);
+  const hasHeroVisual = showCoverPhoto || showIllustration;
 
   return <article className={`invitation-template invitation-template-romantic romantic-001${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.heroConfigured ? " dd-template-hero-configured" : ""}${renderConfig.typographyConfigured ? " dd-template-typography" : ""}${renderConfig.colorsConfigured ? " dd-template-colors" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}${renderConfig.decorationsConfigured ? " dd-template-decorated" : ""}${renderConfig.sectionClasses}${renderConfig.safeAreaClass}`} style={renderConfig.rootStyle}>
     <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="background" />
@@ -24,8 +27,8 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
       <span aria-hidden="true">· ♡ ·</span>
     </header>
 
-    <section className={`romantic-hero${coverPhotoUrl ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
-      {coverPhotoUrl && <figure className="romantic-hero-photo" style={renderConfig.heroMediaStyle}><img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} /></figure>}
+    <section className={`romantic-hero${hasHeroVisual ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
+      {hasHeroVisual && <figure className="romantic-hero-photo" style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
       <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} />
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />
       <div className="romantic-hero-copy" style={renderConfig.heroCopyStyle}>
