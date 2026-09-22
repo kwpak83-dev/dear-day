@@ -851,3 +851,8 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .invitation-bottom-sheet-content .public-rsvp form>button,.invitation-bottom-sheet-content .guestbook-form>button,.invitation-bottom-sheet-content .guestbook-delete-backdrop footer button:last-child{border:1px solid var(--dd-invite-action-accent,transparent);border-radius:var(--dd-invite-action-radius,9px);background:var(--dd-invite-action-bg,#ef786c);color:var(--dd-invite-action-text,#fff)}
 .invitation-bottom-sheet-content .rsvp-status-options input:checked+span{border-color:var(--dd-invite-action-accent,#ef786c);color:var(--dd-invite-action-accent,#ca5d54)}
 .invitation-bottom-sheet-content .rsvp-kicker,.invitation-bottom-sheet-content .section-kicker{color:var(--dd-invite-action-accent,#b37c6d)}
+/* Public invitation Quick Menu and Bottom Sheet UX refinements. */
+.invitation-bottom-sheet{max-height:min(90vh,calc(100vh - 56px));max-height:min(90dvh,calc(100dvh - max(56px,env(safe-area-inset-top))))}
+.invitation-bottom-sheet-content .rsvp-edit-actions a{border:1px solid var(--dd-invite-action-accent);border-radius:var(--dd-invite-action-radius,9px);background:transparent;color:var(--dd-invite-action-accent)}
+.invitation-bottom-sheet-content .rsvp-edit-actions button{border:1px solid var(--dd-invite-action-bg);border-radius:var(--dd-invite-action-radius,9px);background:var(--dd-invite-action-bg);color:var(--dd-invite-action-text)}
+.shared-public-invitation{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
