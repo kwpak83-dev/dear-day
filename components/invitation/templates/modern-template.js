@@ -5,7 +5,7 @@ function SectionHeading({ eyebrow, children }) {
   return <header className="modern-section-heading"><p>{eyebrow}</p><h3>{children}</h3><i aria-hidden="true" /></header>;
 }
 
-export default function ModernTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, bgmControl, children }) {
+export default function ModernTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, bgmControl, screenEffect, children }) {
   const { kindLabel, title, detail, note, schedule, venue, address, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map(value => value.trim()).filter(Boolean) : [];
@@ -17,6 +17,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
     <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="background" />
     <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} />
     {bgmControl}
+    {screenEffect}
     <header className="modern-masthead">
       <b>DearDay</b>
       <span>{wedding ? "WEDDING INVITATION" : kindLabel}</span>
@@ -26,7 +27,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
       {coverPhotoUrl && <figure style={renderConfig.heroMediaStyle}><img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} /></figure>}
       <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} />
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />
-      <div className="modern-hero-copy">
+      <div className="modern-hero-copy" style={renderConfig.heroCopyStyle}>
         <p>{wedding ? "A NEW BEGINNING" : kindLabel}</p>
         {title && <h2>{title}</h2>}
         {(groomRelation || brideRelation) && <div className="wedding-parent-relations">

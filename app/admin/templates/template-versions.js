@@ -18,7 +18,7 @@ const placementFor = (assetId, saved) => {
   return base;
 };
 const backgroundDefaults = { color: "#ffffff", assetId: null, overlayColor: "#000000", overlayOpacity: 0 };
-const heroDefaults = { mode: "photo", aspectRatio: "4:5", positionX: 50, positionY: 50, zoom: 1, backgroundAssetId: null, frameAssetId: null, overlayColor: "#000000", overlayOpacity: 0 };
+const heroDefaults = { mode: "photo", aspectRatio: "4:5", positionX: 50, positionY: 50, textYPercent: 50, zoom: 1, backgroundAssetId: null, frameAssetId: null, overlayColor: "#000000", overlayOpacity: 0 };
 const typographyDefaults = {
   heroTitle: { fontFamily: "serif", fontSize: 32, fontWeight: 400, lineHeight: 1.3, letterSpacing: 0, textAlign: "center" },
   sectionTitle: { fontFamily: "serif", fontSize: 22, fontWeight: 500, lineHeight: 1.4, letterSpacing: 0, textAlign: "center" },
@@ -40,7 +40,8 @@ const sectionsFromConfig = (saved) => Array.isArray(saved) && saved.length === s
   new Set(saved.map((item) => item?.key)).size === sectionLabels.length &&
   saved.every((item) => sectionLabels.some(([key]) => key === item?.key) && typeof item.enabled === "boolean")
     ? saved.map(({ key, enabled }) => ({ key, enabled })) : defaultSections();
-const effectsDefaults = { scrollReveal: "none" };
+const effectsDefaults = { scrollReveal: "none", screenEffect: null };
+const screenEffectDefaults = { count: 8, minSize: 18, maxSize: 36, minDuration: 10, maxDuration: 18, sway: 30, rotate: true, opacity: 0.8 };
 const bgmDefaults = { mode: "none", assetId: null };
 const safeAreaDefaults = { top: 24, right: 16, bottom: 24, left: 16 };
 const colorValue = (value) => /^#[0-9a-fA-F]{6}$/.test(value) ? value : "#000000";
@@ -86,6 +87,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   const frameAssets = state.assets.filter((asset) => asset.asset_type === "hero_frame");
   const decorationAssets = state.assets.filter((asset) => asset.asset_type === "decoration");
   const bgmAssets = state.assets.filter((asset) => asset.asset_type === "bgm");
+  const screenEffectAssets = state.assets.filter((asset) => asset.asset_type === "screen_effect");
 
   const authorization = async () => {
     const client = getSupabaseBrowserClient();
@@ -294,6 +296,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               </select></label>
               <NumberControl label="사진 X 위치 %" value={hero.positionX} min={0} max={100} onChange={(positionX) => setHero({ ...hero, positionX })} />
               <NumberControl label="사진 Y 위치 %" value={hero.positionY} min={0} max={100} onChange={(positionY) => setHero({ ...hero, positionY })} />
+              <NumberControl label="Hero Text Y 위치 %" value={hero.textYPercent} min={0} max={100} onChange={(textYPercent) => setHero({ ...hero, textYPercent })} />
               <NumberControl label="사진 Zoom" value={hero.zoom} min={1} max={3} step={0.05} onChange={(zoom) => setHero({ ...hero, zoom })} />
               <AssetSelect label="Hero Background Asset" assets={backgroundAssets} value={hero.backgroundAssetId} onChange={(backgroundAssetId) => setHero({ ...hero, backgroundAssetId })} />
               <AssetSelect label="Hero Frame Asset" assets={frameAssets} value={hero.frameAssetId} onChange={(frameAssetId) => setHero({ ...hero, frameAssetId })} />
@@ -378,9 +381,25 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
         <section style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: 12, marginTop: 28, minWidth: 0 }}>
           <h3>Effects / BGM / Safe Area Config</h3>
           <form onSubmit={saveEffectsBgmSafeArea} style={{ display: "grid", gap: 16 }}>
-            <label style={field}>Scroll Effect<select style={input} value={effects.scrollReveal} onChange={(event) => setEffects({ scrollReveal: event.target.value })}>
+            <label style={field}>Scroll Effect<select style={input} value={effects.scrollReveal} onChange={(event) => setEffects((current) => ({ ...current, scrollReveal: event.target.value }))}>
               <option value="none">없음</option><option value="fade">Fade</option><option value="fade-up">Fade Up</option>
             </select></label>
+            <fieldset style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 12 }}>
+              <legend>Screen Effect</legend>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
+                <AssetSelect label="Screen Effect Asset" assets={screenEffectAssets} value={effects.screenEffect?.assetId || null} onChange={(assetId) => setEffects((current) => ({ ...current, screenEffect: assetId ? { ...screenEffectDefaults, ...(current.screenEffect || {}), assetId } : null }))} />
+                {effects.screenEffect && <>
+                  <NumberControl label="표시 개수" value={effects.screenEffect.count} min={1} max={24} onChange={(value) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, count: value } }))} />
+                  <NumberControl label="최소 크기 px" value={effects.screenEffect.minSize} min={8} max={80} onChange={(value) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, minSize: value } }))} />
+                  <NumberControl label="최대 크기 px" value={effects.screenEffect.maxSize} min={8} max={120} onChange={(value) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, maxSize: value } }))} />
+                  <NumberControl label="최소 낙하 시간 초" value={effects.screenEffect.minDuration} min={4} max={30} step={0.5} onChange={(value) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, minDuration: value } }))} />
+                  <NumberControl label="최대 낙하 시간 초" value={effects.screenEffect.maxDuration} min={4} max={40} step={0.5} onChange={(value) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, maxDuration: value } }))} />
+                  <NumberControl label="좌우 흔들림 px" value={effects.screenEffect.sway} min={0} max={120} onChange={(value) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, sway: value } }))} />
+                  <NumberControl label="투명도" value={effects.screenEffect.opacity} min={0.1} max={1} step={0.05} onChange={(value) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, opacity: value } }))} />
+                  <label style={{ ...field, alignContent: "center" }}><span>회전 사용</span><input type="checkbox" checked={effects.screenEffect.rotate} onChange={(event) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, rotate: event.target.checked } }))} /></label>
+                </>}
+              </div>
+            </fieldset>
             <label style={field}>BGM<select style={input} value={bgm.assetId || ""} onChange={(event) => setBgm(event.target.value ? { mode: "asset", assetId: event.target.value } : { mode: "none", assetId: null })}>
               <option value="">사용 안 함</option>
               {bgmAssets.map((asset) => <option key={asset.id} value={asset.id}>{asset.name || asset.id}</option>)}

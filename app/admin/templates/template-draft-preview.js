@@ -36,26 +36,32 @@ function PreviewSections() {
 
 export default function TemplateDraftPreview({ templateId, draft, assets = [], loading = false }) {
   const [width, setWidth] = useState(390);
+  const [full, setFull] = useState(false);
   const config = useMemo(() => draftConfig(draft), [draft]);
   const resolvedAssets = useMemo(() => resolveTemplateAssetUrls(config, assets, templateId), [assets, config, templateId]);
   const invitation = useMemo(() => ({ ...sampleInvitation, templateId }), [templateId]);
+  const renderInvitation = (mapWidth) => <InvitationRenderer invitation={invitation} eventKind="wedding" templateId={templateId} templateConfig={config} templateAssets={resolvedAssets}
+    placeActions={<><div className="public-address-copy"><button type="button" disabled>주소 복사</button></div><InvitationMap key={mapWidth} address={invitation.venueAddress} /></>}>
+    <PreviewSections />
+  </InvitationRenderer>;
 
   return <section className="admin-draft-preview" aria-labelledby="admin-draft-preview-title">
     <div className="admin-draft-preview-toolbar">
       <div><h3 id="admin-draft-preview-title">Draft Live Preview</h3><p>저장된 편집 Draft · 읽기 전용</p></div>
       <div className="admin-draft-preview-widths" aria-label="미리보기 너비">
+        {draft && <button type="button" onClick={() => setFull(true)}>전체 미리보기</button>}
         {[390, 540].map((value) => <button key={value} type="button" className={width === value ? "active" : ""} aria-pressed={width === value} onClick={() => setWidth(value)}>{value}px</button>)}
       </div>
     </div>
     {loading ? <p className="admin-draft-preview-status">미리보기를 준비하는 중이에요.</p> : !draft ?
       <p className="admin-draft-preview-status">Draft 버전을 만든 후 미리보기를 확인할 수 있어요.</p> :
+      full ? <p className="admin-draft-preview-status">전체 미리보기를 표시하고 있어요.</p> :
       <div className="admin-draft-preview-scroll">
-        <div className="admin-draft-preview-device full-invitation-renderer" style={{ width }}>
-          <InvitationRenderer invitation={invitation} eventKind="wedding" templateId={templateId} templateConfig={config} templateAssets={resolvedAssets}
-            placeActions={<><div className="public-address-copy"><button type="button" disabled>주소 복사</button></div><InvitationMap key={width} address={invitation.venueAddress} /></>}>
-            <PreviewSections />
-          </InvitationRenderer>
-        </div>
+        <div className="admin-draft-preview-device full-invitation-renderer" style={{ width }}>{renderInvitation(width)}</div>
       </div>}
+    {full && <div className="admin-draft-full-preview" role="dialog" aria-modal="true" aria-label="Draft 전체 미리보기" onKeyDown={(event) => { if (event.key === "Escape") setFull(false); }}>
+      <div className="admin-draft-full-preview-toolbar"><strong>Draft 전체 미리보기 · 390px</strong><button type="button" onClick={() => setFull(false)}>닫기</button></div>
+      <div className="admin-draft-full-preview-device full-invitation-renderer">{renderInvitation(390)}</div>
+    </div>}
   </section>;
 }

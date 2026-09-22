@@ -215,8 +215,19 @@ async function saveSections(auth, body) {
 }
 const scrollRevealValues = new Set(["none", "fade", "fade-up"]);
 
+function validScreenEffect(value) {
+  return value === null || (hasOnlyKeys(value, ["assetId", "count", "minSize", "maxSize", "minDuration", "maxDuration", "sway", "rotate", "opacity"]) &&
+    uuid.test(value.assetId || "") && Number.isInteger(value.count) && value.count >= 1 && value.count <= 24 &&
+    Number.isInteger(value.minSize) && value.minSize >= 8 && value.minSize <= 80 &&
+    Number.isInteger(value.maxSize) && value.maxSize >= value.minSize && value.maxSize <= 120 &&
+    decimal(value.minDuration, 4, 30) && decimal(value.maxDuration, value.minDuration, 40) &&
+    Number.isInteger(value.sway) && value.sway >= 0 && value.sway <= 120 &&
+    typeof value.rotate === "boolean" && decimal(value.opacity, 0.1, 1));
+}
+
 function validEffectsBgmSafeArea(effects, bgm, safeArea) {
-  return hasOnlyKeys(effects, ["scrollReveal"]) && scrollRevealValues.has(effects.scrollReveal) &&
+  return hasOnlyKeys(effects, ["scrollReveal", "screenEffect"]) && scrollRevealValues.has(effects.scrollReveal) &&
+    validScreenEffect(effects.screenEffect) &&
     ((hasOnlyKeys(bgm, ["mode", "assetId"]) && bgm.mode === "none" && bgm.assetId === null) ||
       (hasOnlyKeys(bgm, ["mode", "assetId"]) && bgm.mode === "asset" && uuid.test(bgm.assetId || ""))) &&
     hasOnlyKeys(safeArea, ["top", "right", "bottom", "left"]) &&
@@ -245,6 +256,15 @@ async function saveEffectsBgmSafeArea(auth, body) {
     }
   }
 
+  if (body.effects.screenEffect) {
+    const { data: asset, error: assetError } = await auth.adminClient.from("template_assets")
+      .select("id,template_id,asset_type,is_active").eq("id", body.effects.screenEffect.assetId).maybeSingle();
+    if (assetError) return fail("Screen Effect Asset을 확인하지 못했어요.", 500);
+    if (!asset || asset.template_id !== body.templateId || asset.asset_type !== "screen_effect" || !asset.is_active) {
+      return fail("현재 템플릿의 활성 Screen Effect Asset만 저장할 수 있어요.", 400);
+    }
+  }
+
   const effects = { ...body.effects };
   const bgm = { ...body.bgm };
   const safeArea = { ...body.safeArea };
@@ -270,10 +290,10 @@ function validBackground(value) {
 }
 
 function validHero(value) {
-  return hasOnlyKeys(value, ["mode", "aspectRatio", "positionX", "positionY", "zoom", "backgroundAssetId", "frameAssetId", "overlayColor", "overlayOpacity"]) &&
+  return hasOnlyKeys(value, ["mode", "aspectRatio", "positionX", "positionY", "textYPercent", "zoom", "backgroundAssetId", "frameAssetId", "overlayColor", "overlayOpacity"]) &&
     heroModes.has(value.mode) && heroRatios.has(value.aspectRatio) &&
     decimal(value.positionX, 0, 100) && decimal(value.positionY, 0, 100) &&
-    decimal(value.zoom, 1, 3) && optionalId(value.backgroundAssetId) &&
+    decimal(value.textYPercent, 0, 100) && decimal(value.zoom, 1, 3) && optionalId(value.backgroundAssetId) &&
     optionalId(value.frameAssetId) && hexColor(value.overlayColor) &&
     decimal(value.overlayOpacity, 0, 1);
 }

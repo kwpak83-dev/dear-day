@@ -4,6 +4,7 @@ import RomanticTemplate from "./templates/romantic-template";
 import { getInvitationPresentation } from "./presentation";
 import { normalizeTemplateConfig } from "../../lib/template-config";
 import TemplateBgm from "./template-bgm";
+import TemplateScreenEffect from "./template-screen-effect";
 
 export const TEMPLATE_IDS = {
   classic: "10000000-0000-4000-8000-000000000001",
@@ -22,5 +23,5 @@ export default function InvitationRenderer({ invitation, eventKind, templateId, 
   const presentation = getInvitationPresentation(invitation, eventKind);
   const normalizedConfig = normalizeTemplateConfig(templateConfig);
   const bgmUrl = normalizedConfig.bgm?.mode === "asset" ? templateAssets?.[normalizedConfig.bgm.assetId] : null;
-  return <Template presentation={presentation} templateConfig={normalizedConfig} templateAssets={templateAssets} eventKind={eventKind || invitation.eventKind || "wedding"} placeActions={placeActions} bgmControl={<TemplateBgm src={bgmUrl} />}>{children}</Template>;
+  return <Template presentation={presentation} templateConfig={normalizedConfig} templateAssets={templateAssets} eventKind={eventKind || invitation.eventKind || "wedding"} placeActions={placeActions} bgmControl={<TemplateBgm src={bgmUrl} />} screenEffect={<TemplateScreenEffect config={normalizedConfig} assets={templateAssets} />}>{children}</Template>;
 }

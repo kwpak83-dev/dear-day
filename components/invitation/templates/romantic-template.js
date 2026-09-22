@@ -5,7 +5,7 @@ function SectionHeading({ eyebrow, children }) {
   return <header className="romantic-section-heading"><span aria-hidden="true">♡</span><p>{eyebrow}</p><h3>{children}</h3><i aria-hidden="true" /></header>;
 }
 
-export default function RomanticTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, bgmControl, children }) {
+export default function RomanticTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, bgmControl, screenEffect, children }) {
   const { kindLabel, title, detail, note, schedule, venue, address, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map(value => value.trim()).filter(Boolean) : [];
@@ -17,6 +17,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
     <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="background" />
     <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} />
     {bgmControl}
+    {screenEffect}
     <header className="romantic-masthead">
       <p>{wedding ? "WEDDING INVITATION" : kindLabel}</p>
       <span aria-hidden="true">· ♡ ·</span>
@@ -26,7 +27,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
       {coverPhotoUrl && <figure className="romantic-hero-photo" style={renderConfig.heroMediaStyle}><img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} /></figure>}
       <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} />
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />
-      <div className="romantic-hero-copy">
+      <div className="romantic-hero-copy" style={renderConfig.heroCopyStyle}>
         {title && (couple.length === 2
           ? <h2 className="romantic-couple-title"><span>{couple[0]}</span><i aria-hidden="true">♡</i><span>{couple[1]}</span></h2>
           : <h2>{title}</h2>)}

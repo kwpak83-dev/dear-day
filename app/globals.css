@@ -807,3 +807,10 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-bgm .dd-template-bgm-toggle span{display:block;font:700 15px/1 Arial,"Apple SD Gothic Neo",sans-serif;transform:translateY(-.5px)}
 .dd-template-bgm small{position:absolute;top:42px;right:12px;max-width:calc(100% - 24px);padding:5px 8px;border-radius:6px;background:rgba(255,255,255,.94);color:#8b3f35;font-size:11px;pointer-events:auto}
 .dd-template-background.classic-001 .classic-footer{background:inherit}
+.dd-template-screen-effect{position:sticky;z-index:20;top:0;width:100%;height:0;pointer-events:none;overflow:visible}
+.dd-template-screen-effect img{position:absolute;top:-80px;left:var(--dd-screen-x);width:var(--dd-screen-size);height:auto;opacity:var(--dd-screen-opacity);pointer-events:none;will-change:transform;animation:dd-screen-fall var(--dd-screen-duration) linear var(--dd-screen-delay) infinite}
+@keyframes dd-screen-fall{from{transform:translate3d(0,-10vh,0) rotate(0deg)}to{transform:translate3d(var(--dd-screen-sway),110vh,0) rotate(var(--dd-screen-rotation))}}
+@media(prefers-reduced-motion:reduce){.dd-template-screen-effect{display:none}}
+.admin-draft-full-preview{position:fixed;z-index:100;inset:0;overflow:auto;background:#e9e1dc;padding:18px 10px 40px}
+.admin-draft-full-preview-toolbar{position:sticky;z-index:101;top:0;display:flex;justify-content:space-between;align-items:center;width:min(390px,100%);box-sizing:border-box;margin:0 auto 12px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.96);box-shadow:0 5px 18px rgba(70,43,35,.15)}
+.admin-draft-full-preview-device{width:min(390px,100%);margin:0 auto;background:#fffaf5;box-shadow:0 10px 28px rgba(70,43,35,.14)}

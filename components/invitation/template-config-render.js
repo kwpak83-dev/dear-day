@@ -17,6 +17,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   const heroStyle = {};
   const heroMediaStyle = {};
   const heroImageStyle = {};
+  const heroCopyStyle = {};
   const background = config?.background;
   const hero = config?.hero;
   const typography = config?.typography;
@@ -49,6 +50,14 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   if (hero?.aspectRatio) heroMediaStyle.aspectRatio = hero.aspectRatio.replace(":", " / ");
   if (hero && hero.positionX !== null && hero.positionY !== null) heroImageStyle.objectPosition = `${hero.positionX}% ${hero.positionY}%`;
   if (hero && hero.zoom !== null) heroImageStyle.transform = `scale(${hero.zoom})`;
+  if (hero?.textYPercent !== null && hero?.textYPercent !== undefined) {
+    heroCopyStyle.position = "absolute";
+    heroCopyStyle.right = 0;
+    heroCopyStyle.left = 0;
+    heroCopyStyle.top = `${hero.textYPercent}%`;
+    heroCopyStyle.bottom = "auto";
+    heroCopyStyle.transform = "translateY(-50%)";
+  }
 
   for (const [role, prefix] of [["heroTitle", "hero-title"], ["sectionTitle", "section-title"], ["body", "body"], ["caption", "caption"]]) {
     const item = typography?.[role];
@@ -79,7 +88,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   }
   const safeAreaClass = safeArea ? " dd-template-safe-area" : "";
   const configured = Boolean(background || hero || typography || colors);
-  return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), backgroundConfigured: Boolean(background), decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle };
+  return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), backgroundConfigured: Boolean(background), decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle };
 }
 
 export function TemplateConfigHeroLayers({ config, assets = {} }) {
