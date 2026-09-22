@@ -815,3 +815,23 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .admin-draft-full-preview{position:fixed;z-index:100;inset:0;overflow:auto;background:#e9e1dc;padding:18px 10px 40px}
 .admin-draft-full-preview-toolbar{position:sticky;z-index:101;top:0;display:flex;justify-content:space-between;align-items:center;width:min(390px,100%);box-sizing:border-box;margin:0 auto 12px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.96);box-shadow:0 5px 18px rgba(70,43,35,.15)}
 .admin-draft-full-preview-device{width:min(390px,100%);margin:0 auto;background:#fffaf5;box-shadow:0 10px 28px rgba(70,43,35,.14)}
+
+.invitation-quick-menu-trigger{display:block;width:1px;height:1px;pointer-events:none}
+.invitation-quick-menu{position:fixed;z-index:70;right:50%;bottom:max(12px,env(safe-area-inset-bottom));display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);width:min(calc(100% - 24px),516px);padding:7px;border:1px solid rgba(218,201,191,.85);border-radius:17px;background:rgba(255,252,249,.94);box-shadow:0 10px 30px rgba(57,39,32,.18);backdrop-filter:blur(10px);transform:translateX(50%);animation:dd-quick-menu-in .22s ease-out}
+.invitation-quick-menu button{display:grid;min-width:0;gap:3px;place-items:center;border:0;background:transparent;color:#674f45;padding:6px 4px;font:11px/1.25 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;cursor:pointer}
+.invitation-quick-menu button+button{border-left:1px solid rgba(218,201,191,.7)}
+.invitation-quick-menu b{font:400 18px/1 Georgia,"Times New Roman",serif}.invitation-quick-menu span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dd-section-hidden-rsvp .invitation-quick-rsvp,.dd-section-hidden-location .invitation-quick-location,.dd-section-hidden-guestbook .invitation-quick-guestbook{display:none}
+.invitation-bottom-sheet-layer{position:fixed;z-index:110;inset:0;display:flex;align-items:flex-end;justify-content:center}
+.invitation-bottom-sheet-backdrop{position:absolute;z-index:0;inset:0;width:100%;height:100%;border:0;background:rgba(38,29,25,.42);backdrop-filter:blur(2px);cursor:pointer}
+.invitation-bottom-sheet{position:relative;z-index:1;display:flex;flex-direction:column;width:min(100%,540px);max-height:88vh;max-height:88dvh;border-radius:22px 22px 0 0;background:#fffaf7;box-shadow:0 -18px 45px rgba(44,29,23,.22);animation:dd-sheet-up .22s ease-out}
+.invitation-bottom-sheet-handle{display:block;width:38px;height:4px;margin:9px auto 3px;border-radius:99px;background:#d8c8c0}
+.invitation-bottom-sheet>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 18px 11px;border-bottom:1px solid #eaded7}
+.invitation-bottom-sheet>header h2{margin:0;font:400 20px/1.4 Georgia,"Batang",serif}.invitation-bottom-sheet>header button{border:0;background:transparent;color:#80695f;padding:2px 5px;font-size:26px;line-height:1;cursor:pointer}
+.invitation-bottom-sheet-content{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:env(safe-area-inset-bottom)}
+.invitation-bottom-sheet-content>.public-rsvp,.invitation-bottom-sheet-content>.guestbook-section{margin:0;border:0;background:#fffaf7}
+.invitation-bottom-sheet .guestbook-delete-backdrop{z-index:10}
+@keyframes dd-quick-menu-in{from{opacity:0;transform:translate(50%,18px)}to{opacity:1;transform:translate(50%,0)}}
+@keyframes dd-sheet-up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@media(max-width:380px){.invitation-quick-menu{width:calc(100% - 16px);bottom:max(8px,env(safe-area-inset-bottom))}.invitation-quick-menu button{font-size:10px}.invitation-bottom-sheet{border-radius:18px 18px 0 0}}
+@media(prefers-reduced-motion:reduce){.invitation-quick-menu,.invitation-bottom-sheet{animation:none}}
