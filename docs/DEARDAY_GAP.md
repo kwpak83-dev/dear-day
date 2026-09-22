@@ -38,15 +38,16 @@
 | ⑨ | RSVP / 하객 관리 / Excel | 🟢 완료 |
 | ⑩ | 방명록 | 🟢 완료 |
 | ⑩-A | 소유자 `초대장 보기` 진입 시 내 초대장/홈 복귀 UX | 🟢 완료 |
+| ⑩-B | 공개 초대장 Quick Menu + RSVP/방명록 Bottom Sheet | 🟢 완료 — 공개 화면 운영 TC 및 2차 UX 보완 완료 |
 | ⑪ | 마이페이지 완성 | 🟢 완료 |
 | ⑪-D | 문의내역 / 문의하기 | 🟢 완료 |
 | ⑪-E | Naver 내 정보 프로필 보완 | 🟢 완료 |
 | ⑫ | 보관기간 / 만료 / 유료연장 / 알림 | 🟢 완료 |
 | **⑬-T1** | **템플릿 DB + Storage + Asset/Config 구조** | **🟢 기반 완료** |
 | **⑬-T2** | **관리자 템플릿 등록/수정 UI** | **🟢 C1~C5 완료 / 운영 TC 완료** |
-| ⑬-T3 | Asset/Config ↔ InvitationRenderer 연결 | 🟢 완료 — C6-1~C6-4, 관리자 Draft Live Preview, C6 통합 회귀 완료 |
+| ⑬-T3 | Asset/Config ↔ InvitationRenderer 연결 | 🟢 완료 — C6-1~C6-4, Hero mode/zoom/background/frame 후속 개선, 관리자 Draft Live Preview, C6 통합 회귀 완료 |
 | ⑬-T4 | 실제 Renderer 미리보기 + 버전/판매상태 관리 | 🟢 완료 — Draft→판매 Version 확정, 판매중지/재개, Event pinning, 사용자/Public Renderer 운영 TC 완료 |
-| ⑬-A | 판매용 템플릿 20~30개 확대 | 🟡 진행 중 — Warm Ivory 첫 실전 마스터 E2E 검증 완료 |
+| ⑬-A | 판매용 템플릿 20~30개 확대 | 🟡 진행 중 — Warm Ivory 첫 실전 마스터 E2E 검증 완료, Spring Blossom Hero 표현 확장 검증 진행 |
 | ⑫-A | 상품/요금제 구조 + 단건·다회 이용권 상품 기반 | 🔴 |
 | ⑫-B | 이용권 구매분·사용량·잔여수량·유효기간 관리 | 🔴 |
 | ⑬ | 관리자 페이지 나머지 운영 기능 | 🔴 |
@@ -55,7 +56,7 @@
 | ⑮ | 전체 통합 TC / 보안·안정화 / 오픈 준비 | 🔴 |
 | ⑯ | DearDay 정식 오픈 | 🔴 |
 
-> **현재 개발 우선순위 (2026-09-21):** `⑬-A 판매용 템플릿 확대(우선 실전 마스터 템플릿 검증) → ⑫-A → ⑫-B → ⑬ → ⑬-B → ⑭ → ⑮ → ⑯`
+> **현재 개발 우선순위 (2026-09-22):** `⑬-A 판매용 템플릿 확대/실전 템플릿 검증 계속 → ⑫-A → ⑫-B → ⑬ → ⑬-B → ⑭ → ⑮ → ⑯`
 >
 > 템플릿 시스템을 먼저 데이터 기반으로 완성해, 이후 판매용 템플릿 추가는 가능한 한 Codex 코드 수정·GitHub commit·Vercel 재배포 없이 관리자 페이지에서 처리하는 것을 목표로 한다.
 
@@ -88,6 +89,23 @@
 - query parameter는 UI 표시 용도로만 사용하며 관리 권한 판정에는 사용하지 않는다.
 - 공개 초대장 URL/slug 구조와 RSVP, 방명록, 지도, 갤러리, 공유, QR 등 기존 기능은 유지한다.
 - 실제 TC에서 PC 소유자 링크 이동, 모바일 소유자 표시/링크 이동, 일반 하객 공개 URL 미노출을 확인했다.
+
+## ⑩-B 공개 초대장 Quick Menu + Bottom Sheet 완료 범위 (2026-09-22)
+
+- 공개 초대장의 긴 RSVP/방명록 인라인 UX를 하단 Quick Menu 기반 접근 방식으로 정리했다.
+- Quick Menu는 최초 접속 시 숨겨지고, 실제 초대장 최하단 trigger가 viewport에 진입하면 아래에서 나타난다. 한 번 나타난 뒤에는 위로 다시 스크롤해도 화면 하단 fixed 상태를 유지하며 새로고침 시 다시 숨김 상태로 시작한다.
+- 활성 기능에 따라 `참석 여부`, `오시는 길`, `축하 메시지` 버튼만 표시한다. RSVP/방명록/장소 및 Template Sections 비활성화 상태를 기존 조건과 연동한다.
+- `참석 여부`와 `축하 메시지`는 기존 RSVP/Guestbook 컴포넌트와 API를 재사용한 Bottom Sheet로 열며, 별도 데이터 구조를 만들지 않는다.
+- `오시는 길`은 기존 장소 섹션으로 이동하며 reduced-motion 설정을 존중한다.
+- Bottom Sheet는 dim backdrop, 닫기 버튼, 바깥 영역 클릭, Esc 닫기, body scroll lock, 내부 스크롤, safe-area를 지원한다.
+- Sheet 최대 높이는 `90dvh` 이내이며 화면 상단에 최소 56px이 남도록 제한해 원래 초대장이 일부 보이는 Bottom Sheet UX를 유지한다.
+- Quick Menu가 마지막 `Thank you` 콘텐츠를 가리지 않도록 공개 초대장 하단에 Quick Menu 높이와 safe area를 고려한 76px 보호 여백을 둔다.
+- Quick Menu와 Bottom Sheet의 버튼/포인트 색상은 기존 `colors.buttonBackground`, `colors.buttonText`, `colors.accent`, `colors.divider` CSS 변수를 우선 재사용한다. Config가 없으면 Classic gold, Modern ink, Romantic rose/gold fallback을 유지한다.
+- RSVP 완료 화면은 `참석 여부 수정하기`를 Secondary action(투명 배경 + 템플릿 accent 테두리/글자), `수정 링크 복사`를 Primary action(템플릿 button 배경/글자)으로 구분했다.
+- 구형 내부 trigger와 `triggerRef/useRef` 잔여 코드로 발생한 Public Invitation 런타임 오류를 제거하고, `page.js`의 실제 최하단 `#invitation-quick-menu-trigger`만 사용하도록 정리했다.
+- Preview 경로는 기존 인라인 RSVP/방명록을 유지해 관리자 Draft Preview와 사용자 LIVE Preview를 보호한다.
+- 배포 후 운영 화면에서 최하단 등장, 등장 후 fixed 유지, 템플릿 색상 연동, RSVP Bottom Sheet, RSVP 완료 화면, Guestbook Bottom Sheet, 최하단 콘텐츠 비가림을 확인했다.
+- 상세 구현/회귀 항목은 `docs/DEARDAY_QUICK_MENU_UPDATE_20260922.md`, `docs/DEARDAY_QUICK_MENU_TC_20260922.md`를 기준으로 한다.
 
 ## ⑪ 마이페이지 완료 범위
 
@@ -152,7 +170,7 @@
 
 ## ⑬-T2 관리자 템플릿 등록/수정 UI
 
-### 현재 구현 상태 (2026-09-21)
+### 현재 구현 상태 (2026-09-22)
 
 - 🟢 템플릿 기본정보 등록·수정, 상태·노출·정렬순서 관리
 - 🟢 Template key 검증 및 앞뒤 공백 처리
@@ -179,10 +197,12 @@
 - 🟢 **C6-3 Decoration + Sections**: Decoration의 slot/X/Y/size/rotation/opacity/zIndex/visible을 실제 Renderer에 적용하고, 6개 공통 Section의 표시/숨김/순서를 실제 DOM에 적용. Admin Draft Preview 운영 TC 완료
 - 🟢 **C6-4 Effects + Safe Area**: `none/fade/fade-up` Scroll Reveal과 0~120px Safe Area를 실제 Renderer에 적용. Admin 내부 스크롤 Observer root, reduced-motion/fallback, Background/Hero full-bleed 보호, 390px/540px overflow 운영 TC 완료
 - 🟢 **C6 통합 회귀 완료**: Background/Hero/Typography/Colors/Decoration/Sections/Effects/Safe Area 상호작용과 기존 기능 경로를 점검했다. Background/Hero만 설정해도 Typography/Colors override가 활성화될 수 있던 조건을 분리하고, 불완전한 Typography/Colors Config는 기존 템플릿 디자인을 유지하도록 보강했다
-- 🟡 **Hero mode 후속 개선 기록**: `hero.mode`는 현재 `photo/frame/illustration` 값을 저장·정규화하지만 Renderer 렌더 분기에는 아직 사용하지 않는다. Hero Background Asset은 정상 렌더되지만 full-cover 고객 대표사진 아래에 위치해 거의 가려질 수 있다. 실제 판매 템플릿 단계에서 mode별 사진/Background/Frame 구성을 정의하고, 필요 시 Admin Draft Preview에 대표사진 표시 ON/OFF 또는 Background-only 확인 기능을 추가한다
+- 🟢 **Hero mode Renderer 분기 완료**: Classic/Modern/Romantic 공통으로 `photo`는 대표사진 O/Frame X, `frame`은 대표사진 O/Frame O, `illustration`은 대표사진 X/Hero Background O/Frame 설정 시 O 정책을 사용한다. mode가 없는 기존 Version/Public 초대장은 기존 fallback을 유지한다.
+- 🟢 **Hero Zoom 축소/확대 범위 개선**: 관리자/API/Config 정규화 범위를 `0.5~2.0`, step `0.05`로 통일했다. `photo/frame`에서 대표사진 scale에 적용하고 `illustration`에서는 대표사진이 숨겨지므로 시각 영향이 없다.
+- 🟢 **Hero Background 레이어 개선**: Hero Background Asset이 있을 때 figure fallback 배경을 투명 처리해 축소된 대표사진 뒤로 Background가 노출되도록 했다. Asset이 없으면 기존 템플릿 fallback 배경을 유지한다.
+- 🟢 **Classic 하드코딩 Hero gradient 분리**: Config가 적용된 Classic Hero에서는 기존 `figure::after` gradient를 숨기고 `hero.overlayColor/overlayOpacity` 기반 공통 Overlay만 사용한다. Config 없는 기존 Classic은 기존 gradient를 유지한다.
 - 🟢 **BGM 실제 음원 기능 완료**: 관리자 MP3 Asset 업로드, Draft Config 선택/저장, 공통 `InvitationRenderer → TemplateBgm` 재생/정지 연결 및 운영 TC 완료. Vercel 4.5MB Function payload 제한을 피하기 위해 BGM binary는 관리자 브라우저에서 Supabase Storage로 직접 업로드하고 작은 metadata JSON만 API로 전달한다. 최대 15MB, `audio/mpeg`, 관리자 JWT/RLS 및 서버 metadata 재검증/rollback을 유지한다.
 - 🟢 **BGM UX 운영 검증 완료**: autoplay 없이 초기 정지, 36px 원형 플로팅 토글(`♪`/`■`), 정지 시 `currentTime=0`, 390/540 Draft Preview, 스크롤 고정, 폭 전환 시 중복 재생 방지까지 확인했다. Admin Draft Preview와 Public Invitation은 동일한 공통 `TemplateBgm` 컴포넌트를 사용한다.
-
 
 - 관리자에서 `새 템플릿 등록` 화면을 제공하고 템플릿명, 가격/판매 상태, 태그, 표시 순서, 배지 등을 관리한다.
 - Asset 슬롯별 업로드, 미리보기, 교체, 삭제를 지원하며 필요한 경우 `+ Asset 추가` 방식으로 확장 가능하게 한다.
@@ -199,17 +219,16 @@
 - 템플릿 추천 행사 태그는 추천/검색/정렬에만 사용하며 행사종류 사용 제한으로 사용하지 않는다.
 - 화면효과와 BGM의 사용자 선택값은 템플릿 추천값과 분리해 저장한다.
 
-## ⑬-T3/C6 진행 체크포인트 (2026-09-21)
+## ⑬-T3/C6 진행 체크포인트 (2026-09-22)
 
 - C6-1 완료: `normalizeTemplateConfig` 기반을 추가하고 기존 Config 미보유 공개 초대장의 디자인/기능 유지 TC를 통과했다.
 - C6-2 구현 완료: 공개 경로는 `current_sale_version_id`가 아니라 이벤트에 pin된 `events.template_version_id`와 동일 `template_id`의 Version Config를 사용한다.
 - C6-2에서 Background/Hero/Typography/Colors 적용, 필요한 Asset ID→URL 해석, inactive 과거 Asset 참조 보호를 구현했다.
-- 현재 테스트 템플릿은 `현재 판매 버전: 없음 / 편집 Draft: v1` 상태이므로 Draft C2/C3 값을 공개 발행본으로 검증할 정상 경로가 없다.
-- 따라서 판매 버전을 억지로 만들거나 DB를 직접 조작하지 않고, **관리자 Draft Live Preview를 선행 구현**한다.
-- Live Preview는 별도 가짜 Renderer가 아니라 실제 `InvitationRenderer`를 재사용한다. Draft Config와 Draft가 참조하는 Asset을 사용하되 공개 발행 경로의 pinned Version 규칙은 변경하지 않는다.
+- 판매 버전을 억지로 만들거나 DB를 직접 조작하지 않고 관리자 Draft Live Preview에서 Draft Config를 실제 `InvitationRenderer`로 검증한다.
 - MVP Preview는 시각 확인용이며 Drag/Resize 직접 편집기는 만들지 않는다. 기존 숫자/선택 Config 입력을 유지한다.
-- Draft Live Preview, C6-2 실화면 검증, C6-3 Decoration+Sections, C6-4 Effects/Safe Area 및 C6 통합 회귀까지 완료했다. `hero.mode` 실제 렌더 분기와 full-cover 대표사진에 가려지는 Hero Background 확인 UX는 후속 개선으로 기록한다.
-- BGM 실제 음원 기능까지 완료했다. MP3 Asset 업로드, Draft Config 연결, 공통 Renderer 재생/정지, 플로팅 토글 UI, 390/540 및 스크롤/중복재생 운영 TC를 통과했다. 다음은 ⑬-T4 버전/판매상태 관리로 진행한다.
+- Draft Live Preview, C6-2 실화면 검증, C6-3 Decoration+Sections, C6-4 Effects/Safe Area 및 C6 통합 회귀까지 완료했다.
+- 후속 Hero 표현 개선으로 `photo/frame/illustration` 실제 렌더 분기, Zoom `0.5~2.0`, Hero Background→대표사진→Overlay/Frame→Hero Text 레이어 정책을 구현했다. Config가 없는 기존 Version/Public fallback은 유지한다.
+- BGM 실제 음원 기능까지 완료했다. MP3 Asset 업로드, Draft Config 연결, 공통 Renderer 재생/정지, 플로팅 토글 UI, 390/540 및 스크롤/중복재생 운영 TC를 통과했다.
 
 ## ⑬-T4 실제 Renderer 미리보기 + 버전/판매상태 관리 — 완료 (2026-09-21)
 
@@ -225,8 +244,8 @@
 - migration `202609210003_grant_template_assets_select.sql`로 `grant select on table public.template_assets to service_role;`을 추가하고 Production DB에도 동일 권한을 적용했다. anon/authenticated 범위와 RLS policy는 변경하지 않았다.
 - HOTFIX 후 실제 공개 v2 초대장에서 Whole Background, Hero Frame, Decoration 등 Asset 기반 디자인이 정상 렌더링되고 Effects도 정상 동작하는 것을 운영 화면에서 확인했다. BGM은 v2 Config/Asset 및 공통 Renderer 연결이 유지된다.
 - Public 렌더링은 계속 `events.template_version_id`에 pin된 Version을 사용하며 `current_sale_version_id`를 직접 따라가지 않는다. 과거 pinned Version/Asset 보호 원칙도 유지한다.
-- Hero Background는 고객 대표사진 아래 레이어라 full-cover 사진에 가려질 수 있으며, `hero.mode` 실제 렌더 분기는 후속 개선으로 유지한다.
-- T4 완료 기준을 충족했으므로 다음 단계는 ⑬-A 판매용 템플릿 확대다. 우선 실전 판매 품질의 마스터 템플릿 1개를 현재 Renderer/관리자 설정만으로 제작해 디자인 완성도와 추가 Renderer capability 필요 여부를 검증한다.
+- Hero mode/Background/Frame/Zoom의 후속 Renderer 개선은 2026-09-22 완료했으며 기존 pinned Version의 mode 미보유 fallback을 유지한다.
+- T4 완료 기준을 충족했으므로 다음 단계는 ⑬-A 판매용 템플릿 확대다.
 
 ## ⑬-A 판매용 템플릿 20~30개 확대
 
