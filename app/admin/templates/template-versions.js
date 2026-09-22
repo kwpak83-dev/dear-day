@@ -299,7 +299,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               <NumberControl label="사진 X 위치 %" value={hero.positionX} min={0} max={100} onChange={(positionX) => setHero({ ...hero, positionX })} />
               <NumberControl label="사진 Y 위치 %" value={hero.positionY} min={0} max={100} onChange={(positionY) => setHero({ ...hero, positionY })} />
               <NumberControl label="Hero Text Y 위치 %" value={hero.textYPercent} min={0} max={100} onChange={(textYPercent) => setHero({ ...hero, textYPercent })} />
-              <NumberControl label="사진 Zoom" value={hero.zoom} min={1} max={3} step={0.05} onChange={(zoom) => setHero({ ...hero, zoom })} />
+              <NumberControl label="사진 Zoom" value={hero.zoom} min={0.5} max={2} step={0.05} onChange={(zoom) => setHero({ ...hero, zoom })} />
               <AssetSelect label="Hero Background Asset" assets={backgroundAssets} value={hero.backgroundAssetId} onChange={(backgroundAssetId) => setHero({ ...hero, backgroundAssetId })} />
               <AssetSelect label="Hero Frame Asset" assets={frameAssets} value={hero.frameAssetId} onChange={(frameAssetId) => setHero({ ...hero, frameAssetId })} />
               <ColorControl label="Hero Overlay 색상" value={hero.overlayColor} onChange={(overlayColor) => setHero({ ...hero, overlayColor })} />

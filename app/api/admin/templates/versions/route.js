@@ -294,7 +294,7 @@ function validHero(value) {
   return hasOnlyKeys(value, ["mode", "aspectRatio", "positionX", "positionY", "textYPercent", "zoom", "backgroundAssetId", "frameAssetId", "overlayColor", "overlayOpacity", "display"]) &&
     heroModes.has(value.mode) && heroRatios.has(value.aspectRatio) &&
     decimal(value.positionX, 0, 100) && decimal(value.positionY, 0, 100) &&
-    decimal(value.textYPercent, 0, 100) && decimal(value.zoom, 1, 3) && optionalId(value.backgroundAssetId) &&
+    decimal(value.textYPercent, 0, 100) && decimal(value.zoom, 0.5, 2) && optionalId(value.backgroundAssetId) &&
     optionalId(value.frameAssetId) && hexColor(value.overlayColor) &&
     decimal(value.overlayOpacity, 0, 1) && hasOnlyKeys(value.display, heroDisplayKeys) &&
     heroDisplayKeys.every((key) => typeof value.display[key] === "boolean");
