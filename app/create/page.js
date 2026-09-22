@@ -201,6 +201,7 @@ export default function CreateInvitation() {
   const [eventSlug, setEventSlug] = useState("");
   const [templateOptions, setTemplateOptions] = useState([]);
   const [templateRender, setTemplateRender] = useState({ config: null, assets: {} });
+  const [previewTemplateId, setPreviewTemplateId] = useState("");
   const [templateNotice, setTemplateNotice] = useState("");
   const [submitting, setSubmitting] = useState("");
   const [galleryBusy, setGalleryBusy] = useState(false);
@@ -266,7 +267,7 @@ export default function CreateInvitation() {
   useEffect(() => () => window.clearTimeout(saveToastTimer.current), []);
   useEffect(() => {
     if (livePreviewRef.current) livePreviewRef.current.scrollTop = 0;
-  }, [invitation.coverPhotoUrl, invitation.templateId, templateRender.config]);
+  }, [invitation.coverPhotoUrl, previewTemplateId, templateRender.config]);
   useEffect(() => {
     if (!previewOpen && !checkoutOpen && !paymentComplete && !publishConfirmOpen && !published) return;
     const previousOverflow = document.body.style.overflow;
@@ -295,6 +296,7 @@ export default function CreateInvitation() {
         }
       }
       setInvitation(restoredInvitation);
+      setPreviewTemplateId(restoredInvitation.templateId);
       setTemplateRender({ config: result.templateConfig || null, assets: result.templateAssets || {} });
       templateSelectionChanged.current = false;
       setEventSlug(result.event.slug);
@@ -313,6 +315,7 @@ export default function CreateInvitation() {
       if (error) return setTemplateNotice("템플릿 목록을 불러오지 못했어요.");
       const templates = data || [];
       setTemplateOptions(templates);
+      setPreviewTemplateId((current) => current || templates[0]?.id || "");
       setInvitation((current) => current.templateId || !templates[0] ? current : { ...current, templateId: templates[0].id });
     };
     loadTemplates();
@@ -441,10 +444,13 @@ export default function CreateInvitation() {
   const selectTemplate = async (templateId) => {
     const requestId = ++templatePreviewRequest.current;
     templateSelectionChanged.current = true;
-    setTemplateRender({ config: null, assets: {} });
     update("templateId", templateId);
     setTemplateNotice("");
-    if (DEVELOPMENT_TEMPLATE_IDS.has(templateId)) return;
+    if (DEVELOPMENT_TEMPLATE_IDS.has(templateId)) {
+      setTemplateRender({ config: null, assets: {} });
+      setPreviewTemplateId(templateId);
+      return;
+    }
     setTemplateNotice("템플릿 디자인을 불러오는 중이에요.");
     try {
       const response = await fetch(`/api/events?templateId=${encodeURIComponent(templateId)}`);
@@ -455,6 +461,7 @@ export default function CreateInvitation() {
         return;
       }
       setTemplateRender({ config: result.templateConfig || null, assets: result.templateAssets || {} });
+      setPreviewTemplateId(templateId);
       setTemplateNotice("");
     } catch {
       if (requestId === templatePreviewRequest.current) setTemplateNotice("템플릿 디자인을 불러오지 못했어요.");
@@ -479,7 +486,10 @@ export default function CreateInvitation() {
       templateSelectionChanged.current = false;
       const renderResponse = await fetch(`/api/events?slug=${encodeURIComponent(slug)}`, { headers: { Authorization: `Bearer ${session.access_token}` } });
       const renderResult = await renderResponse.json().catch(() => ({}));
-      if (renderResponse.ok) setTemplateRender({ config: renderResult.templateConfig || null, assets: renderResult.templateAssets || {} });
+      if (renderResponse.ok) {
+        setTemplateRender({ config: renderResult.templateConfig || null, assets: renderResult.templateAssets || {} });
+        setPreviewTemplateId(renderResult.event?.template_id || invitation.templateId);
+      }
       setLoginRequired(false); window.localStorage.setItem("dear-day-event-slug", slug); setEventSlug(slug); setEventStatus(savedStatus);
       if ((savedStatus === "draft" || savedStatus === "suspended") && showSuccessToast) { setSaveNotice(""); showSavedToast(savedStatus === "suspended" ? "변경사항이 저장되었습니다. 재발행은 내 초대장 → 다시 발행하기에서 가능합니다.." : "임시 저장이 완료되었습니다."); }
       else setSaveNotice(savedStatus === "paid" ? "결제완료 상태로 저장했어요." : savedStatus === "published" ? "발행된 초대장을 저장했어요." : "");
@@ -600,12 +610,12 @@ export default function CreateInvitation() {
 </Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent2Name || "예금주 이름" : invitation.bride || "신부 이름"} value={invitation.brideAccountHolder} onChange={(e) => update("brideAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.brideAccount} onChange={(e) => update("brideAccount", e.target.value)} /></Field></div></div>}
         <div className="editor-actions"><button type="button" className="save-button preview-button" onClick={() => { setFlowNotice(""); setPreviewOpen(true); }}>미리보기</button><button className="save-button" onClick={() => saveDraft({ showSuccessToast: true })} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>저장하기</button></div>{saveNotice && <p role="status">{saveNotice}</p>}{loginRequired && <button type="button" className="save-button" onClick={continueAfterLogin}>로그인하고 계속하기</button>}
       </section>
-      <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div ref={livePreviewRef} className="preview-content full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} templateConfig={templateRender.config} templateAssets={templateRender.assets} placeActions={previewPlaceActions()}><><Gallery photos={galleryPhotos} idPrefix="live-preview-gallery" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} preview /></></InvitationRenderer></div></div></aside>
+      <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div ref={livePreviewRef} className="preview-content full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={previewTemplateId || invitation.templateId} templateConfig={templateRender.config} templateAssets={templateRender.assets} placeActions={previewPlaceActions()}><><Gallery photos={galleryPhotos} idPrefix="live-preview-gallery" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} preview /></></InvitationRenderer></div></div></aside>
     </div>
     {previewOpen && <div className="full-preview-overlay" role="dialog" aria-modal="true" aria-label={eventStatus === "draft" ? "초대장 전체 미리보기" : "초대장 최종 미리보기"} onKeyDown={(event) => { if (event.key === "Escape") setPreviewOpen(false); }}>
       <div className="full-preview-toolbar"><strong>{eventStatus === "draft" ? "DearDay Preview" : "최종 미리보기"}</strong><div><button type="button" className="secondary" onClick={() => setPreviewOpen(false)} autoFocus>계속 수정하기</button>{eventStatus === "draft" && <button type="button" onClick={preparePayment}>발행 준비하기</button>}{eventStatus === "paid" && <button type="button" onClick={requestPublish}>초대장 발행하기</button>}</div></div>
       {flowNotice && <p className="full-preview-notice" role="alert">{flowNotice}</p>}
-      <div className="full-preview-scroll"><div className="full-preview-document full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} templateConfig={templateRender.config} templateAssets={templateRender.assets} placeActions={previewPlaceActions()}><><Gallery photos={galleryPhotos} idPrefix="full-preview-gallery" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} preview /></></InvitationRenderer></div></div>
+      <div className="full-preview-scroll"><div className="full-preview-document full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={previewTemplateId || invitation.templateId} templateConfig={templateRender.config} templateAssets={templateRender.assets} placeActions={previewPlaceActions()}><><Gallery photos={galleryPhotos} idPrefix="full-preview-gallery" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} preview /></></InvitationRenderer></div></div>
     </div>}
     {checkoutOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="payment-title"><div className="payment-card"><p className="section-kicker">TEST PAYMENT</p><h2 id="payment-title">발행 준비 안내</h2><dl><div><dt>템플릿</dt><dd>{templateOptions.find((template) => template.id === invitation.templateId)?.name || "선택한 템플릿"}</dd></div><div><dt>행사 종류</dt><dd>{eventConfig.label}</dd></div><div><dt>결제 금액</dt><dd>테스트 결제</dd></div></dl><p className="test-payment-notice"><strong>개발용 테스트 결제입니다.</strong> 실제 결제가 발생하지 않습니다.</p><p>테스트 결제 후에도 초대장은 공개되지 않으며, 최종 확인 후 직접 발행해야 합니다.</p>{flowNotice && <p className="payment-error" role="alert">{flowNotice}</p>}<div className="payment-actions"><button type="button" className="save-button" onClick={() => setCheckoutOpen(false)}>계속 수정하기</button><button type="button" className="publish-button" onClick={runMockPayment}>테스트 결제하기</button></div></div></div>}
     {paymentComplete && <div className="publish-overlay" role="dialog" aria-modal="true" aria-labelledby="payment-complete-title"><div className="publish-card"><div className="publish-heart">✓</div><p className="section-kicker">PAYMENT COMPLETE</p><h2 id="payment-complete-title">결제가 완료되었습니다.</h2><p>아직 초대장은 공개되지 않았습니다.<br />내용을 최종 확인한 후 발행해 주세요.</p><button type="button" className="save-button full" onClick={() => { setPaymentComplete(false); setPreviewOpen(true); }}>최종 미리보기</button><button type="button" className="publish-button full" onClick={requestPublish}>초대장 발행하기</button></div></div>}
