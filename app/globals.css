@@ -691,6 +691,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-background .romantic-section,.dd-template-background .modern-section,.dd-template-background .classic-section,.dd-template-background .invitation-gallery,.dd-template-background .public-accounts,.dd-template-background .public-rsvp,.dd-template-background .guestbook-section{background:transparent}
 .dd-template-hero-configured .classic-hero,.dd-template-hero-configured .romantic-hero,.dd-template-hero-configured .modern-hero{position:relative;isolation:isolate;overflow:hidden}
 .dd-template-hero-configured .classic-hero>figure,.dd-template-hero-configured .romantic-hero>figure,.dd-template-hero-configured .modern-hero>figure{position:relative;z-index:0}
+.dd-template-hero-configured .classic-hero>figure::after{display:none}
 .dd-template-hero-configured .classic-hero-copy,.dd-template-hero-configured .romantic-hero-copy,.dd-template-hero-configured .modern-hero-copy{position:relative;z-index:3}
 .dd-template-hero-configured .classic-hero.has-photo .classic-hero-copy,.dd-template-hero-configured .modern-hero.has-photo .modern-hero-copy{position:absolute}
 .dd-template-hero-overlay,.dd-template-hero-frame{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
