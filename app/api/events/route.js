@@ -77,9 +77,25 @@ async function getTemplateRenderData(supabase, templateId, versionId) {
 }
 
 export async function GET(request) {
+  const searchParams = new URL(request.url).searchParams;
+  const previewTemplateId = searchParams.get("templateId");
+  if (previewTemplateId) {
+    if (!uuidPattern.test(previewTemplateId)) return json({ error: "선택한 템플릿 정보가 올바르지 않아요." }, 400);
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!url || !serviceRoleKey) return json({ error: "템플릿 서비스를 준비하지 못했어요." }, 503);
+    const supabase = createClient(url, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
+    const { data: template, error: templateError } = await supabase.from("templates")
+      .select("id,current_sale_version_id,is_active").eq("id", previewTemplateId).maybeSingle();
+    if (templateError) return json({ error: "템플릿을 불러오지 못했어요." }, 500);
+    if (!template?.is_active || !template.current_sale_version_id) return json({ error: "현재 판매 중인 템플릿을 찾지 못했어요." }, 404);
+    const renderData = await getTemplateRenderData(supabase, template.id, template.current_sale_version_id);
+    if (!renderData.templateConfig) return json({ error: "템플릿 디자인을 불러오지 못했어요." }, 409);
+    return json({ templateId: template.id, templateVersionId: template.current_sale_version_id, ...renderData });
+  }
   const auth = await getAuthenticatedClient(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
-  const slug = new URL(request.url).searchParams.get("slug");
+  const slug = searchParams.get("slug");
   let query = auth.supabase.from("events").select("slug,title,status,kind,template_id,template_version_id,starts_at,paid_at,published_at,service_started_at,service_expires_at,grace_ends_at,updated_at,settings").eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
   if (slug) query = query.eq("slug", slug).limit(1);
   const { data, error } = await query;

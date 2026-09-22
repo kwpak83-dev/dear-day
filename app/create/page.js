@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
-import InvitationRenderer from "../../components/invitation/invitation-renderer";
+import InvitationRenderer, { TEMPLATE_IDS } from "../../components/invitation/invitation-renderer";
 import InvitationMap from "../../components/invitation/invitation-map";
 import ShareActions from "../../components/share-actions";
 import Gallery from "../invite/[slug]/gallery";
@@ -30,6 +30,7 @@ const BANK_OPTIONS = [
   { name: "새마을금고", logo: "/banks/mg.png" },
   { name: "iM뱅크", logo: "/banks/imbank.png" },
 ];
+const DEVELOPMENT_TEMPLATE_IDS = new Set(Object.values(TEMPLATE_IDS));
 function BankSelector({ value, onChange }) {
   const isPresetBank = BANK_OPTIONS.some((bank) => bank.name === value);
   const [open, setOpen] = useState(false);
@@ -214,6 +215,7 @@ export default function CreateInvitation() {
   const lastMappedAddress = useRef("");
   const livePreviewRef = useRef(null);
   const templateSelectionChanged = useRef(false);
+  const templatePreviewRequest = useRef(0);
 
   const focusMap = (point) => {
     const maps = window.naver?.maps;
@@ -436,6 +438,28 @@ export default function CreateInvitation() {
     setSaveToastVisible(true);
     saveToastTimer.current = window.setTimeout(() => setSaveToastVisible(false), 3800);
   };
+  const selectTemplate = async (templateId) => {
+    const requestId = ++templatePreviewRequest.current;
+    templateSelectionChanged.current = true;
+    setTemplateRender({ config: null, assets: {} });
+    update("templateId", templateId);
+    setTemplateNotice("");
+    if (DEVELOPMENT_TEMPLATE_IDS.has(templateId)) return;
+    setTemplateNotice("템플릿 디자인을 불러오는 중이에요.");
+    try {
+      const response = await fetch(`/api/events?templateId=${encodeURIComponent(templateId)}`);
+      const result = await response.json().catch(() => ({}));
+      if (requestId !== templatePreviewRequest.current) return;
+      if (!response.ok || result.templateId !== templateId) {
+        setTemplateNotice(result.error || "템플릿 디자인을 불러오지 못했어요.");
+        return;
+      }
+      setTemplateRender({ config: result.templateConfig || null, assets: result.templateAssets || {} });
+      setTemplateNotice("");
+    } catch {
+      if (requestId === templatePreviewRequest.current) setTemplateNotice("템플릿 디자인을 불러오지 못했어요.");
+    }
+  };
   const saveDraft = async ({ showLoading = true, showSuccessToast = false } = {}) => {
     if (galleryBusy || photoBusy.current || (showLoading && submitting)) return;
     if (showSuccessToast) { window.clearTimeout(saveToastTimer.current); setSaveToastVisible(false); }
@@ -557,7 +581,7 @@ export default function CreateInvitation() {
       <section className="editor-panel">
         <p className="section-kicker">STEP 1 OF 1 · INVITATION EDITOR</p><h1>우리의 이야기를<br /><em>채워볼까요?</em></h1><p className="editor-intro">입력한 내용은 자동으로 미리보기에 반영돼요.</p>
         <div className="form-section"><h2>행사 종류</h2><Field label="초대장 종류"><select value={invitation.eventKind} onChange={(e) => update("eventKind", e.target.value)}>{EVENT_KIND_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></Field></div>
-        <div className="form-section template-picker"><h2>템플릿 <small>개발용</small></h2>{templateOptions.length ? <div className="template-picker-grid">{templateOptions.map((template, index) => { const selected = invitation.templateId === template.id; return <button key={template.id} type="button" className={`template-choice${selected ? " selected" : ""}`} aria-pressed={selected} onClick={() => { templateSelectionChanged.current = true; setTemplateRender({ config: null, assets: {} }); update("templateId", template.id); }}><span className={`template-choice-preview preview-${(index % 3) + 1}`} aria-hidden="true"><i /><b>Dear Day</b><em>Invitation</em></span><strong>{template.name}</strong><span className="template-choice-status">{selected ? "✓ 선택됨" : "선택하기"}</span></button>; })}</div> : <p className="template-picker-empty">템플릿을 불러오는 중이에요.</p>}{templateNotice && <p className="photo-notice" role="status">{templateNotice}</p>}</div>
+        <div className="form-section template-picker"><h2>템플릿 <small>개발용</small></h2>{templateOptions.length ? <div className="template-picker-grid">{templateOptions.map((template, index) => { const selected = invitation.templateId === template.id; return <button key={template.id} type="button" className={`template-choice${selected ? " selected" : ""}`} aria-pressed={selected} onClick={() => selectTemplate(template.id)}><span className={`template-choice-preview preview-${(index % 3) + 1}`} aria-hidden="true"><i /><b>Dear Day</b><em>Invitation</em></span><strong>{template.name}</strong><span className="template-choice-status">{selected ? "✓ 선택됨" : "선택하기"}</span></button>; })}</div> : <p className="template-picker-empty">템플릿을 불러오는 중이에요.</p>}{templateNotice && <p className="photo-notice" role="status">{templateNotice}</p>}</div>
         <div className="form-section photo-editor"><h2>대표사진 <small>선택</small></h2><p>초대장에 보여줄 대표사진을 등록해보세요.</p><Field label={invitation.coverPhotoUrl ? "사진 교체" : "사진 선택"}><input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadPhoto} disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} aria-describedby="photo-help" /></Field><p id="photo-help">JPG · PNG · WEBP, 최대 15MB · 사진은 자동으로 크기를 줄여요.</p>{invitation.coverPhotoUrl && <div className="photo-selection"><img src={invitation.coverPhotoUrl} alt="첨부한 대표사진" /><button type="button" className="save-button" disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} onClick={() => { update("coverPhotoUrl", ""); setPhotoNotice("사진을 뺐어요. 임시 저장 또는 발행으로 반영해 주세요."); }}>사진 삭제</button></div>}<p className="photo-notice" role="status" aria-live="polite">{photoNotice}</p></div>
         <GalleryEditor slug={eventSlug} disabled={Boolean(submitting) || uploadingPhoto} onSaveInvitation={saveDraft} onBusyChange={setGalleryBusy} onPhotosChange={setGalleryPhotos} />
         {eventConfig.sections.map((section) => <div className="form-section" key={section.id}><h2>{section.title}</h2>{section.rows.map((row, rowIndex) => row.length > 1 ? <div className="field-grid" key={rowIndex}>{row.map(renderConfigField)}</div> : row.map(renderConfigField))}</div>)}
