@@ -281,6 +281,7 @@ const hexColor = (value) => typeof value === "string" && /^#[0-9a-fA-F]{6}$/.tes
 const optionalId = (value) => value === null || (typeof value === "string" && uuid.test(value));
 const hasOnlyKeys = (value, keys) => isRecord(value) && Object.keys(value).every((key) => keys.includes(key)) && keys.every((key) => Object.hasOwn(value, key));
 const heroModes = new Set(["photo", "frame", "illustration"]);
+const heroDisplayKeys = ["eyebrow","eventLabel","title","relations","detail","note","schedule","venue"];
 const heroRatios = new Set(["4:5", "1:1", "3:4", "16:9"]);
 
 function validBackground(value) {
@@ -290,12 +291,13 @@ function validBackground(value) {
 }
 
 function validHero(value) {
-  return hasOnlyKeys(value, ["mode", "aspectRatio", "positionX", "positionY", "textYPercent", "zoom", "backgroundAssetId", "frameAssetId", "overlayColor", "overlayOpacity"]) &&
+  return hasOnlyKeys(value, ["mode", "aspectRatio", "positionX", "positionY", "textYPercent", "zoom", "backgroundAssetId", "frameAssetId", "overlayColor", "overlayOpacity", "display"]) &&
     heroModes.has(value.mode) && heroRatios.has(value.aspectRatio) &&
     decimal(value.positionX, 0, 100) && decimal(value.positionY, 0, 100) &&
     decimal(value.textYPercent, 0, 100) && decimal(value.zoom, 1, 3) && optionalId(value.backgroundAssetId) &&
     optionalId(value.frameAssetId) && hexColor(value.overlayColor) &&
-    decimal(value.overlayOpacity, 0, 1);
+    decimal(value.overlayOpacity, 0, 1) && hasOnlyKeys(value.display, heroDisplayKeys) &&
+    heroDisplayKeys.every((key) => typeof value.display[key] === "boolean");
 }
 
 async function saveBackgroundHero(auth, body) {

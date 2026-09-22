@@ -11,6 +11,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
   const couple = wedding ? title.split(" & ").map((value) => value.trim()).filter(Boolean) : [];
   const hasInformation = Boolean(schedule || venue || address);
   const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
+  const showHero = (key) => templateConfig?.hero?.display?.[key] !== false;
 
   return <article className={`invitation-template invitation-template-classic classic-001${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.heroConfigured ? " dd-template-hero-configured" : ""}${renderConfig.typographyConfigured ? " dd-template-typography" : ""}${renderConfig.colorsConfigured ? " dd-template-colors" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}${renderConfig.decorationsConfigured ? " dd-template-decorated" : ""}${renderConfig.sectionClasses}${renderConfig.safeAreaClass}`} style={renderConfig.rootStyle}>
     <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="background" />
@@ -24,20 +25,20 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
       <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} />
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />
       <div className="classic-hero-copy" style={renderConfig.heroCopyStyle}>
-        <small>{wedding ? "소중한 분들을 초대합니다" : kindLabel}</small>
-        <p>{wedding ? "Wedding Day" : kindLabel}</p>
-        <i aria-hidden="true" />
-        {title && (couple.length === 2
+        {showHero("eyebrow") && <small>{wedding ? "소중한 분들을 초대합니다" : kindLabel}</small>}
+        {showHero("eventLabel") && <p>{wedding ? "Wedding Day" : kindLabel}</p>}
+        {showHero("eventLabel") && <i aria-hidden="true" />}
+        {showHero("title") && title && (couple.length === 2
           ? <h2 className="classic-couple-title"><span>{couple[0]}</span><em>&amp;</em><span>{couple[1]}</span></h2>
           : <h2>{title}</h2>)}
-        {(groomRelation || brideRelation) && <div className="wedding-parent-relations">
+        {showHero("relations") && (groomRelation || brideRelation) && <div className="wedding-parent-relations">
           {groomRelation && <p>{groomRelation}</p>}
           {brideRelation && <p>{brideRelation}</p>}
         </div>}
-        {detail && <span className="classic-detail">{detail}</span>}
-        {note && <span className="classic-note">{note}</span>}
-        {schedule && <time>{schedule}</time>}
-        {venue && <strong>{venue}</strong>}
+        {showHero("detail") && detail && <span className="classic-detail">{detail}</span>}
+        {showHero("note") && note && <span className="classic-note">{note}</span>}
+        {showHero("schedule") && schedule && <time>{schedule}</time>}
+        {showHero("venue") && venue && <strong>{venue}</strong>}
       </div>
     </section>
 

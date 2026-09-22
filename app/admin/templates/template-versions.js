@@ -17,8 +17,9 @@ const placementFor = (assetId, saved) => {
   }
   return base;
 };
+const heroDisplayDefaults = { eyebrow: true, eventLabel: true, title: true, relations: true, detail: true, note: true, schedule: true, venue: true };
 const backgroundDefaults = { color: "#ffffff", assetId: null, overlayColor: "#000000", overlayOpacity: 0 };
-const heroDefaults = { mode: "photo", aspectRatio: "4:5", positionX: 50, positionY: 50, textYPercent: 50, zoom: 1, backgroundAssetId: null, frameAssetId: null, overlayColor: "#000000", overlayOpacity: 0 };
+const heroDefaults = { mode: "photo", aspectRatio: "4:5", positionX: 50, positionY: 50, textYPercent: 50, zoom: 1, backgroundAssetId: null, frameAssetId: null, overlayColor: "#000000", overlayOpacity: 0, display: heroDisplayDefaults };
 const typographyDefaults = {
   heroTitle: { fontFamily: "serif", fontSize: 32, fontWeight: 400, lineHeight: 1.3, letterSpacing: 0, textAlign: "center" },
   sectionTitle: { fontFamily: "serif", fontSize: 22, fontWeight: 500, lineHeight: 1.4, letterSpacing: 0, textAlign: "center" },
@@ -29,6 +30,7 @@ const colorDefaults = { text: "#333333", title: "#222222", muted: "#777777", acc
 const typographyRoles = [["heroTitle", "Hero Title"], ["sectionTitle", "Section Title"], ["body", "Body"], ["caption", "Caption / Small"]];
 const colorLabels = [["text", "기본 글자색"], ["title", "제목 색상"], ["muted", "보조 글자색"], ["accent", "포인트 색상"], ["buttonBackground", "버튼 배경"], ["buttonText", "버튼 글자"], ["divider", "구분선"]];
 const fromConfig = (defaults, saved) => Object.fromEntries(Object.keys(defaults).map((key) => [key, saved && typeof saved === "object" && saved[key] !== undefined ? saved[key] : defaults[key]]));
+const heroFromConfig = (saved) => ({ ...fromConfig(heroDefaults, saved), display: fromConfig(heroDisplayDefaults, saved?.display) });
 const typographyFromConfig = (saved) => Object.fromEntries(typographyRoles.map(([role]) => [role, fromConfig(typographyDefaults[role], saved?.[role])]));
 const sectionLabels = [
   ["invitation", "초대글"], ["location", "오시는 길"],
@@ -107,7 +109,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     if (!assetResponse.ok) throw new Error(assets.error || "장식 Asset을 불러오지 못했어요.");
     const active = (assets.assets || []).filter((asset) => asset.is_active);
     setBackground((previous) => preservePlacements ? previous : fromConfig(backgroundDefaults, versions.draft?.background));
-    setHero((previous) => preservePlacements ? previous : fromConfig(heroDefaults, versions.draft?.hero));
+    setHero((previous) => preservePlacements ? previous : heroFromConfig(versions.draft?.hero));
     setTypography((previous) => preservePlacements ? previous : typographyFromConfig(versions.draft?.typography));
     setColors((previous) => preservePlacements ? previous : fromConfig(colorDefaults, versions.draft?.colors));
     setSections((previous) => preservePlacements ? previous : sectionsFromConfig(versions.draft?.sections));
@@ -302,6 +304,19 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               <AssetSelect label="Hero Frame Asset" assets={frameAssets} value={hero.frameAssetId} onChange={(frameAssetId) => setHero({ ...hero, frameAssetId })} />
               <ColorControl label="Hero Overlay 색상" value={hero.overlayColor} onChange={(overlayColor) => setHero({ ...hero, overlayColor })} />
               <NumberControl label="Hero Overlay 투명도" value={hero.overlayOpacity} min={0} max={1} step={0.05} onChange={(overlayOpacity) => setHero({ ...hero, overlayOpacity })} />
+              <fieldset style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 10, gridColumn: "1 / -1" }}>
+                <legend>Hero 표시 항목</legend>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 8 }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="checkbox" checked={hero.display.eyebrow} onChange={(event) => setHero((current) => ({ ...current, display: { ...current.display, eyebrow: event.target.checked } }))} />상단 초대 문구</label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="checkbox" checked={hero.display.eventLabel} onChange={(event) => setHero((current) => ({ ...current, display: { ...current.display, eventLabel: event.target.checked } }))} />행사 문구</label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="checkbox" checked={hero.display.title} onChange={(event) => setHero((current) => ({ ...current, display: { ...current.display, title: event.target.checked } }))} />행사 제목 / 이름</label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="checkbox" checked={hero.display.relations} onChange={(event) => setHero((current) => ({ ...current, display: { ...current.display, relations: event.target.checked } }))} />관계 정보</label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="checkbox" checked={hero.display.detail} onChange={(event) => setHero((current) => ({ ...current, display: { ...current.display, detail: event.target.checked } }))} />상세 정보</label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="checkbox" checked={hero.display.note} onChange={(event) => setHero((current) => ({ ...current, display: { ...current.display, note: event.target.checked } }))} />추가 문구</label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="checkbox" checked={hero.display.schedule} onChange={(event) => setHero((current) => ({ ...current, display: { ...current.display, schedule: event.target.checked } }))} />날짜 / 시간</label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="checkbox" checked={hero.display.venue} onChange={(event) => setHero((current) => ({ ...current, display: { ...current.display, venue: event.target.checked } }))} />장소</label>
+                </div>
+              </fieldset>
             </div>
           </fieldset>
           {assetChangesPending && <p>Asset 변경을 확정한 뒤 Background/Hero 설정을 저장할 수 있어요.</p>}

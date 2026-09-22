@@ -12,6 +12,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
   const hasCouple = wedding && couple.length > 0;
   const hasInformation = Boolean(schedule || venue || address);
   const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
+  const showHero = (key) => templateConfig?.hero?.display?.[key] !== false;
 
   return <article className={`invitation-template invitation-template-modern modern-001${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.heroConfigured ? " dd-template-hero-configured" : ""}${renderConfig.typographyConfigured ? " dd-template-typography" : ""}${renderConfig.colorsConfigured ? " dd-template-colors" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}${renderConfig.decorationsConfigured ? " dd-template-decorated" : ""}${renderConfig.sectionClasses}${renderConfig.safeAreaClass}`} style={renderConfig.rootStyle}>
     <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="background" />
@@ -28,15 +29,15 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
       <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} />
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />
       <div className="modern-hero-copy" style={renderConfig.heroCopyStyle}>
-        <p>{wedding ? "A NEW BEGINNING" : kindLabel}</p>
-        {title && <h2>{title}</h2>}
-        {(groomRelation || brideRelation) && <div className="wedding-parent-relations">
+        {showHero("eventLabel") && <p>{wedding ? "A NEW BEGINNING" : kindLabel}</p>}
+        {showHero("title") && title && <h2>{title}</h2>}
+        {showHero("relations") && (groomRelation || brideRelation) && <div className="wedding-parent-relations">
           {groomRelation && <p>{groomRelation}</p>}
           {brideRelation && <p>{brideRelation}</p>}
         </div>}
-        {detail && <span>{detail}</span>}
-        {note && <span>{note}</span>}
-        {schedule && <time>{schedule}</time>}
+        {showHero("detail") && detail && <span>{detail}</span>}
+        {showHero("note") && note && <span>{note}</span>}
+        {showHero("schedule") && schedule && <time>{schedule}</time>}
       </div>
     </section>
 
