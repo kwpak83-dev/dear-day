@@ -50,6 +50,12 @@ function validImage(bytes, mime) {
   if (mime === "image/png") return bytes.length > 8 && Buffer.from(bytes.subarray(0, 8)).equals(Buffer.from([137,80,78,71,13,10,26,10]));
   return mime === "image/webp" && bytes.length > 12 && Buffer.from(bytes.subarray(0,4)).toString() === "RIFF" && Buffer.from(bytes.subarray(8,12)).toString() === "WEBP";
 }
+function configReferencesAsset(value, assetId) {
+  if (value === assetId) return true;
+  if (Array.isArray(value)) return value.some((item) => configReferencesAsset(item, assetId));
+  if (value && typeof value === "object") return Object.values(value).some((item) => configReferencesAsset(item, assetId));
+  return false;
+}
 export async function GET(request) {
   const auth = await getAdmin(request);
   if (auth.error) return fail(auth.error, auth.status);
@@ -231,6 +237,38 @@ export async function DELETE(request) {
   if (auth.error) return fail(auth.error, auth.status);
   const body = await request.json().catch(() => null);
   if (!uuid.test(body?.templateId || "")) return fail("템플릿 정보가 올바르지 않아요.", 400);
+  if (body?.action === "delete") {
+    if (!uuid.test(body?.assetId || "")) return fail("Asset 정보가 올바르지 않아요.", 400);
+    const invalid = await checkTemplate(auth.client, body.templateId);
+    if (invalid) return invalid;
+    const { data: asset, error: assetError } = await auth.client.from("template_assets")
+      .select("id,template_id,asset_type,name,storage_bucket,storage_path,mime_type,width,height,file_size,has_alpha,sort_order,is_active,created_by,created_at,updated_at")
+      .eq("id", body.assetId).eq("template_id", body.templateId).maybeSingle();
+    if (assetError) return fail("Asset을 확인하지 못했어요.", 500);
+    if (!asset || !folders[asset.asset_type]) return fail("Asset을 찾지 못했어요.", 404);
+    if (asset.is_active) return fail("활성 Asset은 삭제할 수 없어요. 먼저 비활성화해 주세요.", 409);
+    if (asset.storage_bucket !== bucket || typeof asset.storage_path !== "string" ||
+        !asset.storage_path.startsWith(`${body.templateId}/`)) return fail("Asset 저장 경로를 확인하지 못했어요.", 409);
+
+    const { data: versions, error: versionsError } = await auth.client.from("template_versions")
+      .select("version,config").eq("template_id", body.templateId);
+    if (versionsError) return fail("Asset 참조 여부를 확인하지 못했어요.", 500);
+    const referencedBy = (versions || []).find((version) => configReferencesAsset(version.config, asset.id));
+    if (referencedBy) return fail(`이 Asset은 v${referencedBy.version}에서 사용 중이어서 삭제할 수 없습니다.`, 409);
+
+    const removed = await auth.client.from("template_assets").delete({ count: "exact" })
+      .eq("id", asset.id).eq("template_id", body.templateId).eq("is_active", false);
+    if (removed.error) return fail("Asset 정보를 삭제하지 못했어요.", 500);
+    if (removed.count !== 1) return fail("Asset 상태가 변경됐어요. 목록을 다시 확인해 주세요.", 409);
+    const { error: storageError } = await auth.client.storage.from(bucket).remove([asset.storage_path]);
+    if (storageError) {
+      const { error: restoreError } = await auth.client.from("template_assets").insert(asset);
+      return fail(restoreError
+        ? "Asset 파일 삭제에 실패했고 DB 정보 복원도 실패했어요. 관리자 확인이 필요합니다."
+        : "Asset 파일 삭제에 실패해 DB 정보를 복원했어요. 다시 시도해 주세요.", 500);
+    }
+    return Response.json({ removed: asset.id });
+  }
   const operation = readOperation(body?.receipt, auth.user.id, body.templateId);
   if (!operation || !uuid.test(operation.id || "")) return fail("이번 편집 세션의 Asset 변경만 취소할 수 있어요.", 403);
   const invalid = await checkTemplate(auth.client, body.templateId);

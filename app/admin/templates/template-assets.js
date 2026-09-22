@@ -17,7 +17,7 @@ const imageSize = (file) => new Promise((resolve, reject) => {
   image.src = url;
 });
 
-export default function TemplateAssets({ templateId, onOperation, onBusyChange }) {
+export default function TemplateAssets({ templateId, onOperation, onPermanentDelete, onBusyChange, deletionBlocked }) {
   const [assets, setAssets] = useState([]);
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(true);
@@ -103,6 +103,24 @@ export default function TemplateAssets({ templateId, onOperation, onBusyChange }
     } catch (error) { setNotice(error.message); }
     finally { setBusy(false); onBusyChange(false); }
   };
+  const removeAsset = async (asset) => {
+    if (busy || asset.is_active) return;
+    if (deletionBlocked) { setNotice("먼저 현재 Asset 변경을 저장한 뒤 다시 편집해 삭제해 주세요."); return; }
+    if (!window.confirm("이 Asset을 영구 삭제할까요?\n현재 또는 과거 템플릿 Version에서 사용 중인 Asset은 삭제할 수 없습니다.")) return;
+    setBusy(true); onBusyChange(true); setNotice("");
+    try {
+      const response = await fetch("/api/admin/templates/assets", {
+        method: "DELETE", headers: { ...(await authorization()), "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "delete", templateId, assetId: asset.id }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "Asset을 삭제하지 못했어요.");
+      onPermanentDelete(asset.id);
+      await load();
+      setNotice("Asset을 영구 삭제했습니다.");
+    } catch (error) { setNotice(error.message); }
+    finally { setBusy(false); onBusyChange(false); }
+  };
   return <section className="admin-template-assets">
     <h2>템플릿 Asset</h2>
     <p>이미지는 템플릿별로 보관됩니다. 교체하거나 비활성화해도 기존 파일은 삭제되지 않습니다.</p>
@@ -116,7 +134,7 @@ export default function TemplateAssets({ templateId, onOperation, onBusyChange }
         {rows.map((asset) => <article className="admin-template-asset-row" key={asset.id}>
           {asset.url && (asset.asset_type === "bgm" ? <audio src={asset.url} controls preload="none" aria-label={`${label} 미리듣기`} /> : <img src={asset.url} alt={`${label} 미리보기`} loading="lazy" />)}
           <div><strong>{asset.name || asset.storage_path.split("/").pop()}</strong><p>{asset.is_active ? "사용 중" : "비활성"}{asset.asset_type === "bgm" ? ` · ${Math.ceil((asset.file_size || 0) / 1024)}KB` : ` · ${asset.width || "-"} × ${asset.height || "-"}`}</p></div>
-          <button type="button" className="save-button" disabled={busy} onClick={() => changeActive(asset)}>{asset.is_active ? "비활성화" : "활성화"}</button>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}><button type="button" className="save-button" disabled={busy} onClick={() => changeActive(asset)}>{asset.is_active ? "비활성화" : "활성화"}</button>{!asset.is_active && <button type="button" className="save-button" disabled={busy} onClick={() => removeAsset(asset)}>삭제</button>}</div>
         </article>)}
         <input ref={(element) => { inputs.current[type] = element; }} type="file" accept={type === "bgm" ? "audio/mpeg,.mp3" : "image/jpeg,image/png,image/webp"} hidden onChange={(event) => upload(type, event.target.files?.[0])} />
         <button type="button" className="save-button" disabled={busy} onClick={() => inputs.current[type]?.click()}>
