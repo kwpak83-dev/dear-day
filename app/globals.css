@@ -835,3 +835,19 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 @keyframes dd-sheet-up{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @media(max-width:380px){.invitation-quick-menu{width:calc(100% - 16px);bottom:max(8px,env(safe-area-inset-bottom))}.invitation-quick-menu button{font-size:10px}.invitation-bottom-sheet{border-radius:18px 18px 0 0}}
 @media(prefers-reduced-motion:reduce){.invitation-quick-menu,.invitation-bottom-sheet{animation:none}}
+/* Public invitation Quick Menu and Bottom Sheet inherit the active template palette. */
+.classic-001{--dd-invite-action-bg:transparent;--dd-invite-action-text:var(--classic-gold);--dd-invite-action-accent:var(--classic-gold);--dd-invite-action-divider:var(--classic-line);--dd-invite-action-radius:999px}
+.modern-001{--dd-invite-action-bg:transparent;--dd-invite-action-text:var(--modern-ink);--dd-invite-action-accent:var(--modern-ink);--dd-invite-action-divider:var(--modern-line);--dd-invite-action-radius:0}
+.romantic-001{--dd-invite-action-bg:var(--romantic-rose);--dd-invite-action-text:#fff;--dd-invite-action-accent:var(--romantic-gold);--dd-invite-action-divider:var(--romantic-gold);--dd-invite-action-radius:9px}
+.dd-template-colors{--dd-invite-action-bg:var(--dd-color-button-bg);--dd-invite-action-text:var(--dd-color-button-text);--dd-invite-action-accent:var(--dd-color-accent);--dd-invite-action-divider:var(--dd-color-divider)}
+.invitation-quick-menu{border-color:var(--dd-invite-action-divider,rgba(218,201,191,.85))}
+.invitation-quick-menu button{border-radius:var(--dd-invite-action-radius,0);background:var(--dd-invite-action-bg,transparent);color:var(--dd-invite-action-text,#674f45)}
+.invitation-quick-menu button+button{border-left-color:var(--dd-invite-action-divider,rgba(218,201,191,.7))}
+.invitation-quick-menu b{color:var(--dd-invite-action-accent,currentColor)}
+.invitation-bottom-sheet-handle{background:var(--dd-invite-action-accent,#d8c8c0)}
+.invitation-bottom-sheet>header{border-bottom-color:var(--dd-invite-action-divider,#eaded7)}
+.invitation-bottom-sheet>header button,.dd-template-colors .invitation-bottom-sheet>header button{background:transparent;color:var(--dd-invite-action-accent,#80695f)}
+.dd-template-colors .invitation-bottom-sheet-backdrop{background:rgba(38,29,25,.42);color:inherit}
+.invitation-bottom-sheet-content .public-rsvp form>button,.invitation-bottom-sheet-content .guestbook-form>button,.invitation-bottom-sheet-content .guestbook-delete-backdrop footer button:last-child{border:1px solid var(--dd-invite-action-accent,transparent);border-radius:var(--dd-invite-action-radius,9px);background:var(--dd-invite-action-bg,#ef786c);color:var(--dd-invite-action-text,#fff)}
+.invitation-bottom-sheet-content .rsvp-status-options input:checked+span{border-color:var(--dd-invite-action-accent,#ef786c);color:var(--dd-invite-action-accent,#ca5d54)}
+.invitation-bottom-sheet-content .rsvp-kicker,.invitation-bottom-sheet-content .section-kicker{color:var(--dd-invite-action-accent,#b37c6d)}
