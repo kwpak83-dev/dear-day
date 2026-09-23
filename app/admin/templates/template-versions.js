@@ -469,13 +469,13 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
             ))}
             <h4 style={{ margin: 0 }}>Colors</h4>
             <MappingTable rows={[
-              ["Text", "기본 본문 글자색", "초대문구 · 장소 · 계좌 · RSVP"],
-              ["Title", "Hero/섹션 제목 계열 색상", "Wedding Day · 경원 & 보람 · 섹션 제목"],
-              ["Muted", "작은 보조문구 색상", "OUR MOMENTS · 안내문구"],
-              ["Accent", "포인트·링크·Quick Menu 아이콘", "강조 문구 · 링크 · 아이콘"],
-              ["Button Background", "일반 버튼과 Quick Menu 배경", "주소 복사 · RSVP 버튼"],
-              ["Button Text", "일반 버튼과 Quick Menu 글자", "버튼 내부 텍스트"],
-              ["Divider", "섹션/카드/Quick Menu 구분선", "카드 테두리 · 메뉴 구분선"],
+              ["기본 글자색", "기본 본문 글자색", "초대문구 · 장소 · 계좌 · RSVP"],
+              ["제목 색상", "Hero/섹션 제목 계열 색상", "Wedding Day · 경원 & 보람 · 섹션 제목"],
+              ["보조 글자색", "작은 보조문구 색상", "OUR MOMENTS · 안내문구"],
+              ["포인트 색상", "포인트·링크·Quick Menu 아이콘", "강조 문구 · 링크 · 아이콘"],
+              ["버튼 배경", "일반 버튼과 Quick Menu 배경", "주소 복사 · RSVP 버튼"],
+              ["버튼 글자", "일반 버튼과 Quick Menu 글자", "버튼 내부 텍스트"],
+              ["구분선", "섹션/카드/Quick Menu 구분선", "카드 테두리 · 메뉴 구분선"],
             ]} />
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 10 }}>
               {colorLabels.map(([key, label]) => <ColorControl key={key} label={label} value={colors[key]} onChange={(value) => setColors((current) => ({ ...current, [key]: value }))} />)}
