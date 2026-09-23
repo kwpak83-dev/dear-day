@@ -51,7 +51,7 @@ function loadNaverMaps() {
   return mapsSdkPromise;
 }
 
-export default function InvitationMap({ address }) {
+export default function InvitationMap({ address, onPositionChange }) {
   const canvasRef = useRef(null);
   const [position, setPosition] = useState(null);
   const normalizedAddress = address?.trim() || "";
@@ -59,6 +59,7 @@ export default function InvitationMap({ address }) {
   useEffect(() => {
     let active = true;
     setPosition(null);
+    onPositionChange?.(null);
     if (!normalizedAddress) return () => { active = false; };
 
     loadNaverMaps().then((maps) => {
@@ -67,12 +68,16 @@ export default function InvitationMap({ address }) {
         if (!active || status !== maps.Service.Status.OK || !result) return;
         const latitude = Number(result.y);
         const longitude = Number(result.x);
-        if (Number.isFinite(latitude) && Number.isFinite(longitude)) setPosition({ latitude, longitude });
+        if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
+          const nextPosition = { latitude, longitude };
+          setPosition(nextPosition);
+          onPositionChange?.(nextPosition);
+        }
       });
     }).catch(() => {});
 
     return () => { active = false; };
-  }, [normalizedAddress]);
+  }, [normalizedAddress, onPositionChange]);
 
   useEffect(() => {
     if (!position || !canvasRef.current || !window.naver?.maps) return;
