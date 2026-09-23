@@ -13,6 +13,9 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
   const hasInformation = Boolean(schedule || venue || address);
   const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
   const showHero = (key) => templateConfig?.hero?.display?.[key] !== false;
+  const defaultMastheadText = wedding ? "WEDDING INVITATION" : kindLabel;
+  const mastheadText = templateConfig?.hero?.mastheadText?.trim() || defaultMastheadText;
+  const showMastheadText = templateConfig?.hero?.mastheadVisible !== false;
   const showCoverPhoto = Boolean(coverPhotoUrl && renderConfig.showCoverPhoto);
   const showIllustration = Boolean(renderConfig.illustrationMode && renderConfig.heroBackgroundConfigured);
   const hasHeroVisual = showCoverPhoto || showIllustration;
@@ -24,7 +27,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
     {screenEffect}
     <header className="modern-masthead">
       <b>DearDay</b>
-      <span>{wedding ? "WEDDING INVITATION" : kindLabel}</span>
+      {showMastheadText && <span>{mastheadText}</span>}
     </header>
 
     <section className={`modern-hero${hasHeroVisual ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
