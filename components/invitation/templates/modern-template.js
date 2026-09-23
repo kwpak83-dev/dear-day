@@ -39,8 +39,8 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
     <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} />
     {bgmControl}
     {screenEffect}
-    {showHeader && <header className="modern-masthead">
-      <b>DearDay</b>
+    {(showHeader || showMastheadText) && <header className="modern-masthead">
+      {showHeader && <b>DearDay</b>}
       {showMastheadText && <span>{mastheadText}</span>}
     </header>
 
