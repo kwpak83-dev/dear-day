@@ -191,7 +191,6 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   const saveBackgroundHero = async (event) => {
     event.preventDefault();
     if (saving || !state.draft) return;
-    if (assetChangesPending) { setNotice("Asset 변경을 기본정보 저장으로 확정한 뒤 Background/Hero 설정을 저장해 주세요."); return; }
     setSaving(true); setNotice("");
     try {
       const response = await fetch("/api/admin/templates/versions", {
@@ -208,7 +207,6 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   const saveTypographyColors = async (event) => {
     event.preventDefault();
     if (saving || !state.draft) return;
-    if (assetChangesPending) { setNotice("Asset 변경을 기본정보 저장으로 확정한 뒤 Typography/Colors 설정을 저장해 주세요."); return; }
     setSaving(true); setNotice("");
     try {
       const response = await fetch("/api/admin/templates/versions", {
@@ -232,7 +230,6 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   const saveSections = async (event) => {
     event.preventDefault();
     if (saving || !state.draft) return;
-    if (assetChangesPending) { setNotice("Asset 변경을 기본정보 저장으로 확정한 뒤 Sections 설정을 저장해 주세요."); return; }
     setSaving(true); setNotice("");
     try {
       const response = await fetch("/api/admin/templates/versions", {
@@ -249,7 +246,6 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   const saveEffectsBgmSafeArea = async (event) => {
     event.preventDefault();
     if (saving || !state.draft) return;
-    if (assetChangesPending) { setNotice("Asset 변경을 기본정보 저장으로 확정한 뒤 Effects/BGM/Safe Area 설정을 저장해 주세요."); return; }
     setSaving(true); setNotice("");
     try {
       const response = await fetch("/api/admin/templates/versions", {
@@ -271,7 +267,6 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   const saveDecorations = async (event) => {
     event.preventDefault();
     if (saving || !state.draft) return;
-    if (assetChangesPending) { setNotice("Asset 변경을 기본정보 저장으로 확정한 뒤 장식 배치를 저장해 주세요."); return; }
     setSaving(true); setNotice("");
     try {
       const response = await fetch("/api/admin/templates/versions", {
@@ -363,8 +358,8 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               </fieldset>
             </div>
           </fieldset>
-          {assetChangesPending && <p>Asset 변경을 확정한 뒤 Background/Hero 설정을 저장할 수 있어요.</p>}
-          <button type="submit" className="save-button" disabled={saving || assetChangesPending}>{saving ? "저장 중..." : "Background + Hero 저장"}</button>
+          
+          <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Background + Hero 저장"}</button>
         </form>
         <section style={configSection}><h3 style={configHeading}>Decoration 배치 설정</h3>
         <p style={guideNote}>등록한 장식 Asset을 Hero·섹션·배경에 배치하고 위치·크기·회전·투명도·레이어를 조절합니다.</p>
@@ -398,8 +393,8 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
                 </div>
               </div>;
             })}
-            {assetChangesPending && <p>Asset 변경을 확정한 뒤 이 배치를 저장할 수 있어요.</p>}
-            <button type="submit" className="save-button" disabled={saving || assetChangesPending}>{saving ? "저장 중..." : "Draft 장식 배치 저장"}</button>
+            
+            <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Draft 장식 배치 저장"}</button>
           </form>}</section>
         <section style={configSection}>
           <h3 style={configHeading}>Typography + Colors Config</h3>
@@ -518,8 +513,8 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               <NumberControl label="글자 크기" value={quickMenu.fontSize} min={8} max={18} onChange={(fontSize) => setQuickMenu((current) => ({ ...current, fontSize }))} />
               <NumberControl label="아이콘 크기" value={quickMenu.iconSize} min={12} max={32} onChange={(iconSize) => setQuickMenu((current) => ({ ...current, iconSize }))} />
             </div>
-            {assetChangesPending && <p>Asset 변경을 확정한 뒤 Typography/Colors 설정을 저장할 수 있어요.</p>}
-            <button type="submit" className="save-button" disabled={saving || assetChangesPending}>{saving ? "저장 중..." : "Typography + Colors 저장"}</button>
+            
+            <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Typography + Colors 저장"}</button>
           </form>
         </section>
         <section style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: 12, marginTop: 28, minWidth: 0 }}>
@@ -538,8 +533,8 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               <button type="button" aria-label={`${sectionLabels.find(([key]) => key === section.key)?.[1]} 아래로 이동`} disabled={index === sections.length - 1} onClick={() => moveSection(index, 1)}>↓</button>
               <label style={{ display: "flex", alignItems: "center", gap: 4 }}>표시 <input type="checkbox" checked={section.enabled} onChange={(event) => setSections((current) => current.map((item) => item.key === section.key ? { ...item, enabled: event.target.checked } : item))} /></label>
             </div>)}
-            {assetChangesPending && <p>Asset 변경을 확정한 뒤 Sections 설정을 저장할 수 있어요.</p>}
-            <button type="submit" className="save-button" disabled={saving || assetChangesPending}>{saving ? "저장 중..." : "Sections 저장"}</button>
+            
+            <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Sections 저장"}</button>
           </form>
         </section>
         <section style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: 12, marginTop: 28, minWidth: 0 }}>
@@ -582,8 +577,8 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
                   <NumberControl key={key} label={label} value={safeArea[key]} min={0} max={120} onChange={(value) => setSafeArea((current) => ({ ...current, [key]: value }))} />)}
               </div>
             </fieldset>
-            {assetChangesPending && <p>Asset 변경을 확정한 뒤 Effects/BGM/Safe Area 설정을 저장할 수 있어요.</p>}
-            <button type="submit" className="save-button" disabled={saving || assetChangesPending}>{saving ? "저장 중..." : "Effects / BGM / Safe Area 저장"}</button>
+            
+            <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Effects / BGM / Safe Area 저장"}</button>
           </form>
         </section>
       </>}
