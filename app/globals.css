@@ -880,3 +880,15 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   .admin-template-editor-layout{grid-template-columns:1fr}
   .admin-template-editor-preview{position:static;max-height:none;overflow:visible;order:-1}
 }
+
+/* Compact configurable Hero masthead */
+.full-invitation-renderer .modern-001 .modern-masthead,
+.full-invitation-renderer .classic-001 .classic-masthead{
+  min-height:0;
+  padding-top:5px;
+  padding-bottom:5px;
+}
+.full-invitation-renderer .modern-001 .modern-masthead.event-only,
+.full-invitation-renderer .classic-001 .classic-masthead.event-only{
+  justify-content:flex-end;
+}
