@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
+import { TEMPLATE_FONT_STACKS } from "../../../../../lib/template-config";
 
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const fail = (error, status) => Response.json({ error }, { status });
@@ -45,7 +46,7 @@ export async function GET(request) {
   if (!uuid.test(templateId || "")) return fail("템플릿 정보가 올바르지 않아요.", 400);
   const result = await readVersions(auth.serverClient, templateId);
   if (result.error) return result.error;
-  return Response.json({ template: { status: result.template.status, isVisible: result.template.is_visible, isActive: result.template.is_active }, current: result.current && { id: result.current.id, version: result.current.version, status: result.current.status }, draft: result.draft && { id: result.draft.id, version: result.draft.version, decorations: Array.isArray(result.draft.config?.decorations) ? result.draft.config.decorations : [], background: result.draft.config?.background ?? null, hero: result.draft.config?.hero ?? null, typography: result.draft.config?.typography ?? null, colors: result.draft.config?.colors ?? null, quickMenu: result.draft.config?.quickMenu ?? null, sections: result.draft.config?.sections ?? null, effects: result.draft.config?.effects ?? null, bgm: result.draft.config?.bgm ?? null, safeArea: result.draft.config?.safeArea ?? null } });
+  return Response.json({ template: { status: result.template.status, isVisible: result.template.is_visible, isActive: result.template.is_active }, current: result.current && { id: result.current.id, version: result.current.version, status: result.current.status }, draft: result.draft && { id: result.draft.id, version: result.draft.version, decorations: Array.isArray(result.draft.config?.decorations) ? result.draft.config.decorations : [], background: result.draft.config?.background ?? null, hero: result.draft.config?.hero ?? null, typography: result.draft.config?.typography ?? null, colors: result.draft.config?.colors ?? null, buttonStyle: result.draft.config?.buttonStyle ?? null, quickMenu: result.draft.config?.quickMenu ?? null, sections: result.draft.config?.sections ?? null, effects: result.draft.config?.effects ?? null, bgm: result.draft.config?.bgm ?? null, safeArea: result.draft.config?.safeArea ?? null } });
 }
 
 export async function POST(request) {
@@ -347,7 +348,7 @@ async function saveBackgroundHero(auth, body) {
 const typographyRoles = ["heroTitle", "sectionTitle", "body", "caption"];
 const typographyFields = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "textAlign"];
 const colorFields = ["text", "title", "muted", "accent", "buttonBackground", "buttonText", "divider"];
-const fontFamilies = new Set(["serif", "sans"]);
+const fontFamilies = new Set(Object.keys(TEMPLATE_FONT_STACKS));
 const fontWeights = new Set([300, 400, 500, 600, 700]);
 const textAlignments = new Set(["left", "center", "right"]);
 
@@ -368,6 +369,16 @@ function validColors(value) {
   return hasOnlyKeys(value, colorFields) && colorFields.every((field) => hexColor(value[field]));
 }
 
+function validButtonStyle(value) {
+  return hasOnlyKeys(value, ["width", "height", "fontSize", "borderRadius", "borderWidth", "borderColor"]) &&
+    Number.isInteger(value.width) && value.width >= 40 && value.width <= 100 &&
+    Number.isInteger(value.height) && value.height >= 32 && value.height <= 64 &&
+    Number.isInteger(value.fontSize) && value.fontSize >= 10 && value.fontSize <= 18 &&
+    Number.isInteger(value.borderRadius) && value.borderRadius >= 0 && value.borderRadius <= 32 &&
+    Number.isInteger(value.borderWidth) && value.borderWidth >= 0 && value.borderWidth <= 3 &&
+    hexColor(value.borderColor);
+}
+
 function validQuickMenu(value) {
   return hasOnlyKeys(value, ["rsvpIcon", "locationIcon", "guestbookIcon", "fontSize", "iconSize"]) &&
     [value.rsvpIcon, value.locationIcon, value.guestbookIcon].every((icon) =>
@@ -377,9 +388,10 @@ function validQuickMenu(value) {
 }
 
 async function saveTypographyColors(auth, body) {
-  if (!hasOnlyKeys(body, ["templateId", "draftId", "typography", "colors", "quickMenu"]) ||
+  if (!hasOnlyKeys(body, ["templateId", "draftId", "typography", "colors", "buttonStyle", "quickMenu"]) ||
       !uuid.test(body.templateId || "") || !uuid.test(body.draftId || "") ||
-      !validTypography(body.typography) || !validColors(body.colors) || !validQuickMenu(body.quickMenu)) {
+      !validTypography(body.typography) || !validColors(body.colors) ||
+      !validButtonStyle(body.buttonStyle) || !validQuickMenu(body.quickMenu)) {
     return fail("Typography/Colors 설정값을 확인해 주세요.", 400);
   }
   const result = await readVersions(auth.serverClient, body.templateId);
@@ -395,8 +407,9 @@ async function saveTypographyColors(auth, body) {
     typography[role] = { ...(isRecord(existingTypography[role]) ? existingTypography[role] : {}), ...body.typography[role] };
   }
   const colors = { ...(isRecord(previous.colors) ? previous.colors : {}), ...body.colors };
+  const buttonStyle = { ...(isRecord(previous.buttonStyle) ? previous.buttonStyle : {}), ...body.buttonStyle };
   const quickMenu = { ...(isRecord(previous.quickMenu) ? previous.quickMenu : {}), ...body.quickMenu };
-  const config = { ...previous, typography, colors, quickMenu };
+  const config = { ...previous, typography, colors, buttonStyle, quickMenu };
   const { data: updated, error } = await auth.adminClient.from("template_versions")
     .update({ config })
     .eq("id", body.draftId)
@@ -406,5 +419,5 @@ async function saveTypographyColors(auth, body) {
     .maybeSingle();
   if (error) return fail("Typography/Colors 설정을 저장하지 못했어요.", 500);
   if (!updated) return fail("편집 Draft를 수정하지 못했어요. 다시 불러와 주세요.", 409);
-  return Response.json({ draftId: body.draftId, typography, colors, quickMenu });
+  return Response.json({ draftId: body.draftId, typography, colors, buttonStyle, quickMenu });
 }

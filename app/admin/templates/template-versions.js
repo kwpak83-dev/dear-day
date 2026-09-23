@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
+import { TEMPLATE_FONT_OPTIONS } from "../../../lib/template-config";
 import TemplateDraftPreview from "./template-draft-preview";
 
 const slots = [["hero", "Hero"], ["section", "섹션"], ["background", "배경"]];
@@ -27,6 +28,7 @@ const typographyDefaults = {
   caption: { fontFamily: "sans", fontSize: 13, fontWeight: 400, lineHeight: 1.5, letterSpacing: 0, textAlign: "center" },
 };
 const colorDefaults = { text: "#333333", title: "#222222", muted: "#777777", accent: "#b78b72", buttonBackground: "#b78b72", buttonText: "#ffffff", divider: "#e8e2de" };
+const buttonStyleDefaults = { width: 100, height: 44, fontSize: 12, borderRadius: 9, borderWidth: 0, borderColor: "#b78b72" };
 const quickMenuDefaults = { rsvpIcon: "✓", locationIcon: "⌖", guestbookIcon: "♡", fontSize: 11, iconSize: 18 };
 const typographyRoles = [["heroTitle", "Hero Title"], ["sectionTitle", "Section Title"], ["body", "Body"], ["caption", "Caption / Small"]];
 const colorLabels = [["text", "기본 글자색"], ["title", "제목 색상"], ["muted", "보조 글자색"], ["accent", "포인트 색상"], ["buttonBackground", "버튼 배경"], ["buttonText", "버튼 글자"], ["divider", "구분선"]];
@@ -78,6 +80,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   const [hero, setHero] = useState(heroDefaults);
   const [typography, setTypography] = useState(typographyDefaults);
   const [colors, setColors] = useState(colorDefaults);
+  const [buttonStyle, setButtonStyle] = useState(buttonStyleDefaults);
   const [quickMenu, setQuickMenu] = useState(quickMenuDefaults);
   const [sections, setSections] = useState(defaultSections);
   const [effects, setEffects] = useState(effectsDefaults);
@@ -114,6 +117,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     setHero((previous) => preservePlacements ? previous : heroFromConfig(versions.draft?.hero));
     setTypography((previous) => preservePlacements ? previous : typographyFromConfig(versions.draft?.typography));
     setColors((previous) => preservePlacements ? previous : fromConfig(colorDefaults, versions.draft?.colors));
+    setButtonStyle((previous) => preservePlacements ? previous : fromConfig(buttonStyleDefaults, versions.draft?.buttonStyle));
     setQuickMenu((previous) => preservePlacements ? previous : fromConfig(quickMenuDefaults, versions.draft?.quickMenu));
     setSections((previous) => preservePlacements ? previous : sectionsFromConfig(versions.draft?.sections));
     setEffects((previous) => preservePlacements ? previous : fromConfig(effectsDefaults, versions.draft?.effects));
@@ -192,7 +196,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     try {
       const response = await fetch("/api/admin/templates/versions", {
         method: "PATCH", headers: { ...(await authorization()), "Content-Type": "application/json" },
-        body: JSON.stringify({ templateId, draftId: state.draft.id, typography, colors, quickMenu }),
+        body: JSON.stringify({ templateId, draftId: state.draft.id, typography, colors, buttonStyle, quickMenu }),
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "Typography/Colors 설정을 저장하지 못했어요.");
@@ -359,7 +363,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
                 <legend>{label}</legend>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
                   <label style={field}>Font<select style={input} value={typography[role].fontFamily} onChange={(event) => updateTypography(role, "fontFamily", event.target.value)}>
-                    <option value="serif">Serif (Georgia 계열)</option><option value="sans">Sans (Arial 계열)</option>
+                    {TEMPLATE_FONT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
                   </select></label>
                   <NumberControl label="Size (px)" value={typography[role].fontSize} min={10} max={64} onChange={(value) => updateTypography(role, "fontSize", value)} />
                   <label style={field}>Weight<select style={input} value={typography[role].fontWeight} onChange={(event) => updateTypography(role, "fontWeight", Number(event.target.value))}>
@@ -376,6 +380,15 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
             <h4 style={{ margin: 0 }}>Colors</h4>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 10 }}>
               {colorLabels.map(([key, label]) => <ColorControl key={key} label={label} value={colors[key]} onChange={(value) => setColors((current) => ({ ...current, [key]: value }))} />)}
+            </div>
+            <h4 style={{ margin: 0 }}>Button Style</h4>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
+              <NumberControl label="버튼 너비 (%)" value={buttonStyle.width} min={40} max={100} onChange={(width) => setButtonStyle((current) => ({ ...current, width }))} />
+              <NumberControl label="버튼 높이" value={buttonStyle.height} min={32} max={64} onChange={(height) => setButtonStyle((current) => ({ ...current, height }))} />
+              <NumberControl label="버튼 글자 크기" value={buttonStyle.fontSize} min={10} max={18} onChange={(fontSize) => setButtonStyle((current) => ({ ...current, fontSize }))} />
+              <NumberControl label="모서리 둥글기" value={buttonStyle.borderRadius} min={0} max={32} onChange={(borderRadius) => setButtonStyle((current) => ({ ...current, borderRadius }))} />
+              <NumberControl label="테두리 두께" value={buttonStyle.borderWidth} min={0} max={3} onChange={(borderWidth) => setButtonStyle((current) => ({ ...current, borderWidth }))} />
+              <ColorControl label="테두리 색상" value={buttonStyle.borderColor} onChange={(borderColor) => setButtonStyle((current) => ({ ...current, borderColor }))} />
             </div>
             <h4 style={{ margin: 0 }}>Quick Menu</h4>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>

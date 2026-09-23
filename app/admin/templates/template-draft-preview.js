@@ -18,7 +18,7 @@ const sampleInvitation = {
 
 const draftConfig = (draft) => draft ? ({
   decorations: draft.decorations, background: draft.background, hero: draft.hero,
-  typography: draft.typography, colors: draft.colors, sections: draft.sections,
+  typography: draft.typography, colors: draft.colors, buttonStyle: draft.buttonStyle, sections: draft.sections,
   effects: draft.effects, bgm: draft.bgm, safeArea: draft.safeArea,
 }) : null;
 

@@ -1,3 +1,5 @@
+import { TEMPLATE_FONT_STACKS } from "../../lib/template-config";
+
 function rgba(hex, opacity) {
   if (!hex || typeof opacity !== "number") return null;
   const value = hex.slice(1);
@@ -5,9 +7,7 @@ function rgba(hex, opacity) {
   return `rgba(${channels.join(", ")}, ${opacity})`;
 }
 
-const fontStack = (value) => value === "serif"
-  ? 'Georgia, "Batang", serif'
-  : value === "sans" ? 'Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif' : null;
+const fontStack = (value) => TEMPLATE_FONT_STACKS[value] || null;
 const set = (target, name, value, unit = "") => {
   if (value !== null && value !== undefined) target[name] = `${value}${unit}`;
 };
@@ -22,6 +22,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   const hero = config?.hero;
   const typography = config?.typography;
   const colors = config?.colors;
+  const buttonStyle = config?.buttonStyle;
   const quickMenu = config?.quickMenu;
   const backgroundUrl = background?.assetId ? assets[background.assetId] : null;
   const heroBackgroundUrl = hero?.backgroundAssetId ? assets[hero.backgroundAssetId] : null;
@@ -75,6 +76,14 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   for (const [key, variable] of [["text", "text"], ["title", "title"], ["muted", "muted"], ["accent", "accent"], ["buttonBackground", "button-bg"], ["buttonText", "button-text"], ["divider", "divider"]]) {
     set(rootStyle, `--dd-color-${variable}`, colors?.[key]);
   }
+  if (buttonStyle) {
+    set(rootStyle, "--dd-button-width", buttonStyle.width, "%");
+    set(rootStyle, "--dd-button-height", buttonStyle.height, "px");
+    set(rootStyle, "--dd-button-font-size", buttonStyle.fontSize, "px");
+    set(rootStyle, "--dd-button-radius", buttonStyle.borderRadius, "px");
+    set(rootStyle, "--dd-button-border-width", buttonStyle.borderWidth, "px");
+    set(rootStyle, "--dd-button-border-color", buttonStyle.borderColor);
+  }
   if (quickMenu) {
     set(rootStyle, "--dd-quick-menu-font-size", quickMenu.fontSize, "px");
     set(rootStyle, "--dd-quick-menu-icon-size", quickMenu.iconSize, "px");
@@ -98,7 +107,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   }
   const safeAreaClass = safeArea ? " dd-template-safe-area" : "";
   const configured = Boolean(background || hero || typography || colors);
-  return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), backgroundConfigured: Boolean(background), decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle, showCoverPhoto, illustrationMode: hero?.mode === "illustration", heroBackgroundConfigured: Boolean(heroBackgroundUrl) };
+  return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), buttonStyleConfigured: Boolean(buttonStyle), backgroundConfigured: Boolean(background), decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle, showCoverPhoto, illustrationMode: hero?.mode === "illustration", heroBackgroundConfigured: Boolean(heroBackgroundUrl) };
 }
 
 export function TemplateConfigHeroLayers({ config, assets = {} }) {
