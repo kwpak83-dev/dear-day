@@ -129,7 +129,5 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
     </section>}
 
     {children && <div className="invitation-template-sections">{children}</div>}
-
-    <footer className="classic-footer"><i aria-hidden="true">❦</i><span>Thank you</span><small>소중한 순간을 함께해 주세요</small><b>DearDay</b></footer>
   </article>;
 }
