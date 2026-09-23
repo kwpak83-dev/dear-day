@@ -315,7 +315,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .classic-couple-title em{flex:none;color:var(--classic-gold);font-size:16px;font-weight:400}
 .classic-detail,.classic-note,.classic-hero-copy time,.classic-hero-copy strong{display:block;margin-top:9px;font:11px/1.7 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.04em;overflow-wrap:anywhere}
 .classic-hero-copy strong{font-weight:700}
-.classic-section{min-width:0;padding:68px clamp(25px,9vw,50px);border-bottom:1px solid rgba(170,141,86,.3)}
+.classic-section{min-width:0;padding:68px clamp(25px,9vw,50px);border-bottom:0}
 .classic-message{order:2;background:linear-gradient(155deg,#fffdf8,#f7f1e5)}
 .classic-information{order:3;background:var(--classic-paper)}
 .classic-section-heading p{margin:0;color:var(--classic-gold);font:8px/1.4 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.3em}
