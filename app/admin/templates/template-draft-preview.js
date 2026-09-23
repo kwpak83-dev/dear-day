@@ -22,7 +22,7 @@ const draftConfig = (draft) => draft ? ({
   effects: draft.effects, bgm: draft.bgm, safeArea: draft.safeArea,
 }) : null;
 
-function PreviewSections() {
+function PreviewSections({ showQuickMenu = false }) {
   return <div className="public-invitation-sections">
     <section className="invitation-gallery" aria-label="샘플 갤러리">
       <p className="gallery-kicker">OUR MOMENTS</p><h2>우리의 순간들</h2>
@@ -40,9 +40,9 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
   const config = useMemo(() => draftConfig(draft), [draft]);
   const resolvedAssets = useMemo(() => resolveTemplateAssetUrls(config, assets, templateId), [assets, config, templateId]);
   const invitation = useMemo(() => ({ ...sampleInvitation, templateId }), [templateId]);
-  const renderInvitation = (mapWidth) => <InvitationRenderer invitation={invitation} eventKind="wedding" templateId={templateId} templateConfig={config} templateAssets={resolvedAssets}
+  const renderInvitation = (mapWidth, showQuickMenu = false) => <InvitationRenderer invitation={invitation} eventKind="wedding" templateId={templateId} templateConfig={config} templateAssets={resolvedAssets}
     placeActions={<><div className="public-address-copy"><button type="button" disabled>주소 복사</button></div><InvitationMap key={mapWidth} address={invitation.venueAddress} /></>}>
-    <PreviewSections />
+    <PreviewSections showQuickMenu={showQuickMenu} />
   </InvitationRenderer>;
 
   return <section className="admin-draft-preview" aria-labelledby="admin-draft-preview-title">
