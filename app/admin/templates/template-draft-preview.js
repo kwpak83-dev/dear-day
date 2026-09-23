@@ -22,7 +22,7 @@ const draftConfig = (draft) => draft ? ({
   effects: draft.effects, bgm: draft.bgm, safeArea: draft.safeArea,
 }) : null;
 
-function PreviewSections({ showQuickMenu = false, quickMenuVisible = false, onQuickMenuTrigger }) {
+function PreviewSections({ showQuickMenu = false, quickMenuVisible = false }) {
   return <div className="public-invitation-sections">
     <section className="invitation-gallery" aria-label="샘플 갤러리">
       <p className="gallery-kicker">OUR MOMENTS</p><h2>우리의 순간들</h2>
@@ -66,7 +66,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
 
   const renderInvitation = (mapWidth, showQuickMenu = false) => <InvitationRenderer invitation={invitation} eventKind="wedding" templateId={templateId} templateConfig={config} templateAssets={resolvedAssets}
     placeActions={<><div className="public-address-copy"><button type="button" disabled>주소 복사</button></div><InvitationMap key={mapWidth} address={invitation.venueAddress} /></>}>
-    <PreviewSections showQuickMenu={showQuickMenu} quickMenuVisible={quickMenuVisible} onQuickMenuTrigger={observeQuickMenuTrigger} />
+    <PreviewSections showQuickMenu={showQuickMenu} quickMenuVisible={quickMenuVisible} />
   </InvitationRenderer>;
 
   return <section className="admin-draft-preview" aria-labelledby="admin-draft-preview-title">
@@ -85,7 +85,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
       </div>}
     {full && <div className="admin-draft-full-preview" role="dialog" aria-modal="true" aria-label="Draft 전체 미리보기" onKeyDown={(event) => { if (event.key === "Escape") setFull(false); }}>
       <div className="admin-draft-full-preview-toolbar" style={{ width, maxWidth: "100%" }}><strong>{`Draft 전체 미리보기 · ${width}px`}</strong><button type="button" onClick={() => setFull(false)}>닫기</button></div>
-      <div className="admin-draft-full-preview-device full-invitation-renderer" style={{ width, maxWidth: "100%" }}>{renderInvitation(width, true)}</div>
+      <div className="admin-draft-full-preview-device full-invitation-renderer" style={{ width, maxWidth: "100%" }}>{renderInvitation(width, true)}</div>\n      <span className="invitation-quick-menu-trigger" aria-hidden="true" ref={observeQuickMenuTrigger} />
     </div>}
   </section>;
 }
