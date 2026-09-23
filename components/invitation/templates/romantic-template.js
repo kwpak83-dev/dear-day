@@ -29,6 +29,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
   const defaultMastheadText = mastheadLabels[eventKind] || "INVITATION";
   const mastheadText = templateConfig?.hero?.mastheadText?.trim() || defaultMastheadText;
   const showMastheadText = templateConfig?.hero?.mastheadVisible !== false;
+  const showHeader = templateConfig?.hero?.headerVisible !== false;
   const showCoverPhoto = Boolean(coverPhotoUrl && renderConfig.showCoverPhoto);
   const showIllustration = Boolean(renderConfig.illustrationMode && renderConfig.heroBackgroundConfigured);
   const hasHeroVisual = showCoverPhoto || showIllustration;
@@ -38,7 +39,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
     <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} />
     {bgmControl}
     {screenEffect}
-    {showMastheadText && <header className="romantic-masthead">
+    {showHeader && showMastheadText && <header className="romantic-masthead">
       <p>{mastheadText}</p>
       <span aria-hidden="true">· ♡ ·</span>
     </header>}
