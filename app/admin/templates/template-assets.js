@@ -6,7 +6,7 @@ import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 const types = [
   ["thumbnail", "판매 목록 썸네일"], ["long_preview", "긴 판매용 미리보기"],
   ["background", "배경"], ["hero_frame", "Hero 프레임"], ["decoration", "장식"],
-  ["screen_effect", "화면 효과"], ["texture", "Texture"], ["bgm", "BGM (MP3)"],
+  ["screen_effect", "화면 효과"], ["quick_menu_icon", "Quick Menu 아이콘"], ["texture", "Texture"], ["bgm", "BGM (MP3)"],
 ];
 const maxBytes = 15 * 1024 * 1024;
 const versionUsageLabels = (usage) => {
