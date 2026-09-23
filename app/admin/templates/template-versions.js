@@ -27,6 +27,7 @@ const typographyDefaults = {
   caption: { fontFamily: "sans", fontSize: 13, fontWeight: 400, lineHeight: 1.5, letterSpacing: 0, textAlign: "center" },
 };
 const colorDefaults = { text: "#333333", title: "#222222", muted: "#777777", accent: "#b78b72", buttonBackground: "#b78b72", buttonText: "#ffffff", divider: "#e8e2de" };
+const quickMenuDefaults = { rsvpIcon: "✓", locationIcon: "⌖", guestbookIcon: "♡", fontSize: 11, iconSize: 18 };
 const typographyRoles = [["heroTitle", "Hero Title"], ["sectionTitle", "Section Title"], ["body", "Body"], ["caption", "Caption / Small"]];
 const colorLabels = [["text", "기본 글자색"], ["title", "제목 색상"], ["muted", "보조 글자색"], ["accent", "포인트 색상"], ["buttonBackground", "버튼 배경"], ["buttonText", "버튼 글자"], ["divider", "구분선"]];
 const fromConfig = (defaults, saved) => Object.fromEntries(Object.keys(defaults).map((key) => [key, saved && typeof saved === "object" && saved[key] !== undefined ? saved[key] : defaults[key]]));
@@ -77,6 +78,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   const [hero, setHero] = useState(heroDefaults);
   const [typography, setTypography] = useState(typographyDefaults);
   const [colors, setColors] = useState(colorDefaults);
+  const [quickMenu, setQuickMenu] = useState(quickMenuDefaults);
   const [sections, setSections] = useState(defaultSections);
   const [effects, setEffects] = useState(effectsDefaults);
   const [bgm, setBgm] = useState(bgmDefaults);
@@ -112,6 +114,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     setHero((previous) => preservePlacements ? previous : heroFromConfig(versions.draft?.hero));
     setTypography((previous) => preservePlacements ? previous : typographyFromConfig(versions.draft?.typography));
     setColors((previous) => preservePlacements ? previous : fromConfig(colorDefaults, versions.draft?.colors));
+    setQuickMenu((previous) => preservePlacements ? previous : fromConfig(quickMenuDefaults, versions.draft?.quickMenu));
     setSections((previous) => preservePlacements ? previous : sectionsFromConfig(versions.draft?.sections));
     setEffects((previous) => preservePlacements ? previous : fromConfig(effectsDefaults, versions.draft?.effects));
     setBgm((previous) => preservePlacements ? previous : fromConfig(bgmDefaults, versions.draft?.bgm));
@@ -189,7 +192,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     try {
       const response = await fetch("/api/admin/templates/versions", {
         method: "PATCH", headers: { ...(await authorization()), "Content-Type": "application/json" },
-        body: JSON.stringify({ templateId, draftId: state.draft.id, typography, colors }),
+        body: JSON.stringify({ templateId, draftId: state.draft.id, typography, colors, quickMenu }),
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || "Typography/Colors 설정을 저장하지 못했어요.");
@@ -373,6 +376,14 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
             <h4 style={{ margin: 0 }}>Colors</h4>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 10 }}>
               {colorLabels.map(([key, label]) => <ColorControl key={key} label={label} value={colors[key]} onChange={(value) => setColors((current) => ({ ...current, [key]: value }))} />)}
+            </div>
+            <h4 style={{ margin: 0 }}>Quick Menu</h4>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
+              <label style={field}>참석 아이콘<input style={input} type="text" required maxLength={8} value={quickMenu.rsvpIcon} onChange={(event) => setQuickMenu((current) => ({ ...current, rsvpIcon: event.target.value }))} /></label>
+              <label style={field}>위치 아이콘<input style={input} type="text" required maxLength={8} value={quickMenu.locationIcon} onChange={(event) => setQuickMenu((current) => ({ ...current, locationIcon: event.target.value }))} /></label>
+              <label style={field}>방명록 아이콘<input style={input} type="text" required maxLength={8} value={quickMenu.guestbookIcon} onChange={(event) => setQuickMenu((current) => ({ ...current, guestbookIcon: event.target.value }))} /></label>
+              <NumberControl label="글자 크기" value={quickMenu.fontSize} min={8} max={18} onChange={(fontSize) => setQuickMenu((current) => ({ ...current, fontSize }))} />
+              <NumberControl label="아이콘 크기" value={quickMenu.iconSize} min={12} max={32} onChange={(iconSize) => setQuickMenu((current) => ({ ...current, iconSize }))} />
             </div>
             {assetChangesPending && <p>Asset 변경을 확정한 뒤 Typography/Colors 설정을 저장할 수 있어요.</p>}
             <button type="submit" className="save-button" disabled={saving || assetChangesPending}>{saving ? "저장 중..." : "Typography + Colors 저장"}</button>

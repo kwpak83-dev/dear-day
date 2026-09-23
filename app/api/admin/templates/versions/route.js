@@ -45,7 +45,7 @@ export async function GET(request) {
   if (!uuid.test(templateId || "")) return fail("템플릿 정보가 올바르지 않아요.", 400);
   const result = await readVersions(auth.serverClient, templateId);
   if (result.error) return result.error;
-  return Response.json({ template: { status: result.template.status, isVisible: result.template.is_visible, isActive: result.template.is_active }, current: result.current && { id: result.current.id, version: result.current.version, status: result.current.status }, draft: result.draft && { id: result.draft.id, version: result.draft.version, decorations: Array.isArray(result.draft.config?.decorations) ? result.draft.config.decorations : [], background: result.draft.config?.background ?? null, hero: result.draft.config?.hero ?? null, typography: result.draft.config?.typography ?? null, colors: result.draft.config?.colors ?? null, sections: result.draft.config?.sections ?? null, effects: result.draft.config?.effects ?? null, bgm: result.draft.config?.bgm ?? null, safeArea: result.draft.config?.safeArea ?? null } });
+  return Response.json({ template: { status: result.template.status, isVisible: result.template.is_visible, isActive: result.template.is_active }, current: result.current && { id: result.current.id, version: result.current.version, status: result.current.status }, draft: result.draft && { id: result.draft.id, version: result.draft.version, decorations: Array.isArray(result.draft.config?.decorations) ? result.draft.config.decorations : [], background: result.draft.config?.background ?? null, hero: result.draft.config?.hero ?? null, typography: result.draft.config?.typography ?? null, colors: result.draft.config?.colors ?? null, quickMenu: result.draft.config?.quickMenu ?? null, sections: result.draft.config?.sections ?? null, effects: result.draft.config?.effects ?? null, bgm: result.draft.config?.bgm ?? null, safeArea: result.draft.config?.safeArea ?? null } });
 }
 
 export async function POST(request) {
@@ -142,7 +142,7 @@ export async function PATCH(request) {
   const body = await request.json().catch(() => null);
   if (isRecord(body) && ("effects" in body || "bgm" in body || "safeArea" in body)) return saveEffectsBgmSafeArea(auth, body);
   if (isRecord(body) && "sections" in body) return saveSections(auth, body);
-  if (isRecord(body) && ("typography" in body || "colors" in body)) return saveTypographyColors(auth, body);
+  if (isRecord(body) && ("typography" in body || "colors" in body || "quickMenu" in body)) return saveTypographyColors(auth, body);
   if (isRecord(body) && ("background" in body || "hero" in body)) return saveBackgroundHero(auth, body);
   if (!uuid.test(body?.templateId || "") || !uuid.test(body?.draftId || "") ||
       !validDecorations(body?.decorations)) return fail("장식 배치값을 확인해 주세요.", 400);
@@ -368,10 +368,18 @@ function validColors(value) {
   return hasOnlyKeys(value, colorFields) && colorFields.every((field) => hexColor(value[field]));
 }
 
+function validQuickMenu(value) {
+  return hasOnlyKeys(value, ["rsvpIcon", "locationIcon", "guestbookIcon", "fontSize", "iconSize"]) &&
+    [value.rsvpIcon, value.locationIcon, value.guestbookIcon].every((icon) =>
+      typeof icon === "string" && icon.length >= 1 && icon.length <= 8 && icon === icon.trim()) &&
+    Number.isInteger(value.fontSize) && value.fontSize >= 8 && value.fontSize <= 18 &&
+    Number.isInteger(value.iconSize) && value.iconSize >= 12 && value.iconSize <= 32;
+}
+
 async function saveTypographyColors(auth, body) {
-  if (!hasOnlyKeys(body, ["templateId", "draftId", "typography", "colors"]) ||
+  if (!hasOnlyKeys(body, ["templateId", "draftId", "typography", "colors", "quickMenu"]) ||
       !uuid.test(body.templateId || "") || !uuid.test(body.draftId || "") ||
-      !validTypography(body.typography) || !validColors(body.colors)) {
+      !validTypography(body.typography) || !validColors(body.colors) || !validQuickMenu(body.quickMenu)) {
     return fail("Typography/Colors 설정값을 확인해 주세요.", 400);
   }
   const result = await readVersions(auth.serverClient, body.templateId);
@@ -387,7 +395,8 @@ async function saveTypographyColors(auth, body) {
     typography[role] = { ...(isRecord(existingTypography[role]) ? existingTypography[role] : {}), ...body.typography[role] };
   }
   const colors = { ...(isRecord(previous.colors) ? previous.colors : {}), ...body.colors };
-  const config = { ...previous, typography, colors };
+  const quickMenu = { ...(isRecord(previous.quickMenu) ? previous.quickMenu : {}), ...body.quickMenu };
+  const config = { ...previous, typography, colors, quickMenu };
   const { data: updated, error } = await auth.adminClient.from("template_versions")
     .update({ config })
     .eq("id", body.draftId)
@@ -397,5 +406,5 @@ async function saveTypographyColors(auth, body) {
     .maybeSingle();
   if (error) return fail("Typography/Colors 설정을 저장하지 못했어요.", 500);
   if (!updated) return fail("편집 Draft를 수정하지 못했어요. 다시 불러와 주세요.", 409);
-  return Response.json({ draftId: body.draftId, typography, colors });
+  return Response.json({ draftId: body.draftId, typography, colors, quickMenu });
 }

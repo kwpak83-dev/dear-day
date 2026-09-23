@@ -22,6 +22,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   const hero = config?.hero;
   const typography = config?.typography;
   const colors = config?.colors;
+  const quickMenu = config?.quickMenu;
   const backgroundUrl = background?.assetId ? assets[background.assetId] : null;
   const heroBackgroundUrl = hero?.backgroundAssetId ? assets[hero.backgroundAssetId] : null;
   const showCoverPhoto = hero?.mode !== "illustration";
@@ -73,6 +74,13 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   }
   for (const [key, variable] of [["text", "text"], ["title", "title"], ["muted", "muted"], ["accent", "accent"], ["buttonBackground", "button-bg"], ["buttonText", "button-text"], ["divider", "divider"]]) {
     set(rootStyle, `--dd-color-${variable}`, colors?.[key]);
+  }
+  if (quickMenu) {
+    set(rootStyle, "--dd-quick-menu-font-size", quickMenu.fontSize, "px");
+    set(rootStyle, "--dd-quick-menu-icon-size", quickMenu.iconSize, "px");
+    set(rootStyle, "--dd-quick-menu-rsvp-icon", JSON.stringify(quickMenu.rsvpIcon));
+    set(rootStyle, "--dd-quick-menu-location-icon", JSON.stringify(quickMenu.locationIcon));
+    set(rootStyle, "--dd-quick-menu-guestbook-icon", JSON.stringify(quickMenu.guestbookIcon));
   }
   const sections = config?.sections;
   if (sections) {
