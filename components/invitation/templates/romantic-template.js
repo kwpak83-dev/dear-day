@@ -13,6 +13,9 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
   const hasInformation = Boolean(schedule || venue || address);
   const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
   const showHero = (key) => templateConfig?.hero?.display?.[key] !== false;
+  const defaultMastheadText = wedding ? "WEDDING INVITATION" : kindLabel;
+  const mastheadText = templateConfig?.hero?.mastheadText?.trim() || defaultMastheadText;
+  const showMastheadText = templateConfig?.hero?.mastheadVisible !== false;
   const showCoverPhoto = Boolean(coverPhotoUrl && renderConfig.showCoverPhoto);
   const showIllustration = Boolean(renderConfig.illustrationMode && renderConfig.heroBackgroundConfigured);
   const hasHeroVisual = showCoverPhoto || showIllustration;
@@ -22,10 +25,10 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
     <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} />
     {bgmControl}
     {screenEffect}
-    <header className="romantic-masthead">
-      <p>{wedding ? "WEDDING INVITATION" : kindLabel}</p>
+    {showMastheadText && <header className="romantic-masthead">
+      <p>{mastheadText}</p>
       <span aria-hidden="true">· ♡ ·</span>
-    </header>
+    </header>}
 
     <section className={`romantic-hero${hasHeroVisual ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
       {hasHeroVisual && <figure className="romantic-hero-photo" style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
