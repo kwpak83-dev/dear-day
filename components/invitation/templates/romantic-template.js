@@ -39,7 +39,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
     <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} />
     {bgmControl}
     {screenEffect}
-    {showHeader && showMastheadText && <header className="romantic-masthead">
+    {showMastheadText && <header className="romantic-masthead">
       <p>{mastheadText}</p>
       <span aria-hidden="true">· ♡ ·</span>
     </header>}
