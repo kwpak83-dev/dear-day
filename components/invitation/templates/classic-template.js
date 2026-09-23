@@ -6,7 +6,7 @@ function ClassicHeading({ eyebrow, children }) {
 }
 
 export default function ClassicTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, bgmControl, screenEffect, children }) {
-  const { kindLabel, title, detail, note, schedule, venue, address, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
+  const { kindLabel, title, detail, note, heroSchedule, schedule, venue, address, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map((value) => value.trim()).filter(Boolean) : [];
   const hasInformation = Boolean(schedule || venue || address);
@@ -56,7 +56,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
         </div>}
         {showHero("detail") && detail && <span className="classic-detail">{detail}</span>}
         {showHero("note") && note && <span className="classic-note">{note}</span>}
-        {showHero("schedule") && schedule && <time>{schedule}</time>}
+        {showHero("schedule") && heroSchedule && <time>{heroSchedule}</time>}
         {showHero("venue") && venue && <strong>{venue}</strong>}
       </div>
     </section>
