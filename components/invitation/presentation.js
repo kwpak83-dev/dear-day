@@ -74,6 +74,8 @@ export function getInvitationPresentation(invitation = {}, eventKind) {
     note: clean(event.note),
     groomRelation: clean(event.groomRelation),
     brideRelation: clean(event.brideRelation),
+    eventDate: clean(invitation.date),
+    eventTime: clean(invitation.time),
     heroSchedule: formatHeroSchedule(invitation.date, invitation.time),
     schedule: join([formatDate(invitation.date), invitation.time]),
     venue: clean(invitation.venue),
