@@ -62,11 +62,10 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
       </div>
     </section>
 
-    {hasInformation && <section className="classic-section classic-information classic-information-before-invitation">
+    {(schedule || venue) && <section className="classic-section classic-information-lead">
       <div className="classic-information-body">
         {schedule && <time>{schedule}</time>}
         {venue && <strong>{venue}</strong>}
-        {address && <p>{address}</p>}
       </div>
     </section>}
 
@@ -80,7 +79,15 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
       </div>}
     </section>}
 
-    {hasInformation && placeActions && <div className="classic-place-actions-after-invitation">{placeActions}</div>}
+    {hasInformation && <section className="classic-section classic-information">
+      <ClassicHeading eyebrow="DATE & PLACE">{wedding ? "예식 안내" : "행사 안내"}</ClassicHeading>
+      <div className="classic-information-body">
+        {schedule && <time>{schedule}</time>}
+        {venue && <strong>{venue}</strong>}
+        {address && <p>{address}</p>}
+        {placeActions}
+      </div>
+    </section>}
 
     {children && <div className="invitation-template-sections">{children}</div>}
 
