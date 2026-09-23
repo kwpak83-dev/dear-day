@@ -71,7 +71,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
 
     {message && <section className="classic-section classic-message">
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="section" />
-      <ClassicHeading eyebrow="INVITATION">소중한 분들을 초대합니다</ClassicHeading>
+      <ClassicHeading eyebrow="INVITATION"></ClassicHeading>
       <blockquote>{message}</blockquote>
       {wedding && (groomRelation || brideRelation) && <div className="classic-invitation-family">
         {groomRelation && <p>{groomRelation}</p>}
