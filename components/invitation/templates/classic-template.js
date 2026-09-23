@@ -120,9 +120,8 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
     <ClassicDateSection eventDate={eventDate} eventTime={eventTime} title={title} wedding={wedding} />
 
     {hasInformation && <section className="classic-section classic-information">
-      <ClassicHeading eyebrow="DATE & PLACE">{wedding ? "예식 안내" : "행사 안내"}</ClassicHeading>
+      <ClassicHeading eyebrow="PLACE">{wedding ? "오시는 길" : "오시는 길"}</ClassicHeading>
       <div className="classic-information-body">
-        {schedule && <time>{schedule}</time>}
         {venue && <strong>{venue}</strong>}
         {address && <p>{address}</p>}
         {placeActions}
