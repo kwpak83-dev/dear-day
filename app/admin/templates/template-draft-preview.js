@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import InvitationRenderer from "../../../components/invitation/invitation-renderer";
 import InvitationMap from "../../../components/invitation/invitation-map";
 import OptionalInvitationSections from "../../invite/[slug]/optional-invitation-sections";
@@ -23,6 +23,24 @@ const draftConfig = (draft) => draft ? ({
 }) : null;
 
 function PreviewSections({ showQuickMenu = false }) {
+  const [quickMenuVisible, setQuickMenuVisible] = useState(false);
+
+  useEffect(() => {
+    if (!showQuickMenu) {
+      setQuickMenuVisible(false);
+      return;
+    }
+    const trigger = document.getElementById("admin-preview-quick-menu-trigger");
+    if (!trigger) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setQuickMenuVisible(true);
+        observer.disconnect();
+      }
+    }, { threshold: 0.1 });
+    observer.observe(trigger);
+    return () => observer.disconnect();
+  }, [showQuickMenu]);
   return <div className="public-invitation-sections">
     <section className="invitation-gallery" aria-label="샘플 갤러리">
       <p className="gallery-kicker">OUR MOMENTS</p><h2>우리의 순간들</h2>
@@ -31,7 +49,8 @@ function PreviewSections({ showQuickMenu = false }) {
     <section className="public-accounts"><h2>마음 전하실 곳</h2><article className="public-account-card"><p>신랑 측</p><strong>디어은행 · 경원</strong><div><span>123-456-7890</span><button type="button" disabled>계좌 복사</button></div></article></section>
     <OptionalInvitationSections invitation={sampleInvitation} preview />
     <footer>디어데이와 함께하는 소중한 순간</footer>
-    {showQuickMenu && <nav className="invitation-quick-menu" aria-label="초대장 빠른 메뉴 미리보기">
+    {showQuickMenu && <span id="admin-preview-quick-menu-trigger" className="invitation-quick-menu-trigger" aria-hidden="true" />}
+    {quickMenuVisible && <nav className="invitation-quick-menu" aria-label="초대장 빠른 메뉴 미리보기">
       <button className="invitation-quick-rsvp" type="button" disabled><b aria-hidden="true" /><span>참석 여부</span></button>
       <button className="invitation-quick-location" type="button" disabled><b aria-hidden="true" /><span>오시는 길</span></button>
       <button className="invitation-quick-guestbook" type="button" disabled><b aria-hidden="true" /><span>축하 메시지</span></button>
