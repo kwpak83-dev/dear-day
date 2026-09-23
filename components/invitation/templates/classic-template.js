@@ -38,7 +38,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
     <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} />
     {bgmControl}
     {screenEffect}
-    {(showHeader || showMastheadText) && <header className="classic-masthead">{showHeader && <b>DearDay</b>}{showMastheadText && <span>{mastheadText}</span>}</header>}
+    {(showHeader || showMastheadText) && <header className={`classic-masthead${!showHeader && showMastheadText ? " event-only" : ""}`}>{showHeader && <b>DearDay</b>}{showMastheadText && <span>{mastheadText}</span>}</header>}
 
     <section className={`classic-hero${hasHeroVisual ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
       {hasHeroVisual && <figure style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
