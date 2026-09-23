@@ -919,3 +919,6 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Invitation heading: keep kicker only and pull body content upward. */
 .classic-001 .classic-message .classic-section-heading h3:empty{display:none}
 .classic-001 .classic-message .classic-section-heading:has(h3:empty){margin-bottom:18px}
+
+/* Pull Invitation up directly beneath Hero after removing the duplicate date/place lead-in. */
+.classic-001 .classic-message{padding-top:44px}
