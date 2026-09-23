@@ -60,10 +60,12 @@ function ColorControl({ label, value, onChange }) {
 
 function AssetSelect({ label, assets, value, onChange }) {
   const selected = assets.find((asset) => asset.id === value);
+  const inactiveValue = value && !selected;
   return <label style={field}>{label}<select style={input} value={value || ""} onChange={(event) => onChange(event.target.value || null)}>
     <option value="">사용 안 함</option>
+    {inactiveValue && <option value={value}>비활성 Asset (변경 필요)</option>}
     {assets.map((asset) => <option key={asset.id} value={asset.id}>{asset.name || asset.id}</option>)}
-  </select>{value && !selected && <span role="alert">저장된 Asset이 비활성 상태입니다. 다른 Asset 또는 사용 안 함을 선택해 주세요.</span>}{selected?.url && <img src={selected.url} alt={`${label} 미리보기`} loading="lazy" style={{ width: 72, height: 72, objectFit: "contain" }} />}</label>;
+  </select>{inactiveValue && <span role="alert">저장된 Asset이 비활성 상태입니다. 다른 Asset 또는 사용 안 함을 선택해 주세요.</span>}{selected?.url && <img src={selected.url} alt={`${label} 미리보기`} loading="lazy" style={{ width: 72, height: 72, objectFit: "contain" }} />}</label>;
 }
 
 function NumberControl({ label, value, min, max, step = 1, onChange }) {
