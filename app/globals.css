@@ -861,3 +861,13 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .shared-public-invitation{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 .dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button){min-height:var(--dd-button-height);height:var(--dd-button-height);box-sizing:border-box;border-width:var(--dd-button-border-width);border-style:solid;border-color:var(--dd-button-border-color);border-radius:var(--dd-button-radius);font-size:var(--dd-button-font-size)}
 .dd-template-button-style :is(.public-rsvp form>button,.guestbook-form>button){width:var(--dd-button-width);justify-self:center}
+
+/* Admin template editor: desktop side-by-side controls + sticky live preview */
+.admin-template-editor-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,580px);gap:24px;align-items:start}
+.admin-template-editor-controls{min-width:0}
+.admin-template-editor-preview{position:sticky;top:16px;min-width:0;max-height:calc(100vh - 32px);overflow:auto;scrollbar-gutter:stable}
+.admin-template-editor-preview .admin-draft-preview{margin:0}
+@media (max-width:1100px){
+  .admin-template-editor-layout{grid-template-columns:1fr}
+  .admin-template-editor-preview{position:static;max-height:none;overflow:visible;order:-1}
+}
