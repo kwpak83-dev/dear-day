@@ -915,3 +915,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .classic-001 .classic-information-lead .classic-information-body{margin-top:0}
 .classic-001 .classic-information-lead .classic-information-body>time{font-size:14px;letter-spacing:.04em}
 .classic-001 .classic-information-lead .classic-information-body>strong{margin-top:7px;font-size:13px;font-weight:400}
+
+/* Invitation heading: keep kicker only and pull body content upward. */
+.classic-001 .classic-message .classic-section-heading h3:empty{display:none}
+.classic-001 .classic-message .classic-section-heading:has(h3:empty){margin-bottom:18px}
