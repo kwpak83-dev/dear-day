@@ -909,3 +909,9 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .classic-001 .classic-information-before-invitation .classic-information-body>strong{margin-top:7px;font-size:13px;font-weight:400}
 .classic-001 .classic-information-before-invitation .classic-information-body>p{margin-top:4px;font-size:11px}
 .classic-001 .classic-place-actions-after-invitation{padding:0 clamp(25px,9vw,50px) 56px;text-align:center}
+
+/* Date/place lead-in only; full location/map remains in its original section. */
+.classic-001 .classic-information-lead{padding-top:44px;padding-bottom:42px;text-align:center}
+.classic-001 .classic-information-lead .classic-information-body{margin-top:0}
+.classic-001 .classic-information-lead .classic-information-body>time{font-size:14px;letter-spacing:.04em}
+.classic-001 .classic-information-lead .classic-information-body>strong{margin-top:7px;font-size:13px;font-weight:400}
