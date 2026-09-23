@@ -372,41 +372,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
           
           <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Background + Hero 저장"}</button>
         </form>
-        <section style={configSection}><h3 style={configHeading}>Decoration 배치 설정</h3>
-        <p style={guideNote}>등록한 장식 Asset을 Hero·섹션·배경에 배치하고 위치·크기·회전·투명도·레이어를 조절합니다.</p>
-        <MappingTable rows={[
-          ["Slot", "장식이 놓이는 영역", "Hero / 섹션 / 배경"],
-          ["X % / Y %", "장식의 가로·세로 위치", "꽃을 우측 상단으로 이동"],
-          ["크기 %", "장식 이미지 크기", "20% → 35%"],
-          ["회전 °", "장식 회전 각도", "-15° · 20°"],
-          ["투명도", "장식의 진하기", "0.5 = 반투명"],
-          ["레이어 순서", "장식 앞뒤 순서", "숫자가 클수록 위"],
-          ["표시", "해당 장식 노출 여부", "체크 해제 = 숨김"],
-        ]} />
-        {!decorationAssets.length ? <p>활성 장식 Asset이 없습니다. 아래 Asset 영역에서 장식을 등록해 주세요.</p> :
-          <form onSubmit={saveDecorations} style={{ display: "grid", gap: 16 }}>
-            {decorationAssets.map((asset) => {
-              const placement = placements.find((item) => item.assetId === asset.id) || defaults(asset.id);
-              return <div key={asset.id} style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: 12, minWidth: 0 }}>
-                <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-                  {asset.url && <img src={asset.url} alt="" style={{ width: 64, height: 64, objectFit: "contain" }} />}
-                  <strong style={{ overflowWrap: "anywhere" }}>{asset.name || asset.id}</strong>
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10, marginTop: 12 }}>
-                  <label style={field}>Slot<select style={input} value={placement.slot} onChange={(event) => update(asset.id, "slot", event.target.value)}>{slots.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-                  {[
-                    ["xPercent", "X %", 0, 100, 1], ["yPercent", "Y %", 0, 100, 1],
-                    ["widthPercent", "크기 %", 1, 100, 1], ["rotationDeg", "회전 °", -180, 180, 1],
-                    ["opacity", "투명도", 0, 1, 0.01], ["zIndex", "레이어 순서", 0, 20, 1],
-                  ].map(([key, label, min, max, step]) =>
-                    <label key={key} style={field}>{label}<input style={input} type="number" required min={min} max={max} step={step} value={placement[key]} onChange={(event) => update(asset.id, key, Number(event.target.value))} /></label>)}
-                  <label style={{ ...field, alignContent: "center" }}><span>표시</span><input type="checkbox" checked={placement.visible} onChange={(event) => update(asset.id, "visible", event.target.checked)} /></label>
-                </div>
-              </div>;
-            })}
-            
-            <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Draft 장식 배치 저장"}</button>
-          </form>}</section>
+
         <section style={configSection}>
           <h3 style={configHeading}>Typography + Colors Config</h3>
           <p style={guideNote}>초대장의 글꼴·크기·정렬·색상과 일반 버튼 및 Quick Menu 디자인을 설정합니다.</p>
@@ -548,6 +514,41 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
             <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Sections 저장"}</button>
           </form>
         </section>
+        <section style={configSection}><h3 style={configHeading}>Decoration 배치 설정</h3>
+        <p style={guideNote}>등록한 장식 Asset을 Hero·섹션·배경에 배치하고 위치·크기·회전·투명도·레이어를 조절합니다.</p>
+        <MappingTable rows={[
+          ["Slot", "장식이 놓이는 영역", "Hero / 섹션 / 배경"],
+          ["X % / Y %", "장식의 가로·세로 위치", "꽃을 우측 상단으로 이동"],
+          ["크기 %", "장식 이미지 크기", "20% → 35%"],
+          ["회전 °", "장식 회전 각도", "-15° · 20°"],
+          ["투명도", "장식의 진하기", "0.5 = 반투명"],
+          ["레이어 순서", "장식 앞뒤 순서", "숫자가 클수록 위"],
+          ["표시", "해당 장식 노출 여부", "체크 해제 = 숨김"],
+        ]} />
+        {!decorationAssets.length ? <p>활성 장식 Asset이 없습니다. 아래 Asset 영역에서 장식을 등록해 주세요.</p> :
+          <form onSubmit={saveDecorations} style={{ display: "grid", gap: 16 }}>
+            {decorationAssets.map((asset) => {
+              const placement = placements.find((item) => item.assetId === asset.id) || defaults(asset.id);
+              return <div key={asset.id} style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: 12, minWidth: 0 }}>
+                <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+                  {asset.url && <img src={asset.url} alt="" style={{ width: 64, height: 64, objectFit: "contain" }} />}
+                  <strong style={{ overflowWrap: "anywhere" }}>{asset.name || asset.id}</strong>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10, marginTop: 12 }}>
+                  <label style={field}>Slot<select style={input} value={placement.slot} onChange={(event) => update(asset.id, "slot", event.target.value)}>{slots.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+                  {[
+                    ["xPercent", "X %", 0, 100, 1], ["yPercent", "Y %", 0, 100, 1],
+                    ["widthPercent", "크기 %", 1, 100, 1], ["rotationDeg", "회전 °", -180, 180, 1],
+                    ["opacity", "투명도", 0, 1, 0.01], ["zIndex", "레이어 순서", 0, 20, 1],
+                  ].map(([key, label, min, max, step]) =>
+                    <label key={key} style={field}>{label}<input style={input} type="number" required min={min} max={max} step={step} value={placement[key]} onChange={(event) => update(asset.id, key, Number(event.target.value))} /></label>)}
+                  <label style={{ ...field, alignContent: "center" }}><span>표시</span><input type="checkbox" checked={placement.visible} onChange={(event) => update(asset.id, "visible", event.target.checked)} /></label>
+                </div>
+              </div>;
+            })}
+            
+            <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Draft 장식 배치 저장"}</button>
+          </form>}</section>
         <section style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: 12, marginTop: 28, minWidth: 0 }}>
           <h3>Effects / BGM / Safe Area Config</h3>
           <p style={guideNote}>스크롤 등장 효과, 화면 장식 효과, 배경음악과 콘텐츠 안전 여백을 설정합니다.</p>
