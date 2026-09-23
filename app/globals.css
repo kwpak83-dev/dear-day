@@ -922,3 +922,17 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* Pull Invitation up directly beneath Hero after removing the duplicate date/place lead-in. */
 .classic-001 .classic-message{padding-top:44px}
+
+
+/* Classic DATE calendar section */
+.classic-001 .classic-date{text-align:center;padding-top:48px;padding-bottom:52px}
+.classic-001 .classic-date-summary{margin:4px 0 28px;font-size:14px;letter-spacing:.04em;color:var(--dd-color-text,#333)}
+.classic-001 .classic-calendar{width:min(82%,360px);margin:0 auto;padding:22px 0;border-top:1px solid var(--dd-color-divider,#e8e2de);border-bottom:1px solid var(--dd-color-divider,#e8e2de)}
+.classic-001 .classic-calendar-month{margin-bottom:18px;font-family:var(--dd-section-title-font-family,serif);font-size:17px;color:var(--dd-color-title,#222)}
+.classic-001 .classic-calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:7px 4px;align-items:center}
+.classic-001 .classic-calendar-grid span{display:flex;align-items:center;justify-content:center;min-height:30px;font-size:12px;color:var(--dd-color-text,#333)}
+.classic-001 .classic-calendar-weekdays{margin-bottom:6px}
+.classic-001 .classic-calendar-weekdays span{font-size:11px;color:var(--dd-color-muted,#777)}
+.classic-001 .classic-calendar-grid span.is-event-day{width:30px;height:30px;min-height:30px;margin:auto;border-radius:50%;background:var(--dd-color-accent,#b78b72);color:#fff;font-weight:600}
+.classic-001 .classic-dday{margin:26px 0 0;font-size:13px;line-height:1.8;color:var(--dd-color-text,#333)}
+.classic-001 .classic-dday strong{font-weight:500;color:var(--dd-color-title,#222)}
