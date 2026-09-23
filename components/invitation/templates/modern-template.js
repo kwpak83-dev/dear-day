@@ -29,6 +29,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
   const defaultMastheadText = mastheadLabels[eventKind] || "INVITATION";
   const mastheadText = templateConfig?.hero?.mastheadText?.trim() || defaultMastheadText;
   const showMastheadText = templateConfig?.hero?.mastheadVisible !== false;
+  const showHeader = templateConfig?.hero?.headerVisible !== false;
   const showCoverPhoto = Boolean(coverPhotoUrl && renderConfig.showCoverPhoto);
   const showIllustration = Boolean(renderConfig.illustrationMode && renderConfig.heroBackgroundConfigured);
   const hasHeroVisual = showCoverPhoto || showIllustration;
@@ -38,7 +39,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
     <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} />
     {bgmControl}
     {screenEffect}
-    <header className="modern-masthead">
+    {showHeader && <header className="modern-masthead">
       <b>DearDay</b>
       {showMastheadText && <span>{mastheadText}</span>}
     </header>
