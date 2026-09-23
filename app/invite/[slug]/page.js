@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
 import InvitationRenderer from "../../../components/invitation/invitation-renderer";
 import InvitationMap from "../../../components/invitation/invitation-map";
+import DearDayBrandFooter from "../../../components/invitation/dearday-brand-footer";
 import Gallery from "./gallery";
 import AccountCopy from "./account-copy";
 import AddressCopy from "./address-copy";
@@ -64,17 +65,7 @@ export default async function InvitationPage({ params, searchParams }) {
   return <main className="public-invitation shared-public-invitation">
     {ownerView && <nav className="owner-return-nav" aria-label="DearDay 관리 화면으로 돌아가기"><a href="/my-invitations">내 초대장</a><a href="/">DearDay 홈</a></nav>}
     <div className="full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} templateConfig={templateConfig} templateAssets={templateAssets} placeActions={<><AddressCopy invitation={invitation} /><InvitationMap address={invitation.venueAddress} venue={invitation.venue} /></>}>
-      <div className="public-invitation-sections"><Gallery photos={galleryPhotos} /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} slug={slug} startsAt={event.starts_at} /><LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} /><footer className="dearday-brand-footer">
-        <a href="/" className="dearday-brand-footer-link" aria-label="DearDay에서 초대장 만들기">
-          <div className="dearday-heart-line" aria-hidden="true"><span>♡</span></div>
-          <strong className="dearday-brand-name">DearDay</strong>
-          <span className="dearday-brand-tagline">good people, good moment</span>
-          <span className="dearday-brand-divider" aria-hidden="true" />
-          <span className="dearday-brand-message">당신의 특별한 순간도<br />디어데이와 함께하세요.</span>
-          <span className="dearday-brand-arrow" aria-hidden="true">→</span>
-          <span className="dearday-brand-cta">디어데이에서 초대장 만들기</span>
-        </a>
-      </footer></div>
+      <div className="public-invitation-sections"><Gallery photos={galleryPhotos} /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} slug={slug} startsAt={event.starts_at} /><LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} /><DearDayBrandFooter /></div>
     </InvitationRenderer></div>
     <span id="invitation-quick-menu-trigger" className="invitation-quick-menu-trigger" aria-hidden="true" />
   </main>;
