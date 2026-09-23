@@ -62,6 +62,14 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
       </div>
     </section>
 
+    {hasInformation && <section className="classic-section classic-information classic-information-before-invitation">
+      <div className="classic-information-body">
+        {schedule && <time>{schedule}</time>}
+        {venue && <strong>{venue}</strong>}
+        {address && <p>{address}</p>}
+      </div>
+    </section>}
+
     {message && <section className="classic-section classic-message">
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="section" />
       <ClassicHeading eyebrow="INVITATION">소중한 분들을 초대합니다</ClassicHeading>
@@ -72,15 +80,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
       </div>}
     </section>}
 
-    {hasInformation && <section className="classic-section classic-information">
-      <ClassicHeading eyebrow="DATE & PLACE">{wedding ? "예식 안내" : "행사 안내"}</ClassicHeading>
-      <div className="classic-information-body">
-        {schedule && <time>{schedule}</time>}
-        {venue && <strong>{venue}</strong>}
-        {address && <p>{address}</p>}
-        {placeActions}
-      </div>
-    </section>}
+    {hasInformation && placeActions && <div className="classic-place-actions-after-invitation">{placeActions}</div>}
 
     {children && <div className="invitation-template-sections">{children}</div>}
 
