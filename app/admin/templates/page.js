@@ -85,7 +85,7 @@ export default function AdminTemplatesPage() {
       setNotice(error.message || "Asset 변경을 취소하지 못했어요. 다시 시도해 주세요.");
     } finally { setSaving(false); }
   };
-  return <main style={{ maxWidth: 880, margin: "0 auto", padding: "32px 16px 64px" }}>
+  return <main style={{ maxWidth: editing && editing !== "new" ? 1480 : 880, margin: "0 auto", padding: "32px 16px 64px" }}>
     <p className="section-kicker">ADMIN · TEMPLATES</p><h1>템플릿 관리</h1>
     {state.loading ? <p>템플릿 목록을 불러오는 중이에요.</p> : state.error ? <section className="my-notice"><p>{state.error}</p>{state.status === 401 && <a className="my-login-button" href="/?login=required&returnUrl=%2Fadmin%2Ftemplates">로그인하기</a>}</section> : <>
       {editing ? <button type="button" className="save-button" disabled={saving} onClick={cancel}>← 템플릿 목록으로</button> : <button type="button" className="save-button" onClick={() => openForm()}>새 템플릿 등록</button>}
