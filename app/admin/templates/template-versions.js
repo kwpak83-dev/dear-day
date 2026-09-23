@@ -20,7 +20,7 @@ const placementFor = (assetId, saved) => {
 };
 const heroDisplayDefaults = { eyebrow: true, eventLabel: true, title: true, relations: true, detail: true, note: true, schedule: true, venue: true };
 const backgroundDefaults = { color: "#ffffff", assetId: null, overlayColor: "#000000", overlayOpacity: 0 };
-const heroDefaults = { mode: "photo", aspectRatio: "4:5", positionX: 50, positionY: 50, textYPercent: 50, zoom: 1, backgroundAssetId: null, frameAssetId: null, overlayColor: "#000000", overlayOpacity: 0, mastheadVisible: true, mastheadText: "", display: heroDisplayDefaults };
+const heroDefaults = { mode: "photo", aspectRatio: "4:5", positionX: 50, positionY: 50, textYPercent: 50, scheduleFontSize: 11, zoom: 1, backgroundAssetId: null, frameAssetId: null, overlayColor: "#000000", overlayOpacity: 0, mastheadVisible: true, mastheadText: "", display: heroDisplayDefaults };
 const typographyDefaults = {
   heroTitle: { fontFamily: "serif", fontSize: 32, fontWeight: 400, lineHeight: 1.3, letterSpacing: 0, textAlign: "center" },
   sectionTitle: { fontFamily: "serif", fontSize: 22, fontWeight: 500, lineHeight: 1.4, letterSpacing: 0, textAlign: "center" },
@@ -340,6 +340,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               <NumberControl label="사진 X 위치 %" value={hero.positionX} min={0} max={100} onChange={(positionX) => setHero({ ...hero, positionX })} />
               <NumberControl label="사진 Y 위치 %" value={hero.positionY} min={0} max={100} onChange={(positionY) => setHero({ ...hero, positionY })} />
               <NumberControl label="Hero Text Y 위치 %" value={hero.textYPercent} min={0} max={100} onChange={(textYPercent) => setHero({ ...hero, textYPercent })} />
+               <NumberControl label="Hero 날짜 글자 크기 (px)" value={hero.scheduleFontSize} min={8} max={24} onChange={(scheduleFontSize) => setHero({ ...hero, scheduleFontSize })} />
               <NumberControl label="사진 Zoom" value={hero.zoom} min={0.5} max={2} step={0.05} onChange={(zoom) => setHero({ ...hero, zoom })} />
               <AssetSelect label="Hero Background Asset" assets={backgroundAssets} value={hero.backgroundAssetId} onChange={(backgroundAssetId) => setHero({ ...hero, backgroundAssetId })} />
               <AssetSelect label="Hero Frame Asset" assets={frameAssets} value={hero.frameAssetId} onChange={(frameAssetId) => setHero({ ...hero, frameAssetId })} />
