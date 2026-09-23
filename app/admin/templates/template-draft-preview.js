@@ -31,7 +31,6 @@ function PreviewSections({ showQuickMenu = false, quickMenuVisible = false }) {
     <section className="public-accounts"><h2>마음 전하실 곳</h2><article className="public-account-card"><p>신랑 측</p><strong>디어은행 · 경원</strong><div><span>123-456-7890</span><button type="button" disabled>계좌 복사</button></div></article></section>
     <OptionalInvitationSections invitation={sampleInvitation} preview />
     <footer>디어데이와 함께하는 소중한 순간</footer>
-    {showQuickMenu && <span className="invitation-quick-menu-trigger" aria-hidden="true" ref={onQuickMenuTrigger} />}
     {showQuickMenu && quickMenuVisible && <nav className="invitation-quick-menu" aria-label="초대장 빠른 메뉴 미리보기">
       <button className="invitation-quick-rsvp" type="button" disabled><b aria-hidden="true" /><span>참석 여부</span></button>
       <button className="invitation-quick-location" type="button" disabled><b aria-hidden="true" /><span>오시는 길</span></button>
@@ -85,7 +84,8 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
       </div>}
     {full && <div className="admin-draft-full-preview" role="dialog" aria-modal="true" aria-label="Draft 전체 미리보기" onKeyDown={(event) => { if (event.key === "Escape") setFull(false); }}>
       <div className="admin-draft-full-preview-toolbar" style={{ width, maxWidth: "100%" }}><strong>{`Draft 전체 미리보기 · ${width}px`}</strong><button type="button" onClick={() => setFull(false)}>닫기</button></div>
-      <div className="admin-draft-full-preview-device full-invitation-renderer" style={{ width, maxWidth: "100%" }}>{renderInvitation(width, true)}</div>\n      <span className="invitation-quick-menu-trigger" aria-hidden="true" ref={observeQuickMenuTrigger} />
+      <div className="admin-draft-full-preview-device full-invitation-renderer" style={{ width, maxWidth: "100%" }}>{renderInvitation(width, true)}</div>
+      <span className="invitation-quick-menu-trigger" aria-hidden="true" ref={observeQuickMenuTrigger} />
     </div>}
   </section>;
 }
