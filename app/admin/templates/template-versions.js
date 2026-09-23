@@ -27,11 +27,11 @@ const typographyDefaults = {
   body: { fontFamily: "sans", fontSize: 16, fontWeight: 400, lineHeight: 1.7, letterSpacing: 0, textAlign: "center" },
   caption: { fontFamily: "sans", fontSize: 13, fontWeight: 400, lineHeight: 1.5, letterSpacing: 0, textAlign: "center" },
 };
-const colorDefaults = { text: "#333333", title: "#222222", muted: "#777777", accent: "#b78b72", buttonBackground: "#b78b72", buttonText: "#ffffff", divider: "#e8e2de" };
+const colorDefaults = { text: "#333333", title: "#222222", heroTitle: "#222222", muted: "#777777", accent: "#b78b72", buttonBackground: "#b78b72", buttonText: "#ffffff", divider: "#e8e2de" };
 const buttonStyleDefaults = { width: 100, height: 44, fontSize: 12, borderRadius: 9, borderWidth: 0, borderColor: "#b78b72" };
 const quickMenuDefaults = { rsvpIcon: "✓", locationIcon: "⌖", guestbookIcon: "♡", rsvpIconAssetId: null, locationIconAssetId: null, guestbookIconAssetId: null, fontSize: 11, iconSize: 18 };
 const typographyRoles = [["heroTitle", "Hero Title"], ["sectionTitle", "Section Title"], ["body", "Body"], ["caption", "Caption / Small"]];
-const colorLabels = [["text", "기본 글자색"], ["title", "제목 색상"], ["muted", "보조 글자색"], ["accent", "포인트 색상"], ["buttonBackground", "버튼 배경"], ["buttonText", "버튼 글자"], ["divider", "구분선"]];
+const colorLabels = [["text", "기본 글자색"], ["title", "본문 제목 색상"], ["heroTitle", "Hero 제목 색상"], ["muted", "보조 글자색"], ["accent", "포인트 색상"], ["buttonBackground", "버튼 배경"], ["buttonText", "버튼 글자"], ["divider", "구분선"]];
 const fromConfig = (defaults, saved) => Object.fromEntries(Object.keys(defaults).map((key) => [key, saved && typeof saved === "object" && saved[key] !== undefined ? saved[key] : defaults[key]]));
 const heroFromConfig = (saved) => ({ ...fromConfig(heroDefaults, saved), display: fromConfig(heroDisplayDefaults, saved?.display) });
 const typographyFromConfig = (saved) => Object.fromEntries(typographyRoles.map(([role]) => [role, fromConfig(typographyDefaults[role], saved?.[role])]));
@@ -133,7 +133,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     setBackground((previous) => preservePlacements ? previous : fromConfig(backgroundDefaults, versions.draft?.background));
     setHero((previous) => preservePlacements ? previous : heroFromConfig(versions.draft?.hero));
     setTypography((previous) => preservePlacements ? previous : typographyFromConfig(versions.draft?.typography));
-    setColors((previous) => preservePlacements ? previous : fromConfig(colorDefaults, versions.draft?.colors));
+    setColors((previous) => preservePlacements ? previous : fromConfig(colorDefaults, { ...versions.draft?.colors, heroTitle: versions.draft?.colors?.heroTitle || versions.draft?.colors?.title || colorDefaults.heroTitle }));
     setButtonStyle((previous) => preservePlacements ? previous : fromConfig(buttonStyleDefaults, versions.draft?.buttonStyle));
     setQuickMenu((previous) => preservePlacements ? previous : fromConfig(quickMenuDefaults, versions.draft?.quickMenu));
     setSections((previous) => preservePlacements ? previous : sectionsFromConfig(versions.draft?.sections));
@@ -413,7 +413,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
                       <thead><tr><th style={{ textAlign: "left", padding: 6 }}>항목</th><th style={{ textAlign: "left", padding: 6 }}>적용 위치</th></tr></thead>
                       <tbody>
                         <tr><td style={{ padding: 6 }}>Text</td><td style={{ padding: 6 }}>기본 본문, 장소/일정, 계좌, RSVP·방명록 내용</td></tr>
-                        <tr><td style={{ padding: 6 }}>Title</td><td style={{ padding: 6 }}>Hero 제목 + Classic의 Wedding Day + 각 섹션 제목</td></tr>
+                        <tr><td style={{ padding: 6 }}>Title</td><td style={{ padding: 6 }}>본문의 각 섹션 제목</td></tr><tr><td style={{ padding: 6 }}>Hero Title</td><td style={{ padding: 6 }}>Hero 사진 위 이름 / 메인 제목</td></tr>
                         <tr><td style={{ padding: 6 }}>Muted</td><td style={{ padding: 6 }}>작은 보조문구, kicker, small</td></tr>
                         <tr><td style={{ padding: 6 }}>Accent</td><td style={{ padding: 6 }}>강조 요소·링크 + Quick Menu 아이콘/강조색</td></tr>
                         <tr><td style={{ padding: 6 }}>Button Background</td><td style={{ padding: 6 }}>일반 액션 버튼 + Quick Menu 배경</td></tr>
