@@ -380,9 +380,10 @@ function validButtonStyle(value) {
 }
 
 function validQuickMenu(value) {
-  return hasOnlyKeys(value, ["rsvpIcon", "locationIcon", "guestbookIcon", "fontSize", "iconSize"]) &&
+  return hasOnlyKeys(value, ["rsvpIcon", "locationIcon", "guestbookIcon", "rsvpIconAssetId", "locationIconAssetId", "guestbookIconAssetId", "fontSize", "iconSize"]) &&
     [value.rsvpIcon, value.locationIcon, value.guestbookIcon].every((icon) =>
       typeof icon === "string" && icon.length >= 1 && icon.length <= 8 && icon === icon.trim()) &&
+    [value.rsvpIconAssetId, value.locationIconAssetId, value.guestbookIconAssetId].every((id) => id === null || uuid.test(id || "")) &&
     Number.isInteger(value.fontSize) && value.fontSize >= 8 && value.fontSize <= 18 &&
     Number.isInteger(value.iconSize) && value.iconSize >= 12 && value.iconSize <= 32;
 }
@@ -399,6 +400,18 @@ async function saveTypographyColors(auth, body) {
   if (!result.draft || result.draft.id !== body.draftId ||
       result.current?.id === body.draftId) return fail("해당 템플릿의 편집 Draft만 수정할 수 있어요.", 409);
   if (!isRecord(result.draft.config)) return fail("기존 Config 형식을 확인해 주세요.", 409);
+
+  const iconAssetIds = [body.quickMenu.rsvpIconAssetId, body.quickMenu.locationIconAssetId, body.quickMenu.guestbookIconAssetId].filter(Boolean);
+  if (iconAssetIds.length) {
+    const { data: iconAssets, error: iconAssetError } = await auth.adminClient.from("template_assets")
+      .select("id,template_id,asset_type,is_active").in("id", [...new Set(iconAssetIds)]);
+    if (iconAssetError) return fail("Quick Menu 아이콘 Asset을 확인하지 못했어요.", 500);
+    const uniqueIds = [...new Set(iconAssetIds)];
+    if (iconAssets?.length !== uniqueIds.length || iconAssets.some((asset) =>
+      asset.template_id !== body.templateId || asset.asset_type !== "decoration" || !asset.is_active)) {
+      return fail("현재 템플릿의 활성 Decoration Asset만 Quick Menu 아이콘으로 사용할 수 있어요.", 400);
+    }
+  }
 
   const previous = result.draft.config;
   const existingTypography = isRecord(previous.typography) ? previous.typography : {};
