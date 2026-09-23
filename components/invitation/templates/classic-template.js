@@ -62,13 +62,6 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
       </div>
     </section>
 
-    {(schedule || venue) && <section className="classic-section classic-information-lead">
-      <div className="classic-information-body">
-        {schedule && <time>{schedule}</time>}
-        {venue && <strong>{venue}</strong>}
-      </div>
-    </section>}
-
     {message && <section className="classic-section classic-message">
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="section" />
       <ClassicHeading eyebrow="INVITATION"></ClassicHeading>
