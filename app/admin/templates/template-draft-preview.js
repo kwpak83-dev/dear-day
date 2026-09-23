@@ -18,7 +18,7 @@ const sampleInvitation = {
 
 const draftConfig = (draft) => draft ? ({
   decorations: draft.decorations, background: draft.background, hero: draft.hero,
-  typography: draft.typography, colors: draft.colors, buttonStyle: draft.buttonStyle, sections: draft.sections,
+  typography: draft.typography, colors: draft.colors, buttonStyle: draft.buttonStyle, quickMenu: draft.quickMenu, sections: draft.sections,
   effects: draft.effects, bgm: draft.bgm, safeArea: draft.safeArea,
 }) : null;
 
@@ -61,7 +61,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
       </div>}
     {full && <div className="admin-draft-full-preview" role="dialog" aria-modal="true" aria-label="Draft 전체 미리보기" onKeyDown={(event) => { if (event.key === "Escape") setFull(false); }}>
       <div className="admin-draft-full-preview-toolbar" style={{ width, maxWidth: "100%" }}><strong>{`Draft 전체 미리보기 · ${width}px`}</strong><button type="button" onClick={() => setFull(false)}>닫기</button></div>
-      <div className="admin-draft-full-preview-device full-invitation-renderer" style={{ width, maxWidth: "100%" }}>{renderInvitation(width)}</div>
+      <div className="admin-draft-full-preview-device full-invitation-renderer" style={{ width, maxWidth: "100%" }}>{renderInvitation(width, true)}</div>
     </div>}
   </section>;
 }
