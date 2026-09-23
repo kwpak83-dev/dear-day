@@ -71,8 +71,10 @@ function AssetSelect({ label, assets, value, onChange }) {
 function NumberControl({ label, value, min, max, step = 1, onChange }) {
   return <label style={field}>{label}<input style={input} type="number" required min={min} max={max} step={step} value={value} onChange={(event) => onChange(Number(event.target.value))} /></label>;
 }
-const field = { display: "grid", gap: 4, minWidth: 0 };
-const input = { width: "100%", boxSizing: "border-box" };
+const field = { display: "grid", gap: 7, minWidth: 0, fontSize: 13, fontWeight: 700, color: "#5a463d" };
+const input = { width: "100%", boxSizing: "border-box", minHeight: 40, padding: "8px 10px", border: "1px solid #d7c5ba", borderRadius: 7, background: "#fff", color: "#3f332e", fontSize: 14, fontWeight: 500, outlineColor: "#b78b72" };
+const configSection = { border: "2px solid #e4d3c9", borderRadius: 14, padding: 16, marginTop: 22, background: "#fffdfb", boxShadow: "0 3px 12px rgba(92, 65, 52, .06)", minWidth: 0 };
+const configHeading = { margin: "0 0 14px", paddingBottom: 10, borderBottom: "2px solid #eadfd8", color: "#4f3d35", fontSize: 18 };
 
 export default function TemplateVersions({ templateId, assetRevision = 0, assetChangesPending = false, onWorkflowChange }) {
   const [state, setState] = useState({ loading: true, template: null, current: null, draft: null, assets: [], allAssets: [], error: "" });
@@ -287,8 +289,8 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
       {state.draft && <>
         <p>이 Draft가 Config 편집 대상입니다. 현재 판매 버전과 기존 초대장은 변경되지 않습니다.</p>
         <form onSubmit={saveBackgroundHero} style={{ display: "grid", gap: 14, marginBottom: 28 }}>
-          <fieldset style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 12 }}>
-            <legend>Background 설정</legend>
+          <fieldset style={{ ...configSection, marginTop: 0 }}>
+            <legend style={{ padding: "0 8px", fontWeight: 800, color: "#4f3d35", fontSize: 16 }}>Background 설정</legend>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10 }}>
               <ColorControl label="배경색" value={background.color} onChange={(color) => setBackground({ ...background, color })} />
               <AssetSelect label="배경 이미지 Asset" assets={backgroundAssets} value={background.assetId} onChange={(assetId) => setBackground({ ...background, assetId })} />
@@ -331,7 +333,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
           {assetChangesPending && <p>Asset 변경을 확정한 뒤 Background/Hero 설정을 저장할 수 있어요.</p>}
           <button type="submit" className="save-button" disabled={saving || assetChangesPending}>{saving ? "저장 중..." : "Background + Hero 저장"}</button>
         </form>
-        <h3>Decoration 배치 설정</h3>
+        <section style={configSection}><h3 style={configHeading}>Decoration 배치 설정</h3>
         {!decorationAssets.length ? <p>활성 장식 Asset이 없습니다. 아래 Asset 영역에서 장식을 등록해 주세요.</p> :
           <form onSubmit={saveDecorations} style={{ display: "grid", gap: 16 }}>
             {decorationAssets.map((asset) => {
@@ -355,9 +357,9 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
             })}
             {assetChangesPending && <p>Asset 변경을 확정한 뒤 이 배치를 저장할 수 있어요.</p>}
             <button type="submit" className="save-button" disabled={saving || assetChangesPending}>{saving ? "저장 중..." : "Draft 장식 배치 저장"}</button>
-          </form>}
-        <section style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: 12, marginTop: 28, minWidth: 0 }}>
-          <h3>Typography + Colors Config</h3>
+          </form>}</section>
+        <section style={configSection}>
+          <h3 style={configHeading}>Typography + Colors Config</h3>
           <form onSubmit={saveTypographyColors} style={{ display: "grid", gap: 16 }}>
             <details style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: "10px 12px", background: "#fffaf7" }}>
               <summary style={{ cursor: "pointer", fontWeight: 700 }}>C3 매핑 가이드 보기</summary>
