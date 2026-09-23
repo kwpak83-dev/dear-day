@@ -160,7 +160,7 @@ export async function PATCH(request) {
       .select("id,template_id,asset_type,is_active").in("id", ids);
     if (assetError) return fail("장식 Asset을 확인하지 못했어요.", 500);
     if (assets?.length !== ids.length || assets.some((asset) =>
-      asset.template_id !== body.templateId || asset.asset_type !== "quick_menu_icon" || !asset.is_active)) {
+      asset.template_id !== body.templateId || asset.asset_type !== "decoration" || !asset.is_active)) {
       return fail("현재 템플릿의 활성 장식 Asset만 저장할 수 있어요.", 400);
     }
   }
