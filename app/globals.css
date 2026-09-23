@@ -901,3 +901,11 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .classic-001 .classic-message blockquote{max-width:390px;margin:0 auto;white-space:pre-line;line-height:2}
 .classic-001 .classic-invitation-family{display:grid;gap:9px;margin:42px auto 0;padding-top:0;max-width:390px;border-top:0;text-align:center}
 .classic-001 .classic-invitation-family p{margin:0;color:var(--dd-color-text,var(--classic-ink));font:400 13px/1.8 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:.01em}
+
+/* Classic editorial flow: concise date/place lead-in before Invitation. */
+.classic-001 .classic-information-before-invitation{padding-top:44px;padding-bottom:42px;text-align:center}
+.classic-001 .classic-information-before-invitation .classic-information-body{margin-top:0}
+.classic-001 .classic-information-before-invitation .classic-information-body>time{font-size:14px;letter-spacing:.04em}
+.classic-001 .classic-information-before-invitation .classic-information-body>strong{margin-top:7px;font-size:13px;font-weight:400}
+.classic-001 .classic-information-before-invitation .classic-information-body>p{margin-top:4px;font-size:11px}
+.classic-001 .classic-place-actions-after-invitation{padding:0 clamp(25px,9vw,50px) 56px;text-align:center}
