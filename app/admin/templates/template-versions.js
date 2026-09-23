@@ -326,7 +326,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               ["Hero Background Asset", "Hero 영역 전용 배경", "꽃 배경 · 포스터 배경"],
               ["Hero Frame Asset", "Hero 위 프레임 이미지", "아치 · 꽃 프레임"],
               ["Hero Overlay", "Hero 이미지 위 색상/농도", "사진을 어둡게 해 글자 강조"],
-              ["상단 DearDay 헤더 표시", "Hero 위 브랜드 헤더 전체 표시 여부", "끄면 사진부터 바로 시작"],
+              ["상단 DearDay 표시", "상단 헤더의 DearDay 브랜드명 표시 여부", "끄고 행사 문구만 켜면 행사 문구만 표시"],
                ["상단 문구", "DearDay 옆/상단 행사 문구", "WEDDING INVITATION · OUR DAY"],
                ["상단 문구 표시", "상단 행사 문구 표시 여부", "끄면 행사 문구 숨김"],
                ["Hero 표시 항목", "Hero 안 개별 문구 표시 여부", "날짜·장소·관계정보 숨김"],
@@ -349,7 +349,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               <NumberControl label="Hero Overlay 투명도" value={hero.overlayOpacity} min={0} max={1} step={0.05} onChange={(overlayOpacity) => setHero({ ...hero, overlayOpacity })} />
                <label style={{ ...field, display: "flex", flexDirection: "row", alignItems: "center", gap: 8 }}>
                  <input type="checkbox" checked={hero.headerVisible} onChange={(event) => setHero({ ...hero, headerVisible: event.target.checked })} />
-                 상단 DearDay 헤더 표시
+                 상단 DearDay 표시
                </label>
                <label style={field}>상단 문구
                  <input style={input} type="text" maxLength={60} value={hero.mastheadText} placeholder="비워두면 행사 기본 문구 사용" onChange={(event) => setHero({ ...hero, mastheadText: event.target.value })} />
