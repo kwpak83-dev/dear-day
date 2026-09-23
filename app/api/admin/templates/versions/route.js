@@ -408,7 +408,7 @@ async function saveTypographyColors(auth, body) {
     if (iconAssetError) return fail("Quick Menu 아이콘 Asset을 확인하지 못했어요.", 500);
     const uniqueIds = [...new Set(iconAssetIds)];
     if (iconAssets?.length !== uniqueIds.length || iconAssets.some((asset) =>
-      asset.template_id !== body.templateId || asset.asset_type !== "decoration" || !asset.is_active)) {
+      asset.template_id !== body.templateId || asset.asset_type !== "quick_menu_icon" || !asset.is_active)) {
       return fail("현재 템플릿의 활성 Quick Menu 아이콘 Asset만 사용할 수 있어요.", 400);
     }
   }
