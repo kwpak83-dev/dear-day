@@ -5,8 +5,53 @@ function ClassicHeading({ eyebrow, children }) {
   return <header className="classic-section-heading"><p>{eyebrow}</p><h3>{children}</h3></header>;
 }
 
+function ClassicDateSection({ eventDate, eventTime, title, wedding }) {
+  if (!eventDate) return null;
+  const date = new Date(`${eventDate}T12:00:00`);
+  if (Number.isNaN(date.getTime())) return null;
+
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDate();
+  const weekday = ["일", "월", "화", "수", "목", "금", "토"][date.getDay()];
+  const firstDay = new Date(year, month, 1).getDay();
+  const lastDate = new Date(year, month + 1, 0).getDate();
+  const cells = Array.from({ length: firstDay + lastDate }, (_, index) => index < firstDay ? null : index - firstDay + 1);
+
+  const timeMatch = String(eventTime || "").match(/^(\d{1,2}):(\d{2})$/);
+  let timeText = eventTime || "";
+  if (timeMatch) {
+    const hour = Number(timeMatch[1]);
+    const minute = Number(timeMatch[2]);
+    timeText = `${hour < 12 ? "오전" : "오후"} ${hour % 12 || 12}시${minute ? ` ${minute}분` : ""}`;
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const target = new Date(year, month, day);
+  const diffDays = Math.ceil((target - today) / 86400000);
+  const ddayText = diffDays > 0 ? `${diffDays}일 남았습니다.` : diffDays === 0 ? "오늘입니다." : `${Math.abs(diffDays)}일 지났습니다.`;
+  const names = title || "";
+  const eventText = wedding && names ? `${names.replace(" & ", " ♡ ")}의 결혼식` : names;
+
+  return <section className="classic-section classic-date">
+    <ClassicHeading eyebrow="DATE"></ClassicHeading>
+    <p className="classic-date-summary">{year}.{String(month + 1).padStart(2, "0")}.{String(day).padStart(2, "0")} {weekday} {timeText}</p>
+    <div className="classic-calendar">
+      <div className="classic-calendar-month">{year}. {String(month + 1).padStart(2, "0")}</div>
+      <div className="classic-calendar-grid classic-calendar-weekdays">
+        {["일", "월", "화", "수", "목", "금", "토"].map((label) => <span key={label}>{label}</span>)}
+      </div>
+      <div className="classic-calendar-grid">
+        {cells.map((value, index) => <span key={index} className={value === day ? "is-event-day" : ""}>{value || ""}</span>)}
+      </div>
+    </div>
+    <p className="classic-dday">{eventText && <><strong>{eventText}</strong><br /></>}{ddayText}</p>
+  </section>;
+}
+
 export default function ClassicTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, bgmControl, screenEffect, children }) {
-  const { kindLabel, title, detail, note, heroSchedule, schedule, venue, address, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
+  const { kindLabel, title, detail, note, eventDate, eventTime, heroSchedule, schedule, venue, address, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map((value) => value.trim()).filter(Boolean) : [];
   const hasInformation = Boolean(schedule || venue || address);
@@ -71,6 +116,8 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
         {brideRelation && <p>{brideRelation}</p>}
       </div>}
     </section>}
+
+    <ClassicDateSection eventDate={eventDate} eventTime={eventTime} title={title} wedding={wedding} />
 
     {hasInformation && <section className="classic-section classic-information">
       <ClassicHeading eyebrow="DATE & PLACE">{wedding ? "예식 안내" : "행사 안내"}</ClassicHeading>
