@@ -420,12 +420,6 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               </div>
             </details>
             <h4 style={{ margin: 0 }}>Typography</h4>
-            <MappingTable rows={[
-              ["Hero Title", "Hero 이름/메인 제목 Typography", "경원 & 보람"],
-              ["Section Title", "각 섹션의 큰 제목", "우리의 순간들 · 마음 전하실 곳"],
-              ["Body", "일반 본문과 주요 정보", "초대문구 · 장소 · 계좌 · RSVP"],
-              ["Caption", "작은 보조문구", "OUR MOMENTS · kicker · small"],
-            ]} />
             {typographyRoles.map(([role, label]) => (
               <fieldset key={role} style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 12 }}>
                 <legend>{label}</legend>
