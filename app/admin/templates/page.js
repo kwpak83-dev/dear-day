@@ -5,7 +5,7 @@ import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 import TemplateAssets from "./template-assets";
 import TemplateVersions from "./template-versions";
 
-const statusOptions = [["draft", "제작중"], ["review", "검수대기"], ["sale_ready", "판매가능"], ["on_sale", "판매중"], ["stopped", "판매중지"], ["archived", "보관"]];
+const statusOptions = [["draft", "제작중"], ["on_sale", "판매중"], ["stopped", "판매중지"], ["archived", "보관"]];
 const emptyForm = { name: "", template_key: "", description: "", status: "draft", is_visible: false, sort_order: 0 };
 const fieldStyle = { display: "grid", gap: 4, minWidth: 0 };
 const inputStyle = { width: "100%", boxSizing: "border-box" };
