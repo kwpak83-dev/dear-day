@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import InvitationRenderer from "../../../components/invitation/invitation-renderer";
 import InvitationMap from "../../../components/invitation/invitation-map";
 import OptionalInvitationSections from "../../invite/[slug]/optional-invitation-sections";
@@ -22,25 +22,7 @@ const draftConfig = (draft) => draft ? ({
   effects: draft.effects, bgm: draft.bgm, safeArea: draft.safeArea,
 }) : null;
 
-function PreviewSections({ showQuickMenu = false }) {
-  const [quickMenuVisible, setQuickMenuVisible] = useState(false);
-
-  useEffect(() => {
-    if (!showQuickMenu) {
-      setQuickMenuVisible(false);
-      return;
-    }
-    const trigger = document.getElementById("admin-preview-quick-menu-trigger");
-    if (!trigger) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setQuickMenuVisible(true);
-        observer.disconnect();
-      }
-    }, { threshold: 0.1 });
-    observer.observe(trigger);
-    return () => observer.disconnect();
-  }, [showQuickMenu]);
+function PreviewSections({ showQuickMenu = false, onQuickMenuTrigger }) {
   return <div className="public-invitation-sections">
     <section className="invitation-gallery" aria-label="샘플 갤러리">
       <p className="gallery-kicker">OUR MOMENTS</p><h2>우리의 순간들</h2>
@@ -49,8 +31,8 @@ function PreviewSections({ showQuickMenu = false }) {
     <section className="public-accounts"><h2>마음 전하실 곳</h2><article className="public-account-card"><p>신랑 측</p><strong>디어은행 · 경원</strong><div><span>123-456-7890</span><button type="button" disabled>계좌 복사</button></div></article></section>
     <OptionalInvitationSections invitation={sampleInvitation} preview />
     <footer>디어데이와 함께하는 소중한 순간</footer>
-    {showQuickMenu && <span id="admin-preview-quick-menu-trigger" className="invitation-quick-menu-trigger" aria-hidden="true" />}
-    {quickMenuVisible && <nav className="invitation-quick-menu" aria-label="초대장 빠른 메뉴 미리보기">
+    {showQuickMenu && <span className="invitation-quick-menu-trigger" aria-hidden="true" ref={onQuickMenuTrigger} />}
+    {showQuickMenu && quickMenuVisible && <nav className="invitation-quick-menu" aria-label="초대장 빠른 메뉴 미리보기">
       <button className="invitation-quick-rsvp" type="button" disabled><b aria-hidden="true" /><span>참석 여부</span></button>
       <button className="invitation-quick-location" type="button" disabled><b aria-hidden="true" /><span>오시는 길</span></button>
       <button className="invitation-quick-guestbook" type="button" disabled><b aria-hidden="true" /><span>축하 메시지</span></button>
@@ -61,19 +43,37 @@ function PreviewSections({ showQuickMenu = false }) {
 export default function TemplateDraftPreview({ templateId, draft, assets = [], loading = false }) {
   const [width, setWidth] = useState(390);
   const [full, setFull] = useState(false);
+  const [quickMenuVisible, setQuickMenuVisible] = useState(false);
   const config = useMemo(() => draftConfig(draft), [draft]);
   const resolvedAssets = useMemo(() => resolveTemplateAssetUrls(config, assets, templateId), [assets, config, templateId]);
   const invitation = useMemo(() => ({ ...sampleInvitation, templateId }), [templateId]);
+  const observeQuickMenuTrigger = (node) => {
+    if (!node || quickMenuVisible) return;
+    const root = node.closest(".admin-draft-full-preview");
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setQuickMenuVisible(true);
+        observer.disconnect();
+      }
+    }, { root, threshold: 0.1 });
+    observer.observe(node);
+  };
+
+  const openFullPreview = () => {
+    setQuickMenuVisible(false);
+    setFull(true);
+  };
+
   const renderInvitation = (mapWidth, showQuickMenu = false) => <InvitationRenderer invitation={invitation} eventKind="wedding" templateId={templateId} templateConfig={config} templateAssets={resolvedAssets}
     placeActions={<><div className="public-address-copy"><button type="button" disabled>주소 복사</button></div><InvitationMap key={mapWidth} address={invitation.venueAddress} /></>}>
-    <PreviewSections showQuickMenu={showQuickMenu} />
+    <PreviewSections showQuickMenu={showQuickMenu} onQuickMenuTrigger={observeQuickMenuTrigger} />
   </InvitationRenderer>;
 
   return <section className="admin-draft-preview" aria-labelledby="admin-draft-preview-title">
     <div className="admin-draft-preview-toolbar">
       <div><h3 id="admin-draft-preview-title">Draft Live Preview</h3><p>저장된 편집 Draft · 읽기 전용</p></div>
       <div className="admin-draft-preview-widths" aria-label="미리보기 너비">
-        {draft && <button type="button" onClick={() => setFull(true)}>전체 미리보기</button>}
+        {draft && <button type="button" onClick={openFullPreview}>전체 미리보기</button>}
         {[390, 540].map((value) => <button key={value} type="button" className={width === value ? "active" : ""} aria-pressed={width === value} onClick={() => setWidth(value)}>{value}px</button>)}
       </div>
     </div>
