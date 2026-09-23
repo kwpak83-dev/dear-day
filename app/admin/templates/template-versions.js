@@ -368,7 +368,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
                     <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 520 }}>
                       <thead><tr><th style={{ textAlign: "left", padding: 6 }}>항목</th><th style={{ textAlign: "left", padding: 6 }}>적용 위치</th><th style={{ textAlign: "left", padding: 6 }}>예시</th></tr></thead>
                       <tbody>
-                        <tr><td style={{ padding: 6 }}>Hero Title</td><td style={{ padding: 6 }}>Hero 메인 제목</td><td style={{ padding: 6 }}>Wedding Day</td></tr>
+                        <tr><td style={{ padding: 6 }}>Hero Title</td><td style={{ padding: 6 }}>Hero의 이름/메인 제목 Typography</td><td style={{ padding: 6 }}>경원 &amp; 보람 등</td></tr>
                         <tr><td style={{ padding: 6 }}>Section Title</td><td style={{ padding: 6 }}>각 섹션의 큰 제목</td><td style={{ padding: 6 }}>우리의 순간들, 마음 전하실 곳, RSVP, 방명록</td></tr>
                         <tr><td style={{ padding: 6 }}>Body</td><td style={{ padding: 6 }}>일반 본문·정보</td><td style={{ padding: 6 }}>초대 문구, 장소/일정, 계좌, RSVP·방명록 본문</td></tr>
                         <tr><td style={{ padding: 6 }}>Caption</td><td style={{ padding: 6 }}>작은 보조문구</td><td style={{ padding: 6 }}>OUR MOMENTS, section-kicker, small</td></tr>
@@ -384,7 +384,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
                       <thead><tr><th style={{ textAlign: "left", padding: 6 }}>항목</th><th style={{ textAlign: "left", padding: 6 }}>적용 위치</th></tr></thead>
                       <tbody>
                         <tr><td style={{ padding: 6 }}>Text</td><td style={{ padding: 6 }}>기본 본문, 장소/일정, 계좌, RSVP·방명록 내용</td></tr>
-                        <tr><td style={{ padding: 6 }}>Title</td><td style={{ padding: 6 }}>Hero 메인 제목 + 각 섹션 제목</td></tr>
+                        <tr><td style={{ padding: 6 }}>Title</td><td style={{ padding: 6 }}>Hero 제목 + Classic의 Wedding Day + 각 섹션 제목</td></tr>
                         <tr><td style={{ padding: 6 }}>Muted</td><td style={{ padding: 6 }}>작은 보조문구, kicker, small</td></tr>
                         <tr><td style={{ padding: 6 }}>Accent</td><td style={{ padding: 6 }}>강조 요소·링크 + Quick Menu 아이콘/강조색</td></tr>
                         <tr><td style={{ padding: 6 }}>Button Background</td><td style={{ padding: 6 }}>일반 액션 버튼 + Quick Menu 배경</td></tr>
