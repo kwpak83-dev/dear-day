@@ -85,7 +85,5 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
     </section>}
 
     {children && <div className="invitation-template-sections">{children}</div>}
-
-    <footer className="romantic-footer"><span>Thank you</span><i aria-hidden="true">♡</i><b>DearDay</b></footer>
   </article>;
 }
