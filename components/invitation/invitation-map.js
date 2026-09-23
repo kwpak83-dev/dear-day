@@ -99,7 +99,8 @@ export default function InvitationMap({ address, venue = "", onPositionChange })
   const destinationName = venue?.trim() || normalizedAddress;
   const encodedName = encodeURIComponent(destinationName);
   const { latitude, longitude } = position;
-  const naverUrl = `https://map.naver.com/p/directions/-/-/-/car?c=${longitude},${latitude},15,0,0,0,dh`;
+  const appName = typeof window !== "undefined" ? window.location.origin : "https://dearday.app";
+  const naverUrl = `nmap://route/car?dlat=${latitude}&dlng=${longitude}&dname=${encodedName}&appname=${encodeURIComponent(appName)}`;
   const kakaoUrl = `https://map.kakao.com/link/to/${encodedName},${latitude},${longitude}`;
   const tmapUrl = `https://www.tmap.co.kr/tmap2/mobile/route.jsp?name=${encodedName}&lon=${longitude}&lat=${latitude}`;
 
