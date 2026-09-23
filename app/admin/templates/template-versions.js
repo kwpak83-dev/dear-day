@@ -301,12 +301,15 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
           <fieldset style={{ ...configSection, marginTop: 0 }}>
             <legend style={{ padding: "0 8px", fontWeight: 800, color: "#4f3d35", fontSize: 16 }}>Background 설정</legend>
             <p style={guideNote}>초대장 전체 페이지의 기본 배경과 배경 위 오버레이를 설정합니다.</p>
-            <MappingTable rows={[
+            <details style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: "10px 12px", background: "#fffaf7" }}>
+              <summary style={{ cursor: "pointer", fontWeight: 700 }}>매핑 가이드 보기</summary>
+              <div style={{ marginTop: 10 }}><MappingTable rows={[
               ["배경색", "초대장 전체 기본 배경색", "아이보리 · 흰색 · 베이지"],
               ["배경 이미지 Asset", "전체 페이지에 반복되는 배경 이미지", "종이 질감 · 패턴"],
               ["Overlay 색상", "배경 이미지 위에 덮는 색상", "검정 · 흰색 오버레이"],
               ["Overlay 투명도", "Overlay 색상의 강도", "0 = 없음 / 0.3 = 은은하게"],
-            ]} />
+            ]} /></div>
+            </details>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10 }}>
               <ColorControl label="배경색" value={background.color} onChange={(color) => setBackground({ ...background, color })} />
               <AssetSelect label="배경 이미지 Asset" assets={backgroundAssets} value={background.assetId} onChange={(assetId) => setBackground({ ...background, assetId })} />
@@ -317,7 +320,9 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
           <fieldset style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 12 }}>
             <legend>Hero 설정</legend>
             <p style={guideNote}>초대장 첫 화면(Hero)의 사진·프레임·배경·텍스트 위치와 표시 내용을 설정합니다.</p>
-            <MappingTable rows={[
+            <details style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: "10px 12px", background: "#fffaf7" }}>
+              <summary style={{ cursor: "pointer", fontWeight: 700 }}>매핑 가이드 보기</summary>
+              <div style={{ marginTop: 10 }}><MappingTable rows={[
               ["Hero mode", "첫 화면 표현 방식", "사진 중심 / 프레임 / 일러스트"],
               ["Hero 비율", "첫 화면 이미지 영역 비율", "4:5 · 1:1 · 3:4 · 16:9"],
               ["사진 X / Y 위치", "Hero 사진의 초점 위치", "얼굴을 중앙으로 이동"],
@@ -330,7 +335,8 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
                ["상단 문구", "DearDay 옆/상단 행사 문구", "WEDDING INVITATION · OUR DAY"],
                ["상단 문구 표시", "상단 행사 문구 표시 여부", "끄면 행사 문구 숨김"],
                ["Hero 표시 항목", "Hero 안 개별 문구 표시 여부", "날짜·장소·관계정보 숨김"],
-            ]} />
+            ]} /></div>
+            </details>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10 }}>
               <label style={field}>Hero mode<select style={input} value={hero.mode} onChange={(event) => setHero({ ...hero, mode: event.target.value })}>
                 <option value="photo">사진 중심형</option><option value="frame">컨셉 프레임형</option><option value="illustration">포스터/일러스트형</option>
@@ -440,7 +446,9 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               </fieldset>
             ))}
             <h4 style={{ margin: 0 }}>Colors</h4>
-            <MappingTable rows={[
+            <details style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: "10px 12px", background: "#fffaf7" }}>
+              <summary style={{ cursor: "pointer", fontWeight: 700 }}>매핑 가이드 보기</summary>
+              <div style={{ marginTop: 10 }}><MappingTable rows={[
               ["기본 글자색", "기본 본문 글자색", "초대문구 · 장소 · 계좌 · RSVP"],
               ["제목 색상", "Hero/섹션 제목 계열 색상", "Wedding Day · 경원 & 보람 · 섹션 제목"],
               ["보조 글자색", "작은 보조문구 색상", "OUR MOMENTS · 안내문구"],
@@ -448,19 +456,23 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               ["버튼 배경", "일반 버튼과 Quick Menu 배경", "주소 복사 · RSVP 버튼"],
               ["버튼 글자", "일반 버튼과 Quick Menu 글자", "버튼 내부 텍스트"],
               ["구분선", "섹션/카드/Quick Menu 구분선", "카드 테두리 · 메뉴 구분선"],
-            ]} />
+            ]} /></div>
+            </details>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 10 }}>
               {colorLabels.map(([key, label]) => <ColorControl key={key} label={label} value={colors[key]} onChange={(value) => setColors((current) => ({ ...current, [key]: value }))} />)}
             </div>
             <h4 style={{ margin: 0 }}>Button Style</h4>
             <p style={guideNote}>초대장 안의 주요 액션 버튼 모양을 설정합니다. Quick Menu 자체의 크기 설정과는 별개입니다.</p>
-            <MappingTable rows={[
+            <details style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: "10px 12px", background: "#fffaf7" }}>
+              <summary style={{ cursor: "pointer", fontWeight: 700 }}>매핑 가이드 보기</summary>
+              <div style={{ marginTop: 10 }}><MappingTable rows={[
               ["버튼 너비", "주요 CTA 버튼 폭", "RSVP 등록 버튼 70%"],
               ["버튼 높이", "버튼 세로 크기", "44px → 56px"],
               ["버튼 글자 크기", "버튼 내부 글자 크기", "주소 복사 · 등록"],
               ["모서리 둥글기", "버튼 라운드 정도", "0 = 사각 / 20 = 둥글게"],
               ["테두리 두께/색상", "버튼 외곽선", "1px 베이지 테두리"],
-            ]} />
+            ]} /></div>
+            </details>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
               <NumberControl label="버튼 너비 (%)" value={buttonStyle.width} min={40} max={100} onChange={(width) => setButtonStyle((current) => ({ ...current, width }))} />
               <NumberControl label="버튼 높이" value={buttonStyle.height} min={32} max={64} onChange={(height) => setButtonStyle((current) => ({ ...current, height }))} />
@@ -471,14 +483,17 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
             </div>
             <h4 style={{ margin: 0 }}>Quick Menu</h4>
             <p style={guideNote}>초대장 하단에 나타나는 참석·위치·방명록 Quick Menu의 아이콘과 크기를 설정합니다.</p>
-            <MappingTable rows={[
+            <details style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: "10px 12px", background: "#fffaf7" }}>
+              <summary style={{ cursor: "pointer", fontWeight: 700 }}>매핑 가이드 보기</summary>
+              <div style={{ marginTop: 10 }}><MappingTable rows={[
               ["참석 아이콘", "RSVP Quick Menu 아이콘", "✓"],
               ["위치 아이콘", "위치 Quick Menu 아이콘", "⌖"],
               ["방명록 아이콘", "방명록 Quick Menu 아이콘", "♡"],
               ["글자 크기", "Quick Menu 라벨 크기", "참석 · 위치 · 방명록"],
               ["아이콘 이미지", "문자 대신 Quick Menu 아이콘 Asset 이미지를 사용", "PNG/WebP 아이콘"],
               ["아이콘 크기", "Quick Menu 문자/이미지 아이콘 크기", "18px"],
-            ]} />
+            ]} /></div>
+            </details>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
               <label style={field}>참석 아이콘<input style={input} type="text" required maxLength={8} value={quickMenu.rsvpIcon} onChange={(event) => setQuickMenu((current) => ({ ...current, rsvpIcon: event.target.value }))} /></label>
               <label style={field}>위치 아이콘<input style={input} type="text" required maxLength={8} value={quickMenu.locationIcon} onChange={(event) => setQuickMenu((current) => ({ ...current, locationIcon: event.target.value }))} /></label>
@@ -496,10 +511,13 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
         <section style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: 12, marginTop: 28, minWidth: 0 }}>
           <h3>Sections Config</h3>
           <p style={guideNote}>Hero 아래 섹션의 표시 여부와 순서를 설정합니다.</p>
-          <MappingTable rows={[
+          <details style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: "10px 12px", background: "#fffaf7" }}>
+              <summary style={{ cursor: "pointer", fontWeight: 700 }}>매핑 가이드 보기</summary>
+              <div style={{ marginTop: 10 }}><MappingTable rows={[
             ["↑ / ↓", "섹션 표시 순서", "갤러리를 장소보다 위로 이동"],
             ["표시", "섹션 노출 여부", "계좌 · RSVP · 방명록 숨김"],
-          ]} />
+          ]} /></div>
+            </details>
           <p>Hero는 항상 맨 위에 표시됩니다. 아래 설정은 템플릿의 기본 구성만 저장합니다.</p>
           <form onSubmit={saveSections} style={{ display: "grid", gap: 10 }}>
             {sections.map((section, index) => <div key={section.key} style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", border: "1px solid #eadfd8", borderRadius: 8, padding: 10, minWidth: 0 }}>
@@ -515,7 +533,9 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
         </section>
         <section style={configSection}><h3 style={configHeading}>Decoration 배치 설정</h3>
         <p style={guideNote}>등록한 장식 Asset을 Hero·섹션·배경에 배치하고 위치·크기·회전·투명도·레이어를 조절합니다.</p>
-        <MappingTable rows={[
+        <details style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: "10px 12px", background: "#fffaf7" }}>
+              <summary style={{ cursor: "pointer", fontWeight: 700 }}>매핑 가이드 보기</summary>
+              <div style={{ marginTop: 10 }}><MappingTable rows={[
           ["Slot", "장식이 놓이는 영역", "Hero / 섹션 / 배경"],
           ["X % / Y %", "장식의 가로·세로 위치", "꽃을 우측 상단으로 이동"],
           ["크기 %", "장식 이미지 크기", "20% → 35%"],
@@ -523,7 +543,8 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
           ["투명도", "장식의 진하기", "0.5 = 반투명"],
           ["레이어 순서", "장식 앞뒤 순서", "숫자가 클수록 위"],
           ["표시", "해당 장식 노출 여부", "체크 해제 = 숨김"],
-        ]} />
+        ]} /></div>
+            </details>
         {!decorationAssets.length ? <p>활성 장식 Asset이 없습니다. 아래 Asset 영역에서 장식을 등록해 주세요.</p> :
           <form onSubmit={saveDecorations} style={{ display: "grid", gap: 16 }}>
             {decorationAssets.map((asset) => {
@@ -551,12 +572,15 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
         <section style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: 12, marginTop: 28, minWidth: 0 }}>
           <h3>Effects / BGM / Safe Area Config</h3>
           <p style={guideNote}>스크롤 등장 효과, 화면 장식 효과, 배경음악과 콘텐츠 안전 여백을 설정합니다.</p>
-          <MappingTable rows={[
+          <details style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: "10px 12px", background: "#fffaf7" }}>
+              <summary style={{ cursor: "pointer", fontWeight: 700 }}>매핑 가이드 보기</summary>
+              <div style={{ marginTop: 10 }}><MappingTable rows={[
             ["Scroll Effect", "스크롤 시 섹션 등장 방식", "Fade · Fade Up"],
             ["Screen Effect", "화면 위에 움직이는 장식 효과", "꽃잎 · 눈송이"],
             ["BGM", "초대장 배경음악", "Wedding BGM MP3"],
             ["Safe Area", "콘텐츠 상·우·하·좌 안전 여백", "장식과 글자가 화면 끝에 붙지 않게 조절"],
-          ]} />
+          ]} /></div>
+            </details>
           <form onSubmit={saveEffectsBgmSafeArea} style={{ display: "grid", gap: 16 }}>
             <label style={field}>Scroll Effect<select style={input} value={effects.scrollReveal} onChange={(event) => setEffects((current) => ({ ...current, scrollReveal: event.target.value }))}>
               <option value="none">없음</option><option value="fade">Fade</option><option value="fade-up">Fade Up</option>
