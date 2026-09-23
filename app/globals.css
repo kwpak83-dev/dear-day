@@ -899,5 +899,5 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .classic-001 .classic-message .classic-section-heading p{margin-bottom:10px;letter-spacing:.24em}
 .classic-001 .classic-message .classic-section-heading h3{margin-bottom:0}
 .classic-001 .classic-message blockquote{max-width:390px;margin:0 auto;white-space:pre-line;line-height:2}
-.classic-001 .classic-invitation-family{display:grid;gap:9px;margin:42px auto 0;padding-top:28px;max-width:390px;border-top:1px solid var(--dd-color-divider,var(--classic-line));text-align:center}
+.classic-001 .classic-invitation-family{display:grid;gap:9px;margin:42px auto 0;padding-top:0;max-width:390px;border-top:0;text-align:center}
 .classic-001 .classic-invitation-family p{margin:0;color:var(--dd-color-text,var(--classic-ink));font:400 13px/1.8 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:.01em}
