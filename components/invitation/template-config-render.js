@@ -92,7 +92,10 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     set(rootStyle, "--dd-quick-menu-guestbook-icon", JSON.stringify(quickMenu.guestbookIcon));
     for (const [key, variable] of [["rsvpIconAssetId", "rsvp"], ["locationIconAssetId", "location"], ["guestbookIconAssetId", "guestbook"]]) {
       const url = quickMenu[key] ? assets[quickMenu[key]] : null;
-      if (url) set(rootStyle, `--dd-quick-menu-${variable}-icon-image`, `url("${url}")`);
+      if (url) {
+        set(rootStyle, `--dd-quick-menu-${variable}-icon-image`, `url("${url}")`);
+        set(rootStyle, `--dd-quick-menu-${variable}-icon`, '""');
+      }
     }
   }
   const sections = config?.sections;
