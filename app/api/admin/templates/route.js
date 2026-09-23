@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 const json = (body, status = 200) => NextResponse.json(body, { status });
-const statuses = new Set(["draft", "review", "sale_ready", "on_sale", "stopped", "archived"]);
+const statuses = new Set(["draft", "on_sale", "stopped", "archived"]);
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 async function getAdmin(request) {
@@ -54,7 +54,7 @@ export async function POST(request) {
   if (auth.error) return json({ error: auth.error }, auth.status);
   const fields = readFields(await request.json().catch(() => null));
   if (!fields) return json({ error: "템플릿 기본정보를 확인해 주세요." }, 400);
-  if (fields.status === "sale_ready" || fields.status === "on_sale") return json({ error: "버전을 만든 뒤 판매 상태로 변경할 수 있어요." }, 409);
+  if (fields.status === "on_sale") return json({ error: "버전을 만든 뒤 판매 상태로 변경할 수 있어요." }, 409);
   const id = randomUUID();
   const { error } = await auth.adminClient.from("templates").insert({ id, ...fields, is_active: false });
   if (error?.code === "23505") return json({ error: "이미 사용 중인 template key예요." }, 409);
@@ -74,7 +74,7 @@ export async function PATCH(request) {
   if (lookupError) return json({ error: "템플릿을 확인하지 못했어요." }, 500);
   if (!existing) return json({ error: "템플릿을 찾지 못했어요." }, 404);
   if (fields.template_key !== existing.template_key) return json({ error: "기존 template key는 변경할 수 없어요." }, 400);
-  if ((fields.status === "sale_ready" || fields.status === "on_sale") && !existing.current_sale_version_id) {
+  if (fields.status === "on_sale" && !existing.current_sale_version_id) {
     return json({ error: "판매 상태로 변경하려면 템플릿 버전이 필요해요." }, 409);
   }
   const { template_key: _unchangedKey, ...updates } = fields;
