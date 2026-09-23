@@ -109,6 +109,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   const backgroundAssets = state.assets.filter((asset) => asset.asset_type === "background");
   const frameAssets = state.assets.filter((asset) => asset.asset_type === "hero_frame");
   const decorationAssets = state.assets.filter((asset) => asset.asset_type === "decoration");
+  const quickMenuIconAssets = state.assets.filter((asset) => asset.asset_type === "quick_menu_icon");
   const bgmAssets = state.assets.filter((asset) => asset.asset_type === "bgm");
   const screenEffectAssets = state.assets.filter((asset) => asset.asset_type === "screen_effect");
 
@@ -504,16 +505,16 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               ["위치 아이콘", "위치 Quick Menu 아이콘", "⌖"],
               ["방명록 아이콘", "방명록 Quick Menu 아이콘", "♡"],
               ["글자 크기", "Quick Menu 라벨 크기", "참석 · 위치 · 방명록"],
-              ["아이콘 이미지", "문자 대신 Decoration Asset 이미지를 사용", "PNG/WebP 아이콘"],
+              ["아이콘 이미지", "문자 대신 Quick Menu 아이콘 Asset 이미지를 사용", "PNG/WebP 아이콘"],
               ["아이콘 크기", "Quick Menu 문자/이미지 아이콘 크기", "18px"],
             ]} />
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
               <label style={field}>참석 아이콘<input style={input} type="text" required maxLength={8} value={quickMenu.rsvpIcon} onChange={(event) => setQuickMenu((current) => ({ ...current, rsvpIcon: event.target.value }))} /></label>
               <label style={field}>위치 아이콘<input style={input} type="text" required maxLength={8} value={quickMenu.locationIcon} onChange={(event) => setQuickMenu((current) => ({ ...current, locationIcon: event.target.value }))} /></label>
               <label style={field}>방명록 아이콘<input style={input} type="text" required maxLength={8} value={quickMenu.guestbookIcon} onChange={(event) => setQuickMenu((current) => ({ ...current, guestbookIcon: event.target.value }))} /></label>
-              <AssetSelect label="참석 아이콘 이미지" assets={decorationAssets} value={quickMenu.rsvpIconAssetId} onChange={(rsvpIconAssetId) => setQuickMenu((current) => ({ ...current, rsvpIconAssetId }))} />
-              <AssetSelect label="위치 아이콘 이미지" assets={decorationAssets} value={quickMenu.locationIconAssetId} onChange={(locationIconAssetId) => setQuickMenu((current) => ({ ...current, locationIconAssetId }))} />
-              <AssetSelect label="방명록 아이콘 이미지" assets={decorationAssets} value={quickMenu.guestbookIconAssetId} onChange={(guestbookIconAssetId) => setQuickMenu((current) => ({ ...current, guestbookIconAssetId }))} />
+              <AssetSelect label="참석 아이콘 이미지" assets={quickMenuIconAssets} value={quickMenu.rsvpIconAssetId} onChange={(rsvpIconAssetId) => setQuickMenu((current) => ({ ...current, rsvpIconAssetId }))} />
+              <AssetSelect label="위치 아이콘 이미지" assets={quickMenuIconAssets} value={quickMenu.locationIconAssetId} onChange={(locationIconAssetId) => setQuickMenu((current) => ({ ...current, locationIconAssetId }))} />
+              <AssetSelect label="방명록 아이콘 이미지" assets={quickMenuIconAssets} value={quickMenu.guestbookIconAssetId} onChange={(guestbookIconAssetId) => setQuickMenu((current) => ({ ...current, guestbookIconAssetId }))} />
               <NumberControl label="글자 크기" value={quickMenu.fontSize} min={8} max={18} onChange={(fontSize) => setQuickMenu((current) => ({ ...current, fontSize }))} />
               <NumberControl label="아이콘 크기" value={quickMenu.iconSize} min={12} max={32} onChange={(iconSize) => setQuickMenu((current) => ({ ...current, iconSize }))} />
             </div>
