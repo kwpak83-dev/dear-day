@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import InvitationRenderer from "../../../components/invitation/invitation-renderer";
 import InvitationMap from "../../../components/invitation/invitation-map";
+import DearDayBrandFooter from "../../../components/invitation/dearday-brand-footer";
 import OptionalInvitationSections from "../../invite/[slug]/optional-invitation-sections";
 import { resolveTemplateAssetUrls } from "../../../lib/template-config";
 
@@ -30,7 +31,7 @@ function PreviewSections({ showQuickMenu = false, quickMenuVisible = false }) {
     </section>
     <section className="public-accounts"><h2>마음 전하실 곳</h2><article className="public-account-card"><p>신랑 측</p><strong>디어은행 · 경원</strong><div><span>123-456-7890</span><button type="button" disabled>계좌 복사</button></div></article></section>
     <OptionalInvitationSections invitation={sampleInvitation} preview />
-    <footer>디어데이와 함께하는 소중한 순간</footer>
+    <DearDayBrandFooter />
     {showQuickMenu && quickMenuVisible && <nav className="invitation-quick-menu" aria-label="초대장 빠른 메뉴 미리보기">
       <button className="invitation-quick-rsvp" type="button" disabled><b aria-hidden="true" /><span>참석 여부</span></button>
       <button className="invitation-quick-location" type="button" disabled><b aria-hidden="true" /><span>오시는 길</span></button>
@@ -64,7 +65,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
   };
 
   const renderInvitation = (mapWidth, showQuickMenu = false) => <InvitationRenderer invitation={invitation} eventKind="wedding" templateId={templateId} templateConfig={config} templateAssets={resolvedAssets}
-    placeActions={<><div className="public-address-copy"><button type="button" disabled>주소 복사</button></div><InvitationMap key={mapWidth} address={invitation.venueAddress} /></>}>
+    placeActions={<><div className="public-address-copy"><button type="button" disabled>주소 복사</button></div><InvitationMap key={mapWidth} address={invitation.venueAddress} venue={invitation.venue} /></>}>
     <PreviewSections showQuickMenu={showQuickMenu} quickMenuVisible={quickMenuVisible} />
   </InvitationRenderer>;
 
