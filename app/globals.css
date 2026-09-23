@@ -926,6 +926,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* Classic DATE calendar section */
 .classic-001 .classic-date{text-align:center;padding-top:48px;padding-bottom:52px}
+.dd-template-sections-configured .classic-date{order:calc(var(--dd-section-invitation-order) + 1)}
 .classic-001 .classic-date-summary{margin:4px 0 28px;font-size:14px;letter-spacing:.04em;color:var(--dd-color-text,#333)}
 .classic-001 .classic-calendar{width:min(82%,360px);margin:0 auto;padding:22px 0;border-top:1px solid var(--dd-color-divider,#e8e2de);border-bottom:1px solid var(--dd-color-divider,#e8e2de)}
 .classic-001 .classic-calendar-month{margin-bottom:18px;font-family:var(--dd-section-title-font-family,serif);font-size:17px;color:var(--dd-color-title,#222)}
