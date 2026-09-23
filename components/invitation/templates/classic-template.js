@@ -64,10 +64,12 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
 
     {message && <section className="classic-section classic-message">
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="section" />
-      <ClassicHeading eyebrow="INVITATION">초대의 글</ClassicHeading>
+      <ClassicHeading eyebrow="INVITATION">소중한 분들을 초대합니다</ClassicHeading>
       <blockquote>{message}</blockquote>
-      {title && <strong>{title}</strong>}
-      {schedule && <time>{schedule}</time>}
+      {wedding && (groomRelation || brideRelation) && <div className="classic-invitation-family">
+        {groomRelation && <p>{groomRelation}</p>}
+        {brideRelation && <p>{brideRelation}</p>}
+      </div>}
     </section>}
 
     {hasInformation && <section className="classic-section classic-information">
