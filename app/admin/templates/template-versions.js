@@ -287,7 +287,8 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
 
   return <section style={{ border: "1px solid #eadfd8", borderRadius: 14, padding: 16, background: "#fff", margin: "16px 0" }}>
     <h2 style={{ marginTop: 0 }}>템플릿 버전</h2>
-    <TemplateDraftPreview templateId={templateId} draft={state.draft} assets={state.allAssets} loading={state.loading} />
+    <div className="admin-template-editor-layout">
+      <div className="admin-template-editor-controls">
     {state.loading ? <p>버전 정보를 불러오는 중이에요.</p> : <>
       <p>현재 판매 버전: {state.current ? `v${state.current.version}` : "없음"}</p>
       <p>현재 편집 Draft: {state.draft ? `v${state.draft.version}` : "없음"}</p>
@@ -583,5 +584,10 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
       </>}
     </>}
     {(state.error || notice) && <p role="status">{state.error || notice}</p>}
+      </div>
+      <aside className="admin-template-editor-preview">
+        <TemplateDraftPreview templateId={templateId} draft={state.draft} assets={state.allAssets} loading={state.loading} />
+      </aside>
+    </div>
   </section>;
 }
