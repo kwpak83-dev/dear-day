@@ -2,7 +2,7 @@ import TemplateConfigEffects from "../template-config-effects";
 import { getTemplateConfigRenderProps, TemplateConfigDecorations, TemplateConfigHeroLayers } from "../template-config-render";
 
 function ClassicHeading({ eyebrow, children }) {
-  return <header className="classic-section-heading"><p>{eyebrow}</p><h3>{children}</h3><i aria-hidden="true">❦</i></header>;
+  return <header className="classic-section-heading"><p>{eyebrow}</p><h3>{children}</h3></header>;
 }
 
 export default function ClassicTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, bgmControl, screenEffect, children }) {
