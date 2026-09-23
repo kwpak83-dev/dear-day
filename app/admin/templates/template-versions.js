@@ -20,7 +20,7 @@ const placementFor = (assetId, saved) => {
 };
 const heroDisplayDefaults = { eyebrow: true, eventLabel: true, title: true, relations: true, detail: true, note: true, schedule: true, venue: true };
 const backgroundDefaults = { color: "#ffffff", assetId: null, overlayColor: "#000000", overlayOpacity: 0 };
-const heroDefaults = { mode: "photo", aspectRatio: "4:5", positionX: 50, positionY: 50, textYPercent: 50, scheduleFontSize: 11, zoom: 1, backgroundAssetId: null, frameAssetId: null, overlayColor: "#000000", overlayOpacity: 0, mastheadVisible: true, mastheadText: "", display: heroDisplayDefaults };
+const heroDefaults = { mode: "photo", aspectRatio: "4:5", positionX: 50, positionY: 50, textYPercent: 50, scheduleFontSize: 11, zoom: 1, backgroundAssetId: null, frameAssetId: null, overlayColor: "#000000", overlayOpacity: 0, headerVisible: true, mastheadVisible: true, mastheadText: "", display: heroDisplayDefaults };
 const typographyDefaults = {
   heroTitle: { fontFamily: "serif", fontSize: 32, fontWeight: 400, lineHeight: 1.3, letterSpacing: 0, textAlign: "center" },
   sectionTitle: { fontFamily: "serif", fontSize: 22, fontWeight: 500, lineHeight: 1.4, letterSpacing: 0, textAlign: "center" },
@@ -326,7 +326,8 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               ["Hero Background Asset", "Hero 영역 전용 배경", "꽃 배경 · 포스터 배경"],
               ["Hero Frame Asset", "Hero 위 프레임 이미지", "아치 · 꽃 프레임"],
               ["Hero Overlay", "Hero 이미지 위 색상/농도", "사진을 어둡게 해 글자 강조"],
-              ["상단 문구", "DearDay 옆/상단 행사 문구", "WEDDING INVITATION · OUR DAY"],
+              ["상단 DearDay 헤더 표시", "Hero 위 브랜드 헤더 전체 표시 여부", "끄면 사진부터 바로 시작"],
+               ["상단 문구", "DearDay 옆/상단 행사 문구", "WEDDING INVITATION · OUR DAY"],
                ["상단 문구 표시", "상단 행사 문구 표시 여부", "끄면 행사 문구 숨김"],
                ["Hero 표시 항목", "Hero 안 개별 문구 표시 여부", "날짜·장소·관계정보 숨김"],
             ]} />
@@ -346,6 +347,10 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               <AssetSelect label="Hero Frame Asset" assets={frameAssets} value={hero.frameAssetId} onChange={(frameAssetId) => setHero({ ...hero, frameAssetId })} />
               <ColorControl label="Hero Overlay 색상" value={hero.overlayColor} onChange={(overlayColor) => setHero({ ...hero, overlayColor })} />
               <NumberControl label="Hero Overlay 투명도" value={hero.overlayOpacity} min={0} max={1} step={0.05} onChange={(overlayOpacity) => setHero({ ...hero, overlayOpacity })} />
+               <label style={{ ...field, display: "flex", flexDirection: "row", alignItems: "center", gap: 8 }}>
+                 <input type="checkbox" checked={hero.headerVisible} onChange={(event) => setHero({ ...hero, headerVisible: event.target.checked })} />
+                 상단 DearDay 헤더 표시
+               </label>
                <label style={field}>상단 문구
                  <input style={input} type="text" maxLength={60} value={hero.mastheadText} placeholder="비워두면 행사 기본 문구 사용" onChange={(event) => setHero({ ...hero, mastheadText: event.target.value })} />
                  <small style={{ color: "#8b7468" }}>예: WEDDING INVITATION · OUR DAY · HAPPY BIRTHDAY</small>
