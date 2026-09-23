@@ -13,7 +13,20 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
   const hasInformation = Boolean(schedule || venue || address);
   const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
   const showHero = (key) => templateConfig?.hero?.display?.[key] !== false;
-  const defaultMastheadText = wedding ? "WEDDING INVITATION" : kindLabel;
+  const mastheadLabels = {
+    wedding: "WEDDING INVITATION",
+    first_birthday: "FIRST BIRTHDAY",
+    birthday: "BIRTHDAY PARTY",
+    baby_shower: "BABY SHOWER",
+    bridal_shower: "BRIDAL SHOWER",
+    anniversary: "ANNIVERSARY",
+    housewarming: "HOUSEWARMING",
+    graduation: "GRADUATION",
+    corporate: "SPECIAL EVENT",
+    party: "PARTY INVITATION",
+    other: "INVITATION",
+  };
+  const defaultMastheadText = mastheadLabels[eventKind] || "INVITATION";
   const mastheadText = templateConfig?.hero?.mastheadText?.trim() || defaultMastheadText;
   const showMastheadText = templateConfig?.hero?.mastheadVisible !== false;
   const showCoverPhoto = Boolean(coverPhotoUrl && renderConfig.showCoverPhoto);
