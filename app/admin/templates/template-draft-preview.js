@@ -30,7 +30,12 @@ function PreviewSections({ showQuickMenu = false }) {
     </section>
     <section className="public-accounts"><h2>마음 전하실 곳</h2><article className="public-account-card"><p>신랑 측</p><strong>디어은행 · 경원</strong><div><span>123-456-7890</span><button type="button" disabled>계좌 복사</button></div></article></section>
     <OptionalInvitationSections invitation={sampleInvitation} preview />
-    <footer>디어데이와 함께하는 소중한 순간</footer>\n    {showQuickMenu && <nav className="invitation-quick-menu" aria-label="초대장 빠른 메뉴 미리보기">\n      <button className="invitation-quick-rsvp" type="button" disabled><b aria-hidden="true" /><span>참석 여부</span></button>\n      <button className="invitation-quick-location" type="button" disabled><b aria-hidden="true" /><span>오시는 길</span></button>\n      <button className="invitation-quick-guestbook" type="button" disabled><b aria-hidden="true" /><span>축하 메시지</span></button>\n    </nav>}
+    <footer>디어데이와 함께하는 소중한 순간</footer>
+    {showQuickMenu && <nav className="invitation-quick-menu" aria-label="초대장 빠른 메뉴 미리보기">
+      <button className="invitation-quick-rsvp" type="button" disabled><b aria-hidden="true" /><span>참석 여부</span></button>
+      <button className="invitation-quick-location" type="button" disabled><b aria-hidden="true" /><span>오시는 길</span></button>
+      <button className="invitation-quick-guestbook" type="button" disabled><b aria-hidden="true" /><span>축하 메시지</span></button>
+    </nav>}
   </div>;
 }
 
