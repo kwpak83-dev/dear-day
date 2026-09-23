@@ -28,6 +28,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
   const defaultMastheadText = mastheadLabels[eventKind] || "INVITATION";
   const mastheadText = templateConfig?.hero?.mastheadText?.trim() || defaultMastheadText;
   const showMastheadText = templateConfig?.hero?.mastheadVisible !== false;
+  const showHeader = templateConfig?.hero?.headerVisible !== false;
   const showCoverPhoto = Boolean(coverPhotoUrl && renderConfig.showCoverPhoto);
   const showIllustration = Boolean(renderConfig.illustrationMode && renderConfig.heroBackgroundConfigured);
   const hasHeroVisual = showCoverPhoto || showIllustration;
@@ -37,7 +38,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
     <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} />
     {bgmControl}
     {screenEffect}
-    <header className="classic-masthead"><b>DearDay</b>{showMastheadText && <span>{mastheadText}</span>}</header>
+    {showHeader && <header className="classic-masthead"><b>DearDay</b>{showMastheadText && <span>{mastheadText}</span>}</header>}
 
     <section className={`classic-hero${hasHeroVisual ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
       {hasHeroVisual && <figure style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
