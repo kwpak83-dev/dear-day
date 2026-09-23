@@ -6,6 +6,7 @@ const SWIPE_THRESHOLD = 50;
 
 export default function Gallery({ photos, idPrefix = "public-gallery" }) {
   const [active, setActive] = useState(null);
+  const [expanded, setExpanded] = useState(false);
   const titleId = `${idPrefix}-title`;
   const dialog = useRef(null);
   const opener = useRef(null);
@@ -43,11 +44,15 @@ export default function Gallery({ photos, idPrefix = "public-gallery" }) {
 
   if (!photos.length) return null;
 
+  const visiblePhotos = expanded ? photos : photos.slice(0, 9);
+  const hasMore = photos.length > 9;
+
   return <section className="invitation-gallery" aria-labelledby={titleId}>
     <p className="gallery-kicker">OUR MOMENTS</p><h2 id={titleId}>우리의 순간들</h2>
-    <div className="public-gallery-grid">{photos.map((photo, index) => <button type="button" className="public-gallery-photo" key={photo.id} aria-label={`${index + 1}번 사진 전체보기`} onClick={event => { opener.current = event.currentTarget; setActive(index); }}>
+    <div className="public-gallery-grid">{visiblePhotos.map((photo, index) => <button type="button" className="public-gallery-photo" key={photo.id} aria-label={`${index + 1}번 사진 전체보기`} onClick={event => { opener.current = event.currentTarget; setActive(index); }}>
       <img src={photo.url} alt={`초대장의 소중한 순간 ${index + 1}`} loading="lazy" decoding="async" width="400" height="400" />
     </button>)}</div>
+    {hasMore && <button type="button" className="public-gallery-more" aria-expanded={expanded} onClick={() => setExpanded(value => !value)}>{expanded ? "접기⌃" : "더 보기⌄"}</button>}
     <dialog ref={dialog} className="gallery-lightbox" aria-label="갤러리 사진 전체보기" onCancel={event => { event.preventDefault(); close(); }} onClose={() => setActive(null)} onKeyDown={event => {
       if (event.key === "ArrowLeft") { event.preventDefault(); step(-1); }
       if (event.key === "ArrowRight") { event.preventDefault(); step(1); }
