@@ -86,7 +86,5 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
     </section>}
 
     {children && <div className="invitation-template-sections">{children}</div>}
-
-    <footer className="modern-footer"><span>TOGETHER</span><strong>FOREVER</strong><i aria-hidden="true" /><b>DearDay</b></footer>
   </article>;
 }
