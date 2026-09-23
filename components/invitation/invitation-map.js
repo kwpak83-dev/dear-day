@@ -51,7 +51,7 @@ function loadNaverMaps() {
   return mapsSdkPromise;
 }
 
-export default function InvitationMap({ address, onPositionChange }) {
+export default function InvitationMap({ address, venue = "", onPositionChange }) {
   const canvasRef = useRef(null);
   const [position, setPosition] = useState(null);
   const normalizedAddress = address?.trim() || "";
@@ -95,5 +95,20 @@ export default function InvitationMap({ address, onPositionChange }) {
   }, [position]);
 
   if (!normalizedAddress || !position) return null;
-  return <div className="invitation-map" aria-label={`${normalizedAddress} 지도`}><div ref={canvasRef} className="invitation-map-canvas" /></div>;
+
+  const destinationName = venue?.trim() || normalizedAddress;
+  const encodedName = encodeURIComponent(destinationName);
+  const { latitude, longitude } = position;
+  const naverUrl = `https://map.naver.com/p/directions/-/-/-/car?c=${longitude},${latitude},15,0,0,0,dh`;
+  const kakaoUrl = `https://map.kakao.com/link/to/${encodedName},${latitude},${longitude}`;
+  const tmapUrl = `https://www.tmap.co.kr/tmap2/mobile/route.jsp?name=${encodedName}&lon=${longitude}&lat=${latitude}`;
+
+  return <div className="invitation-map" aria-label={`${normalizedAddress} 지도`}>
+    <div ref={canvasRef} className="invitation-map-canvas" />
+    <nav className="invitation-navigation-links" aria-label="길찾기 앱 선택">
+      <a href={naverUrl} target="_blank" rel="noreferrer"><span className="nav-app-icon naver" aria-hidden="true">N</span><span>네이버지도</span></a>
+      <a href={kakaoUrl} target="_blank" rel="noreferrer"><span className="nav-app-icon kakao" aria-hidden="true">K</span><span>카카오맵</span></a>
+      <a href={tmapUrl} target="_blank" rel="noreferrer"><span className="nav-app-icon tmap" aria-hidden="true">T</span><span>티맵</span></a>
+    </nav>
+  </div>;
 }
