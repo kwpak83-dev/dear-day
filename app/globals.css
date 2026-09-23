@@ -126,7 +126,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .romantic-001 .public-account-card>p{color:var(--romantic-rose)}
 .romantic-001 .public-account-card strong,.romantic-001 .public-account-card span{color:var(--romantic-brown);overflow-wrap:anywhere}
 .romantic-001 .public-share-copy{margin:0;padding:42px 22px 25px;background:var(--romantic-ivory)}
-.romantic-001 .public-invitation-sections>footer{display:none}
+.romantic-001 .public-invitation-sections>footer:not(.dearday-brand-footer){display:none}
 .romantic-footer{display:flex;min-height:150px;align-items:center;justify-content:center;flex-direction:column;gap:9px;padding:38px 22px;background:#6a4c47;color:#f9eae0}
 .romantic-footer span{font-size:23px;font-style:italic}
 .romantic-footer i{color:#d7aaa0;font-size:11px;font-style:normal}
@@ -242,7 +242,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .modern-001 .public-account-card>p{color:var(--modern-muted);letter-spacing:.12em}
 .modern-001 .public-account-card strong,.modern-001 .public-account-card span{color:var(--modern-ink);overflow-wrap:anywhere}
 .modern-001 .public-share-copy{margin:0;padding:38px 22px;background:var(--modern-paper)}
-.modern-001 .public-invitation-sections>footer{display:none}
+.modern-001 .public-invitation-sections>footer:not(.dearday-brand-footer){display:none}
 .modern-footer{display:flex;min-height:190px;align-items:flex-start;justify-content:center;flex-direction:column;padding:42px clamp(24px,8vw,44px);background:#242421;color:#fff}
 .modern-footer span,.modern-footer strong{font:400 31px/.95 Georgia,"Times New Roman",serif;letter-spacing:-.04em}
 .modern-footer strong{font-style:italic;font-weight:400}
@@ -345,7 +345,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .classic-001 .public-account-card>p{color:var(--classic-muted);letter-spacing:.1em}
 .classic-001 .public-account-card strong,.classic-001 .public-account-card span{color:var(--classic-ink);overflow-wrap:anywhere}
 .classic-001 .public-share-copy{margin:0;padding:37px 22px;background:var(--classic-ivory)}
-.classic-001 .public-invitation-sections>footer{display:none}
+.classic-001 .public-invitation-sections>footer:not(.dearday-brand-footer){display:none}
 .classic-footer{display:flex;min-height:210px;align-items:center;justify-content:center;flex-direction:column;padding:50px 24px;background:#f2ede2;color:var(--classic-ink)}
 .classic-footer>i{color:#78846c;font-size:25px;font-style:normal}
 .classic-footer>span{margin-top:15px;color:var(--classic-gold);font:italic 34px/1.1 Georgia,"Times New Roman",serif}
@@ -966,3 +966,5 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dearday-brand-arrow{display:grid;width:48px;height:48px;margin-top:22px;place-items:center;border:1px solid #c98f84;border-radius:50%;font-size:24px;color:#a96f65;transition:transform .18s ease,background .18s ease}
 .dearday-brand-footer-link:hover .dearday-brand-arrow{transform:translateX(2px);background:rgba(201,143,132,.08)}
 .dearday-brand-cta{margin-top:10px;font-size:12px;letter-spacing:.02em;color:#795d53}
+
+.dd-template-sections-configured .dearday-brand-footer{order:1000}
