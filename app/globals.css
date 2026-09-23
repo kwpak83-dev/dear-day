@@ -935,4 +935,4 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .classic-001 .classic-calendar-weekdays span{font-size:11px;color:var(--dd-color-muted,#777)}
 .classic-001 .classic-calendar-grid span.is-event-day{width:30px;height:30px;min-height:30px;margin:auto;border-radius:50%;background:var(--dd-color-accent,#b78b72);color:#fff;font-weight:600}
 .classic-001 .classic-dday{margin:26px 0 0;font-size:13px;line-height:1.8;color:var(--dd-color-text,#333)}
-.classic-001 .classic-dday strong{font-weight:500;color:var(--dd-color-title,#222)}
+.classic-001 .classic-dday strong{font-weight:500;color:var(--dd-color-text,#333)}
