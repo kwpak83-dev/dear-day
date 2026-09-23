@@ -68,7 +68,7 @@ export async function POST(request) {
     if (promoted.error) return fail("Draft를 판매 버전으로 확정하지 못했어요.", 500);
     if (promoted.count !== 1) return fail("Draft 상태가 변경되었어요. 다시 불러와 주세요.", 409);
 
-    const templateStatus = ["on_sale", "stopped"].includes(result.template.status) ? result.template.status : "sale_ready";
+    const templateStatus = ["on_sale", "stopped"].includes(result.template.status) ? result.template.status : "draft";
     const changed = await auth.adminClient.from("templates")
       .update({ current_sale_version_id: body.draftId, status: templateStatus }, { count: "exact" })
       .eq("id", templateId);
