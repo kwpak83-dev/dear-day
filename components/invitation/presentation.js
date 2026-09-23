@@ -21,6 +21,29 @@ function formatDate(value) {
   return new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "short" }).format(date);
 }
 
+function formatHeroSchedule(dateValue, timeValue) {
+  const rawDate = clean(dateValue);
+  const rawTime = clean(timeValue);
+  let dateText = rawDate;
+  if (rawDate) {
+    const date = new Date(rawDate + "T12:00:00");
+    if (!Number.isNaN(date.getTime())) {
+      const weekdays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+      dateText = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")} ${weekdays[date.getDay()]}`;
+    }
+  }
+  let timeText = rawTime;
+  const match = rawTime.match(/^(\d{1,2}):(\d{2})$/);
+  if (match) {
+    const hour = Number(match[1]);
+    const minute = Number(match[2]);
+    const period = hour < 12 ? "오전" : "오후";
+    const hour12 = hour % 12 || 12;
+    timeText = `${period} ${hour12}시${minute ? ` ${minute}분` : ""}`;
+  }
+  return join([dateText, timeText], " ");
+}
+
 const EVENT_PRESENTERS = {
   wedding: (item) => ({
     title: join([item.groom, item.bride], " & "),
@@ -51,6 +74,7 @@ export function getInvitationPresentation(invitation = {}, eventKind) {
     note: clean(event.note),
     groomRelation: clean(event.groomRelation),
     brideRelation: clean(event.brideRelation),
+    heroSchedule: formatHeroSchedule(invitation.date, invitation.time),
     schedule: join([formatDate(invitation.date), invitation.time]),
     venue: clean(invitation.venue),
     address: join([invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail], " "),
