@@ -42,7 +42,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
     {(showHeader || showMastheadText) && <header className={`modern-masthead${!showHeader && showMastheadText ? " event-only" : ""}`}>
       {showHeader && <b>DearDay</b>}
       {showMastheadText && <span>{mastheadText}</span>}
-    </header>
+    </header>}
 
     <section className={`modern-hero${hasHeroVisual ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
       {hasHeroVisual && <figure style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
