@@ -359,6 +359,43 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
         <section style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: 12, marginTop: 28, minWidth: 0 }}>
           <h3>Typography + Colors Config</h3>
           <form onSubmit={saveTypographyColors} style={{ display: "grid", gap: 16 }}>
+            <details style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: "10px 12px", background: "#fffaf7" }}>
+              <summary style={{ cursor: "pointer", fontWeight: 700 }}>C3 매핑 가이드 보기</summary>
+              <div style={{ display: "grid", gap: 14, marginTop: 12, fontSize: 13, lineHeight: 1.6 }}>
+                <div>
+                  <strong>Typography</strong>
+                  <div style={{ overflowX: "auto", marginTop: 6 }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 520 }}>
+                      <thead><tr><th style={{ textAlign: "left", padding: 6 }}>항목</th><th style={{ textAlign: "left", padding: 6 }}>적용 위치</th><th style={{ textAlign: "left", padding: 6 }}>예시</th></tr></thead>
+                      <tbody>
+                        <tr><td style={{ padding: 6 }}>Hero Title</td><td style={{ padding: 6 }}>Hero 메인 제목</td><td style={{ padding: 6 }}>Wedding Day</td></tr>
+                        <tr><td style={{ padding: 6 }}>Section Title</td><td style={{ padding: 6 }}>각 섹션의 큰 제목</td><td style={{ padding: 6 }}>우리의 순간들, 마음 전하실 곳, RSVP, 방명록</td></tr>
+                        <tr><td style={{ padding: 6 }}>Body</td><td style={{ padding: 6 }}>일반 본문·정보</td><td style={{ padding: 6 }}>초대 문구, 장소/일정, 계좌, RSVP·방명록 본문</td></tr>
+                        <tr><td style={{ padding: 6 }}>Caption</td><td style={{ padding: 6 }}>작은 보조문구</td><td style={{ padding: 6 }}>OUR MOMENTS, section-kicker, small</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p style={{ margin: "6px 0 0", color: "#76645b" }}>각 Typography 항목의 Font / Size / Weight / Line Height / Letter Spacing / Align이 해당 영역에 적용됩니다.</p>
+                </div>
+                <div>
+                  <strong>Colors</strong>
+                  <div style={{ overflowX: "auto", marginTop: 6 }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 520 }}>
+                      <thead><tr><th style={{ textAlign: "left", padding: 6 }}>항목</th><th style={{ textAlign: "left", padding: 6 }}>적용 위치</th></tr></thead>
+                      <tbody>
+                        <tr><td style={{ padding: 6 }}>Text</td><td style={{ padding: 6 }}>기본 본문, 장소/일정, 계좌, RSVP·방명록 내용</td></tr>
+                        <tr><td style={{ padding: 6 }}>Title</td><td style={{ padding: 6 }}>Hero 메인 제목 + 각 섹션 제목</td></tr>
+                        <tr><td style={{ padding: 6 }}>Muted</td><td style={{ padding: 6 }}>작은 보조문구, kicker, small</td></tr>
+                        <tr><td style={{ padding: 6 }}>Accent</td><td style={{ padding: 6 }}>강조 요소·링크 + Quick Menu 아이콘/강조색</td></tr>
+                        <tr><td style={{ padding: 6 }}>Button Background</td><td style={{ padding: 6 }}>일반 액션 버튼 + Quick Menu 배경</td></tr>
+                        <tr><td style={{ padding: 6 }}>Button Text</td><td style={{ padding: 6 }}>일반 액션 버튼 글자 + Quick Menu 글자</td></tr>
+                        <tr><td style={{ padding: 6 }}>Divider</td><td style={{ padding: 6 }}>섹션/카드 경계선 + Quick Menu 구분선</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </details>
             <h4 style={{ margin: 0 }}>Typography</h4>
             {typographyRoles.map(([role, label]) => (
               <fieldset key={role} style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 12 }}>
