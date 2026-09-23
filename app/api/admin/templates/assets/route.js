@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 const bucket = "template-assets";
 const maxBytes = 15 * 1024 * 1024;
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const folders = { thumbnail: "sales", long_preview: "sales", background: "backgrounds", hero_frame: "hero", decoration: "decorations", screen_effect: "effects", texture: "textures", bgm: "audio" };
+const folders = { thumbnail: "sales", long_preview: "sales", background: "backgrounds", hero_frame: "hero", decoration: "decorations", screen_effect: "effects", quick_menu_icon: "quick-menu-icons", texture: "textures", bgm: "audio" };
 const singleActiveTypes = new Set(["thumbnail", "long_preview", "hero_frame", "screen_effect", "texture", "bgm"]);
 const extensions = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "audio/mpeg": "mp3" };
 const fail = (error, status) => Response.json({ error }, { status });
