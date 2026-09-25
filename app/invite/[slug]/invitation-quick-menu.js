@@ -86,11 +86,17 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
         // The desktop phone renders the invitation at a compact scale, so element
         // geometry is not comparable to the full/mobile preview. Use the actual
         // phone scroller progress instead, after a real user scroll.
-        let userScrolled = false;
         const onScroll = () => {
-          userScrolled = true;
+          // This compact LIVE PREVIEW has a much longer scaled document than the
+          // full preview. Reveal when the phone reaches the same semantic area
+          // (gallery/place), but keep a progress fallback for templates without it.
+          const semanticTrigger = menuRoot?.querySelector(".classic-gallery, .romantic-gallery, .modern-gallery, .classic-information, .romantic-information, .modern-information, .public-accounts");
+          const rootRect = scrollRoot.getBoundingClientRect();
+          const triggerRect = semanticTrigger?.getBoundingClientRect();
+          const nearPlace = triggerRect && triggerRect.top <= rootRect.bottom * 1.08;
           const maxScroll = Math.max(1, scrollRoot.scrollHeight - scrollRoot.clientHeight);
-          if (scrollRoot.scrollTop >= maxScroll * 0.42) setVisible(true);
+          const fallbackReached = scrollRoot.scrollTop >= maxScroll * 0.28;
+          if (nearPlace || fallbackReached) setVisible(true);
         };
         scrollRoot.addEventListener("scroll", onScroll, { passive: true });
         return () => scrollRoot.removeEventListener("scroll", onScroll);
