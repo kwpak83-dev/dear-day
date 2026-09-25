@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import RsvpForm from "./rsvp-form";
 import Guestbook from "./guestbook";
 
@@ -26,53 +26,36 @@ function BottomSheet({ title, onClose, children }) {
   </div>;
 }
 
-export default function InvitationQuickMenu({ invitation, slug, startsAt, previewRoot = null, alwaysVisible = false, embedded = false }) {
-  const [visible, setVisible] = useState(alwaysVisible);
+export default function InvitationQuickMenu({ invitation, slug, startsAt }) {
+  const [visible, setVisible] = useState(false);
   const [sheet, setSheet] = useState(null);
-  const hostRef = useRef(null);
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
 
   useEffect(() => {
-    if (alwaysVisible) { setVisible(true); return; }
-    const root = previewRoot?.current || null;
-    const scope = hostRef.current?.closest(".full-invitation-renderer") || root || document;
-    const trigger = scope.querySelector?.(".public-accounts") || document.getElementById("invitation-quick-menu-trigger");
+    const trigger = document.querySelector(".public-accounts") || document.getElementById("invitation-quick-menu-trigger");
     if (visible || !trigger) return;
-
-    const scrollRoot = embedded
-      ? (root || hostRef.current?.closest(".preview-content, .admin-draft-preview-scroll"))
-      : null;
-
-    const reachedTrigger = () => {
-      const triggerRect = trigger.getBoundingClientRect();
-      const rootRect = scrollRoot?.getBoundingClientRect();
-      const viewportBottom = rootRect?.bottom ?? window.innerHeight;
-      if (triggerRect.top <= viewportBottom * 0.92) setVisible(true);
-    };
-
-    reachedTrigger();
-    const target = scrollRoot || window;
-    target.addEventListener("scroll", reachedTrigger, { passive: true });
-    window.addEventListener("resize", reachedTrigger);
-    return () => {
-      target.removeEventListener("scroll", reachedTrigger);
-      window.removeEventListener("resize", reachedTrigger);
-    };
-  }, [alwaysVisible, embedded, previewRoot, visible]);
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setVisible(true);
+        observer.disconnect();
+      }
+    }, { threshold: 0.1 });
+    observer.observe(trigger);
+    return () => observer.disconnect();
+  }, [visible]);
 
   const goToLocation = () => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const scope = hostRef.current?.closest(".full-invitation-renderer") || previewRoot?.current || document;
-    scope.querySelector?.(".classic-information, .romantic-information, .modern-information")
+    document.querySelector(".classic-information, .romantic-information, .modern-information")
       ?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
   };
 
   if (!rsvpEnabled && !guestbookEnabled && !hasLocation) return null;
 
-  return <div ref={hostRef} className="invitation-quick-menu-host">
-    {visible && <nav className={`invitation-quick-menu${embedded ? " invitation-quick-menu-embedded" : ""}`} aria-label="초대장 빠른 메뉴">
+  return <>
+    {visible && <nav className="invitation-quick-menu" aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
       {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
@@ -83,5 +66,5 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     {sheet === "guestbook" && guestbookEnabled && <BottomSheet title="축하 메시지" onClose={() => setSheet(null)}>
       <Guestbook slug={slug} />
     </BottomSheet>}
-  </div>;
+  </>;
 }
