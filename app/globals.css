@@ -984,15 +984,5 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
     width:auto;
     transform:none;
     z-index:80;
-    padding:7px;
-    border:1px solid var(--dd-invite-action-divider,rgba(218,201,191,.85));
-    border-radius:17px;
-    background:rgba(255,252,249,.94);
-    box-shadow:0 10px 30px rgba(57,39,32,.18);
-  }
-  .preview-phone > .invitation-quick-menu--desktop-live button{
-    border-radius:var(--dd-invite-action-radius,0);
-    background:var(--dd-invite-action-bg,transparent);
-    color:var(--dd-invite-action-text,#674f45);
   }
 }
