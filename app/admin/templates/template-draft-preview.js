@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import InvitationRenderer from "../../../components/invitation/invitation-renderer";
 import InvitationMap from "../../../components/invitation/invitation-map";
 import DearDayBrandFooter from "../../../components/invitation/dearday-brand-footer";
