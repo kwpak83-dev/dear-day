@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import RsvpForm from "./rsvp-form";
 import Guestbook from "./guestbook";
 
@@ -29,6 +29,7 @@ function BottomSheet({ title, onClose, children }) {
 export default function InvitationQuickMenu({ invitation, slug, startsAt }) {
   const [visible, setVisible] = useState(false);
   const [sheet, setSheet] = useState(null);
+  const markerRef = useRef(null);
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
@@ -36,15 +37,14 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt }) {
   useEffect(() => {
     if (visible) return;
 
-    const menuRoot = document.querySelector(".invitation-quick-menu-trigger")?.closest(".invitation-template")
-      || document.querySelector(".invitation-template");
-    const scrollRoot = menuRoot?.closest(".preview-content, .full-preview-scroll, .admin-template-editor-preview, .admin-draft-full-preview")
-      || null;
-    const trigger = menuRoot?.querySelector(".classic-information, .romantic-information, .modern-information, .public-accounts")
-      || document.getElementById("invitation-quick-menu-trigger");
+    // Scope every quick menu to its own invitation instance. The editor can render
+    // live, full and admin previews at the same time, so document.querySelector()
+    // can accidentally observe a different preview.
+    const menuRoot = markerRef.current?.closest(".invitation-template");
+    const scrollRoot = markerRef.current?.closest(".preview-content, .full-preview-scroll, .admin-template-editor-preview, .admin-draft-full-preview") || null;
+    const trigger = menuRoot?.querySelector(".classic-information, .romantic-information, .modern-information, .public-accounts");
 
     if (!trigger) {
-      // Invitations without a location/accounts section still need RSVP/guestbook access.
       setVisible(true);
       return;
     }
@@ -61,13 +61,15 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt }) {
 
   const goToLocation = () => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    document.querySelector(".classic-information, .romantic-information, .modern-information")
+    markerRef.current?.closest(".invitation-template")
+      ?.querySelector(".classic-information, .romantic-information, .modern-information")
       ?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
   };
 
   if (!rsvpEnabled && !guestbookEnabled && !hasLocation) return null;
 
   return <>
+    <span ref={markerRef} className="invitation-quick-menu-trigger" aria-hidden="true" />
     {visible && <nav className="invitation-quick-menu" aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
       {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
