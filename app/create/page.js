@@ -191,6 +191,7 @@ export default function CreateInvitation() {
   const [published, setPublished] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [eventStatus, setEventStatus] = useState("draft");
+  const [eventReady, setEventReady] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [paymentComplete, setPaymentComplete] = useState(false);
   const [publishConfirmOpen, setPublishConfirmOpen] = useState(false);
@@ -265,6 +266,7 @@ export default function CreateInvitation() {
     const slug = query.get("slug") || "";
     // A URL slug is the only way to enter edit mode. A plain /create starts a new event.
     setEventSlug(slug);
+    if (!slug) setEventReady(true);
     if (!slug && query.get("resume") === "draft") {
       try {
         const draft = JSON.parse(window.localStorage.getItem("dear-day-draft") || "null");
@@ -311,6 +313,7 @@ export default function CreateInvitation() {
       templateSelectionChanged.current = false;
       setEventSlug(result.event.slug);
       setEventStatus(status);
+      setEventReady(true);
       setSaveNotice(status === "paid" ? "결제완료 초대장을 불러왔어요." : status === "published" ? "발행된 초대장을 불러왔어요." : "임시저장을 불러왔어요.");
       if (status === "paid" && query.get("preview") === "final") setPreviewOpen(true);
       if (status === "paid" && query.get("publish") === "ready") setPublishConfirmOpen(true);
@@ -496,6 +499,10 @@ export default function CreateInvitation() {
     }
   };
   const saveDraft = async ({ showLoading = true, showSuccessToast = false } = {}) => {
+    if (!eventReady) {
+      setSaveNotice("기존 초대장 정보를 불러오는 중이에요. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
     if (galleryBusy || photoBusy.current || (showLoading && submitting)) return;
     if (showSuccessToast) { window.clearTimeout(saveToastTimer.current); setSaveToastVisible(false); }
     if (showLoading) setSubmitting("draft");
@@ -637,7 +644,7 @@ export default function CreateInvitation() {
     onChange={(bankName) => update("brideBank", bankName)}
   />
 </Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent2Name || "예금주 이름" : invitation.bride || "신부 이름"} value={invitation.brideAccountHolder} onChange={(e) => update("brideAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.brideAccount} onChange={(e) => update("brideAccount", e.target.value)} /></Field></div></div>}
-        <div className="editor-actions"><button type="button" className="save-button preview-button" onClick={() => { setFlowNotice(""); setPreviewOpen(true); }}>미리보기</button><button className="save-button" onClick={() => saveDraft({ showSuccessToast: true })} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>{eventStatus === "published" ? "수정사항 반영" : "저장하기"}</button>{eventStatus === "published" && eventSlug && <a className="save-button published-invitation-link" href={`/invite/${eventSlug}?from=owner`}>초대장 보기</a>}</div>{saveNotice && <p role="status">{saveNotice}</p>}{loginRequired && <button type="button" className="save-button" onClick={continueAfterLogin}>로그인하고 계속하기</button>}
+        <div className="editor-actions"><button type="button" className="save-button preview-button" onClick={() => { setFlowNotice(""); setPreviewOpen(true); }}>미리보기</button><button className="save-button" onClick={() => saveDraft({ showSuccessToast: true })} disabled={!eventReady || Boolean(submitting) || uploadingPhoto || galleryBusy}>{eventStatus === "published" ? "수정사항 반영" : "저장하기"}</button>{eventStatus === "published" && eventSlug && <a className="save-button published-invitation-link" href={`/invite/${eventSlug}?from=owner`}>초대장 보기</a>}</div>{saveNotice && <p role="status">{saveNotice}</p>}{loginRequired && <button type="button" className="save-button" onClick={continueAfterLogin}>로그인하고 계속하기</button>}
       </section>
       <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div ref={livePreviewRef} className="preview-content full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={previewTemplateId || invitation.templateId} templateConfig={templateRender.config} templateAssets={templateRender.assets} placeActions={previewPlaceActions()}><><Gallery photos={galleryPhotos} idPrefix="live-preview-gallery" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} /></></InvitationRenderer></div></div></aside>
     </div>
