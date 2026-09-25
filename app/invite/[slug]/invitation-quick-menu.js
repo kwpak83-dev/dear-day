@@ -31,6 +31,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const [sheet, setSheet] = useState(null);
   const markerRef = useRef(null);
   const desktopLiveStartedAtTopRef = useRef(false);
+  const desktopLiveHasScrolledRef = useRef(false);
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
@@ -63,7 +64,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
         // The phone preview is visually scaled, so DOM intersection happens too late.
         // Reveal at the same relative journey point as the real invitation.
         const maxScroll = Math.max(1, scrollRoot.scrollHeight - scrollRoot.clientHeight);
-        if (scrollRoot.scrollTop >= maxScroll * 0.58) {
+        if (desktopLiveHasScrolledRef.current && scrollRoot.scrollTop >= maxScroll * 0.58) {
           setVisible(true);
           return true;
         }
@@ -85,7 +86,10 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     // IntersectionObserver report the location section as intersecting at load.
     // For preview scrollers, use their real scroll position/geometry instead.
     if (scrollRoot) {
-      const onScroll = () => { reveal(); };
+      const onScroll = () => {
+        if (isDesktopLivePreview) desktopLiveHasScrolledRef.current = true;
+        reveal();
+      };
       scrollRoot.addEventListener("scroll", onScroll, { passive: true });
       return () => scrollRoot.removeEventListener("scroll", onScroll);
     }
