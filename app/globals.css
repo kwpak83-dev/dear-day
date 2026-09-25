@@ -835,7 +835,8 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .invitation-quick-rsvp b[style],.invitation-quick-location b[style],.invitation-quick-guestbook b[style]{font-size:0}
 .invitation-quick-menu span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .preview-content,.admin-draft-preview-scroll{position:relative}
-.invitation-quick-menu.invitation-quick-menu-embedded{position:sticky;z-index:70;right:auto;bottom:8px;width:calc(100% - 12px);margin:0 6px 8px;box-sizing:border-box;transform:none;animation:none}
+.invitation-quick-menu-host:has(.invitation-quick-menu-embedded){position:sticky;z-index:70;bottom:8px;height:0;overflow:visible}
+.invitation-quick-menu.invitation-quick-menu-embedded{position:absolute;z-index:70;right:6px;bottom:8px;left:6px;width:auto;margin:0;box-sizing:border-box;transform:none;animation:none}
 
 .dd-section-hidden-rsvp .invitation-quick-rsvp,.dd-section-hidden-location .invitation-quick-location,.dd-section-hidden-guestbook .invitation-quick-guestbook{display:none}
 .invitation-bottom-sheet-layer{position:fixed;z-index:110;inset:0;display:flex;align-items:flex-end;justify-content:center}
