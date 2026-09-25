@@ -40,7 +40,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
-  const isDesktopLivePreview = previewMode === "desktop-live";
+  const isDesktopLivePreview = previewMode === "desktop-live" || previewMode === "admin-live";
 
   useEffect(() => {
     if (!isDesktopLivePreview) return;
