@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import RsvpForm from "./rsvp-form";
 import Guestbook from "./guestbook";
 
@@ -29,10 +30,15 @@ function BottomSheet({ title, onClose, children }) {
 export default function InvitationQuickMenu({ invitation, slug, startsAt, previewMode = "" }) {
   const [visible, setVisible] = useState(false);
   const [sheet, setSheet] = useState(null);
-  const [desktopLiveOffset, setDesktopLiveOffset] = useState(null);
+  const [desktopLivePortal, setDesktopLivePortal] = useState(null);
   const markerRef = useRef(null);
   const desktopLiveStartedAtTopRef = useRef(false);
   const desktopLiveHasScrolledRef = useRef(false);
+
+  useEffect(() => {
+    if (!isDesktopLivePreview) return;
+    setDesktopLivePortal(markerRef.current?.closest(".preview-phone") || null);
+  }, [isDesktopLivePreview]);
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
@@ -68,7 +74,6 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
         if (desktopLiveHasScrolledRef.current && scrollRoot.scrollTop >= maxScroll * 0.58) {
           // Keep the menu at a fixed viewport position inside the phone. Compensate
           // for the preview scroller's movement because the menu is rendered inside it.
-          setDesktopLiveOffset(scrollRoot.scrollTop);
           setVisible(true);
           return true;
         }
@@ -93,7 +98,6 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       const onScroll = () => {
         if (isDesktopLivePreview) {
           desktopLiveHasScrolledRef.current = true;
-          if (visible) setDesktopLiveOffset(scrollRoot.scrollTop);
         }
         reveal();
       };
@@ -122,11 +126,15 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
 
   return <>
     <span ref={markerRef} className="invitation-quick-menu-trigger" aria-hidden="true" />
-    {visible && <nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} style={isDesktopLivePreview && desktopLiveOffset !== null ? { transform: `translate(-50%, ${desktopLiveOffset}px)` } : undefined} aria-label="초대장 빠른 메뉴">
+    {visible && (isDesktopLivePreview && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
       {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
-    </nav>}
+    </nav>, desktopLivePortal) : <nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} aria-label="초대장 빠른 메뉴">
+      {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
+      {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
+      {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
+    </nav>)}
     {sheet === "rsvp" && rsvpEnabled && <BottomSheet title="참석 여부" onClose={() => setSheet(null)}>
       <RsvpForm slug={slug} startsAt={startsAt} />
     </BottomSheet>}
