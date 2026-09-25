@@ -30,7 +30,7 @@ function PreviewSections({ interactiveQuickMenu = false, previewRoot = null }) {
       <div className="public-gallery-grid">{[2, 3, 4].map((number) => <span className="public-gallery-photo" key={number}><img src={`/moment-${number}.png`} alt="" /></span>)}</div>
     </section>
     <section className="public-accounts"><h2>마음 전하실 곳</h2><article className="public-account-card"><p>신랑 측</p><strong>디어은행 · 경원</strong><div><span>123-456-7890</span><button type="button" disabled>계좌 복사</button></div></article></section>
-    <OptionalInvitationSections invitation={sampleInvitation} previewRoot={previewRoot} {...(interactiveQuickMenu ? {} : {})} />
+    <OptionalInvitationSections invitation={sampleInvitation} previewRoot={previewRoot} embedded />
     <DearDayBrandFooter />
 
   </div>;
