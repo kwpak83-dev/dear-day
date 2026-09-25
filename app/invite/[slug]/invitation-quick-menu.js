@@ -40,15 +40,26 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     const scope = hostRef.current?.closest(".full-invitation-renderer") || root || document;
     const trigger = scope.querySelector?.(".public-accounts") || document.getElementById("invitation-quick-menu-trigger");
     if (visible || !trigger) return;
-    const scrollRoot = root || (embedded ? scope.closest?.(".preview-content, .admin-draft-preview-scroll") : null);
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setVisible(true);
-        observer.disconnect();
-      }
-    }, { root: scrollRoot, threshold: 0.1 });
-    observer.observe(trigger);
-    return () => observer.disconnect();
+
+    const scrollRoot = embedded
+      ? (root || hostRef.current?.closest(".preview-content, .admin-draft-preview-scroll"))
+      : null;
+
+    const reachedTrigger = () => {
+      const triggerRect = trigger.getBoundingClientRect();
+      const rootRect = scrollRoot?.getBoundingClientRect();
+      const viewportBottom = rootRect?.bottom ?? window.innerHeight;
+      if (triggerRect.top <= viewportBottom * 0.92) setVisible(true);
+    };
+
+    reachedTrigger();
+    const target = scrollRoot || window;
+    target.addEventListener("scroll", reachedTrigger, { passive: true });
+    window.addEventListener("resize", reachedTrigger);
+    return () => {
+      target.removeEventListener("scroll", reachedTrigger);
+      window.removeEventListener("resize", reachedTrigger);
+    };
   }, [alwaysVisible, embedded, previewRoot, visible]);
 
   const goToLocation = () => {
