@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import RsvpForm from "./rsvp-form";
 import Guestbook from "./guestbook";
 
-function BottomSheet({ title, onClose, children }) {
+function BottomSheet({ title, onClose, children, portalTarget = null, preview = false }) {
   useEffect(() => {
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -17,7 +17,7 @@ function BottomSheet({ title, onClose, children }) {
     };
   }, [onClose]);
 
-  return <div className="invitation-bottom-sheet-layer">
+  const sheet = <div className={`invitation-bottom-sheet-layer${preview ? " invitation-bottom-sheet-layer--preview" : ""}`}>
     <button className="invitation-bottom-sheet-backdrop" type="button" aria-label="닫기" onClick={onClose} />
     <section className="invitation-bottom-sheet" role="dialog" aria-modal="true" aria-label={title}>
       <i className="invitation-bottom-sheet-handle" aria-hidden="true" />
@@ -25,6 +25,7 @@ function BottomSheet({ title, onClose, children }) {
       <div className="invitation-bottom-sheet-content">{children}</div>
     </section>
   </div>;
+  return portalTarget ? createPortal(sheet, portalTarget) : sheet;
 }
 
 export default function InvitationQuickMenu({ invitation, slug, startsAt, previewMode = "" }) {
@@ -151,10 +152,10 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
     </nav>)}
-    {sheet === "rsvp" && rsvpEnabled && <BottomSheet title="참석 여부" onClose={() => setSheet(null)}>
+    {sheet === "rsvp" && rsvpEnabled && <BottomSheet title="참석 여부" onClose={() => setSheet(null)} portalTarget={isDesktopLivePreview ? desktopLivePortal : null} preview={isDesktopLivePreview}>
       <RsvpForm slug={slug} startsAt={startsAt} />
     </BottomSheet>}
-    {sheet === "guestbook" && guestbookEnabled && <BottomSheet title="축하 메시지" onClose={() => setSheet(null)}>
+    {sheet === "guestbook" && guestbookEnabled && <BottomSheet title="축하 메시지" onClose={() => setSheet(null)} portalTarget={isDesktopLivePreview ? desktopLivePortal : null} preview={isDesktopLivePreview}>
       <Guestbook slug={slug} />
     </BottomSheet>}
   </>;
