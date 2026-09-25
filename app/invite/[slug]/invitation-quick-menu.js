@@ -31,6 +31,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const [visible, setVisible] = useState(false);
   const [sheet, setSheet] = useState(null);
   const [desktopLivePortal, setDesktopLivePortal] = useState(null);
+  const [desktopLiveStyle, setDesktopLiveStyle] = useState(undefined);
   const markerRef = useRef(null);
   const desktopLiveStartedAtTopRef = useRef(false);
   const desktopLiveScrolledRef = useRef(false);
@@ -45,6 +46,17 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     const phone = markerRef.current?.closest(".preview-phone") || null;
     const scroller = markerRef.current?.closest(".preview-content") || null;
     setDesktopLivePortal(phone);
+    const templateRoot = markerRef.current?.closest(".invitation-template");
+    if (templateRoot) {
+      const computed = getComputedStyle(templateRoot);
+      setDesktopLiveStyle({
+        "--dd-invite-action-bg": computed.getPropertyValue("--dd-invite-action-bg"),
+        "--dd-invite-action-text": computed.getPropertyValue("--dd-invite-action-text"),
+        "--dd-invite-action-accent": computed.getPropertyValue("--dd-invite-action-accent"),
+        "--dd-invite-action-divider": computed.getPropertyValue("--dd-invite-action-divider"),
+        "--dd-invite-action-radius": computed.getPropertyValue("--dd-invite-action-radius"),
+      });
+    }
     if (!scroller) return;
 
     // The editor re-renders the invitation while fields/templates change. Always
@@ -69,6 +81,8 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     if (isDesktopLivePreview && scrollRoot) {
       const onScroll = () => {
         if (desktopLiveScrolledRef.current) return;
+        const maxScroll = Math.max(1, scrollRoot.scrollHeight - scrollRoot.clientHeight);
+        if (scrollRoot.scrollTop < maxScroll * 0.32) return;
         desktopLiveScrolledRef.current = true;
         setVisible(true);
       };
@@ -120,7 +134,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
 
   return <>
     <span ref={markerRef} className="invitation-quick-menu-trigger" aria-hidden="true" />
-    {visible && (isDesktopLivePreview && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} aria-label="초대장 빠른 메뉴">
+    {visible && (isDesktopLivePreview && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} style={isDesktopLivePreview ? desktopLiveStyle : undefined} aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
       {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
