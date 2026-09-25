@@ -33,7 +33,6 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const [desktopLivePortal, setDesktopLivePortal] = useState(null);
   const markerRef = useRef(null);
   const desktopLiveStartedAtTopRef = useRef(false);
-  const desktopLiveHasScrolledRef = useRef(false);
 
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
@@ -50,23 +49,17 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     // The editor re-renders the invitation while fields/templates change. Always
     // restart the desktop LIVE PREVIEW quick-menu journey from the top.
     scroller.scrollTop = 0;
-    desktopLiveHasScrolledRef.current = false;
     setVisible(false);
   }, [isDesktopLivePreview, invitation.templateId]);
 
   useEffect(() => {
     if (visible) return;
 
-    // Scope every quick menu to its own invitation instance. The editor can render
-    // live, full and admin previews at the same time, so document.querySelector()
-    // can accidentally observe a different preview.
     const menuRoot = markerRef.current?.closest(".invitation-template");
     const scrollRoot = markerRef.current?.closest(".preview-content, .full-preview-scroll, .admin-template-editor-preview, .admin-draft-full-preview") || null;
     const trigger = menuRoot?.querySelector(".classic-information, .romantic-information, .modern-information, .public-accounts");
 
     if (isDesktopLivePreview && scrollRoot && !desktopLiveStartedAtTopRef.current) {
-      // A previous editor render can preserve the phone's scroll position. Reset only
-      // the desktop LIVE PREVIEW so a newly mounted quick menu never starts visible.
       scrollRoot.scrollTop = 0;
       desktopLiveStartedAtTopRef.current = true;
     }
@@ -76,20 +69,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       return;
     }
 
-    const reveal = () => {
-      if (isDesktopLivePreview && scrollRoot) {
-        // The phone preview is visually scaled, so DOM intersection happens too late.
-        // Reveal at the same relative journey point as the real invitation.
-        const maxScroll = Math.max(1, scrollRoot.scrollHeight - scrollRoot.clientHeight);
-        if (desktopLiveHasScrolledRef.current && scrollRoot.scrollTop >= maxScroll * 0.58) {
-          // Keep the menu at a fixed viewport position inside the phone. Compensate
-          // for the preview scroller's movement because the menu is rendered inside it.
-          setVisible(true);
-          return true;
-        }
-        return false;
-      }
-
+    const revealFromGeometry = () => {
       const triggerRect = trigger.getBoundingClientRect();
       const rootRect = scrollRoot?.getBoundingClientRect();
       const viewportTop = rootRect?.top ?? 0;
@@ -101,16 +81,11 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       return false;
     };
 
-    // The compact desktop LIVE PREVIEW scales template content, which can make
-    // IntersectionObserver report the location section as intersecting at load.
-    // For preview scrollers, use their real scroll position/geometry instead.
     if (scrollRoot) {
-      const onScroll = () => {
-        if (isDesktopLivePreview) {
-          desktopLiveHasScrolledRef.current = true;
-        }
-        reveal();
-      };
+      // Use the same geometry rule as the working mobile/full preview. The only
+      // desktop-specific difference is that the rendered menu is portaled to the
+      // phone frame so it stays fixed while this scroller moves.
+      const onScroll = () => { revealFromGeometry(); };
       scrollRoot.addEventListener("scroll", onScroll, { passive: true });
       return () => scrollRoot.removeEventListener("scroll", onScroll);
     }
