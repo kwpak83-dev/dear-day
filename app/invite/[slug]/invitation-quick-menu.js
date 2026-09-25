@@ -34,7 +34,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt }) {
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
 
   useEffect(() => {
-    const trigger = document.getElementById("invitation-quick-menu-trigger");
+    const trigger = document.querySelector(".public-accounts") || document.getElementById("invitation-quick-menu-trigger");
     if (visible || !trigger) return;
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
