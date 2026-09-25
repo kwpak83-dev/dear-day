@@ -515,6 +515,7 @@ export default function CreateInvitation() {
       }
       setLoginRequired(false); window.localStorage.setItem("dear-day-event-slug", slug); setEventSlug(slug); setEventStatus(savedStatus);
       if ((savedStatus === "draft" || savedStatus === "suspended") && showSuccessToast) { setSaveNotice(""); showSavedToast(savedStatus === "suspended" ? "변경사항이 저장되었습니다. 재발행은 내 초대장 → 다시 발행하기에서 가능합니다.." : "임시 저장이 완료되었습니다."); }
+      else if (savedStatus === "published" && showSuccessToast) { setSaveNotice(""); showSavedToast("수정사항이 공개 초대장에 반영되었습니다."); }
       else setSaveNotice(savedStatus === "paid" ? "결제완료 상태로 저장했어요." : savedStatus === "published" ? "발행된 초대장을 저장했어요." : "");
       return slug;
     } finally {
@@ -631,7 +632,7 @@ export default function CreateInvitation() {
     onChange={(bankName) => update("brideBank", bankName)}
   />
 </Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent2Name || "예금주 이름" : invitation.bride || "신부 이름"} value={invitation.brideAccountHolder} onChange={(e) => update("brideAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.brideAccount} onChange={(e) => update("brideAccount", e.target.value)} /></Field></div></div>}
-        <div className="editor-actions"><button type="button" className="save-button preview-button" onClick={() => { setFlowNotice(""); setPreviewOpen(true); }}>미리보기</button><button className="save-button" onClick={() => saveDraft({ showSuccessToast: true })} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>저장하기</button></div>{saveNotice && <p role="status">{saveNotice}</p>}{loginRequired && <button type="button" className="save-button" onClick={continueAfterLogin}>로그인하고 계속하기</button>}
+        <div className="editor-actions"><button type="button" className="save-button preview-button" onClick={() => { setFlowNotice(""); setPreviewOpen(true); }}>미리보기</button><button className="save-button" onClick={() => saveDraft({ showSuccessToast: true })} disabled={Boolean(submitting) || uploadingPhoto || galleryBusy}>{eventStatus === "published" ? "수정사항 반영" : "저장하기"}</button></div>{saveNotice && <p role="status">{saveNotice}</p>}{loginRequired && <button type="button" className="save-button" onClick={continueAfterLogin}>로그인하고 계속하기</button>}
       </section>
       <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div ref={livePreviewRef} className="preview-content full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={previewTemplateId || invitation.templateId} templateConfig={templateRender.config} templateAssets={templateRender.assets} placeActions={previewPlaceActions()}><><Gallery photos={galleryPhotos} idPrefix="live-preview-gallery" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} preview /></></InvitationRenderer></div></div></aside>
     </div>
