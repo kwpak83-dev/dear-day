@@ -29,6 +29,7 @@ function BottomSheet({ title, onClose, children }) {
 export default function InvitationQuickMenu({ invitation, slug, startsAt, previewMode = "" }) {
   const [visible, setVisible] = useState(false);
   const [sheet, setSheet] = useState(null);
+  const [desktopLiveOffset, setDesktopLiveOffset] = useState(null);
   const markerRef = useRef(null);
   const desktopLiveStartedAtTopRef = useRef(false);
   const desktopLiveHasScrolledRef = useRef(false);
@@ -65,6 +66,9 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
         // Reveal at the same relative journey point as the real invitation.
         const maxScroll = Math.max(1, scrollRoot.scrollHeight - scrollRoot.clientHeight);
         if (desktopLiveHasScrolledRef.current && scrollRoot.scrollTop >= maxScroll * 0.58) {
+          // Keep the menu at a fixed viewport position inside the phone. Compensate
+          // for the preview scroller's movement because the menu is rendered inside it.
+          setDesktopLiveOffset(scrollRoot.scrollTop);
           setVisible(true);
           return true;
         }
@@ -87,7 +91,10 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     // For preview scrollers, use their real scroll position/geometry instead.
     if (scrollRoot) {
       const onScroll = () => {
-        if (isDesktopLivePreview) desktopLiveHasScrolledRef.current = true;
+        if (isDesktopLivePreview) {
+          desktopLiveHasScrolledRef.current = true;
+          if (visible) setDesktopLiveOffset(scrollRoot.scrollTop);
+        }
         reveal();
       };
       scrollRoot.addEventListener("scroll", onScroll, { passive: true });
@@ -115,7 +122,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
 
   return <>
     <span ref={markerRef} className="invitation-quick-menu-trigger" aria-hidden="true" />
-    {visible && <nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} aria-label="초대장 빠른 메뉴">
+    {visible && <nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} style={isDesktopLivePreview && desktopLiveOffset !== null ? { transform: `translate(-50%, ${desktopLiveOffset}px)` } : undefined} aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
       {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
