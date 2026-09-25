@@ -173,10 +173,23 @@ export async function POST(request) {
     if (Number.isNaN(new Date(startsAt).getTime())) return json({ error: "예식 날짜 또는 시간을 확인해 주세요." }, 400);
   }
 
-  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id,status,template_id,template_version_id,paid_at,published_at,service_started_at,service_expires_at").eq("slug", slug).limit(1);
+  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id,status,kind,settings,template_id,template_version_id,paid_at,published_at,service_started_at,service_expires_at").eq("slug", slug).limit(1);
   if (lookupError) return json({ error: "기존 초대장을 확인하지 못했어요." }, 500);
   const existing = matches?.[0];
   if (existing && existing.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 수정할 수 없어요." }, 403);
+
+  // Published invitations must never be overwritten by an uninitialized editor state.
+  // Validate the complete incoming editor payload before allowing a published save.
+  if (existing?.status === "published") {
+    const publishedKind = invitation.eventKind || existing.kind || "wedding";
+    const missingFields = getMissingRequiredFields(invitation, publishedKind);
+    if (missingFields.length) {
+      return json({
+        error: "발행된 초대장의 필수 정보가 비어 있어 저장을 중단했어요. 새로고침 후 다시 확인해 주세요.",
+        missingFields,
+      }, 409);
+    }
+  }
 
   let templateVersionId = existing?.template_version_id || null;
   if (templateId) {
