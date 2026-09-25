@@ -202,6 +202,7 @@ export default function CreateInvitation() {
   const [loginRequired, setLoginRequired] = useState(false);
   const [mapNotice, setMapNotice] = useState("주소를 입력하면 지도를 확인할 수 있어요.");
   const [mapRevision, setMapRevision] = useState(0);
+  const [venueBuildingAuto, setVenueBuildingAuto] = useState(false);
   const [placeResults, setPlaceResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [eventSlug, setEventSlug] = useState("");
@@ -250,7 +251,10 @@ export default function CreateInvitation() {
       if (buildingName && normalizedAddress.endsWith(" " + buildingName)) normalizedAddress = normalizedAddress.slice(0, -(buildingName.length + 1)).trim();
       else if (buildingName && normalizedAddress.endsWith(" (" + buildingName + ")")) normalizedAddress = normalizedAddress.slice(0, -(buildingName.length + 3)).trim();
       lastMappedAddress.current = updateAddress ? normalizedAddress : address;
-      if (updateAddress) setInvitation((current) => ({ ...current, venueAddress: normalizedAddress, venueBuilding: buildingName }));
+      if (updateAddress) {
+        setInvitation((current) => ({ ...current, venueAddress: normalizedAddress, venueBuilding: buildingName }));
+        setVenueBuildingAuto(Boolean(buildingName));
+      }
       focusMap(new maps.LatLng(Number(result.y), Number(result.x)));
     });
   };
@@ -401,6 +405,7 @@ export default function CreateInvitation() {
   const selectPlace = (place) => {
     const address = place.roadAddress || place.address || "";
     setInvitation((current) => ({ ...current, venue: place.title.replace(/<[^>]+>/g, ""), venueAddress: address, venueBuilding: "" }));
+    setVenueBuildingAuto(false);
     // Local Search returns WGS84 coordinates multiplied by 10,000,000. Use them
     // directly so the map follows the selected result even when geocoding is slow.
     const longitude = Number(place.mapx) / 10000000;
@@ -413,7 +418,7 @@ export default function CreateInvitation() {
   const eventConfig = getEventConfig(invitation.eventKind);
   const renderConfigField = (field) => {
     if (field.key === "birthDate") return <BirthDateField key={field.key} label={field.label} value={invitation.birthDate || ""} onChange={value => update("birthDate", value)} />;
-    if (field.type === "venue") return <div key={field.key}><Field label="장소명"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "장소 검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results">{placeResults.map((place) => <button type="button" key={[place.mapx, place.mapy, place.title].join("-")} onClick={() => selectPlace(place)}><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></button>)}<p className="place-search-guide">검색 결과는 최대 5개까지 보여드려요. 원하는 장소가 없다면 지역명과 함께 검색해 주세요.</p></div>}<Field label="기본주소"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), geocodeAddress(invitation.venueAddress))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>주소 검색</button></div></Field><Field label="건물명"><input placeholder="주소 검색 결과에 건물명이 있으면 자동으로 입력돼요" value={invitation.venueBuilding || ""} onChange={(e) => update("venueBuilding", e.target.value)} /></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={setMapContainer} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div></div>;
+    if (field.type === "venue") return <div key={field.key}><Field label="장소명"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "장소 검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results">{placeResults.map((place) => <button type="button" key={[place.mapx, place.mapy, place.title].join("-")} onClick={() => selectPlace(place)}><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></button>)}<p className="place-search-guide">검색 결과는 최대 5개까지 보여드려요. 원하는 장소가 없다면 지역명과 함께 검색해 주세요.</p></div>}<Field label="기본주소"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), geocodeAddress(invitation.venueAddress))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>주소 검색</button></div></Field><Field label="건물명"><input placeholder="주소 검색 결과에 건물명이 있으면 자동으로 입력돼요" value={invitation.venueBuilding || ""} onChange={(e) => update("venueBuilding", e.target.value)} disabled={venueBuildingAuto} aria-readonly={venueBuildingAuto} title={venueBuildingAuto ? "주소 검색으로 자동 입력된 건물명입니다." : undefined} /></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={setMapContainer} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div></div>;
     if (field.type === "textarea") {
       const weddingMessage = field.key === "message" && invitation.eventKind === "wedding";
       return <Field key={field.key} label={field.label}>
