@@ -82,9 +82,20 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     };
 
     if (scrollRoot) {
-      // Use the same geometry rule as the working mobile/full preview. The only
-      // desktop-specific difference is that the rendered menu is portaled to the
-      // phone frame so it stays fixed while this scroller moves.
+      if (isDesktopLivePreview) {
+        // The desktop phone renders the invitation at a compact scale, so element
+        // geometry is not comparable to the full/mobile preview. Use the actual
+        // phone scroller progress instead, after a real user scroll.
+        let userScrolled = false;
+        const onScroll = () => {
+          userScrolled = true;
+          const maxScroll = Math.max(1, scrollRoot.scrollHeight - scrollRoot.clientHeight);
+          if (scrollRoot.scrollTop >= maxScroll * 0.42) setVisible(true);
+        };
+        scrollRoot.addEventListener("scroll", onScroll, { passive: true });
+        return () => scrollRoot.removeEventListener("scroll", onScroll);
+      }
+
       const onScroll = () => { revealFromGeometry(); };
       scrollRoot.addEventListener("scroll", onScroll, { passive: true });
       return () => scrollRoot.removeEventListener("scroll", onScroll);
