@@ -1041,3 +1041,11 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
     backdrop-filter:blur(2px);
   }
 }
+
+/* Unified RSVP/guestbook sheet backdrop across published invitations and all previews. */
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-backdrop,
+.dd-template-colors .invitation-bottom-sheet-layer .invitation-bottom-sheet-backdrop{
+  background:rgba(38,29,25,.42);
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+}
