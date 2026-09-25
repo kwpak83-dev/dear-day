@@ -808,7 +808,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-bgm .dd-template-bgm-toggle{display:grid;width:36px;height:36px;place-items:center;padding:0;pointer-events:auto;border:1px solid rgba(80,72,68,.22);border-radius:50%;background:rgba(255,255,255,.9);color:var(--dd-color-text,#4c4541);box-shadow:0 2px 8px rgba(42,37,34,.12);cursor:pointer}
 .dd-template-bgm .dd-template-bgm-toggle:hover,.dd-template-bgm .dd-template-bgm-toggle:focus-visible{border-color:rgba(80,72,68,.42);background:rgba(255,255,255,.98)}
 .dd-template-bgm .dd-template-bgm-toggle:focus-visible{outline:2px solid currentColor;outline-offset:2px}
-.dd-template-bgm .dd-template-bgm-toggle span{display:block;font:700 15px/1 Arial,"Apple SD Gothic Neo",sans-serif;transform:translateY(-.5px)}
+.dd-template-bgm .dd-template-bgm-icon{display:block;width:22px;height:22px}.dd-template-bgm .dd-template-bgm-icon svg{display:block;width:100%;height:100%;overflow:visible}.dd-template-bgm .dd-template-bgm-note{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.dd-template-bgm .dd-template-bgm-wave{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}.dd-template-bgm .dd-template-bgm-off{fill:none;stroke:#d9868e;stroke-width:1.7;stroke-linecap:round}
 .dd-template-bgm small{position:absolute;top:42px;right:12px;max-width:calc(100% - 24px);padding:5px 8px;border-radius:6px;background:rgba(255,255,255,.94);color:#8b3f35;font-size:11px;pointer-events:auto}
 .dd-template-background.classic-001 .classic-footer{background:inherit}
 .dd-template-screen-effect{position:sticky;z-index:20;top:0;width:100%;height:0;pointer-events:none;overflow:visible}
