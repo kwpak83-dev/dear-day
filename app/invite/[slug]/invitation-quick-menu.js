@@ -26,7 +26,7 @@ function BottomSheet({ title, onClose, children }) {
   </div>;
 }
 
-export default function InvitationQuickMenu({ invitation, slug, startsAt, previewRoot = null, alwaysVisible = false }) {
+export default function InvitationQuickMenu({ invitation, slug, startsAt, previewRoot = null, alwaysVisible = false, embedded = false }) {
   const [visible, setVisible] = useState(alwaysVisible);
   const [sheet, setSheet] = useState(null);
   const hostRef = useRef(null);
@@ -60,7 +60,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   if (!rsvpEnabled && !guestbookEnabled && !hasLocation) return null;
 
   return <div ref={hostRef} className="invitation-quick-menu-host">
-    {visible && <nav className="invitation-quick-menu" aria-label="초대장 빠른 메뉴">
+    {visible && <nav className={`invitation-quick-menu${embedded ? " invitation-quick-menu-embedded" : ""}`} aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
       {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
