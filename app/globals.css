@@ -954,11 +954,9 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* DearDay common public-invitation brand footer. */
 .dearday-brand-footer{display:flex;padding:64px 24px 46px;align-items:center;flex-direction:column;text-align:center;background:#fffaf7;color:#684d43}
-.dearday-heart-line{position:relative;width:min(100%,390px);height:54px;margin-bottom:8px;color:#c98779;font-size:36px;line-height:44px}
-.dearday-heart-line::before,.dearday-heart-line::after{content:"";position:absolute;top:30px;width:43%;height:1px;background:#c98779}
-.dearday-heart-line::before{left:0;transform:rotate(4deg);transform-origin:right center}.dearday-heart-line::after{right:0;transform:rotate(-4deg);transform-origin:left center}
-.dearday-heart-line span{position:relative;z-index:1;padding:0 12px}
-.dearday-brand-name{font-family:Georgia,"Times New Roman",serif;font-size:44px;font-weight:400;line-height:1;color:#342720}
+.dearday-heart-line{width:calc(100% + 48px);height:78px;margin:0 -24px 8px}
+
+.dearday-heart-line svg{display:block;width:100%;height:100%;overflow:visible}.dearday-heart-line path{fill:none;stroke:#c98779;stroke-width:1.5;vector-effect:non-scaling-stroke}.dearday-brand-name{font-family:Georgia,"Times New Roman",serif;font-size:44px;font-weight:400;line-height:1;color:#342720}
 .dearday-brand-tagline{margin-top:12px;font-family:Georgia,"Times New Roman",serif;font-size:10px;letter-spacing:.32em;color:#76584d}
 .dearday-brand-divider{width:44px;height:1px;margin:28px 0 22px;background:#bf887a}
 .dearday-brand-message{font-family:var(--dd-body-font-family,"Batang",serif);font-size:17px;line-height:1.75;color:#72564b}
