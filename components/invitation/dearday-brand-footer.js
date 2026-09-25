@@ -1,6 +1,10 @@
 export default function DearDayBrandFooter() {
   return <footer className="dearday-brand-footer">
-    <div className="dearday-heart-line" aria-hidden="true"><span>♡</span></div>
+    <div className="dearday-heart-line" aria-hidden="true">
+      <svg viewBox="0 0 540 100" preserveAspectRatio="none">
+        <path d="M0 72 C70 92 126 46 190 62 C222 70 245 55 270 34 C244 17 238 0 253 0 C264 0 270 14 270 27 C270 14 276 0 287 0 C302 0 296 17 270 34 C295 55 318 70 350 62 C414 46 470 92 540 72" />
+      </svg>
+    </div>
     <strong className="dearday-brand-name">DearDay</strong>
     <span className="dearday-brand-tagline">good people, good moment</span>
     <span className="dearday-brand-divider" aria-hidden="true" />
