@@ -1032,3 +1032,12 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
     overflow:hidden;
   }
 }
+
+/* Keep all compact LIVE PREVIEW bottom-sheet backdrops visually consistent. */
+@media (min-width:901px){
+  .preview-phone > .invitation-bottom-sheet-layer--preview .invitation-bottom-sheet-backdrop,
+  .admin-draft-preview-device > .invitation-bottom-sheet-layer--preview .invitation-bottom-sheet-backdrop{
+    background:rgba(38,29,25,.42);
+    backdrop-filter:blur(2px);
+  }
+}
