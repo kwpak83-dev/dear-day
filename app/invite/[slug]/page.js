@@ -65,7 +65,7 @@ export default async function InvitationPage({ params, searchParams }) {
   return <main className="public-invitation shared-public-invitation">
     {ownerView && <nav className="owner-return-nav" aria-label="DearDay 관리 화면으로 돌아가기"><a href="/my-invitations">내 초대장</a><a href="/">DearDay 홈</a></nav>}
     <div className="full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} templateConfig={templateConfig} templateAssets={templateAssets} placeActions={<><AddressCopy invitation={invitation} /><InvitationMap address={invitation.venueAddress} venue={invitation.venue} /></>}>
-      <div className="public-invitation-sections"><Gallery photos={galleryPhotos} /><span id="invitation-quick-menu-trigger" className="invitation-quick-menu-trigger" aria-hidden="true" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} slug={slug} startsAt={event.starts_at} /><LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} /><DearDayBrandFooter /></div>
+      <div className="public-invitation-sections"><Gallery photos={galleryPhotos} /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} slug={slug} startsAt={event.starts_at} /><LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} /><DearDayBrandFooter /></div>
     </InvitationRenderer></div>
 </main>;
 }
