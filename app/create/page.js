@@ -418,12 +418,16 @@ export default function CreateInvitation() {
       const weddingMessage = field.key === "message" && invitation.eventKind === "wedding";
       return <Field key={field.key} label={field.label}>
         {weddingMessage && <select className="message-example-select" defaultValue="" onChange={(e) => {
+          if (e.target.value === "direct") {
+            update("message", "");
+            return;
+          }
           const example = WEDDING_MESSAGE_EXAMPLES[Number(e.target.value)];
           if (example) update("message", example.text);
         }}>
           <option value="">예시문 선택</option>
           {WEDDING_MESSAGE_EXAMPLES.map((example, index) => <option key={example.label} value={index}>{example.label}</option>)}
-          <option value="">직접 입력</option>
+          <option value="direct">직접 입력</option>
         </select>}
         <textarea rows="4" value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} />
       </Field>;
