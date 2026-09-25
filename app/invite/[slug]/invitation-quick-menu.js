@@ -51,6 +51,17 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     }
 
     const reveal = () => {
+      if (isDesktopLivePreview && scrollRoot) {
+        // The phone preview is visually scaled, so DOM intersection happens too late.
+        // Reveal at the same relative journey point as the real invitation.
+        const maxScroll = Math.max(1, scrollRoot.scrollHeight - scrollRoot.clientHeight);
+        if (scrollRoot.scrollTop >= maxScroll * 0.58) {
+          setVisible(true);
+          return true;
+        }
+        return false;
+      }
+
       const triggerRect = trigger.getBoundingClientRect();
       const rootRect = scrollRoot?.getBoundingClientRect();
       const viewportTop = rootRect?.top ?? 0;
