@@ -317,7 +317,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .classic-hero-copy strong{font-weight:700}
 .classic-section{min-width:0;padding:68px clamp(25px,9vw,50px);border-bottom:0}
 .classic-message{order:2;background:linear-gradient(155deg,#fffdf8,#f7f1e5)}
-.classic-information{order:3;background:var(--classic-paper)}
+.classic-information{order:3;padding-right:clamp(16px,5vw,28px);padding-left:clamp(16px,5vw,28px);background:var(--classic-paper)}
 .classic-section-heading p{margin:0;color:var(--classic-gold);font:8px/1.4 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.3em}
 .classic-section-heading h3{margin:10px 0 0;font-size:24px;font-weight:400;letter-spacing:-.03em}
 .classic-section-heading i{display:block;margin:17px 0 0;color:var(--classic-gold);font-size:18px;font-style:normal}
@@ -794,7 +794,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-safe-area .classic-masthead{padding-top:11px;padding-right:max(clamp(20px,7vw,38px),var(--dd-safe-right));padding-left:max(clamp(20px,7vw,38px),var(--dd-safe-left))}
 .dd-template-safe-area .classic-hero.has-photo .classic-hero-copy{padding-right:max(clamp(24px,8vw,44px),var(--dd-safe-right));padding-left:max(clamp(24px,8vw,44px),var(--dd-safe-left))}
 .dd-template-safe-area .classic-hero.no-photo{padding-right:max(clamp(24px,9vw,50px),var(--dd-safe-right));padding-left:max(clamp(24px,9vw,50px),var(--dd-safe-left))}
-.dd-template-safe-area .classic-section{padding-right:max(clamp(25px,9vw,50px),var(--dd-safe-right));padding-left:max(clamp(25px,9vw,50px),var(--dd-safe-left))}
+.dd-template-safe-area .classic-section{padding-right:max(clamp(25px,9vw,50px),var(--dd-safe-right));padding-left:max(clamp(25px,9vw,50px),var(--dd-safe-left))}.dd-template-safe-area .classic-information{padding-right:max(clamp(16px,5vw,28px),var(--dd-safe-right));padding-left:max(clamp(16px,5vw,28px),var(--dd-safe-left))}
 .dd-template-safe-area.classic-001 .invitation-gallery{padding-right:max(clamp(18px,7vw,38px),var(--dd-safe-right));padding-left:max(clamp(18px,7vw,38px),var(--dd-safe-left))}
 .dd-template-safe-area.classic-001 .public-accounts{padding-right:max(clamp(25px,9vw,50px),var(--dd-safe-right));padding-left:max(clamp(25px,9vw,50px),var(--dd-safe-left))}
 .dd-template-safe-area .classic-footer{padding-right:max(24px,var(--dd-safe-right));padding-bottom:max(50px,var(--dd-safe-bottom));padding-left:max(24px,var(--dd-safe-left))}
