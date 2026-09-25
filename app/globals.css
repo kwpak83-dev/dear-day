@@ -961,7 +961,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dearday-brand-divider{width:44px;height:1px;margin:28px 0 22px;background:#bf887a}
 .dearday-brand-message{font-family:var(--dd-body-font-family,"Batang",serif);font-size:17px;line-height:1.75;color:#72564b}
 .dearday-brand-action{display:flex;margin-top:22px;align-items:center;flex-direction:column;color:inherit;text-decoration:none}
-.dearday-brand-arrow{display:grid;width:54px;height:54px;place-items:center;border:1px solid #c98779;border-radius:50%;font-size:28px;color:#ad7063;transition:transform .18s ease,background .18s ease}
+.dearday-brand-arrow{display:grid;width:46px;height:46px;place-items:center;border:1px solid #c98779;border-radius:50%;color:#ad7063;transition:transform .18s ease,background .18s ease}.dearday-brand-arrow svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .dearday-brand-action:hover .dearday-brand-arrow{transform:translateX(2px);background:rgba(201,135,121,.08)}
 .dearday-brand-cta{margin-top:12px;font-size:13px;color:#72564b}
 .dearday-brand-categories{display:flex;width:min(100%,390px);margin-top:34px;align-items:center;justify-content:center;gap:12px;font-size:11px;white-space:nowrap;color:#76584d}
