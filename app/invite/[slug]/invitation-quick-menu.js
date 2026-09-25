@@ -26,13 +26,14 @@ function BottomSheet({ title, onClose, children }) {
   </div>;
 }
 
-export default function InvitationQuickMenu({ invitation, slug, startsAt }) {
+export default function InvitationQuickMenu({ invitation, slug, startsAt, previewMode = "" }) {
   const [visible, setVisible] = useState(false);
   const [sheet, setSheet] = useState(null);
   const markerRef = useRef(null);
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
+  const isDesktopLivePreview = previewMode === "desktop-live";
 
   useEffect(() => {
     if (visible) return;
@@ -65,7 +66,6 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt }) {
     // IntersectionObserver report the location section as intersecting at load.
     // For preview scrollers, use their real scroll position/geometry instead.
     if (scrollRoot) {
-      if (scrollRoot.scrollTop > 0 && reveal()) return;
       const onScroll = () => { reveal(); };
       scrollRoot.addEventListener("scroll", onScroll, { passive: true });
       return () => scrollRoot.removeEventListener("scroll", onScroll);
@@ -79,7 +79,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt }) {
     }, { threshold: 0.1 });
     observer.observe(trigger);
     return () => observer.disconnect();
-  }, [visible]);
+  }, [visible, isDesktopLivePreview]);
 
   const goToLocation = () => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -92,7 +92,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt }) {
 
   return <>
     <span ref={markerRef} className="invitation-quick-menu-trigger" aria-hidden="true" />
-    {visible && <nav className="invitation-quick-menu" aria-label="초대장 빠른 메뉴">
+    {visible && <nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
       {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
