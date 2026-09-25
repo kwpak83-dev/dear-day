@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import RsvpForm from "./rsvp-form";
 import Guestbook from "./guestbook";
 
@@ -29,6 +29,7 @@ function BottomSheet({ title, onClose, children }) {
 export default function InvitationQuickMenu({ invitation, slug, startsAt, previewRoot = null, alwaysVisible = false }) {
   const [visible, setVisible] = useState(alwaysVisible);
   const [sheet, setSheet] = useState(null);
+  const hostRef = useRef(null);
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
@@ -36,7 +37,8 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   useEffect(() => {
     if (alwaysVisible) { setVisible(true); return; }
     const root = previewRoot?.current || null;
-    const trigger = root?.querySelector(".public-accounts") || document.querySelector(".public-accounts") || document.getElementById("invitation-quick-menu-trigger");
+    const scope = hostRef.current?.closest(".full-invitation-renderer") || root || document;
+    const trigger = scope.querySelector?.(".public-accounts") || document.getElementById("invitation-quick-menu-trigger");
     if (visible || !trigger) return;
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
@@ -50,13 +52,14 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
 
   const goToLocation = () => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    document.querySelector(".classic-information, .romantic-information, .modern-information")
+    const scope = hostRef.current?.closest(".full-invitation-renderer") || previewRoot?.current || document;
+    scope.querySelector?.(".classic-information, .romantic-information, .modern-information")
       ?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
   };
 
   if (!rsvpEnabled && !guestbookEnabled && !hasLocation) return null;
 
-  return <>
+  return <div ref={hostRef} className="invitation-quick-menu-host">
     {visible && <nav className="invitation-quick-menu" aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
       {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
@@ -68,5 +71,5 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     {sheet === "guestbook" && guestbookEnabled && <BottomSheet title="축하 메시지" onClose={() => setSheet(null)}>
       <Guestbook slug={slug} />
     </BottomSheet>}
-  </>;
+  </div>;
 }
