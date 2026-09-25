@@ -60,7 +60,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
       <p className="admin-draft-preview-status">Draft 버전을 만든 후 미리보기를 확인할 수 있어요.</p> :
       full ? <p className="admin-draft-preview-status">전체 미리보기를 표시하고 있어요.</p> :
       <div className="admin-draft-preview-scroll">
-        <div className="admin-draft-preview-device full-invitation-renderer" style={{ width }}>{renderInvitation(width, "desktop-live")}</div>
+        <div className="admin-draft-preview-device full-invitation-renderer" style={{ width }}>{renderInvitation(width, "admin-live")}</div>
       </div>}
     {full && <div className="admin-draft-full-preview" role="dialog" aria-modal="true" aria-label="Draft 전체 미리보기" onKeyDown={(event) => { if (event.key === "Escape") setFull(false); }}>
       <div className="admin-draft-full-preview-toolbar" style={{ width, maxWidth: "100%" }}><strong>{`Draft 전체 미리보기 · ${width}px`}</strong><button type="button" onClick={() => setFull(false)}>닫기</button></div>
