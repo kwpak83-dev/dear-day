@@ -34,14 +34,27 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt }) {
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
 
   useEffect(() => {
-    const trigger = document.querySelector(".public-accounts") || document.getElementById("invitation-quick-menu-trigger");
-    if (visible || !trigger) return;
+    if (visible) return;
+
+    const menuRoot = document.querySelector(".invitation-quick-menu-trigger")?.closest(".invitation-template")
+      || document.querySelector(".invitation-template");
+    const scrollRoot = menuRoot?.closest(".preview-content, .full-preview-scroll, .admin-template-editor-preview, .admin-draft-full-preview")
+      || null;
+    const trigger = menuRoot?.querySelector(".classic-information, .romantic-information, .modern-information, .public-accounts")
+      || document.getElementById("invitation-quick-menu-trigger");
+
+    if (!trigger) {
+      // Invitations without a location/accounts section still need RSVP/guestbook access.
+      setVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
         setVisible(true);
         observer.disconnect();
       }
-    }, { threshold: 0.1 });
+    }, { root: scrollRoot, threshold: 0.1 });
     observer.observe(trigger);
     return () => observer.disconnect();
   }, [visible]);
