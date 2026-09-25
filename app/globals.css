@@ -947,7 +947,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* Destination navigation links below invitation map. */
 .invitation-navigation-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:0;border:1px solid var(--dd-color-divider,#e8e2de);border-top:0;background:rgba(255,255,255,.72)}
-.invitation-navigation-links a{display:flex;min-width:0;min-height:48px;align-items:center;justify-content:center;gap:3px;color:var(--dd-color-text,#333);font-size:5px;text-decoration:none;white-space:nowrap}.invitation-navigation-links a span{white-space:nowrap}
+.invitation-navigation-links a{display:flex;min-width:0;min-height:48px;align-items:center;justify-content:center;gap:3px;color:var(--dd-color-text,#333);font-size:5px;text-decoration:none;white-space:nowrap}.invitation-navigation-links a span{font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif!important;font-size:5px!important;font-weight:400!important;line-height:1!important;letter-spacing:0!important;white-space:nowrap}
 .invitation-navigation-links a+a{border-left:1px solid var(--dd-color-divider,#e8e2de)}
 .nav-app-icon{display:block;width:22px;height:22px;flex:0 0 22px;object-fit:contain;border-radius:5px}
 
