@@ -986,3 +986,27 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
     z-index:80;
   }
 }
+
+@media (min-width:901px){
+  .preview-phone > .invitation-bottom-sheet-layer--preview{
+    position:absolute;
+    inset:0;
+    z-index:95;
+    overflow:hidden;
+    border-radius:0 0 34px 34px;
+  }
+  .preview-phone > .invitation-bottom-sheet-layer--preview .invitation-bottom-sheet-backdrop{
+    position:absolute;
+    inset:0;
+  }
+  .preview-phone > .invitation-bottom-sheet-layer--preview .invitation-bottom-sheet{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    width:100%;
+    max-width:none;
+    max-height:82%;
+    border-radius:20px 20px 0 0;
+  }
+}
