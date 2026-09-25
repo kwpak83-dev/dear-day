@@ -79,7 +79,8 @@ export function getInvitationPresentation(invitation = {}, eventKind) {
     heroSchedule: formatHeroSchedule(invitation.date, invitation.time),
     schedule: join([formatDate(invitation.date), invitation.time]),
     venue: clean(invitation.venue),
-    address: join([invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail], " "),
+    address: join([invitation.venueAddress, invitation.venueBuilding], " "),
+    addressDetail: clean(invitation.venueDetail),
     message: clean(invitation.message),
     coverPhotoUrl: clean(invitation.coverPhotoUrl),
   };
