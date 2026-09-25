@@ -44,8 +44,12 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
 
   useEffect(() => {
     if (!isDesktopLivePreview) return;
-    const phone = markerRef.current?.closest(".preview-phone") || null;
-    const scroller = markerRef.current?.closest(".preview-content") || null;
+    const phone = previewMode === "admin-live"
+      ? markerRef.current?.closest(".admin-draft-preview-device") || null
+      : markerRef.current?.closest(".preview-phone") || null;
+    const scroller = previewMode === "admin-live"
+      ? markerRef.current?.closest(".admin-draft-preview-scroll") || null
+      : markerRef.current?.closest(".preview-content") || null;
     setDesktopLivePortal(phone);
     const templateRoot = markerRef.current?.closest(".invitation-template");
     if (templateRoot) {
@@ -73,13 +77,15 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     scroller.scrollTop = 0;
     desktopLiveScrolledRef.current = false;
     setVisible(false);
-  }, [isDesktopLivePreview, invitation.templateId]);
+  }, [isDesktopLivePreview, previewMode, invitation.templateId]);
 
   useEffect(() => {
     if (visible) return;
 
     const menuRoot = markerRef.current?.closest(".invitation-template");
-    const scrollRoot = markerRef.current?.closest(".preview-content, .full-preview-scroll, .admin-template-editor-preview, .admin-draft-full-preview") || null;
+    const scrollRoot = previewMode === "admin-live"
+      ? markerRef.current?.closest(".admin-draft-preview-scroll") || null
+      : markerRef.current?.closest(".preview-content, .full-preview-scroll, .admin-template-editor-preview, .admin-draft-full-preview") || null;
     const trigger = menuRoot?.querySelector(".classic-information, .romantic-information, .modern-information, .public-accounts");
 
     if (isDesktopLivePreview && scrollRoot && !desktopLiveStartedAtTopRef.current) {
@@ -130,7 +136,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     }, { threshold: 0.1 });
     observer.observe(trigger);
     return () => observer.disconnect();
-  }, [visible, isDesktopLivePreview]);
+  }, [visible, isDesktopLivePreview, previewMode]);
 
   const goToLocation = () => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
