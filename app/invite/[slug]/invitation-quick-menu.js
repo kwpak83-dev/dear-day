@@ -55,6 +55,14 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
         "--dd-invite-action-accent": computed.getPropertyValue("--dd-invite-action-accent"),
         "--dd-invite-action-divider": computed.getPropertyValue("--dd-invite-action-divider"),
         "--dd-invite-action-radius": computed.getPropertyValue("--dd-invite-action-radius"),
+        "--dd-quick-menu-font-size": computed.getPropertyValue("--dd-quick-menu-font-size"),
+        "--dd-quick-menu-icon-size": computed.getPropertyValue("--dd-quick-menu-icon-size"),
+        "--dd-quick-menu-rsvp-icon": computed.getPropertyValue("--dd-quick-menu-rsvp-icon"),
+        "--dd-quick-menu-location-icon": computed.getPropertyValue("--dd-quick-menu-location-icon"),
+        "--dd-quick-menu-guestbook-icon": computed.getPropertyValue("--dd-quick-menu-guestbook-icon"),
+        "--dd-quick-menu-rsvp-icon-image": computed.getPropertyValue("--dd-quick-menu-rsvp-icon-image"),
+        "--dd-quick-menu-location-icon-image": computed.getPropertyValue("--dd-quick-menu-location-icon-image"),
+        "--dd-quick-menu-guestbook-icon-image": computed.getPropertyValue("--dd-quick-menu-guestbook-icon-image"),
       });
     }
     if (!scroller) return;
