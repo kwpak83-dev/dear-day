@@ -1010,3 +1010,25 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
     border-radius:20px 20px 0 0;
   }
 }
+
+@media (min-width:901px){
+  .admin-draft-preview-device > .invitation-quick-menu--desktop-live{
+    position:sticky;
+    left:8px;
+    right:8px;
+    bottom:8px;
+    width:calc(100% - 16px);
+    margin:-76px 8px 8px;
+    transform:none;
+    z-index:80;
+  }
+  .admin-draft-preview-device > .invitation-bottom-sheet-layer--preview{
+    position:sticky;
+    left:0;
+    bottom:0;
+    width:100%;
+    height:min(680px,80vh);
+    z-index:95;
+    overflow:hidden;
+  }
+}
