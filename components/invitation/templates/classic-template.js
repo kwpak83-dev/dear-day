@@ -51,7 +51,7 @@ function ClassicDateSection({ eventDate, eventTime, title, wedding }) {
 }
 
 export default function ClassicTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, bgmControl, screenEffect, children }) {
-  const { kindLabel, title, detail, note, eventDate, eventTime, heroSchedule, schedule, venue, address, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
+  const { kindLabel, title, detail, note, eventDate, eventTime, heroSchedule, schedule, venue, address, addressDetail, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map((value) => value.trim()).filter(Boolean) : [];
   const hasInformation = Boolean(schedule || venue || address);
@@ -124,6 +124,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
       <div className="classic-information-body">
         {venue && <strong>{venue}</strong>}
         {address && <p>{address}</p>}
+        {addressDetail && <p className="classic-address-detail">{addressDetail}</p>}
         {placeActions}
       </div>
     </section>}
