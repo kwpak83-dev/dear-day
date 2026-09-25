@@ -10,7 +10,7 @@ export default function DearDayBrandFooter() {
     <span className="dearday-brand-divider" aria-hidden="true" />
     <span className="dearday-brand-message">당신의 특별한 순간도<br />디어데이와 함께하세요.</span>
     <a href="/" className="dearday-brand-action" aria-label="DearDay에서 초대장 만들기">
-      <span className="dearday-brand-arrow" aria-hidden="true">→</span>
+      <span className="dearday-brand-arrow" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M7 16h16M17 10l6 6-6 6" /></svg></span>
       <span className="dearday-brand-cta">디어데이에서 초대장 만들기</span>
     </a>
     <div className="dearday-brand-categories" aria-label="DearDay 초대장 종류">
