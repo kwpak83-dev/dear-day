@@ -49,12 +49,34 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt }) {
       return;
     }
 
+    const reveal = () => {
+      const triggerRect = trigger.getBoundingClientRect();
+      const rootRect = scrollRoot?.getBoundingClientRect();
+      const viewportTop = rootRect?.top ?? 0;
+      const viewportBottom = rootRect?.bottom ?? window.innerHeight;
+      if (triggerRect.top < viewportBottom && triggerRect.bottom > viewportTop) {
+        setVisible(true);
+        return true;
+      }
+      return false;
+    };
+
+    // The compact desktop LIVE PREVIEW scales template content, which can make
+    // IntersectionObserver report the location section as intersecting at load.
+    // For preview scrollers, use their real scroll position/geometry instead.
+    if (scrollRoot) {
+      if (scrollRoot.scrollTop > 0 && reveal()) return;
+      const onScroll = () => { reveal(); };
+      scrollRoot.addEventListener("scroll", onScroll, { passive: true });
+      return () => scrollRoot.removeEventListener("scroll", onScroll);
+    }
+
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
         setVisible(true);
         observer.disconnect();
       }
-    }, { root: scrollRoot, threshold: 0.1 });
+    }, { threshold: 0.1 });
     observer.observe(trigger);
     return () => observer.disconnect();
   }, [visible]);
