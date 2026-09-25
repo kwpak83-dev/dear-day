@@ -35,14 +35,15 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const desktopLiveStartedAtTopRef = useRef(false);
   const desktopLiveHasScrolledRef = useRef(false);
 
-  useEffect(() => {
-    if (!isDesktopLivePreview) return;
-    setDesktopLivePortal(markerRef.current?.closest(".preview-phone") || null);
-  }, [isDesktopLivePreview]);
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
   const isDesktopLivePreview = previewMode === "desktop-live";
+
+  useEffect(() => {
+    if (!isDesktopLivePreview) return;
+    setDesktopLivePortal(markerRef.current?.closest(".preview-phone") || null);
+  }, [isDesktopLivePreview]);
 
   useEffect(() => {
     if (visible) return;
