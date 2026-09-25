@@ -31,6 +31,12 @@ const BANK_OPTIONS = [
   { name: "iM뱅크", logo: "/banks/imbank.png" },
 ];
 const DEVELOPMENT_TEMPLATE_IDS = new Set(Object.values(TEMPLATE_IDS));
+const WEDDING_MESSAGE_EXAMPLES = [
+  { label: "따뜻한 인사", text: "서로 다른 길을 걸어온 두 사람이\n이제 하나의 길을 함께 걸으려 합니다.\n소중한 분들을 모시고 기쁨을 나누고 싶습니다.\n귀한 걸음으로 축복해 주세요." },
+  { label: "정중한 인사", text: "저희 두 사람이 사랑과 믿음으로\n한 가정을 이루게 되었습니다.\n소중한 분들을 모시고 뜻깊은 시작을 함께하고자 하오니\n참석하시어 축복해 주시면 감사하겠습니다." },
+  { label: "짧고 심플하게", text: "저희 두 사람,\n평생을 함께하기로 약속했습니다.\n새로운 시작의 순간을 함께해 주세요." },
+  { label: "감성적인 인사", text: "함께한 시간이 쌓여 사랑이 되었고,\n이제 그 사랑으로 한 가정을 이루려 합니다.\n저희의 새로운 시작을\n따뜻한 마음으로 축복해 주세요." },
+];
 function BankSelector({ value, onChange }) {
   const isPresetBank = BANK_OPTIONS.some((bank) => bank.name === value);
   const [open, setOpen] = useState(false);
@@ -408,7 +414,20 @@ export default function CreateInvitation() {
   const renderConfigField = (field) => {
     if (field.key === "birthDate") return <BirthDateField key={field.key} label={field.label} value={invitation.birthDate || ""} onChange={value => update("birthDate", value)} />;
     if (field.type === "venue") return <div key={field.key}><Field label="장소명"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "장소 검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results">{placeResults.map((place) => <button type="button" key={[place.mapx, place.mapy, place.title].join("-")} onClick={() => selectPlace(place)}><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></button>)}<p className="place-search-guide">검색 결과는 최대 5개까지 보여드려요. 원하는 장소가 없다면 지역명과 함께 검색해 주세요.</p></div>}<Field label="기본주소"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), geocodeAddress(invitation.venueAddress))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>주소 검색</button></div></Field><Field label="건물명"><input placeholder="주소 검색 결과에 건물명이 있으면 자동으로 입력돼요" value={invitation.venueBuilding || ""} onChange={(e) => update("venueBuilding", e.target.value)} /></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={setMapContainer} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div></div>;
-    if (field.type === "textarea") return <Field key={field.key} label={field.label}><textarea rows="4" value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} /></Field>;
+    if (field.type === "textarea") {
+      const weddingMessage = field.key === "message" && invitation.eventKind === "wedding";
+      return <Field key={field.key} label={field.label}>
+        {weddingMessage && <select className="message-example-select" defaultValue="" onChange={(e) => {
+          const example = WEDDING_MESSAGE_EXAMPLES[Number(e.target.value)];
+          if (example) update("message", example.text);
+        }}>
+          <option value="">예시문 선택</option>
+          {WEDDING_MESSAGE_EXAMPLES.map((example, index) => <option key={example.label} value={index}>{example.label}</option>)}
+          <option value="">직접 입력</option>
+        </select>}
+        <textarea rows="4" value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} />
+      </Field>;
+    }
    if (field.type === "parentName") return (
   <div key={field.key} className="form-field parent-name-field">
     <div className="parent-name-label">
