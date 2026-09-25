@@ -976,11 +976,11 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* Keep the editor's fixed quick menu visually inside the desktop phone preview. */
 @media (min-width: 901px){
-  .preview-panel:has(.invitation-quick-menu--desktop-live) .invitation-quick-menu--desktop-live{
+  .preview-phone > .invitation-quick-menu--desktop-live{
     position:absolute;
     left:50%;
     right:auto;
-    bottom:48px;
+    bottom:14px;
     width:270px;
     transform:translateX(-50%);
     z-index:80;
