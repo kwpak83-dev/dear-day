@@ -328,7 +328,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .classic-information-body>time,.classic-information-body>strong,.classic-information-body>p{display:block;margin:0;overflow-wrap:anywhere}
 .classic-information-body>time{font-size:15px;line-height:1.7}
 .classic-information-body>strong{margin-top:20px;font-size:15px;line-height:1.6}
-.classic-information-body>p{margin-top:7px;color:var(--classic-muted);font:12px/1.8 Arial,"Apple SD Gothic Neo",sans-serif}
+.classic-information-body>p{margin-top:7px;color:var(--classic-muted);font:12px/1.8 Arial,"Apple SD Gothic Neo",sans-serif}.classic-information-body>.classic-address-detail{margin-top:2px;text-align:center}
 .classic-001 .public-address-copy{margin:20px 0 0}
 .classic-001 .public-address-copy button,.classic-001 .public-share-copy button,.classic-001 .public-account-card button{border:1px solid var(--classic-gold);border-radius:999px;background:transparent;color:#816a40;box-shadow:none}
 .classic-001 .invitation-map{border-color:var(--classic-line);border-radius:3px;background:#eee7da}
