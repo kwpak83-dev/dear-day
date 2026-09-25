@@ -23,20 +23,16 @@ const draftConfig = (draft) => draft ? ({
   effects: draft.effects, bgm: draft.bgm, safeArea: draft.safeArea,
 }) : null;
 
-function PreviewSections({ showQuickMenu = false, quickMenuVisible = false }) {
+function PreviewSections({ interactiveQuickMenu = false }) {
   return <div className="public-invitation-sections">
     <section className="invitation-gallery" aria-label="샘플 갤러리">
       <p className="gallery-kicker">OUR MOMENTS</p><h2>우리의 순간들</h2>
       <div className="public-gallery-grid">{[2, 3, 4].map((number) => <span className="public-gallery-photo" key={number}><img src={`/moment-${number}.png`} alt="" /></span>)}</div>
     </section>
     <section className="public-accounts"><h2>마음 전하실 곳</h2><article className="public-account-card"><p>신랑 측</p><strong>디어은행 · 경원</strong><div><span>123-456-7890</span><button type="button" disabled>계좌 복사</button></div></article></section>
-    <OptionalInvitationSections invitation={sampleInvitation} preview />
+    <OptionalInvitationSections invitation={sampleInvitation} {...(interactiveQuickMenu ? {} : { preview: true })} />
     <DearDayBrandFooter />
-    {showQuickMenu && quickMenuVisible && <nav className="invitation-quick-menu" aria-label="초대장 빠른 메뉴 미리보기">
-      <button className="invitation-quick-rsvp" type="button" disabled><b aria-hidden="true" /><span>참석 여부</span></button>
-      <button className="invitation-quick-location" type="button" disabled><b aria-hidden="true" /><span>오시는 길</span></button>
-      <button className="invitation-quick-guestbook" type="button" disabled><b aria-hidden="true" /><span>축하 메시지</span></button>
-    </nav>}
+
   </div>;
 }
 
@@ -66,7 +62,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
 
   const renderInvitation = (mapWidth, showQuickMenu = false) => <InvitationRenderer invitation={invitation} eventKind="wedding" templateId={templateId} templateConfig={config} templateAssets={resolvedAssets}
     placeActions={<><div className="public-address-copy"><button type="button" disabled>주소 복사</button></div><InvitationMap key={mapWidth} address={invitation.venueAddress} venue={invitation.venue} /></>}>
-    <PreviewSections showQuickMenu={showQuickMenu} quickMenuVisible={quickMenuVisible} />
+    <PreviewSections interactiveQuickMenu={showQuickMenu} />
   </InvitationRenderer>;
 
   return <section className="admin-draft-preview" aria-labelledby="admin-draft-preview-title">
