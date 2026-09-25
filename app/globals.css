@@ -953,7 +953,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 
 /* DearDay common public-invitation brand footer. */
-.dearday-brand-footer{display:flex;padding:64px 24px 46px;align-items:center;flex-direction:column;text-align:center;background:rgba(255,250,247,.58);color:#684d43}
+.dearday-brand-footer{display:flex;padding:64px 24px 46px;align-items:center;flex-direction:column;text-align:center;background:#fffaf7;color:#684d43}
 .dearday-heart-line{position:relative;width:min(100%,390px);height:54px;margin-bottom:8px;color:#c98779;font-size:36px;line-height:44px}
 .dearday-heart-line::before,.dearday-heart-line::after{content:"";position:absolute;top:30px;width:43%;height:1px;background:#c98779}
 .dearday-heart-line::before{left:0;transform:rotate(4deg);transform-origin:right center}.dearday-heart-line::after{right:0;transform:rotate(-4deg);transform-origin:left center}
