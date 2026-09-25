@@ -42,8 +42,17 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
 
   useEffect(() => {
     if (!isDesktopLivePreview) return;
-    setDesktopLivePortal(markerRef.current?.closest(".preview-phone") || null);
-  }, [isDesktopLivePreview]);
+    const phone = markerRef.current?.closest(".preview-phone") || null;
+    const scroller = markerRef.current?.closest(".preview-content") || null;
+    setDesktopLivePortal(phone);
+    if (!scroller) return;
+
+    // The editor re-renders the invitation while fields/templates change. Always
+    // restart the desktop LIVE PREVIEW quick-menu journey from the top.
+    scroller.scrollTop = 0;
+    desktopLiveHasScrolledRef.current = false;
+    setVisible(false);
+  }, [isDesktopLivePreview, invitation.templateId]);
 
   useEffect(() => {
     if (visible) return;
@@ -63,7 +72,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     }
 
     if (!trigger) {
-      setVisible(true);
+      if (!isDesktopLivePreview) setVisible(true);
       return;
     }
 
