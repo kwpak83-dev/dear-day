@@ -33,6 +33,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const [desktopLivePortal, setDesktopLivePortal] = useState(null);
   const markerRef = useRef(null);
   const desktopLiveStartedAtTopRef = useRef(false);
+  const desktopLiveScrolledRef = useRef(false);
 
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
@@ -49,6 +50,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     // The editor re-renders the invitation while fields/templates change. Always
     // restart the desktop LIVE PREVIEW quick-menu journey from the top.
     scroller.scrollTop = 0;
+    desktopLiveScrolledRef.current = false;
     setVisible(false);
   }, [isDesktopLivePreview, invitation.templateId]);
 
@@ -64,8 +66,18 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       desktopLiveStartedAtTopRef.current = true;
     }
 
+    if (isDesktopLivePreview && scrollRoot) {
+      const onScroll = () => {
+        if (desktopLiveScrolledRef.current) return;
+        desktopLiveScrolledRef.current = true;
+        setVisible(true);
+      };
+      scrollRoot.addEventListener("scroll", onScroll, { passive: true });
+      return () => scrollRoot.removeEventListener("scroll", onScroll);
+    }
+
     if (!trigger) {
-      if (!isDesktopLivePreview) setVisible(true);
+      setVisible(true);
       return;
     }
 
@@ -82,26 +94,6 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     };
 
     if (scrollRoot) {
-      if (isDesktopLivePreview) {
-        // The desktop phone renders the invitation at a compact scale, so element
-        // geometry is not comparable to the full/mobile preview. Use the actual
-        // phone scroller progress instead, after a real user scroll.
-        const onScroll = () => {
-          // This compact LIVE PREVIEW has a much longer scaled document than the
-          // full preview. Reveal when the phone reaches the same semantic area
-          // (gallery/place), but keep a progress fallback for templates without it.
-          const semanticTrigger = menuRoot?.querySelector(".classic-gallery, .romantic-gallery, .modern-gallery, .classic-information, .romantic-information, .modern-information, .public-accounts");
-          const rootRect = scrollRoot.getBoundingClientRect();
-          const triggerRect = semanticTrigger?.getBoundingClientRect();
-          const nearPlace = triggerRect && triggerRect.top <= rootRect.bottom * 1.08;
-          const maxScroll = Math.max(1, scrollRoot.scrollHeight - scrollRoot.clientHeight);
-          const fallbackReached = scrollRoot.scrollTop >= maxScroll * 0.28;
-          if (nearPlace || fallbackReached) setVisible(true);
-        };
-        scrollRoot.addEventListener("scroll", onScroll, { passive: true });
-        return () => scrollRoot.removeEventListener("scroll", onScroll);
-      }
-
       const onScroll = () => { revealFromGeometry(); };
       scrollRoot.addEventListener("scroll", onScroll, { passive: true });
       return () => scrollRoot.removeEventListener("scroll", onScroll);
