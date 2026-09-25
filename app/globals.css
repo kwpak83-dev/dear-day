@@ -970,3 +970,5 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dearday-brand-closing{font-family:var(--dd-body-font-family,"Batang",serif);font-size:13px;color:#72564b}.dearday-brand-closing b{margin-left:5px;color:#ef8d8f;font-size:22px;font-weight:400}
 .dearday-brand-signature{margin-top:6px;font-family:Georgia,"Times New Roman",serif;font-size:10px;letter-spacing:.42em;color:#76584d}
 .dd-template-sections-configured .dearday-brand-footer{order:1000}
+
+.message-example-select{width:100%;margin-bottom:8px;padding:0 14px;height:44px;border:1px solid #eadbd3;border-radius:10px;background:#fff;color:#4c4541;font:inherit}
