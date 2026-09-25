@@ -973,3 +973,16 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-sections-configured .dearday-brand-footer{order:1000}
 
 .message-example-select{width:100%;margin-bottom:8px;padding:0 14px;height:44px;border:1px solid #eadbd3;border-radius:10px;background:#fff;color:#4c4541;font:inherit}
+
+/* Keep the editor's fixed quick menu visually inside the desktop phone preview. */
+@media (min-width: 901px){
+  .preview-panel:has(.invitation-quick-menu--desktop-live) .invitation-quick-menu--desktop-live{
+    position:absolute;
+    left:50%;
+    right:auto;
+    bottom:48px;
+    width:270px;
+    transform:translateX(-50%);
+    z-index:80;
+  }
+}
