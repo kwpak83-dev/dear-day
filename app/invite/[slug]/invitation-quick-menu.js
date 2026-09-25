@@ -30,6 +30,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const [visible, setVisible] = useState(false);
   const [sheet, setSheet] = useState(null);
   const markerRef = useRef(null);
+  const desktopLiveStartedAtTopRef = useRef(false);
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
@@ -44,6 +45,13 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     const menuRoot = markerRef.current?.closest(".invitation-template");
     const scrollRoot = markerRef.current?.closest(".preview-content, .full-preview-scroll, .admin-template-editor-preview, .admin-draft-full-preview") || null;
     const trigger = menuRoot?.querySelector(".classic-information, .romantic-information, .modern-information, .public-accounts");
+
+    if (isDesktopLivePreview && scrollRoot && !desktopLiveStartedAtTopRef.current) {
+      // A previous editor render can preserve the phone's scroll position. Reset only
+      // the desktop LIVE PREVIEW so a newly mounted quick menu never starts visible.
+      scrollRoot.scrollTop = 0;
+      desktopLiveStartedAtTopRef.current = true;
+    }
 
     if (!trigger) {
       setVisible(true);
