@@ -26,25 +26,27 @@ function BottomSheet({ title, onClose, children }) {
   </div>;
 }
 
-export default function InvitationQuickMenu({ invitation, slug, startsAt }) {
-  const [visible, setVisible] = useState(false);
+export default function InvitationQuickMenu({ invitation, slug, startsAt, previewRoot = null, alwaysVisible = false }) {
+  const [visible, setVisible] = useState(alwaysVisible);
   const [sheet, setSheet] = useState(null);
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
 
   useEffect(() => {
-    const trigger = document.querySelector(".public-accounts") || document.getElementById("invitation-quick-menu-trigger");
+    if (alwaysVisible) { setVisible(true); return; }
+    const root = previewRoot?.current || null;
+    const trigger = root?.querySelector(".public-accounts") || document.querySelector(".public-accounts") || document.getElementById("invitation-quick-menu-trigger");
     if (visible || !trigger) return;
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
         setVisible(true);
         observer.disconnect();
       }
-    }, { threshold: 0.1 });
+    }, { root, threshold: 0.1 });
     observer.observe(trigger);
     return () => observer.disconnect();
-  }, [visible]);
+  }, [alwaysVisible, previewRoot, visible]);
 
   const goToLocation = () => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
