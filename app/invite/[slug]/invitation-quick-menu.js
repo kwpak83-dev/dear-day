@@ -40,15 +40,16 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     const scope = hostRef.current?.closest(".full-invitation-renderer") || root || document;
     const trigger = scope.querySelector?.(".public-accounts") || document.getElementById("invitation-quick-menu-trigger");
     if (visible || !trigger) return;
+    const scrollRoot = root || (embedded ? scope.closest?.(".preview-content, .admin-draft-preview-scroll") : null);
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
         setVisible(true);
         observer.disconnect();
       }
-    }, { root, threshold: 0.1 });
+    }, { root: scrollRoot, threshold: 0.1 });
     observer.observe(trigger);
     return () => observer.disconnect();
-  }, [alwaysVisible, previewRoot, visible]);
+  }, [alwaysVisible, embedded, previewRoot, visible]);
 
   const goToLocation = () => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
