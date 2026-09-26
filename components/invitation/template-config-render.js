@@ -135,6 +135,7 @@ export function TemplateConfigHeroLayers({ config, assets = {} }) {
   return <>
     {overlay && <span className="dd-template-hero-overlay" style={{ background: overlay }} aria-hidden="true" />}
     {config?.hero?.mode === "frame" && frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
+    {config?.hero?.nameFontFamily && config.hero.nameFontFamily !== "inherit" && <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />}
     {Array.isArray(config?.hero?.textLayers) && config.hero.textLayers.some((layer) => layer.text?.trim()) && <>
       <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />
       <div className="dd-template-hero-text-layers">
