@@ -28,7 +28,8 @@ const typographyDefaults = {
   caption: { fontFamily: "sans", fontSize: 13, fontWeight: 400, lineHeight: 1.5, letterSpacing: 0, textAlign: "center" },
 };
 const colorDefaults = { text: "#333333", title: "#222222", heroTitle: "#222222", muted: "#777777", accent: "#b78b72", buttonBackground: "#b78b72", buttonText: "#ffffff", divider: "#e8e2de" };
-const buttonStyleDefaults = { width: 100, height: 44, fontSize: 12, borderRadius: 9, borderWidth: 0, borderColor: "#b78b72" };
+const SHARED_BUTTON_PRESETS = [{id:"soft-rose",name:"Soft Rose",background:"#d78f9b",text:"#ffffff",borderColor:"#d78f9b",borderRadius:28,borderWidth:0},{id:"classic-gold",name:"Classic Gold",background:"#fffaf2",text:"#977b50",borderColor:"#b69b72",borderRadius:8,borderWidth:1},{id:"modern-minimal",name:"Modern Minimal",background:"#303030",text:"#ffffff",borderColor:"#303030",borderRadius:7,borderWidth:0},{id:"romantic-line",name:"Romantic Line",background:"#fff8f9",text:"#b97e89",borderColor:"#d9a3aa",borderRadius:28,borderWidth:1}];
+const buttonStyleDefaults = { width: 100, height: 44, fontSize: 12, borderRadius: 9, borderWidth: 0, borderColor: "#b78b72", background: "#b78b72", text: "#ffffff", syncQuickMenu: false };
 const quickMenuDefaults = { rsvpIcon: "✓", locationIcon: "⌖", guestbookIcon: "♡", rsvpIconAssetId: null, locationIconAssetId: null, guestbookIconAssetId: null, fontSize: 11, iconSize: 18 };
 const typographyRoles = [["heroTitle", "Hero Title"], ["sectionTitle", "Section Title"], ["body", "Body"], ["caption", "Caption / Small"]];
 const colorLabels = [["text", "기본 글자색"], ["title", "본문 제목 색상"], ["muted", "보조 글자색"], ["accent", "포인트 색상"], ["buttonBackground", "버튼 배경"], ["buttonText", "버튼 글자"], ["divider", "구분선"]];
@@ -412,6 +413,10 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
             ]} /></div>
             </details>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
+              <label style={field}>공용 버튼 디자인<select style={input} value={SHARED_BUTTON_PRESETS.find(p=>p.background===buttonStyle.background&&p.text===buttonStyle.text&&p.borderRadius===buttonStyle.borderRadius&&p.borderColor===buttonStyle.borderColor)?.id||""} onChange={event=>{const preset=SHARED_BUTTON_PRESETS.find(p=>p.id===event.target.value);if(preset)setButtonStyle(current=>({...current,background:preset.background,text:preset.text,borderColor:preset.borderColor,borderRadius:preset.borderRadius,borderWidth:preset.borderWidth}));}}><option value="">직접 설정</option>{SHARED_BUTTON_PRESETS.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
+              <label style={{...field,alignContent:"center"}}><span><input type="checkbox" checked={Boolean(buttonStyle.syncQuickMenu)} onChange={event=>setButtonStyle(current=>({...current,syncQuickMenu:event.target.checked}))}/> 퀵메뉴도 같은 디자인 적용</span></label>
+              <ColorControl label="버튼 배경색" value={buttonStyle.background||"#b78b72"} onChange={background=>setButtonStyle(current=>({...current,background}))}/>
+              <ColorControl label="버튼 글자색" value={buttonStyle.text||"#ffffff"} onChange={text=>setButtonStyle(current=>({...current,text}))}/>
               <NumberControl label="버튼 너비 (%)" value={buttonStyle.width} min={40} max={100} onChange={(width) => setButtonStyle((current) => ({ ...current, width }))} />
               <NumberControl label="버튼 높이" value={buttonStyle.height} min={32} max={64} onChange={(height) => setButtonStyle((current) => ({ ...current, height }))} />
               <NumberControl label="버튼 글자 크기" value={buttonStyle.fontSize} min={10} max={18} onChange={(fontSize) => setButtonStyle((current) => ({ ...current, fontSize }))} />
