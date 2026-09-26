@@ -1057,3 +1057,6 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Hero preset typography for event title, names and wedding separator. */
 .dd-template-hero-configured .classic-hero-copy h2,.dd-template-hero-configured .romantic-hero-copy h2,.dd-template-hero-configured .modern-hero-copy h2{font-size:var(--dd-hero-name-size,21px);color:var(--dd-hero-name-color,inherit)}
 .dd-template-hero-configured .classic-couple-title em,.dd-template-hero-configured .romantic-couple-title i{font-size:var(--dd-hero-separator-size,16px);color:var(--dd-hero-separator-color,#d8b985)}
+
+/* Preset-owned Hero title typography takes precedence over legacy body-theme Hero Title. */
+.dd-template-hero-configured .classic-hero-copy h2,.dd-template-hero-configured .romantic-hero-copy h2,.dd-template-hero-configured .modern-hero-copy h2{font-family:var(--dd-hero-title-font,inherit);font-weight:var(--dd-hero-title-weight,400);line-height:var(--dd-hero-title-line-height,1.5);letter-spacing:var(--dd-hero-title-letter-spacing,normal);text-align:var(--dd-hero-title-align,center)}
