@@ -169,7 +169,6 @@ export async function POST(request) {
   const hasHeroPresetId = Object.prototype.hasOwnProperty.call(invitation, "heroPresetId");
   const heroPresetId = invitation.heroPresetId || null;
   if (heroPresetId && !uuidPattern.test(heroPresetId)) return json({ error: "선택한 Hero 정보가 올바르지 않아요." }, 400);
-  if (heroPresetId) { const { data: hero, error: heroError } = await supabase.from("hero_presets").select("id,status,is_visible").eq("id", heroPresetId).maybeSingle(); if (heroError) return json({ error: "선택한 Hero를 확인하지 못했어요." }, 500); if (!hero || (existing == null && (hero.status !== "on_sale" || !hero.is_visible))) return json({ error: "현재 사용할 수 없는 Hero예요." }, 409); }
 
   let startsAt = null;
   if (invitation.date && invitation.time) {
@@ -181,6 +180,7 @@ export async function POST(request) {
   if (lookupError) return json({ error: "기존 초대장을 확인하지 못했어요." }, 500);
   const existing = matches?.[0];
   if (existing && existing.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 수정할 수 없어요." }, 403);
+  if (heroPresetId) { const { data: hero, error: heroError } = await supabase.from("hero_presets").select("id,status,is_visible").eq("id", heroPresetId).maybeSingle(); if (heroError) return json({ error: "선택한 Hero를 확인하지 못했어요." }, 500); if (!hero || (!existing && (hero.status !== "on_sale" || !hero.is_visible))) return json({ error: "현재 사용할 수 없는 Hero예요." }, 409); }
 
   // Published invitations must never be overwritten by an uninitialized editor state.
   // Validate the complete incoming editor payload before allowing a published save.
