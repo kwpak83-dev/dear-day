@@ -559,7 +559,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     {(state.error || notice) && <p role="status">{state.error || notice}</p>}
       </div>
       <aside className="admin-template-editor-preview">
-        <TemplateDraftPreview templateId={templateId} draft={state.draft} assets={state.allAssets} loading={state.loading} />
+        <TemplateDraftPreview templateId={templateId} draft={state.draft ? { ...state.draft, typography, colors, buttonStyle, quickMenu } : null} assets={state.allAssets} loading={state.loading} />
       </aside>
     </div>
   </section>;
