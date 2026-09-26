@@ -55,6 +55,11 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   if (hero?.aspectRatio) heroMediaStyle.aspectRatio = hero.aspectRatio.replace(":", " / ");
   if (hero?.positionX !== null && hero?.positionX !== undefined) heroImageStyle.objectPosition = `${hero.positionX}% ${hero?.positionY ?? 50}%`;
   if (hero && hero.zoom !== null) { heroImageStyle.transform = `scale(${hero.zoom})`; heroImageStyle.transformOrigin = `${hero?.positionX ?? 50}% ${hero?.positionY ?? 50}%`; }
+  if (hero?.nameFontFamily && hero.nameFontFamily !== "inherit") set(rootStyle, "--dd-hero-title-font", fontStack(hero.nameFontFamily));
+  if (hero?.nameFontWeight != null) set(rootStyle, "--dd-hero-title-weight", hero.nameFontWeight);
+  if (hero?.nameLineHeight != null) set(rootStyle, "--dd-hero-title-line-height", hero.nameLineHeight);
+  if (hero?.nameLetterSpacing != null) set(rootStyle, "--dd-hero-title-letter-spacing", hero.nameLetterSpacing, "px");
+  if (hero?.nameTextAlign) set(rootStyle, "--dd-hero-title-align", hero.nameTextAlign);
   if (hero?.nameFontSize != null) set(rootStyle, "--dd-hero-name-size", hero.nameFontSize, "px");
   if (hero?.nameColor) set(rootStyle, "--dd-hero-name-color", hero.nameColor);
   if (hero?.separatorFontSize != null) set(rootStyle, "--dd-hero-separator-size", hero.separatorFontSize, "px");
@@ -70,6 +75,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   }
 
   for (const [role, prefix] of [["heroTitle", "hero-title"], ["sectionTitle", "section-title"], ["body", "body"], ["caption", "caption"]]) {
+    if (role === "heroTitle" && hero?.nameFontFamily && hero.nameFontFamily !== "inherit") continue;
     const item = typography?.[role];
     if (!item) continue;
     set(rootStyle, `--dd-${prefix}-font`, fontStack(item.fontFamily));
