@@ -158,6 +158,7 @@ export default function TemplateAssets({ templateId, onOperation, onPermanentDel
       const active = rows.filter((asset) => asset.is_active);
       return <div className="admin-template-asset-slot" key={type}>
         <h3>{label}</h3>
+        {type === "thumbnail" && <div tabIndex={0} onPaste={(event) => { const item=[...event.clipboardData.items].find((entry)=>entry.type.startsWith("image/")); const blob=item?.getAsFile(); if(!blob){setNotice("클립보드에 이미지가 없어요.");return;} event.preventDefault(); upload("thumbnail",new File([blob],"body-theme-thumbnail.png",{type:blob.type||"image/png"})); }} style={{border:"2px dashed #d7c5ba",borderRadius:10,padding:"14px 10px",textAlign:"center",margin:"8px 0 12px",cursor:"text"}}><strong>여기를 클릭 → Ctrl+V</strong><div style={{fontSize:12,color:"#806f66",marginTop:4}}>캡처한 이미지를 판매 목록 썸네일로 바로 업로드</div></div>}
         {!active.length && <p>{type === "bgm" ? "등록된 음원 없음" : "등록된 이미지 없음"}</p>}
         {rows.map((asset) => <article className="admin-template-asset-row" key={asset.id}>
           {asset.url && (asset.asset_type === "bgm" ? <audio src={asset.url} controls preload="none" aria-label={`${label} 미리듣기`} /> : <img src={asset.url} alt={`${label} 미리보기`} loading="lazy" />)}
