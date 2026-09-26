@@ -52,7 +52,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroMediaStyle.background = "transparent";
   }
   if (hero?.aspectRatio) heroMediaStyle.aspectRatio = hero.aspectRatio.replace(":", " / ");
-  if (hero && hero.positionX !== null && hero.positionY !== null) heroImageStyle.objectPosition = `${hero.positionX}% ${hero.positionY}%`;
+  if (hero?.positionX !== null && hero?.positionX !== undefined) heroImageStyle.objectPosition = `${hero.positionX}% ${hero?.positionY ?? 50}%`;
   if (hero && hero.zoom !== null) heroImageStyle.transform = `scale(${hero.zoom})`;
   if (hero?.scheduleFontSize !== null && hero?.scheduleFontSize !== undefined) set(rootStyle, "--dd-hero-schedule-size", hero.scheduleFontSize, "px");
   if (hero?.textYPercent !== null && hero?.textYPercent !== undefined) {
@@ -123,7 +123,7 @@ export function TemplateConfigHeroLayers({ config, assets = {} }) {
   const overlay = rgba(config?.hero?.overlayColor, config?.hero?.overlayOpacity);
   return <>
     {overlay && <span className="dd-template-hero-overlay" style={{ background: overlay }} aria-hidden="true" />}
-    {frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
+    {config?.hero?.mode === "frame" && frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
   </>;
 }
 
