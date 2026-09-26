@@ -1,5 +1,6 @@
 import { HERO_FONT_STYLESHEET, getHeroFont } from "../../lib/hero-fonts";
 import { TEMPLATE_FONT_STACKS } from "../../lib/template-config";
+const BODY_FONT_STYLESHEET = "https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Hi+Melody&family=Nanum+Brush+Script&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@400;500;600;700&family=Song+Myung&display=swap";
 
 function rgba(hex, opacity) {
   if (!hex || typeof opacity !== "number") return null;
@@ -135,6 +136,7 @@ export function TemplateConfigHeroLayers({ config, assets = {} }) {
   return <>
     {overlay && <span className="dd-template-hero-overlay" style={{ background: overlay }} aria-hidden="true" />}
     {config?.hero?.mode === "frame" && frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
+    {config?.typography && <link rel="stylesheet" href={BODY_FONT_STYLESHEET} />}
     {config?.hero?.nameFontFamily && config.hero.nameFontFamily !== "inherit" && <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />}
     {Array.isArray(config?.hero?.textLayers) && config.hero.textLayers.some((layer) => layer.text?.trim()) && <>
       <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />
