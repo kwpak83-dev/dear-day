@@ -1,0 +1,44 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
+
+const displayLabels=[["eyebrow","상단 초대 문구"],["eventLabel","행사 문구"],["title","행사 제목 / 이름"],["relations","관계 정보"],["detail","상세 정보"],["note","추가 문구"],["schedule","날짜 / 시간"],["venue","장소"]];
+const defaultDisplay=Object.fromEntries(displayLabels.map(([key])=>[key,true]));
+const defaultConfig={mode:"photo",aspectRatio:"4:5",positionX:50,positionY:50,textYPercent:50,scheduleFontSize:11,zoom:1,overlayColor:"#000000",overlayOpacity:0,headerVisible:true,mastheadVisible:true,mastheadText:"",display:defaultDisplay};
+const empty={name:"",preset_key:"",description:"",status:"draft",is_visible:false,sort_order:0,config:defaultConfig};
+const field={display:"grid",gap:5,minWidth:0};
+const input={width:"100%",boxSizing:"border-box",minHeight:40,padding:"8px 10px",border:"1px solid #d7c5ba",borderRadius:7};
+const card={border:"1px solid #eadfd8",borderRadius:14,padding:16,background:"#fff"};
+
+export default function HeroPresetsPage(){
+ const [state,setState]=useState({loading:true,error:"",presets:[]}); const [editing,setEditing]=useState(null); const [form,setForm]=useState(empty); const [saving,setSaving]=useState(false); const [notice,setNotice]=useState("");
+ const auth=async()=>{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)throw new Error("로그인이 필요합니다.");return {Authorization:`Bearer ${session.access_token}`};};
+ const load=async()=>{const response=await fetch("/api/admin/hero-presets",{headers:await auth()});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||"Hero 프리셋 목록을 불러오지 못했어요.");setState({loading:false,error:"",presets:result.presets||[]});};
+ useEffect(()=>{load().catch((e)=>setState({loading:false,error:e.message,presets:[]}));},[]);
+ const open=(preset=null)=>{setEditing(preset?.id||"new");setForm(preset?{name:preset.name,preset_key:preset.preset_key,description:preset.description||"",status:preset.status,is_visible:preset.is_visible,sort_order:preset.sort_order,config:{...defaultConfig,...preset.config,display:{...defaultDisplay,...preset.config?.display}}}:{...empty,config:{...defaultConfig,display:{...defaultDisplay}}});setNotice("");};
+ const setConfig=(key,value)=>setForm((current)=>({...current,config:{...current.config,[key]:value}}));
+ const save=async(e)=>{e.preventDefault();if(saving)return;setSaving(true);setNotice("");try{const response=await fetch("/api/admin/hero-presets",{method:editing==="new"?"POST":"PATCH",headers:{...(await auth()),"Content-Type":"application/json"},body:JSON.stringify({...form,preset_key:form.preset_key.trim(),...(editing!=="new"?{id:editing}:{})})});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||"저장하지 못했어요.");await load();setEditing(null);setNotice("Hero 프리셋을 저장했습니다.");}catch(e){setNotice(e.message);}finally{setSaving(false);}};
+ return <main style={{maxWidth:980,margin:"0 auto",padding:"32px 16px 64px"}}><p className="section-kicker">ADMIN · HERO PRESETS</p><h1>Hero 프레임 관리</h1><p>Hero는 사진·프레임·텍스트 배치만 관리합니다. 본문 배경과 장식은 기존 템플릿 관리에서 계속 관리합니다.</p><p><a href="/admin/templates">← 본문 테마 관리</a></p>
+ {state.loading?<p>불러오는 중이에요.</p>:state.error?<p className="payment-error">{state.error}</p>:<>
+ {!editing&&<button type="button" className="save-button" onClick={()=>open()}>새 Hero 프리셋</button>}{notice&&<p role="status">{notice}</p>}
+ {editing?<form onSubmit={save} style={{...card,display:"grid",gap:14,marginTop:16}}><h2 style={{margin:0}}>{editing==="new"?"새 Hero 프리셋":"Hero 프리셋 수정"}</h2>
+ <label style={field}>이름<input style={input} required maxLength={100} value={form.name} onChange={(e)=>setForm({...form,name:e.target.value})}/></label>
+ <label style={field}>Preset key<input style={input} required pattern="[a-z0-9](?:[a-z0-9]|_|-){2,79}" disabled={editing!=="new"} value={form.preset_key} onChange={(e)=>setForm({...form,preset_key:e.target.value.trim()})}/></label>
+ <label style={field}>설명<textarea style={input} rows={3} maxLength={2000} value={form.description} onChange={(e)=>setForm({...form,description:e.target.value})}/></label>
+ <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:10}}>
+ <label style={field}>상태<select style={input} value={form.status} onChange={(e)=>setForm({...form,status:e.target.value})}><option value="draft">제작중</option><option value="on_sale">사용중</option><option value="stopped">사용중지</option></select></label>
+ <label style={field}>정렬순서<input style={input} type="number" min={-10000} max={10000} value={form.sort_order} onChange={(e)=>setForm({...form,sort_order:Number(e.target.value)})}/></label>
+ <label style={{display:"flex",alignItems:"center",gap:7}}><input type="checkbox" checked={form.is_visible} onChange={(e)=>setForm({...form,is_visible:e.target.checked})}/> 사용자 선택에 노출</label></div>
+ <fieldset style={{border:"1px solid #eadfd8",borderRadius:10,padding:12}}><legend>Hero 레이아웃</legend><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(145px,1fr))",gap:10}}>
+ <label style={field}>표현 방식<select style={input} value={form.config.mode} onChange={(e)=>setConfig("mode",e.target.value)}><option value="photo">사진 중심형</option><option value="frame">컨셉 프레임형</option><option value="illustration">포스터/일러스트형</option></select></label>
+ <label style={field}>비율<select style={input} value={form.config.aspectRatio} onChange={(e)=>setConfig("aspectRatio",e.target.value)}>{["4:5","1:1","3:4","16:9"].map(v=><option key={v}>{v}</option>)}</select></label>
+ {[["positionX","사진 X 위치 %",0,100,1],["positionY","사진 Y 위치 %",0,100,1],["textYPercent","텍스트 Y 위치 %",0,100,1],["scheduleFontSize","날짜 글자 크기",8,24,1],["zoom","사진 Zoom",.5,2,.05],["overlayOpacity","Overlay 투명도",0,1,.05]].map(([key,label,min,max,step])=><label style={field} key={key}>{label}<input style={input} type="number" min={min} max={max} step={step} value={form.config[key]} onChange={(e)=>setConfig(key,Number(e.target.value))}/></label>)}
+ <label style={field}>Overlay 색상<input style={input} type="color" value={form.config.overlayColor} onChange={(e)=>setConfig("overlayColor",e.target.value)}/></label>
+ <label style={field}>상단 문구<input style={input} maxLength={60} value={form.config.mastheadText} onChange={(e)=>setConfig("mastheadText",e.target.value)}/></label>
+ </div><div style={{display:"flex",gap:12,flexWrap:"wrap",marginTop:12}}><label><input type="checkbox" checked={form.config.headerVisible} onChange={(e)=>setConfig("headerVisible",e.target.checked)}/> DearDay 표시</label><label><input type="checkbox" checked={form.config.mastheadVisible} onChange={(e)=>setConfig("mastheadVisible",e.target.checked)}/> 상단 행사문구 표시</label></div>
+ <fieldset style={{marginTop:12,border:"1px solid #eadfd8",borderRadius:8}}><legend>Hero 표시 항목</legend><div style={{display:"flex",gap:12,flexWrap:"wrap"}}>{displayLabels.map(([key,label])=><label key={key}><input type="checkbox" checked={form.config.display[key]} onChange={(e)=>setConfig("display",{...form.config.display,[key]:e.target.checked})}/>{label}</label>)}</div></fieldset></fieldset>
+ <p style={{margin:0,color:"#806f66",fontSize:13}}>Hero 프레임 이미지 Asset 연결은 다음 단계에서 Hero 전용 Asset 저장소와 함께 연결합니다. 현재는 레이아웃 프리셋을 안전하게 독립시키는 단계입니다.</p>
+ <div style={{display:"flex",gap:8}}><button className="save-button" disabled={saving}>{saving?"저장 중...":"저장"}</button><button type="button" className="save-button" disabled={saving} onClick={()=>setEditing(null)}>취소</button></div></form>:
+ <div style={{display:"grid",gap:12,marginTop:16}}>{state.presets.length?state.presets.map((preset)=><article key={preset.id} style={card}><h2 style={{margin:"0 0 8px"}}>{preset.name}</h2><p style={{margin:"4px 0"}}>{preset.preset_key} · {preset.status==="on_sale"?"사용중":preset.status==="stopped"?"사용중지":"제작중"} · {preset.is_visible?"노출":"숨김"}</p><button type="button" className="save-button" onClick={()=>open(preset)}>수정하기</button></article>):<p>등록된 Hero 프리셋이 없습니다.</p>}</div>}</>}</main>;
+}
