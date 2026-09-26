@@ -55,7 +55,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   if (hero?.aspectRatio) heroMediaStyle.aspectRatio = hero.aspectRatio.replace(":", " / ");
   if (hero?.positionX !== null && hero?.positionX !== undefined) heroImageStyle.objectPosition = `${hero.positionX}% ${hero?.positionY ?? 50}%`;
   if (hero && hero.zoom !== null) { heroImageStyle.transform = `scale(${hero.zoom})`; heroImageStyle.transformOrigin = `${hero?.positionX ?? 50}% ${hero?.positionY ?? 50}%`; }
-  if (hero?.nameFontFamily && hero.nameFontFamily !== "inherit") set(rootStyle, "--dd-hero-title-font", fontStack(hero.nameFontFamily));
+  if (hero?.nameFontFamily && hero.nameFontFamily !== "inherit") set(rootStyle, "--dd-hero-title-font", getHeroFont(hero.nameFontFamily).family);
   if (hero?.nameFontWeight != null) set(rootStyle, "--dd-hero-title-weight", hero.nameFontWeight);
   if (hero?.nameLineHeight != null) set(rootStyle, "--dd-hero-title-line-height", hero.nameLineHeight);
   if (hero?.nameLetterSpacing != null) set(rootStyle, "--dd-hero-title-letter-spacing", hero.nameLetterSpacing, "px");
