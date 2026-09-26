@@ -300,7 +300,7 @@ export default function CreateInvitation() {
       if (!response.ok || !result.event) return setSaveNotice(result.error || "초대장을 찾지 못했어요.");
       const status = result.event.status || "draft";
       const query = new URLSearchParams(window.location.search);
-      let restoredInvitation = { ...initialInvitation, ...result.event.settings, eventKind: result.event.kind || result.event.settings?.eventKind || "wedding", templateId: result.event.template_id || result.event.settings?.templateId || "" };
+      let restoredInvitation = { ...initialInvitation, ...result.event.settings, eventKind: result.event.kind || result.event.settings?.eventKind || "wedding", templateId: result.event.template_id || result.event.settings?.templateId || "", heroPresetId: result.event.hero_preset_id || result.event.settings?.heroPresetId || "" };
       if (query.get("resume") === "draft") {
         try {
           const draft = JSON.parse(window.localStorage.getItem("dear-day-draft") || "null");
