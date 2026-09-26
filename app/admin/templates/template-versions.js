@@ -30,7 +30,7 @@ const typographyDefaults = {
 const colorDefaults = { text: "#333333", title: "#222222", heroTitle: "#222222", muted: "#777777", accent: "#b78b72", buttonBackground: "#b78b72", buttonText: "#ffffff", divider: "#e8e2de" };
 const buttonStyleDefaults = { width: 100, height: 44, fontSize: 12, borderRadius: 9, borderWidth: 0, borderColor: "#b78b72" };
 const quickMenuDefaults = { rsvpIcon: "✓", locationIcon: "⌖", guestbookIcon: "♡", rsvpIconAssetId: null, locationIconAssetId: null, guestbookIconAssetId: null, fontSize: 11, iconSize: 18 };
-const typographyRoles = [["sectionTitle", "Section Title"], ["body", "Body"], ["caption", "Caption / Small"]];
+const typographyRoles = [["heroTitle", "Hero Title"], ["sectionTitle", "Section Title"], ["body", "Body"], ["caption", "Caption / Small"]];
 const colorLabels = [["text", "기본 글자색"], ["title", "본문 제목 색상"], ["muted", "보조 글자색"], ["accent", "포인트 색상"], ["buttonBackground", "버튼 배경"], ["buttonText", "버튼 글자"], ["divider", "구분선"]];
 const fromConfig = (defaults, saved) => Object.fromEntries(Object.keys(defaults).map((key) => [key, saved && typeof saved === "object" && saved[key] !== undefined ? saved[key] : defaults[key]]));
 const heroFromConfig = (saved) => ({ ...fromConfig(heroDefaults, saved), display: fromConfig(heroDisplayDefaults, saved?.display) });
@@ -363,7 +363,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               </div>
             </details>
             <h4 style={{ margin: 0 }}>Typography</h4>
-            {typographyRoles.map(([role, label]) => (
+            {typographyRoles.filter(([role]) => role !== "heroTitle").map(([role, label]) => (
               <fieldset key={role} style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 12 }}>
                 <legend>{label}</legend>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
