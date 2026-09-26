@@ -427,7 +427,8 @@ export default function CreateInvitation() {
     setPlaceResults([]);
   };
   const selectedHero=heroOptions.find((item)=>item.id===invitation.heroPresetId)||null;
-  const selectedHeroFrame=selectedHero?.assets?.hero_frame||null;\n  const composedTemplateRender=selectedHero?{config:templateRender.config?{...templateRender.config,hero:{...templateRender.config.hero,...selectedHero.config,frameAssetId:selectedHeroFrame?.id||null}}:templateRender.config,assets:selectedHeroFrame?.url?{...templateRender.assets,[selectedHeroFrame.id]:selectedHeroFrame.url}:templateRender.assets}:templateRender;
+  const selectedHeroFrame=selectedHero?.assets?.hero_frame||null;
+  const composedTemplateRender=selectedHero?{config:templateRender.config?{...templateRender.config,hero:{...templateRender.config.hero,...selectedHero.config,frameAssetId:selectedHeroFrame?.id||null}}:templateRender.config,assets:selectedHeroFrame?.url?{...templateRender.assets,[selectedHeroFrame.id]:selectedHeroFrame.url}:templateRender.assets}:templateRender;
   const eventConfig = getEventConfig(invitation.eventKind);
   const renderConfigField = (field) => {
     if (field.key === "birthDate") return <BirthDateField key={field.key} label={field.label} value={invitation.birthDate || ""} onChange={value => update("birthDate", value)} />;
