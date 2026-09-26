@@ -88,12 +88,16 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     const templateRoot = markerRef.current?.closest(".invitation-template");
     if (!templateRoot) return;
     const computed = getComputedStyle(templateRoot);
-    setDesktopLiveStyle({
+    const nextStyle = {
       "--dd-invite-action-bg": computed.getPropertyValue("--dd-invite-action-bg"),
       "--dd-invite-action-text": computed.getPropertyValue("--dd-invite-action-text"),
       "--dd-invite-action-accent": computed.getPropertyValue("--dd-invite-action-accent"),
       "--dd-invite-action-divider": computed.getPropertyValue("--dd-invite-action-divider"),
       "--dd-invite-action-radius": computed.getPropertyValue("--dd-invite-action-radius"),
+      "--dd-quick-menu-bg": computed.getPropertyValue("--dd-quick-menu-bg"),
+      "--dd-quick-menu-text": computed.getPropertyValue("--dd-quick-menu-text"),
+      "--dd-quick-menu-border": computed.getPropertyValue("--dd-quick-menu-border"),
+      "--dd-quick-menu-radius": computed.getPropertyValue("--dd-quick-menu-radius"),
       "--dd-quick-menu-font-size": computed.getPropertyValue("--dd-quick-menu-font-size"),
       "--dd-quick-menu-icon-size": computed.getPropertyValue("--dd-quick-menu-icon-size"),
       "--dd-quick-menu-rsvp-icon": computed.getPropertyValue("--dd-quick-menu-rsvp-icon"),
@@ -102,8 +106,9 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       "--dd-quick-menu-rsvp-icon-image": computed.getPropertyValue("--dd-quick-menu-rsvp-icon-image"),
       "--dd-quick-menu-location-icon-image": computed.getPropertyValue("--dd-quick-menu-location-icon-image"),
       "--dd-quick-menu-guestbook-icon-image": computed.getPropertyValue("--dd-quick-menu-guestbook-icon-image"),
-    });
-  }, [visible, isDesktopLivePreview, invitation.templateId, invitation.heroPresetId]);
+    };
+    setDesktopLiveStyle(previous => JSON.stringify(previous) === JSON.stringify(nextStyle) ? previous : nextStyle);
+  });
 
   useEffect(() => {
     if (visible) return;
