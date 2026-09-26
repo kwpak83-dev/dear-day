@@ -44,7 +44,7 @@ function fields(body){
 export async function GET(request){
   const auth=await getAdmin(request); if(auth.error) return json({error:auth.error},auth.status);
   const {data,error}=await auth.serverClient.from("hero_presets").select("id,name,preset_key,description,status,is_visible,sort_order,config,created_at,updated_at").order("sort_order").order("created_at");
-  if(error) return json({error:"Hero 프리셋 목록을 불러오지 못했어요."},500);
+  if(error){ console.error("Hero preset list failed", { code:error.code, message:error.message, details:error.details, hint:error.hint }); return json({error:`Hero 프리셋 목록 오류: ${error.message}`},500); }
   return json({presets:data||[]});
 }
 export async function POST(request){
