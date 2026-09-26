@@ -96,7 +96,7 @@ export async function GET(request) {
   const auth = await getAuthenticatedClient(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
   const slug = searchParams.get("slug");
-  let query = auth.supabase.from("events").select("slug,title,status,kind,template_id,template_version_id,starts_at,paid_at,published_at,service_started_at,service_expires_at,grace_ends_at,updated_at,settings").eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
+  let query = auth.supabase.from("events").select("slug,title,status,kind,template_id,template_version_id,hero_preset_id,starts_at,paid_at,published_at,service_started_at,service_expires_at,grace_ends_at,updated_at,settings").eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
   if (slug) query = query.eq("slug", slug).limit(1);
   const { data, error } = await query;
   if (error) return json({ error: "초대장을 불러오지 못했어요." }, 500);
@@ -166,6 +166,10 @@ export async function POST(request) {
   const hasTemplateId = Object.prototype.hasOwnProperty.call(invitation, "templateId");
   const templateId = invitation.templateId || null;
   if (templateId && !uuidPattern.test(templateId)) return json({ error: "선택한 템플릿 정보가 올바르지 않아요." }, 400);
+  const hasHeroPresetId = Object.prototype.hasOwnProperty.call(invitation, "heroPresetId");
+  const heroPresetId = invitation.heroPresetId || null;
+  if (heroPresetId && !uuidPattern.test(heroPresetId)) return json({ error: "선택한 Hero 정보가 올바르지 않아요." }, 400);
+  if (heroPresetId) { const { data: hero, error: heroError } = await supabase.from("hero_presets").select("id,status,is_visible").eq("id", heroPresetId).maybeSingle(); if (heroError) return json({ error: "선택한 Hero를 확인하지 못했어요." }, 500); if (!hero || (existing == null && (hero.status !== "on_sale" || !hero.is_visible))) return json({ error: "현재 사용할 수 없는 Hero예요." }, 409); }
 
   let startsAt = null;
   if (invitation.date && invitation.time) {
@@ -173,7 +177,7 @@ export async function POST(request) {
     if (Number.isNaN(new Date(startsAt).getTime())) return json({ error: "예식 날짜 또는 시간을 확인해 주세요." }, 400);
   }
 
-  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id,status,kind,settings,template_id,template_version_id,paid_at,published_at,service_started_at,service_expires_at").eq("slug", slug).limit(1);
+  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id,status,kind,settings,template_id,template_version_id,hero_preset_id,paid_at,published_at,service_started_at,service_expires_at").eq("slug", slug).limit(1);
   if (lookupError) return json({ error: "기존 초대장을 확인하지 못했어요." }, 500);
   const existing = matches?.[0];
   if (existing && existing.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 수정할 수 없어요." }, 403);
@@ -214,6 +218,7 @@ export async function POST(request) {
     ...(retentionDates || {}),
     kind: eventKind,
     ...(hasTemplateId ? { template_id: templateId, template_version_id: templateVersionId } : {}),
+    ...(hasHeroPresetId ? { hero_preset_id: heroPresetId } : {}),
     title: getInvitationTitle(invitation, eventKind),
     starts_at: startsAt,
     settings: invitation,
