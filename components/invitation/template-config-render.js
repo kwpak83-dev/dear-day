@@ -1,3 +1,4 @@
+import { HERO_FONT_STYLESHEET, getHeroFont } from "../../lib/hero-fonts";
 import { TEMPLATE_FONT_STACKS } from "../../lib/template-config";
 
 function rgba(hex, opacity) {
@@ -124,6 +125,22 @@ export function TemplateConfigHeroLayers({ config, assets = {} }) {
   return <>
     {overlay && <span className="dd-template-hero-overlay" style={{ background: overlay }} aria-hidden="true" />}
     {config?.hero?.mode === "frame" && frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
+    {Array.isArray(config?.hero?.textLayers) && config.hero.textLayers.some((layer) => layer.text?.trim()) && <>
+      <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />
+      <div className="dd-template-hero-text-layers">
+        {config.hero.textLayers.filter((layer) => layer.text?.trim()).map((layer) => {
+          const x = Math.min(100, Math.max(0, Number(layer.x ?? 50)));
+          const y = Math.min(100, Math.max(0, Number(layer.y ?? 50)));
+          const align = ["left", "center", "right"].includes(layer.align) ? layer.align : "center";
+          return <div key={layer.id} className="dd-template-hero-text-layer" style={{
+            left: `${x}%`, top: `${y}%`, transform: `translate(${-x}%, -50%)`,
+            width: "100%", textAlign: align, fontFamily: getHeroFont(layer.fontId).family,
+            fontSize: `${Math.min(100, Math.max(8, Number(layer.fontSize ?? 32)))}px`,
+            color: layer.color || "#ffffff", whiteSpace: "pre-wrap", overflowWrap: "anywhere",
+          }}>{layer.text}</div>;
+        })}
+      </div>
+    </>}
   </>;
 }
 
