@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
+import { captureBodyThemeThumbnail } from "../../../lib/capture-element";
 
 const types = [
   ["thumbnail", "판매 목록 썸네일"], ["long_preview", "긴 판매용 미리보기"],
@@ -94,6 +95,22 @@ export default function TemplateAssets({ templateId, onOperation, onPermanentDel
     } catch (error) { setNotice(error.message); }
     finally { setBusy(false); onBusyChange(false); if (inputs.current[type]) inputs.current[type].value = ""; }
   };
+  const captureThumbnail = async () => {
+    if (busy) return;
+    setBusy(true); onBusyChange(true); setNotice("");
+    try {
+      const activeBackground=assets.find((asset)=>asset.asset_type==="background"&&asset.is_active)?.url||"";
+      const activeDecoration=assets.find((asset)=>asset.asset_type==="decoration"&&asset.is_active)?.url||"";
+      const blob=await captureBodyThemeThumbnail({backgroundUrl:activeBackground,decorationUrl:activeDecoration,width:600,height:750});
+      const file=new File([blob],"body-theme-thumbnail.png",{type:"image/png"});
+      const form=new FormData(); form.set("templateId",templateId); form.set("assetType","thumbnail"); form.set("file",file); form.set("width","600"); form.set("height","750");
+      const response=await fetch("/api/admin/templates/assets",{method:"POST",headers:await authorization(),body:form});
+      const result=await response.json().catch(()=>({}));
+      if(!response.ok)throw new Error(result.error||"본문 테마 썸네일을 저장하지 못했어요.");
+      onOperation({id:result.id,receipt:result.receipt}); await load(); setNotice("현재 본문 테마를 선택 화면 썸네일로 저장했습니다.");
+    } catch(error){setNotice(`본문 테마 썸네일 캡처 실패: ${error.message||"알 수 없는 오류"}`);}
+    finally{setBusy(false);onBusyChange(false);}
+  };
   const changeActive = async (asset) => {
     const action = asset.is_active ? "deactivate" : "activate";
     if (busy || (action === "deactivate" && !window.confirm("이 Asset을 비활성화할까요? Storage 파일은 보존됩니다."))) return;
@@ -133,6 +150,7 @@ export default function TemplateAssets({ templateId, onOperation, onPermanentDel
   return <section className="admin-template-assets">
     <h2>템플릿 Asset</h2>
     <p>이미지는 템플릿별로 보관됩니다. 교체하거나 비활성화해도 기존 파일은 삭제되지 않습니다.</p>
+    <div className="admin-template-asset-slot"><h3>본문 테마 썸네일 캡처</h3><p>현재 활성 배경·장식을 사용해 선택 화면용 썸네일을 자동 생성합니다. 필요하면 아래 판매 목록 썸네일에서 직접 교체할 수도 있습니다.</p><button type="button" className="save-button" disabled={busy} onClick={captureThumbnail}>{busy?"처리 중...":"현재 본문 테마 썸네일 캡처"}</button></div>
     {deleteError && <p className="payment-error" role="alert">{deleteError}</p>}
     {notice && <p role="status">{notice}</p>}
     {loading ? <p>Asset을 불러오는 중이에요.</p> : types.map(([type, label]) => {
