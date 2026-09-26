@@ -1060,9 +1060,14 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* Preset-owned Hero title typography takes precedence over legacy body-theme Hero Title. */
 .dd-template-hero-configured .classic-hero-copy h2,.dd-template-hero-configured .romantic-hero-copy h2,.dd-template-hero-configured .modern-hero-copy h2{font-family:var(--dd-hero-title-font,inherit);font-weight:var(--dd-hero-title-weight,inherit);line-height:var(--dd-hero-title-line-height,inherit);letter-spacing:var(--dd-hero-title-letter-spacing,inherit);text-align:var(--dd-hero-title-align,inherit)}
-\n
+
 /* Optional shared button appearance: existing actions and click handlers are unchanged. */
 .dd-template-button-style[style*="--dd-button-bg"] :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button){background:var(--dd-button-bg);color:var(--dd-button-text)}
 .invitation-quick-menu{background:var(--dd-quick-menu-bg,rgba(255,252,249,.94));border-color:var(--dd-quick-menu-border,rgba(218,201,191,.85));border-radius:var(--dd-quick-menu-radius,17px)}
 .invitation-quick-menu button{color:var(--dd-quick-menu-text,#674f45)}
 .invitation-quick-menu button+button{border-left-color:var(--dd-quick-menu-border,rgba(218,201,191,.7))}
+
+/* Keep action appearance in sync with the selected reusable button palette. */
+.dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button){background:var(--dd-button-bg,var(--dd-color-button-bg,#b78b72));color:var(--dd-button-text,var(--dd-color-button-text,#fff))}
+.invitation-quick-menu:has(> button){background:var(--dd-quick-menu-bg,rgba(255,252,249,.94))}
+.invitation-quick-menu button{color:var(--dd-quick-menu-text,#674f45)}
