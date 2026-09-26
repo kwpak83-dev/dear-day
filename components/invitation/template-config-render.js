@@ -123,7 +123,7 @@ export function TemplateConfigHeroLayers({ config, assets = {} }) {
   const overlay = rgba(config?.hero?.overlayColor, config?.hero?.overlayOpacity);
   return <>
     {overlay && <span className="dd-template-hero-overlay" style={{ background: overlay }} aria-hidden="true" />}
-    {config?.hero?.mode !== "photo" && frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
+    {frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
   </>;
 }
 
