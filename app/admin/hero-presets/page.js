@@ -7,7 +7,7 @@ import { HERO_FONTS, HERO_FONT_STYLESHEET } from "../../../lib/hero-fonts";
 
 const displayLabels=[["eyebrow","상단 초대 문구"],["eventLabel","행사 문구"],["title","행사 제목 / 이름"],["relations","관계 정보"],["detail","상세 정보"],["note","추가 문구"],["schedule","날짜 / 시간"],["venue","장소"]];
 const defaultDisplay=Object.fromEntries(displayLabels.map(([key])=>[key,true]));
-const defaultConfig={mode:"photo",aspectRatio:"4:5",positionX:50,positionY:50,textYPercent:50,scheduleFontSize:11,zoom:1,overlayColor:"#000000",overlayOpacity:0,headerVisible:true,mastheadVisible:true,mastheadText:"",display:defaultDisplay,textLayers:[]};
+const defaultConfig={mode:"photo",aspectRatio:"4:5",positionX:50,positionY:50,textYPercent:50,scheduleFontSize:11,nameFontSize:21,nameColor:"#ffffff",separatorFontSize:16,separatorColor:"#d8b985",zoom:1,overlayColor:"#000000",overlayOpacity:0,headerVisible:true,mastheadVisible:true,mastheadText:"",display:defaultDisplay,textLayers:[]};
 const empty={name:"",preset_key:"",description:"",status:"draft",is_visible:false,sort_order:0,config:defaultConfig};
 const field={display:"grid",gap:5,minWidth:0};
 const input={width:"100%",boxSizing:"border-box",minHeight:40,padding:"8px 10px",border:"1px solid #d7c5ba",borderRadius:7};
@@ -52,6 +52,10 @@ export default function HeroPresetsPage(){
  <label style={field}>표현 방식<select style={input} value={form.config.mode} onChange={(e)=>setConfig("mode",e.target.value)}><option value="photo">사진 중심형</option><option value="frame">컨셉 프레임형</option><option value="illustration">포스터/일러스트형</option></select></label>
  <label style={field}>비율<select style={input} value={form.config.aspectRatio} onChange={(e)=>setConfig("aspectRatio",e.target.value)}>{["4:5","1:1","3:4","16:9"].map(v=><option key={v}>{v}</option>)}</select></label>
  {[["positionX","사진 X 위치 %",0,100,1],["positionY","사진 Y 위치 %",0,100,1],["textYPercent","텍스트 Y 위치 %",0,100,1],["scheduleFontSize","날짜 글자 크기",8,24,1],["zoom","사진 Zoom",.5,2,.05],["overlayOpacity","Overlay 투명도",0,1,.05]].map(([key,label,min,max,step])=><label style={field} key={key}>{label}<input style={input} type="number" min={min} max={max} step={step} value={form.config[key]} onChange={(e)=>setConfig(key,Number(e.target.value))}/></label>)}
+ <label style={field}>행사 제목 / 이름 크기 (px)<input style={input} type="number" min={8} max={72} value={form.config.nameFontSize??21} onChange={(e)=>setConfig("nameFontSize",Number(e.target.value))}/></label>
+ <label style={field}>행사 제목 / 이름 색상<input style={input} type="color" value={form.config.nameColor||"#ffffff"} onChange={(e)=>setConfig("nameColor",e.target.value)}/></label>
+ <label style={field}>이름 사이 & 크기 (px)<input style={input} type="number" min={8} max={72} value={form.config.separatorFontSize??16} onChange={(e)=>setConfig("separatorFontSize",Number(e.target.value))}/></label>
+ <label style={field}>이름 사이 & 색상<input style={input} type="color" value={form.config.separatorColor||"#d8b985"} onChange={(e)=>setConfig("separatorColor",e.target.value)}/></label>
  <label style={field}>Overlay 색상<input style={input} type="color" value={form.config.overlayColor} onChange={(e)=>setConfig("overlayColor",e.target.value)}/></label>
  <label style={field}>상단 문구<input style={input} maxLength={60} value={form.config.mastheadText} onChange={(e)=>setConfig("mastheadText",e.target.value)}/></label>
  </div><div style={{display:"flex",gap:12,flexWrap:"wrap",marginTop:12}}><label><input type="checkbox" checked={form.config.headerVisible} onChange={(e)=>setConfig("headerVisible",e.target.checked)}/> DearDay 표시</label><label><input type="checkbox" checked={form.config.mastheadVisible} onChange={(e)=>setConfig("mastheadVisible",e.target.checked)}/> 상단 행사문구 표시</label></div>
