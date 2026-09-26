@@ -303,7 +303,7 @@ function validHero(value) {
 
 async function saveBackgroundHero(auth, body) {
   if (!uuid.test(body.templateId || "") || !uuid.test(body.draftId || "") ||
-      !validBackground(body.background) || !validHero(body.hero)) {
+      !validBackground(body.background) || (body.hero !== undefined && !validHero(body.hero))) {
     return fail("Background/Hero 설정값을 확인해 주세요.", 400);
   }
   const result = await readVersions(auth.serverClient, body.templateId);
@@ -313,10 +313,10 @@ async function saveBackgroundHero(auth, body) {
   if (!isRecord(result.draft.config)) return fail("기존 Config 형식을 확인해 주세요.", 409);
 
   const expected = new Map();
-  for (const id of [body.background.assetId, body.hero.backgroundAssetId]) {
+  for (const id of [body.background.assetId, body.hero?.backgroundAssetId]) {
     if (id) expected.set(id, "background");
   }
-  if (body.hero.frameAssetId) expected.set(body.hero.frameAssetId, "hero_frame");
+  if (body.hero?.frameAssetId) expected.set(body.hero.frameAssetId, "hero_frame");
   if (expected.size) {
     const { data: assets, error } = await auth.adminClient.from("template_assets")
       .select("id,template_id,asset_type,is_active").in("id", [...expected.keys()]);
@@ -331,7 +331,7 @@ async function saveBackgroundHero(auth, body) {
   const config = {
     ...previous,
     background: { ...(isRecord(previous.background) ? previous.background : {}), ...body.background },
-    hero: { ...(isRecord(previous.hero) ? previous.hero : {}), ...body.hero },
+    ...(body.hero !== undefined ? { hero: { ...(isRecord(previous.hero) ? previous.hero : {}), ...body.hero } } : {}),
   };
   const { data: updated, error } = await auth.adminClient.from("template_versions")
     .update({ config })
