@@ -1053,3 +1053,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Custom Hero typography: above overlay/frame and the built-in hero copy. */
 .dd-template-hero-text-layers{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
 .dd-template-hero-text-layer{position:absolute;line-height:1.2;font-weight:400;text-shadow:0 1px 8px rgba(0,0,0,.24);padding:0 8px;box-sizing:border-box}
+
+/* Hero preset typography for event title, names and wedding separator. */
+.dd-template-hero-configured .classic-hero-copy h2,.dd-template-hero-configured .romantic-hero-copy h2,.dd-template-hero-configured .modern-hero-copy h2{font-size:var(--dd-hero-name-size,21px);color:var(--dd-hero-name-color,inherit)}
+.dd-template-hero-configured .classic-couple-title em,.dd-template-hero-configured .romantic-couple-title i{font-size:var(--dd-hero-separator-size,16px);color:var(--dd-hero-separator-color,#d8b985)}
