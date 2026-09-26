@@ -7,12 +7,13 @@ const types=new Set(["thumbnail","hero_frame"]);
 const extensions={"image/jpeg":"jpg","image/png":"png","image/webp":"webp"};
 const fail=(error,status)=>Response.json({error},{status});
 async function admin(request){
- const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.SUPABASE_SERVICE_ROLE_KEY,token=request.headers.get("authorization")?.replace(/^Bearer\s+/i,"");
- if(!url||!key)return {error:"관리자 서비스를 준비하지 못했어요.",status:503}; if(!token)return {error:"로그인이 필요합니다.",status:401};
- const client=createClient(url,key,{auth:{autoRefreshToken:false,persistSession:false}});
- const {data:{user},error}=await client.auth.getUser(token); if(error||!user)return {error:"로그인이 만료되었습니다.",status:401};
+ const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,serviceKey=process.env.SUPABASE_SERVICE_ROLE_KEY,token=request.headers.get("authorization")?.replace(/^Bearer\s+/i,"");
+ if(!url||!key||!serviceKey)return {error:"관리자 서비스를 준비하지 못했어요.",status:503}; if(!token)return {error:"로그인이 필요합니다.",status:401};
+ const verifier=createClient(url,serviceKey,{auth:{autoRefreshToken:false,persistSession:false}});
+ const {data:{user},error}=await verifier.auth.getUser(token); if(error||!user)return {error:"로그인이 만료되었습니다.",status:401};
+ const client=createClient(url,key,{global:{headers:{Authorization:`Bearer ${token}`}},auth:{autoRefreshToken:false,persistSession:false}});
  const {data:isAdmin,error:adminError}=await client.rpc("is_admin"); if(adminError)return {error:"관리자 권한을 확인하지 못했어요.",status:500}; if(isAdmin!==true)return {error:"관리자만 접근할 수 있습니다.",status:403};
- return {client};
+ return {client,user};
 }
 async function preset(client,id){const {data,error}=await client.from("hero_presets").select("id").eq("id",id).maybeSingle();return error?fail("Hero 프리셋을 확인하지 못했어요.",500):!data?fail("Hero 프리셋을 찾지 못했어요.",404):null;}
 function validImage(bytes,mime){if(mime==="image/jpeg")return bytes.length>3&&bytes[0]===255&&bytes[1]===216&&bytes[2]===255;if(mime==="image/png")return bytes.length>8&&Buffer.from(bytes.subarray(0,8)).equals(Buffer.from([137,80,78,71,13,10,26,10]));return mime==="image/webp"&&bytes.length>12&&Buffer.from(bytes.subarray(0,4)).toString()==="RIFF"&&Buffer.from(bytes.subarray(8,12)).toString()==="WEBP";}
