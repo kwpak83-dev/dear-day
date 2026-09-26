@@ -46,10 +46,15 @@ function validConfig(value){
   if(!Array.isArray(value.textLayers)||value.textLayers.length>12)return false;
   const fontIds=new Set(["noto-serif-kr","nanum-myeongjo","gowun-batang","gowun-dodum","noto-sans-kr","playfair-display","cormorant-garamond","great-vibes","allura","alex-brush","parisienne","dancing-script"]);
   return value.textLayers.every((layer)=>layer&&typeof layer==="object"&&!Array.isArray(layer)
-    &&Object.keys(layer).every((key)=>["id","text","fontId"].includes(key))
+    &&Object.keys(layer).every((key)=>["id","text","fontId","fontSize","color","x","y","align"].includes(key))
     &&typeof layer.id==="string"&&/^[a-zA-Z0-9_-]{1,80}$/.test(layer.id)
     &&typeof layer.text==="string"&&layer.text.length<=200
-    &&typeof layer.fontId==="string"&&fontIds.has(layer.fontId))
+    &&typeof layer.fontId==="string"&&fontIds.has(layer.fontId)
+    &&(layer.fontSize===undefined||Number.isInteger(layer.fontSize)&&decimal(layer.fontSize,8,100))
+    &&(layer.color===undefined||hex(layer.color))
+    &&(layer.x===undefined||decimal(layer.x,0,100))
+    &&(layer.y===undefined||decimal(layer.y,0,100))
+    &&(layer.align===undefined||["left","center","right"].includes(layer.align)))
     &&new Set(value.textLayers.map((layer)=>layer.id)).size===value.textLayers.length;
 }
 function fields(body){
