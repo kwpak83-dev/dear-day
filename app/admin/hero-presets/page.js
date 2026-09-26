@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 import InvitationRenderer from "../../../components/invitation/invitation-renderer";
+import { HERO_FONTS, HERO_FONT_STYLESHEET } from "../../../lib/hero-fonts";
 
 const displayLabels=[["eyebrow","상단 초대 문구"],["eventLabel","행사 문구"],["title","행사 제목 / 이름"],["relations","관계 정보"],["detail","상세 정보"],["note","추가 문구"],["schedule","날짜 / 시간"],["venue","장소"]];
 const defaultDisplay=Object.fromEntries(displayLabels.map(([key])=>[key,true]));
@@ -13,6 +14,7 @@ const input={width:"100%",boxSizing:"border-box",minHeight:40,padding:"8px 10px"
 const card={border:"1px solid #eadfd8",borderRadius:14,padding:16,background:"#fff"};
 
 export default function HeroPresetsPage(){
+ const [fontLibraryOpen,setFontLibraryOpen]=useState(false);
  const [state,setState]=useState({loading:true,error:"",presets:[]}); const [editing,setEditing]=useState(null); const [form,setForm]=useState(empty); const [saving,setSaving]=useState(false); const [notice,setNotice]=useState(""); const [assets,setAssets]=useState([]); const [assetBusy,setAssetBusy]=useState(""); const heroPreviewRef=useRef(null); const [samplePhoto,setSamplePhoto]=useState(""); const samplePhotoRef=useRef("");
  useEffect(()=>()=>{if(samplePhotoRef.current)URL.revokeObjectURL(samplePhotoRef.current);},[]);
  const changeSamplePhoto=(file)=>{if(!file)return;if(!["image/jpeg","image/png","image/webp"].includes(file.type)){setNotice("JPG, PNG, WebP 사진만 업로드할 수 있어요.");return;}if(file.size>15*1024*1024){setNotice("15MB 이하 사진을 선택해 주세요.");return;}const url=URL.createObjectURL(file);if(samplePhotoRef.current)URL.revokeObjectURL(samplePhotoRef.current);samplePhotoRef.current=url;setSamplePhoto(url);setNotice("샘플사진이 미리보기에 적용됐어요. 서버에는 저장되지 않습니다.");};
@@ -40,6 +42,7 @@ export default function HeroPresetsPage(){
  <label style={field}>상태<select style={input} value={form.status} onChange={(e)=>setForm({...form,status:e.target.value})}><option value="draft">제작중</option><option value="on_sale">사용중</option><option value="stopped">사용중지</option></select></label>
  <label style={field}>정렬순서<input style={input} type="number" min={-10000} max={10000} value={form.sort_order} onChange={(e)=>setForm({...form,sort_order:Number(e.target.value)})}/></label>
  <label style={{display:"flex",alignItems:"center",gap:7}}><input type="checkbox" checked={form.is_visible} onChange={(e)=>setForm({...form,is_visible:e.target.checked})}/> 사용자 선택에 노출</label></div>
+ <section style={{border:"1px solid #eadfd8",borderRadius:10,padding:12,background:"#fff"}}><link rel="stylesheet" href={HERO_FONT_STYLESHEET}/><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:10}}><div><strong>Hero 폰트 라이브러리</strong><p style={{fontSize:12,color:"#806f66",margin:"5px 0 0"}}>한글·영문 웨딩용 12종의 실제 글씨를 미리 비교해 보세요.</p></div><button type="button" className="save-button" aria-expanded={fontLibraryOpen} onClick={()=>setFontLibraryOpen((v)=>!v)}>{fontLibraryOpen?"폰트 목록 닫기":"폰트 12종 보기"}</button></div>{fontLibraryOpen&&<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:9,marginTop:12}}>{HERO_FONTS.map((font)=><div key={font.id} style={{border:"1px solid #eadfd8",borderRadius:8,padding:12,minWidth:0}}><div style={{fontSize:12,color:"#806f66"}}>{font.category} · {font.name}</div><div lang={font.category.startsWith("한글")?"ko":"en"} style={{fontFamily:font.family,fontSize:font.category.includes("캘리그래피")?30:font.category.startsWith("영문")?24:19,lineHeight:1.5,marginTop:8,overflowWrap:"anywhere"}}>{font.sample}</div></div>)}</div>}<p style={{fontSize:11,color:"#806f66",margin:"10px 0 0"}}>현재 단계는 폰트 목록과 미리보기입니다. 다음 단계에서 텍스트 레이어별 폰트 선택을 연결합니다. 폰트 표시는 인터넷 연결이 필요합니다.</p></section>
  <div style={{display:"grid",gridTemplateColumns:"minmax(0,1fr) minmax(300px,390px)",gap:16,alignItems:"start"}}>
  <div><fieldset style={{border:"1px solid #eadfd8",borderRadius:10,padding:12}}><legend>Hero 레이아웃</legend><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(145px,1fr))",gap:10}}>
  <label style={field}>표현 방식<select style={input} value={form.config.mode} onChange={(e)=>setConfig("mode",e.target.value)}><option value="photo">사진 중심형</option><option value="frame">컨셉 프레임형</option><option value="illustration">포스터/일러스트형</option></select></label>
