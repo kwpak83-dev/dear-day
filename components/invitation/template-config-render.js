@@ -55,6 +55,10 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   if (hero?.aspectRatio) heroMediaStyle.aspectRatio = hero.aspectRatio.replace(":", " / ");
   if (hero?.positionX !== null && hero?.positionX !== undefined) heroImageStyle.objectPosition = `${hero.positionX}% ${hero?.positionY ?? 50}%`;
   if (hero && hero.zoom !== null) { heroImageStyle.transform = `scale(${hero.zoom})`; heroImageStyle.transformOrigin = `${hero?.positionX ?? 50}% ${hero?.positionY ?? 50}%`; }
+  if (hero?.nameFontSize != null) set(rootStyle, "--dd-hero-name-size", hero.nameFontSize, "px");
+  if (hero?.nameColor) set(rootStyle, "--dd-hero-name-color", hero.nameColor);
+  if (hero?.separatorFontSize != null) set(rootStyle, "--dd-hero-separator-size", hero.separatorFontSize, "px");
+  if (hero?.separatorColor) set(rootStyle, "--dd-hero-separator-color", hero.separatorColor);
   if (hero?.scheduleFontSize !== null && hero?.scheduleFontSize !== undefined) set(rootStyle, "--dd-hero-schedule-size", hero.scheduleFontSize, "px");
   if (hero?.textYPercent !== null && hero?.textYPercent !== undefined) {
     heroCopyStyle.position = "absolute";
