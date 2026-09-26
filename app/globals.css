@@ -1075,3 +1075,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Button width is relative to the available action area, including compact copy actions. */
 .dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button){max-width:100%;width:var(--dd-button-width,100%);min-width:0}
 .dd-template-button-style .public-account-card button{flex:0 1 auto}
+
+/* Shared quick-menu styling belongs to the three action buttons, not the tray. */
+.invitation-quick-menu button{background:var(--dd-quick-menu-item-bg,var(--dd-invite-action-bg,transparent));color:var(--dd-quick-menu-item-text,var(--dd-invite-action-text,#674f45));border-radius:var(--dd-quick-menu-item-radius,var(--dd-invite-action-radius,0));border-style:solid;border-width:var(--dd-quick-menu-item-border-width,0);border-color:var(--dd-quick-menu-item-border,transparent)}
+.invitation-quick-menu button+button{border-left-width:var(--dd-quick-menu-item-border-width,0);border-left-color:var(--dd-quick-menu-item-border,var(--dd-invite-action-divider,rgba(218,201,191,.7)))}
