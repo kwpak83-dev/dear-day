@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 import InvitationRenderer from "../../../components/invitation/invitation-renderer";
 import InvitationMap from "../../../components/invitation/invitation-map";
 import DearDayBrandFooter from "../../../components/invitation/dearday-brand-footer";
@@ -38,8 +39,14 @@ function PreviewSections({ invitation, previewMode = "" }) {
 export default function TemplateDraftPreview({ templateId, draft, assets = [], loading = false }) {
   const [width, setWidth] = useState(390);
   const [full, setFull] = useState(false);
-  const config = useMemo(() => draftConfig(draft), [draft]);
-  const resolvedAssets = useMemo(() => resolveTemplateAssetUrls(config, assets, templateId), [assets, config, templateId]);
+  const [heroPresets, setHeroPresets] = useState([]);
+  const [heroPresetId, setHeroPresetId] = useState("");
+  useEffect(() => { let active=true; (async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch("/api/admin/hero-presets",{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setHeroPresets(result.presets||[]);}catch{}})();return()=>{active=false;};},[]);
+  const selectedHero = heroPresets.find((item)=>item.id===heroPresetId) || null;
+  const config = useMemo(() => { const base=draftConfig(draft); return base&&selectedHero?{...base,hero:{...base.hero,...selectedHero.config}}:base; }, [draft,selectedHero]);
+  const [heroAssets,setHeroAssets]=useState([]);
+  useEffect(()=>{let active=true;if(!heroPresetId){setHeroAssets([]);return()=>{active=false;};}(async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch(`/api/admin/hero-presets/assets?heroPresetId=${encodeURIComponent(heroPresetId)}`,{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setHeroAssets(result.assets||[]);}catch{}})();return()=>{active=false;};},[heroPresetId]);
+  const resolvedAssets = useMemo(() => { const base=resolveTemplateAssetUrls(config, assets, templateId); const frame=heroAssets.find((item)=>item.asset_type==="hero_frame"&&item.is_active); return frame?{...base,heroFrameUrl:frame.url}:base; }, [assets, config, templateId, heroAssets]);
   const invitation = useMemo(() => ({ ...sampleInvitation, templateId }), [templateId]);
   const openFullPreview = () => setFull(true);
 
@@ -50,7 +57,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
 
   return <section className="admin-draft-preview" aria-labelledby="admin-draft-preview-title">
     <div className="admin-draft-preview-toolbar">
-      <div><h3 id="admin-draft-preview-title">Draft Live Preview</h3><p>저장된 편집 Draft · 읽기 전용</p></div>
+      <div><h3 id="admin-draft-preview-title">Draft Live Preview</h3><p>저장된 편집 Draft · 읽기 전용</p><label style={{display:"grid",gap:4,fontSize:12,fontWeight:700}}>미리보기 Hero<select value={heroPresetId} onChange={(e)=>setHeroPresetId(e.target.value)} style={{minHeight:36,padding:"6px 8px"}}><option value="">현재 템플릿 Hero (기존)</option>{heroPresets.map((preset)=><option key={preset.id} value={preset.id}>{preset.name}</option>)}</select></label></div>
       <div className="admin-draft-preview-widths" aria-label="미리보기 너비">
         {draft && <button type="button" onClick={openFullPreview}>전체 미리보기</button>}
         {[390, 540].map((value) => <button key={value} type="button" className={width === value ? "active" : ""} aria-pressed={width === value} onClick={() => setWidth(value)}>{value}px</button>)}
