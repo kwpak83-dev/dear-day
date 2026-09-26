@@ -27,6 +27,7 @@ async function getAdmin(request) {
 }
 const decimal=(value,min,max)=>typeof value==="number"&&Number.isFinite(value)&&value>=min&&value<=max;
 const hex=(value)=>typeof value==="string"&&/^#[0-9a-fA-F]{6}$/.test(value);
+const fontIds=new Set(["noto-serif-kr","nanum-myeongjo","gowun-batang","gowun-dodum","noto-sans-kr","playfair-display","cormorant-garamond","great-vibes","allura","alex-brush","parisienne","dancing-script"]);
 function validConfig(value){
   if(!value||typeof value!=="object"||Array.isArray(value)) return false;
   const allowed=["mode","aspectRatio","positionX","positionY","textYPercent","scheduleFontSize","nameFontSize","nameFontFamily","nameFontWeight","nameLineHeight","nameLetterSpacing","nameTextAlign","nameColor","separatorFontSize","separatorColor","zoom","overlayColor","overlayOpacity","headerVisible","mastheadVisible","mastheadText","display","textLayers"];
@@ -102,4 +103,3 @@ export async function PATCH(request){
   return json({id:body.id});
 }
 export { defaultConfig };
-function replace() { [native code] }
