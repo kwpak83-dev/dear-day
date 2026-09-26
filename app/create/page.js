@@ -336,8 +336,25 @@ export default function CreateInvitation() {
       if (error) return setTemplateNotice("템플릿 목록을 불러오지 못했어요.");
       const templates = data || [];
       setTemplateOptions(templates);
-      setPreviewTemplateId((current) => current || templates[0]?.id || "");
-      setInvitation((current) => current.templateId || !templates[0] ? current : { ...current, templateId: templates[0].id });
+      const isExistingEvent = Boolean(new URLSearchParams(window.location.search).get("slug"));
+      const firstTemplateId = templates[0]?.id || "";
+      setPreviewTemplateId((current) => current || firstTemplateId);
+      setInvitation((current) => current.templateId || !firstTemplateId ? current : { ...current, templateId: firstTemplateId });
+      // A brand-new invitation starts with the first body theme already selected.
+      // Load its render config immediately so a Hero chosen before any theme click
+      // can compose against a real template instead of a null config.
+      if (!isExistingEvent && firstTemplateId && !DEVELOPMENT_TEMPLATE_IDS.has(firstTemplateId)) {
+        try {
+          const response = await fetch(`/api/events?templateId=${encodeURIComponent(firstTemplateId)}`);
+          const result = await response.json().catch(() => ({}));
+          if (response.ok && result.templateId === firstTemplateId) {
+            setTemplateRender({ config: result.templateConfig || null, assets: result.templateAssets || {} });
+            setPreviewTemplateId(firstTemplateId);
+          }
+        } catch {
+          setTemplateNotice("템플릿 디자인을 불러오지 못했어요.");
+        }
+      }
     };
     loadTemplates();
   }, []);
