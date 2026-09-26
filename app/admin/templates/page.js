@@ -86,7 +86,7 @@ export default function AdminTemplatesPage() {
     } finally { setSaving(false); }
   };
   return <main style={{ maxWidth: editing && editing !== "new" ? 1480 : 880, margin: "0 auto", padding: "32px 16px 64px" }}>
-    <p className="section-kicker">ADMIN · TEMPLATES</p><h1>템플릿 관리</h1>
+    <p className="section-kicker">ADMIN · BODY THEMES</p><h1>본문 테마 관리</h1><p>본문 배경·장식·색상·Quick Menu를 관리합니다. Hero는 별도 프리셋으로 분리합니다.</p><p><a href="/admin/hero-presets">Hero 프레임 관리 →</a></p>
     {state.loading ? <p>템플릿 목록을 불러오는 중이에요.</p> : state.error ? <section className="my-notice"><p>{state.error}</p>{state.status === 401 && <a className="my-login-button" href="/?login=required&returnUrl=%2Fadmin%2Ftemplates">로그인하기</a>}</section> : <>
       {editing ? <button type="button" className="save-button" disabled={saving} onClick={cancel}>← 템플릿 목록으로</button> : <button type="button" className="save-button" onClick={() => openForm()}>새 템플릿 등록</button>}
       {notice && <p role="status">{notice}</p>}
