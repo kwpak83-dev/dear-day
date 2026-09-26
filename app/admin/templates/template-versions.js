@@ -417,7 +417,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               <label style={{...field,alignContent:"center"}}><span><input type="checkbox" checked={Boolean(buttonStyle.syncQuickMenu)} onChange={event=>setButtonStyle(current=>({...current,syncQuickMenu:event.target.checked}))}/> 퀵메뉴도 같은 디자인 적용</span></label>
               <ColorControl label="버튼 배경색" value={buttonStyle.background||"#b78b72"} onChange={background=>setButtonStyle(current=>({...current,background}))}/>
               <ColorControl label="버튼 글자색" value={buttonStyle.text||"#ffffff"} onChange={text=>setButtonStyle(current=>({...current,text}))}/>
-              <NumberControl label="버튼 너비 (%)" value={buttonStyle.width} min={40} max={100} onChange={(width) => setButtonStyle((current) => ({ ...current, width }))} />
+              <NumberControl label="버튼 너비 (%)" value={buttonStyle.width} min={10} max={100} onChange={(width) => setButtonStyle((current) => ({ ...current, width }))} />
               <NumberControl label="버튼 높이" value={buttonStyle.height} min={32} max={64} onChange={(height) => setButtonStyle((current) => ({ ...current, height }))} />
               <NumberControl label="버튼 글자 크기" value={buttonStyle.fontSize} min={10} max={18} onChange={(fontSize) => setButtonStyle((current) => ({ ...current, fontSize }))} />
               <NumberControl label="모서리 둥글기" value={buttonStyle.borderRadius} min={0} max={32} onChange={(borderRadius) => setButtonStyle((current) => ({ ...current, borderRadius }))} />
