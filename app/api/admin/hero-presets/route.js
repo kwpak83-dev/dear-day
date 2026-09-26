@@ -9,7 +9,7 @@ const heroModes = new Set(["photo", "frame", "illustration"]);
 const heroRatios = new Set(["4:5", "1:1", "3:4", "16:9"]);
 const heroDisplayKeys = ["eyebrow","eventLabel","title","relations","detail","note","schedule","venue"];
 const defaultDisplay = Object.fromEntries(heroDisplayKeys.map((key) => [key, true]));
-const defaultConfig = { mode:"photo", aspectRatio:"4:5", positionX:50, positionY:50, textYPercent:50, scheduleFontSize:11, nameFontSize:21, nameColor:"#ffffff", separatorFontSize:16, separatorColor:"#d8b985", zoom:1, overlayColor:"#000000", overlayOpacity:0, headerVisible:true, mastheadVisible:true, mastheadText:"", display:defaultDisplay };
+const defaultConfig = { mode:"photo", aspectRatio:"4:5", positionX:50, positionY:50, textYPercent:50, scheduleFontSize:11, nameFontSize:21, nameFontFamily:"inherit", nameFontWeight:400, nameLineHeight:1.5, nameLetterSpacing:0, nameTextAlign:"center", nameColor:"#ffffff", separatorFontSize:16, separatorColor:"#d8b985", zoom:1, overlayColor:"#000000", overlayOpacity:0, headerVisible:true, mastheadVisible:true, mastheadText:"", display:defaultDisplay };
 
 async function getAdmin(request) {
   const url=process.env.NEXT_PUBLIC_SUPABASE_URL, publishableKey=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, serviceRoleKey=process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -29,13 +29,18 @@ const decimal=(value,min,max)=>typeof value==="number"&&Number.isFinite(value)&&
 const hex=(value)=>typeof value==="string"&&/^#[0-9a-fA-F]{6}$/.test(value);
 function validConfig(value){
   if(!value||typeof value!=="object"||Array.isArray(value)) return false;
-  const allowed=["mode","aspectRatio","positionX","positionY","textYPercent","scheduleFontSize","nameFontSize","nameColor","separatorFontSize","separatorColor","zoom","overlayColor","overlayOpacity","headerVisible","mastheadVisible","mastheadText","display","textLayers"];
+  const allowed=["mode","aspectRatio","positionX","positionY","textYPercent","scheduleFontSize","nameFontSize","nameFontFamily","nameFontWeight","nameLineHeight","nameLetterSpacing","nameTextAlign","nameColor","separatorFontSize","separatorColor","zoom","overlayColor","overlayOpacity","headerVisible","mastheadVisible","mastheadText","display","textLayers"];
   if(Object.keys(value).some((key)=>!allowed.includes(key))) return false;
   const baseValid=heroModes.has(value.mode)&&heroRatios.has(value.aspectRatio)
     &&decimal(value.positionX,0,100)&&decimal(value.positionY,0,100)
     &&decimal(value.textYPercent,0,100)&&Number.isInteger(value.scheduleFontSize)
     &&decimal(value.scheduleFontSize,8,24)
     &&(value.nameFontSize===undefined||Number.isInteger(value.nameFontSize)&&decimal(value.nameFontSize,8,72))
+    &&(value.nameFontFamily===undefined||value.nameFontFamily==="inherit"||fontIds.has(value.nameFontFamily))
+    &&(value.nameFontWeight===undefined||[300,400,500,600,700,800].includes(value.nameFontWeight))
+    &&(value.nameLineHeight===undefined||decimal(value.nameLineHeight,.8,2.5))
+    &&(value.nameLetterSpacing===undefined||decimal(value.nameLetterSpacing,-5,15))
+    &&(value.nameTextAlign===undefined||["left","center","right"].includes(value.nameTextAlign))
     &&(value.nameColor===undefined||hex(value.nameColor))
     &&(value.separatorFontSize===undefined||Number.isInteger(value.separatorFontSize)&&decimal(value.separatorFontSize,8,72))
     &&(value.separatorColor===undefined||hex(value.separatorColor))
@@ -49,7 +54,7 @@ function validConfig(value){
   if(!baseValid)return false;
   if(value.textLayers===undefined)return true;
   if(!Array.isArray(value.textLayers)||value.textLayers.length>12)return false;
-  const fontIds=new Set(["noto-serif-kr","nanum-myeongjo","gowun-batang","gowun-dodum","noto-sans-kr","playfair-display","cormorant-garamond","great-vibes","allura","alex-brush","parisienne","dancing-script"]);
+
   return value.textLayers.every((layer)=>layer&&typeof layer==="object"&&!Array.isArray(layer)
     &&Object.keys(layer).every((key)=>["id","text","fontId","fontSize","color","x","y","align"].includes(key))
     &&typeof layer.id==="string"&&/^[a-zA-Z0-9_-]{1,80}$/.test(layer.id)
@@ -97,3 +102,4 @@ export async function PATCH(request){
   return json({id:body.id});
 }
 export { defaultConfig };
+function replace() { [native code] }
