@@ -43,10 +43,11 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
   const [heroPresetId, setHeroPresetId] = useState("");
   useEffect(() => { let active=true; (async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch("/api/admin/hero-presets",{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setHeroPresets(result.presets||[]);}catch{}})();return()=>{active=false;};},[]);
   const selectedHero = heroPresets.find((item)=>item.id===heroPresetId) || null;
-  const config = useMemo(() => { const base=draftConfig(draft); return base&&selectedHero?{...base,hero:{...base.hero,...selectedHero.config}}:base; }, [draft,selectedHero]);
+  const activeHeroFrame = heroAssets.find((item)=>item.asset_type==="hero_frame"&&item.is_active) || null;
+  const config = useMemo(() => { const base=draftConfig(draft); return base&&selectedHero?{...base,hero:{...base.hero,...selectedHero.config,frameAssetId:activeHeroFrame?.id||null}}:base; }, [draft,selectedHero,activeHeroFrame]);
   const [heroAssets,setHeroAssets]=useState([]);
   useEffect(()=>{let active=true;if(!heroPresetId){setHeroAssets([]);return()=>{active=false;};}(async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch(`/api/admin/hero-presets/assets?heroPresetId=${encodeURIComponent(heroPresetId)}`,{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setHeroAssets(result.assets||[]);}catch{}})();return()=>{active=false;};},[heroPresetId]);
-  const resolvedAssets = useMemo(() => { const base=resolveTemplateAssetUrls(config, assets, templateId); const frame=heroAssets.find((item)=>item.asset_type==="hero_frame"&&item.is_active); return frame?{...base,heroFrameUrl:frame.url}:base; }, [assets, config, templateId, heroAssets]);
+  const resolvedAssets = useMemo(() => { const base=resolveTemplateAssetUrls(config, assets, templateId); const frame=heroAssets.find((item)=>item.asset_type==="hero_frame"&&item.is_active); return frame?.url?{...base,[frame.id]:frame.url}:base; }, [assets, config, templateId, heroAssets]);
   const invitation = useMemo(() => ({ ...sampleInvitation, templateId }), [templateId]);
   const openFullPreview = () => setFull(true);
 
