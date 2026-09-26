@@ -195,12 +195,12 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     try {
       const response = await fetch("/api/admin/templates/versions", {
         method: "PATCH", headers: { ...(await authorization()), "Content-Type": "application/json" },
-        body: JSON.stringify({ templateId, draftId: state.draft.id, background, hero }),
+        body: JSON.stringify({ templateId, draftId: state.draft.id, background }),
       });
       const result = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(result.error || "Background/Hero 설정을 저장하지 못했어요.");
+      if (!response.ok) throw new Error(result.error || "Background 설정을 저장하지 못했어요.");
       await load(false);
-      setNotice("Draft Background/Hero 설정을 저장했습니다.");
+      setNotice("Draft Background 설정을 저장했습니다.");
     } catch (error) { setNotice(error.message); }
     finally { setSaving(false); }
   };
@@ -317,71 +317,8 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               <NumberControl label="Overlay 투명도" value={background.overlayOpacity} min={0} max={1} step={0.05} onChange={(overlayOpacity) => setBackground({ ...background, overlayOpacity })} />
             </div>
           </fieldset>
-          <fieldset style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 12 }}>
-            <legend>Hero 설정</legend>
-            <p style={guideNote}>초대장 첫 화면(Hero)의 사진·프레임·배경·텍스트 위치와 표시 내용을 설정합니다.</p>
-            <details style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: "10px 12px", background: "#fffaf7" }}>
-              <summary style={{ cursor: "pointer", fontWeight: 700 }}>매핑 가이드 보기</summary>
-              <div style={{ marginTop: 10 }}><MappingTable rows={[
-              ["Hero mode", "첫 화면 표현 방식", "사진 중심 / 프레임 / 일러스트"],
-              ["Hero 비율", "첫 화면 이미지 영역 비율", "4:5 · 1:1 · 3:4 · 16:9"],
-              ["사진 X / Y 위치", "Hero 사진의 초점 위치", "얼굴을 중앙으로 이동"],
-              ["Hero Text Y 위치", "Hero 글자 묶음의 세로 위치", "Wedding Day·이름 영역 이동"],
-              ["사진 Zoom", "Hero 사진 확대/축소", "1 = 기본 / 1.2 = 확대"],
-              ["Hero Background Asset", "Hero 영역 전용 배경", "꽃 배경 · 포스터 배경"],
-              ["Hero Frame Asset", "Hero 위 프레임 이미지", "아치 · 꽃 프레임"],
-              ["Hero Overlay", "Hero 이미지 위 색상/농도", "사진을 어둡게 해 글자 강조"],
-              ["상단 DearDay 표시", "상단 헤더의 DearDay 브랜드명 표시 여부", "끄고 행사 문구만 켜면 행사 문구만 표시"],
-               ["상단 문구", "DearDay 옆/상단 행사 문구", "WEDDING INVITATION · OUR DAY"],
-               ["상단 문구 표시", "상단 행사 문구 표시 여부", "끄면 행사 문구 숨김"],
-               ["Hero 표시 항목", "Hero 안 개별 문구 표시 여부", "날짜·장소·관계정보 숨김"],
-            ]} /></div>
-            </details>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10 }}>
-              <label style={field}>Hero mode<select style={input} value={hero.mode} onChange={(event) => setHero({ ...hero, mode: event.target.value })}>
-                <option value="photo">사진 중심형</option><option value="frame">컨셉 프레임형</option><option value="illustration">포스터/일러스트형</option>
-              </select></label>
-              <label style={field}>Hero 비율<select style={input} value={hero.aspectRatio} onChange={(event) => setHero({ ...hero, aspectRatio: event.target.value })}>
-                {["4:5", "1:1", "3:4", "16:9"].map((ratio) => <option key={ratio} value={ratio}>{ratio}</option>)}
-              </select></label>
-              <NumberControl label="사진 X 위치 %" value={hero.positionX} min={0} max={100} onChange={(positionX) => setHero({ ...hero, positionX })} />
-              <NumberControl label="사진 Y 위치 %" value={hero.positionY} min={0} max={100} onChange={(positionY) => setHero({ ...hero, positionY })} />
-              <NumberControl label="Hero Text Y 위치 %" value={hero.textYPercent} min={0} max={100} onChange={(textYPercent) => setHero({ ...hero, textYPercent })} />
-               <NumberControl label="Hero 날짜 글자 크기 (px)" value={hero.scheduleFontSize} min={8} max={24} onChange={(scheduleFontSize) => setHero({ ...hero, scheduleFontSize })} />
-              <NumberControl label="사진 Zoom" value={hero.zoom} min={0.5} max={2} step={0.05} onChange={(zoom) => setHero({ ...hero, zoom })} />
-              <AssetSelect label="Hero Background Asset" assets={backgroundAssets} value={hero.backgroundAssetId} onChange={(backgroundAssetId) => setHero({ ...hero, backgroundAssetId })} />
-              <AssetSelect label="Hero Frame Asset" assets={frameAssets} value={hero.frameAssetId} onChange={(frameAssetId) => setHero({ ...hero, frameAssetId })} />
-              <ColorControl label="Hero Overlay 색상" value={hero.overlayColor} onChange={(overlayColor) => setHero({ ...hero, overlayColor })} />
-              <NumberControl label="Hero Overlay 투명도" value={hero.overlayOpacity} min={0} max={1} step={0.05} onChange={(overlayOpacity) => setHero({ ...hero, overlayOpacity })} />
-               <label style={{ ...field, display: "flex", flexDirection: "row", alignItems: "center", gap: 8 }}>
-                 <input type="checkbox" checked={hero.headerVisible} onChange={(event) => setHero({ ...hero, headerVisible: event.target.checked })} />
-                 상단 DearDay 표시
-               </label>
-               <label style={field}>상단 문구
-                 <input style={input} type="text" maxLength={60} value={hero.mastheadText} placeholder="비워두면 행사 기본 문구 사용" onChange={(event) => setHero({ ...hero, mastheadText: event.target.value })} />
-                 <small style={{ color: "#8b7468" }}>예: WEDDING INVITATION · OUR DAY · HAPPY BIRTHDAY</small>
-               </label>
-               <label style={{ ...field, display: "flex", flexDirection: "row", alignItems: "center", gap: 8 }}>
-                 <input type="checkbox" checked={hero.mastheadVisible} onChange={(event) => setHero({ ...hero, mastheadVisible: event.target.checked })} />
-                 상단 행사 문구 표시
-               </label>
-              <fieldset style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 10, gridColumn: "1 / -1" }}>
-                <legend>Hero 표시 항목</legend>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 8 }}>
-                  <label style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="checkbox" checked={hero.display.eyebrow} onChange={(event) => setHero((current) => ({ ...current, display: { ...current.display, eyebrow: event.target.checked } }))} />상단 초대 문구</label>
-                  <label style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="checkbox" checked={hero.display.eventLabel} onChange={(event) => setHero((current) => ({ ...current, display: { ...current.display, eventLabel: event.target.checked } }))} />행사 문구</label>
-                  <label style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="checkbox" checked={hero.display.title} onChange={(event) => setHero((current) => ({ ...current, display: { ...current.display, title: event.target.checked } }))} />행사 제목 / 이름</label>
-                  <label style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="checkbox" checked={hero.display.relations} onChange={(event) => setHero((current) => ({ ...current, display: { ...current.display, relations: event.target.checked } }))} />관계 정보</label>
-                  <label style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="checkbox" checked={hero.display.detail} onChange={(event) => setHero((current) => ({ ...current, display: { ...current.display, detail: event.target.checked } }))} />상세 정보</label>
-                  <label style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="checkbox" checked={hero.display.note} onChange={(event) => setHero((current) => ({ ...current, display: { ...current.display, note: event.target.checked } }))} />추가 문구</label>
-                  <label style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="checkbox" checked={hero.display.schedule} onChange={(event) => setHero((current) => ({ ...current, display: { ...current.display, schedule: event.target.checked } }))} />날짜 / 시간</label>
-                  <label style={{ display: "flex", alignItems: "center", gap: 6 }}><input type="checkbox" checked={hero.display.venue} onChange={(event) => setHero((current) => ({ ...current, display: { ...current.display, venue: event.target.checked } }))} />장소</label>
-                </div>
-              </fieldset>
-            </div>
-          </fieldset>
-          
-          <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Background + Hero 저장"}</button>
+          <p style={guideNote}>Hero 디자인은 <a href="/admin/hero-presets">Hero 프레임 관리</a>에서 별도로 편집합니다. 기존 본문 테마의 Hero 설정 데이터는 유지됩니다.</p>
+          <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Background 저장"}</button>
         </form>
 
         <section style={configSection}>
