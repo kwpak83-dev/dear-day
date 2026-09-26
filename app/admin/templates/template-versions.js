@@ -362,6 +362,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
                 </div>
               </div>
             </details>
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Hi+Melody&family=Nanum+Brush+Script&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@400;500;600;700&family=Song+Myung&display=swap" />
             <h4 style={{ margin: 0 }}>Typography</h4>
             {typographyRoles.filter(([role]) => role !== "heroTitle").map(([role, label]) => (
               <fieldset key={role} style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 12 }}>
