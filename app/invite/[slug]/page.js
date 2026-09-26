@@ -19,7 +19,7 @@ export default async function InvitationPage({ params, searchParams }) {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !serviceRoleKey) notFound();
   const supabase = createClient(url, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
-  const { data: events } = await supabase.from("events").select("id,status,kind,template_id,template_version_id,starts_at,service_expires_at,grace_ends_at,settings").eq("slug", slug).in("status", ["published", "suspended"]).limit(1);
+  const { data: events } = await supabase.from("events").select("id,status,kind,template_id,template_version_id,hero_preset_id,starts_at,service_expires_at,grace_ends_at,settings").eq("slug", slug).in("status", ["published", "suspended"]).limit(1);
   const event = events?.[0];
   if (!event) notFound();
   if (event.status === "suspended") return <main className="public-invitation suspended-invitation">
@@ -54,6 +54,17 @@ export default async function InvitationPage({ params, searchParams }) {
         templateAssets = resolveTemplateAssetUrls(templateConfig, assets, event.template_id, (asset) =>
           supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl);
       }
+    }
+  }
+  if (event.hero_preset_id) {
+    const { data: heroPreset, error: heroError } = await supabase.from("hero_presets").select("id,config").eq("id", event.hero_preset_id).maybeSingle();
+    if (heroError) console.error("Hero preset query failed:", heroError.code);
+    if (heroPreset) {
+      const { data: heroAssets, error: heroAssetError } = await supabase.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path").eq("hero_preset_id", heroPreset.id).eq("asset_type", "hero_frame").eq("is_active", true).limit(1);
+      if (heroAssetError) console.error("Hero asset query failed:", heroAssetError.code);
+      const frame = heroAssets?.[0] || null;
+      templateConfig = templateConfig ? { ...templateConfig, hero: { ...templateConfig.hero, ...(heroPreset.config || {}), frameAssetId: frame?.id || null } } : templateConfig;
+      if (frame) templateAssets = { ...templateAssets, [frame.id]: supabase.storage.from(frame.storage_bucket).getPublicUrl(frame.storage_path).data.publicUrl };
     }
   }
   const { data: galleryRows, error: galleryError } = await supabase.from("event_media")
