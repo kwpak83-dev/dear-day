@@ -29,7 +29,7 @@ const typographyDefaults = {
 };
 const colorDefaults = { text: "#333333", title: "#222222", heroTitle: "#222222", muted: "#777777", accent: "#b78b72", buttonBackground: "#b78b72", buttonText: "#ffffff", divider: "#e8e2de" };
 const SHARED_BUTTON_PRESETS = [{id:"soft-rose",name:"Soft Rose",background:"#d78f9b",text:"#ffffff",borderColor:"#d78f9b",borderRadius:28,borderWidth:0},{id:"classic-gold",name:"Classic Gold",background:"#fffaf2",text:"#977b50",borderColor:"#b69b72",borderRadius:8,borderWidth:1},{id:"modern-minimal",name:"Modern Minimal",background:"#303030",text:"#ffffff",borderColor:"#303030",borderRadius:7,borderWidth:0},{id:"romantic-line",name:"Romantic Line",background:"#fff8f9",text:"#b97e89",borderColor:"#d9a3aa",borderRadius:28,borderWidth:1}];
-const buttonStyleDefaults = { width: 100, height: 44, fontSize: 12, borderRadius: 9, borderWidth: 0, borderColor: "#b78b72", background: "#b78b72", text: "#ffffff", fontFamily: "sans", syncQuickMenu: false };
+const buttonStyleDefaults = { width: 100, height: 44, fontSize: 12, borderRadius: 9, borderWidth: 0, borderColor: "#b78b72", background: "#b78b72", text: "#ffffff", fontFamily: "sans", fontWeight: 400, syncQuickMenu: false };
 const quickMenuDefaults = { rsvpIcon: "✓", locationIcon: "⌖", guestbookIcon: "♡", rsvpIconAssetId: null, locationIconAssetId: null, guestbookIconAssetId: null, fontSize: 11, iconSize: 18 };
 const typographyRoles = [["heroTitle", "Hero Title"], ["sectionTitle", "Section Title"], ["body", "Body"], ["caption", "Caption / Small"]];
 const colorLabels = [["text", "기본 글자색"], ["title", "본문 제목 색상"], ["muted", "보조 글자색"], ["accent", "포인트 색상"], ["buttonBackground", "버튼 배경"], ["buttonText", "버튼 글자"], ["divider", "구분선"]];
@@ -420,6 +420,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               <ColorControl label="버튼 글자색" value={buttonStyle.text||"#ffffff"} onChange={text=>setButtonStyle(current=>({...current,text}))}/>
               <NumberControl label="버튼 너비 (%)" value={buttonStyle.width} min={10} max={100} onChange={(width) => setButtonStyle((current) => ({ ...current, width }))} />
               <NumberControl label="버튼 높이" value={buttonStyle.height} min={32} max={64} onChange={(height) => setButtonStyle((current) => ({ ...current, height }))} />
+              <label style={field}>버튼 글자 굵기<select style={input} value={buttonStyle.fontWeight??400} onChange={event=>setButtonStyle(current=>({...current,fontWeight:Number(event.target.value)}))}><option value={400}>Regular (400)</option><option value={500}>Medium (500)</option><option value={600}>Semi Bold (600)</option><option value={700}>Bold (700)</option></select></label>
               <NumberControl label="버튼 글자 크기" value={buttonStyle.fontSize} min={10} max={18} onChange={(fontSize) => setButtonStyle((current) => ({ ...current, fontSize }))} />
               <NumberControl label="모서리 둥글기" value={buttonStyle.borderRadius} min={0} max={32} onChange={(borderRadius) => setButtonStyle((current) => ({ ...current, borderRadius }))} />
               <NumberControl label="테두리 두께" value={buttonStyle.borderWidth} min={0} max={3} onChange={(borderWidth) => setButtonStyle((current) => ({ ...current, borderWidth }))} />
