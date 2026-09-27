@@ -144,7 +144,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), buttonStyleConfigured: Boolean(buttonStyle), backgroundConfigured: Boolean(background), decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle, showCoverPhoto, illustrationMode: hero?.mode === "illustration", heroBackgroundConfigured: Boolean(heroBackgroundUrl) };
 }
 
-export function TemplateConfigHeroLayers({ config, assets = {} }) {
+export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {} }) {
   const frameUrl = config?.hero?.frameAssetId ? assets[config.hero.frameAssetId] : null;
   const overlay = rgba(config?.hero?.overlayColor, config?.hero?.overlayOpacity);
   return <>
@@ -152,10 +152,12 @@ export function TemplateConfigHeroLayers({ config, assets = {} }) {
     {config?.hero?.mode === "frame" && frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
     {config?.typography && <link rel="stylesheet" href={BODY_FONT_STYLESHEET} />}
     {config?.hero?.nameFontFamily && config.hero.nameFontFamily !== "inherit" && <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />}
-    {Array.isArray(config?.hero?.textLayers) && config.hero.textLayers.some((layer) => layer.text?.trim()) && <>
+    {Array.isArray(config?.hero?.textLayers) && config.hero.textLayers.some((layer) => (layer.source && layer.source !== "custom") || layer.text?.trim()) && <>
       <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />
       <div className="dd-template-hero-text-layers">
-        {config.hero.textLayers.filter((layer) => layer.text?.trim()).map((layer) => {
+        {config.hero.textLayers.filter((layer) => (layer.source && layer.source !== "custom") || layer.text?.trim()).map((layer) => {
+          const boundText = layer.source === "title" ? presentation.title : layer.source === "schedule" ? presentation.heroSchedule : layer.source === "venue" ? presentation.venue : layer.text;
+          if (!boundText?.trim()) return null;
           const x = Math.min(100, Math.max(0, Number(layer.x ?? 50)));
           const y = Math.min(100, Math.max(0, Number(layer.y ?? 50)));
           const align = ["left", "center", "right"].includes(layer.align) ? layer.align : "center";
@@ -176,7 +178,7 @@ export function TemplateConfigHeroLayers({ config, assets = {} }) {
           return <div key={layer.id} className="dd-template-hero-text-layer" style={{
             left: `${x}%`, top: `${y}%`, transform: `translate(${-x}%, -50%) rotate(${layer.rotation ?? 0}deg)`,
             width: "100%", textAlign: align,
-          }}><span style={{ ...textStyle, display: "inline-block", maxWidth: "100%" }}>{layer.text}</span></div>;
+          }}><span style={{ ...textStyle, display: "inline-block", maxWidth: "100%" }}>{boundText}</span></div>;
         })}
       </div>
     </>}
