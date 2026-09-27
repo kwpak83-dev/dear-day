@@ -60,9 +60,15 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
         grid: `linear-gradient(${ink} 1px, transparent 1px), linear-gradient(90deg, ${ink} 1px, transparent 1px)`,
         diagonal: `repeating-linear-gradient(45deg, transparent 0, transparent ${size-1}px, ${ink} ${size-1}px, ${ink} ${size}px)`,
         stripes: `repeating-linear-gradient(90deg, transparent 0, transparent ${size-1}px, ${ink} ${size-1}px, ${ink} ${size}px)`,
+        horizontal: `repeating-linear-gradient(0deg, transparent 0, transparent ${size-1}px, ${ink} ${size-1}px, ${ink} ${size}px)`,
+        cross: `linear-gradient(45deg, transparent 48%, ${ink} 49%, ${ink} 51%, transparent 52%), linear-gradient(-45deg, transparent 48%, ${ink} 49%, ${ink} 51%, transparent 52%)`,
+        checker: `conic-gradient(${ink} 25%, transparent 0 50%, ${ink} 0 75%, transparent 0)`,
+        diamonds: `linear-gradient(45deg, transparent 45%, ${ink} 46%, ${ink} 48%, transparent 49%), linear-gradient(-45deg, transparent 45%, ${ink} 46%, ${ink} 48%, transparent 49%)`,
+        waves: `radial-gradient(ellipse at 50% 100%, transparent 55%, ${ink} 58%, transparent 62%)`,
+        confetti: `radial-gradient(circle at 20% 25%, ${ink} 2px, transparent 3px), radial-gradient(circle at 75% 70%, ${ink} 1px, transparent 2px)`,
       };
       heroStyle.backgroundImage = patterns[backdrop.pattern] || patterns.dots;
-      heroStyle.backgroundSize = backdrop.pattern === "dots" || backdrop.pattern === "grid" ? `${size}px ${size}px` : "auto";
+      heroStyle.backgroundSize = ["dots","grid","cross","checker","diamonds","waves","confetti"].includes(backdrop.pattern) ? `${size}px ${size}px` : "auto";
     }
     heroMediaStyle.backgroundColor = heroStyle.backgroundColor;
     heroMediaStyle.backgroundImage = heroStyle.backgroundImage || "none";
@@ -85,10 +91,10 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroMediaStyle.position = "absolute";
     heroMediaStyle.left = `${frame.x ?? 50}%`;
     heroMediaStyle.top = `${frame.y ?? 50}%`;
-    heroMediaStyle.transform = "translate(-50%, -50%)";
+    heroMediaStyle.transform = `translate(-50%, -50%) rotate(${frame.rotation ?? 0}deg)`;
     heroMediaStyle.margin = 0;
     heroMediaStyle.aspectRatio = "auto";
-    heroMediaStyle.border = `${frame.borderWidth ?? 0}px solid ${frame.borderColor || "#ffffff"}`;
+    heroMediaStyle.border = `${frame.borderWidth ?? 0}px ${frame.borderStyle || "solid"} ${frame.borderColor || "#ffffff"}`;
     heroMediaStyle.borderRadius = ({rectangle:"0",rounded:"18px",oval:"50%",circle:"50%",arch:"50% 50% 0 0 / 32% 32% 0 0"})[frame.shape] || "0";
     heroMediaStyle.overflow = "hidden";
     heroMediaStyle.boxSizing = "border-box";
@@ -97,10 +103,13 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroImageStyle.width = "100%";
     heroImageStyle.height = "100%";
     heroImageStyle.objectFit = "cover";
+    heroImageStyle.objectPosition = `${frame.imageX ?? 50}% ${frame.imageY ?? 50}%`;
+    heroImageStyle.transform = `scale(${frame.imageZoom ?? 1})`;
+    heroImageStyle.transformOrigin = `${frame.imageX ?? 50}% ${frame.imageY ?? 50}%`;
   }
   if (hero?.aspectRatio && (!frame || frame.shape === "default")) heroMediaStyle.aspectRatio = hero.aspectRatio.replace(":", " / ");
-  if (hero?.positionX !== null && hero?.positionX !== undefined) heroImageStyle.objectPosition = `${hero.positionX}% ${hero?.positionY ?? 50}%`;
-  if (hero && hero.zoom !== null) { heroImageStyle.transform = `scale(${hero.zoom})`; heroImageStyle.transformOrigin = `${hero?.positionX ?? 50}% ${hero?.positionY ?? 50}%`; }
+  if ((!frame || frame.shape === "default") && hero?.positionX !== null && hero?.positionX !== undefined) heroImageStyle.objectPosition = `${hero.positionX}% ${hero?.positionY ?? 50}%`;
+  if ((!frame || frame.shape === "default") && hero && hero.zoom !== null) { heroImageStyle.transform = `scale(${hero.zoom})`; heroImageStyle.transformOrigin = `${hero?.positionX ?? 50}% ${hero?.positionY ?? 50}%`; }
   if (hero?.nameFontFamily && hero.nameFontFamily !== "inherit") set(rootStyle, "--dd-hero-title-font", getHeroFont(hero.nameFontFamily).family);
   if (hero?.nameFontWeight != null) set(rootStyle, "--dd-hero-title-weight", hero.nameFontWeight);
   if (hero?.nameLineHeight != null) set(rootStyle, "--dd-hero-title-line-height", hero.nameLineHeight);
