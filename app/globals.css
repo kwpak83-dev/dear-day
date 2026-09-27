@@ -1291,3 +1291,20 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   white-space:nowrap;
   word-break:keep-all;
 }
+
+/* Account copy is a flex child inside the template button-style wrapper.
+   Override its configured 100% width and normal wrapping only in live preview. */
+.preview-content .invitation-template .public-account-card > div > button{
+  box-sizing:border-box;
+  width:max-content !important;
+  max-width:none !important;
+  min-width:max-content;
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap !important;
+  word-break:keep-all;
+  overflow-wrap:normal;
+  padding-inline:12px;
+}
