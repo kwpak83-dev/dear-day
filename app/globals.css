@@ -1093,3 +1093,13 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dearday-compact-arrow{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#b88b82;color:white;font-size:15px}
 .dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button){font-family:var(--dd-button-font,Arial,sans-serif)}
 .invitation-quick-menu button{font-family:var(--dd-quick-menu-font,Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif)}
+
+/* Wedding contact actions beneath the invitation message. */
+.dd-wedding-contacts{padding:22px 16px;margin:0 auto;text-align:center;color:var(--dd-color-text,#684d43);font-family:var(--dd-body-font-family,inherit)}
+.dd-contact-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.dd-contact-person{display:grid;justify-items:center;gap:9px;padding:7px 2px;font-size:13px}
+.dd-contact-actions{display:flex;align-items:center;justify-content:center;gap:22px}
+.dd-contact-actions a{display:inline-grid;place-items:center;min-width:28px;min-height:28px;font-size:23px;color:inherit;text-decoration:none}
+.dd-contact-toggle{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:15px auto 8px;padding:9px;border:0;background:transparent;color:inherit;font-size:12px;cursor:pointer}
+.dd-contact-parents{padding-top:8px;border-top:1px solid var(--dd-color-divider,#e8e2de)}
+.dd-contact-parents>div>strong{display:block;margin:7px 0 10px;font-size:12px;font-weight:500}
