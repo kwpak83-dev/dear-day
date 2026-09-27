@@ -1171,3 +1171,23 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-typography.classic-001 .classic-calendar-grid span{justify-content:center;text-align:center}
 .classic-001 .classic-dday .classic-dday-highlight{display:inline-block;padding:0 5px;border-radius:5px;background:color-mix(in srgb,var(--dd-color-accent,#b78b72) 15%,transparent);color:var(--dd-color-accent,#b78b72);font-weight:700}
 .dd-template-typography.classic-001 .classic-dday .classic-dday-highlight{font-family:var(--dd-body-font);font-size:var(--dd-body-size);line-height:var(--dd-body-line-height);letter-spacing:var(--dd-body-letter-spacing);font-weight:700}
+
+/* Published invitation and editor previews: continue the selected template background
+   through the sharing area instead of introducing an unrelated solid panel. */
+.dd-template-background .invitation-template-sections,
+.dd-template-background .public-invitation-sections,
+.dd-template-background .public-share-copy,
+.dd-template-background .public-share-copy.share-actions {
+  background:transparent;
+}
+.dd-template-background .public-share-copy .share-actions>button {
+  background:var(--dd-button-bg,var(--dd-color-button-bg,#b78b72));
+  color:var(--dd-button-text,var(--dd-color-button-text,#fff));
+}
+.dd-template-background .invitation-quick-menu {
+  background:var(--dd-quick-menu-bg,var(--dd-template-quick-bg,#fffaf5));
+}
+.dd-template-background .invitation-quick-menu button {
+  background:var(--dd-quick-menu-item-bg,var(--dd-button-bg,var(--dd-color-button-bg,#b78b72)));
+  color:var(--dd-quick-menu-item-text,var(--dd-button-text,var(--dd-color-button-text,#fff)));
+}
