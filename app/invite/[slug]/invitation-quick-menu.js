@@ -40,17 +40,18 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
-  const isDesktopLivePreview = previewMode === "desktop-live" || previewMode === "admin-live" || previewMode === "admin-full";
+  const isEditorFullPreview = previewMode === "editor-full";
+  const isDesktopLivePreview = previewMode === "desktop-live" || previewMode === "admin-live" || previewMode === "admin-full" || isEditorFullPreview;
 
   useEffect(() => {
     const templateRoot = markerRef.current?.closest(".invitation-template");
     if (!templateRoot) return;
     const phone = (previewMode === "admin-live" || previewMode === "admin-full")
       ? markerRef.current?.closest(".admin-draft-preview-device, .admin-draft-full-preview-device") || null
-      : markerRef.current?.closest(".preview-phone") || null;
+      : markerRef.current?.closest(isEditorFullPreview ? ".full-preview-document" : ".preview-phone") || null;
     const scroller = (previewMode === "admin-live" || previewMode === "admin-full")
       ? markerRef.current?.closest(".admin-draft-preview-scroll, .admin-draft-full-preview") || null
-      : markerRef.current?.closest(".preview-content") || null;
+      : markerRef.current?.closest(isEditorFullPreview ? ".full-preview-scroll" : ".preview-content") || null;
     if (isDesktopLivePreview) setDesktopLivePortal(phone);
     {
       const computed = getComputedStyle(templateRoot);
@@ -90,8 +91,8 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     // restart the desktop LIVE PREVIEW quick-menu journey from the top.
     scroller.scrollTop = 0;
     desktopLiveScrolledRef.current = false;
-    setVisible(previewMode === "admin-live" || previewMode === "admin-full");
-  }, [isDesktopLivePreview, previewMode, invitation.templateId]);
+    setVisible(previewMode === "admin-live" || previewMode === "admin-full" || isEditorFullPreview);
+  }, [isDesktopLivePreview, isEditorFullPreview, previewMode, invitation.templateId]);
 
   useEffect(() => {
     if (!visible || !isDesktopLivePreview) return;
@@ -198,7 +199,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
 
   return <>
     <span ref={markerRef} className="invitation-quick-menu-trigger" aria-hidden="true" />
-    {visible && (isDesktopLivePreview && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} style={isDesktopLivePreview ? desktopLiveStyle : undefined} aria-label="초대장 빠른 메뉴">
+    {visible && (isDesktopLivePreview && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}${isEditorFullPreview ? " invitation-quick-menu--editor-full" : ""}`} style={isDesktopLivePreview ? desktopLiveStyle : undefined} aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
       {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
