@@ -74,7 +74,28 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroStyle.backgroundPosition = "center";
     heroMediaStyle.background = "transparent";
   }
-  if (hero?.aspectRatio) heroMediaStyle.aspectRatio = hero.aspectRatio.replace(":", " / ");
+  const frame = hero?.photoFrame;
+  if (frame && frame.shape !== "default") {
+    const width = frame.width ?? 100, height = frame.height ?? 100;
+    heroMediaStyle.width = `${width}%`;
+    heroMediaStyle.height = `${height}%`;
+    heroMediaStyle.position = "absolute";
+    heroMediaStyle.left = `${frame.x ?? 50}%`;
+    heroMediaStyle.top = `${frame.y ?? 50}%`;
+    heroMediaStyle.transform = "translate(-50%, -50%)";
+    heroMediaStyle.margin = 0;
+    heroMediaStyle.aspectRatio = "auto";
+    heroMediaStyle.border = `${frame.borderWidth ?? 0}px solid ${frame.borderColor || "#ffffff"}`;
+    heroMediaStyle.borderRadius = ({rectangle:"0",rounded:"18px",oval:"50%",circle:"50%",arch:"50% 50% 0 0 / 32% 32% 0 0"})[frame.shape] || "0";
+    heroMediaStyle.overflow = "hidden";
+    heroMediaStyle.boxSizing = "border-box";
+    if (frame.shape === "circle") heroMediaStyle.aspectRatio = "1 / 1";
+    if (frame.shadow) heroMediaStyle.filter = `drop-shadow(0 6px ${frame.shadowBlur ?? 12}px rgba(0,0,0,.35))`;
+    heroImageStyle.width = "100%";
+    heroImageStyle.height = "100%";
+    heroImageStyle.objectFit = "cover";
+  }
+  if (hero?.aspectRatio && (!frame || frame.shape === "default")) heroMediaStyle.aspectRatio = hero.aspectRatio.replace(":", " / ");
   if (hero?.positionX !== null && hero?.positionX !== undefined) heroImageStyle.objectPosition = `${hero.positionX}% ${hero?.positionY ?? 50}%`;
   if (hero && hero.zoom !== null) { heroImageStyle.transform = `scale(${hero.zoom})`; heroImageStyle.transformOrigin = `${hero?.positionX ?? 50}% ${hero?.positionY ?? 50}%`; }
   if (hero?.nameFontFamily && hero.nameFontFamily !== "inherit") set(rootStyle, "--dd-hero-title-font", getHeroFont(hero.nameFontFamily).family);
