@@ -30,7 +30,7 @@ function ClassicDateSection({ eventDate, eventTime, title, wedding }) {
   today.setHours(0, 0, 0, 0);
   const target = new Date(year, month, day);
   const diffDays = Math.ceil((target - today) / 86400000);
-  const ddayText = diffDays > 0 ? `${diffDays}일 남았습니다.` : diffDays === 0 ? "오늘입니다." : `${Math.abs(diffDays)}일 지났습니다.`;
+  const ddayText = diffDays === 0 ? "오늘입니다." : null;
   const names = title || "";
   const eventText = wedding && names ? `${names.replace(" & ", " ♡ ")}의 결혼식` : names;
 
@@ -46,7 +46,7 @@ function ClassicDateSection({ eventDate, eventTime, title, wedding }) {
         {cells.map((value, index) => <span key={index} className={value === day ? "is-event-day" : ""}>{value || ""}</span>)}
       </div>
     </div>
-    <p className="classic-dday">{eventText && <><strong>{eventText}</strong><br /></>}{ddayText}</p>
+    <p className="classic-dday">{eventText && <><strong>{eventText}</strong><br /></>}{ddayText || <><span className="classic-dday-highlight">{Math.abs(diffDays)}일</span> {diffDays > 0 ? "남았습니다." : "지났습니다."}</>}</p>
   </section>;
 }
 
