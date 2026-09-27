@@ -12,7 +12,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
   const hasCouple = wedding && couple.length > 0;
   const hasInformation = Boolean(schedule || venue || address);
   const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
-  const showHero = (key) => templateConfig?.hero?.display?.[key] !== false;
+  const showHero = (key) => templateConfig?.hero?.display?.[key] !== false && !((key === "title" || key === "schedule" || key === "venue") && templateConfig?.hero?.textLayers?.some((layer) => layer.source === key));
   const mastheadLabels = {
     wedding: "WEDDING INVITATION",
     first_birthday: "FIRST BIRTHDAY",
@@ -46,7 +46,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
 
     <section className={`romantic-hero${hasHeroVisual ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
       {hasHeroVisual && <figure className="romantic-hero-photo" style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
-      <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} />
+      <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} presentation={presentation} />
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />
       <div className="romantic-hero-copy" style={renderConfig.heroCopyStyle}>
         {showHero("title") && title && (couple.length === 2
@@ -68,6 +68,8 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
       <blockquote>{message}</blockquote>
     </section>}
 
+    {weddingContacts}
+
     {hasCouple && <section className="romantic-section romantic-couple">
       <SectionHeading eyebrow="THE GROOM & BRIDE">신랑 · 신부</SectionHeading>
       <div className="romantic-couple-grid">
@@ -75,8 +77,6 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
         {couple[1] && <p><small>BRIDE</small><strong>{couple[1]}</strong></p>}
       </div>
     </section>}
-
-    {weddingContacts}
 
     {hasInformation && <section className="romantic-section romantic-information">
       <SectionHeading eyebrow={wedding ? "WEDDING INFORMATION" : "EVENT INFORMATION"}>{wedding ? "예식 안내" : "행사 안내"}</SectionHeading>

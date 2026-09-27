@@ -12,7 +12,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
   const hasCouple = wedding && couple.length > 0;
   const hasInformation = Boolean(schedule || venue || address);
   const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
-  const showHero = (key) => templateConfig?.hero?.display?.[key] !== false;
+  const showHero = (key) => templateConfig?.hero?.display?.[key] !== false && !((key === "title" || key === "schedule" || key === "venue") && templateConfig?.hero?.textLayers?.some((layer) => layer.source === key));
   const mastheadLabels = {
     wedding: "WEDDING INVITATION",
     first_birthday: "FIRST BIRTHDAY",
@@ -46,7 +46,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
 
     <section className={`modern-hero${hasHeroVisual ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
       {hasHeroVisual && <figure style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
-      <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} />
+      <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} presentation={presentation} />
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />
       <div className="modern-hero-copy" style={renderConfig.heroCopyStyle}>
         {showHero("eventLabel") && <p>{wedding ? "A NEW BEGINNING" : kindLabel}</p>}
@@ -67,6 +67,8 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
       <blockquote>{message}</blockquote>
     </section>}
 
+    {weddingContacts}
+
     {hasCouple && <section className="modern-section modern-couple">
       <SectionHeading eyebrow="GROOM AND BRIDE">신랑 · 신부</SectionHeading>
       <div className={`modern-couple-grid count-${couple.length}`}>
@@ -74,8 +76,6 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
         {couple[1] && <p><small>BRIDE</small><strong>{couple[1]}</strong></p>}
       </div>
     </section>}
-
-    {weddingContacts}
 
     {hasInformation && <section className="modern-section modern-information">
       <SectionHeading eyebrow={wedding ? "WEDDING INFORMATION" : "EVENT INFORMATION"}>{wedding ? "예식 정보" : "행사 정보"}</SectionHeading>

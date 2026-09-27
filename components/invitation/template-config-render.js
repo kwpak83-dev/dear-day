@@ -47,15 +47,69 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
       }
     }
   }
+  const backdrop = hero?.heroBackdrop;
+  if (backdrop && backdrop.mode !== "inherit") {
+    const base = backdrop.color || "#f3ebe2";
+    heroStyle.backgroundColor = base;
+    if (backdrop.mode === "gradient") heroStyle.backgroundImage = `linear-gradient(${backdrop.angle ?? 135}deg, ${base}, ${backdrop.endColor || "#e8d4c5"})`;
+    if (backdrop.mode === "pattern") {
+      const ink = rgba(backdrop.patternColor || "#bca08d", backdrop.patternOpacity ?? .25);
+      const size = backdrop.patternSize || 20;
+      const patterns = {
+        dots: `radial-gradient(circle, ${ink} 1.5px, transparent 2px)`,
+        grid: `linear-gradient(${ink} 1px, transparent 1px), linear-gradient(90deg, ${ink} 1px, transparent 1px)`,
+        diagonal: `repeating-linear-gradient(45deg, transparent 0, transparent ${size-1}px, ${ink} ${size-1}px, ${ink} ${size}px)`,
+        stripes: `repeating-linear-gradient(90deg, transparent 0, transparent ${size-1}px, ${ink} ${size-1}px, ${ink} ${size}px)`,
+        horizontal: `repeating-linear-gradient(0deg, transparent 0, transparent ${size-1}px, ${ink} ${size-1}px, ${ink} ${size}px)`,
+        cross: `linear-gradient(45deg, transparent 48%, ${ink} 49%, ${ink} 51%, transparent 52%), linear-gradient(-45deg, transparent 48%, ${ink} 49%, ${ink} 51%, transparent 52%)`,
+        checker: `conic-gradient(${ink} 25%, transparent 0 50%, ${ink} 0 75%, transparent 0)`,
+        diamonds: `linear-gradient(45deg, transparent 45%, ${ink} 46%, ${ink} 48%, transparent 49%), linear-gradient(-45deg, transparent 45%, ${ink} 46%, ${ink} 48%, transparent 49%)`,
+        waves: `radial-gradient(ellipse at 50% 100%, transparent 55%, ${ink} 58%, transparent 62%)`,
+        confetti: `radial-gradient(circle at 20% 25%, ${ink} 2px, transparent 3px), radial-gradient(circle at 75% 70%, ${ink} 1px, transparent 2px)`,
+      };
+      heroStyle.backgroundImage = patterns[backdrop.pattern] || patterns.dots;
+      heroStyle.backgroundSize = ["dots","grid","cross","checker","diamonds","waves","confetti"].includes(backdrop.pattern) ? `${size}px ${size}px` : "auto";
+    }
+    heroMediaStyle.backgroundColor = heroStyle.backgroundColor;
+    heroMediaStyle.backgroundImage = heroStyle.backgroundImage || "none";
+    if (heroStyle.backgroundSize) heroMediaStyle.backgroundSize = heroStyle.backgroundSize;
+  }
   if (heroBackgroundUrl) {
     heroStyle.backgroundImage = `url("${heroBackgroundUrl}")`;
     heroStyle.backgroundSize = "cover";
     heroStyle.backgroundPosition = "center";
     heroMediaStyle.background = "transparent";
   }
-  if (hero?.aspectRatio) heroMediaStyle.aspectRatio = hero.aspectRatio.replace(":", " / ");
-  if (hero?.positionX !== null && hero?.positionX !== undefined) heroImageStyle.objectPosition = `${hero.positionX}% ${hero?.positionY ?? 50}%`;
-  if (hero && hero.zoom !== null) { heroImageStyle.transform = `scale(${hero.zoom})`; heroImageStyle.transformOrigin = `${hero?.positionX ?? 50}% ${hero?.positionY ?? 50}%`; }
+  const frame = hero?.photoFrame;
+  if (frame && frame.shape !== "default") {
+    heroStyle.aspectRatio = (hero?.aspectRatio || "4:5").replace(":", " / ");
+    heroStyle.position = "relative";
+    heroStyle.overflow = "hidden";
+    const width = frame.width ?? 100, height = frame.height ?? 100;
+    heroMediaStyle.width = `${width}%`;
+    heroMediaStyle.height = `${height}%`;
+    heroMediaStyle.position = "absolute";
+    heroMediaStyle.left = `${frame.x ?? 50}%`;
+    heroMediaStyle.top = `${frame.y ?? 50}%`;
+    heroMediaStyle.transform = `translate(-50%, -50%) rotate(${frame.rotation ?? 0}deg)`;
+    heroMediaStyle.margin = 0;
+    heroMediaStyle.aspectRatio = "auto";
+    heroMediaStyle.border = `${frame.borderWidth ?? 0}px ${frame.borderStyle || "solid"} ${frame.borderColor || "#ffffff"}`;
+    heroMediaStyle.borderRadius = ({rectangle:"0",rounded:"18px",oval:"50%",circle:"50%",arch:"50% 50% 0 0 / 32% 32% 0 0"})[frame.shape] || "0";
+    heroMediaStyle.overflow = "hidden";
+    heroMediaStyle.boxSizing = "border-box";
+    if (frame.shape === "circle") heroMediaStyle.aspectRatio = "1 / 1";
+    if (frame.shadow) heroMediaStyle.filter = `drop-shadow(0 6px ${frame.shadowBlur ?? 12}px rgba(0,0,0,.35))`;
+    heroImageStyle.width = "100%";
+    heroImageStyle.height = "100%";
+    heroImageStyle.objectFit = "cover";
+    heroImageStyle.objectPosition = `${frame.imageX ?? 50}% ${frame.imageY ?? 50}%`;
+    heroImageStyle.transform = `scale(${frame.imageZoom ?? 1})`;
+    heroImageStyle.transformOrigin = `${frame.imageX ?? 50}% ${frame.imageY ?? 50}%`;
+  }
+  if (hero?.aspectRatio && (!frame || frame.shape === "default")) heroMediaStyle.aspectRatio = hero.aspectRatio.replace(":", " / ");
+  if ((!frame || frame.shape === "default") && hero?.positionX !== null && hero?.positionX !== undefined) heroImageStyle.objectPosition = `${hero.positionX}% ${hero?.positionY ?? 50}%`;
+  if ((!frame || frame.shape === "default") && hero && hero.zoom !== null) { heroImageStyle.transform = `scale(${hero.zoom})`; heroImageStyle.transformOrigin = `${hero?.positionX ?? 50}% ${hero?.positionY ?? 50}%`; }
   if (hero?.nameFontFamily && hero.nameFontFamily !== "inherit") set(rootStyle, "--dd-hero-title-font", getHeroFont(hero.nameFontFamily).family);
   if (hero?.nameFontWeight != null) set(rootStyle, "--dd-hero-title-weight", hero.nameFontWeight);
   if (hero?.nameLineHeight != null) set(rootStyle, "--dd-hero-title-line-height", hero.nameLineHeight);
@@ -144,7 +198,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), buttonStyleConfigured: Boolean(buttonStyle), backgroundConfigured: Boolean(background), decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle, showCoverPhoto, illustrationMode: hero?.mode === "illustration", heroBackgroundConfigured: Boolean(heroBackgroundUrl) };
 }
 
-export function TemplateConfigHeroLayers({ config, assets = {} }) {
+export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {} }) {
   const frameUrl = config?.hero?.frameAssetId ? assets[config.hero.frameAssetId] : null;
   const overlay = rgba(config?.hero?.overlayColor, config?.hero?.overlayOpacity);
   return <>
@@ -152,19 +206,33 @@ export function TemplateConfigHeroLayers({ config, assets = {} }) {
     {config?.hero?.mode === "frame" && frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
     {config?.typography && <link rel="stylesheet" href={BODY_FONT_STYLESHEET} />}
     {config?.hero?.nameFontFamily && config.hero.nameFontFamily !== "inherit" && <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />}
-    {Array.isArray(config?.hero?.textLayers) && config.hero.textLayers.some((layer) => layer.text?.trim()) && <>
+    {Array.isArray(config?.hero?.textLayers) && config.hero.textLayers.some((layer) => (layer.source && layer.source !== "custom") || layer.text?.trim()) && <>
       <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />
       <div className="dd-template-hero-text-layers">
-        {config.hero.textLayers.filter((layer) => layer.text?.trim()).map((layer) => {
+        {config.hero.textLayers.filter((layer) => layer.visible !== false && ((layer.source && layer.source !== "custom") || layer.text?.trim())).map((layer) => {
+          const boundText = layer.source === "title" ? presentation.title : layer.source === "schedule" ? presentation.heroSchedule : layer.source === "venue" ? presentation.venue : layer.text;
+          if (!boundText?.trim()) return null;
           const x = Math.min(100, Math.max(0, Number(layer.x ?? 50)));
           const y = Math.min(100, Math.max(0, Number(layer.y ?? 50)));
           const align = ["left", "center", "right"].includes(layer.align) ? layer.align : "center";
-          return <div key={layer.id} className="dd-template-hero-text-layer" style={{
-            left: `${x}%`, top: `${y}%`, transform: `translate(${-x}%, -50%)`,
-            width: "100%", textAlign: align, fontFamily: getHeroFont(layer.fontId).family,
+          const stroke = layer.stroke?.enabled ? layer.stroke : null;
+          const shadow = layer.shadow?.enabled ? layer.shadow : null;
+          const gradient = layer.gradient?.enabled ? layer.gradient : null;
+          const shadowColor = shadow ? rgba(shadow.color, shadow.opacity) : null;
+          const textShadow = shadowColor ? `${shadow.x}px ${shadow.y}px ${shadow.blur}px ${shadowColor}` : "none";
+          const textStyle = {
+            fontFamily: getHeroFont(layer.fontId).family,
             fontSize: `${Math.min(100, Math.max(8, Number(layer.fontSize ?? 32)))}px`,
             color: layer.color || "#ffffff", whiteSpace: "pre-wrap", overflowWrap: "anywhere",
-          }}>{layer.text}</div>;
+            opacity: layer.opacity ?? 1, letterSpacing: `${layer.letterSpacing ?? 0}px`,
+            lineHeight: layer.lineHeight ?? 1.5, textShadow,
+            ...(stroke ? { WebkitTextStroke: `${stroke.width}px ${stroke.color}`, paintOrder: "stroke fill" } : {}),
+            ...(gradient ? { backgroundImage: `linear-gradient(${gradient.angle}deg, ${gradient.start}, ${gradient.end})`, WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent" } : {}),
+          };
+          return <div key={layer.id} className="dd-template-hero-text-layer" style={{
+            left: `${x}%`, top: `${y}%`, transform: `translate(${-x}%, -50%) rotate(${layer.rotation ?? 0}deg)`,
+            width: "100%", textAlign: align,
+          }}><span style={{ ...textStyle, display: "inline-block", maxWidth: "100%" }}>{boundText}</span></div>;
         })}
       </div>
     </>}

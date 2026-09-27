@@ -30,7 +30,7 @@ function ClassicDateSection({ eventDate, eventTime, title, wedding }) {
   today.setHours(0, 0, 0, 0);
   const target = new Date(year, month, day);
   const diffDays = Math.ceil((target - today) / 86400000);
-  const ddayText = diffDays > 0 ? `${diffDays}일 남았습니다.` : diffDays === 0 ? "오늘입니다." : `${Math.abs(diffDays)}일 지났습니다.`;
+  const ddayText = diffDays === 0 ? "오늘입니다." : null;
   const names = title || "";
   const eventText = wedding && names ? `${names.replace(" & ", " ♡ ")}의 결혼식` : names;
 
@@ -46,7 +46,7 @@ function ClassicDateSection({ eventDate, eventTime, title, wedding }) {
         {cells.map((value, index) => <span key={index} className={value === day ? "is-event-day" : ""}>{value || ""}</span>)}
       </div>
     </div>
-    <p className="classic-dday">{eventText && <><strong>{eventText}</strong><br /></>}{ddayText}</p>
+    <p className="classic-dday">{eventText && <><strong>{eventText}</strong><br /></>}{ddayText || <><span className="classic-dday-highlight">{Math.abs(diffDays)}일</span> {diffDays > 0 ? "남았습니다." : "지났습니다."}</>}</p>
   </section>;
 }
 
@@ -56,7 +56,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
   const couple = wedding ? title.split(" & ").map((value) => value.trim()).filter(Boolean) : [];
   const hasInformation = Boolean(schedule || venue || address);
   const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
-  const showHero = (key) => templateConfig?.hero?.display?.[key] !== false;
+  const showHero = (key) => templateConfig?.hero?.display?.[key] !== false && !((key === "title" || key === "schedule" || key === "venue") && templateConfig?.hero?.textLayers?.some((layer) => layer.source === key));
   const mastheadLabels = {
     wedding: "WEDDING INVITATION",
     first_birthday: "FIRST BIRTHDAY",
@@ -87,7 +87,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
 
     <section className={`classic-hero${hasHeroVisual ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
       {hasHeroVisual && <figure style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
-      <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} />
+      <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} presentation={presentation} />
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />
       <div className="classic-hero-copy" style={renderConfig.heroCopyStyle}>
         {showHero("eyebrow") && <small>{wedding ? "소중한 분들을 초대합니다" : kindLabel}</small>}
