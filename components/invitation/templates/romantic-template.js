@@ -12,7 +12,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
   const hasCouple = wedding && couple.length > 0;
   const hasInformation = Boolean(schedule || venue || address);
   const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
-  const showHero = (key) => templateConfig?.hero?.display?.[key] !== false;
+  const showHero = (key) => templateConfig?.hero?.display?.[key] !== false && !((key === "title" || key === "schedule" || key === "venue") && templateConfig?.hero?.textLayers?.some((layer) => layer.source === key));
   const mastheadLabels = {
     wedding: "WEDDING INVITATION",
     first_birthday: "FIRST BIRTHDAY",
