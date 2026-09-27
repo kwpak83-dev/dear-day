@@ -1112,3 +1112,10 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .hero-editor-live-preview-frame>.invitation-template>:not(.classic-hero):not(.modern-hero):not(.romantic-hero){display:none!important}
 .hero-editor-live-preview-frame .classic-hero,.hero-editor-live-preview-frame .modern-hero,.hero-editor-live-preview-frame .romantic-hero{min-height:0!important;margin:0!important}
 @media(min-width:901px){.hero-editor-live-preview{position:relative;top:auto}}
+
+/* Explicit font shorthand for quick-menu items (including portaled previews). */
+.invitation-quick-menu button{font:var(--dd-quick-menu-font-size,11px)/1.25 var(--dd-quick-menu-font,Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif)}
+.hero-edit-section .hero-text-reset-actions{display:flex;gap:8px;flex-wrap:wrap}
+.hero-edit-section .hero-text-reset-actions button,.hero-edit-section .hero-add-text-button,.hero-edit-section .hero-reset-all-button{border:1px solid #d7bdb0;border-radius:9px;background:#fffaf7;color:#705348;padding:10px 14px;font-size:12px;font-weight:600}
+.hero-edit-section .hero-add-text-button{background:#f6e8df;border-color:#cda99b}
+.hero-edit-section .hero-reset-all-button{background:#fff5f3;border-color:#d5a19c;color:#a34c48}
