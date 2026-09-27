@@ -110,6 +110,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       "--dd-quick-menu-item-border": computed.getPropertyValue("--dd-quick-menu-item-border"),
       "--dd-quick-menu-item-border-width": computed.getPropertyValue("--dd-quick-menu-item-border-width"),
       "--dd-quick-menu-font-size": computed.getPropertyValue("--dd-quick-menu-font-size"),
+      "--dd-quick-menu-font": computed.getPropertyValue("--dd-quick-menu-font"),
       "--dd-quick-menu-icon-size": computed.getPropertyValue("--dd-quick-menu-icon-size"),
       "--dd-quick-menu-rsvp-icon": computed.getPropertyValue("--dd-quick-menu-rsvp-icon"),
       "--dd-quick-menu-location-icon": computed.getPropertyValue("--dd-quick-menu-location-icon"),
