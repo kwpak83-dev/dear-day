@@ -51,7 +51,7 @@ function HeroEditorPreview({ invitation, eventKind, templateId, templateConfig, 
       if (!hero) return;
       const width = Math.min(245, frame.clientWidth || 245);
       const scale = width / 390;
-      const height = Math.ceil(hero.getBoundingClientRect().height / (dimensions.scale || 1) * scale);
+      const height = Math.ceil(hero.offsetHeight * scale);
       setDimensions(previous => previous.width === width && Math.abs(previous.height - height) < 2 ? previous : { width, height, scale });
     };
     const observer = new ResizeObserver(measure);
