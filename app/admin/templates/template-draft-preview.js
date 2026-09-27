@@ -9,10 +9,13 @@ import OptionalInvitationSections from "../../invite/[slug]/optional-invitation-
 import { resolveTemplateAssetUrls } from "../../../lib/template-config";
 
 const sampleInvitation = {
-  eventKind: "wedding", groom: "경원", bride: "보람",
-  groomFatherName: "박영채", groomMotherName: "김이순",
-  brideFatherName: "이규수", brideMotherName: "김덕임",
-  date: "2026-10-10", time: "14:00", venue: "디어데이 웨딩홀",
+  eventKind: "wedding", groom: "민준", bride: "서연",
+  groomPhone: "010-0000-0001", bridePhone: "010-0000-0002",
+  groomFatherName: "김정호", groomFatherPhone: "010-0000-0003",
+  groomMotherName: "이영희", groomMotherPhone: "010-0000-0004",
+  brideFatherName: "박성호", brideFatherPhone: "010-0000-0005",
+  brideMotherName: "최미경", brideMotherPhone: "010-0000-0006",
+  date: "2026-11-14", time: "14:00", venue: "디어데이 웨딩홀",
   venueAddress: "서울특별시 중구 세종대로 110",
   message: "저희 두 사람이 소중한 분들을 모시고 새로운 시작을 함께하려 합니다.",
   coverPhotoUrl: "/templates/modern-001/preview.png", rsvpEnabled: true, guestbookEnabled: true,
