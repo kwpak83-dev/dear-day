@@ -1079,3 +1079,8 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Shared quick-menu styling belongs to the three action buttons, not the tray. */
 .invitation-quick-menu button{background:var(--dd-quick-menu-item-bg,var(--dd-invite-action-bg,transparent));color:var(--dd-quick-menu-item-text,var(--dd-invite-action-text,#674f45));border-radius:var(--dd-quick-menu-item-radius,var(--dd-invite-action-radius,0));border-style:solid;border-width:var(--dd-quick-menu-item-border-width,0);border-color:var(--dd-quick-menu-item-border,transparent)}
 .invitation-quick-menu button+button{border-left-width:var(--dd-quick-menu-item-border-width,0);border-left-color:var(--dd-quick-menu-item-border,var(--dd-invite-action-divider,rgba(218,201,191,.7)))}
+
+/* Keep the draft full-preview quick menu inside its phone-sized device. */
+.admin-draft-full-preview-device{position:relative;padding-bottom:84px}
+.admin-draft-full-preview-device > .invitation-quick-menu--desktop-live{position:sticky;left:8px;right:8px;bottom:8px;width:calc(100% - 16px);max-width:none;margin:-76px 8px 8px;transform:none;z-index:80}
+.admin-draft-full-preview-device > .invitation-bottom-sheet-layer--preview{position:sticky;left:0;bottom:0;width:100%;height:min(680px,80vh);z-index:95;overflow:hidden}
