@@ -1163,3 +1163,11 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Keep wedding contacts immediately after Invitation in flex-ordered templates. */
 .invitation-template .dd-wedding-contacts{order:2.25}
 .dd-template-sections-configured .dd-wedding-contacts{order:calc(var(--dd-section-invitation-order) + 0.25)}
+
+/* Wedding parent-contact toggle uses the shared template Button Style controls. */
+.dd-template-button-style .dd-contact-toggle{box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:10px;width:var(--dd-button-width,100%);max-width:100%;min-width:0;height:var(--dd-button-height);min-height:var(--dd-button-height);margin:15px auto 8px;padding:8px 12px;border:var(--dd-button-border-width) solid var(--dd-button-border-color);border-radius:var(--dd-button-radius);background:var(--dd-button-bg,var(--dd-color-button-bg,#b78b72));color:var(--dd-button-text,var(--dd-color-button-text,#fff));font-family:var(--dd-button-font,Arial,sans-serif);font-size:var(--dd-button-font-size);font-weight:var(--dd-button-font-weight,400);line-height:1.25;text-align:center;cursor:pointer}
+/* DATE remains Caption / Small; all other Classic calendar/date text follows Body. */
+.dd-template-typography.classic-001 .classic-date :is(.classic-date-summary,.classic-calendar-month,.classic-calendar-grid span,.classic-calendar-weekdays span,.classic-dday,.classic-dday strong){font-family:var(--dd-body-font);font-size:var(--dd-body-size);font-weight:var(--dd-body-weight);line-height:var(--dd-body-line-height);letter-spacing:var(--dd-body-letter-spacing);text-align:var(--dd-body-align)}
+.dd-template-typography.classic-001 .classic-calendar-grid span{justify-content:center;text-align:center}
+.classic-001 .classic-dday .classic-dday-highlight{display:inline-block;padding:0 5px;border-radius:5px;background:color-mix(in srgb,var(--dd-color-accent,#b78b72) 15%,transparent);color:var(--dd-color-accent,#b78b72);font-weight:700}
+.dd-template-typography.classic-001 .classic-dday .classic-dday-highlight{font-family:var(--dd-body-font);font-size:var(--dd-body-size);line-height:var(--dd-body-line-height);letter-spacing:var(--dd-body-letter-spacing);font-weight:700}
