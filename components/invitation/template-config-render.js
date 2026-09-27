@@ -159,12 +159,24 @@ export function TemplateConfigHeroLayers({ config, assets = {} }) {
           const x = Math.min(100, Math.max(0, Number(layer.x ?? 50)));
           const y = Math.min(100, Math.max(0, Number(layer.y ?? 50)));
           const align = ["left", "center", "right"].includes(layer.align) ? layer.align : "center";
-          return <div key={layer.id} className="dd-template-hero-text-layer" style={{
-            left: `${x}%`, top: `${y}%`, transform: `translate(${-x}%, -50%)`,
-            width: "100%", textAlign: align, fontFamily: getHeroFont(layer.fontId).family,
+          const stroke = layer.stroke?.enabled ? layer.stroke : null;
+          const shadow = layer.shadow?.enabled ? layer.shadow : null;
+          const gradient = layer.gradient?.enabled ? layer.gradient : null;
+          const shadowColor = shadow ? rgba(shadow.color, shadow.opacity) : null;
+          const textShadow = shadowColor ? `${shadow.x}px ${shadow.y}px ${shadow.blur}px ${shadowColor}` : "none";
+          const textStyle = {
+            fontFamily: getHeroFont(layer.fontId).family,
             fontSize: `${Math.min(100, Math.max(8, Number(layer.fontSize ?? 32)))}px`,
             color: layer.color || "#ffffff", whiteSpace: "pre-wrap", overflowWrap: "anywhere",
-          }}>{layer.text}</div>;
+            opacity: layer.opacity ?? 1, letterSpacing: `${layer.letterSpacing ?? 0}px`,
+            lineHeight: layer.lineHeight ?? 1.5, textShadow,
+            ...(stroke ? { WebkitTextStroke: `${stroke.width}px ${stroke.color}`, paintOrder: "stroke fill" } : {}),
+            ...(gradient ? { backgroundImage: `linear-gradient(${gradient.angle}deg, ${gradient.start}, ${gradient.end})`, WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent" } : {}),
+          };
+          return <div key={layer.id} className="dd-template-hero-text-layer" style={{
+            left: `${x}%`, top: `${y}%`, transform: `translate(${-x}%, -50%) rotate(${layer.rotation ?? 0}deg)`,
+            width: "100%", textAlign: align,
+          }}><span style={{ ...textStyle, display: "inline-block", maxWidth: "100%" }}>{layer.text}</span></div>;
         })}
       </div>
     </>}
