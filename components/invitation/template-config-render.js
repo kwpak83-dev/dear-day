@@ -47,6 +47,25 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
       }
     }
   }
+  const backdrop = hero?.heroBackdrop;
+  if (backdrop && backdrop.mode !== "inherit") {
+    const base = backdrop.color || "#f3ebe2";
+    heroStyle.backgroundColor = base;
+    if (backdrop.mode === "gradient") heroStyle.backgroundImage = `linear-gradient(${backdrop.angle ?? 135}deg, ${base}, ${backdrop.endColor || "#e8d4c5"})`;
+    if (backdrop.mode === "pattern") {
+      const ink = rgba(backdrop.patternColor || "#bca08d", backdrop.patternOpacity ?? .25);
+      const size = backdrop.patternSize || 20;
+      const patterns = {
+        dots: `radial-gradient(circle, ${ink} 1.5px, transparent 2px)`,
+        grid: `linear-gradient(${ink} 1px, transparent 1px), linear-gradient(90deg, ${ink} 1px, transparent 1px)`,
+        diagonal: `repeating-linear-gradient(45deg, transparent 0, transparent ${size-1}px, ${ink} ${size-1}px, ${ink} ${size}px)`,
+        stripes: `repeating-linear-gradient(90deg, transparent 0, transparent ${size-1}px, ${ink} ${size-1}px, ${ink} ${size}px)`,
+      };
+      heroStyle.backgroundImage = patterns[backdrop.pattern] || patterns.dots;
+      heroStyle.backgroundSize = backdrop.pattern === "dots" || backdrop.pattern === "grid" ? `${size}px ${size}px` : "auto";
+    }
+    heroMediaStyle.background = "transparent";
+  }
   if (heroBackgroundUrl) {
     heroStyle.backgroundImage = `url("${heroBackgroundUrl}")`;
     heroStyle.backgroundSize = "cover";
