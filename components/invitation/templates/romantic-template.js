@@ -46,7 +46,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
 
     <section className={`romantic-hero${hasHeroVisual ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
       {hasHeroVisual && <figure className="romantic-hero-photo" style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
-      <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} />
+      <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} presentation={presentation} />
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />
       <div className="romantic-hero-copy" style={renderConfig.heroCopyStyle}>
         {showHero("title") && title && (couple.length === 2
