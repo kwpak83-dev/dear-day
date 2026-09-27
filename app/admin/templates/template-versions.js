@@ -19,7 +19,7 @@ const placementFor = (assetId, saved) => {
   return base;
 };
 const heroDisplayDefaults = { eyebrow: true, eventLabel: true, title: true, relations: true, detail: true, note: true, schedule: true, venue: true };
-const backgroundDefaults = { color: "#ffffff", assetId: null, overlayColor: "#000000", overlayOpacity: 0 };
+const backgroundDefaults = { mode: "custom", color: "#ffffff", assetId: null, overlayColor: "#000000", overlayOpacity: 0, custom: { mode: "solid", endColor: "#f3e8df", angle: 135, pattern: "dots", patternColor: "#bca08d", patternSize: 20, patternOpacity: .25 } };
 const heroDefaults = { mode: "photo", aspectRatio: "4:5", positionX: 50, positionY: 50, textYPercent: 50, scheduleFontSize: 11, zoom: 1, backgroundAssetId: null, frameAssetId: null, overlayColor: "#000000", overlayOpacity: 0, headerVisible: true, mastheadVisible: true, mastheadText: "", display: heroDisplayDefaults };
 const typographyDefaults = {
   heroTitle: { fontFamily: "serif", fontSize: 32, fontWeight: 400, lineHeight: 1.3, letterSpacing: 0, textAlign: "center" },
@@ -131,7 +131,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     if (!versionResponse.ok) throw new Error(versions.error || "버전 정보를 불러오지 못했어요.");
     if (!assetResponse.ok) throw new Error(assets.error || "장식 Asset을 불러오지 못했어요.");
     const active = (assets.assets || []).filter((asset) => asset.is_active);
-    setBackground((previous) => preservePlacements ? previous : fromConfig(backgroundDefaults, versions.draft?.background));
+    setBackground((previous) => preservePlacements ? previous : ({ ...fromConfig(backgroundDefaults, versions.draft?.background), mode: versions.draft?.background?.mode || (versions.draft?.background?.assetId ? "image" : "custom"), custom: { ...backgroundDefaults.custom, ...(versions.draft?.background?.custom || {}) } }));
     setHero((previous) => preservePlacements ? previous : heroFromConfig(versions.draft?.hero));
     setTypography((previous) => preservePlacements ? previous : typographyFromConfig(versions.draft?.typography));
     setColors((previous) => preservePlacements ? previous : fromConfig(colorDefaults, { ...versions.draft?.colors, heroTitle: versions.draft?.colors?.heroTitle || versions.draft?.colors?.title || colorDefaults.heroTitle }));
@@ -311,12 +311,36 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               ["Overlay 투명도", "Overlay 색상의 강도", "0 = 없음 / 0.3 = 은은하게"],
             ]} /></div>
             </details>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10 }}>
-              <ColorControl label="배경색" value={background.color} onChange={(color) => setBackground({ ...background, color })} />
-              <AssetSelect label="배경 이미지 Asset" assets={backgroundAssets} value={background.assetId} onChange={(assetId) => setBackground({ ...background, assetId })} />
-              <ColorControl label="Overlay 색상" value={background.overlayColor} onChange={(overlayColor) => setBackground({ ...background, overlayColor })} />
-              <NumberControl label="Overlay 투명도" value={background.overlayOpacity} min={0} max={1} step={0.05} onChange={(overlayOpacity) => setBackground({ ...background, overlayOpacity })} />
+            <div style={{ display: "grid", gap: 10, marginBottom: 12 }}>
+              <strong>배경 제작 방식 (택 1)</strong>
+              <label><input type="radio" name="body-background-mode" checked={background.mode === "custom"} onChange={() => setBackground(current => ({ ...current, mode: "custom" }))} /> 직접 제작 (단색 · 그라데이션 · 무늬)</label>
+              <label><input type="radio" name="body-background-mode" checked={background.mode === "image"} onChange={() => setBackground(current => ({ ...current, mode: "image" }))} /> 이미지 업로드 / 기존 이미지 선택</label>
             </div>
+            {background.mode === "image" ? <div style={{ display: "grid", gap: 10 }}>
+              <p style={guideNote}>위쪽 템플릿 Asset에서 배경 이미지를 업로드한 후 여기서 선택하세요. 직접 제작 설정은 보존됩니다.</p>
+              <AssetSelect label="배경 이미지 Asset" assets={backgroundAssets} value={background.assetId} onChange={(assetId) => setBackground(current => ({ ...current, assetId }))} />
+              <ColorControl label="이미지 아래 기본 배경색" value={background.color} onChange={(color) => setBackground(current => ({ ...current, color }))} />
+              <ColorControl label="Overlay 색상" value={background.overlayColor} onChange={(overlayColor) => setBackground(current => ({ ...current, overlayColor }))} />
+              <NumberControl label="Overlay 투명도" value={background.overlayOpacity} min={0} max={1} step={0.05} onChange={(overlayOpacity) => setBackground(current => ({ ...current, overlayOpacity }))} />
+            </div> : <div style={{ display: "grid", gap: 12 }}>
+              <label style={field}>직접 제작 유형<select style={input} value={background.custom.mode} onChange={event => setBackground(current => ({ ...current, custom: { ...current.custom, mode: event.target.value } }))}>
+                <option value="solid">단색</option><option value="gradient">그라데이션</option><option value="pattern">무늬</option>
+              </select></label>
+              <ColorControl label="기본 배경색" value={background.color} onChange={(color) => setBackground(current => ({ ...current, color }))} />
+              {background.custom.mode === "gradient" && <>
+                <ColorControl label="종료 색상" value={background.custom.endColor} onChange={endColor => setBackground(current => ({ ...current, custom: { ...current.custom, endColor } }))} />
+                <NumberControl label="방향 (도)" value={background.custom.angle} min={0} max={360} onChange={angle => setBackground(current => ({ ...current, custom: { ...current.custom, angle } }))} />
+              </>}
+              {background.custom.mode === "pattern" && <>
+                <label style={field}>무늬 종류<select style={input} value={background.custom.pattern} onChange={event => setBackground(current => ({ ...current, custom: { ...current.custom, pattern: event.target.value } }))}>
+                  {[["dots","도트"],["grid","격자"],["diagonal","사선"],["stripes","세로 줄무늬"],["horizontal","가로 줄무늬"],["cross","교차"],["checker","체커"],["diamonds","다이아몬드"],["waves","물결"],["confetti","컨페티"]].map(([value,label]) => <option key={value} value={value}>{label}</option>)}
+                </select></label>
+                <ColorControl label="무늬 색상" value={background.custom.patternColor} onChange={patternColor => setBackground(current => ({ ...current, custom: { ...current.custom, patternColor } }))} />
+                <NumberControl label="무늬 크기" value={background.custom.patternSize} min={8} max={80} onChange={patternSize => setBackground(current => ({ ...current, custom: { ...current.custom, patternSize } }))} />
+                <NumberControl label="무늬 투명도" value={background.custom.patternOpacity} min={0} max={1} step={0.05} onChange={patternOpacity => setBackground(current => ({ ...current, custom: { ...current.custom, patternOpacity } }))} />
+              </>}
+              <p style={guideNote}>이미지 Asset은 삭제되지 않으며, 직접 제작 모드에서는 이미지가 겹쳐 표시되지 않습니다.</p>
+            </div>}
           </fieldset>
           <p style={guideNote}>Hero 디자인은 <a href="/admin/hero-presets">Hero 프레임 관리</a>에서 별도로 편집합니다. 기존 본문 테마의 Hero 설정 데이터는 유지됩니다.</p>
           <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Background 저장"}</button>
@@ -566,7 +590,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     {(state.error || notice) && <p role="status">{state.error || notice}</p>}
       </div>
       <aside className="admin-template-editor-preview">
-        <TemplateDraftPreview templateId={templateId} draft={state.draft ? { ...state.draft, typography, colors, buttonStyle, quickMenu } : null} assets={state.allAssets} loading={state.loading} />
+        <TemplateDraftPreview templateId={templateId} draft={state.draft ? { ...state.draft, background, typography, colors, buttonStyle, quickMenu } : null} assets={state.allAssets} loading={state.loading} />
       </aside>
     </div>
   </section>;

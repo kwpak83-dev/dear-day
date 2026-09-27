@@ -1171,3 +1171,140 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-typography.classic-001 .classic-calendar-grid span{justify-content:center;text-align:center}
 .classic-001 .classic-dday .classic-dday-highlight{display:inline-block;padding:0 5px;border-radius:5px;background:color-mix(in srgb,var(--dd-color-accent,#b78b72) 15%,transparent);color:var(--dd-color-accent,#b78b72);font-weight:700}
 .dd-template-typography.classic-001 .classic-dday .classic-dday-highlight{font-family:var(--dd-body-font);font-size:var(--dd-body-size);line-height:var(--dd-body-line-height);letter-spacing:var(--dd-body-letter-spacing);font-weight:700}
+
+/* Published invitation and editor previews: continue the selected template background
+   through the sharing area instead of introducing an unrelated solid panel. */
+.dd-template-background .invitation-template-sections,
+.dd-template-background .public-invitation-sections,
+.dd-template-background .public-share-copy,
+.dd-template-background .public-share-copy.share-actions {
+  background:transparent;
+}
+.dd-template-background .public-share-copy .share-actions>button {
+  background:var(--dd-button-bg,var(--dd-color-button-bg,#b78b72));
+  color:var(--dd-button-text,var(--dd-color-button-text,#fff));
+}
+.dd-template-background .invitation-quick-menu {
+  background:var(--dd-quick-menu-bg,var(--dd-template-quick-bg,#fffaf5));
+}
+.dd-template-background .invitation-quick-menu button {
+  background:var(--dd-quick-menu-item-bg,var(--dd-button-bg,var(--dd-color-button-bg,#b78b72)));
+  color:var(--dd-quick-menu-item-text,var(--dd-button-text,var(--dd-color-button-text,#fff)));
+}
+
+/* Match the selected template's artwork on the fixed quick-menu tray,
+   including editor previews where the menu is portaled outside the template. */
+.dd-template-background .invitation-quick-menu,
+.invitation-quick-menu--desktop-live[style*="--dd-template-quick-image"] {
+  background-color:var(--dd-template-quick-bg,#fffaf5);
+  background-image:var(--dd-template-quick-image,none);
+  background-size:100% auto;
+  background-position:center;
+  background-repeat:repeat-y;
+}
+
+/* Editor full preview: scope the fixed tray to the invitation width and reserve
+   scrolling space so the share actions and footer are not obscured. */
+.full-preview-scroll{padding-bottom:110px}
+.full-preview-document > .invitation-quick-menu--editor-full{
+  position:fixed;
+  left:50%;
+  right:auto;
+  bottom:max(12px,env(safe-area-inset-bottom));
+  width:min(calc(100% - 24px),516px);
+  transform:translateX(-50%);
+  z-index:80;
+}
+.full-preview-document > .invitation-quick-menu--editor-full button{
+  background:var(--dd-quick-menu-item-bg,var(--dd-button-bg,var(--dd-invite-action-bg,transparent)));
+  color:var(--dd-quick-menu-item-text,var(--dd-button-text,var(--dd-invite-action-text,#674f45)));
+}
+.full-preview-document > .invitation-quick-menu--editor-full{
+  background-color:var(--dd-template-quick-bg,#fffaf5);
+  background-image:var(--dd-template-quick-image,none);
+  background-size:100% auto;
+  background-position:center;
+}
+
+/* User editor: show a realistic 390px mobile viewport instead of compressing
+   account-copy labels and quick-menu text into the old 286px mock phone. */
+@media (min-width:761px){
+  .create-layout{grid-template-columns:minmax(0,1fr) 480px;gap:40px}
+  .preview-panel{height:744px;padding:30px 34px}
+  .preview-phone{width:390px;height:650px;margin-top:20px}
+  .preview-content{height:595px}
+}
+.preview-content .public-account-card button{
+  flex-shrink:0;
+  white-space:nowrap;
+  overflow-wrap:normal;
+  word-break:keep-all;
+}
+.preview-phone > .invitation-quick-menu--desktop-live button span{
+  white-space:nowrap;
+  word-break:keep-all;
+}
+
+/* Live preview action labels: override generic template button width/wrapping,
+   without changing the published invitation or the full-screen preview. */
+.preview-content .dd-template-button-style .public-account-card button,
+.preview-content .public-account-card button {
+  width:auto;
+  min-width:max-content;
+  flex:0 0 auto;
+  padding:8px 12px;
+  font-size:11px;
+  line-height:1.25;
+  white-space:nowrap;
+  word-break:keep-all;
+  overflow-wrap:normal;
+}
+.preview-content .dd-template-button-style .public-share-copy .share-actions > button,
+.preview-content .public-share-copy .share-actions > button {
+  width:auto;
+  min-width:max-content;
+  flex:0 0 auto;
+  padding:9px 11px;
+  font-size:11px;
+  line-height:1.25;
+  white-space:nowrap;
+  word-break:keep-all;
+  overflow-wrap:normal;
+}
+.preview-content .public-share-copy .share-actions{
+  flex-wrap:nowrap;
+  gap:8px;
+}
+.preview-content .public-share-copy .share-actions-notice{
+  display:none;
+}
+.preview-phone > .invitation-quick-menu--desktop-live button{
+  font-size:12px;
+  min-width:0;
+  padding:8px 5px;
+}
+.preview-phone > .invitation-quick-menu--desktop-live button span{
+  display:block;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  word-break:keep-all;
+}
+
+/* Account copy is a flex child inside the template button-style wrapper.
+   Override its configured 100% width and normal wrapping only in live preview. */
+.preview-content .invitation-template .public-account-card > div > button{
+  box-sizing:border-box;
+  width:max-content !important;
+  max-width:none !important;
+  min-width:max-content;
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap !important;
+  word-break:keep-all;
+  overflow-wrap:normal;
+  padding-inline:12px;
+}

@@ -40,19 +40,20 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
-  const isDesktopLivePreview = previewMode === "desktop-live" || previewMode === "admin-live" || previewMode === "admin-full";
+  const isEditorFullPreview = previewMode === "editor-full";
+  const isDesktopLivePreview = previewMode === "desktop-live" || previewMode === "admin-live" || previewMode === "admin-full" || isEditorFullPreview;
 
   useEffect(() => {
-    if (!isDesktopLivePreview) return;
+    const templateRoot = markerRef.current?.closest(".invitation-template");
+    if (!templateRoot) return;
     const phone = (previewMode === "admin-live" || previewMode === "admin-full")
       ? markerRef.current?.closest(".admin-draft-preview-device, .admin-draft-full-preview-device") || null
-      : markerRef.current?.closest(".preview-phone") || null;
+      : markerRef.current?.closest(isEditorFullPreview ? ".full-preview-document" : ".preview-phone") || null;
     const scroller = (previewMode === "admin-live" || previewMode === "admin-full")
       ? markerRef.current?.closest(".admin-draft-preview-scroll, .admin-draft-full-preview") || null
-      : markerRef.current?.closest(".preview-content") || null;
-    setDesktopLivePortal(phone);
-    const templateRoot = markerRef.current?.closest(".invitation-template");
-    if (templateRoot) {
+      : markerRef.current?.closest(isEditorFullPreview ? ".full-preview-scroll" : ".preview-content") || null;
+    if (isDesktopLivePreview) setDesktopLivePortal(phone);
+    {
       const computed = getComputedStyle(templateRoot);
       setDesktopLiveStyle({
         "--dd-invite-action-bg": computed.getPropertyValue("--dd-invite-action-bg"),
@@ -60,12 +61,14 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
         "--dd-invite-action-accent": computed.getPropertyValue("--dd-invite-action-accent"),
         "--dd-invite-action-divider": computed.getPropertyValue("--dd-invite-action-divider"),
         "--dd-invite-action-radius": computed.getPropertyValue("--dd-invite-action-radius"),
-        "--dd-quick-menu-bg": computed.getPropertyValue("--dd-quick-menu-bg"),
+        "--dd-quick-menu-bg": computed.getPropertyValue("--dd-quick-menu-bg") || computed.getPropertyValue("--dd-template-quick-bg"),
+        "--dd-template-quick-bg": computed.getPropertyValue("--dd-template-quick-bg"),
+        "--dd-template-quick-image": computed.getPropertyValue("--dd-template-quick-image"),
         "--dd-quick-menu-text": computed.getPropertyValue("--dd-quick-menu-text"),
         "--dd-quick-menu-border": computed.getPropertyValue("--dd-quick-menu-border"),
         "--dd-quick-menu-radius": computed.getPropertyValue("--dd-quick-menu-radius"),
-        "--dd-quick-menu-item-bg": computed.getPropertyValue("--dd-quick-menu-item-bg"),
-        "--dd-quick-menu-item-text": computed.getPropertyValue("--dd-quick-menu-item-text"),
+        "--dd-quick-menu-item-bg": computed.getPropertyValue("--dd-quick-menu-item-bg").trim() || computed.getPropertyValue("--dd-button-bg").trim() || computed.getPropertyValue("--dd-invite-action-bg").trim() || undefined,
+        "--dd-quick-menu-item-text": computed.getPropertyValue("--dd-quick-menu-item-text").trim() || computed.getPropertyValue("--dd-button-text").trim() || computed.getPropertyValue("--dd-invite-action-text").trim() || undefined,
         "--dd-quick-menu-item-radius": computed.getPropertyValue("--dd-quick-menu-item-radius"),
         "--dd-quick-menu-item-border": computed.getPropertyValue("--dd-quick-menu-item-border"),
         "--dd-quick-menu-item-border-width": computed.getPropertyValue("--dd-quick-menu-item-border-width"),
@@ -82,14 +85,14 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
         "--dd-quick-menu-guestbook-icon-image": computed.getPropertyValue("--dd-quick-menu-guestbook-icon-image"),
       });
     }
-    if (!scroller) return;
+    if (!isDesktopLivePreview || !scroller) return;
 
     // The editor re-renders the invitation while fields/templates change. Always
     // restart the desktop LIVE PREVIEW quick-menu journey from the top.
     scroller.scrollTop = 0;
     desktopLiveScrolledRef.current = false;
-    setVisible(previewMode === "admin-live" || previewMode === "admin-full");
-  }, [isDesktopLivePreview, previewMode, invitation.templateId]);
+    setVisible(previewMode === "admin-live" || previewMode === "admin-full" || isEditorFullPreview);
+  }, [isDesktopLivePreview, isEditorFullPreview, previewMode, invitation.templateId]);
 
   useEffect(() => {
     if (!visible || !isDesktopLivePreview) return;
@@ -196,11 +199,11 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
 
   return <>
     <span ref={markerRef} className="invitation-quick-menu-trigger" aria-hidden="true" />
-    {visible && (isDesktopLivePreview && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} style={isDesktopLivePreview ? desktopLiveStyle : undefined} aria-label="초대장 빠른 메뉴">
+    {visible && (isDesktopLivePreview && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}${isEditorFullPreview ? " invitation-quick-menu--editor-full" : ""}`} style={isDesktopLivePreview ? desktopLiveStyle : undefined} aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
       {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
-    </nav>, desktopLivePortal) : <nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} aria-label="초대장 빠른 메뉴">
+    </nav>, desktopLivePortal) : <nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
       {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}

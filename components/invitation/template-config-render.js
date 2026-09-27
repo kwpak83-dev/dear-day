@@ -31,21 +31,45 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   const showCoverPhoto = hero?.mode !== "illustration";
 
   if (background) {
-    if (background.color) rootStyle.backgroundColor = background.color;
+    const custom = background.custom || {};
+    const mode = background.mode || (background.assetId ? "image" : "custom");
+    rootStyle.backgroundColor = background.color || "#ffffff";
     const overlay = rgba(background.overlayColor, background.overlayOpacity);
-    const layers = [overlay ? `linear-gradient(${overlay}, ${overlay})` : null,
-      backgroundUrl ? `url("${backgroundUrl}")` : null].filter(Boolean);
-    if (layers.length) {
-      rootStyle.backgroundImage = layers.join(", ");
-      if (backgroundUrl) {
-        rootStyle.backgroundSize = "100% auto";
-        rootStyle.backgroundPosition = "top center";
-        rootStyle.backgroundRepeat = "repeat-y";
-      } else {
-        rootStyle.backgroundSize = "cover";
-        rootStyle.backgroundPosition = "center";
+    const layers = [];
+    if (overlay) layers.push(`linear-gradient(${overlay}, ${overlay})`);
+    if (mode === "image" && backgroundUrl) {
+      layers.push(`url("${backgroundUrl}")`);
+      rootStyle.backgroundSize = "100% auto";
+      rootStyle.backgroundPosition = "top center";
+      rootStyle.backgroundRepeat = "repeat-y";
+    } else if (mode === "custom") {
+      if (custom.mode === "gradient") {
+        layers.push(`linear-gradient(${custom.angle ?? 135}deg, ${background.color || "#ffffff"}, ${custom.endColor || "#f3e8df"})`);
+      } else if (custom.mode === "pattern") {
+        const ink = rgba(custom.patternColor || "#bca08d", custom.patternOpacity ?? .25);
+        const size = custom.patternSize || 20;
+        const patterns = {
+          dots: `radial-gradient(circle, ${ink} 1.5px, transparent 2px)`,
+          grid: `linear-gradient(${ink} 1px, transparent 1px), linear-gradient(90deg, ${ink} 1px, transparent 1px)`,
+          diagonal: `repeating-linear-gradient(45deg, transparent 0, transparent ${size-1}px, ${ink} ${size-1}px, ${ink} ${size}px)`,
+          stripes: `repeating-linear-gradient(90deg, transparent 0, transparent ${size-1}px, ${ink} ${size-1}px, ${ink} ${size}px)`,
+          horizontal: `repeating-linear-gradient(0deg, transparent 0, transparent ${size-1}px, ${ink} ${size-1}px, ${ink} ${size}px)`,
+          cross: `linear-gradient(45deg, transparent 48%, ${ink} 49%, ${ink} 51%, transparent 52%), linear-gradient(-45deg, transparent 48%, ${ink} 49%, ${ink} 51%, transparent 52%)`,
+          checker: `conic-gradient(${ink} 25%, transparent 0 50%, ${ink} 0 75%, transparent 0)`,
+          diamonds: `linear-gradient(45deg, transparent 45%, ${ink} 46%, ${ink} 48%, transparent 49%), linear-gradient(-45deg, transparent 45%, ${ink} 46%, ${ink} 48%, transparent 49%)`,
+          waves: `radial-gradient(ellipse at 50% 100%, transparent 55%, ${ink} 58%, transparent 62%)`,
+          confetti: `radial-gradient(circle at 20% 25%, ${ink} 2px, transparent 3px), radial-gradient(circle at 75% 70%, ${ink} 1px, transparent 2px)`,
+        };
+        layers.push(patterns[custom.pattern] || patterns.dots);
+        rootStyle.backgroundSize = ["dots","grid","cross","checker","diamonds","waves","confetti"].includes(custom.pattern) ? `${size}px ${size}px` : "auto";
+        rootStyle.backgroundRepeat = "repeat";
       }
     }
+    if (layers.length) rootStyle.backgroundImage = layers.join(", ");
+    rootStyle["--dd-template-surface"] = background.color || "#fffaf5";
+    rootStyle["--dd-template-share-bg"] = "transparent";
+    rootStyle["--dd-template-quick-bg"] = background.color || "#fffaf5";
+    if (rootStyle.backgroundImage) rootStyle["--dd-template-quick-image"] = rootStyle.backgroundImage;
   }
   const backdrop = hero?.heroBackdrop;
   if (backdrop && backdrop.mode !== "inherit") {
