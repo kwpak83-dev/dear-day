@@ -72,7 +72,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
       </div>}
     {full && <div className="admin-draft-full-preview" role="dialog" aria-modal="true" aria-label="Draft 전체 미리보기" onKeyDown={(event) => { if (event.key === "Escape") setFull(false); }}>
       <div className="admin-draft-full-preview-toolbar" style={{ width, maxWidth: "100%" }}><strong>{`Draft 전체 미리보기 · ${width}px`}</strong><button type="button" onClick={() => setFull(false)}>닫기</button></div>
-      <div className="admin-draft-full-preview-device full-invitation-renderer" style={{ width, maxWidth: "100%" }}>{renderInvitation(width)}</div>
+      <div className="admin-draft-full-preview-device full-invitation-renderer" style={{ width, maxWidth: "100%" }}>{renderInvitation(width, "admin-full")}</div>
     </div>}
   </section>;
 }

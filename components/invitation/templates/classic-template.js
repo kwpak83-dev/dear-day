@@ -50,7 +50,7 @@ function ClassicDateSection({ eventDate, eventTime, title, wedding }) {
   </section>;
 }
 
-export default function ClassicTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, bgmControl, screenEffect, children }) {
+export default function ClassicTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, weddingContacts, bgmControl, screenEffect, children }) {
   const { kindLabel, title, detail, note, eventDate, eventTime, heroSchedule, schedule, venue, address, addressDetail, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map((value) => value.trim()).filter(Boolean) : [];
@@ -116,6 +116,8 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
         {brideRelation && <p>{brideRelation}</p>}
       </div>}
     </section>}
+
+    {weddingContacts}
 
     <ClassicDateSection eventDate={eventDate} eventTime={eventTime} title={title} wedding={wedding} />
 

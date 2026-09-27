@@ -40,15 +40,15 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
-  const isDesktopLivePreview = previewMode === "desktop-live" || previewMode === "admin-live";
+  const isDesktopLivePreview = previewMode === "desktop-live" || previewMode === "admin-live" || previewMode === "admin-full";
 
   useEffect(() => {
     if (!isDesktopLivePreview) return;
-    const phone = previewMode === "admin-live"
-      ? markerRef.current?.closest(".admin-draft-preview-device") || null
+    const phone = (previewMode === "admin-live" || previewMode === "admin-full")
+      ? markerRef.current?.closest(".admin-draft-preview-device, .admin-draft-full-preview-device") || null
       : markerRef.current?.closest(".preview-phone") || null;
-    const scroller = previewMode === "admin-live"
-      ? markerRef.current?.closest(".admin-draft-preview-scroll") || null
+    const scroller = (previewMode === "admin-live" || previewMode === "admin-full")
+      ? markerRef.current?.closest(".admin-draft-preview-scroll, .admin-draft-full-preview") || null
       : markerRef.current?.closest(".preview-content") || null;
     setDesktopLivePortal(phone);
     const templateRoot = markerRef.current?.closest(".invitation-template");
@@ -70,6 +70,9 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
         "--dd-quick-menu-item-border": computed.getPropertyValue("--dd-quick-menu-item-border"),
         "--dd-quick-menu-item-border-width": computed.getPropertyValue("--dd-quick-menu-item-border-width"),
         "--dd-quick-menu-font-size": computed.getPropertyValue("--dd-quick-menu-font-size"),
+        "--dd-quick-menu-button-height": computed.getPropertyValue("--dd-quick-menu-button-height"),
+      "--dd-quick-menu-font": computed.getPropertyValue("--dd-quick-menu-font"),
+        "--dd-quick-menu-font-weight": computed.getPropertyValue("--dd-quick-menu-font-weight"),
         "--dd-quick-menu-icon-size": computed.getPropertyValue("--dd-quick-menu-icon-size"),
         "--dd-quick-menu-rsvp-icon": computed.getPropertyValue("--dd-quick-menu-rsvp-icon"),
         "--dd-quick-menu-location-icon": computed.getPropertyValue("--dd-quick-menu-location-icon"),
@@ -85,7 +88,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     // restart the desktop LIVE PREVIEW quick-menu journey from the top.
     scroller.scrollTop = 0;
     desktopLiveScrolledRef.current = false;
-    setVisible(false);
+    setVisible(previewMode === "admin-live" || previewMode === "admin-full");
   }, [isDesktopLivePreview, previewMode, invitation.templateId]);
 
   useEffect(() => {
@@ -109,6 +112,9 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       "--dd-quick-menu-item-border": computed.getPropertyValue("--dd-quick-menu-item-border"),
       "--dd-quick-menu-item-border-width": computed.getPropertyValue("--dd-quick-menu-item-border-width"),
       "--dd-quick-menu-font-size": computed.getPropertyValue("--dd-quick-menu-font-size"),
+        "--dd-quick-menu-button-height": computed.getPropertyValue("--dd-quick-menu-button-height"),
+      "--dd-quick-menu-font": computed.getPropertyValue("--dd-quick-menu-font"),
+        "--dd-quick-menu-font-weight": computed.getPropertyValue("--dd-quick-menu-font-weight"),
       "--dd-quick-menu-icon-size": computed.getPropertyValue("--dd-quick-menu-icon-size"),
       "--dd-quick-menu-rsvp-icon": computed.getPropertyValue("--dd-quick-menu-rsvp-icon"),
       "--dd-quick-menu-location-icon": computed.getPropertyValue("--dd-quick-menu-location-icon"),
@@ -121,10 +127,10 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   });
 
   useEffect(() => {
-    if (visible) return;
+    if (visible || previewMode === "admin-live" || previewMode === "admin-full") return;
 
     const menuRoot = markerRef.current?.closest(".invitation-template");
-    const scrollRoot = previewMode === "admin-live"
+    const scrollRoot = (previewMode === "admin-live" || previewMode === "admin-full")
       ? markerRef.current?.closest(".admin-draft-preview-scroll") || null
       : markerRef.current?.closest(".preview-content, .full-preview-scroll, .admin-template-editor-preview, .admin-draft-full-preview") || null;
     const trigger = menuRoot?.querySelector(".classic-information, .romantic-information, .modern-information, .public-accounts");

@@ -1,3 +1,4 @@
+import WeddingContacts from "./wedding-contacts";
 import ClassicTemplate from "./templates/classic-template";
 import ModernTemplate from "./templates/modern-template";
 import RomanticTemplate from "./templates/romantic-template";
@@ -23,5 +24,5 @@ export default function InvitationRenderer({ invitation, eventKind, templateId, 
   const presentation = getInvitationPresentation(invitation, eventKind);
   const normalizedConfig = normalizeTemplateConfig(templateConfig);
   const bgmUrl = normalizedConfig.bgm?.mode === "asset" ? templateAssets?.[normalizedConfig.bgm.assetId] : null;
-  return <Template presentation={presentation} templateConfig={normalizedConfig} templateAssets={templateAssets} eventKind={eventKind || invitation.eventKind || "wedding"} placeActions={placeActions} bgmControl={<TemplateBgm src={bgmUrl} />} screenEffect={<TemplateScreenEffect config={normalizedConfig} assets={templateAssets} />}>{children}</Template>;
+  return <Template presentation={presentation} templateConfig={normalizedConfig} templateAssets={templateAssets} eventKind={eventKind || invitation.eventKind || "wedding"} placeActions={placeActions} weddingContacts={<WeddingContacts invitation={invitation} />} bgmControl={<TemplateBgm src={bgmUrl} />} screenEffect={<TemplateScreenEffect config={normalizedConfig} assets={templateAssets} />}>{children}</Template>;
 }

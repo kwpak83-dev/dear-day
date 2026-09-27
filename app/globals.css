@@ -902,6 +902,8 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .classic-001 .classic-message blockquote{max-width:390px;margin:0 auto;white-space:pre-line;line-height:2}
 .classic-001 .classic-invitation-family{display:grid;gap:9px;margin:42px auto 0;padding-top:0;max-width:390px;border-top:0;text-align:center}
 .classic-001 .classic-invitation-family p{margin:0;color:var(--dd-color-text,var(--classic-ink));font:400 13px/1.8 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:.01em}
+/* Admin Typography > Body controls the wedding family relationship text when configured. */
+.dd-template-typography.classic-001 .classic-invitation-family p{font-family:var(--dd-body-font);font-size:var(--dd-body-size);font-weight:var(--dd-body-weight);line-height:var(--dd-body-line-height);letter-spacing:var(--dd-body-letter-spacing);text-align:var(--dd-body-align)}
 
 /* Classic editorial flow: concise date/place lead-in before Invitation. */
 .classic-001 .classic-information-before-invitation{padding-top:44px;padding-bottom:42px;text-align:center}
@@ -1079,3 +1081,76 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Shared quick-menu styling belongs to the three action buttons, not the tray. */
 .invitation-quick-menu button{background:var(--dd-quick-menu-item-bg,var(--dd-invite-action-bg,transparent));color:var(--dd-quick-menu-item-text,var(--dd-invite-action-text,#674f45));border-radius:var(--dd-quick-menu-item-radius,var(--dd-invite-action-radius,0));border-style:solid;border-width:var(--dd-quick-menu-item-border-width,0);border-color:var(--dd-quick-menu-item-border,transparent)}
 .invitation-quick-menu button+button{border-left-width:var(--dd-quick-menu-item-border-width,0);border-left-color:var(--dd-quick-menu-item-border,var(--dd-invite-action-divider,rgba(218,201,191,.7)))}
+
+/* Keep the draft full-preview quick menu inside its phone-sized device. */
+.admin-draft-full-preview-device{position:relative;padding-bottom:84px}
+.admin-draft-full-preview-device > .invitation-quick-menu--desktop-live{position:sticky;left:8px;right:8px;bottom:8px;width:calc(100% - 16px);max-width:none;margin:-76px 8px 8px;transform:none;z-index:80}
+.admin-draft-full-preview-device > .invitation-bottom-sheet-layer--preview{position:sticky;left:0;bottom:0;width:100%;height:min(680px,80vh);z-index:95;overflow:hidden}
+
+/* Compact DearDay footer and shared button typography. */
+.dearday-brand-footer--compact{padding:20px 12px 18px;gap:9px}
+.dearday-compact-logo img{display:block;width:116px;max-width:100%;height:auto}
+.dearday-compact-categories{margin:0;font-size:10px;line-height:1.5;color:#806b62;white-space:normal}
+.dearday-compact-action{display:inline-flex;align-items:center;justify-content:center;gap:9px;color:#806b62;font-size:11px;text-decoration:none}
+.dearday-compact-arrow{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#b88b82;color:white;font-size:15px}
+.dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button){font-family:var(--dd-button-font,Arial,sans-serif)}
+.invitation-quick-menu button{font-family:var(--dd-quick-menu-font,Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif)}
+
+/* Wedding contact actions beneath the invitation message. */
+.dd-wedding-contacts{padding:22px 16px;margin:0 auto;text-align:center;color:var(--dd-color-text,#684d43);font-family:var(--dd-body-font-family,inherit)}
+.dd-contact-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.dd-contact-person{display:grid;justify-items:center;gap:9px;padding:7px 2px;font-size:13px}
+.dd-contact-actions{display:flex;align-items:center;justify-content:center;gap:22px}
+.dd-contact-actions a{display:inline-grid;place-items:center;min-width:28px;min-height:28px;font-size:23px;color:inherit;text-decoration:none}
+.dd-contact-toggle{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:15px auto 8px;padding:9px;border:0;background:transparent;color:inherit;font-size:12px;cursor:pointer}
+.dd-contact-parents{padding-top:8px;border-top:1px solid var(--dd-color-divider,#e8e2de)}
+.dd-contact-parents>div>strong{display:block;margin:7px 0 10px;font-size:12px;font-weight:500}
+
+/* Keep the actual Hero visible while adjusting text on a phone. */
+.hero-editor-live-preview{position:sticky;top:8px;z-index:12;margin:10px 0 16px;padding:8px;border:1px solid #eadfd8;border-radius:12px;background:#fffaf7;box-shadow:0 5px 16px rgba(80,55,44,.12)}
+.hero-editor-live-preview-label{text-align:center;font-size:10px;letter-spacing:.08em;color:#8c7468;margin-bottom:7px}
+.hero-editor-live-preview-frame{width:min(100%,245px);margin:auto;max-height:260px;overflow:hidden}
+.hero-editor-live-preview-frame>.invitation-template{min-height:0!important;width:100%;margin:0;box-shadow:none}
+.hero-editor-live-preview-frame>.invitation-template>:not(.classic-hero):not(.modern-hero):not(.romantic-hero){display:none!important}
+.hero-editor-live-preview-frame .classic-hero,.hero-editor-live-preview-frame .modern-hero,.hero-editor-live-preview-frame .romantic-hero{min-height:0!important;margin:0!important}
+@media(min-width:901px){.hero-editor-live-preview{position:relative;top:auto}}
+
+/* Explicit font shorthand for quick-menu items (including portaled previews). */
+.invitation-quick-menu button{font:var(--dd-quick-menu-font-size,11px)/1.25 var(--dd-quick-menu-font,Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif)}
+.hero-edit-section .hero-text-reset-actions{display:flex;gap:8px;flex-wrap:wrap}
+.hero-edit-section .hero-text-reset-actions button,.hero-edit-section .hero-add-text-button,.hero-edit-section .hero-reset-all-button{border:1px solid #d7bdb0;border-radius:9px;background:#fffaf7;color:#705348;padding:10px 14px;font-size:12px;font-weight:600}
+.hero-edit-section .hero-add-text-button{background:#f6e8df;border-color:#cda99b}
+.hero-edit-section .hero-reset-all-button{background:#fff5f3;border-color:#d5a19c;color:#a34c48}
+
+/* Sync only text size and button height; keep three equal columns and icon size independent. */
+.invitation-quick-menu button{min-height:var(--dd-quick-menu-button-height,0px)}
+
+/* Explicit button weight; synchronized quick-menu inherits the same value. */
+.dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button){font-weight:var(--dd-button-font-weight,400)}
+.invitation-quick-menu button{font-weight:var(--dd-quick-menu-font-weight,400)}
+
+/* Center shared action labels regardless of configured width and height.
+   Excludes the Quick Menu, which intentionally has separate icon/text rows. */
+.dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button){display:inline-flex;align-items:center;justify-content:center;text-align:center;vertical-align:middle;line-height:1.25;white-space:normal}
+
+/* Hero editor: scale the entire invitation Hero instead of clipping its lower text.
+   Sticky positioning is bounded by the Hero editing section. */
+.hero-edit-section{position:relative}
+.hero-editor-live-preview-frame{width:245px;max-width:100%;height:335px;max-height:none;overflow:hidden;position:relative}
+.hero-editor-live-preview-frame>.invitation-template{width:390px!important;max-width:none!important;min-height:0!important;transform:scale(.628205);transform-origin:top left;margin:0!important}
+.hero-editor-live-preview-frame .classic-hero,.hero-editor-live-preview-frame .modern-hero,.hero-editor-live-preview-frame .romantic-hero{width:390px!important;max-width:none!important}
+.hero-text-accordion{border:1px solid #eadfd8;border-radius:10px;margin-bottom:12px;background:#fffdfb}
+.hero-text-accordion>summary{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:14px 12px;font-weight:650;list-style:none}
+.hero-text-accordion>summary::-webkit-details-marker{display:none}
+.hero-text-accordion[open]>summary{border-bottom:1px solid #eadfd8}
+.hero-text-accordion[open]>summary span{transform:rotate(180deg)}
+.hero-text-accordion-fields{display:grid;gap:9px;padding:12px}
+@media(max-width:600px){.hero-editor-live-preview{top:6px;padding:6px;margin-bottom:12px}.hero-editor-live-preview-frame{height:335px}}
+
+/* The measured frame follows the actual Hero's rendered height. */
+.hero-editor-live-preview-frame{height:auto;max-height:none;overflow:hidden}
+.hero-editor-live-preview-scaled{width:390px;transform-origin:top left}
+.hero-editor-live-preview-scaled>.invitation-template{width:390px!important;max-width:none!important;min-height:0!important;margin:0!important;box-shadow:none}
+.hero-editor-live-preview-scaled>.invitation-template>:not(.classic-hero):not(.modern-hero):not(.romantic-hero){display:none!important}
+.hero-editor-live-preview-scaled .classic-hero,.hero-editor-live-preview-scaled .modern-hero,.hero-editor-live-preview-scaled .romantic-hero{width:390px!important;max-width:none!important;margin:0!important}
+@media(max-width:600px){.hero-editor-live-preview-frame{height:auto}}
