@@ -1165,7 +1165,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-sections-configured .dd-wedding-contacts{order:calc(var(--dd-section-invitation-order) + 0.25)}
 
 /* Wedding parent-contact toggle uses the shared template Button Style controls. */
-.dd-template-button-style .dd-contact-toggle{width:100%;max-width:100%;min-width:0;margin:15px auto 8px;padding:8px 12px;gap:10px;white-space:nowrap}
+.invitation-template.dd-template-button-style .dd-wedding-contacts button.dd-contact-toggle{width:100%;max-width:100%;min-width:0;flex-shrink:0;margin:15px auto 8px;padding:8px 12px;gap:10px;white-space:nowrap}
 /* DATE remains Caption / Small; all other Classic calendar/date text follows Body. */
 .dd-template-typography.classic-001 .classic-date :is(.classic-date-summary,.classic-calendar-month,.classic-calendar-grid span,.classic-calendar-weekdays span,.classic-dday,.classic-dday strong){font-family:var(--dd-body-font);font-size:var(--dd-body-size);font-weight:var(--dd-body-weight);line-height:var(--dd-body-line-height);letter-spacing:var(--dd-body-letter-spacing);text-align:var(--dd-body-align)}
 .dd-template-typography.classic-001 .classic-calendar-grid span{justify-content:center;text-align:center}
