@@ -17,7 +17,7 @@ export async function writeToClipboard(value) {
   if (!copied) throw new Error("Clipboard unavailable");
 }
 
-export default function ShareActions({ path, title = "DearDay 초대장", text, className = "", showPath = false }) {
+export default function ShareActions({ path, title = "DearDay 초대장", text, className = "", showPath = false, previewOnly = false }) {
   const [notice, setNotice] = useState("");
   const [copied, setCopied] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
@@ -42,6 +42,7 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
     noticeTimer.current = window.setTimeout(() => { setNotice(""); setCopied(false); }, 2200);
   };
   const copy = async (fallback = false) => {
+    if (previewOnly) return showNotice("미리보기입니다. 발행 후 공유할 수 있어요.");
     try {
       await writeToClipboard(publicUrl());
       showNotice(fallback ? "공유 기능을 지원하지 않아 링크를 복사했습니다." : "링크가 복사되었습니다.", true);
@@ -50,6 +51,7 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
     }
   };
   const share = async () => {
+    if (previewOnly) return showNotice("미리보기입니다. 발행 후 공유할 수 있어요.");
     if (!navigator.share) return copy(true);
     try {
       await navigator.share({ title, text: text || `${title}을 확인해 주세요.`, url: publicUrl() });
@@ -59,6 +61,7 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
     }
   };
   const openQr = async () => {
+    if (previewOnly) return showNotice("미리보기입니다. 발행 후 QR 코드를 사용할 수 있어요.");
     const url = publicUrl();
     setQrOpen(true);
     setQrUrl(url);
