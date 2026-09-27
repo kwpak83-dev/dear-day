@@ -68,6 +68,8 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
       <blockquote>{message}</blockquote>
     </section>}
 
+    {weddingContacts}
+
     {hasCouple && <section className="romantic-section romantic-couple">
       <SectionHeading eyebrow="THE GROOM & BRIDE">신랑 · 신부</SectionHeading>
       <div className="romantic-couple-grid">
@@ -76,8 +78,17 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
       </div>
     </section>}
 
-    {weddingContacts}
+    {hasInformation && <section className="romantic-section romantic-information">
+      <SectionHeading eyebrow={wedding ? "WEDDING INFORMATION" : "EVENT INFORMATION"}>{wedding ? "예식 안내" : "행사 안내"}</SectionHeading>
+      {schedule && <time>{schedule}</time>}
+      {venue && <strong>{venue}</strong>}
+      {address && <p>{address}</p>}
+      {placeActions}
+    </section>}
 
+    {children && <div className="invitation-template-sections">{children}</div>}
+  </article>;
+}
     {hasInformation && <section className="romantic-section romantic-information">
       <SectionHeading eyebrow={wedding ? "WEDDING INFORMATION" : "EVENT INFORMATION"}>{wedding ? "예식 안내" : "행사 안내"}</SectionHeading>
       {schedule && <time>{schedule}</time>}
