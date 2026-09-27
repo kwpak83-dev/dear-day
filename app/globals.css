@@ -1119,3 +1119,6 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .hero-edit-section .hero-text-reset-actions button,.hero-edit-section .hero-add-text-button,.hero-edit-section .hero-reset-all-button{border:1px solid #d7bdb0;border-radius:9px;background:#fffaf7;color:#705348;padding:10px 14px;font-size:12px;font-weight:600}
 .hero-edit-section .hero-add-text-button{background:#f6e8df;border-color:#cda99b}
 .hero-edit-section .hero-reset-all-button{background:#fff5f3;border-color:#d5a19c;color:#a34c48}
+
+/* Sync only text size and button height; keep three equal columns and icon size independent. */
+.invitation-quick-menu button{min-height:var(--dd-quick-menu-button-height,0px)}
