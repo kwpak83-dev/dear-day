@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { HERO_FONTS } from "../../../../lib/hero-fonts";
 
 const json = (body, status = 200) => NextResponse.json(body, { status });
 const statuses = new Set(["draft", "on_sale", "stopped"]);
@@ -27,7 +28,7 @@ async function getAdmin(request) {
 }
 const decimal=(value,min,max)=>typeof value==="number"&&Number.isFinite(value)&&value>=min&&value<=max;
 const hex=(value)=>typeof value==="string"&&/^#[0-9a-fA-F]{6}$/.test(value);
-const fontIds=new Set(["noto-serif-kr","nanum-myeongjo","gowun-batang","gowun-dodum","noto-sans-kr","playfair-display","cormorant-garamond","great-vibes","allura","alex-brush","parisienne","dancing-script"]);
+const fontIds=new Set(HERO_FONTS.map((font)=>font.id));
 function validConfig(value){
   if(!value||typeof value!=="object"||Array.isArray(value)) return false;
   const allowed=["mode","aspectRatio","positionX","positionY","textYPercent","scheduleFontSize","nameFontSize","nameFontFamily","nameFontWeight","nameLineHeight","nameLetterSpacing","nameTextAlign","nameColor","separatorFontSize","separatorColor","zoom","overlayColor","overlayOpacity","headerVisible","mastheadVisible","mastheadText","display","textLayers"];
