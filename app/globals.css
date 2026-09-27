@@ -1146,3 +1146,11 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .hero-text-accordion[open]>summary span{transform:rotate(180deg)}
 .hero-text-accordion-fields{display:grid;gap:9px;padding:12px}
 @media(max-width:600px){.hero-editor-live-preview{top:6px;padding:6px;margin-bottom:12px}.hero-editor-live-preview-frame{height:335px}}
+
+/* The measured frame follows the actual Hero's rendered height. */
+.hero-editor-live-preview-frame{height:auto;max-height:none;overflow:hidden}
+.hero-editor-live-preview-scaled{width:390px;transform-origin:top left}
+.hero-editor-live-preview-scaled>.invitation-template{width:390px!important;max-width:none!important;min-height:0!important;margin:0!important;box-shadow:none}
+.hero-editor-live-preview-scaled>.invitation-template>:not(.classic-hero):not(.modern-hero):not(.romantic-hero){display:none!important}
+.hero-editor-live-preview-scaled .classic-hero,.hero-editor-live-preview-scaled .modern-hero,.hero-editor-live-preview-scaled .romantic-hero{width:390px!important;max-width:none!important;margin:0!important}
+@media(max-width:600px){.hero-editor-live-preview-frame{height:auto}}
