@@ -67,6 +67,8 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
       <blockquote>{message}</blockquote>
     </section>}
 
+    {weddingContacts}
+
     {hasCouple && <section className="modern-section modern-couple">
       <SectionHeading eyebrow="GROOM AND BRIDE">신랑 · 신부</SectionHeading>
       <div className={`modern-couple-grid count-${couple.length}`}>
@@ -75,8 +77,19 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
       </div>
     </section>}
 
-    {weddingContacts}
+    {hasInformation && <section className="modern-section modern-information">
+      <SectionHeading eyebrow={wedding ? "WEDDING INFORMATION" : "EVENT INFORMATION"}>{wedding ? "예식 정보" : "행사 정보"}</SectionHeading>
+      <div className="modern-information-body">
+        {schedule && <time>{schedule}</time>}
+        {venue && <strong>{venue}</strong>}
+        {address && <p>{address}</p>}
+        {placeActions}
+      </div>
+    </section>}
 
+    {children && <div className="invitation-template-sections">{children}</div>}
+  </article>;
+}
     {hasInformation && <section className="modern-section modern-information">
       <SectionHeading eyebrow={wedding ? "WEDDING INFORMATION" : "EVENT INFORMATION"}>{wedding ? "예식 정보" : "행사 정보"}</SectionHeading>
       <div className="modern-information-body">
