@@ -5,7 +5,7 @@ function SectionHeading({ eyebrow, children }) {
   return <header className="modern-section-heading"><p>{eyebrow}</p><h3>{children}</h3><i aria-hidden="true" /></header>;
 }
 
-export default function ModernTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, bgmControl, screenEffect, children }) {
+export default function ModernTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, weddingContacts, bgmControl, screenEffect, children }) {
   const { kindLabel, title, detail, note, heroSchedule, schedule, venue, address, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map(value => value.trim()).filter(Boolean) : [];
@@ -74,6 +74,8 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
         {couple[1] && <p><small>BRIDE</small><strong>{couple[1]}</strong></p>}
       </div>
     </section>}
+
+    {weddingContacts}
 
     {hasInformation && <section className="modern-section modern-information">
       <SectionHeading eyebrow={wedding ? "WEDDING INFORMATION" : "EVENT INFORMATION"}>{wedding ? "예식 정보" : "행사 정보"}</SectionHeading>
