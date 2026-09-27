@@ -31,7 +31,7 @@ const hex=(value)=>typeof value==="string"&&/^#[0-9a-fA-F]{6}$/.test(value);
 const fontIds=new Set(HERO_FONTS.map((font)=>font.id));
 function validConfig(value){
   if(!value||typeof value!=="object"||Array.isArray(value)) return false;
-  const allowed=["mode","aspectRatio","positionX","positionY","textYPercent","scheduleFontSize","nameFontSize","nameFontFamily","nameFontWeight","nameLineHeight","nameLetterSpacing","nameTextAlign","nameColor","separatorFontSize","separatorColor","zoom","overlayColor","overlayOpacity","headerVisible","mastheadVisible","mastheadText","display","textLayers"];
+  const allowed=["mode","aspectRatio","positionX","positionY","textYPercent","scheduleFontSize","nameFontSize","nameFontFamily","nameFontWeight","nameLineHeight","nameLetterSpacing","nameTextAlign","nameColor","separatorFontSize","separatorColor","zoom","overlayColor","overlayOpacity","headerVisible","mastheadVisible","mastheadText","display","textLayers","heroBackdrop"];
   if(Object.keys(value).some((key)=>!allowed.includes(key))) return false;
   const baseValid=heroModes.has(value.mode)&&heroRatios.has(value.aspectRatio)
     &&decimal(value.positionX,0,100)&&decimal(value.positionY,0,100)
@@ -54,6 +54,7 @@ function validConfig(value){
     &&Object.keys(value.display).length===heroDisplayKeys.length
     &&heroDisplayKeys.every((key)=>typeof value.display[key]==="boolean");
   if(!baseValid)return false;
+  if(value.heroBackdrop!==undefined){const b=value.heroBackdrop;if(!b||typeof b!=="object"||Array.isArray(b)||Object.keys(b).some(k=>!["mode","color","endColor","angle","pattern","patternColor","patternSize","patternOpacity"].includes(k))||!["inherit","solid","gradient","pattern"].includes(b.mode)||!hex(b.color)||!hex(b.endColor)||!decimal(b.angle,0,360)||!["dots","grid","diagonal","stripes"].includes(b.pattern)||!hex(b.patternColor)||!Number.isInteger(b.patternSize)||!decimal(b.patternSize,8,80)||!decimal(b.patternOpacity,0,1))return false;}
   if(value.textLayers===undefined)return true;
   if(!Array.isArray(value.textLayers)||value.textLayers.length>12)return false;
 
