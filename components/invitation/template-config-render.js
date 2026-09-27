@@ -76,6 +76,9 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   }
   const frame = hero?.photoFrame;
   if (frame && frame.shape !== "default") {
+    heroStyle.aspectRatio = (hero?.aspectRatio || "4:5").replace(":", " / ");
+    heroStyle.position = "relative";
+    heroStyle.overflow = "hidden";
     const width = frame.width ?? 100, height = frame.height ?? 100;
     heroMediaStyle.width = `${width}%`;
     heroMediaStyle.height = `${height}%`;
