@@ -1225,3 +1225,22 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   background-size:100% auto;
   background-position:center;
 }
+
+/* User editor: show a realistic 390px mobile viewport instead of compressing
+   account-copy labels and quick-menu text into the old 286px mock phone. */
+@media (min-width:761px){
+  .create-layout{grid-template-columns:minmax(0,1fr) 480px;gap:40px}
+  .preview-panel{height:744px;padding:30px 34px}
+  .preview-phone{width:390px;height:650px;margin-top:20px}
+  .preview-content{height:595px}
+}
+.preview-content .public-account-card button{
+  flex-shrink:0;
+  white-space:nowrap;
+  overflow-wrap:normal;
+  word-break:keep-all;
+}
+.preview-phone > .invitation-quick-menu--desktop-live button span{
+  white-space:nowrap;
+  word-break:keep-all;
+}
