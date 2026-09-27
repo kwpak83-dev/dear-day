@@ -370,11 +370,12 @@ function validColors(value) {
 }
 
 function validButtonStyle(value) {
-  return hasOnlyKeys(value, ["width", "height", "fontSize", "borderRadius", "borderWidth", "borderColor", "background", "text", "syncQuickMenu"]) &&
+  return hasOnlyKeys(value, ["width", "height", "fontSize", "borderRadius", "borderWidth", "borderColor", "background", "text", "fontFamily", "syncQuickMenu"]) &&
     Number.isInteger(value.width) && value.width >= 10 && value.width <= 100 &&
     (value.background === undefined || hexColor(value.background)) &&
     (value.text === undefined || hexColor(value.text)) &&
     (value.syncQuickMenu === undefined || typeof value.syncQuickMenu === "boolean") &&
+    (value.fontFamily === undefined || fontFamilies.has(value.fontFamily)) &&
     Number.isInteger(value.height) && value.height >= 32 && value.height <= 64 &&
     Number.isInteger(value.fontSize) && value.fontSize >= 10 && value.fontSize <= 18 &&
     Number.isInteger(value.borderRadius) && value.borderRadius >= 0 && value.borderRadius <= 32 &&
