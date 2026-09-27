@@ -1084,3 +1084,12 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .admin-draft-full-preview-device{position:relative;padding-bottom:84px}
 .admin-draft-full-preview-device > .invitation-quick-menu--desktop-live{position:sticky;left:8px;right:8px;bottom:8px;width:calc(100% - 16px);max-width:none;margin:-76px 8px 8px;transform:none;z-index:80}
 .admin-draft-full-preview-device > .invitation-bottom-sheet-layer--preview{position:sticky;left:0;bottom:0;width:100%;height:min(680px,80vh);z-index:95;overflow:hidden}
+
+/* Compact DearDay footer and shared button typography. */
+.dearday-brand-footer--compact{padding:20px 12px 18px;gap:9px}
+.dearday-compact-logo img{display:block;width:116px;max-width:100%;height:auto}
+.dearday-compact-categories{margin:0;font-size:10px;line-height:1.5;color:#806b62;white-space:normal}
+.dearday-compact-action{display:inline-flex;align-items:center;justify-content:center;gap:9px;color:#806b62;font-size:11px;text-decoration:none}
+.dearday-compact-arrow{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#b88b82;color:white;font-size:15px}
+.dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button){font-family:var(--dd-button-font,Arial,sans-serif)}
+.invitation-quick-menu button{font-family:var(--dd-quick-menu-font,Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif)}
