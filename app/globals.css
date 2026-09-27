@@ -1157,3 +1157,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* Published invitation: keep all three editor actions on one row on mobile. */
 @media (max-width:760px){.editor-actions-published{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr) minmax(0,1fr);gap:6px}.editor-actions-published>.save-button{min-width:0;padding:12px 5px;font-size:11px;white-space:nowrap;text-align:center}}
+
+/* Keep wedding contacts immediately after Invitation in flex-ordered templates. */
+.invitation-template .dd-wedding-contacts{order:2.25}
+.dd-template-sections-configured .dd-wedding-contacts{order:calc(var(--dd-section-invitation-order) + 0.25)}
