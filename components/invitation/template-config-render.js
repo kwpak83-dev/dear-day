@@ -51,6 +51,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     rootStyle["--dd-template-surface"] = background.color || "#fffaf5";
     rootStyle["--dd-template-share-bg"] = "transparent";
     rootStyle["--dd-template-quick-bg"] = background.color || "#fffaf5";
+    if (rootStyle.backgroundImage) rootStyle["--dd-template-quick-image"] = rootStyle.backgroundImage;
   }
   const backdrop = hero?.heroBackdrop;
   if (backdrop && backdrop.mode !== "inherit") {
