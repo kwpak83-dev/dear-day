@@ -27,12 +27,12 @@ const typographyDefaults = {
   body: { fontFamily: "sans", fontSize: 16, fontWeight: 400, lineHeight: 1.7, letterSpacing: 0, textAlign: "center" },
   caption: { fontFamily: "sans", fontSize: 13, fontWeight: 400, lineHeight: 1.5, letterSpacing: 0, textAlign: "center" },
 };
-const colorDefaults = { text: "#333333", title: "#222222", heroTitle: "#222222", muted: "#777777", accent: "#b78b72", buttonBackground: "#b78b72", buttonText: "#ffffff", divider: "#e8e2de" };
+const colorDefaults = { text: "#333333", title: "#222222", heroTitle: "#222222", muted: "#777777", accent: "#A77D78", buttonBackground: "#b78b72", buttonText: "#ffffff", divider: "#e8e2de" };
 const SHARED_BUTTON_PRESETS = [{id:"soft-rose",name:"Soft Rose",background:"#d78f9b",text:"#ffffff",borderColor:"#d78f9b",borderRadius:28,borderWidth:0},{id:"classic-gold",name:"Classic Gold",background:"#fffaf2",text:"#977b50",borderColor:"#b69b72",borderRadius:8,borderWidth:1},{id:"modern-minimal",name:"Modern Minimal",background:"#303030",text:"#ffffff",borderColor:"#303030",borderRadius:7,borderWidth:0},{id:"romantic-line",name:"Romantic Line",background:"#fff8f9",text:"#b97e89",borderColor:"#d9a3aa",borderRadius:28,borderWidth:1}];
 const buttonStyleDefaults = { width: 100, height: 44, fontSize: 12, borderRadius: 9, borderWidth: 0, borderColor: "#b78b72", background: "#b78b72", text: "#ffffff", fontFamily: "sans", fontWeight: 400, syncQuickMenu: false };
 const quickMenuDefaults = { rsvpIcon: "✓", locationIcon: "⌖", guestbookIcon: "♡", rsvpIconAssetId: null, locationIconAssetId: null, guestbookIconAssetId: null, fontSize: 11, iconSize: 18 };
 const typographyRoles = [["heroTitle", "Hero Title"], ["sectionTitle", "Section Title"], ["body", "Body"], ["caption", "Caption / Small"]];
-const colorLabels = [["text", "기본 글자색"], ["title", "본문 제목 색상"], ["muted", "보조 글자색"], ["accent", "포인트 색상"], ["buttonBackground", "버튼 배경"], ["buttonText", "버튼 글자"], ["divider", "구분선"]];
+const colorLabels = [["text", "기본 글자색"], ["title", "본문 제목 색상"], ["muted", "보조 글자색"], ["accent", "포인트 색상 · 달력 선택 날짜"], ["buttonBackground", "버튼 배경"], ["buttonText", "버튼 글자"], ["divider", "구분선"]];
 const fromConfig = (defaults, saved) => Object.fromEntries(Object.keys(defaults).map((key) => [key, saved && typeof saved === "object" && saved[key] !== undefined ? saved[key] : defaults[key]]));
 const heroFromConfig = (saved) => ({ ...fromConfig(heroDefaults, saved), display: fromConfig(heroDisplayDefaults, saved?.display) });
 const typographyFromConfig = (saved) => Object.fromEntries(typographyRoles.map(([role]) => [role, fromConfig(typographyDefaults[role], saved?.[role])]));
