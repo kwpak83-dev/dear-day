@@ -191,6 +191,22 @@ export default function CreateInvitation() {
   const [provider, setProvider] = useState("");
   const [published, setPublished] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
+  // Give the full-preview overlay its own history entry, so mobile Back returns to editing.
+  useEffect(() => {
+    if (!previewOpen) return;
+    const marker = "dearday-preview";
+    if (window.history.state?.deardayOverlay !== marker) {
+      window.history.pushState({ ...(window.history.state || {}), deardayOverlay: marker }, "", window.location.href);
+    }
+    const onBack = () => setPreviewOpen(false);
+    window.addEventListener("popstate", onBack);
+    return () => window.removeEventListener("popstate", onBack);
+  }, [previewOpen]);
+  const closePreview = () => {
+    if (window.history.state?.deardayOverlay === "dearday-preview") window.history.back();
+    else setPreviewOpen(false);
+  };
+
   const [eventStatus, setEventStatus] = useState("draft");
   const [eventReady, setEventReady] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
@@ -690,8 +706,8 @@ export default function CreateInvitation() {
       </section>
       <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div ref={livePreviewRef} className="preview-content full-invitation-renderer"><InvitationRenderer invitation={previewInvitation} eventKind={invitation.eventKind} templateId={previewTemplateId || invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets} placeActions={previewPlaceActions()}><><Gallery photos={galleryPhotos} idPrefix="live-preview-gallery" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} previewMode="desktop-live" /></></InvitationRenderer></div></div></aside>
     </div>
-    {previewOpen && <div className="full-preview-overlay" role="dialog" aria-modal="true" aria-label={eventStatus === "draft" ? "초대장 전체 미리보기" : "초대장 최종 미리보기"} onKeyDown={(event) => { if (event.key === "Escape") setPreviewOpen(false); }}>
-      <div className="full-preview-toolbar"><strong>{eventStatus === "draft" ? "DearDay Preview" : "최종 미리보기"}</strong><div><button type="button" className="secondary" onClick={() => setPreviewOpen(false)} autoFocus>계속 수정하기</button>{eventStatus === "draft" && <button type="button" onClick={preparePayment}>발행 준비하기</button>}{eventStatus === "paid" && <button type="button" onClick={requestPublish}>초대장 발행하기</button>}</div></div>
+    {previewOpen && <div className="full-preview-overlay" role="dialog" aria-modal="true" aria-label={eventStatus === "draft" ? "초대장 전체 미리보기" : "초대장 최종 미리보기"} onKeyDown={(event) => { if (event.key === "Escape") closePreview(); }}>
+      <div className="full-preview-toolbar"><strong>{eventStatus === "draft" ? "DearDay Preview" : "최종 미리보기"}</strong><div><button type="button" className="secondary" onClick={closePreview} autoFocus>계속 수정하기</button>{eventStatus === "draft" && <button type="button" onClick={preparePayment}>발행 준비하기</button>}{eventStatus === "paid" && <button type="button" onClick={requestPublish}>초대장 발행하기</button>}</div></div>
       {flowNotice && <p className="full-preview-notice" role="alert">{flowNotice}</p>}
       <div className="full-preview-scroll"><div className="full-preview-document full-invitation-renderer"><InvitationRenderer invitation={previewInvitation} eventKind={invitation.eventKind} templateId={previewTemplateId || invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets} placeActions={previewPlaceActions()}><><Gallery photos={galleryPhotos} idPrefix="full-preview-gallery" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} /></></InvitationRenderer></div></div>
     </div>}
