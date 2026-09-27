@@ -93,12 +93,14 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     set(rootStyle, "--dd-button-width", buttonStyle.width, "%");
     set(rootStyle, "--dd-button-height", buttonStyle.height, "px");
     set(rootStyle, "--dd-button-font-size", buttonStyle.fontSize, "px");
+    set(rootStyle, "--dd-button-font", fontStack(buttonStyle.fontFamily || "sans"));
     set(rootStyle, "--dd-button-radius", buttonStyle.borderRadius, "px");
     set(rootStyle, "--dd-button-border-width", buttonStyle.borderWidth, "px");
     set(rootStyle, "--dd-button-border-color", buttonStyle.borderColor);
     if (buttonStyle.background) set(rootStyle, "--dd-button-bg", buttonStyle.background);
     if (buttonStyle.text) set(rootStyle, "--dd-button-text", buttonStyle.text);
     if (buttonStyle.syncQuickMenu) {
+      set(rootStyle, "--dd-quick-menu-font", fontStack(buttonStyle.fontFamily || "sans"));
       if (buttonStyle.background) set(rootStyle, "--dd-quick-menu-item-bg", buttonStyle.background);
       if (buttonStyle.text) set(rootStyle, "--dd-quick-menu-item-text", buttonStyle.text);
       set(rootStyle, "--dd-quick-menu-item-radius", buttonStyle.borderRadius, "px");
