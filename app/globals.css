@@ -1103,3 +1103,12 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-contact-toggle{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:15px auto 8px;padding:9px;border:0;background:transparent;color:inherit;font-size:12px;cursor:pointer}
 .dd-contact-parents{padding-top:8px;border-top:1px solid var(--dd-color-divider,#e8e2de)}
 .dd-contact-parents>div>strong{display:block;margin:7px 0 10px;font-size:12px;font-weight:500}
+
+/* Keep the actual Hero visible while adjusting text on a phone. */
+.hero-editor-live-preview{position:sticky;top:8px;z-index:12;margin:10px 0 16px;padding:8px;border:1px solid #eadfd8;border-radius:12px;background:#fffaf7;box-shadow:0 5px 16px rgba(80,55,44,.12)}
+.hero-editor-live-preview-label{text-align:center;font-size:10px;letter-spacing:.08em;color:#8c7468;margin-bottom:7px}
+.hero-editor-live-preview-frame{width:min(100%,245px);margin:auto;max-height:260px;overflow:hidden}
+.hero-editor-live-preview-frame>.invitation-template{min-height:0!important;width:100%;margin:0;box-shadow:none}
+.hero-editor-live-preview-frame>.invitation-template>:not(.classic-hero):not(.modern-hero):not(.romantic-hero){display:none!important}
+.hero-editor-live-preview-frame .classic-hero,.hero-editor-live-preview-frame .modern-hero,.hero-editor-live-preview-frame .romantic-hero{min-height:0!important;margin:0!important}
+@media(min-width:901px){.hero-editor-live-preview{position:relative;top:auto}}
