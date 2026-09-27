@@ -286,9 +286,20 @@ const heroDisplayKeys = ["eyebrow","eventLabel","title","relations","detail","no
 const heroRatios = new Set(["4:5", "1:1", "3:4", "16:9"]);
 
 function validBackground(value) {
-  return hasOnlyKeys(value, ["color", "assetId", "overlayColor", "overlayOpacity"]) &&
-    hexColor(value.color) && optionalId(value.assetId) &&
-    hexColor(value.overlayColor) && decimal(value.overlayOpacity, 0, 1);
+  const legacy = hasOnlyKeys(value, ["color", "assetId", "overlayColor", "overlayOpacity"]);
+  const modern = hasOnlyKeys(value, ["mode", "color", "assetId", "overlayColor", "overlayOpacity", "custom"]);
+  if (!legacy && !modern) return false;
+  if (!hexColor(value.color) || !optionalId(value.assetId) ||
+      !hexColor(value.overlayColor) || !decimal(value.overlayOpacity, 0, 1)) return false;
+  if (legacy) return true;
+  const custom = value.custom;
+  return ["image", "custom"].includes(value.mode) &&
+    hasOnlyKeys(custom, ["mode", "endColor", "angle", "pattern", "patternColor", "patternSize", "patternOpacity"]) &&
+    ["solid", "gradient", "pattern"].includes(custom.mode) &&
+    hexColor(custom.endColor) && decimal(custom.angle, 0, 360) &&
+    ["dots", "grid", "diagonal", "stripes", "cross", "checker", "diamonds", "waves", "horizontal", "confetti"].includes(custom.pattern) &&
+    hexColor(custom.patternColor) && Number.isInteger(custom.patternSize) &&
+    decimal(custom.patternSize, 8, 80) && decimal(custom.patternOpacity, 0, 1);
 }
 
 function validHero(value) {
