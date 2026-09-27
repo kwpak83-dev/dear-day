@@ -101,6 +101,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     if (buttonStyle.text) set(rootStyle, "--dd-button-text", buttonStyle.text);
     if (buttonStyle.syncQuickMenu) {
       set(rootStyle, "--dd-quick-menu-font", fontStack(buttonStyle.fontFamily || "sans"));
+      set(rootStyle, "--dd-quick-menu-button-height", buttonStyle.height, "px");
       if (buttonStyle.background) set(rootStyle, "--dd-quick-menu-item-bg", buttonStyle.background);
       if (buttonStyle.text) set(rootStyle, "--dd-quick-menu-item-text", buttonStyle.text);
       set(rootStyle, "--dd-quick-menu-item-radius", buttonStyle.borderRadius, "px");
@@ -109,7 +110,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     }
   }
   if (quickMenu) {
-    set(rootStyle, "--dd-quick-menu-font-size", quickMenu.fontSize, "px");
+    set(rootStyle, "--dd-quick-menu-font-size", buttonStyle?.syncQuickMenu ? buttonStyle.fontSize : quickMenu.fontSize, "px");
     set(rootStyle, "--dd-quick-menu-icon-size", quickMenu.iconSize, "px");
     set(rootStyle, "--dd-quick-menu-rsvp-icon", JSON.stringify(quickMenu.rsvpIcon));
     set(rootStyle, "--dd-quick-menu-location-icon", JSON.stringify(quickMenu.locationIcon));
