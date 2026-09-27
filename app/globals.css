@@ -1191,3 +1191,14 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   background:var(--dd-quick-menu-item-bg,var(--dd-button-bg,var(--dd-color-button-bg,#b78b72)));
   color:var(--dd-quick-menu-item-text,var(--dd-button-text,var(--dd-color-button-text,#fff)));
 }
+
+/* Match the selected template's artwork on the fixed quick-menu tray,
+   including editor previews where the menu is portaled outside the template. */
+.dd-template-background .invitation-quick-menu,
+.invitation-quick-menu--desktop-live[style*="--dd-template-quick-image"] {
+  background-color:var(--dd-template-quick-bg,#fffaf5);
+  background-image:var(--dd-template-quick-image,none);
+  background-size:100% auto;
+  background-position:center;
+  background-repeat:repeat-y;
+}
