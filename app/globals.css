@@ -1132,3 +1132,17 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Center shared action labels regardless of configured width and height.
    Excludes the Quick Menu, which intentionally has separate icon/text rows. */
 .dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button){display:inline-flex;align-items:center;justify-content:center;text-align:center;vertical-align:middle;line-height:1.25;white-space:normal}
+
+/* Hero editor: scale the entire invitation Hero instead of clipping its lower text.
+   Sticky positioning is bounded by the Hero editing section. */
+.hero-edit-section{position:relative}
+.hero-editor-live-preview-frame{width:245px;max-width:100%;height:335px;max-height:none;overflow:hidden;position:relative}
+.hero-editor-live-preview-frame>.invitation-template{width:390px!important;max-width:none!important;min-height:0!important;transform:scale(.628205);transform-origin:top left;margin:0!important}
+.hero-editor-live-preview-frame .classic-hero,.hero-editor-live-preview-frame .modern-hero,.hero-editor-live-preview-frame .romantic-hero{width:390px!important;max-width:none!important}
+.hero-text-accordion{border:1px solid #eadfd8;border-radius:10px;margin-bottom:12px;background:#fffdfb}
+.hero-text-accordion>summary{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:14px 12px;font-weight:650;list-style:none}
+.hero-text-accordion>summary::-webkit-details-marker{display:none}
+.hero-text-accordion[open]>summary{border-bottom:1px solid #eadfd8}
+.hero-text-accordion[open]>summary span{transform:rotate(180deg)}
+.hero-text-accordion-fields{display:grid;gap:9px;padding:12px}
+@media(max-width:600px){.hero-editor-live-preview{top:6px;padding:6px;margin-bottom:12px}.hero-editor-live-preview-frame{height:335px}}
