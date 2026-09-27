@@ -62,6 +62,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
         "--dd-invite-action-radius": computed.getPropertyValue("--dd-invite-action-radius"),
         "--dd-quick-menu-bg": computed.getPropertyValue("--dd-quick-menu-bg") || computed.getPropertyValue("--dd-template-quick-bg"),
         "--dd-template-quick-bg": computed.getPropertyValue("--dd-template-quick-bg"),
+        "--dd-template-quick-image": computed.getPropertyValue("--dd-template-quick-image"),
         "--dd-quick-menu-text": computed.getPropertyValue("--dd-quick-menu-text"),
         "--dd-quick-menu-border": computed.getPropertyValue("--dd-quick-menu-border"),
         "--dd-quick-menu-radius": computed.getPropertyValue("--dd-quick-menu-radius"),
