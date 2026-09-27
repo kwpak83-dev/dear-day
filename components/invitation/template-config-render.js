@@ -47,6 +47,11 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
       }
     }
   }
+  if (background) {
+    rootStyle["--dd-template-surface"] = background.color || "#fffaf5";
+    rootStyle["--dd-template-share-bg"] = "transparent";
+    rootStyle["--dd-template-quick-bg"] = background.color || "#fffaf5";
+  }
   const backdrop = hero?.heroBackdrop;
   if (backdrop && backdrop.mode !== "inherit") {
     const base = backdrop.color || "#f3ebe2";
