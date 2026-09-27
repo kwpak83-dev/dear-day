@@ -58,7 +58,7 @@ function validConfig(value){
   if(!Array.isArray(value.textLayers)||value.textLayers.length>12)return false;
 
   return value.textLayers.every((layer)=>layer&&typeof layer==="object"&&!Array.isArray(layer)
-    &&Object.keys(layer).every((key)=>["id","text","fontId","fontSize","color","x","y","align","stroke","shadow","opacity","letterSpacing","lineHeight","rotation","gradient"].includes(key))
+    &&Object.keys(layer).every((key)=>["id","text","fontId","fontSize","color","x","y","align","stroke","shadow","opacity","letterSpacing","lineHeight","rotation","gradient","source"].includes(key))
     &&typeof layer.id==="string"&&/^[a-zA-Z0-9_-]{1,80}$/.test(layer.id)
     &&typeof layer.text==="string"&&layer.text.length<=200
     &&typeof layer.fontId==="string"&&fontIds.has(layer.fontId)
