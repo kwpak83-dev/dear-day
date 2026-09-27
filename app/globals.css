@@ -1202,3 +1202,26 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   background-position:center;
   background-repeat:repeat-y;
 }
+
+/* Editor full preview: scope the fixed tray to the invitation width and reserve
+   scrolling space so the share actions and footer are not obscured. */
+.full-preview-scroll{padding-bottom:110px}
+.full-preview-document > .invitation-quick-menu--editor-full{
+  position:fixed;
+  left:50%;
+  right:auto;
+  bottom:max(12px,env(safe-area-inset-bottom));
+  width:min(calc(100% - 24px),516px);
+  transform:translateX(-50%);
+  z-index:80;
+}
+.full-preview-document > .invitation-quick-menu--editor-full button{
+  background:var(--dd-quick-menu-item-bg,var(--dd-button-bg,var(--dd-invite-action-bg,transparent)));
+  color:var(--dd-quick-menu-item-text,var(--dd-button-text,var(--dd-invite-action-text,#674f45)));
+}
+.full-preview-document > .invitation-quick-menu--editor-full{
+  background-color:var(--dd-template-quick-bg,#fffaf5);
+  background-image:var(--dd-template-quick-image,none);
+  background-size:100% auto;
+  background-position:center;
+}
