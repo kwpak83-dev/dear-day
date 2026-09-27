@@ -1126,3 +1126,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Explicit button weight; synchronized quick-menu inherits the same value. */
 .dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button){font-weight:var(--dd-button-font-weight,400)}
 .invitation-quick-menu button{font-weight:var(--dd-quick-menu-font-weight,400)}
+
+/* Center shared action labels regardless of configured width and height.
+   Excludes the Quick Menu, which intentionally has separate icon/text rows. */
+.dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button){display:inline-flex;align-items:center;justify-content:center;text-align:center;vertical-align:middle;line-height:1.25;white-space:normal}
