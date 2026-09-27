@@ -1244,3 +1244,50 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   white-space:nowrap;
   word-break:keep-all;
 }
+
+/* Live preview action labels: override generic template button width/wrapping,
+   without changing the published invitation or the full-screen preview. */
+.preview-content .dd-template-button-style .public-account-card button,
+.preview-content .public-account-card button {
+  width:auto;
+  min-width:max-content;
+  flex:0 0 auto;
+  padding:8px 12px;
+  font-size:11px;
+  line-height:1.25;
+  white-space:nowrap;
+  word-break:keep-all;
+  overflow-wrap:normal;
+}
+.preview-content .dd-template-button-style .public-share-copy .share-actions > button,
+.preview-content .public-share-copy .share-actions > button {
+  width:auto;
+  min-width:max-content;
+  flex:0 0 auto;
+  padding:9px 11px;
+  font-size:11px;
+  line-height:1.25;
+  white-space:nowrap;
+  word-break:keep-all;
+  overflow-wrap:normal;
+}
+.preview-content .public-share-copy .share-actions{
+  flex-wrap:nowrap;
+  gap:8px;
+}
+.preview-content .public-share-copy .share-actions-notice{
+  display:none;
+}
+.preview-phone > .invitation-quick-menu--desktop-live button{
+  font-size:12px;
+  min-width:0;
+  padding:8px 5px;
+}
+.preview-phone > .invitation-quick-menu--desktop-live button span{
+  display:block;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  word-break:keep-all;
+}
