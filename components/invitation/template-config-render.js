@@ -64,7 +64,9 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
       heroStyle.backgroundImage = patterns[backdrop.pattern] || patterns.dots;
       heroStyle.backgroundSize = backdrop.pattern === "dots" || backdrop.pattern === "grid" ? `${size}px ${size}px` : "auto";
     }
-    heroMediaStyle.background = "transparent";
+    heroMediaStyle.backgroundColor = heroStyle.backgroundColor;
+    heroMediaStyle.backgroundImage = heroStyle.backgroundImage || "none";
+    if (heroStyle.backgroundSize) heroMediaStyle.backgroundSize = heroStyle.backgroundSize;
   }
   if (heroBackgroundUrl) {
     heroStyle.backgroundImage = `url("${heroBackgroundUrl}")`;
