@@ -43,16 +43,16 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const isDesktopLivePreview = previewMode === "desktop-live" || previewMode === "admin-live" || previewMode === "admin-full";
 
   useEffect(() => {
-    if (!isDesktopLivePreview) return;
+    const templateRoot = markerRef.current?.closest(".invitation-template");
+    if (!templateRoot) return;
     const phone = (previewMode === "admin-live" || previewMode === "admin-full")
       ? markerRef.current?.closest(".admin-draft-preview-device, .admin-draft-full-preview-device") || null
       : markerRef.current?.closest(".preview-phone") || null;
     const scroller = (previewMode === "admin-live" || previewMode === "admin-full")
       ? markerRef.current?.closest(".admin-draft-preview-scroll, .admin-draft-full-preview") || null
       : markerRef.current?.closest(".preview-content") || null;
-    setDesktopLivePortal(phone);
-    const templateRoot = markerRef.current?.closest(".invitation-template");
-    if (templateRoot) {
+    if (isDesktopLivePreview) setDesktopLivePortal(phone);
+    {
       const computed = getComputedStyle(templateRoot);
       setDesktopLiveStyle({
         "--dd-invite-action-bg": computed.getPropertyValue("--dd-invite-action-bg"),
@@ -84,7 +84,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
         "--dd-quick-menu-guestbook-icon-image": computed.getPropertyValue("--dd-quick-menu-guestbook-icon-image"),
       });
     }
-    if (!scroller) return;
+    if (!isDesktopLivePreview || !scroller) return;
 
     // The editor re-renders the invitation while fields/templates change. Always
     // restart the desktop LIVE PREVIEW quick-menu journey from the top.
@@ -202,7 +202,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
       {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
-    </nav>, desktopLivePortal) : <nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} aria-label="초대장 빠른 메뉴">
+    </nav>, desktopLivePortal) : <nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
       {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
