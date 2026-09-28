@@ -1316,3 +1316,13 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* The published quick menu is fixed but remains inside the template DOM.
    Keep the synchronized button palette independent from its artwork tray. */
 .dd-template-button-style .invitation-quick-menu button{background:var(--dd-quick-menu-item-bg,var(--dd-button-bg,var(--dd-invite-action-bg,transparent)));color:var(--dd-quick-menu-item-text,var(--dd-button-text,var(--dd-invite-action-text,#674f45)));border-radius:var(--dd-quick-menu-item-radius,var(--dd-button-radius,0px));border-color:var(--dd-quick-menu-item-border,var(--dd-button-border-color,transparent));border-width:var(--dd-quick-menu-item-border-width,var(--dd-button-border-width,0px))}
+
+/* Keep the published invitation's address-copy action centered on narrow phones. */
+@media (max-width: 767px) {
+  .shared-public-invitation .public-address-copy,
+  .invitation-template .public-address-copy {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+}
