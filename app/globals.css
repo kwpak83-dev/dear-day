@@ -1326,3 +1326,25 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
     text-align: center;
   }
 }
+
+/* Published invitation quick menu: A-type, L-size. Preserve inherited palette and borders. */
+@media (max-width: 767px) {
+  .invitation-quick-menu--a-large {
+    padding: 9px;
+    column-gap: 7px;
+    border-radius: var(--dd-quick-menu-radius, 19px);
+  }
+  .invitation-quick-menu--a-large > button {
+    padding: 10px 5px;
+    gap: 5px;
+    min-height: max(58px, var(--dd-quick-menu-button-height, 0px));
+  }
+  .invitation-quick-menu--a-large > button b {
+    width: 22px;
+    height: 22px;
+    background-size: contain;
+  }
+  .invitation-quick-menu--a-large > button span {
+    line-height: 1.35;
+  }
+}
