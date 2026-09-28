@@ -85,6 +85,19 @@ export async function POST(request) {
   const auth = await getAdmin(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
   const body = await request.json().catch(() => null);
+  if (body?.action === "inherit-draft-design") {
+    if (!uuidPattern.test(body.templateId || "") || !uuidPattern.test(body.sourceTemplateId || "") || body.templateId === body.sourceTemplateId) return json({ error: "원본과 대상 템플릿을 확인해 주세요." }, 400);
+    const inherited = await inheritedConfig(auth.serverClient, body.sourceTemplateId);
+    if (inherited.error) return json({ error: inherited.error }, 400);
+    const { data: draft, error: draftError } = await auth.serverClient.from("template_versions")
+      .select("id,config").eq("template_id", body.templateId).eq("status", "draft").maybeSingle();
+    if (draftError || !draft) return json({ error: "대상 템플릿의 편집 Draft를 확인해 주세요." }, 409);
+    const { data: updated, error } = await auth.adminClient.from("template_versions")
+      .update({ config: { ...(draft.config || {}), ...inherited.config } })
+      .eq("id", draft.id).eq("template_id", body.templateId).eq("status", "draft").select("id").maybeSingle();
+    if (error || !updated) return json({ error: "디자인 상속을 저장하지 못했어요." }, 500);
+    return json({ draftId: updated.id });
+  }
   const fields = readFields(body);
   if (!fields) return json({ error: "템플릿 기본정보를 확인해 주세요." }, 400);
   if (fields.status === "on_sale") return json({ error: "버전을 만든 뒤 판매 상태로 변경할 수 있어요." }, 409);
