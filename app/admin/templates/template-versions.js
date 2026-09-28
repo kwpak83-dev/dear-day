@@ -47,7 +47,7 @@ const sectionsFromConfig = (saved) => Array.isArray(saved) && saved.length === s
   saved.every((item) => sectionLabels.some(([key]) => key === item?.key) && typeof item.enabled === "boolean")
     ? saved.map(({ key, enabled }) => ({ key, enabled })) : defaultSections();
 const effectsDefaults = { scrollReveal: "none", screenEffect: null };
-const screenEffectDefaults = { count: 8, minSize: 18, maxSize: 36, minDuration: 10, maxDuration: 18, sway: 30, rotate: true, opacity: 0.8 };
+const screenEffectDefaults = { ornament: "blossom", motion: "fall", count: 8, minSize: 18, maxSize: 36, minDuration: 10, maxDuration: 18, sway: 30, rotate: true, opacity: 0.8 };
 const bgmDefaults = { mode: "none", assetId: null };
 const safeAreaDefaults = { top: 24, right: 16, bottom: 24, left: 16 };
 const colorValue = (value) => /^#[0-9a-fA-F]{6}$/.test(value) ? value : "#000000";
@@ -557,13 +557,18 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
             <fieldset style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 12 }}>
               <legend>Screen Effect</legend>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
-                <AssetSelect label="Screen Effect Asset" assets={screenEffectAssets} value={effects.screenEffect?.assetId || null} onChange={(assetId) => setEffects((current) => ({ ...current, screenEffect: assetId ? { ...screenEffectDefaults, ...(current.screenEffect || {}), assetId } : null }))} />
+                <label style={field}>장식 종류<select style={input} value={!effects.screenEffect?"none":effects.screenEffect.ornament||"custom"} onChange={(event)=>setEffects((current)=>({ ...current,screenEffect:event.target.value==="none"?null:{...screenEffectDefaults,...(current.screenEffect||{}),ornament:event.target.value,assetId:event.target.value==="custom"?(current.screenEffect?.assetId||null):null} }))}>
+                  {[["none","사용 안 함"],["blossom","벚꽃잎"],["green","초록 나뭇잎"],["autumn","가을 낙엽"],["snow","눈송이"],["star","별빛"],["heart","하트"],["custom","직접 업로드"]].map(([value,label])=><option key={value} value={value}>{label}</option>)}
+                </select></label>
+                {effects.screenEffect?.ornament==="custom"&&<AssetSelect label="직접 업로드 장식 (1개 반복)" assets={screenEffectAssets} value={effects.screenEffect.assetId||null} onChange={(assetId)=>setEffects((current)=>({...current,screenEffect:{...current.screenEffect,assetId}}))}/>}
+                {effects.screenEffect&&<label style={field}>움직임<select style={input} value={effects.screenEffect.motion||"fall"} onChange={(event)=>setEffects((current)=>({...current,screenEffect:{...current.screenEffect,motion:event.target.value}}))}><option value="fall">낙하</option><option value="flutter">흩날림</option><option value="sparkle">반짝임</option></select></label>}
+                {effects.screenEffect?.ornament==="custom"&&!effects.screenEffect.assetId&&<p style={{fontSize:12,color:"#ad514b",gridColumn:"1/-1"}}>화면 효과 Asset에서 투명 PNG/WebP 이미지를 먼저 등록하고 선택해 주세요.</p>}
                 {effects.screenEffect && <>
                   <NumberControl label="표시 개수" value={effects.screenEffect.count} min={1} max={24} onChange={(value) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, count: value } }))} />
                   <NumberControl label="최소 크기 px" value={effects.screenEffect.minSize} min={8} max={80} onChange={(value) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, minSize: value } }))} />
                   <NumberControl label="최대 크기 px" value={effects.screenEffect.maxSize} min={8} max={120} onChange={(value) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, maxSize: value } }))} />
-                  <NumberControl label="최소 낙하 시간 초" value={effects.screenEffect.minDuration} min={4} max={30} step={0.5} onChange={(value) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, minDuration: value } }))} />
-                  <NumberControl label="최대 낙하 시간 초" value={effects.screenEffect.maxDuration} min={4} max={40} step={0.5} onChange={(value) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, maxDuration: value } }))} />
+                  <NumberControl label="최소 애니메이션 시간 초" value={effects.screenEffect.minDuration} min={4} max={30} step={0.5} onChange={(value) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, minDuration: value } }))} />
+                  <NumberControl label="최대 애니메이션 시간 초" value={effects.screenEffect.maxDuration} min={4} max={40} step={0.5} onChange={(value) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, maxDuration: value } }))} />
                   <NumberControl label="좌우 흔들림 px" value={effects.screenEffect.sway} min={0} max={120} onChange={(value) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, sway: value } }))} />
                   <NumberControl label="투명도" value={effects.screenEffect.opacity} min={0.1} max={1} step={0.05} onChange={(value) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, opacity: value } }))} />
                   <label style={{ ...field, alignContent: "center" }}><span>회전 사용</span><input type="checkbox" checked={effects.screenEffect.rotate} onChange={(event) => setEffects((current) => ({ ...current, screenEffect: { ...current.screenEffect, rotate: event.target.checked } }))} /></label>
