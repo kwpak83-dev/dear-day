@@ -1408,3 +1408,26 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-editor-final p{line-height:1.7}
 .dd-editor-final button{margin:8px 8px 0 0}
 @media(max-width:800px){.create-page .editor-panel{padding-bottom:0}.dd-editor-sticky-actions{position:fixed;left:0;right:0;bottom:0;padding:9px 12px max(9px,env(safe-area-inset-bottom));box-shadow:0 -5px 18px #30251e12}.create-page .create-layout{padding-bottom:90px}.dd-editor-steps{gap:3px;padding:13px 5px}.dd-editor-steps button strong{font-size:11px}}
+
+/* User editor phase 2: first-step form visual refresh; existing fields and handlers unchanged */
+.create-page{background:#faf8f6}
+.create-page .create-layout{gap:38px}
+.create-page .editor-panel{min-width:0}
+.create-page .dd-editor-steps{box-shadow:0 5px 22px rgba(52,48,46,.035);border-color:#ebe4df}
+.create-page .dd-editor-step-intro{padding:0 4px 4px;margin-bottom:22px}
+.create-page .dd-editor-step-intro .section-kicker{color:#a66c5e;letter-spacing:.13em;font-size:11px;font-weight:750}
+.create-page .dd-editor-step-intro h1{font-family:Arial,"Apple SD Gothic Neo",sans-serif;font-size:29px;font-weight:750;letter-spacing:-.055em;color:#34302e;margin:9px 0 8px}
+.create-page .dd-editor-step-intro .editor-intro{font-size:14px;line-height:1.6;color:#827773}
+.create-page .dd-required-fields{display:grid;gap:14px}
+.create-page .dd-required-fields .form-section{margin:0;padding:22px 23px 7px;background:#fff;border:1px solid #ebe4df;border-radius:16px;box-shadow:0 3px 16px rgba(52,48,46,.025)}
+.create-page .dd-required-fields .form-section h2{font-family:Arial,"Apple SD Gothic Neo",sans-serif;font-size:17px;line-height:1.45;letter-spacing:-.04em;color:#34302e;margin:0 0 19px}
+.create-page .dd-required-fields .form-field>span{font-size:13px;line-height:1.5;color:#5b504b;margin-bottom:8px}
+.create-page .dd-required-fields .form-field{margin-bottom:17px;min-width:0}
+.create-page .dd-required-fields .form-field input,.create-page .dd-required-fields .form-field select,.create-page .dd-required-fields .form-field textarea{min-height:46px;border-color:#e5ded9;border-radius:10px;background:#fff;color:#34302e;font-size:14px;padding:11px 13px;transition:border-color .15s,box-shadow .15s}
+.create-page .dd-required-fields .form-field textarea{min-height:100px}
+.create-page .dd-required-fields .form-field input:focus,.create-page .dd-required-fields .form-field select:focus,.create-page .dd-required-fields .form-field textarea:focus{border-color:#a66c5e;box-shadow:0 0 0 3px rgba(166,108,94,.1);outline:none}
+.create-page .dd-required-fields .field-grid{gap:12px 14px}
+.create-page .dd-required-fields .field-grid>*{min-width:0}
+.create-page .dd-editor-sticky-actions{border:1px solid #ebe4df;border-radius:13px;padding:10px;background:#fff;box-shadow:0 -4px 18px rgba(52,48,46,.04)}
+.create-page .dd-editor-sticky-actions button{font-size:13px;min-height:46px}
+@media(max-width:800px){.create-page .create-layout{width:min(100% - 28px,560px);padding-top:26px;padding-bottom:100px}.create-page .dd-editor-steps{margin-bottom:20px}.create-page .dd-editor-step-intro h1{font-size:25px}.create-page .dd-required-fields{gap:12px}.create-page .dd-required-fields .form-section{padding:19px 16px 4px;border-radius:14px}.create-page .dd-required-fields .field-grid{gap:10px}.create-page .dd-required-fields .form-field input,.create-page .dd-required-fields .form-field select,.create-page .dd-required-fields .form-field textarea{font-size:16px}.create-page .dd-editor-sticky-actions{left:0;right:0;bottom:0;border-radius:0;border-width:1px 0 0;padding:9px 12px max(9px,env(safe-area-inset-bottom));gap:7px}.create-page .dd-editor-sticky-actions button{font-size:12px}}
