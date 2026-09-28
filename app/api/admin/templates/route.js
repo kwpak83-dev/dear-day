@@ -38,6 +38,38 @@ function readFields(body) {
   return { name: name.trim(), template_key: templateKey.trim(), description: description.trim(), status, is_visible: isVisible, sort_order: sortOrder };
 }
 
+const cleanInheritedConfig = (config) => {
+  const copy = (value) => value == null ? value : JSON.parse(JSON.stringify(value));
+  const background = copy(config?.background);
+  if (background) {
+    background.assetId = null;
+    if (background.mode === "image") background.mode = "custom";
+  }
+  const hero = copy(config?.hero);
+  if (hero) { hero.backgroundAssetId = null; hero.frameAssetId = null; }
+  const quickMenu = copy(config?.quickMenu);
+  if (quickMenu) for (const item of Object.values(quickMenu)) if (item && typeof item === "object") {
+    if ("assetId" in item) item.assetId = null;
+    if ("iconAssetId" in item) item.iconAssetId = null;
+  }
+  const effects = copy(config?.effects);
+  if (effects?.screenEffect?.assetId) effects.screenEffect = null;
+  return {
+    ...(background ? { background } : {}), ...(hero ? { hero } : {}),
+    ...Object.fromEntries(["typography","colors","buttonStyle","sections","safeArea"].filter(k => config?.[k] != null).map(k => [k,copy(config[k])])),
+    ...(quickMenu ? { quickMenu } : {}), ...(effects ? { effects } : {}),
+    decorations: [], bgm: { mode: "none", assetId: null },
+  };
+};
+async function inheritedConfig(client, sourceId) {
+  const { data, error } = await client.from("template_versions").select("config,status,version")
+    .eq("template_id", sourceId).order("version", { ascending: false });
+  if (error) return { error: "상속할 템플릿 설정을 불러오지 못했어요." };
+  const source = (data || []).find(x => x.status === "draft") || (data || []).find(x => x.status === "active") || data?.[0];
+  if (!source?.config?.background) return { error: "선택한 템플릿의 저장된 설정이 없어요." };
+  return { config: cleanInheritedConfig(source.config) };
+}
+
 export async function GET(request) {
   const auth = await getAdmin(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
@@ -60,32 +92,16 @@ export async function POST(request) {
   // Never copy uploaded asset references or alter the source template.
   const sourceId = body?.backgroundSourceTemplateId;
   if (sourceId !== undefined && sourceId !== null && !uuidPattern.test(sourceId)) return json({ error: "기본 배경 템플릿을 확인해 주세요." }, 400);
-  let inheritedBackground = null;
-  if (sourceId) {
-    const { data: source, error: sourceError } = await auth.serverClient.from("template_versions")
-      .select("config,status,version").eq("template_id", sourceId).order("version", { ascending: false });
-    if (sourceError) return json({ error: "기본 배경 설정을 불러오지 못했어요." }, 500);
-    const config = (source || []).find((item) => item.status === "draft")?.config ||
-      (source || []).find((item) => item.status === "active")?.config || source?.[0]?.config;
-    const background = config?.background;
-    if (!background || typeof background !== "object" || Array.isArray(background)) return json({ error: "선택한 템플릿에 저장된 배경 설정이 없어요." }, 400);
-    inheritedBackground = {
-      mode: "custom", color: background.color || "#ffffff", assetId: null,
-      overlayColor: background.overlayColor || "#000000", overlayOpacity: background.overlayOpacity ?? 0,
-      custom: { mode: background.custom?.mode || "solid", endColor: background.custom?.endColor || "#f3e8df",
-        angle: background.custom?.angle ?? 135, pattern: background.custom?.pattern || "dots",
-        patternColor: background.custom?.patternColor || "#bca08d",
-        patternSize: background.custom?.patternSize ?? 20, patternOpacity: background.custom?.patternOpacity ?? 0.25 },
-    };
-  }
+  const inherited = sourceId ? await inheritedConfig(auth.serverClient, sourceId) : null;
+  if (inherited?.error) return json({ error: inherited.error }, 400);
   const id = randomUUID();
   const { error } = await auth.adminClient.from("templates").insert({ id, ...fields, is_active: false });
   if (error?.code === "23505") return json({ error: "이미 사용 중인 template key예요." }, 409);
   if (error) return json({ error: "템플릿을 등록하지 못했어요." }, 500);
-  if (inheritedBackground) {
+  if (inherited?.config) {
     const { error: versionError } = await auth.adminClient.from("template_versions").insert({
       id: randomUUID(), template_id: id, version: 1, status: "draft",
-      config: { background: inheritedBackground }, config_schema_version: 1, created_by: auth.user.id,
+      config: inherited.config, config_schema_version: 1, created_by: auth.user.id,
     });
     if (versionError) return json({ id, error: "템플릿은 생성됐지만 기본 배경을 적용하지 못했어요. 템플릿 목록에서 확인해 주세요." }, 500);
   }
