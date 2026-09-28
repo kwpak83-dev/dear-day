@@ -48,6 +48,13 @@ const sectionsFromConfig = (saved) => Array.isArray(saved) && saved.length === s
     ? saved.map(({ key, enabled }) => ({ key, enabled })) : defaultSections();
 const effectsDefaults = { scrollReveal: "none", screenEffect: null };
 const screenEffectDefaults = { ornament: "blossom", motion: "fall", count: 8, minSize: 18, maxSize: 36, minDuration: 10, maxDuration: 18, sway: 30, rotate: true, opacity: 0.8 };
+const screenOrnamentCategories = [
+  ["nature", "자연", [["blossom","벚꽃잎"],["green","초록 나뭇잎"],["autumn","가을 낙엽"],["snow","솜눈"],["rose","장미 꽃잎"],["lavender","라벤더 꽃잎"],["daisy","데이지 꽃"],["ginkgo","은행잎"],["feather","하얀 깃털"],["butterfly","나비"],["blossom-flower","벚꽃 송이"]]],
+  ["party", "파티", [["heart","하트"],["gold-confetti","골드 컨페티"],["color-confetti","컬러 컨페티"],["balloon","파스텔 풍선"],["ribbon","리본"]]],
+  ["light", "빛", [["star","별빛"],["bubble","비눗방울"],["moon","초승달"]]],
+  ["theme", "테마", [["music","음표"]]],
+];
+const screenOrnamentOptions = screenOrnamentCategories.flatMap(([, , options]) => options);
 const bgmDefaults = { mode: "none", assetId: null };
 const safeAreaDefaults = { top: 24, right: 16, bottom: 24, left: 16 };
 const colorValue = (value) => /^#[0-9a-fA-F]{6}$/.test(value) ? value : "#000000";
@@ -101,6 +108,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   const [quickMenu, setQuickMenu] = useState(quickMenuDefaults);
   const [sections, setSections] = useState(defaultSections);
   const [effects, setEffects] = useState(effectsDefaults);
+  const [screenOrnamentCategory, setScreenOrnamentCategory] = useState("all");
   const [bgm, setBgm] = useState(bgmDefaults);
   const [safeArea, setSafeArea] = useState(safeAreaDefaults);
   const [creating, setCreating] = useState(false);
@@ -557,8 +565,17 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
             <fieldset style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 12 }}>
               <legend>Screen Effect</legend>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
+                <div style={{ ...field, gridColumn: "1 / -1" }}>
+                  <span>장식 카테고리</span>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                    {[["all","전체"],...screenOrnamentCategories.map(([key,label])=>[key,label])].map(([key,label])=><button key={key} type="button" aria-pressed={screenOrnamentCategory===key} onClick={()=>setScreenOrnamentCategory(key)} style={{ padding:"7px 12px", borderRadius:18, border:"1px solid #d7c5ba", background:screenOrnamentCategory===key?"#b78b72":"#fff", color:screenOrnamentCategory===key?"#fff":"#5a463d", cursor:"pointer" }}>{label}</button>)}
+                  </div>
+                </div>
                 <label style={field}>장식 종류<select style={input} value={!effects.screenEffect?"none":effects.screenEffect.ornament||"custom"} onChange={(event)=>setEffects((current)=>({ ...current,screenEffect:event.target.value==="none"?null:{...screenEffectDefaults,...(current.screenEffect||{}),ornament:event.target.value,assetId:event.target.value==="custom"?(current.screenEffect?.assetId||null):null} }))}>
-                  {[["none","사용 안 함"],["blossom","벚꽃잎"],["green","초록 나뭇잎"],["autumn","가을 낙엽"],["snow","눈송이"],["star","별빛"],["heart","하트"],["custom","직접 업로드"]].map(([value,label])=><option key={value} value={value}>{label}</option>)}
+                  <option value="none">사용 안 함</option>
+                  {effects.screenEffect && effects.screenEffect.ornament !== "custom" && screenOrnamentCategory !== "all" && !screenOrnamentCategories.find(([key])=>key===screenOrnamentCategory)?.[2].some(([key])=>key===effects.screenEffect.ornament) && <option value={effects.screenEffect.ornament}>{screenOrnamentOptions.find(([key])=>key===effects.screenEffect.ornament)?.[1]||effects.screenEffect.ornament} (현재 선택)</option>}
+                  {(screenOrnamentCategory==="all"?screenOrnamentOptions:screenOrnamentCategories.find(([key])=>key===screenOrnamentCategory)?.[2]||[]).map(([value,label])=><option key={value} value={value}>{label}</option>)}
+                  <option value="custom">직접 업로드</option>
                 </select></label>
                 {effects.screenEffect?.ornament==="custom"&&<AssetSelect label="직접 업로드 장식 (1개 반복)" assets={screenEffectAssets} value={effects.screenEffect.assetId||null} onChange={(assetId)=>setEffects((current)=>({...current,screenEffect:{...current.screenEffect,assetId}}))}/>}
                 {effects.screenEffect&&<label style={field}>움직임<select style={input} value={effects.screenEffect.motion||"fall"} onChange={(event)=>setEffects((current)=>({...current,screenEffect:{...current.screenEffect,motion:event.target.value}}))}><option value="fall">낙하</option><option value="flutter">흩날림</option><option value="sparkle">반짝임</option></select></label>}
