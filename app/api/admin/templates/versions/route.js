@@ -1,4 +1,4 @@
-import { BACKGROUND_PATTERN_KEYS } from "../../../../lib/background-patterns";
+import { BACKGROUND_PATTERN_KEYS } from "../../../../../lib/background-patterns";
 import { randomUUID } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { TEMPLATE_FONT_STACKS } from "../../../../../lib/template-config";
