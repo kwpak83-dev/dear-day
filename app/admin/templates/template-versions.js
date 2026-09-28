@@ -1,5 +1,6 @@
-import { BACKGROUND_PATTERN_GROUPS } from "../../../lib/background-patterns";
 "use client";
+import { BACKGROUND_PATTERN_GROUPS } from "../../../lib/background-patterns";
+
 
 import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
