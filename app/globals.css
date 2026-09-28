@@ -1372,3 +1372,20 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   text-align:center;
 }
 .shared-public-invitation {padding-bottom:calc(165px + env(safe-area-inset-bottom))}
+
+
+/* Screen Effect modes: legacy falling assets retain the original animation. */
+.dd-template-screen-effect--flutter img{animation-name:dd-screen-flutter;animation-timing-function:ease-in-out}
+@keyframes dd-screen-flutter{
+  0%{transform:translate3d(0,-10vh,0) rotate(0deg)}
+  25%{transform:translate3d(var(--dd-screen-sway),25vh,0) rotate(35deg)}
+  50%{transform:translate3d(0,55vh,0) rotate(-25deg)}
+  75%{transform:translate3d(var(--dd-screen-sway),85vh,0) rotate(25deg)}
+  100%{transform:translate3d(0,110vh,0) rotate(var(--dd-screen-rotation))}
+}
+.dd-template-screen-effect--sparkle img{top:var(--dd-screen-y);animation-name:dd-screen-sparkle;animation-timing-function:ease-in-out}
+@keyframes dd-screen-sparkle{
+  0%,100%{opacity:0;transform:scale(.35) rotate(0deg)}
+  40%,60%{opacity:var(--dd-screen-opacity);transform:scale(1) rotate(var(--dd-screen-rotation))}
+}
+@media(prefers-reduced-motion:reduce){.dd-template-screen-effect{display:none!important}}
