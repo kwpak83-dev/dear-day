@@ -38,7 +38,7 @@ export default function AdminTemplatesPage() {
     assetOperations.current = [];
     setAssetChangesPending(false);
     setEditing(template ? template.id : "new");
-    setBackgroundSourceTemplateId(template ? "" : (state.templates.find((item) => /spring|blossom|벚꽃|봄/i.test(`${item.template_key} ${item.name}`))?.id || ""));
+    setBackgroundSourceTemplateId(state.templates.find((item) => item.id !== template?.id && /spring|blossom|벚꽃|봄/i.test(`${item.template_key} ${item.name}`))?.id || "");
     setForm(template ? { name: template.name, template_key: template.template_key, description: template.description || "", status: template.status, is_visible: template.is_visible, sort_order: template.sort_order } : { ...emptyForm });
     setNotice("");
   };
@@ -62,6 +62,23 @@ export default function AdminTemplatesPage() {
     finally { setSaving(false); }
   };
 
+  const inheritExistingDraft = async () => {
+    if (!editing || editing === "new" || saving || !backgroundSourceTemplateId) return;
+    const source = state.templates.find(item => item.id === backgroundSourceTemplateId);
+    if (!window.confirm(`현재 편집 Draft의 디자인 설정을 "${source?.name || "선택한 템플릿"}" 설정으로 덮어쓸까요? 업로드 Asset은 복사하지 않으며 판매 버전은 변경되지 않습니다.`)) return;
+    setSaving(true); setNotice("");
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("로그인이 필요합니다.");
+      const response = await fetch("/api/admin/templates", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ action: "inherit-draft-design", templateId: editing, sourceTemplateId: backgroundSourceTemplateId }) });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "디자인을 상속하지 못했어요.");
+      setAssetRevision(value => value + 1);
+      setNotice("현재 Draft에 디자인 설정을 상속했습니다.");
+    } catch (error) { setNotice(error.message || "디자인을 상속하지 못했어요."); }
+    finally { setSaving(false); }
+  };
   const cancel = async () => {
     if (saving) return;
     if (assetBusy.current) { setNotice("Asset 처리가 끝난 뒤 취소해 주세요."); return; }
@@ -96,7 +113,8 @@ export default function AdminTemplatesPage() {
         <h2 style={{ margin: 0 }}>{editing === "new" ? "새 템플릿 등록" : "템플릿 수정"}</h2>
         <label style={fieldStyle}>템플릿명<input style={inputStyle} required maxLength={100} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
         <label style={fieldStyle}>Template key<input style={inputStyle} required minLength={3} maxLength={80} pattern="[a-z0-9](?:[a-z0-9]|_|-){2,79}" value={form.template_key} disabled={editing !== "new"} onChange={(e) => setForm({ ...form, template_key: e.target.value.trim() })} /></label>
-        {editing === "new" && <label style={fieldStyle}>신규 배경 기본값 <small style={{ fontWeight: 400, color: "#806f66" }}>선택한 템플릿의 저장된 배경 설정만 상속합니다. 업로드 이미지와 Asset은 복사하지 않습니다.</small><select style={inputStyle} value={backgroundSourceTemplateId} onChange={(e)=>setBackgroundSourceTemplateId(e.target.value)}><option value="">기본 설정 없이 시작</option>{state.templates.map((item)=><option key={item.id} value={item.id}>{item.name}</option>)}</select></label>}
+        {editing === "new" && <label style={fieldStyle}>신규 디자인 기본값 <small style={{ fontWeight: 400, color: "#806f66" }}>선택한 템플릿의 저장된 배경 설정만 상속합니다. 업로드 이미지와 Asset은 복사하지 않습니다.</small><select style={inputStyle} value={backgroundSourceTemplateId} onChange={(e)=>setBackgroundSourceTemplateId(e.target.value)}><option value="">기본 설정 없이 시작</option>{state.templates.map((item)=><option key={item.id} value={item.id}>{item.name}</option>)}</select></label>}
+        {editing !== "new" && <div style={{ ...cardStyle, display: "grid", gap: 8 }}><strong>기존 Draft에 디자인 설정 다시 적용</strong><small>Typography·Colors·버튼·퀵메뉴 등 디자인을 상속합니다. 현재 Draft의 해당 설정은 덮어쓰며 업로드 Asset은 복사하지 않습니다.</small><select style={inputStyle} value={backgroundSourceTemplateId} onChange={e=>setBackgroundSourceTemplateId(e.target.value)}><option value="">원본 템플릿 선택</option>{state.templates.filter(item=>item.id!==editing).map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</select><button type="button" className="save-button" disabled={saving || !backgroundSourceTemplateId} onClick={inheritExistingDraft}>현재 Draft에 디자인 상속</button></div>}
         <label style={fieldStyle}>설명<textarea style={inputStyle} maxLength={2000} rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></label>
         <label style={fieldStyle}>상태 <small style={{ fontWeight: 400, color: "#806f66" }}>아래 템플릿 버전 영역에서 변경됩니다.</small><select style={{ ...inputStyle, background: "#f5f1ee", color: "#6f625b", cursor: "not-allowed" }} value={form.status} disabled aria-label="현재 템플릿 상태">{statusOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
         <label><input type="checkbox" checked={form.is_visible} onChange={(e) => setForm({ ...form, is_visible: e.target.checked })} /> 노출</label>
