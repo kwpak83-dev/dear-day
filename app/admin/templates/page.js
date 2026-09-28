@@ -16,6 +16,7 @@ export default function AdminTemplatesPage() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [backgroundSourceTemplateId, setBackgroundSourceTemplateId] = useState("");
   const [notice, setNotice] = useState("");
   const [assetRevision, setAssetRevision] = useState(0);
   const [assetChangesPending, setAssetChangesPending] = useState(false);
@@ -37,6 +38,7 @@ export default function AdminTemplatesPage() {
     assetOperations.current = [];
     setAssetChangesPending(false);
     setEditing(template ? template.id : "new");
+    setBackgroundSourceTemplateId(template ? "" : (state.templates.find((item) => /spring|blossom|벚꽃|봄/i.test(`${item.template_key} ${item.name}`))?.id || ""));
     setForm(template ? { name: template.name, template_key: template.template_key, description: template.description || "", status: template.status, is_visible: template.is_visible, sort_order: template.sort_order } : { ...emptyForm });
     setNotice("");
   };
@@ -49,7 +51,7 @@ export default function AdminTemplatesPage() {
       const supabase = getSupabaseBrowserClient();
       const { data: { session } } = supabase ? await supabase.auth.getSession() : { data: {} };
       if (!session) { setNotice("로그인이 필요합니다."); return; }
-      const response = await fetch("/api/admin/templates", { method: editing === "new" ? "POST" : "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ ...form, template_key: form.template_key.trim(), ...(editing !== "new" ? { id: editing } : {}) }) });
+      const response = await fetch("/api/admin/templates", { method: editing === "new" ? "POST" : "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ ...form, template_key: form.template_key.trim(), ...(editing !== "new" ? { id: editing } : { backgroundSourceTemplateId: backgroundSourceTemplateId || null }) }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) { setNotice(result.error || "저장하지 못했어요."); return; }
       assetOperations.current = [];
@@ -94,6 +96,7 @@ export default function AdminTemplatesPage() {
         <h2 style={{ margin: 0 }}>{editing === "new" ? "새 템플릿 등록" : "템플릿 수정"}</h2>
         <label style={fieldStyle}>템플릿명<input style={inputStyle} required maxLength={100} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
         <label style={fieldStyle}>Template key<input style={inputStyle} required minLength={3} maxLength={80} pattern="[a-z0-9](?:[a-z0-9]|_|-){2,79}" value={form.template_key} disabled={editing !== "new"} onChange={(e) => setForm({ ...form, template_key: e.target.value.trim() })} /></label>
+        {editing === "new" && <label style={fieldStyle}>신규 배경 기본값 <small style={{ fontWeight: 400, color: "#806f66" }}>선택한 템플릿의 저장된 배경 설정만 상속합니다. 업로드 이미지와 Asset은 복사하지 않습니다.</small><select style={inputStyle} value={backgroundSourceTemplateId} onChange={(e)=>setBackgroundSourceTemplateId(e.target.value)}><option value="">기본 설정 없이 시작</option>{state.templates.map((item)=><option key={item.id} value={item.id}>{item.name}</option>)}</select></label>}
         <label style={fieldStyle}>설명<textarea style={inputStyle} maxLength={2000} rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></label>
         <label style={fieldStyle}>상태 <small style={{ fontWeight: 400, color: "#806f66" }}>아래 템플릿 버전 영역에서 변경됩니다.</small><select style={{ ...inputStyle, background: "#f5f1ee", color: "#6f625b", cursor: "not-allowed" }} value={form.status} disabled aria-label="현재 템플릿 상태">{statusOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
         <label><input type="checkbox" checked={form.is_visible} onChange={(e) => setForm({ ...form, is_visible: e.target.checked })} /> 노출</label>
