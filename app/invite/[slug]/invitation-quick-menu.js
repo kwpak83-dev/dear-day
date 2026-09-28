@@ -36,6 +36,41 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const markerRef = useRef(null);
   const desktopLiveStartedAtTopRef = useRef(false);
   const desktopLiveScrolledRef = useRef(false);
+  const sheetHistoryRef = useRef(null);
+
+  // A published invitation uses one history entry for its open bottom sheet.
+  // Android back/swipe pops that entry and closes the sheet without leaving the page.
+  useEffect(() => {
+    if (previewMode) return;
+    const onPopState = () => {
+      if (!sheetHistoryRef.current) return;
+      sheetHistoryRef.current = null;
+      setSheet(null);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [previewMode]);
+
+  const openSheet = (nextSheet) => {
+    if (!previewMode && !sheetHistoryRef.current) {
+      const token = `dd-invitation-sheet-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      window.history.pushState({ ...window.history.state, ddInvitationSheet: token }, "", window.location.href);
+      sheetHistoryRef.current = token;
+    }
+    setSheet(nextSheet);
+  };
+
+  const closeSheet = () => {
+    if (!previewMode && sheetHistoryRef.current) {
+      const token = sheetHistoryRef.current;
+      sheetHistoryRef.current = null;
+      setSheet(null);
+      if (window.history.state?.ddInvitationSheet === token) window.history.back();
+      return;
+    }
+    setSheet(null);
+  };
+
 
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
@@ -217,19 +252,19 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
 
   return <>
     <span ref={markerRef} className="invitation-quick-menu-trigger" aria-hidden="true" />
-    {visible && (isDesktopLivePreview && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}${isEditorFullPreview ? " invitation-quick-menu--editor-full" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
-      {rsvpEnabled && <button style={synchronizedItemStyle} className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
+    {visible && (isDesktopLivePreview && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu invitation-quick-menu--a-large${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}${isEditorFullPreview ? " invitation-quick-menu--editor-full" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
+      {rsvpEnabled && <button style={synchronizedItemStyle} className="invitation-quick-rsvp" type="button" onClick={() => openSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
       {hasLocation && <button style={synchronizedItemStyle} className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
-      {guestbookEnabled && <button style={synchronizedItemStyle} className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
-    </nav>, desktopLivePortal) : <nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
-      {rsvpEnabled && <button style={synchronizedItemStyle} className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
+      {guestbookEnabled && <button style={synchronizedItemStyle} className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
+    </nav>, desktopLivePortal) : <nav className={`invitation-quick-menu invitation-quick-menu--a-large${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
+      {rsvpEnabled && <button style={synchronizedItemStyle} className="invitation-quick-rsvp" type="button" onClick={() => openSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
       {hasLocation && <button style={synchronizedItemStyle} className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
-      {guestbookEnabled && <button style={synchronizedItemStyle} className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
+      {guestbookEnabled && <button style={synchronizedItemStyle} className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
     </nav>)}
-    {sheet === "rsvp" && rsvpEnabled && <BottomSheet title="참석 여부" onClose={() => setSheet(null)} portalTarget={isDesktopLivePreview ? desktopLivePortal : null} preview={isDesktopLivePreview}>
+    {sheet === "rsvp" && rsvpEnabled && <BottomSheet title="참석 여부" onClose={closeSheet} portalTarget={isDesktopLivePreview ? desktopLivePortal : null} preview={isDesktopLivePreview}>
       <RsvpForm slug={slug} startsAt={startsAt} />
     </BottomSheet>}
-    {sheet === "guestbook" && guestbookEnabled && <BottomSheet title="축하 메시지" onClose={() => setSheet(null)} portalTarget={isDesktopLivePreview ? desktopLivePortal : null} preview={isDesktopLivePreview}>
+    {sheet === "guestbook" && guestbookEnabled && <BottomSheet title="축하 메시지" onClose={closeSheet} portalTarget={isDesktopLivePreview ? desktopLivePortal : null} preview={isDesktopLivePreview}>
       <Guestbook slug={slug} />
     </BottomSheet>}
   </>;

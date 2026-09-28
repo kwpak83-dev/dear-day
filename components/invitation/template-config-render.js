@@ -1,3 +1,4 @@
+import { backgroundPatternStyle } from "../../lib/background-patterns";
 import { HERO_FONT_STYLESHEET, getHeroFont } from "../../lib/hero-fonts";
 import { TEMPLATE_FONT_STACKS } from "../../lib/template-config";
 const BODY_FONT_STYLESHEET = "https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Hi+Melody&family=Nanum+Brush+Script&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@400;500;600;700&family=Song+Myung&display=swap";
@@ -48,20 +49,9 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
       } else if (custom.mode === "pattern") {
         const ink = rgba(custom.patternColor || "#bca08d", custom.patternOpacity ?? .25);
         const size = custom.patternSize || 20;
-        const patterns = {
-          dots: `radial-gradient(circle, ${ink} 1.5px, transparent 2px)`,
-          grid: `linear-gradient(${ink} 1px, transparent 1px), linear-gradient(90deg, ${ink} 1px, transparent 1px)`,
-          diagonal: `repeating-linear-gradient(45deg, transparent 0, transparent ${size-1}px, ${ink} ${size-1}px, ${ink} ${size}px)`,
-          stripes: `repeating-linear-gradient(90deg, transparent 0, transparent ${size-1}px, ${ink} ${size-1}px, ${ink} ${size}px)`,
-          horizontal: `repeating-linear-gradient(0deg, transparent 0, transparent ${size-1}px, ${ink} ${size-1}px, ${ink} ${size}px)`,
-          cross: `linear-gradient(45deg, transparent 48%, ${ink} 49%, ${ink} 51%, transparent 52%), linear-gradient(-45deg, transparent 48%, ${ink} 49%, ${ink} 51%, transparent 52%)`,
-          checker: `conic-gradient(${ink} 25%, transparent 0 50%, ${ink} 0 75%, transparent 0)`,
-          diamonds: `linear-gradient(45deg, transparent 45%, ${ink} 46%, ${ink} 48%, transparent 49%), linear-gradient(-45deg, transparent 45%, ${ink} 46%, ${ink} 48%, transparent 49%)`,
-          waves: `radial-gradient(ellipse at 50% 100%, transparent 55%, ${ink} 58%, transparent 62%)`,
-          confetti: `radial-gradient(circle at 20% 25%, ${ink} 2px, transparent 3px), radial-gradient(circle at 75% 70%, ${ink} 1px, transparent 2px)`,
-        };
-        layers.push(patterns[custom.pattern] || patterns.dots);
-        rootStyle.backgroundSize = ["dots","grid","cross","checker","diamonds","waves","confetti"].includes(custom.pattern) ? `${size}px ${size}px` : "auto";
+        const patternStyle = backgroundPatternStyle(custom.pattern, ink, size);
+        layers.push(patternStyle.image);
+        rootStyle.backgroundSize = patternStyle.backgroundSize;
         rootStyle.backgroundRepeat = "repeat";
       }
     }
@@ -79,20 +69,9 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     if (backdrop.mode === "pattern") {
       const ink = rgba(backdrop.patternColor || "#bca08d", backdrop.patternOpacity ?? .25);
       const size = backdrop.patternSize || 20;
-      const patterns = {
-        dots: `radial-gradient(circle, ${ink} 1.5px, transparent 2px)`,
-        grid: `linear-gradient(${ink} 1px, transparent 1px), linear-gradient(90deg, ${ink} 1px, transparent 1px)`,
-        diagonal: `repeating-linear-gradient(45deg, transparent 0, transparent ${size-1}px, ${ink} ${size-1}px, ${ink} ${size}px)`,
-        stripes: `repeating-linear-gradient(90deg, transparent 0, transparent ${size-1}px, ${ink} ${size-1}px, ${ink} ${size}px)`,
-        horizontal: `repeating-linear-gradient(0deg, transparent 0, transparent ${size-1}px, ${ink} ${size-1}px, ${ink} ${size}px)`,
-        cross: `linear-gradient(45deg, transparent 48%, ${ink} 49%, ${ink} 51%, transparent 52%), linear-gradient(-45deg, transparent 48%, ${ink} 49%, ${ink} 51%, transparent 52%)`,
-        checker: `conic-gradient(${ink} 25%, transparent 0 50%, ${ink} 0 75%, transparent 0)`,
-        diamonds: `linear-gradient(45deg, transparent 45%, ${ink} 46%, ${ink} 48%, transparent 49%), linear-gradient(-45deg, transparent 45%, ${ink} 46%, ${ink} 48%, transparent 49%)`,
-        waves: `radial-gradient(ellipse at 50% 100%, transparent 55%, ${ink} 58%, transparent 62%)`,
-        confetti: `radial-gradient(circle at 20% 25%, ${ink} 2px, transparent 3px), radial-gradient(circle at 75% 70%, ${ink} 1px, transparent 2px)`,
-      };
-      heroStyle.backgroundImage = patterns[backdrop.pattern] || patterns.dots;
-      heroStyle.backgroundSize = ["dots","grid","cross","checker","diamonds","waves","confetti"].includes(backdrop.pattern) ? `${size}px ${size}px` : "auto";
+      const patternStyle = backgroundPatternStyle(backdrop.pattern, ink, size);
+      heroStyle.backgroundImage = patternStyle.image;
+      heroStyle.backgroundSize = patternStyle.backgroundSize;
     }
     heroMediaStyle.backgroundColor = heroStyle.backgroundColor;
     heroMediaStyle.backgroundImage = heroStyle.backgroundImage || "none";

@@ -1316,3 +1316,76 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* The published quick menu is fixed but remains inside the template DOM.
    Keep the synchronized button palette independent from its artwork tray. */
 .dd-template-button-style .invitation-quick-menu button{background:var(--dd-quick-menu-item-bg,var(--dd-button-bg,var(--dd-invite-action-bg,transparent)));color:var(--dd-quick-menu-item-text,var(--dd-button-text,var(--dd-invite-action-text,#674f45)));border-radius:var(--dd-quick-menu-item-radius,var(--dd-button-radius,0px));border-color:var(--dd-quick-menu-item-border,var(--dd-button-border-color,transparent));border-width:var(--dd-quick-menu-item-border-width,var(--dd-button-border-width,0px))}
+
+/* Keep the published invitation's address-copy action centered on narrow phones. */
+@media (max-width: 767px) {
+  .shared-public-invitation .public-address-copy,
+  .invitation-template .public-address-copy {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+/* Published invitation A/L: separate round icon targets with labels beneath.
+   Only published pages receive this class; inherited template colors remain intact. */
+.invitation-quick-menu--a-large {
+  display:grid;
+  grid-auto-flow:column;
+  grid-auto-columns:minmax(0,1fr);
+  gap:9px;
+  padding:10px 12px;
+}
+.invitation-quick-menu--a-large > button {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-width:0;
+  min-height:88px;
+  padding:4px 2px;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  color:var(--dd-quick-menu-item-text,var(--dd-quick-menu-text,#674f45));
+}
+.invitation-quick-menu--a-large > button + button {border-left:0 !important}
+.invitation-quick-menu--a-large > button b {
+  display:grid;
+  place-items:center;
+  box-sizing:border-box;
+  width:60px;
+  height:60px;
+  flex:none;
+  padding:0;
+  border:var(--dd-quick-menu-item-border-width,1px) solid var(--dd-quick-menu-item-border,var(--dd-quick-menu-border,#e6a0a8));
+  border-radius:50%;
+  background-color:var(--dd-quick-menu-item-bg,var(--dd-invite-action-bg,#fffaf7));
+  background-size:23px 23px;
+  color:var(--dd-quick-menu-item-text,var(--dd-quick-menu-text,#674f45));
+}
+.invitation-quick-menu--a-large > button span {
+  line-height:1.35;
+  white-space:nowrap;
+  text-align:center;
+}
+.shared-public-invitation {padding-bottom:calc(165px + env(safe-area-inset-bottom))}
+
+
+/* Screen Effect modes: legacy falling assets retain the original animation. */
+.dd-template-screen-effect--flutter img{animation-name:dd-screen-flutter;animation-timing-function:ease-in-out}
+@keyframes dd-screen-flutter{
+  0%{transform:translate3d(0,-10vh,0) rotate(0deg)}
+  25%{transform:translate3d(var(--dd-screen-sway),25vh,0) rotate(35deg)}
+  50%{transform:translate3d(0,55vh,0) rotate(-25deg)}
+  75%{transform:translate3d(var(--dd-screen-sway),85vh,0) rotate(25deg)}
+  100%{transform:translate3d(0,110vh,0) rotate(var(--dd-screen-rotation))}
+}
+.dd-template-screen-effect--sparkle img{top:var(--dd-screen-y);animation-name:dd-screen-sparkle;animation-timing-function:ease-in-out}
+@keyframes dd-screen-sparkle{
+  0%,100%{opacity:0;transform:scale(.35) rotate(0deg)}
+  40%,60%{opacity:var(--dd-screen-opacity);transform:scale(1) rotate(var(--dd-screen-rotation))}
+}
+@media(prefers-reduced-motion:reduce){.dd-template-screen-effect{display:none!important}}

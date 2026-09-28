@@ -1,3 +1,4 @@
+import { BACKGROUND_PATTERN_KEYS } from "../../../../../lib/background-patterns";
 import { randomUUID } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { TEMPLATE_FONT_STACKS } from "../../../../../lib/template-config";
@@ -216,14 +217,23 @@ async function saveSections(auth, body) {
 }
 const scrollRevealValues = new Set(["none", "fade", "fade-up"]);
 
+const screenOrnaments = new Set(["blossom","green","autumn","snow","star","heart","rose","lavender","daisy","ginkgo","feather","gold-confetti","color-confetti","balloon","bubble","ribbon","music","butterfly","moon","blossom-flower"]);
+const screenMotions = new Set(["fall", "flutter", "sparkle"]);
 function validScreenEffect(value) {
-  return value === null || (hasOnlyKeys(value, ["assetId", "count", "minSize", "maxSize", "minDuration", "maxDuration", "sway", "rotate", "opacity"]) &&
-    uuid.test(value.assetId || "") && Number.isInteger(value.count) && value.count >= 1 && value.count <= 24 &&
+  if (value === null) return true;
+  const legacy = hasOnlyKeys(value, ["assetId", "count", "minSize", "maxSize", "minDuration", "maxDuration", "sway", "rotate", "opacity"]);
+  const modern = hasOnlyKeys(value, ["ornament", "motion", "assetId", "count", "minSize", "maxSize", "minDuration", "maxDuration", "sway", "rotate", "opacity"]);
+  if (!legacy && !modern) return false;
+  const validAsset = legacy ? uuid.test(value.assetId || "") :
+    (screenOrnaments.has(value.ornament) ? value.assetId === null :
+      value.ornament === "custom" && uuid.test(value.assetId || ""));
+  return validAsset && (legacy || screenMotions.has(value.motion)) &&
+    Number.isInteger(value.count) && value.count >= 1 && value.count <= 24 &&
     Number.isInteger(value.minSize) && value.minSize >= 8 && value.minSize <= 80 &&
     Number.isInteger(value.maxSize) && value.maxSize >= value.minSize && value.maxSize <= 120 &&
     decimal(value.minDuration, 4, 30) && decimal(value.maxDuration, value.minDuration, 40) &&
     Number.isInteger(value.sway) && value.sway >= 0 && value.sway <= 120 &&
-    typeof value.rotate === "boolean" && decimal(value.opacity, 0.1, 1));
+    typeof value.rotate === "boolean" && decimal(value.opacity, 0.1, 1);
 }
 
 function validEffectsBgmSafeArea(effects, bgm, safeArea) {
@@ -257,7 +267,7 @@ async function saveEffectsBgmSafeArea(auth, body) {
     }
   }
 
-  if (body.effects.screenEffect) {
+  if (body.effects.screenEffect?.assetId) {
     const { data: asset, error: assetError } = await auth.adminClient.from("template_assets")
       .select("id,template_id,asset_type,is_active").eq("id", body.effects.screenEffect.assetId).maybeSingle();
     if (assetError) return fail("Screen Effect Asset을 확인하지 못했어요.", 500);
@@ -297,7 +307,7 @@ function validBackground(value) {
     hasOnlyKeys(custom, ["mode", "endColor", "angle", "pattern", "patternColor", "patternSize", "patternOpacity"]) &&
     ["solid", "gradient", "pattern"].includes(custom.mode) &&
     hexColor(custom.endColor) && decimal(custom.angle, 0, 360) &&
-    ["dots", "grid", "diagonal", "stripes", "cross", "checker", "diamonds", "waves", "horizontal", "confetti"].includes(custom.pattern) &&
+    BACKGROUND_PATTERN_KEYS.includes(custom.pattern) &&
     hexColor(custom.patternColor) && Number.isInteger(custom.patternSize) &&
     decimal(custom.patternSize, 8, 80) && decimal(custom.patternOpacity, 0, 1);
 }
