@@ -720,7 +720,7 @@ export default function CreateInvitation() {
       <section className="editor-panel">
         <nav className="dd-editor-steps" aria-label="초대장 제작 단계">{["필수입력", "맞춤설정", "공유설정", "결제·발행"].map((label, index) => <button key={label} type="button" className={editorStep === index ? "active" : ""} aria-current={editorStep === index ? "step" : undefined} onClick={() => setEditorStep(index)}><span>{String(index + 1).padStart(2, "0")}</span><strong>{label}</strong></button>)}</nav>
         <div className="dd-editor-step-intro"><p className="section-kicker">STEP {editorStep + 1} OF 4</p><h1>{["필수입력", "맞춤설정", "공유설정", "결제·발행"][editorStep]}</h1><p className="editor-intro">{["초대장에 필요한 기본 정보를 입력해 주세요.", "원하는 디자인과 내용을 꾸며보세요.", "하객에게 제공할 기능을 설정해 주세요.", "최종 확인 후 결제하고 직접 발행해 주세요."][editorStep]}</p></div>
-        <div style={{display:editorStep === 0 ? undefined : "none"}}>
+        <div className="dd-required-fields" style={{display:editorStep === 0 ? undefined : "none"}}>
         <div className="form-section"><h2>행사 종류</h2><Field label="초대장 종류"><select value={invitation.eventKind} onChange={(e) => update("eventKind", e.target.value)}>{EVENT_KIND_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></Field></div>
         {eventConfig.sections.map((section) => <div className="form-section" key={section.id}><h2>{section.title}</h2>{section.rows.map((row, rowIndex) => row.length > 1 ? <div className="field-grid" key={rowIndex}>{row.map(renderConfigField)}</div> : row.map(renderConfigField))}</div>)}
         </div>
