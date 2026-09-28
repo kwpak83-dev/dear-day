@@ -1327,23 +1327,50 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   }
 }
 
-/* Published invitation quick menu A / L: works at desktop viewport widths too
-   (including a cropped localhost invitation), without changing editor previews. */
+/* Published invitation A/L: separate round icon targets with labels beneath.
+   Only published pages receive this class; inherited template colors remain intact. */
 .invitation-quick-menu--a-large {
-  column-gap: 9px;
-  padding: 9px;
+  display:grid;
+  grid-auto-flow:column;
+  grid-auto-columns:minmax(0,1fr);
+  gap:9px;
+  padding:10px 12px;
 }
 .invitation-quick-menu--a-large > button {
-  min-height: max(66px, var(--dd-quick-menu-button-height, 0px));
-  padding: 11px 6px;
-  gap: 6px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-width:0;
+  min-height:88px;
+  padding:4px 2px;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  color:var(--dd-quick-menu-item-text,var(--dd-quick-menu-text,#674f45));
 }
-.invitation-quick-menu--a-large > button + button {
-  border-left-width: var(--dd-quick-menu-item-border-width, 0px);
-}
+.invitation-quick-menu--a-large > button + button {border-left:0 !important}
 .invitation-quick-menu--a-large > button b {
-  width: 23px;
-  height: 23px;
-  background-size: contain;
+  display:grid;
+  place-items:center;
+  box-sizing:border-box;
+  width:60px;
+  height:60px;
+  flex:none;
+  padding:17px;
+  border:var(--dd-quick-menu-item-border-width,1px) solid var(--dd-quick-menu-item-border,var(--dd-quick-menu-border,#e6a0a8));
+  border-radius:50%;
+  background-color:var(--dd-quick-menu-item-bg,var(--dd-invite-action-bg,#fffaf7));
+  background-origin:content-box;
+  background-clip:content-box;
+  background-size:contain;
+  color:var(--dd-quick-menu-item-text,var(--dd-quick-menu-text,#674f45));
 }
-.invitation-quick-menu--a-large > button span { line-height: 1.35; }
+.invitation-quick-menu--a-large > button span {
+  line-height:1.35;
+  white-space:nowrap;
+  text-align:center;
+}
+.shared-public-invitation {padding-bottom:calc(165px + env(safe-area-inset-bottom))}
