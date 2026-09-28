@@ -37,7 +37,26 @@ export default function HeroPresetsPage(){
  const load=async()=>{const response=await fetch("/api/admin/hero-presets",{headers:await auth()});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||"Hero 프리셋 목록을 불러오지 못했어요.");setState({loading:false,error:"",presets:result.presets||[]});};
  useEffect(()=>{load().catch((e)=>setState({loading:false,error:e.message,presets:[]}));},[]);
  const loadAssets=async(id)=>{const response=await fetch(`/api/admin/hero-presets/assets?heroPresetId=${encodeURIComponent(id)}`,{headers:await auth()});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||"Hero Asset을 불러오지 못했어요.");setAssets(result.assets||[]);};
- const open=(preset=null)=>{setExpandedLayerId(null);setEditing(preset?.id||"new");setAssets([]);if(preset?.id)loadAssets(preset.id).catch((e)=>setNotice(e.message));setForm(preset?{name:preset.name,preset_key:preset.preset_key,description:preset.description||"",status:preset.status,is_visible:preset.is_visible,sort_order:preset.sort_order,config:{...defaultConfig,...preset.config,display:{...defaultDisplay,...preset.config?.display},heroBackdrop:{...defaultConfig.heroBackdrop,...preset.config?.heroBackdrop},photoFrame:{...defaultConfig.photoFrame,...preset.config?.photoFrame},textLayers:Array.isArray(preset.config?.textLayers)?preset.config.textLayers.map((layer)=>({fontSize:32,color:"#ffffff",x:50,y:50,align:"center",...layer})):[]}}:{...empty,config:{...defaultConfig,display:{...defaultDisplay}}});setNotice("");};
+ const open=(preset=null)=>{
+  // Copy the latest saved Full Photo configuration, never its uploaded assets.
+  const fullPhoto=state.presets.find((item)=>["full-photo","full_photo","fullphoto"].includes((item.preset_key||"").toLowerCase()))
+    ||state.presets.find((item)=>(item.name||"").trim().toLowerCase()==="full photo");
+  const source=preset||fullPhoto;
+  const sourceConfig=source?.config||defaultConfig;
+  const copiedConfig={
+    ...defaultConfig,...structuredClone(sourceConfig),
+    display:{...defaultDisplay,...sourceConfig.display},
+    heroBackdrop:{...defaultConfig.heroBackdrop,...sourceConfig.heroBackdrop},
+    photoFrame:{...defaultConfig.photoFrame,...sourceConfig.photoFrame},
+    textLayers:Array.isArray(sourceConfig.textLayers)?structuredClone(sourceConfig.textLayers):[],
+  };
+  if(!preset){
+    // Sample photos are local previews; frame/thumbnail uploads are separate assets.
+    if(samplePhotoRef.current)URL.revokeObjectURL(samplePhotoRef.current);
+    samplePhotoRef.current="";
+    setSamplePhoto("");
+  }
+  setExpandedLayerId(null);setEditing(preset?.id||"new");setAssets([]);if(preset?.id)loadAssets(preset.id).catch((e)=>setNotice(e.message));setForm(preset?{name:preset.name,preset_key:preset.preset_key,description:preset.description||"",status:preset.status,is_visible:preset.is_visible,sort_order:preset.sort_order,config:copiedConfig}:{...empty,config:copiedConfig});setNotice("");};
  const setPhotoFrame=(key,value)=>setForm(current=>({...current,config:{...current.config,photoFrame:{...defaultConfig.photoFrame,...current.config.photoFrame,[key]:value}}}));
  const setBackdrop=(key,value)=>setForm(current=>({...current,config:{...current.config,heroBackdrop:{...defaultConfig.heroBackdrop,...current.config.heroBackdrop,[key]:value}}}));
  const setConfig=(key,value)=>setForm((current)=>({...current,config:{...current.config,[key]:value}}));
