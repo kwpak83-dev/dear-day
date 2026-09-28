@@ -1389,3 +1389,103 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   40%,60%{opacity:var(--dd-screen-opacity);transform:scale(1) rotate(var(--dd-screen-rotation))}
 }
 @media(prefers-reduced-motion:reduce){.dd-template-screen-effect{display:none!important}}
+
+/* DearDay user editor: four-step navigation and persistent actions */
+.dd-editor-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:0 0 24px;padding:16px 10px;background:#fff;border:1px solid #eee6e1;border-radius:16px}
+.dd-editor-steps button{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0;border:0;background:transparent;color:#817d7b;cursor:pointer;font:inherit;padding:3px 0}
+.dd-editor-steps button span{display:grid;place-items:center;width:29px;height:29px;border-radius:50%;background:#f2f0ef;color:#706d6b;font-size:11px;font-weight:700}
+.dd-editor-steps button strong{font-size:12px;white-space:nowrap;letter-spacing:-.04em}
+.dd-editor-steps button.active{color:#302a28}
+.dd-editor-steps button.active span{background:#a66c5e;color:white}
+.dd-editor-step-intro{margin-bottom:20px}
+.dd-editor-step-intro h1{font-size:27px;line-height:1.3}
+.dd-editor-sticky-actions{position:sticky;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:10px 0 max(10px,env(safe-area-inset-bottom));background:#fff;border-top:1px solid #eae5e1}
+.dd-editor-sticky-actions button{min-width:0;min-height:46px;padding:8px 3px;border:1px solid #e8e1dd;border-radius:10px;background:#fff;color:#322c29;font:inherit;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer}
+.dd-editor-sticky-actions button:disabled{opacity:.5;cursor:not-allowed}
+.dd-editor-sticky-actions .dd-editor-preview-action{background:#a66c5e;border-color:#a66c5e;color:#fff}
+.dd-editor-sticky-actions .dd-editor-next-action{background:#34302e;border-color:#34302e;color:#fff}
+.dd-editor-final{padding:22px;border:1px solid #eae5e1;border-radius:14px;background:#fff}
+.dd-editor-final p{line-height:1.7}
+.dd-editor-final button{margin:8px 8px 0 0}
+@media(max-width:800px){.create-page .editor-panel{padding-bottom:0}.dd-editor-sticky-actions{position:fixed;left:0;right:0;bottom:0;padding:9px 12px max(9px,env(safe-area-inset-bottom));box-shadow:0 -5px 18px #30251e12}.create-page .create-layout{padding-bottom:90px}.dd-editor-steps{gap:3px;padding:13px 5px}.dd-editor-steps button strong{font-size:11px}}
+
+/* User editor phase 2: first-step form visual refresh; existing fields and handlers unchanged */
+.create-page{background:#faf8f6}
+.create-page .create-layout{gap:38px}
+.create-page .editor-panel{min-width:0}
+.create-page .dd-editor-steps{box-shadow:0 5px 22px rgba(52,48,46,.035);border-color:#ebe4df}
+.create-page .dd-editor-step-intro{padding:0 4px 4px;margin-bottom:22px}
+.create-page .dd-editor-step-intro .section-kicker{color:#a66c5e;letter-spacing:.13em;font-size:11px;font-weight:750}
+.create-page .dd-editor-step-intro h1{font-family:Arial,"Apple SD Gothic Neo",sans-serif;font-size:29px;font-weight:750;letter-spacing:-.055em;color:#34302e;margin:9px 0 8px}
+.create-page .dd-editor-step-intro .editor-intro{font-size:14px;line-height:1.6;color:#827773}
+.create-page .dd-required-fields{display:grid;gap:14px}
+.create-page .dd-required-fields .form-section{margin:0;padding:22px 23px 7px;background:#fff;border:1px solid #ebe4df;border-radius:16px;box-shadow:0 3px 16px rgba(52,48,46,.025)}
+.create-page .dd-required-fields .form-section h2{font-family:Arial,"Apple SD Gothic Neo",sans-serif;font-size:17px;line-height:1.45;letter-spacing:-.04em;color:#34302e;margin:0 0 19px}
+.create-page .dd-required-fields .form-field>span{font-size:13px;line-height:1.5;color:#5b504b;margin-bottom:8px}
+.create-page .dd-required-fields .form-field{margin-bottom:17px;min-width:0}
+.create-page .dd-required-fields .form-field input,.create-page .dd-required-fields .form-field select,.create-page .dd-required-fields .form-field textarea{min-height:46px;border-color:#e5ded9;border-radius:10px;background:#fff;color:#34302e;font-size:14px;padding:11px 13px;transition:border-color .15s,box-shadow .15s}
+.create-page .dd-required-fields .form-field textarea{min-height:100px}
+.create-page .dd-required-fields .form-field input:focus,.create-page .dd-required-fields .form-field select:focus,.create-page .dd-required-fields .form-field textarea:focus{border-color:#a66c5e;box-shadow:0 0 0 3px rgba(166,108,94,.1);outline:none}
+.create-page .dd-required-fields .field-grid{gap:12px 14px}
+.create-page .dd-required-fields .field-grid>*{min-width:0}
+.create-page .dd-editor-sticky-actions{border:1px solid #ebe4df;border-radius:13px;padding:10px;background:#fff;box-shadow:0 -4px 18px rgba(52,48,46,.04)}
+.create-page .dd-editor-sticky-actions button{font-size:13px;min-height:46px}
+@media(max-width:800px){.create-page .create-layout{width:min(100% - 28px,560px);padding-top:26px;padding-bottom:100px}.create-page .dd-editor-steps{margin-bottom:20px}.create-page .dd-editor-step-intro h1{font-size:25px}.create-page .dd-required-fields{gap:12px}.create-page .dd-required-fields .form-section{padding:19px 16px 4px;border-radius:14px}.create-page .dd-required-fields .field-grid{gap:10px}.create-page .dd-required-fields .form-field input,.create-page .dd-required-fields .form-field select,.create-page .dd-required-fields .form-field textarea{font-size:16px}.create-page .dd-editor-sticky-actions{left:0;right:0;bottom:0;border-radius:0;border-width:1px 0 0;padding:9px 12px max(9px,env(safe-area-inset-bottom));gap:7px}.create-page .dd-editor-sticky-actions button{font-size:12px}}
+
+/* User editor phase 3: customization accordions */
+.create-page .dd-custom-accordion{margin:0 0 12px;background:#fff;border:1px solid #eae3de;border-radius:15px;overflow:hidden;box-shadow:0 3px 14px rgba(52,48,46,.025)}
+.create-page .dd-custom-accordion>summary{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:72px;padding:17px 20px;cursor:pointer;list-style:none;color:#34302e}
+.create-page .dd-custom-accordion>summary::-webkit-details-marker{display:none}
+.create-page .dd-custom-accordion>summary span:first-child{display:flex;flex-direction:column;gap:5px;min-width:0}
+.create-page .dd-custom-accordion>summary strong{font-size:15px;letter-spacing:-.035em}
+.create-page .dd-custom-accordion>summary small{font-size:12px;line-height:1.5;color:#8d817b;font-weight:400}
+.create-page .dd-custom-accordion>summary .dd-accordion-chevron{font-size:22px;color:#94766b;transition:transform .15s}
+.create-page .dd-custom-accordion[open]>summary .dd-accordion-chevron{transform:rotate(180deg)}
+.create-page .dd-custom-accordion[open]>summary{border-bottom:1px solid #f0e9e5}
+.create-page .dd-accordion-body{padding:0 20px 20px}
+.create-page .dd-accordion-body>.form-section{margin-top:0;padding-top:19px;border-top:0}
+.create-page .dd-accordion-body>.form-section h2{font-size:14px}
+.create-page .dd-accordion-body>.form-section:first-child{margin-top:0}
+.create-page .dd-accordion-body>.template-picker-grid{margin-top:15px}
+.create-page .dd-editor-steps button:focus:not(:focus-visible){outline:none}
+.create-page .dd-editor-steps button:focus-visible{outline:2px solid #a66c5e;outline-offset:3px;border-radius:7px}
+@media(max-width:800px){.create-page .dd-custom-accordion>summary{padding:16px;min-height:68px}.create-page .dd-accordion-body{padding:0 14px 16px}}
+
+/* User editor phase 4: share settings */
+.create-page .dd-share-settings{display:grid;gap:13px}
+.create-page .dd-share-card{background:#fff;border:1px solid #eae3de;border-radius:16px;padding:22px;box-shadow:0 3px 14px rgba(52,48,46,.025)}
+.create-page .dd-share-card-heading{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.create-page .dd-share-card-heading>div{min-width:0}
+.create-page .dd-share-card h2{margin:0 0 8px;font:700 16px/1.4 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:-.04em;color:#34302e}
+.create-page .dd-share-card-heading p{margin:0;color:#817570;font-size:13px;line-height:1.6}
+.create-page .dd-share-state{margin:16px 0 0;padding:11px 13px;background:#faf8f6;border-radius:9px;color:#806f67;font-size:12px;line-height:1.5}
+.create-page .dd-share-help{margin:2px 4px 10px;color:#897e79;font-size:12px;line-height:1.6}
+.create-page .dd-share-switch{position:relative;display:block;flex:none;width:48px;height:29px;cursor:pointer}
+.create-page .dd-share-switch input{position:absolute;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;z-index:1}
+.create-page .dd-share-switch-track{display:block;width:48px;height:29px;border-radius:20px;background:#d8d6d4;transition:background .15s}
+.create-page .dd-share-switch-track:after{content:"";display:block;position:absolute;top:4px;left:4px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0002;transition:transform .15s}
+.create-page .dd-share-switch input:checked+.dd-share-switch-track{background:#a66c5e}
+.create-page .dd-share-switch input:checked+.dd-share-switch-track:after{transform:translateX(19px)}
+.create-page .dd-share-switch input:focus-visible+.dd-share-switch-track{outline:2px solid #34302e;outline-offset:3px}
+@media(max-width:800px){.create-page .dd-share-card{padding:18px 16px}.create-page .dd-share-card-heading{gap:10px}}
+
+/* User editor phase 5: final review and payment/publish cards */
+.create-page .dd-editor-final{padding:0;background:transparent;border:0;display:grid;gap:13px}
+.create-page .dd-final-card{padding:23px;background:#fff;border:1px solid #eae3de;border-radius:16px;box-shadow:0 3px 14px rgba(52,48,46,.025)}
+.create-page .dd-final-eyebrow{display:block;color:#a66c5e;font-size:10px;letter-spacing:.12em;font-weight:750;margin-bottom:10px}
+.create-page .dd-final-card h2{font:700 18px/1.4 Arial,"Apple SD Gothic Neo",sans-serif;color:#34302e;letter-spacing:-.04em;margin:0 0 9px}
+.create-page .dd-final-card p{font-size:13px;color:#827773;line-height:1.7;margin:0 0 18px}
+.create-page .dd-final-summary{margin:0 0 19px;border-top:1px solid #f0e9e5}
+.create-page .dd-final-summary>div{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid #f0e9e5;font-size:13px}
+.create-page .dd-final-summary dt{color:#827773}
+.create-page .dd-final-summary dd{margin:0;color:#34302e;font-weight:650;text-align:right}
+.create-page .dd-final-preview,.create-page .dd-final-primary{display:flex;justify-content:center;align-items:center;width:100%;min-height:46px;border-radius:10px;padding:11px 13px;font:700 13px/1.4 Arial,"Apple SD Gothic Neo",sans-serif;text-decoration:none;cursor:pointer;margin:0}
+.create-page .dd-final-preview{background:#fff;color:#a66c5e;border:1px solid #a66c5e}
+.create-page .dd-final-primary{background:#34302e;color:#fff;border:1px solid #34302e}
+.create-page .dd-final-primary:disabled{opacity:.5;cursor:not-allowed}
+.create-page .dd-final-flow{display:flex;gap:6px;margin:17px 0}
+.create-page .dd-final-flow span{flex:1;text-align:center;border-radius:8px;padding:10px 3px;background:#f4f1ef;color:#928781;font-size:11px;font-weight:700}
+.create-page .dd-final-flow span.current{background:#f0e3dd;color:#935f52}
+.create-page .dd-final-flow span.done{background:#e6efe8;color:#53745a}
+.create-page .dd-editor-final .dd-final-help{font-size:12px;color:#897e79;line-height:1.6;margin:1px 4px 10px}
+@media(max-width:800px){.create-page .dd-final-card{padding:19px 16px}.create-page .dd-final-flow span{font-size:10px}}
