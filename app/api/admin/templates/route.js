@@ -24,7 +24,7 @@ async function getAdmin(request) {
   const { data: isAdmin, error: adminError } = await adminClient.rpc("is_admin");
   if (adminError) return { error: "관리자 권한을 확인하지 못했어요.", status: 500 };
   if (isAdmin !== true) return { error: "관리자만 접근할 수 있습니다.", status: 403 };
-  return { adminClient, serverClient };
+  return { adminClient, serverClient, user };
 }
 
 function readFields(body) {
@@ -85,7 +85,7 @@ export async function POST(request) {
   if (inheritedBackground) {
     const { error: versionError } = await auth.adminClient.from("template_versions").insert({
       id: randomUUID(), template_id: id, version: 1, status: "draft",
-      config: { background: inheritedBackground }, config_schema_version: 1,
+      config: { background: inheritedBackground }, config_schema_version: 1, created_by: auth.user.id,
     });
     if (versionError) return json({ id, error: "템플릿은 생성됐지만 기본 배경을 적용하지 못했어요. 템플릿 목록에서 확인해 주세요." }, 500);
   }
