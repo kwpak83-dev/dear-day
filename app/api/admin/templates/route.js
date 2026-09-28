@@ -52,13 +52,43 @@ export async function GET(request) {
 export async function POST(request) {
   const auth = await getAdmin(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
-  const fields = readFields(await request.json().catch(() => null));
+  const body = await request.json().catch(() => null);
+  const fields = readFields(body);
   if (!fields) return json({ error: "템플릿 기본정보를 확인해 주세요." }, 400);
   if (fields.status === "on_sale") return json({ error: "버전을 만든 뒤 판매 상태로 변경할 수 있어요." }, 409);
+  // Copy only the visual background settings from the selected spring template.
+  // Never copy uploaded asset references or alter the source template.
+  const sourceId = body?.backgroundSourceTemplateId;
+  if (sourceId !== undefined && sourceId !== null && !uuidPattern.test(sourceId)) return json({ error: "기본 배경 템플릿을 확인해 주세요." }, 400);
+  let inheritedBackground = null;
+  if (sourceId) {
+    const { data: source, error: sourceError } = await auth.serverClient.from("template_versions")
+      .select("config,status,version").eq("template_id", sourceId).order("version", { ascending: false });
+    if (sourceError) return json({ error: "기본 배경 설정을 불러오지 못했어요." }, 500);
+    const config = (source || []).find((item) => item.status === "draft")?.config ||
+      (source || []).find((item) => item.status === "active")?.config || source?.[0]?.config;
+    const background = config?.background;
+    if (!background || typeof background !== "object" || Array.isArray(background)) return json({ error: "선택한 템플릿에 저장된 배경 설정이 없어요." }, 400);
+    inheritedBackground = {
+      mode: "custom", color: background.color || "#ffffff", assetId: null,
+      overlayColor: background.overlayColor || "#000000", overlayOpacity: background.overlayOpacity ?? 0,
+      custom: { mode: background.custom?.mode || "solid", endColor: background.custom?.endColor || "#f3e8df",
+        angle: background.custom?.angle ?? 135, pattern: background.custom?.pattern || "dots",
+        patternColor: background.custom?.patternColor || "#bca08d",
+        patternSize: background.custom?.patternSize ?? 20, patternOpacity: background.custom?.patternOpacity ?? 0.25 },
+    };
+  }
   const id = randomUUID();
   const { error } = await auth.adminClient.from("templates").insert({ id, ...fields, is_active: false });
   if (error?.code === "23505") return json({ error: "이미 사용 중인 template key예요." }, 409);
   if (error) return json({ error: "템플릿을 등록하지 못했어요." }, 500);
+  if (inheritedBackground) {
+    const { error: versionError } = await auth.adminClient.from("template_versions").insert({
+      id: randomUUID(), template_id: id, version: 1, status: "draft",
+      config: { background: inheritedBackground }, config_schema_version: 1,
+    });
+    if (versionError) return json({ id, error: "템플릿은 생성됐지만 기본 배경을 적용하지 못했어요. 템플릿 목록에서 확인해 주세요." }, 500);
+  }
   return json({ id }, 201);
 }
 
