@@ -252,7 +252,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
 
   return <>
     <span ref={markerRef} className="invitation-quick-menu-trigger" aria-hidden="true" />
-    {visible && (isDesktopLivePreview && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}${isEditorFullPreview ? " invitation-quick-menu--editor-full" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
+    {visible && (isDesktopLivePreview && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu${!previewMode ? " invitation-quick-menu--a-large" : ""}${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}${isEditorFullPreview ? " invitation-quick-menu--editor-full" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button style={synchronizedItemStyle} className="invitation-quick-rsvp" type="button" onClick={() => openSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
       {hasLocation && <button style={synchronizedItemStyle} className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
       {guestbookEnabled && <button style={synchronizedItemStyle} className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
