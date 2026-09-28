@@ -35,6 +35,9 @@ function PreviewSections({ invitation, previewMode = "" }) {
     </section>
     <section className="public-accounts"><h2>마음 전하실 곳</h2><article className="public-account-card"><p>신랑 측</p><strong>디어은행 · 경원</strong><div><span>123-456-7890</span><button type="button" disabled>계좌 복사</button></div></article></section>
     <OptionalInvitationSections invitation={invitation} previewMode={previewMode} />
+    <div className="public-share-copy share-actions" aria-label="공유 버튼 디자인 미리보기">
+      <button type="button" disabled>링크 복사</button><button type="button" disabled>공유하기</button><button type="button" disabled>QR 코드</button>
+    </div>
     <DearDayBrandFooter />
   </div>;
 }

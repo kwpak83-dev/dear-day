@@ -1,4 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "git": {
+    "deploymentEnabled": {
+      "dev": false
+    }
+  },
   "crons": [{ "path": "/api/gallery/cleanup", "schedule": "0 19 * * *" }]
 }

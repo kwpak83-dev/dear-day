@@ -871,7 +871,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .invitation-bottom-sheet-content .rsvp-edit-actions a{border:1px solid var(--dd-invite-action-accent);border-radius:var(--dd-invite-action-radius,9px);background:transparent;color:var(--dd-invite-action-accent)}
 .invitation-bottom-sheet-content .rsvp-edit-actions button{border:1px solid var(--dd-invite-action-bg);border-radius:var(--dd-invite-action-radius,9px);background:var(--dd-invite-action-bg);color:var(--dd-invite-action-text)}
 .shared-public-invitation{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
-.dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){min-height:var(--dd-button-height);height:var(--dd-button-height);box-sizing:border-box;border-width:var(--dd-button-border-width);border-style:solid;border-color:var(--dd-button-border-color);border-radius:var(--dd-button-radius);font-size:var(--dd-button-font-size)}
+.dd-template-button-style :is(.public-address-copy button,.public-account-card button,:is(.public-share-copy.share-actions,.public-share-copy .share-actions)>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){min-height:var(--dd-button-height);height:var(--dd-button-height);box-sizing:border-box;border-width:var(--dd-button-border-width);border-style:solid;border-color:var(--dd-button-border-color);border-radius:var(--dd-button-radius);font-size:var(--dd-button-font-size)}
 .dd-template-button-style :is(.public-rsvp form>button,.guestbook-form>button){width:var(--dd-button-width);justify-self:center}
 
 /* Admin template editor: desktop side-by-side controls + sticky live preview */
@@ -1066,18 +1066,18 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-hero-configured .classic-hero-copy h2,.dd-template-hero-configured .romantic-hero-copy h2,.dd-template-hero-configured .modern-hero-copy h2{font-family:var(--dd-hero-title-font,inherit);font-weight:var(--dd-hero-title-weight,inherit);line-height:var(--dd-hero-title-line-height,inherit);letter-spacing:var(--dd-hero-title-letter-spacing,inherit);text-align:var(--dd-hero-title-align,inherit)}
 
 /* Optional shared button appearance: existing actions and click handlers are unchanged. */
-.dd-template-button-style[style*="--dd-button-bg"] :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){background:var(--dd-button-bg);color:var(--dd-button-text)}
+.dd-template-button-style[style*="--dd-button-bg"] :is(.public-address-copy button,.public-account-card button,:is(.public-share-copy.share-actions,.public-share-copy .share-actions)>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){background:var(--dd-button-bg);color:var(--dd-button-text)}
 .invitation-quick-menu{background:var(--dd-quick-menu-bg,rgba(255,252,249,.94));border-color:var(--dd-quick-menu-border,rgba(218,201,191,.85));border-radius:var(--dd-quick-menu-radius,17px)}
 .invitation-quick-menu button{color:var(--dd-quick-menu-text,#674f45)}
 .invitation-quick-menu button+button{border-left-color:var(--dd-quick-menu-border,rgba(218,201,191,.7))}
 
 /* Keep action appearance in sync with the selected reusable button palette. */
-.dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){background:var(--dd-button-bg,var(--dd-color-button-bg,#b78b72));color:var(--dd-button-text,var(--dd-color-button-text,#fff))}
+.dd-template-button-style :is(.public-address-copy button,.public-account-card button,:is(.public-share-copy.share-actions,.public-share-copy .share-actions)>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){background:var(--dd-button-bg,var(--dd-color-button-bg,#b78b72));color:var(--dd-button-text,var(--dd-color-button-text,#fff))}
 .invitation-quick-menu:has(> button){background:var(--dd-quick-menu-bg,rgba(255,252,249,.94))}
 .invitation-quick-menu button{color:var(--dd-quick-menu-text,#674f45)}
 
 /* Button width is relative to the available action area, including compact copy actions. */
-.dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){max-width:100%;width:var(--dd-button-width,100%);min-width:0}
+.dd-template-button-style :is(.public-address-copy button,.public-account-card button,:is(.public-share-copy.share-actions,.public-share-copy .share-actions)>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){max-width:100%;width:var(--dd-button-width,100%);min-width:0}
 .dd-template-button-style .public-account-card button{flex:0 1 auto}
 
 /* Shared quick-menu styling belongs to the three action buttons, not the tray. */
@@ -1095,7 +1095,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dearday-compact-categories{margin:0;font-size:10px;line-height:1.5;color:#806b62;white-space:normal}
 .dearday-compact-action{display:inline-flex;align-items:center;justify-content:center;gap:9px;color:#806b62;font-size:11px;text-decoration:none}
 .dearday-compact-arrow{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#b88b82;color:white;font-size:15px}
-.dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){font-family:var(--dd-button-font,Arial,sans-serif)}
+.dd-template-button-style :is(.public-address-copy button,.public-account-card button,:is(.public-share-copy.share-actions,.public-share-copy .share-actions)>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){font-family:var(--dd-button-font,Arial,sans-serif)}
 .invitation-quick-menu button{font-family:var(--dd-quick-menu-font,Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif)}
 
 /* Wedding contact actions beneath the invitation message. */
@@ -1128,12 +1128,12 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .invitation-quick-menu button{min-height:var(--dd-quick-menu-button-height,0px)}
 
 /* Explicit button weight; synchronized quick-menu inherits the same value. */
-.dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){font-weight:var(--dd-button-font-weight,400)}
+.dd-template-button-style :is(.public-address-copy button,.public-account-card button,:is(.public-share-copy.share-actions,.public-share-copy .share-actions)>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){font-weight:var(--dd-button-font-weight,400)}
 .invitation-quick-menu button{font-weight:var(--dd-quick-menu-font-weight,400)}
 
 /* Center shared action labels regardless of configured width and height.
    Excludes the Quick Menu, which intentionally has separate icon/text rows. */
-.dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-share-copy .share-actions>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){display:inline-flex;align-items:center;justify-content:center;text-align:center;vertical-align:middle;line-height:1.25;white-space:normal}
+.dd-template-button-style :is(.public-address-copy button,.public-account-card button,:is(.public-share-copy.share-actions,.public-share-copy .share-actions)>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){display:inline-flex;align-items:center;justify-content:center;text-align:center;vertical-align:middle;line-height:1.25;white-space:normal}
 
 /* Hero editor: scale the entire invitation Hero instead of clipping its lower text.
    Sticky positioning is bounded by the Hero editing section. */
@@ -1180,7 +1180,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-background .public-share-copy.share-actions {
   background:transparent;
 }
-.dd-template-background .public-share-copy .share-actions>button {
+.dd-template-background :is(.public-share-copy.share-actions,.public-share-copy .share-actions)>button {
   background:var(--dd-button-bg,var(--dd-color-button-bg,#b78b72));
   color:var(--dd-button-text,var(--dd-color-button-text,#fff));
 }
@@ -1308,3 +1308,11 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   overflow-wrap:normal;
   padding-inline:12px;
 }
+
+/* Published invitation: share actions use both classes on the same element.
+   Match the editor previews without allowing button labels to break mid-word. */
+.dd-template-button-style .public-share-copy.share-actions{gap:8px;padding-inline:12px}
+.dd-template-button-style .public-share-copy.share-actions>button{width:auto;max-width:100%;min-width:max-content;flex:0 1 auto;padding-inline:11px;white-space:nowrap;word-break:keep-all;overflow-wrap:normal}
+/* The published quick menu is fixed but remains inside the template DOM.
+   Keep the synchronized button palette independent from its artwork tray. */
+.dd-template-button-style .invitation-quick-menu button{background:var(--dd-quick-menu-item-bg,var(--dd-button-bg,var(--dd-invite-action-bg,transparent)));color:var(--dd-quick-menu-item-text,var(--dd-button-text,var(--dd-invite-action-text,#674f45)));border-radius:var(--dd-quick-menu-item-radius,var(--dd-button-radius,0px));border-color:var(--dd-quick-menu-item-border,var(--dd-button-border-color,transparent));border-width:var(--dd-quick-menu-item-border-width,var(--dd-button-border-width,0px))}
