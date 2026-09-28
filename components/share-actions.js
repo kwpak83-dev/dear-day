@@ -25,6 +25,24 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
   const [qrUrl, setQrUrl] = useState("");
   const [qrError, setQrError] = useState("");
   const noticeTimer = useRef(null);
+  const qrHistoryRef = useRef(null);
+
+  useEffect(() => {
+    const onPopState = () => {
+      if (!qrHistoryRef.current) return;
+      qrHistoryRef.current = null;
+      setQrOpen(false);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  const closeQr = () => {
+    const token = qrHistoryRef.current;
+    qrHistoryRef.current = null;
+    setQrOpen(false);
+    if (token && window.history.state?.ddInvitationQr === token) window.history.back();
+  };
 
   useEffect(() => () => window.clearTimeout(noticeTimer.current), []);
   useEffect(() => {
@@ -63,6 +81,11 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
   const openQr = async () => {
     if (previewOnly) return showNotice("미리보기입니다. 발행 후 QR 코드를 사용할 수 있어요.");
     const url = publicUrl();
+    if (!qrHistoryRef.current) {
+      const token = `dd-invitation-qr-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      window.history.pushState({ ...window.history.state, ddInvitationQr: token }, "", window.location.href);
+      qrHistoryRef.current = token;
+    }
     setQrOpen(true);
     setQrUrl(url);
     setQrDataUrl("");
@@ -96,14 +119,14 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
       <button type="button" onClick={openQr}>QR 코드</button>
       <span className="share-actions-notice" role="status" aria-live="polite">{notice}</span>
     </div>
-    {qrOpen && createPortal(<div className="qr-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title" onKeyDown={(event) => { if (event.key === "Escape") setQrOpen(false); }}>
+    {qrOpen && createPortal(<div className="qr-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title" onKeyDown={(event) => { if (event.key === "Escape") closeQr(); }}>
       <div className="qr-modal">
-        <button type="button" className="qr-modal-close" aria-label="QR 코드 닫기" onClick={() => setQrOpen(false)} autoFocus>×</button>
+        <button type="button" className="qr-modal-close" aria-label="QR 코드 닫기" onClick={closeQr} autoFocus>×</button>
         <p className="section-kicker">DEARDAY</p>
         <h2 id="qr-modal-title">초대장 QR 코드</h2>
         <div className="qr-image-frame">{qrDataUrl ? <img src={qrDataUrl} alt="공개 초대장 QR 코드" width="320" height="320" /> : !qrError && <span>QR 코드를 만들고 있어요.</span>}</div>
         {qrError ? <p className="qr-modal-error" role="alert">{qrError}</p> : <><p>스마트폰 카메라로 스캔해<br />초대장을 확인할 수 있습니다.</p><span className="qr-public-url">{qrUrl}</span></>}
-        <div className="qr-modal-actions"><button type="button" className="save-button" onClick={() => setQrOpen(false)}>닫기</button><button type="button" className="publish-button" onClick={saveQr} disabled={!qrDataUrl}>QR 이미지 저장</button></div>
+        <div className="qr-modal-actions"><button type="button" className="save-button" onClick={closeQr}>닫기</button><button type="button" className="publish-button" onClick={saveQr} disabled={!qrDataUrl}>QR 이미지 저장</button></div>
       </div>
     </div>, document.body)}
   </>;
