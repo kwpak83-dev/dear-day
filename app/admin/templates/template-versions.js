@@ -1,3 +1,4 @@
+import { BACKGROUND_PATTERN_GROUPS } from "../../../lib/background-patterns";
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -341,7 +342,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               </>}
               {background.custom.mode === "pattern" && <>
                 <label style={field}>무늬 종류<select style={input} value={background.custom.pattern} onChange={event => setBackground(current => ({ ...current, custom: { ...current.custom, pattern: event.target.value } }))}>
-                  {[["dots","도트"],["grid","격자"],["diagonal","사선"],["stripes","세로 줄무늬"],["horizontal","가로 줄무늬"],["cross","교차"],["checker","체커"],["diamonds","다이아몬드"],["waves","물결"],["confetti","컨페티"]].map(([value,label]) => <option key={value} value={value}>{label}</option>)}
+                  {BACKGROUND_PATTERN_GROUPS.map(([group, entries]) => <optgroup key={group} label={group}>{entries.map(([value,label]) => <option key={value} value={value}>{label}</option>)}</optgroup>)}
                 </select></label>
                 <ColorControl label="무늬 색상" value={background.custom.patternColor} onChange={patternColor => setBackground(current => ({ ...current, custom: { ...current.custom, patternColor } }))} />
                 <NumberControl label="무늬 크기" value={background.custom.patternSize} min={8} max={80} onChange={patternSize => setBackground(current => ({ ...current, custom: { ...current.custom, patternSize } }))} />
