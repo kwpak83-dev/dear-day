@@ -1,3 +1,4 @@
+import { BACKGROUND_PATTERN_KEYS } from "../../../../lib/background-patterns";
 import { randomUUID } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { TEMPLATE_FONT_STACKS } from "../../../../../lib/template-config";
@@ -306,7 +307,7 @@ function validBackground(value) {
     hasOnlyKeys(custom, ["mode", "endColor", "angle", "pattern", "patternColor", "patternSize", "patternOpacity"]) &&
     ["solid", "gradient", "pattern"].includes(custom.mode) &&
     hexColor(custom.endColor) && decimal(custom.angle, 0, 360) &&
-    ["dots", "grid", "diagonal", "stripes", "cross", "checker", "diamonds", "waves", "horizontal", "confetti"].includes(custom.pattern) &&
+    BACKGROUND_PATTERN_KEYS.includes(custom.pattern) &&
     hexColor(custom.patternColor) && Number.isInteger(custom.patternSize) &&
     decimal(custom.patternSize, 8, 80) && decimal(custom.patternOpacity, 0, 1);
 }
