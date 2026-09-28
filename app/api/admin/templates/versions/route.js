@@ -216,7 +216,7 @@ async function saveSections(auth, body) {
 }
 const scrollRevealValues = new Set(["none", "fade", "fade-up"]);
 
-const screenOrnaments = new Set(["blossom", "green", "autumn", "snow", "star", "heart"]);
+const screenOrnaments = new Set(["blossom","green","autumn","snow","star","heart","rose","lavender","daisy","ginkgo","feather","gold-confetti","color-confetti","balloon","bubble","ribbon","music","butterfly","moon","blossom-flower"]);
 const screenMotions = new Set(["fall", "flutter", "sparkle"]);
 function validScreenEffect(value) {
   if (value === null) return true;
