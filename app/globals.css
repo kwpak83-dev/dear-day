@@ -1389,3 +1389,22 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   40%,60%{opacity:var(--dd-screen-opacity);transform:scale(1) rotate(var(--dd-screen-rotation))}
 }
 @media(prefers-reduced-motion:reduce){.dd-template-screen-effect{display:none!important}}
+
+/* DearDay user editor: four-step navigation and persistent actions */
+.dd-editor-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:0 0 24px;padding:16px 10px;background:#fff;border:1px solid #eee6e1;border-radius:16px}
+.dd-editor-steps button{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0;border:0;background:transparent;color:#817d7b;cursor:pointer;font:inherit;padding:3px 0}
+.dd-editor-steps button span{display:grid;place-items:center;width:29px;height:29px;border-radius:50%;background:#f2f0ef;color:#706d6b;font-size:11px;font-weight:700}
+.dd-editor-steps button strong{font-size:12px;white-space:nowrap;letter-spacing:-.04em}
+.dd-editor-steps button.active{color:#302a28}
+.dd-editor-steps button.active span{background:#a66c5e;color:white}
+.dd-editor-step-intro{margin-bottom:20px}
+.dd-editor-step-intro h1{font-size:27px;line-height:1.3}
+.dd-editor-sticky-actions{position:sticky;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:10px 0 max(10px,env(safe-area-inset-bottom));background:#fff;border-top:1px solid #eae5e1}
+.dd-editor-sticky-actions button{min-width:0;min-height:46px;padding:8px 3px;border:1px solid #e8e1dd;border-radius:10px;background:#fff;color:#322c29;font:inherit;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer}
+.dd-editor-sticky-actions button:disabled{opacity:.5;cursor:not-allowed}
+.dd-editor-sticky-actions .dd-editor-preview-action{background:#a66c5e;border-color:#a66c5e;color:#fff}
+.dd-editor-sticky-actions .dd-editor-next-action{background:#34302e;border-color:#34302e;color:#fff}
+.dd-editor-final{padding:22px;border:1px solid #eae5e1;border-radius:14px;background:#fff}
+.dd-editor-final p{line-height:1.7}
+.dd-editor-final button{margin:8px 8px 0 0}
+@media(max-width:800px){.create-page .editor-panel{padding-bottom:0}.dd-editor-sticky-actions{position:fixed;left:0;right:0;bottom:0;padding:9px 12px max(9px,env(safe-area-inset-bottom));box-shadow:0 -5px 18px #30251e12}.create-page .create-layout{padding-bottom:90px}.dd-editor-steps{gap:3px;padding:13px 5px}.dd-editor-steps button strong{font-size:11px}}
