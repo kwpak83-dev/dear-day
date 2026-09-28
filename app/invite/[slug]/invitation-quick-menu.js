@@ -195,18 +195,36 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       ?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
   };
 
+  // Only synchronized versions define item-specific variables. Apply them directly
+  // to the fixed menu buttons so legacy/global button rules cannot override them.
+  const itemValue = (key) => desktopLiveStyle?.[key]?.trim?.() || undefined;
+  const synchronizedItemStyle = itemValue("--dd-quick-menu-item-bg") && itemValue("--dd-quick-menu-item-border-width")
+    ? {
+        background: itemValue("--dd-quick-menu-item-bg"),
+        color: itemValue("--dd-quick-menu-item-text"),
+        borderColor: itemValue("--dd-quick-menu-item-border"),
+        borderWidth: itemValue("--dd-quick-menu-item-border-width"),
+        borderStyle: "solid",
+        borderRadius: itemValue("--dd-quick-menu-item-radius"),
+        minHeight: itemValue("--dd-quick-menu-button-height"),
+        fontFamily: itemValue("--dd-quick-menu-font"),
+        fontWeight: itemValue("--dd-quick-menu-font-weight"),
+        fontSize: itemValue("--dd-quick-menu-font-size"),
+      }
+    : undefined;
+
   if (!rsvpEnabled && !guestbookEnabled && !hasLocation) return null;
 
   return <>
     <span ref={markerRef} className="invitation-quick-menu-trigger" aria-hidden="true" />
     {visible && (isDesktopLivePreview && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}${isEditorFullPreview ? " invitation-quick-menu--editor-full" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
-      {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
-      {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
-      {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
+      {rsvpEnabled && <button style={synchronizedItemStyle} className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
+      {hasLocation && <button style={synchronizedItemStyle} className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
+      {guestbookEnabled && <button style={synchronizedItemStyle} className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
     </nav>, desktopLivePortal) : <nav className={`invitation-quick-menu${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
-      {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
-      {hasLocation && <button className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
-      {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
+      {rsvpEnabled && <button style={synchronizedItemStyle} className="invitation-quick-rsvp" type="button" onClick={() => setSheet("rsvp")}><b aria-hidden="true" /><span>참석 여부</span></button>}
+      {hasLocation && <button style={synchronizedItemStyle} className="invitation-quick-location" type="button" onClick={goToLocation}><b aria-hidden="true" /><span>오시는 길</span></button>}
+      {guestbookEnabled && <button style={synchronizedItemStyle} className="invitation-quick-guestbook" type="button" onClick={() => setSheet("guestbook")}><b aria-hidden="true" /><span>축하 메시지</span></button>}
     </nav>)}
     {sheet === "rsvp" && rsvpEnabled && <BottomSheet title="참석 여부" onClose={() => setSheet(null)} portalTarget={isDesktopLivePreview ? desktopLivePortal : null} preview={isDesktopLivePreview}>
       <RsvpForm slug={slug} startsAt={startsAt} />
