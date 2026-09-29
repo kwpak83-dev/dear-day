@@ -2019,3 +2019,11 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .landing-v2 .landing-hero-benefits>div span{background:#edf5ff;color:#075be9}
 .landing-v2 .landing-hero-benefits>div span svg{display:block;width:23px;height:23px}
 @media(max-width:800px){.landing-v2 .landing-hero-benefits>div span svg{width:22px;height:22px}}
+
+
+/* HERO note: render above the artwork and match the Good People handwriting. */
+@media(min-width:801px){
+.landing-v2 .hero-copy-v2{position:relative;z-index:6}
+.landing-v2 .hero-side-note{z-index:10;left:79%;top:43%;width:195px;font-family:"Segoe Script","Brush Script MT",cursive;font-size:19px;font-style:italic;font-weight:400;line-height:1.3;letter-spacing:-.05em;color:#1958dc;text-align:center;text-shadow:0 1px 2px rgba(255,255,255,.95),1px 0 3px #fff,-1px 0 3px #fff}
+.landing-v2 .hero-side-note span{display:block;white-space:nowrap}
+}
