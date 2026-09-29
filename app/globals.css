@@ -1953,3 +1953,29 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .landing-v2 .dd-home03-template img{height:135px}
 .landing-v2 .dd-home03-arrow{display:none}
 }
+
+
+/* HOME-03 approved feature strip and template gallery refinement. */
+.landing-v2 .dd-home03{padding:3px 0 42px}
+.landing-v2 .dd-home03-features{gap:10px;padding:17px 20px;margin-bottom:31px;background:linear-gradient(105deg,#f5f9ff,#edf5ff);border:1px solid #edf4ff}
+.landing-v2 .dd-home03-icon{width:34px;height:37px;background:transparent;border-radius:0;color:#0756df}
+.landing-v2 .dd-home03-icon svg{width:28px;height:28px;display:block}
+.landing-v2 .dd-home03-feature strong{font-size:12px;white-space:nowrap}
+.landing-v2 .dd-home03-feature small{font-size:11px}
+.landing-v2 .dd-home03-heading{margin-bottom:12px}
+.landing-v2 .dd-home03-heading h2{font-size:22px}
+.landing-v2 .dd-home03-template{flex-basis:176px;gap:8px}
+.landing-v2 .dd-home03-template img{height:166px;object-fit:cover;object-position:top center}
+.landing-v2 .dd-home03-template strong{font-size:13px;font-weight:750}
+@media(max-width:800px){
+.landing-v2 .dd-home03{padding:0 0 30px}
+.landing-v2 .dd-home03-features{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 9px;padding:14px 12px;margin-bottom:23px}
+.landing-v2 .dd-home03-feature{gap:7px}
+.landing-v2 .dd-home03-icon{width:28px;height:31px}
+.landing-v2 .dd-home03-icon svg{width:25px;height:25px}
+.landing-v2 .dd-home03-feature strong{font-size:11px;white-space:normal}
+.landing-v2 .dd-home03-feature small{font-size:10px}
+.landing-v2 .dd-home03-heading h2{font-size:19px}
+.landing-v2 .dd-home03-template{flex-basis:122px}
+.landing-v2 .dd-home03-template img{height:135px}
+}
