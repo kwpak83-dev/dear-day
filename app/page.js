@@ -72,9 +72,10 @@ export default function Home() {
           <button className="landing-primary" onClick={start}>지금, 초대장 만들기 <b>→</b></button>
         </div>
         <div className="landing-hero-art" aria-hidden="true">
-          <span className="landing-art-shape landing-art-shape-one" /><span className="landing-art-shape landing-art-shape-two" />
-          <span className="landing-art-flower landing-art-flower-one">✿</span><span className="landing-art-flower landing-art-flower-two">✿</span><span className="landing-art-flower landing-art-flower-three">✿</span><span className="landing-art-flower landing-art-flower-four">✿</span><span className="landing-art-flower landing-art-flower-five">✿</span>
-          <div className="landing-phone"><div className="landing-phone-speaker" /><div className="landing-phone-screen"><small>DearDay Invitation</small><strong>YOU’RE<br />INVITED</strong><img src="/templates/modern-001/preview.png" alt="" /></div></div>
+          <img className="landing-hero-phone-image" src="/landing/hero-phone.png" alt="" />
+          <img className="landing-hero-mobile-image" src="/landing/hero-mobile.png" alt="" />
+          <img className="landing-hero-flower landing-hero-flower-blue" src="/landing/hero-flower-blue.png" alt="" />
+          <img className="landing-hero-flower landing-hero-flower-yellow" src="/landing/hero-flower-yellow.png" alt="" />
         </div>
         <div className="landing-hero-benefits"><div><span>✎</span>무료 제작<br />미리보기</div><div><span>▣</span>발행 시만<br />결제</div><div><span>♡</span>다양한<br />템플릿</div><div><span>↗</span>손쉬운<br />공유하기</div></div>
       </div>
