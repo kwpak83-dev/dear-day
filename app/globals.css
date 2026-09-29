@@ -1917,3 +1917,9 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .landing-v2 .dd-category-label i{width:17px;height:17px;font-size:17px}
 }
 @media(max-width:370px){.landing-v2 .dd-category-label strong{font-size:10px}.landing-v2 .dd-category-art{height:78px}}
+
+
+/* HOME-02 approved image illustrations, cropped inside the existing clickable cards. */
+.landing-v2 .dd-category-art{overflow:hidden}
+.landing-v2 .dd-category-art::before,.landing-v2 .dd-category-art::after{content:none}
+.landing-v2 .dd-category-art img{display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;object-position:center}
