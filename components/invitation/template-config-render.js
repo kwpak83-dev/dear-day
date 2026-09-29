@@ -83,6 +83,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroStyle.backgroundPosition = "center";
     heroMediaStyle.background = "transparent";
   }
+  if (hero?.photoFadeUp?.enabled) { heroMediaStyle.animation = `dd-hero-fade-up ${hero.photoFadeUp.duration}s ease-out ${hero.photoFadeUp.delay}s both`; }
   const frame = hero?.photoFrame;
   if (frame && frame.shape !== "default") {
     heroStyle.aspectRatio = (hero?.aspectRatio || "4:5").replace(":", " / ");
@@ -235,7 +236,7 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
           return <div key={layer.id} className="dd-template-hero-text-layer" style={{
             left: `${x}%`, top: `${y}%`, transform: `translate(${-x}%, -50%) rotate(${layer.rotation ?? 0}deg)`,
             width: "100%", textAlign: align,
-          }}><span style={{ ...textStyle, display: "inline-block", maxWidth: "100%" }}>{boundText}</span></div>;
+          }}><span className={layer.fadeUp?.enabled ? "dd-hero-text-fade-up" : undefined} style={{ ...textStyle, display: "inline-block", maxWidth: "100%", ...(layer.fadeUp?.enabled ? { animationDuration: `${layer.fadeUp.duration}s`, animationDelay: `${layer.fadeUp.delay}s` } : {}) }}>{boundText}</span></div>;
         })}
       </div>
     </>}
