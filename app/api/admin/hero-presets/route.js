@@ -29,9 +29,10 @@ async function getAdmin(request) {
 const decimal=(value,min,max)=>typeof value==="number"&&Number.isFinite(value)&&value>=min&&value<=max;
 const hex=(value)=>typeof value==="string"&&/^#[0-9a-fA-F]{6}$/.test(value);
 const fontIds=new Set(HERO_FONTS.map((font)=>font.id));
+const validFadeUp=(value)=>value&&typeof value==="object"&&!Array.isArray(value)&&Object.keys(value).every(key=>["enabled","duration","delay"].includes(key))&&typeof value.enabled==="boolean"&&[0.4,0.6,0.8,1,1.5,2].includes(value.duration)&&[0,0.2,0.3,0.5,0.8,1,1.5,2].includes(value.delay);
 function validConfig(value){
   if(!value||typeof value!=="object"||Array.isArray(value)) return false;
-  const allowed=["mode","aspectRatio","positionX","positionY","textYPercent","scheduleFontSize","nameFontSize","nameFontFamily","nameFontWeight","nameLineHeight","nameLetterSpacing","nameTextAlign","nameColor","separatorFontSize","separatorColor","zoom","overlayColor","overlayOpacity","headerVisible","mastheadVisible","mastheadText","display","textLayers","heroBackdrop","photoFrame"];
+  const allowed=["mode","aspectRatio","positionX","positionY","textYPercent","scheduleFontSize","nameFontSize","nameFontFamily","nameFontWeight","nameLineHeight","nameLetterSpacing","nameTextAlign","nameColor","separatorFontSize","separatorColor","zoom","overlayColor","overlayOpacity","headerVisible","mastheadVisible","mastheadText","display","textLayers","heroBackdrop","photoFrame","photoFadeUp"];
   if(Object.keys(value).some((key)=>!allowed.includes(key))) return false;
   const baseValid=heroModes.has(value.mode)&&heroRatios.has(value.aspectRatio)
     &&decimal(value.positionX,0,100)&&decimal(value.positionY,0,100)
@@ -56,11 +57,12 @@ function validConfig(value){
   if(!baseValid)return false;
   if(value.photoFrame!==undefined){const f=value.photoFrame;if(!f||typeof f!=="object"||Array.isArray(f)||Object.keys(f).some(k=>!["shape","width","height","x","y","borderColor","borderWidth","shadow","shadowBlur","rotation","imageX","imageY","imageZoom","borderStyle"].includes(k))||!["default","rectangle","rounded","oval","circle","arch"].includes(f.shape)||!Number.isInteger(f.width)||!decimal(f.width,40,100)||!Number.isInteger(f.height)||!decimal(f.height,40,100)||!decimal(f.x,0,100)||!decimal(f.y,0,100)||!hex(f.borderColor)||!Number.isInteger(f.borderWidth)||!decimal(f.borderWidth,0,12)||typeof f.shadow!=="boolean"||!Number.isInteger(f.shadowBlur)||!decimal(f.shadowBlur,0,40)||(f.rotation!==undefined&&!decimal(f.rotation,-45,45))||(f.imageX!==undefined&&!decimal(f.imageX,0,100))||(f.imageY!==undefined&&!decimal(f.imageY,0,100))||(f.imageZoom!==undefined&&!decimal(f.imageZoom,1,3))||(f.borderStyle!==undefined&&!["solid","double","dashed","dotted"].includes(f.borderStyle)))return false;}
   if(value.heroBackdrop!==undefined){const b=value.heroBackdrop;if(!b||typeof b!=="object"||Array.isArray(b)||Object.keys(b).some(k=>!["mode","color","endColor","angle","pattern","patternColor","patternSize","patternOpacity"].includes(k))||!["inherit","solid","gradient","pattern"].includes(b.mode)||!hex(b.color)||!hex(b.endColor)||!decimal(b.angle,0,360)||!["dots","grid","diagonal","stripes","cross","checker","diamonds","waves","horizontal","confetti"].includes(b.pattern)||!hex(b.patternColor)||!Number.isInteger(b.patternSize)||!decimal(b.patternSize,8,80)||!decimal(b.patternOpacity,0,1))return false;}
+  if(value.photoFadeUp!==undefined&&!validFadeUp(value.photoFadeUp))return false;
   if(value.textLayers===undefined)return true;
   if(!Array.isArray(value.textLayers)||value.textLayers.length>12)return false;
 
   return value.textLayers.every((layer)=>layer&&typeof layer==="object"&&!Array.isArray(layer)
-    &&Object.keys(layer).every((key)=>["id","text","fontId","fontSize","color","x","y","align","stroke","shadow","opacity","letterSpacing","lineHeight","rotation","gradient","source","visible"].includes(key))
+    &&Object.keys(layer).every((key)=>["id","text","fontId","fontSize","color","x","y","align","stroke","shadow","opacity","letterSpacing","lineHeight","rotation","gradient","source","visible","fadeUp"].includes(key))
     &&typeof layer.id==="string"&&/^[a-zA-Z0-9_-]{1,80}$/.test(layer.id)
     &&typeof layer.text==="string"&&layer.text.length<=200
     &&typeof layer.fontId==="string"&&fontIds.has(layer.fontId)
@@ -73,6 +75,7 @@ function validConfig(value){
     &&(layer.visible===undefined||typeof layer.visible==="boolean")
     &&(layer.stroke===undefined||(layer.stroke&&typeof layer.stroke==="object"&&!Array.isArray(layer.stroke)&&typeof layer.stroke.enabled==="boolean"&&hex(layer.stroke.color)&&decimal(layer.stroke.width,0,6)))
     &&(layer.shadow===undefined||(layer.shadow&&typeof layer.shadow==="object"&&!Array.isArray(layer.shadow)&&typeof layer.shadow.enabled==="boolean"&&hex(layer.shadow.color)&&decimal(layer.shadow.x,-20,20)&&decimal(layer.shadow.y,-20,20)&&decimal(layer.shadow.blur,0,30)&&decimal(layer.shadow.opacity,0,1)))
+    &&(layer.fadeUp===undefined||validFadeUp(layer.fadeUp))
     &&(layer.opacity===undefined||decimal(layer.opacity,0,1))
     &&(layer.letterSpacing===undefined||decimal(layer.letterSpacing,-5,20))
     &&(layer.lineHeight===undefined||decimal(layer.lineHeight,.8,2.5))
