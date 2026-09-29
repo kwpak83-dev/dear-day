@@ -1489,3 +1489,48 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .create-page .dd-final-flow span.done{background:#e6efe8;color:#53745a}
 .create-page .dd-editor-final .dd-final-help{font-size:12px;color:#897e79;line-height:1.6;margin:1px 4px 10px}
 @media(max-width:800px){.create-page .dd-final-card{padding:19px 16px}.create-page .dd-final-flow span{font-size:10px}}
+
+/* User-approved text-only capsule quick menu (B): shared in public and previews. */
+.invitation-quick-menu--minimal {
+  display:flex;
+  align-items:center;
+  gap:0;
+  padding:5px 12px;
+  min-height:52px;
+  border-radius:999px !important;
+  background:var(--dd-quick-menu-bg,var(--dd-template-quick-bg,#fffaf5));
+  overflow:hidden;
+}
+.invitation-quick-menu--minimal > button {
+  display:flex;
+  flex:1 1 0;
+  align-items:center;
+  justify-content:center;
+  min-width:0;
+  min-height:38px;
+  height:auto;
+  margin:0;
+  padding:7px 5px !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  background:transparent !important;
+  color:var(--dd-quick-menu-item-text,var(--dd-quick-menu-text,#674f45)) !important;
+  font-family:var(--dd-quick-menu-font,Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif);
+  font-size:clamp(10px,2.8vw,12px) !important;
+  font-weight:var(--dd-quick-menu-font-weight,400);
+  line-height:1.3;
+}
+.invitation-quick-menu--minimal > button + button {
+  border-left:1px solid var(--dd-quick-menu-border,var(--dd-invite-action-divider,#ddd0c8)) !important;
+}
+.invitation-quick-menu--minimal > button span {
+  display:block;
+  min-width:0;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  word-break:keep-all;
+}
+.invitation-quick-menu--minimal > button:focus-visible {outline:2px solid currentColor;outline-offset:-3px;border-radius:8px !important}
