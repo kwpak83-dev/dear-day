@@ -1651,6 +1651,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-transport-guide-toggle{display:flex;align-items:center;gap:8px;font-weight:600}
 
 /* Hero Fade Up uses individual translate/filter properties to preserve frame rotation, zoom and text opacity. */
+@keyframes dd-hero-photo-fade-up{from{translate:0 20px;opacity:0}to{translate:0 0;opacity:1}}
 @keyframes dd-hero-fade-up{from{translate:0 20px;filter:opacity(0)}to{translate:0 0;filter:opacity(1)}}
 .dd-hero-text-fade-up{animation-name:dd-hero-fade-up;animation-timing-function:ease-out;animation-fill-mode:both}
-@media(prefers-reduced-motion:reduce){.dd-hero-text-fade-up,[style*="dd-hero-fade-up"]{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.dd-hero-text-fade-up,[style*="dd-hero-photo-fade-up"]{animation:none!important}}
