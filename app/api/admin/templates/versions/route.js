@@ -368,7 +368,7 @@ async function saveBackgroundHero(auth, body) {
 
 const typographyRoles = ["heroTitle", "sectionTitle", "body", "caption"];
 const typographyFields = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "textAlign"];
-const colorFields = ["text", "title", "heroTitle", "muted", "accent", "buttonBackground", "buttonText", "divider"];
+const colorFields = ["text", "title", "heroTitle", "muted", "caption", "accent", "buttonBackground", "buttonText", "divider"];
 const fontFamilies = new Set(Object.keys(TEMPLATE_FONT_STACKS));
 const fontWeights = new Set([300, 400, 500, 600, 700]);
 const textAlignments = new Set(["left", "center", "right"]);
