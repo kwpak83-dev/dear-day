@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../lib/supabase/browser";
 import { DEFAULT_AUTH_RETURN_PATH, getSafeAuthReturnPath } from "../lib/auth-return-url";
 
@@ -9,6 +9,7 @@ const steps = [["01", "▧", "템플릿 선택", "마음에 드는 디자인을 
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const featuredTrackRef = useRef(null);
   const [authOpen, setAuthOpen] = useState(false);
   const [authMessage, setAuthMessage] = useState("");
   const [authLoading, setAuthLoading] = useState("");
@@ -81,6 +82,31 @@ export default function Home() {
       </div>
     </section>
     <section className="moment-section dd-category-section" id="templates"><div className="landing-shell"><div className="dd-category-heading"><h2>어떤 초대장을 만드시나요?</h2><button onClick={start}>전체보기 →</button></div><div className="dd-category-grid"><button className="dd-category-card dd-category-1" key="0" onClick={start}><span className="dd-category-art"><img src="/landing/categories/category-wedding.png" alt="" loading="lazy" /></span><span className="dd-category-label"><strong>결혼식</strong><i aria-hidden="true">›</i></span></button><button className="dd-category-card dd-category-2" key="1" onClick={start}><span className="dd-category-art"><img src="/landing/categories/category-first-birthday.png" alt="" loading="lazy" /></span><span className="dd-category-label"><strong>돌잔치</strong><i aria-hidden="true">›</i></span></button><button className="dd-category-card dd-category-3" key="2" onClick={start}><span className="dd-category-art"><img src="/landing/categories/category-birthday.png" alt="" loading="lazy" /></span><span className="dd-category-label"><strong>생일</strong><i aria-hidden="true">›</i></span></button><button className="dd-category-card dd-category-4" key="3" onClick={start}><span className="dd-category-art"><img src="/landing/categories/category-gathering.png" alt="" loading="lazy" /></span><span className="dd-category-label"><strong>모임·동창회</strong><i aria-hidden="true">›</i></span></button><button className="dd-category-card dd-category-5" key="4" onClick={start}><span className="dd-category-art"><img src="/landing/categories/category-party.png" alt="" loading="lazy" /></span><span className="dd-category-label"><strong>파티</strong><i aria-hidden="true">›</i></span></button><button className="dd-category-card dd-category-6" key="5" onClick={start}><span className="dd-category-art"><img src="/landing/categories/category-custom.png" alt="" loading="lazy" /></span><span className="dd-category-label"><strong>직접 만들기</strong><i aria-hidden="true">›</i></span></button></div></div></section>
+    <section className="dd-home03" aria-label="DearDay 서비스 소개 및 인기 템플릿">
+      <div className="landing-shell">
+        <div className="dd-home03-features">
+          {[
+            ["▯", "모바일에 최적화", "언제 어디서나"],
+            ["▧", "원하는 대로 편집", "쉬운 에디터"],
+            ["♧", "필요한 기능만 선택", "지도·방명록·참석여부 등"],
+            ["♧", "간편한 공유", "링크·QR코드"],
+            ["♡", "특별한 순간을 더 특별하게", "다양한 디자인"],
+          ].map(([symbol, title, description], i) => <div className="dd-home03-feature" key={title}><span className={"dd-home03-icon dd-home03-icon-" + i} aria-hidden="true">{symbol}</span><div><strong>{title}</strong><small>{description}</small></div></div>)}
+        </div>
+        <div className="dd-home03-heading"><h2>인기 템플릿 미리보기</h2><button type="button" onClick={start}>전체보기 →</button></div>
+        <div className="dd-home03-carousel">
+          <button className="dd-home03-arrow" type="button" aria-label="이전 템플릿" onClick={() => featuredTrackRef.current?.scrollBy({left:-320,behavior:"smooth"})}>‹</button>
+          <div className="dd-home03-track" ref={featuredTrackRef}>
+            {[
+              {id:"modern-001",name:"모던 블루",image:"/templates/modern-001/preview.png"},
+              {id:"classic-001",name:"심플 화이트",image:"/templates/classic-001/preview.png"},
+              {id:"romantic-001",name:"로맨틱",image:"/templates/romantic-001/preview.png"},
+            ].map(template => <button type="button" className="dd-home03-template" key={template.id} onClick={start}><img src={template.image} alt={template.name + " 템플릿 미리보기"} loading="lazy" /><strong>{template.name}</strong></button>)}
+          </div>
+          <button className="dd-home03-arrow" type="button" aria-label="다음 템플릿" onClick={() => featuredTrackRef.current?.scrollBy({left:320,behavior:"smooth"})}>›</button>
+        </div>
+      </div>
+    </section>
     <section className="how-v2" id="how"><div className="landing-shell"><p className="landing-kicker">HOW IT WORKS</p><h2>3단계로, 쉽고 빠르게</h2><p className="landing-subtitle">누구나 몇 분 만에, 나만의 초대장이 완성됩니다.</p><div className="how-v2-grid">{steps.map(([number, icon, title, description]) => <article key={number}><span className="step-number">{number}</span><div>{icon}</div><section><h3>{title}</h3><p>{description}</p></section></article>)}</div></div></section>
 
     <section className="envelope-cta" id="story"><div className="landing-shell"><p>MAKE<br />SPECIAL MOMENTS<br />TOGETHER</p><div><h2>모든 특별한 날,<br /><b>Dear Day</b>가 함께합니다.</h2><span>부담은 가볍게, 마음은 충분히.</span></div><button className="landing-primary" onClick={start}>지금, 초대장 만들기 <b>→</b></button></div></section>
