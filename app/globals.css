@@ -2027,3 +2027,11 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .landing-v2 .hero-side-note{z-index:10;left:79%;top:43%;width:195px;font-family:"Segoe Script","Brush Script MT",cursive;font-size:19px;font-style:italic;font-weight:400;line-height:1.3;letter-spacing:-.05em;color:#1958dc;text-align:center;text-shadow:0 1px 2px rgba(255,255,255,.95),1px 0 3px #fff,-1px 0 3px #fff}
 .landing-v2 .hero-side-note span{display:block;white-space:nowrap}
 }
+
+
+/* HOME footer CTA: unify the former peach envelope banner with the blue landing palette. */
+.landing-v2 .envelope-cta{background:linear-gradient(105deg,rgba(236,245,255,.94),rgba(247,250,255,.96)),url('/final-cta-envelope.png') center/cover;border-top:1px solid #e2edff;color:#152b52}
+.landing-v2 .envelope-cta h2{color:#152b52}
+.landing-v2 .envelope-cta span{color:#647895}
+.landing-v2 .envelope-cta p{color:#4776bd;text-shadow:none}
+@media(max-width:800px){.landing-v2 .envelope-cta{background:linear-gradient(110deg,rgba(236,245,255,.95),rgba(247,250,255,.97)),url('/final-cta-envelope.png') center/cover;border-top-color:#e2edff}}
