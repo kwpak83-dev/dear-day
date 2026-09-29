@@ -1584,3 +1584,33 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .public-share-copy.dd-public-share-pills>button svg{width:15px;height:15px;flex:0 0 15px}
 .public-share-copy.dd-public-share-pills>.share-actions-notice{grid-column:1/-1;min-width:0;min-height:0;flex:none;text-align:center;font-size:12px;overflow-wrap:anywhere}
 @media(max-width:350px){.public-share-copy.dd-public-share-pills{gap:4px;padding-inline:4px}.public-share-copy.dd-public-share-pills>button{font-size:11px;padding-inline:3px;gap:3px}.public-share-copy.dd-public-share-pills>button svg{width:13px;height:13px;flex-basis:13px}}
+
+/* Strong final isolation: legacy theme selectors must not reshape the footer controls. */
+:is(.romantic-001,.modern-001,.classic-001,.dd-template-button-style,.dd-template-background) .public-share-copy.dd-public-share-pills,
+.public-share-copy.dd-public-share-pills{
+  display:grid !important;grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  width:100% !important;max-width:100% !important;min-width:0 !important;
+  gap:6px !important;margin:0 !important;padding:14px 10px !important;
+  box-sizing:border-box !important;justify-content:stretch !important;align-items:center !important;
+}
+:is(.romantic-001,.modern-001,.classic-001,.dd-template-button-style,.dd-template-background) .public-share-copy.dd-public-share-pills>button,
+.public-share-copy.dd-public-share-pills>button{
+  display:flex !important;flex-direction:row !important;position:static !important;
+  grid-column:auto !important;align-items:center !important;justify-content:center !important;
+  flex:none !important;min-width:0 !important;width:100% !important;max-width:none !important;
+  height:40px !important;min-height:40px !important;aspect-ratio:auto !important;
+  padding:0 3px !important;margin:0 !important;border-radius:999px !important;
+  border-width:1.5px !important;border-style:solid !important;box-shadow:none !important;
+  font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif !important;
+  font-size:12px !important;font-weight:700 !important;letter-spacing:-.04em !important;
+  line-height:1 !important;white-space:nowrap !important;word-break:keep-all !important;
+  overflow:hidden !important;box-sizing:border-box !important;
+}
+:is(.romantic-001,.modern-001,.classic-001,.dd-template-button-style,.dd-template-background) .public-share-copy.dd-public-share-pills>.dd-share-kakao,
+.public-share-copy.dd-public-share-pills>.dd-share-kakao{background:#fee500 !important;color:#191919 !important;border-color:#fee500 !important}
+:is(.romantic-001,.modern-001,.classic-001,.dd-template-button-style,.dd-template-background) .public-share-copy.dd-public-share-pills>.dd-share-link,
+.public-share-copy.dd-public-share-pills>.dd-share-link{background:#080808 !important;color:#fff !important;border-color:#080808 !important}
+:is(.romantic-001,.modern-001,.classic-001,.dd-template-button-style,.dd-template-background) .public-share-copy.dd-public-share-pills>.dd-share-qr,
+.public-share-copy.dd-public-share-pills>.dd-share-qr{background:#fff !important;color:#111 !important;border-color:#111 !important}
+.public-share-copy.dd-public-share-pills>button svg{display:block !important;width:14px !important;height:14px !important;flex:0 0 14px !important}
+.public-share-copy.dd-public-share-pills>.share-actions-notice{grid-column:1/-1 !important;display:block;min-height:0}
