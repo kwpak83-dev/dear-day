@@ -1979,3 +1979,15 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .landing-v2 .dd-home03-template{flex-basis:122px}
 .landing-v2 .dd-home03-template img{height:135px}
 }
+
+
+/* HOME-04: match How It Works to DearDay navy and pale-blue homepage palette. */
+.landing-v2 .how-v2{background:linear-gradient(115deg,#f5f9ff 0%,#edf5ff 55%,#f6faff 100%);padding:38px 0 43px;color:#142b55}
+.landing-v2 .how-v2 .landing-kicker{color:#2461d5;letter-spacing:.24em;font-weight:800}
+.landing-v2 .how-v2 h2{color:#132b55;font-family:Arial,"Apple SD Gothic Neo",sans-serif;font-weight:800;letter-spacing:-.055em}
+.landing-v2 .how-v2 .landing-subtitle{color:#627694}
+.landing-v2 .how-v2-grid article>div{background:#dceaff;color:#175ce4}
+.landing-v2 .how-v2-grid .step-number{background:#2563eb;color:#fff;box-shadow:0 3px 8px rgba(37,99,235,.17)}
+.landing-v2 .how-v2-grid h3{color:#172e57;font-weight:800}
+.landing-v2 .how-v2-grid p{color:#607491}
+@media(max-width:800px){.landing-v2 .how-v2{padding:30px 0 34px}.landing-v2 .how-v2-grid article>div{width:54px;height:54px}}
