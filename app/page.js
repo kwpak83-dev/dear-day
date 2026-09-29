@@ -57,8 +57,8 @@ export default function Home() {
   return <main className="landing-v2">
     <header className="landing-header">
       <a className="landing-brand" href="#top" aria-label="디어데이 홈"><span><b>DearDay</b><small>GOOD PEOPLE GOOD MOMENT</small></span></a>
-      <nav className="landing-nav"><a href="#templates">템플릿</a><a href="#how">이용방법</a><button onClick={comingSoon}>요금제</button><a href="#story">Dear Day 이야기</a></nav>
-      <div className="landing-actions">{user ? <><span>{providerLabel}</span><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>
+      <nav className="landing-nav"><button onClick={start}>초대장 만들기</button><a href="#templates">템플릿</a><a href="#how">이용안내</a><a href="#story">고객센터</a></nav>
+      <div className="landing-actions">{user ? <><span>{providerLabel}</span><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={start}>지금, 초대장 만들기 →</button></div>
       <button className="landing-menu" aria-label="메뉴 열기" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
       {menuOpen && <div className="landing-mobile-nav"><a href="#templates" onClick={() => setMenuOpen(false)}>템플릿</a><a href="#how" onClick={() => setMenuOpen(false)}>이용방법</a><button onClick={comingSoon}>요금제</button><a href="#story" onClick={() => setMenuOpen(false)}>Dear Day 이야기</a>{user ? <><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <button onClick={() => openLogin()}>로그인</button>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>}
     </header>
@@ -76,7 +76,7 @@ export default function Home() {
           <span className="landing-art-flower landing-art-flower-one">✿</span><span className="landing-art-flower landing-art-flower-two">✿</span><span className="landing-art-flower landing-art-flower-three">✿</span>
           <div className="landing-phone"><div className="landing-phone-speaker" /><img src="/templates/modern-001/preview.png" alt="" /></div>
         </div>
-        <div className="landing-hero-benefits"><div><span>✎</span>무료 제작<br />미리보기</div><div><span>▣</span>발행 시만<br />결제</div><div><span>♡</span>다양한<br />템플릿</div></div>
+        <div className="landing-hero-benefits"><div><span>✎</span>무료 제작<br />미리보기</div><div><span>▣</span>발행 시만<br />결제</div><div><span>♡</span>다양한<br />템플릿</div><div><span>↗</span>손쉬운<br />공유하기</div></div>
       </div>
     </section>
     <section className="moment-section" id="templates"><div className="landing-shell"><p className="landing-kicker">CHOOSE YOUR MOMENT</p><h2>어떤 초대장을 만드시나요?</h2><p className="landing-subtitle">소중한 순간, Dear Day와 함께해 주세요.</p><div className="moment-grid">{invitationTypes.map(([english, korean, _visual, style], index) => <button className={`moment-card ${style}`} key={english} onClick={start}><span className="tape" /><div className="moment-photo" style={{ backgroundImage: `url(/moment-${index + 1}.png)` }} /><em>{english}</em><strong>{korean}</strong><i>→</i></button>)}</div></div></section>
