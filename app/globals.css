@@ -2003,3 +2003,12 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .landing-v2 .landing-hero-benefits>div:last-child{grid-column:auto}
 }
 @media(max-width:800px){.landing-v2 .landing-hero-flower{display:none}}
+
+
+/* HERO fine tuning: fixed handwritten lines and clearer, slightly larger benefits panel. */
+@media(min-width:801px){
+.landing-v2 .hero-side-note{left:77%;top:42%;width:185px;font-family:"하이멜로디 귀여운 손글씨","Hi Melody","Nanum Pen Script","Malgun Gothic",cursive;font-size:16px;line-height:1.55;letter-spacing:-.045em}
+.landing-v2 .hero-side-note span{display:block;white-space:nowrap}
+.landing-v2 .landing-hero-benefits{transform:scale(1.045);transform-origin:center;background:rgba(255,255,255,.96);padding:12px;gap:9px;border-color:rgba(230,239,253,.96)}
+.landing-v2 .landing-hero-benefits>div{min-height:111px;padding:12px 5px}
+}
