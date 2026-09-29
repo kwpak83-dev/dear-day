@@ -1991,3 +1991,15 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .landing-v2 .how-v2-grid h3{color:#172e57;font-weight:800}
 .landing-v2 .how-v2-grid p{color:#607491}
 @media(max-width:800px){.landing-v2 .how-v2{padding:30px 0 34px}.landing-v2 .how-v2-grid article>div{width:54px;height:54px}}
+
+
+/* HOME-01 visual refinement: approved quieter reference, desktop only. */
+@media(min-width:801px){
+.landing-v2 .landing-hero-flower{display:none}
+.landing-v2 .hero-side-note{display:block;left:85%;top:42%;width:115px;transform:rotate(-11deg);font-family:"Nanum Pen Script","Nanum Brush Script","Segoe Print","Malgun Gothic",cursive;font-size:15px;font-style:normal;line-height:1.45;letter-spacing:-.04em;color:#34496b;text-align:center}
+.landing-v2 .landing-hero-benefits{align-self:center;gap:8px;padding:10px;background:rgba(255,255,255,.82);border:1px solid #e8effb;border-radius:17px;box-shadow:0 7px 23px rgba(40,78,140,.06)}
+.landing-v2 .landing-hero-benefits>div{min-height:105px;padding:10px 4px;border-radius:13px;gap:5px;font-size:12px;box-shadow:0 3px 10px rgba(40,78,140,.04)}
+.landing-v2 .landing-hero-benefits>div span{width:39px;height:39px;font-size:23px;background:#eff5ff;color:#1458e0}
+.landing-v2 .landing-hero-benefits>div:last-child{grid-column:auto}
+}
+@media(max-width:800px){.landing-v2 .landing-hero-flower{display:none}}
