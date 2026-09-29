@@ -1649,3 +1649,8 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-transport-guide h3{margin:0 0 10px;font:inherit;font-weight:700;color:inherit;text-align:center}
 .dd-transport-guide p{margin:0;white-space:pre-wrap;overflow-wrap:break-word;word-break:keep-all;font:inherit;color:inherit}
 .dd-transport-guide-toggle{display:flex;align-items:center;gap:8px;font-weight:600}
+
+/* Hero Fade Up uses individual translate/filter properties to preserve frame rotation, zoom and text opacity. */
+@keyframes dd-hero-fade-up{from{translate:0 20px;filter:opacity(0)}to{translate:0 0;filter:opacity(1)}}
+.dd-hero-text-fade-up{animation-name:dd-hero-fade-up;animation-timing-function:ease-out;animation-fill-mode:both}
+@media(prefers-reduced-motion:reduce){.dd-hero-text-fade-up,[style*="dd-hero-fade-up"]{animation:none!important}}
