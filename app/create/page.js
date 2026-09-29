@@ -13,6 +13,7 @@ import OptionalInvitationSections from "../invite/[slug]/optional-invitation-sec
 
 import GalleryEditor from "./gallery-editor";
 import { preparePhoto } from "../../lib/prepare-photo";
+import { normalizeNotice } from "../../lib/invitation-notice";
 import { getInvitationTitle } from "../../lib/invitation-title";
 import { EVENT_KIND_OPTIONS, getEventConfig, getMissingRequiredFields } from "../../lib/event-config";
 
@@ -482,6 +483,28 @@ export default function CreateInvitation() {
       setUploadingPhoto(false);
     }
   };
+  const updateNotice = (key, value) => setInvitation(current => ({ ...current, notice: { ...normalizeNotice(current.notice), [key]: value } }));
+  const [noticeUploadBusy, setNoticeUploadBusy] = useState(false);
+  const [noticeUploadMessage, setNoticeUploadMessage] = useState("");
+  const uploadNoticePhoto = async event => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || !eventSlug || noticeUploadBusy) return;
+    setNoticeUploadBusy(true);
+    setNoticeUploadMessage("공지 이미지를 올리고 있어요.");
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("로그인이 필요해요.");
+      const photo = await preparePhoto(file);
+      const response = await fetch("/api/notice-photo", { method: "POST", headers: { "Content-Type": "image/jpeg", "Authorization": "Bearer " + session.access_token, "X-Event-Slug": eventSlug }, body: photo });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "업로드 실패");
+      updateNotice("imagePath", result.path);
+      setNoticeUploadMessage("이미지가 첨부됐어요. 수정사항 반영을 눌러 주세요.");
+    } catch (error) { setNoticeUploadMessage(error.message || "이미지 업로드 실패"); }
+    finally { setNoticeUploadBusy(false); }
+  };
   const searchPlaces = async () => {
     const query = invitation.venue.trim();
     if (!query) return setMapNotice("예식장 이름을 입력해 주세요.");
@@ -749,6 +772,9 @@ export default function CreateInvitation() {
           <div className="dd-share-card"><div className="dd-share-card-heading"><div><h2>꽃잎 효과</h2><p>초대장에 꽃잎이 흩날리는 효과를 설정해요.</p></div><label className="dd-share-switch"><input type="checkbox" checked={invitation.petalEffectEnabled === true} onChange={event => update("petalEffectEnabled", event.target.checked)} aria-label="꽃잎 효과 사용" /><span className="dd-share-switch-track" aria-hidden="true" /></label></div><p className="dd-share-state">{invitation.petalEffectEnabled === true ? "사용 중 · 저장 후 초대장에 반영됩니다." : "사용 안 함"}</p></div>
         </div>
         <div className="dd-share-settings" style={{display:editorStep === 3 ? undefined : "none"}}>
+          <div className="dd-share-card"><div className="dd-share-card-heading"><div><h2>공지사항 팝업</h2><p>초대장 접속 시 중요한 안내를 보여줘요.</p></div><label className="dd-share-switch"><input type="checkbox" checked={invitation.notice?.enabled === true} onChange={event => updateNotice("enabled", event.target.checked)} aria-label="공지사항 팝업 사용" /><span className="dd-share-switch-track" aria-hidden="true" /></label></div>
+            <div className="form-section"><Field label="공지 제목"><input maxLength={80} placeholder="하객 안내사항" value={invitation.notice?.title || ""} onChange={event => updateNotice("title", event.target.value)} /></Field><Field label="공지 내용"><textarea rows={5} maxLength={3000} placeholder="셔틀버스 및 주차 안내 등을 입력하세요." value={invitation.notice?.body || ""} onChange={event => updateNotice("body", event.target.value)} /></Field><Field label="이미지 1장 (선택)"><input type="file" accept="image/jpeg,image/png,image/webp" disabled={!eventSlug || noticeUploadBusy} onChange={uploadNoticePhoto} /></Field>{!eventSlug && <p>이미지를 올리려면 초대장을 먼저 임시저장해 주세요.</p>}{invitation.notice?.imagePath && <button type="button" className="save-button" onClick={() => updateNotice("imagePath", "")}>첨부 이미지 삭제</button>}{noticeUploadMessage && <p role="status">{noticeUploadMessage}</p>}</div>
+            <p className="dd-share-help">접속 시 자동 표시 · 오늘 하루 보지 않기 · 내용 수정 시 다시 표시. 제목과 내용을 입력해야 활성화됩니다.</p></div>
           <p className="dd-share-help">참석 여부와 방명록 현황은 마이페이지 → 하객관리에서 실시간으로 확인할 수 있어요.</p>
           <div className="dd-share-card"><div className="dd-share-card-heading"><div><h2>참석 여부 확인</h2><p>하객이 로그인 없이 참석 여부를 전달할 수 있어요.</p></div><label className="dd-share-switch"><input type="checkbox" checked={invitation.rsvpEnabled === true} onChange={(event) => update("rsvpEnabled", event.target.checked)} aria-label="참석 여부 확인 사용" /><span className="dd-share-switch-track" aria-hidden="true" /></label></div><p className="dd-share-state">{invitation.rsvpEnabled === true ? "사용 중 · 초대장에 참석 여부 확인 버튼이 표시돼요." : "사용 안 함 · 초대장에 참석 여부 확인 버튼이 표시되지 않아요."}</p></div>
           <div className="dd-share-card"><div className="dd-share-card-heading"><div><h2>방명록</h2><p>하객이 축하 메시지를 남길 수 있어요.</p></div><label className="dd-share-switch"><input type="checkbox" checked={invitation.guestbookEnabled !== false} onChange={(event) => update("guestbookEnabled", event.target.checked)} aria-label="방명록 사용" /><span className="dd-share-switch-track" aria-hidden="true" /></label></div><p className="dd-share-state">{invitation.guestbookEnabled !== false ? "사용 중 · 초대장에 방명록 버튼이 표시돼요." : "사용 안 함 · 기존 방명록 글은 삭제되지 않아요."}</p></div>
