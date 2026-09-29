@@ -59,8 +59,8 @@ export default function Home() {
       <a className="landing-brand" href="#top" aria-label="디어데이 홈"><span><b>DearDay</b><small>GOOD PEOPLE GOOD MOMENT</small></span></a>
       <nav className="landing-nav"><button onClick={start}>초대장 만들기</button><a href="#templates">템플릿</a><a href="#how">이용안내</a><a href="#story">고객센터</a></nav>
       <div className="landing-actions">{user ? <><span>{providerLabel}</span><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={start}>지금, 초대장 만들기 →</button></div>
-      <button className="landing-menu" aria-label="메뉴 열기" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
-      {menuOpen && <div className="landing-mobile-nav"><a href="#templates" onClick={() => setMenuOpen(false)}>템플릿</a><a href="#how" onClick={() => setMenuOpen(false)}>이용방법</a><button onClick={comingSoon}>요금제</button><a href="#story" onClick={() => setMenuOpen(false)}>Dear Day 이야기</a>{user ? <><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <button onClick={() => openLogin()}>로그인</button>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>}
+      <div className="landing-mobile-actions"><button aria-label="검색" onClick={comingSoon}>⌕</button><button className="landing-menu" aria-label="메뉴 열기" onClick={() => setMenuOpen(!menuOpen)}>☰</button></div>
+      {menuOpen && <div className="landing-mobile-nav"><button onClick={() => { setMenuOpen(false); start(); }}>초대장 만들기</button><a href="#templates" onClick={() => setMenuOpen(false)}>템플릿</a><a href="#how" onClick={() => setMenuOpen(false)}>이용안내</a><a href="#story" onClick={() => setMenuOpen(false)}>고객센터</a>{user ? <><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <button onClick={() => openLogin()}>로그인</button>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>}
     </header>
 
     <section className="landing-hero" id="top">
@@ -68,13 +68,13 @@ export default function Home() {
         <div className="hero-copy-v2">
           <p className="hero-handwriting">Good People<br />Good Moment</p>
           <h1>특별한 날을<br />쉽고, 멋지게</h1>
-          <span>누구나 쉽게 만드는<br />모바일 초대장 DearDay</span>
+          <span>누구나 쉽게 만드는<br />모바일 초대장 DearDay</span><p className="hero-side-note">좋은 날,<br />좋은 사람들과 함께 ♡</p>
           <button className="landing-primary" onClick={start}>지금, 초대장 만들기 <b>→</b></button>
         </div>
         <div className="landing-hero-art" aria-hidden="true">
           <span className="landing-art-shape landing-art-shape-one" /><span className="landing-art-shape landing-art-shape-two" />
-          <span className="landing-art-flower landing-art-flower-one">✿</span><span className="landing-art-flower landing-art-flower-two">✿</span><span className="landing-art-flower landing-art-flower-three">✿</span>
-          <div className="landing-phone"><div className="landing-phone-speaker" /><img src="/templates/modern-001/preview.png" alt="" /></div>
+          <span className="landing-art-flower landing-art-flower-one">✿</span><span className="landing-art-flower landing-art-flower-two">✿</span><span className="landing-art-flower landing-art-flower-three">✿</span><span className="landing-art-flower landing-art-flower-four">✿</span><span className="landing-art-flower landing-art-flower-five">✿</span>
+          <div className="landing-phone"><div className="landing-phone-speaker" /><div className="landing-phone-screen"><small>DearDay Invitation</small><strong>YOU’RE<br />INVITED</strong><img src="/templates/modern-001/preview.png" alt="" /></div></div>
         </div>
         <div className="landing-hero-benefits"><div><span>✎</span>무료 제작<br />미리보기</div><div><span>▣</span>발행 시만<br />결제</div><div><span>♡</span>다양한<br />템플릿</div><div><span>↗</span>손쉬운<br />공유하기</div></div>
       </div>
