@@ -1565,3 +1565,22 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-notice-bottom{border-top:1px solid #eee;padding-top:16px;font-size:12px}
 .dd-notice-bottom label{display:flex;align-items:center;gap:5px}
 .dd-notice-bottom button{border:0;border-radius:8px;background:#453b36;color:white;padding:10px 20px;cursor:pointer}
+
+/* DearDay footer sharing pills: intentionally independent of template button palette. */
+.dd-template-button-style .public-share-copy.share-actions,
+.public-share-copy.share-actions{display:flex;flex-wrap:nowrap;align-items:center;justify-content:center;gap:7px;padding:12px 8px;max-width:100%;box-sizing:border-box}
+.dd-template-button-style .public-share-copy.share-actions>button,
+.public-share-copy.share-actions>button,
+.preview-content .public-share-copy.share-actions>button{display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:1 1 0;min-width:0;max-width:128px;width:auto;height:39px;min-height:39px;padding:0 8px;border-radius:999px;border:1.5px solid transparent;font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:12px;font-weight:700;line-height:1;white-space:nowrap;word-break:keep-all;cursor:pointer}
+.dd-template-button-style .public-share-copy.share-actions>.dd-share-kakao,
+.public-share-copy.share-actions>.dd-share-kakao,
+.preview-content .public-share-copy.share-actions>.dd-share-kakao{background:#fee500;color:#191919;border-color:#fee500}
+.dd-template-button-style .public-share-copy.share-actions>.dd-share-link,
+.public-share-copy.share-actions>.dd-share-link,
+.preview-content .public-share-copy.share-actions>.dd-share-link{background:#080808;color:#fff;border-color:#080808}
+.dd-template-button-style .public-share-copy.share-actions>.dd-share-qr,
+.public-share-copy.share-actions>.dd-share-qr,
+.preview-content .public-share-copy.share-actions>.dd-share-qr{background:#fff;color:#111;border-color:#111}
+.public-share-copy.share-actions>button svg{width:15px;height:15px;flex:none}
+.public-share-copy.share-actions>.share-actions-notice{flex:1 0 100%;min-height:0}
+@media(max-width:350px){.dd-template-button-style .public-share-copy.share-actions,.public-share-copy.share-actions{gap:4px;padding-inline:4px}.dd-template-button-style .public-share-copy.share-actions>button,.public-share-copy.share-actions>button{font-size:11px;padding-inline:4px;gap:3px}.public-share-copy.share-actions>button svg{width:13px;height:13px}}
