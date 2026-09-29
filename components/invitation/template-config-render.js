@@ -31,6 +31,11 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   const heroBackgroundUrl = hero?.backgroundAssetId ? assets[hero.backgroundAssetId] : null;
   const showCoverPhoto = hero?.mode !== "illustration";
 
+  if (background?.centerPanel?.enabled) {
+    const panel = background.centerPanel;
+    set(rootStyle, "--dd-center-panel-width", panel.width, "%");
+    rootStyle["--dd-center-panel-color"] = rgba(panel.color, panel.opacity / 100) || "transparent";
+  }
   if (background) {
     const custom = background.custom || {};
     const mode = background.mode || (background.assetId ? "image" : "custom");
@@ -199,7 +204,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   }
   const safeAreaClass = safeArea ? " dd-template-safe-area" : "";
   const configured = Boolean(background || hero || typography || colors);
-  return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), buttonStyleConfigured: Boolean(buttonStyle), backgroundConfigured: Boolean(background), decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle, showCoverPhoto, illustrationMode: hero?.mode === "illustration", heroBackgroundConfigured: Boolean(heroBackgroundUrl) };
+  return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), buttonStyleConfigured: Boolean(buttonStyle), backgroundConfigured: Boolean(background), centerPanelConfigured: background?.centerPanel?.enabled === true, decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle, showCoverPhoto, illustrationMode: hero?.mode === "illustration", heroBackgroundConfigured: Boolean(heroBackgroundUrl) };
 }
 
 export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {} }) {
