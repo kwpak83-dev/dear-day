@@ -144,7 +144,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     set(rootStyle, `--dd-${prefix}-letter-spacing`, item.letterSpacing, "px");
     set(rootStyle, `--dd-${prefix}-align`, item.textAlign);
   }
-  for (const [key, variable] of [["text", "text"], ["title", "title"], ["heroTitle", "hero-title"], ["muted", "muted"], ["accent", "accent"], ["buttonBackground", "button-bg"], ["buttonText", "button-text"], ["divider", "divider"]]) {
+  for (const [key, variable] of [["text", "text"], ["title", "title"], ["heroTitle", "hero-title"], ["muted", "muted"], ["caption", "caption"], ["accent", "accent"], ["buttonBackground", "button-bg"], ["buttonText", "button-text"], ["divider", "divider"]]) {
     set(rootStyle, `--dd-color-${variable}`, colors?.[key]);
   }
   if (buttonStyle) {
