@@ -1534,3 +1534,12 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   word-break:keep-all;
 }
 .invitation-quick-menu--minimal > button:focus-visible {outline:2px solid currentColor;outline-offset:-3px;border-radius:8px !important}
+
+/* B-style quick menu: readable dark labels independent of inherited button palette. */
+.invitation-quick-menu--minimal > button,
+.dd-template-background .invitation-quick-menu--minimal > button,
+.full-preview-document > .invitation-quick-menu--minimal > button {
+  color:#222 !important;
+  -webkit-text-fill-color:#222 !important;
+}
+.invitation-quick-menu--minimal > button span {color:#222 !important;-webkit-text-fill-color:#222 !important;opacity:1 !important}
