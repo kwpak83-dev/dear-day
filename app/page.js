@@ -85,13 +85,11 @@ export default function Home() {
     <section className="dd-home03" aria-label="DearDay 서비스 소개 및 인기 템플릿">
       <div className="landing-shell">
         <div className="dd-home03-features">
-          {[
-            ["▯", "모바일에 최적화", "언제 어디서나"],
-            ["▧", "원하는 대로 편집", "쉬운 에디터"],
-            ["♧", "필요한 기능만 선택", "지도·방명록·참석여부 등"],
-            ["♧", "간편한 공유", "링크·QR코드"],
-            ["♡", "특별한 순간을 더 특별하게", "다양한 디자인"],
-          ].map(([symbol, title, description], i) => <div className="dd-home03-feature" key={title}><span className={"dd-home03-icon dd-home03-icon-" + i} aria-hidden="true">{symbol}</span><div><strong>{title}</strong><small>{description}</small></div></div>)}
+          <div className="dd-home03-feature"><span className="dd-home03-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18h2"/></svg></span><div><strong>모바일에 최적화</strong><small>언제 어디서나</small></div></div>
+          <div className="dd-home03-feature"><span className="dd-home03-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m3 17 5-5 4 3 3-3 6 6M15 20l5-5"/></svg></span><div><strong>원하는 대로 편집</strong><small>쉬운 에디터</small></div></div>
+          <div className="dd-home03-feature"><span className="dd-home03-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span><div><strong>필요한 기능만 선택</strong><small>지도·방명록·참석여부 등</small></div></div>
+          <div className="dd-home03-feature"><span className="dd-home03-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.6 6.6-4.2m-6.6 7 6.6 4.2"/></svg></span><div><strong>간편한 공유</strong><small>링크·QR코드</small></div></div>
+          <div className="dd-home03-feature"><span className="dd-home03-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M7 10v11H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3Zm0 0 5-8a3 3 0 0 1 3 3l-1 5h6a2 2 0 0 1 2 2l-2 7a3 3 0 0 1-3 2H7"/></svg></span><div><strong>특별한 순간을 더 특별하게</strong><small>다양한 디자인</small></div></div>
         </div>
         <div className="dd-home03-heading"><h2>인기 템플릿 미리보기</h2><button type="button" onClick={start}>전체보기 →</button></div>
         <div className="dd-home03-carousel">
