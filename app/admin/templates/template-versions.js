@@ -64,7 +64,7 @@ const colorValue = (value) => /^#[0-9a-fA-F]{6}$/.test(value) ? value : "#000000
 function ColorControl({ label, value, onChange }) {
   return <label style={field}>{label}<div style={{ display: "flex", gap: 6, minWidth: 0 }}>
     <input type="color" style={{ width: 38, height: 34, flex: "none" }} value={colorValue(value)} onChange={(event) => onChange(event.target.value)} aria-label={label} />
-    <input style={{ ...input, minWidth: 0, flex: "1 1 0" }} type="text" required maxLength={7} pattern="#[0-9a-fA-F]{6}" value={value} onChange={(event) => onChange(event.target.value)} />
+    <input style={{ ...input, minWidth: 0, flex: "1 1 0" }} type="text" required maxLength={7} pattern="#[0-9a-fA-F]{6}" value={value ?? ""} onChange={(event) => onChange(event.target.value)} />
   </div></label>;
 }
 
