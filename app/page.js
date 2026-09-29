@@ -56,15 +56,29 @@ export default function Home() {
 
   return <main className="landing-v2">
     <header className="landing-header">
-      <a className="landing-brand" href="#top" aria-label="디어데이 홈"><span className="brand-mark">♡</span><span><b>Dear Day</b><small>모든 특별한 날을 위한 초대장</small></span></a>
+      <a className="landing-brand" href="#top" aria-label="디어데이 홈"><span><b>DearDay</b><small>GOOD PEOPLE GOOD MOMENT</small></span></a>
       <nav className="landing-nav"><a href="#templates">템플릿</a><a href="#how">이용방법</a><button onClick={comingSoon}>요금제</button><a href="#story">Dear Day 이야기</a></nav>
       <div className="landing-actions">{user ? <><span>{providerLabel}</span><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>
       <button className="landing-menu" aria-label="메뉴 열기" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
       {menuOpen && <div className="landing-mobile-nav"><a href="#templates" onClick={() => setMenuOpen(false)}>템플릿</a><a href="#how" onClick={() => setMenuOpen(false)}>이용방법</a><button onClick={comingSoon}>요금제</button><a href="#story" onClick={() => setMenuOpen(false)}>Dear Day 이야기</a>{user ? <><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <button onClick={() => openLogin()}>로그인</button>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>}
     </header>
 
-    <section className="landing-hero" id="top"><div className="hero-lights" /><div className="hero-arch" /><div className="hero-flowers hero-flowers-one" /><div className="hero-flowers hero-flowers-two" /><div className="landing-shell hero-copy-v2"><p>SPECIAL DAYS,<br />MORE MEANINGFUL</p><hr /><h1>소중한 순간을<br />더 특별하게</h1><span>결혼식부터 돌잔치, 생일, 모임, 파티까지<br />몇 분 만에 만드는 나만의 모바일 초대장</span><button className="landing-primary" onClick={start}>지금, 시작하기 <b>→</b></button><small>EVERY MOMENT DESERVES AN INVITATION</small></div></section>
-
+    <section className="landing-hero" id="top">
+      <div className="landing-shell landing-hero-layout">
+        <div className="hero-copy-v2">
+          <p className="hero-handwriting">Good People<br />Good Moment</p>
+          <h1>특별한 날을<br />쉽고, 멋지게</h1>
+          <span>누구나 쉽게 만드는<br />모바일 초대장 DearDay</span>
+          <button className="landing-primary" onClick={start}>지금, 초대장 만들기 <b>→</b></button>
+        </div>
+        <div className="landing-hero-art" aria-hidden="true">
+          <span className="landing-art-shape landing-art-shape-one" /><span className="landing-art-shape landing-art-shape-two" />
+          <span className="landing-art-flower landing-art-flower-one">✿</span><span className="landing-art-flower landing-art-flower-two">✿</span><span className="landing-art-flower landing-art-flower-three">✿</span>
+          <div className="landing-phone"><div className="landing-phone-speaker" /><img src="/templates/modern-001/preview.png" alt="" /></div>
+        </div>
+        <div className="landing-hero-benefits"><div><span>✎</span>무료 제작<br />미리보기</div><div><span>▣</span>발행 시만<br />결제</div><div><span>♡</span>다양한<br />템플릿</div></div>
+      </div>
+    </section>
     <section className="moment-section" id="templates"><div className="landing-shell"><p className="landing-kicker">CHOOSE YOUR MOMENT</p><h2>어떤 초대장을 만드시나요?</h2><p className="landing-subtitle">소중한 순간, Dear Day와 함께해 주세요.</p><div className="moment-grid">{invitationTypes.map(([english, korean, _visual, style], index) => <button className={`moment-card ${style}`} key={english} onClick={start}><span className="tape" /><div className="moment-photo" style={{ backgroundImage: `url(/moment-${index + 1}.png)` }} /><em>{english}</em><strong>{korean}</strong><i>→</i></button>)}</div></div></section>
 
     <section className="how-v2" id="how"><div className="landing-shell"><p className="landing-kicker">HOW IT WORKS</p><h2>3단계로, 쉽고 빠르게</h2><p className="landing-subtitle">누구나 몇 분 만에, 나만의 초대장이 완성됩니다.</p><div className="how-v2-grid">{steps.map(([number, icon, title, description]) => <article key={number}><span className="step-number">{number}</span><div>{icon}</div><section><h3>{title}</h3><p>{description}</p></section></article>)}</div></div></section>
