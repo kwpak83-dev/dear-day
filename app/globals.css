@@ -1655,3 +1655,6 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 @keyframes dd-hero-fade-up{from{translate:0 20px;filter:opacity(0)}to{translate:0 0;filter:opacity(1)}}
 .dd-hero-text-fade-up{animation-name:dd-hero-fade-up;animation-timing-function:ease-out;animation-fill-mode:both}
 @media(prefers-reduced-motion:reduce){.dd-hero-text-fade-up,[style*="dd-hero-photo-fade-up"]{animation:none!important}}
+
+/* Dedicated Caption / Small palette; legacy themes fall back to Muted. */
+.dd-template-colors .classic-section-heading p,.dd-template-colors .romantic-section-heading p,.dd-template-colors .modern-section-heading p,.dd-template-colors .invitation-gallery .gallery-kicker,.dd-template-colors .section-kicker,.dd-template-colors .public-accounts h2::before{color:var(--dd-color-caption,var(--dd-color-muted))}
