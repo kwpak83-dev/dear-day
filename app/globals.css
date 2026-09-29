@@ -1640,3 +1640,6 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .invitation-quick-menu--minimal.invitation-quick-menu--pills > button span {display:block !important;overflow:visible !important;max-width:none !important;white-space:nowrap !important;color:#222 !important;-webkit-text-fill-color:#222 !important}
 .invitation-quick-menu--minimal.invitation-quick-menu--pills > button:focus-visible {outline:2px solid #222 !important;outline-offset:2px !important;border-radius:999px !important}
 @media(max-width:360px){.invitation-quick-menu--minimal.invitation-quick-menu--pills{gap:6px !important;padding:5px !important}.invitation-quick-menu--minimal.invitation-quick-menu--pills > button{padding:0 9px !important;font-size:11px !important}}
+
+/* Keep Korean words together in invitation messages; preserve authored newlines and template typography. */
+:is(.romantic-message,.modern-message,.classic-message) blockquote{word-break:keep-all;overflow-wrap:break-word;white-space:pre-line}
