@@ -1,3 +1,4 @@
+import { prepareNoticeForSave } from "../../../lib/invitation-notice";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { getInvitationTitle } from "../../../lib/invitation-title";
@@ -221,7 +222,7 @@ export async function POST(request) {
     ...(hasHeroPresetId ? { hero_preset_id: heroPresetId } : {}),
     title: getInvitationTitle(invitation, eventKind),
     starts_at: startsAt,
-    settings: invitation,
+    settings: { ...invitation, notice: prepareNoticeForSave(invitation.notice, existing?.settings?.notice) },
   };
 
   if (publish && !existing) return json({ error: "초대장을 먼저 임시 저장해 주세요." }, 409);
