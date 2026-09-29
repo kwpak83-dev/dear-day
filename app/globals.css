@@ -1720,3 +1720,45 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .landing-v2 .landing-hero-layout::after{content:"지금, 초대장 만들기  →";position:absolute;top:455px;left:0;right:0;padding:14px 8px;border-radius:999px;background:#173d8d;color:#fff;text-align:center;font-size:14px;font-weight:700;pointer-events:none}
 .landing-v2 .hero-copy-v2 .landing-primary{display:block;position:absolute;top:427px;left:0;width:calc(100vw - 36px);height:48px;min-width:0;margin:0;opacity:0;z-index:5}
 }
+
+/* HOME-01 refinement: approved fuller desktop/mobile hero composition. */
+.landing-v2 .landing-header{height:70px;gap:28px;padding:0 max(32px,calc((100vw - 1180px)/2))}
+.landing-v2 .landing-nav{gap:34px}
+.landing-v2 .landing-actions{gap:12px}
+.landing-v2 .landing-actions>button:not(.landing-cta):not(.search-button){background:#f4f7fd;border-radius:999px;padding:10px 16px}
+.landing-v2 .landing-hero{min-height:445px;background:radial-gradient(ellipse at 52% 10%,#e1efff 0 8%,transparent 8.3%),radial-gradient(ellipse at 93% 92%,#dcecff 0 12%,transparent 12.3%),linear-gradient(110deg,#fff 0%,#f6faff 58%,#eaf4ff 100%)}
+.landing-v2 .landing-hero-layout{grid-template-columns:38% 36% 26%;min-height:445px}
+.landing-v2 .hero-copy-v2{padding-top:23px;padding-bottom:20px}
+.landing-v2 .hero-copy-v2 .hero-handwriting{font-size:42px;line-height:1.02;margin:0 0 23px}
+.landing-v2 .hero-copy-v2 h1{font-size:49px;line-height:1.2}
+.landing-v2 .hero-copy-v2>span{margin-top:12px}
+.landing-v2 .landing-hero-art{height:445px}
+.landing-v2 .landing-phone{width:248px;height:440px;left:14%;top:32px;transform:rotate(13deg)}
+.landing-v2 .landing-art-shape-one{inset:10px -34px 0 -35px}
+.landing-v2 .landing-art-shape-two{right:-18px;top:12px}
+.landing-v2 .landing-art-flower-one{right:-3%;top:13%}
+.landing-v2 .landing-art-flower-two{left:-16%;bottom:10%}
+.landing-v2 .landing-hero-benefits{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:16px;border:1px solid #e6efff;border-radius:22px;background:rgba(255,255,255,.92);box-shadow:0 12px 30px rgba(30,58,138,.045)}
+.landing-v2 .landing-hero-benefits>div{min-height:127px}
+.landing-v2 .landing-hero-benefits>div:last-child{grid-column:auto}
+@media(max-width:800px){
+.landing-v2 .landing-header{height:60px;padding:0 18px}
+.landing-v2 .landing-hero-layout{min-height:560px}
+.landing-v2 .hero-copy-v2{padding-top:35px}
+.landing-v2 .hero-copy-v2 .hero-handwriting{font-size:26px;margin-bottom:21px}
+.landing-v2 .hero-copy-v2 h1{font-size:30px}
+.landing-v2 .landing-hero-art{height:335px;top:18px;right:-7px}
+.landing-v2 .landing-phone{width:158px;height:308px;left:13%;top:30px}
+.landing-v2 .landing-hero-benefits{top:346px;gap:5px;padding:0;border:0;background:transparent;box-shadow:none;grid-template-columns:repeat(3,minmax(0,1fr))}
+.landing-v2 .landing-hero-benefits>div{min-height:92px}
+.landing-v2 .landing-hero-benefits>div:last-child{display:none}
+.landing-v2 .landing-hero-layout::after{content:none}
+.landing-v2 .hero-copy-v2 .landing-primary{display:block;position:absolute;top:425px;left:0;width:calc(100vw - 36px);height:47px;opacity:1;z-index:5;margin:0;min-width:0;padding:12px;font-size:14px}
+}
+@media(min-width:801px) and (max-width:1100px){
+.landing-v2 .landing-hero-layout{grid-template-columns:37% 36% 27%}
+.landing-v2 .hero-copy-v2 .hero-handwriting{font-size:35px}
+.landing-v2 .hero-copy-v2 h1{font-size:42px}
+.landing-v2 .landing-phone{left:9%;width:215px;height:410px}
+.landing-v2 .landing-hero-benefits>div{min-height:108px}
+}
