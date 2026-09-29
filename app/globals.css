@@ -1879,3 +1879,41 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .landing-v2 .landing-hero-benefits{margin-top:36px}
 }
 @media(max-width:370px){.landing-v2 .landing-hero-mobile-image{width:122%;left:-13%;top:17px}}
+
+
+/* HOME-02: category tiles from the approved navy/pastel mockup. */
+.landing-v2 .dd-category-section{padding:29px 0 33px;background:#fff;text-align:left}
+.landing-v2 .dd-category-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}
+.landing-v2 .dd-category-heading h2{margin:0;font:800 25px/1.3 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:-.055em;color:#13264c}
+.landing-v2 .dd-category-heading button{border:0;background:transparent;color:#1656cc;font-size:13px;font-weight:700;white-space:nowrap;cursor:pointer}
+.landing-v2 .dd-category-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.landing-v2 .dd-category-card{min-width:0;padding:0;border:1px solid #edf0f8;border-radius:16px;background:#fff;overflow:hidden;text-align:left;box-shadow:0 5px 12px rgba(28,49,93,.07);cursor:pointer;transition:transform .18s,box-shadow .18s}
+.landing-v2 .dd-category-card:hover{transform:translateY(-4px);box-shadow:0 11px 20px rgba(28,49,93,.12)}
+.landing-v2 .dd-category-art{display:grid;place-items:center;height:132px;background:#fff0f3;color:#ee758b;position:relative}
+.landing-v2 .dd-category-art svg{display:block;width:85px;height:85px;max-width:76%;max-height:76%;position:relative;z-index:1}
+.landing-v2 .dd-category-art:before,.landing-v2 .dd-category-art:after{content:"✦";position:absolute;color:currentColor;opacity:.28;font-size:20px;top:17px;left:14px}
+.landing-v2 .dd-category-art:after{left:auto;right:15px;top:45px;font-size:26px}
+.landing-v2 .dd-category-2 .dd-category-art{background:#fff9e6;color:#2377cf}
+.landing-v2 .dd-category-3 .dd-category-art{background:#fff0f2;color:#f27b8f}
+.landing-v2 .dd-category-4 .dd-category-art{background:#e9fbf8;color:#159c81}
+.landing-v2 .dd-category-5 .dd-category-art{background:#f3ebff;color:#7654e8}
+.landing-v2 .dd-category-6 .dd-category-art{background:#fff9e8;color:#e8a900}
+.landing-v2 .dd-category-label{display:flex;align-items:center;justify-content:space-between;gap:3px;min-height:45px;padding:9px 11px;color:#172a50}
+.landing-v2 .dd-category-label strong{font-size:14px;letter-spacing:-.05em;white-space:nowrap}
+.landing-v2 .dd-category-label i{display:grid;place-items:center;width:23px;height:23px;flex:none;border:1px solid #f19aab;border-radius:50%;font:normal 22px/1 Arial;color:#ed7188}
+.landing-v2 .dd-category-2 .dd-category-label i,.landing-v2 .dd-category-6 .dd-category-label i{border-color:#e9bb39;color:#d6a500}
+.landing-v2 .dd-category-4 .dd-category-label i{border-color:#54c4af;color:#159c81}
+.landing-v2 .dd-category-5 .dd-category-label i{border-color:#bca0ff;color:#7654e8}
+@media(max-width:800px){
+.landing-v2 .dd-category-section{padding:24px 0 30px}
+.landing-v2 .dd-category-heading h2{font-size:19px}
+.landing-v2 .dd-category-heading button{font-size:11px}
+.landing-v2 .dd-category-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.landing-v2 .dd-category-card{border-radius:12px}
+.landing-v2 .dd-category-art{height:92px}
+.landing-v2 .dd-category-art svg{width:66px;height:66px}
+.landing-v2 .dd-category-label{min-height:39px;padding:7px 6px}
+.landing-v2 .dd-category-label strong{font-size:11px}
+.landing-v2 .dd-category-label i{width:17px;height:17px;font-size:17px}
+}
+@media(max-width:370px){.landing-v2 .dd-category-label strong{font-size:10px}.landing-v2 .dd-category-art{height:78px}}
