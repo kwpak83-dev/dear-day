@@ -1663,3 +1663,60 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .invitation-template.dd-template-center-panel{position:relative;isolation:isolate}
 .invitation-template.dd-template-center-panel::before{content:"";position:absolute;inset:0 auto 0 50%;translate:-50% 0;width:var(--dd-center-panel-width,85%);background:var(--dd-center-panel-color,transparent);pointer-events:none;z-index:0}
 .invitation-template.dd-template-center-panel > *{position:relative;z-index:1}
+
+
+/* HOME-01: DearDay navy landing rebrand. Scoped to the homepage only. */
+.landing-v2{background:#fff;color:#172b52;font-family:Arial,"Apple SD Gothic Neo",sans-serif}
+.landing-v2 .landing-shell{width:min(1180px,calc(100% - 48px))}
+.landing-v2 .landing-header{background:rgba(255,255,255,.96);border-bottom:1px solid #e5eefb;box-shadow:0 2px 12px rgba(30,58,138,.035)}
+.landing-v2 .landing-brand{color:#152b52;min-width:190px}
+.landing-v2 .landing-brand b{font:800 26px/1.05 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:-.055em}
+.landing-v2 .landing-brand small{font:8px/1.4 Arial,sans-serif;letter-spacing:.065em;color:#536781}
+.landing-v2 .landing-nav a,.landing-v2 .landing-nav button,.landing-v2 .landing-actions a,.landing-v2 .landing-actions button{color:#152b52}
+.landing-v2 .landing-cta{background:#1e3a8a!important;box-shadow:none}
+.landing-v2 .landing-hero{min-height:445px;background:radial-gradient(ellipse at 65% 60%,#e8f3ff 0%,transparent 54%),linear-gradient(115deg,#fff 0%,#f4f9ff 65%,#e7f2ff 100%);color:#152b52}
+.landing-v2 .landing-hero-layout{position:relative;min-height:445px;display:grid;grid-template-columns:38% 37% 25%;align-items:center}
+.landing-v2 .hero-copy-v2{padding:34px 0 40px;color:#152b52}
+.landing-v2 .hero-copy-v2 .hero-handwriting{font:italic 32px/1.08 "Segoe Script","Brush Script MT",cursive;letter-spacing:-.05em;color:#1958dc;transform:rotate(-7deg);transform-origin:left center;margin:0 0 21px}
+.landing-v2 .hero-copy-v2 h1{font:800 47px/1.25 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:-.065em}
+.landing-v2 .hero-copy-v2>span{font-size:16px;line-height:1.6;color:#344766}
+.landing-v2 .landing-primary{background:#173d8d;color:#fff;box-shadow:none;font-weight:700;min-width:245px}
+.landing-v2 .landing-hero-art{position:relative;height:425px;align-self:end;isolation:isolate}
+.landing-v2 .landing-art-shape{position:absolute;display:block;border-radius:42% 58% 52% 48%;z-index:-1}
+.landing-v2 .landing-art-shape-one{inset:36px -42px 24px -26px;background:#d6e8ff;transform:rotate(-19deg)}
+.landing-v2 .landing-art-shape-two{width:165px;height:175px;right:-55px;top:36px;background:#fff0a9;transform:rotate(23deg)}
+.landing-v2 .landing-art-flower{position:absolute;font:70px/1 Arial,sans-serif;color:#ffda61;z-index:2;text-shadow:0 3px 0 #fff}
+.landing-v2 .landing-art-flower-one{right:2%;top:22%}.landing-v2 .landing-art-flower-two{left:-12%;bottom:15%;font-size:49px;color:#78a9f4}.landing-v2 .landing-art-flower-three{right:-5%;bottom:10%;font-size:44px}
+.landing-v2 .landing-phone{position:absolute;left:24%;top:23px;width:220px;height:400px;padding:13px 9px 9px;border:7px solid #1e2630;border-radius:33px;background:#fff;box-shadow:0 19px 27px rgba(23,44,83,.22);transform:rotate(13deg);overflow:hidden}
+.landing-v2 .landing-phone-speaker{position:absolute;z-index:2;top:5px;left:50%;transform:translateX(-50%);width:55px;height:9px;border-radius:0 0 9px 9px;background:#1e2630}
+.landing-v2 .landing-phone img{display:block;width:100%;height:100%;object-fit:cover;object-position:top;border-radius:18px}
+.landing-v2 .landing-hero-benefits{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;position:relative;z-index:3}
+.landing-v2 .landing-hero-benefits>div{min-height:108px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;border:1px solid #edf2fc;border-radius:18px;background:#fff;text-align:center;font-size:13px;font-weight:700;line-height:1.35;box-shadow:0 8px 22px rgba(29,65,121,.06)}
+.landing-v2 .landing-hero-benefits>div span{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#eaf3ff;color:#1958dc;font-size:25px}
+.landing-v2 .landing-hero-benefits>div:last-child{grid-column:1/-1}
+.landing-v2 .landing-menu{color:#152b52}
+.landing-v2 .landing-mobile-nav{background:#fff;color:#152b52}
+.landing-v2 .landing-mobile-nav a,.landing-v2 .landing-mobile-nav button{color:#152b52}
+@media(max-width:800px){
+.landing-v2 .landing-shell{width:calc(100% - 36px)}
+.landing-v2 .landing-brand{min-width:0}.landing-v2 .landing-brand b{font-size:23px}
+.landing-v2 .landing-hero{min-height:0}
+.landing-v2 .landing-hero-layout{min-height:590px;display:block;padding-top:0;padding-bottom:22px}
+.landing-v2 .hero-copy-v2{position:relative;z-index:2;padding:28px 0 0;width:56%}
+.landing-v2 .hero-copy-v2 .hero-handwriting{font-size:24px;margin-bottom:18px}
+.landing-v2 .hero-copy-v2 h1{font-size:29px;line-height:1.27}
+.landing-v2 .hero-copy-v2>span{font-size:12px;margin-top:12px}
+.landing-v2 .hero-copy-v2 .landing-primary{display:none}
+.landing-v2 .landing-hero-art{position:absolute;top:15px;right:-12px;width:58%;height:355px}
+.landing-v2 .landing-phone{left:20%;top:32px;width:145px;height:285px;padding:10px 6px 6px;border-width:5px;border-radius:23px}
+.landing-v2 .landing-phone img{border-radius:12px}
+.landing-v2 .landing-art-shape-one{inset:35px -15px 14px -5px}
+.landing-v2 .landing-art-shape-two{width:95px;height:115px;right:-12px}
+.landing-v2 .landing-art-flower{font-size:36px}.landing-v2 .landing-art-flower-two{font-size:32px}
+.landing-v2 .landing-hero-benefits{position:absolute;left:0;right:0;top:345px;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.landing-v2 .landing-hero-benefits>div{min-height:94px;font-size:11px;border-radius:14px;gap:5px}
+.landing-v2 .landing-hero-benefits>div span{width:35px;height:35px;font-size:21px}
+.landing-v2 .landing-hero-benefits>div:last-child{grid-column:auto}
+.landing-v2 .landing-hero-layout::after{content:"지금, 초대장 만들기  →";position:absolute;top:455px;left:0;right:0;padding:14px 8px;border-radius:999px;background:#173d8d;color:#fff;text-align:center;font-size:14px;font-weight:700;pointer-events:none}
+.landing-v2 .hero-copy-v2 .landing-primary{display:block;position:absolute;top:427px;left:0;width:calc(100vw - 36px);height:48px;min-width:0;margin:0;opacity:0;z-index:5}
+}
