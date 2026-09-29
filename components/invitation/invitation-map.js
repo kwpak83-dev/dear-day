@@ -51,7 +51,7 @@ function loadNaverMaps() {
   return mapsSdkPromise;
 }
 
-export default function InvitationMap({ address, venue = "", onPositionChange }) {
+export default function InvitationMap({ address, venue = "", onPositionChange, staticView = false }) {
   const canvasRef = useRef(null);
   const [position, setPosition] = useState(null);
   const normalizedAddress = address?.trim() || "";
@@ -83,7 +83,7 @@ export default function InvitationMap({ address, venue = "", onPositionChange })
     if (!position || !canvasRef.current || !window.naver?.maps) return;
     const maps = window.naver.maps;
     const point = new maps.LatLng(position.latitude, position.longitude);
-    const map = new maps.Map(canvasRef.current, { center: point, zoom: 16, zoomControl: false });
+    const map = new maps.Map(canvasRef.current, { center: point, zoom: 16, zoomControl: false, draggable: !staticView, scrollWheel: !staticView, pinchZoom: !staticView, keyboardShortcuts: !staticView, disableDoubleTapZoom: staticView, disableDoubleClickZoom: staticView, twoFingerTapZoom: !staticView });
     const marker = new maps.Marker({ position: point, map });
     maps.Event?.trigger(map, "resize");
     map.setCenter(point);
@@ -92,7 +92,7 @@ export default function InvitationMap({ address, venue = "", onPositionChange })
       marker.setMap(null);
       map.destroy?.();
     };
-  }, [position]);
+  }, [position, staticView]);
 
   if (!normalizedAddress || !position) return null;
 
@@ -105,7 +105,7 @@ export default function InvitationMap({ address, venue = "", onPositionChange })
   const tmapUrl = `https://www.tmap.co.kr/tmap2/mobile/route.jsp?name=${encodedName}&lon=${longitude}&lat=${latitude}`;
 
   return <div className="invitation-map" aria-label={`${normalizedAddress} 지도`}>
-    <div ref={canvasRef} className="invitation-map-canvas" />
+    <div ref={canvasRef} className="invitation-map-canvas" style={staticView ? { pointerEvents: "none" } : undefined} />
     <nav className="invitation-navigation-links" aria-label="길찾기 앱 선택">
       <a href={naverUrl} target="_blank" rel="noreferrer"><img className="nav-app-icon" src="/map-icons/naver-map.svg" alt="" aria-hidden="true" /><span>네이버지도</span></a>
       <a href={kakaoUrl} target="_blank" rel="noreferrer"><img className="nav-app-icon" src="/map-icons/kakao-map.svg" alt="" aria-hidden="true" /><span>카카오맵</span></a>

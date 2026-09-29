@@ -113,10 +113,16 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
 
   return <>
     {showPath && <div className="share-link"><span>{path}</span><button type="button" onClick={() => copy()}>{copied ? "복사됨" : "링크 복사"}</button></div>}
-    <div className={`share-actions ${className}`.trim()}>
-      {!showPath && <button type="button" onClick={() => copy()}>링크 복사</button>}
-      <button type="button" onClick={share}>공유하기</button>
-      <button type="button" onClick={openQr}>QR 코드</button>
+    <div className={`${className.includes("public-share-copy") ? "dd-public-share-pills" : "share-actions"} ${className}`.trim()}>
+      {className.includes("public-share-copy") ? <>
+        <button type="button" className="dd-share-kakao" onClick={share}><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.4 2 10.7c0 2.8 1.9 5.3 4.8 6.7L6 21l4.2-2.5c.6.1 1.2.1 1.8.1 5.5 0 10-3.5 10-7.9S17.5 3 12 3z"/></svg>카톡공유</button>
+        <button type="button" className="dd-share-link" onClick={() => copy()}><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>링크복사</button>
+        <button type="button" className="dd-share-qr" onClick={openQr}><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm10-2h3v3h-3v-3zm5 0h3v3h-3v-3zm-5 5h3v3h-3v-3zm5 0h3v3h-3v-3z"/></svg>QR코드</button>
+      </> : <>
+        {!showPath && <button type="button" onClick={() => copy()}>링크 복사</button>}
+        <button type="button" onClick={share}>공유하기</button>
+        <button type="button" onClick={openQr}>QR 코드</button>
+      </>}
       <span className="share-actions-notice" role="status" aria-live="polite">{notice}</span>
     </div>
     {qrOpen && createPortal(<div className="qr-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title" onKeyDown={(event) => { if (event.key === "Escape") closeQr(); }}>

@@ -13,6 +13,7 @@ import OptionalInvitationSections from "../invite/[slug]/optional-invitation-sec
 
 import GalleryEditor from "./gallery-editor";
 import { preparePhoto } from "../../lib/prepare-photo";
+import { normalizeNotice } from "../../lib/invitation-notice";
 import { getInvitationTitle } from "../../lib/invitation-title";
 import { EVENT_KIND_OPTIONS, getEventConfig, getMissingRequiredFields } from "../../lib/event-config";
 
@@ -482,6 +483,28 @@ export default function CreateInvitation() {
       setUploadingPhoto(false);
     }
   };
+  const updateNotice = (key, value) => setInvitation(current => ({ ...current, notice: { ...normalizeNotice(current.notice), [key]: value } }));
+  const [noticeUploadBusy, setNoticeUploadBusy] = useState(false);
+  const [noticeUploadMessage, setNoticeUploadMessage] = useState("");
+  const uploadNoticePhoto = async event => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || !eventSlug || noticeUploadBusy) return;
+    setNoticeUploadBusy(true);
+    setNoticeUploadMessage("공지 이미지를 올리고 있어요.");
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("로그인이 필요해요.");
+      const photo = await preparePhoto(file);
+      const response = await fetch("/api/notice-photo", { method: "POST", headers: { "Content-Type": "image/jpeg", "Authorization": "Bearer " + session.access_token, "X-Event-Slug": eventSlug }, body: photo });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "업로드 실패");
+      updateNotice("imagePath", result.path);
+      setNoticeUploadMessage("이미지가 첨부됐어요. 수정사항 반영을 눌러 주세요.");
+    } catch (error) { setNoticeUploadMessage(error.message || "이미지 업로드 실패"); }
+    finally { setNoticeUploadBusy(false); }
+  };
   const searchPlaces = async () => {
     const query = invitation.venue.trim();
     if (!query) return setMapNotice("예식장 이름을 입력해 주세요.");
@@ -718,8 +741,8 @@ export default function CreateInvitation() {
     <header className="create-header"><a className="brand" href="/"><img src="/dear-day-logo.png" alt="디어데이" /></a><div className="create-user"><span>{provider}로 시작했어요</span><a href="/my-invitations">내 초대장</a><a href="/">나가기</a></div></header>
     <div className="create-layout">
       <section className="editor-panel">
-        <nav className="dd-editor-steps" aria-label="초대장 제작 단계">{["필수입력", "맞춤설정", "공유설정", "결제·발행"].map((label, index) => <button key={label} type="button" className={editorStep === index ? "active" : ""} aria-current={editorStep === index ? "step" : undefined} onClick={() => setEditorStep(index)}><span>{String(index + 1).padStart(2, "0")}</span><strong>{label}</strong></button>)}</nav>
-        <div className="dd-editor-step-intro"><p className="section-kicker">STEP {editorStep + 1} OF 4</p><h1>{["필수입력", "맞춤설정", "공유설정", "결제·발행"][editorStep]}</h1><p className="editor-intro">{["초대장에 필요한 기본 정보를 입력해 주세요.", "원하는 디자인과 내용을 꾸며보세요.", "하객에게 제공할 기능을 설정해 주세요.", "최종 확인 후 결제하고 직접 발행해 주세요."][editorStep]}</p></div>
+        <nav className="dd-editor-steps" aria-label="초대장 제작 단계">{["필수입력", "맞춤설정", "효과설정", "공유설정", "결제·발행"].map((label, index) => <button key={label} type="button" className={editorStep === index ? "active" : ""} aria-current={editorStep === index ? "step" : undefined} onClick={() => setEditorStep(index)}><span>{String(index + 1).padStart(2, "0")}</span><strong>{label}</strong></button>)}</nav>
+        <div className="dd-editor-step-intro"><p className="section-kicker">STEP {editorStep + 1} OF 5</p><h1>{["필수입력", "맞춤설정", "효과설정", "공유설정", "결제·발행"][editorStep]}</h1><p className="editor-intro">{["초대장에 필요한 기본 정보를 입력해 주세요.", "원하는 디자인과 내용을 꾸며보세요.", "배경음악과 화면 효과를 설정해 주세요.", "하객에게 제공할 기능을 설정해 주세요.", "최종 확인 후 결제하고 직접 발행해 주세요."][editorStep]}</p></div>
         <div className="dd-required-fields" style={{display:editorStep === 0 ? undefined : "none"}}>
         <div className="form-section"><h2>행사 종류</h2><Field label="초대장 종류"><select value={invitation.eventKind} onChange={(e) => update("eventKind", e.target.value)}>{EVENT_KIND_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></Field></div>
         {eventConfig.sections.map((section) => <div className="form-section" key={section.id}><h2>{section.title}</h2>{section.rows.map((row, rowIndex) => row.length > 1 ? <div className="field-grid" key={rowIndex}>{row.map(renderConfigField)}</div> : row.map(renderConfigField))}</div>)}
@@ -745,6 +768,14 @@ export default function CreateInvitation() {
         </div></details>
         </div>
         <div className="dd-share-settings" style={{display:editorStep === 2 ? undefined : "none"}}>
+          <div className="dd-share-card"><div className="dd-share-card-heading"><div><h2>배경음악</h2><p>저작권 확인을 마친 음원은 추후 등록할 예정이에요.</p></div><span className="dd-share-state">준비 중</span></div><p className="dd-share-help">음원 등록 후 곡 선택과 미리듣기를 지원할 예정입니다. 현재 음악 재생은 활성화되지 않습니다.</p></div>
+          <div className="dd-share-card"><div className="dd-share-card-heading"><div><h2>꽃잎 효과</h2><p>초대장에 꽃잎이 흩날리는 효과를 설정해요.</p></div><label className="dd-share-switch"><input type="checkbox" checked={invitation.petalEffectEnabled === true} onChange={event => update("petalEffectEnabled", event.target.checked)} aria-label="꽃잎 효과 사용" /><span className="dd-share-switch-track" aria-hidden="true" /></label></div><p className="dd-share-state">{invitation.petalEffectEnabled === true ? "사용 중 · 저장 후 초대장에 반영됩니다." : "사용 안 함"}</p></div>
+        </div>
+        <div className="dd-share-settings" style={{display:editorStep === 3 ? undefined : "none"}}>
+          <div className="dd-share-card"><div className="dd-share-card-heading"><div><h2>공지사항 팝업</h2><p>초대장 접속 시 중요한 안내를 보여줘요.</p></div><label className="dd-share-switch"><input type="checkbox" checked={invitation.notice?.enabled === true} onChange={event => updateNotice("enabled", event.target.checked)} aria-label="공지사항 팝업 사용" /><span className="dd-share-switch-track" aria-hidden="true" /></label></div>
+            <div className="form-section"><Field label="공지 제목"><input maxLength={80} placeholder="하객 안내사항" value={invitation.notice?.title || ""} onChange={event => updateNotice("title", event.target.value)} /></Field><Field label="공지 내용"><textarea rows={5} maxLength={3000} placeholder="셔틀버스 및 주차 안내 등을 입력하세요." value={invitation.notice?.body || ""} onChange={event => updateNotice("body", event.target.value)} /></Field><Field label="이미지 1장 (선택)"><input type="file" accept="image/jpeg,image/png,image/webp" disabled={!eventSlug || noticeUploadBusy} onChange={uploadNoticePhoto} /></Field>{!eventSlug && <p>이미지를 올리려면 초대장을 먼저 임시저장해 주세요.</p>}{invitation.notice?.imagePath && <button type="button" className="save-button" onClick={() => updateNotice("imagePath", "")}>첨부 이미지 삭제</button>}{noticeUploadMessage && <p role="status">{noticeUploadMessage}</p>}</div>
+            <p className="dd-share-help">접속 시 자동 표시 · 오늘 하루 보지 않기 · 내용 수정 시 다시 표시. 제목과 내용을 입력해야 활성화됩니다.</p></div>
+          <p className="dd-share-help">참석 여부와 방명록 현황은 마이페이지 → 하객관리에서 실시간으로 확인할 수 있어요.</p>
           <div className="dd-share-card"><div className="dd-share-card-heading"><div><h2>참석 여부 확인</h2><p>하객이 로그인 없이 참석 여부를 전달할 수 있어요.</p></div><label className="dd-share-switch"><input type="checkbox" checked={invitation.rsvpEnabled === true} onChange={(event) => update("rsvpEnabled", event.target.checked)} aria-label="참석 여부 확인 사용" /><span className="dd-share-switch-track" aria-hidden="true" /></label></div><p className="dd-share-state">{invitation.rsvpEnabled === true ? "사용 중 · 초대장에 참석 여부 확인 버튼이 표시돼요." : "사용 안 함 · 초대장에 참석 여부 확인 버튼이 표시되지 않아요."}</p></div>
           <div className="dd-share-card"><div className="dd-share-card-heading"><div><h2>방명록</h2><p>하객이 축하 메시지를 남길 수 있어요.</p></div><label className="dd-share-switch"><input type="checkbox" checked={invitation.guestbookEnabled !== false} onChange={(event) => update("guestbookEnabled", event.target.checked)} aria-label="방명록 사용" /><span className="dd-share-switch-track" aria-hidden="true" /></label></div><p className="dd-share-state">{invitation.guestbookEnabled !== false ? "사용 중 · 초대장에 방명록 버튼이 표시돼요." : "사용 안 함 · 기존 방명록 글은 삭제되지 않아요."}</p></div>
           <p className="dd-share-help">설정을 변경한 뒤 임시저장 또는 수정사항 반영을 눌러 주세요. 기존 방명록 데이터는 설정을 꺼도 유지됩니다.</p>
@@ -764,12 +795,12 @@ export default function CreateInvitation() {
 </Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent2Name || "예금주 이름" : invitation.bride || "신부 이름"} value={invitation.brideAccountHolder} onChange={(e) => update("brideAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.brideAccount} onChange={(e) => update("brideAccount", e.target.value)} /></Field></div></div>}
         </div></details>
         </div>
-        <div style={{display:editorStep === 3 ? undefined : "none"}} className="dd-editor-final">
+        <div style={{display:editorStep === 4 ? undefined : "none"}} className="dd-editor-final">
           <div className="dd-final-card"><span className="dd-final-eyebrow">FINAL CHECK</span><h2>초대장 최종 확인</h2><p>발행하기 전 행사 정보와 디자인을 확인해 주세요.</p><dl className="dd-final-summary"><div><dt>행사 종류</dt><dd>{eventConfig.label}</dd></div><div><dt>본문 테마</dt><dd>{templateOptions.find((template) => template.id === invitation.templateId)?.name || "선택한 템플릿"}</dd></div><div><dt>진행 상태</dt><dd>{eventStatus === "published" ? "발행 완료" : eventStatus === "paid" ? "결제 완료 · 발행 대기" : "임시저장 · 발행 전"}</dd></div></dl><button type="button" className="dd-final-preview" onClick={() => { setFlowNotice(""); setPreviewOpen(true); }}>◉ 전체 미리보기</button></div>
           <div className="dd-final-card"><span className="dd-final-eyebrow">PAYMENT & PUBLISH</span><h2>{eventStatus === "published" ? "초대장 발행 완료" : eventStatus === "paid" ? "결제가 완료되었어요" : "결제 및 발행"}</h2><div className="dd-final-flow"><span className={eventStatus === "paid" || eventStatus === "published" ? "done" : "current"}>01 · 결제</span><span className={eventStatus === "published" ? "done" : eventStatus === "paid" ? "current" : ""}>02 · 직접 발행</span><span className={eventStatus === "published" ? "done" : ""}>03 · 링크 공유</span></div><p>{eventStatus === "published" ? "발행된 초대장을 확인하고 링크를 공유해 주세요." : eventStatus === "paid" ? "아직 초대장은 공개되지 않았습니다. 최종 확인 후 직접 발행해 주세요." : "현재는 개발용 테스트 결제입니다. 테스트 결제 후에도 직접 발행하기 전까지 초대장은 공개되지 않습니다."}</p>{eventStatus === "published" && eventSlug ? <a className="dd-final-primary" href={`/invite/${eventSlug}?from=owner`}>발행된 초대장 보기 →</a> : <button type="button" className="dd-final-primary" disabled={Boolean(submitting) || uploadingPhoto || galleryBusy} onClick={eventStatus === "paid" ? requestPublish : preparePayment}>{eventStatus === "paid" ? "초대장 발행하기 →" : "발행 준비 및 테스트 결제 →"}</button>}</div>
           <p className="dd-final-help">결제와 발행은 별개 단계입니다. 발행 버튼을 눌러야 초대장 링크가 활성화됩니다.</p>
         </div>
-        <div className="dd-editor-sticky-actions"><button type="button" onClick={() => saveDraft({ showSuccessToast: true })} disabled={!eventReady || Boolean(submitting) || uploadingPhoto || galleryBusy}>{eventStatus === "published" ? "수정사항 반영" : "임시저장"}</button><button type="button" className="dd-editor-preview-action" onClick={() => { setFlowNotice(""); setPreviewOpen(true); }}>◉ 미리보기</button><button type="button" className="dd-editor-next-action" onClick={() => { if (editorStep < 3) { setEditorStep(editorStep + 1); window.scrollTo({top:0,behavior:"smooth"}); } else if (eventStatus === "published" && eventSlug) { window.location.href = `/invite/${eventSlug}?from=owner`; } else if (eventStatus === "paid") requestPublish(); else preparePayment(); }}>{editorStep < 3 ? "다음단계 →" : eventStatus === "published" ? "초대장 보기" : eventStatus === "paid" ? "발행하기" : "결제·발행 →"}</button></div>{saveNotice && <p role="status">{saveNotice}</p>}{loginRequired && <button type="button" className="save-button" onClick={continueAfterLogin}>로그인하고 계속하기</button>}
+        <div className="dd-editor-sticky-actions"><button type="button" onClick={() => saveDraft({ showSuccessToast: true })} disabled={!eventReady || Boolean(submitting) || uploadingPhoto || galleryBusy}>{eventStatus === "published" ? "수정사항 반영" : "임시저장"}</button><button type="button" className="dd-editor-preview-action" onClick={() => { setFlowNotice(""); setPreviewOpen(true); }}>◉ 미리보기</button><button type="button" className="dd-editor-next-action" onClick={() => { if (editorStep < 4) { setEditorStep(editorStep + 1); window.scrollTo({top:0,behavior:"smooth"}); } else if (eventStatus === "published" && eventSlug) { window.location.href = `/invite/${eventSlug}?from=owner`; } else if (eventStatus === "paid") requestPublish(); else preparePayment(); }}>{editorStep < 4 ? "다음단계 →" : eventStatus === "published" ? "초대장 보기" : eventStatus === "paid" ? "발행하기" : "결제·발행 →"}</button></div>{saveNotice && <p role="status">{saveNotice}</p>}{loginRequired && <button type="button" className="save-button" onClick={continueAfterLogin}>로그인하고 계속하기</button>}
       </section>
       <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div ref={livePreviewRef} className="preview-content full-invitation-renderer"><InvitationRenderer invitation={previewInvitation} eventKind={invitation.eventKind} templateId={previewTemplateId || invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets} placeActions={previewPlaceActions()}><><Gallery photos={galleryPhotos} idPrefix="live-preview-gallery" /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} previewMode="desktop-live" /><div className="public-share-copy"><ShareActions path={eventSlug ? `/invite/${eventSlug}` : "#preview"} title={getInvitationTitle(invitation, invitation.eventKind)} previewOnly /></div><DearDayBrandFooter /></></InvitationRenderer></div></div></aside>
     </div>
