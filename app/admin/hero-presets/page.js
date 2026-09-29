@@ -66,8 +66,8 @@ export default function HeroPresetsPage(){
     display:{...defaultDisplay,...sourceConfig.display},
     heroBackdrop:{...defaultConfig.heroBackdrop,...sourceConfig.heroBackdrop},
     photoFrame:{...defaultConfig.photoFrame,...sourceConfig.photoFrame},
-    textLayers:Array.isArray(sourceConfig.textLayers)?structuredClone(sourceConfig.textLayers):[],
-    photoFadeUp:{...defaultConfig.photoFadeUp,...sourceConfig.photoFadeUp},
+    textLayers:Array.isArray(sourceConfig.textLayers)?structuredClone(sourceConfig.textLayers).map(layer=>preset?layer:{...layer,fadeUp:{enabled:false,duration:0.8,delay:0.3}}):[],
+    photoFadeUp:preset?{...defaultConfig.photoFadeUp,...sourceConfig.photoFadeUp}:{...defaultConfig.photoFadeUp},
   };
   if(!preset){
     // Sample photos are local previews; frame/thumbnail uploads are separate assets.
