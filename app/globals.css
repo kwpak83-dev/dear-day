@@ -2012,3 +2012,10 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .landing-v2 .landing-hero-benefits{transform:scale(1.045);transform-origin:center;background:rgba(255,255,255,.96);padding:12px;gap:9px;border-color:rgba(230,239,253,.96)}
 .landing-v2 .landing-hero-benefits>div{min-height:111px;padding:12px 5px}
 }
+
+
+/* HERO benefit cards: reference-style blue line icons and visible pale-blue outlines. */
+.landing-v2 .landing-hero-benefits>div{border:1px solid #dceafe}
+.landing-v2 .landing-hero-benefits>div span{background:#edf5ff;color:#075be9}
+.landing-v2 .landing-hero-benefits>div span svg{display:block;width:23px;height:23px}
+@media(max-width:800px){.landing-v2 .landing-hero-benefits>div span svg{width:22px;height:22px}}
