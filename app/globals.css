@@ -1614,3 +1614,29 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .public-share-copy.dd-public-share-pills>.dd-share-qr{background:#fff !important;color:#111 !important;border-color:#111 !important}
 .public-share-copy.dd-public-share-pills>button svg{display:block !important;width:14px !important;height:14px !important;flex:0 0 14px !important}
 .public-share-copy.dd-public-share-pills>.share-actions-notice{grid-column:1/-1 !important;display:block;min-height:0}
+
+/* Approved compact white quick-action pills: public invitation and previews only. */
+.invitation-quick-menu--minimal.invitation-quick-menu--pills {
+  display:flex !important;align-items:center !important;justify-content:center !important;
+  gap:10px !important;width:max-content !important;max-width:calc(100% - 16px) !important;
+  min-height:0 !important;padding:7px 10px !important;border-radius:999px !important;
+  background:transparent !important;border:0 !important;box-shadow:none !important;
+  overflow:visible !important;
+}
+.invitation-quick-menu--minimal.invitation-quick-menu--pills > button,
+.dd-template-button-style .invitation-quick-menu--minimal.invitation-quick-menu--pills > button,
+.dd-template-background .invitation-quick-menu--minimal.invitation-quick-menu--pills > button {
+  display:inline-flex !important;flex:0 0 auto !important;align-items:center !important;
+  justify-content:center !important;gap:6px !important;width:auto !important;min-width:0 !important;
+  min-height:36px !important;height:36px !important;padding:0 13px !important;
+  border:1px solid #e5e5e5 !important;border-radius:999px !important;
+  background:#fff !important;color:#222 !important;-webkit-text-fill-color:#222 !important;
+  box-shadow:0 2px 5px rgba(0,0,0,.07) !important;
+  font:500 12px/1.2 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif !important;
+  white-space:nowrap !important;box-sizing:border-box !important;
+}
+.invitation-quick-menu--minimal.invitation-quick-menu--pills > button + button {border-left:1px solid #e5e5e5 !important}
+.invitation-quick-menu--minimal.invitation-quick-menu--pills > button svg {display:block !important;flex:0 0 16px !important;width:16px !important;height:16px !important;color:#222 !important;stroke:#222 !important}
+.invitation-quick-menu--minimal.invitation-quick-menu--pills > button span {display:block !important;overflow:visible !important;max-width:none !important;white-space:nowrap !important;color:#222 !important;-webkit-text-fill-color:#222 !important}
+.invitation-quick-menu--minimal.invitation-quick-menu--pills > button:focus-visible {outline:2px solid #222 !important;outline-offset:2px !important;border-radius:999px !important}
+@media(max-width:360px){.invitation-quick-menu--minimal.invitation-quick-menu--pills{gap:6px !important;padding:5px !important}.invitation-quick-menu--minimal.invitation-quick-menu--pills > button{padding:0 9px !important;font-size:11px !important}}
