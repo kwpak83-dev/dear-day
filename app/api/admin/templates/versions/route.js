@@ -297,12 +297,14 @@ const heroRatios = new Set(["4:5", "1:1", "3:4", "16:9"]);
 
 function validBackground(value) {
   const legacy = hasOnlyKeys(value, ["color", "assetId", "overlayColor", "overlayOpacity"]);
-  const modern = hasOnlyKeys(value, ["mode", "color", "assetId", "overlayColor", "overlayOpacity", "custom"]);
+  const modern = hasOnlyKeys(value, ["mode", "color", "assetId", "overlayColor", "overlayOpacity", "custom"]) || hasOnlyKeys(value, ["mode", "color", "assetId", "overlayColor", "overlayOpacity", "custom", "centerPanel"]);
   if (!legacy && !modern) return false;
   if (!hexColor(value.color) || !optionalId(value.assetId) ||
       !hexColor(value.overlayColor) || !decimal(value.overlayOpacity, 0, 1)) return false;
   if (legacy) return true;
   const custom = value.custom;
+  const panel = value.centerPanel;
+  if (panel !== undefined && (!hasOnlyKeys(panel, ["enabled","width","color","opacity"]) || typeof panel.enabled !== "boolean" || !Number.isInteger(panel.width) || !decimal(panel.width,65,100) || !hexColor(panel.color) || !Number.isInteger(panel.opacity) || !decimal(panel.opacity,0,100))) return false;
   return ["image", "custom"].includes(value.mode) &&
     hasOnlyKeys(custom, ["mode", "endColor", "angle", "pattern", "patternColor", "patternSize", "patternOpacity"]) &&
     ["solid", "gradient", "pattern"].includes(custom.mode) &&
@@ -368,7 +370,7 @@ async function saveBackgroundHero(auth, body) {
 
 const typographyRoles = ["heroTitle", "sectionTitle", "body", "caption"];
 const typographyFields = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "textAlign"];
-const colorFields = ["text", "title", "heroTitle", "muted", "accent", "buttonBackground", "buttonText", "divider"];
+const colorFields = ["text", "title", "heroTitle", "muted", "caption", "accent", "buttonBackground", "buttonText", "divider"];
 const fontFamilies = new Set(Object.keys(TEMPLATE_FONT_STACKS));
 const fontWeights = new Set([300, 400, 500, 600, 700]);
 const textAlignments = new Set(["left", "center", "right"]);

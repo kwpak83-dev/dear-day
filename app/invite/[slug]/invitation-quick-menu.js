@@ -28,6 +28,12 @@ function BottomSheet({ title, onClose, children, portalTarget = null, preview = 
   return portalTarget ? createPortal(sheet, portalTarget) : sheet;
 }
 
+function QuickMenuIcon({ kind }) {
+  return kind === "rsvp"
+    ? <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="7.5" r="3.5" /><path d="M5 20v-2a7 7 0 0 1 14 0v2" /></svg>
+    : <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 5 4 4M4 20l4.5-1 11-11a2.1 2.1 0 0 0-3-3l-11 11L4 20Z" /></svg>;
+}
+
 export default function InvitationQuickMenu({ invitation, slug, startsAt, previewMode = "" }) {
   const [visible, setVisible] = useState(false);
   const [sheet, setSheet] = useState(null);
@@ -248,18 +254,18 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       }
     : undefined;
 
-  if (!rsvpEnabled && !guestbookEnabled && !hasLocation) return null;
+  if (!rsvpEnabled && !guestbookEnabled) return null;
 
   return <>
     <span ref={markerRef} className="invitation-quick-menu-trigger" aria-hidden="true" />
-    {visible && (isDesktopLivePreview && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu invitation-quick-menu--minimal${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}${isEditorFullPreview ? " invitation-quick-menu--editor-full" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
-      {rsvpEnabled && <button style={synchronizedItemStyle} className="invitation-quick-rsvp" type="button" onClick={() => openSheet("rsvp")}><span>참석 여부</span></button>}
-      {hasLocation && <button style={synchronizedItemStyle} className="invitation-quick-location" type="button" onClick={goToLocation}><span>오시는 길</span></button>}
-      {guestbookEnabled && <button style={synchronizedItemStyle} className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><span>축하 메시지</span></button>}
-    </nav>, desktopLivePortal) : <nav className={`invitation-quick-menu invitation-quick-menu--minimal${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
-      {rsvpEnabled && <button style={synchronizedItemStyle} className="invitation-quick-rsvp" type="button" onClick={() => openSheet("rsvp")}><span>참석 여부</span></button>}
-      {hasLocation && <button style={synchronizedItemStyle} className="invitation-quick-location" type="button" onClick={goToLocation}><span>오시는 길</span></button>}
-      {guestbookEnabled && <button style={synchronizedItemStyle} className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><span>축하 메시지</span></button>}
+    {visible && (isDesktopLivePreview && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu invitation-quick-menu--minimal invitation-quick-menu--pills${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}${isEditorFullPreview ? " invitation-quick-menu--editor-full" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
+      {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => openSheet("rsvp")}><QuickMenuIcon kind="rsvp" /><span>참석여부 알리기</span></button>}
+      
+      {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><QuickMenuIcon kind="guestbook" /><span>방명록 글쓰기</span></button>}
+    </nav>, desktopLivePortal) : <nav className={`invitation-quick-menu invitation-quick-menu--minimal invitation-quick-menu--pills${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
+      {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => openSheet("rsvp")}><QuickMenuIcon kind="rsvp" /><span>참석여부 알리기</span></button>}
+      
+      {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><QuickMenuIcon kind="guestbook" /><span>방명록 글쓰기</span></button>}
     </nav>)}
     {sheet === "rsvp" && rsvpEnabled && <BottomSheet title="참석 여부" onClose={closeSheet} portalTarget={isDesktopLivePreview ? desktopLivePortal : null} preview={isDesktopLivePreview}>
       <RsvpForm slug={slug} startsAt={startsAt} />

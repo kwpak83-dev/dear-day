@@ -21,7 +21,7 @@ const placementFor = (assetId, saved) => {
   return base;
 };
 const heroDisplayDefaults = { eyebrow: true, eventLabel: true, title: true, relations: true, detail: true, note: true, schedule: true, venue: true };
-const backgroundDefaults = { mode: "custom", color: "#ffffff", assetId: null, overlayColor: "#000000", overlayOpacity: 0, custom: { mode: "solid", endColor: "#f3e8df", angle: 135, pattern: "dots", patternColor: "#bca08d", patternSize: 20, patternOpacity: .25 } };
+const backgroundDefaults = { mode: "custom", color: "#ffffff", assetId: null, overlayColor: "#000000", overlayOpacity: 0, centerPanel: { enabled: false, width: 85, color: "#fffcf7", opacity: 100 }, custom: { mode: "solid", endColor: "#f3e8df", angle: 135, pattern: "dots", patternColor: "#bca08d", patternSize: 20, patternOpacity: .25 } };
 const heroDefaults = { mode: "photo", aspectRatio: "4:5", positionX: 50, positionY: 50, textYPercent: 50, scheduleFontSize: 11, zoom: 1, backgroundAssetId: null, frameAssetId: null, overlayColor: "#000000", overlayOpacity: 0, headerVisible: true, mastheadVisible: true, mastheadText: "", display: heroDisplayDefaults };
 const typographyDefaults = {
   heroTitle: { fontFamily: "serif", fontSize: 32, fontWeight: 400, lineHeight: 1.3, letterSpacing: 0, textAlign: "center" },
@@ -29,12 +29,12 @@ const typographyDefaults = {
   body: { fontFamily: "sans", fontSize: 16, fontWeight: 400, lineHeight: 1.7, letterSpacing: 0, textAlign: "center" },
   caption: { fontFamily: "sans", fontSize: 13, fontWeight: 400, lineHeight: 1.5, letterSpacing: 0, textAlign: "center" },
 };
-const colorDefaults = { text: "#333333", title: "#222222", heroTitle: "#222222", muted: "#777777", accent: "#A77D78", buttonBackground: "#b78b72", buttonText: "#ffffff", divider: "#e8e2de" };
+const colorDefaults = { text: "#333333", title: "#222222", heroTitle: "#222222", muted: "#777777", caption: "#777777", accent: "#A77D78", buttonBackground: "#b78b72", buttonText: "#ffffff", divider: "#e8e2de" };
 const SHARED_BUTTON_PRESETS = [{id:"soft-rose",name:"Soft Rose",background:"#d78f9b",text:"#ffffff",borderColor:"#d78f9b",borderRadius:28,borderWidth:0},{id:"classic-gold",name:"Classic Gold",background:"#fffaf2",text:"#977b50",borderColor:"#b69b72",borderRadius:8,borderWidth:1},{id:"modern-minimal",name:"Modern Minimal",background:"#303030",text:"#ffffff",borderColor:"#303030",borderRadius:7,borderWidth:0},{id:"romantic-line",name:"Romantic Line",background:"#fff8f9",text:"#b97e89",borderColor:"#d9a3aa",borderRadius:28,borderWidth:1}];
 const buttonStyleDefaults = { width: 100, height: 44, fontSize: 12, borderRadius: 9, borderWidth: 0, borderColor: "#b78b72", background: "#b78b72", text: "#ffffff", fontFamily: "sans", fontWeight: 400, syncQuickMenu: false };
 const quickMenuDefaults = { rsvpIcon: "✓", locationIcon: "⌖", guestbookIcon: "♡", rsvpIconAssetId: null, locationIconAssetId: null, guestbookIconAssetId: null, fontSize: 11, iconSize: 18 };
 const typographyRoles = [["heroTitle", "Hero Title"], ["sectionTitle", "Section Title"], ["body", "Body"], ["caption", "Caption / Small"]];
-const colorLabels = [["text", "기본 글자색"], ["title", "본문 제목 색상"], ["muted", "보조 글자색"], ["accent", "포인트 색상 · 달력 선택 날짜"], ["buttonBackground", "버튼 배경"], ["buttonText", "버튼 글자"], ["divider", "구분선"]];
+const colorLabels = [["text", "기본 글자색"], ["title", "본문 제목 색상"], ["muted", "보조 글자색"], ["caption", "Caption / Small 글자색"], ["accent", "포인트 색상 · 달력 선택 날짜"], ["buttonBackground", "버튼 배경"], ["buttonText", "버튼 글자"], ["divider", "구분선"]];
 const fromConfig = (defaults, saved) => Object.fromEntries(Object.keys(defaults).map((key) => [key, saved && typeof saved === "object" && saved[key] !== undefined ? saved[key] : defaults[key]]));
 const heroFromConfig = (saved) => ({ ...fromConfig(heroDefaults, saved), display: fromConfig(heroDisplayDefaults, saved?.display) });
 const typographyFromConfig = (saved) => Object.fromEntries(typographyRoles.map(([role]) => [role, fromConfig(typographyDefaults[role], saved?.[role])]));
@@ -64,7 +64,7 @@ const colorValue = (value) => /^#[0-9a-fA-F]{6}$/.test(value) ? value : "#000000
 function ColorControl({ label, value, onChange }) {
   return <label style={field}>{label}<div style={{ display: "flex", gap: 6, minWidth: 0 }}>
     <input type="color" style={{ width: 38, height: 34, flex: "none" }} value={colorValue(value)} onChange={(event) => onChange(event.target.value)} aria-label={label} />
-    <input style={{ ...input, minWidth: 0, flex: "1 1 0" }} type="text" required maxLength={7} pattern="#[0-9a-fA-F]{6}" value={value} onChange={(event) => onChange(event.target.value)} />
+    <input style={{ ...input, minWidth: 0, flex: "1 1 0" }} type="text" required maxLength={7} pattern="#[0-9a-fA-F]{6}" value={value ?? ""} onChange={(event) => onChange(event.target.value)} />
   </div></label>;
 }
 
@@ -141,10 +141,10 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     if (!versionResponse.ok) throw new Error(versions.error || "버전 정보를 불러오지 못했어요.");
     if (!assetResponse.ok) throw new Error(assets.error || "장식 Asset을 불러오지 못했어요.");
     const active = (assets.assets || []).filter((asset) => asset.is_active);
-    setBackground((previous) => preservePlacements ? previous : ({ ...fromConfig(backgroundDefaults, versions.draft?.background), mode: versions.draft?.background?.mode || (versions.draft?.background?.assetId ? "image" : "custom"), custom: { ...backgroundDefaults.custom, ...(versions.draft?.background?.custom || {}) } }));
+    setBackground((previous) => preservePlacements ? previous : ({ ...fromConfig(backgroundDefaults, versions.draft?.background), mode: versions.draft?.background?.mode || (versions.draft?.background?.assetId ? "image" : "custom"), centerPanel: { ...backgroundDefaults.centerPanel, ...(versions.draft?.background?.centerPanel || {}) }, custom: { ...backgroundDefaults.custom, ...(versions.draft?.background?.custom || {}) } }));
     setHero((previous) => preservePlacements ? previous : heroFromConfig(versions.draft?.hero));
     setTypography((previous) => preservePlacements ? previous : typographyFromConfig(versions.draft?.typography));
-    setColors((previous) => preservePlacements ? previous : fromConfig(colorDefaults, { ...versions.draft?.colors, heroTitle: versions.draft?.colors?.heroTitle || versions.draft?.colors?.title || colorDefaults.heroTitle }));
+    setColors((previous) => preservePlacements ? previous : fromConfig(colorDefaults, { ...versions.draft?.colors, caption: versions.draft?.colors?.caption || versions.draft?.colors?.muted || colorDefaults.caption, heroTitle: versions.draft?.colors?.heroTitle || versions.draft?.colors?.title || colorDefaults.heroTitle }));
     setButtonStyle((previous) => preservePlacements ? previous : fromConfig(buttonStyleDefaults, versions.draft?.buttonStyle));
     setQuickMenu((previous) => preservePlacements ? previous : fromConfig(quickMenuDefaults, versions.draft?.quickMenu));
     setSections((previous) => preservePlacements ? previous : sectionsFromConfig(versions.draft?.sections));
@@ -351,6 +351,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               </>}
               <p style={guideNote}>이미지 Asset은 삭제되지 않으며, 직접 제작 모드에서는 이미지가 겹쳐 표시되지 않습니다.</p>
             </div>}
+            <fieldset style={{border:"1px solid #eadfd8",borderRadius:10,padding:12,display:"grid",gap:10}}><legend>중앙 본문 배경</legend><label><input type="checkbox" checked={background.centerPanel?.enabled===true} onChange={event=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,enabled:event.target.checked}}))}/> 중앙 본문 배경 사용</label>{background.centerPanel?.enabled&&<><label style={field}>중앙 본문 너비: {background.centerPanel.width}%<input type="range" min={65} max={100} step={1} value={background.centerPanel.width} onChange={event=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,width:Number(event.target.value)}}))}/></label><ColorControl label="중앙 본문 배경색" value={background.centerPanel.color} onChange={color=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,color}}))}/><label style={field}>불투명도: {background.centerPanel.opacity}%<input type="range" min={0} max={100} step={5} value={background.centerPanel.opacity} onChange={event=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,opacity:Number(event.target.value)}}))}/></label></>}<p style={guideNote}>기존 배경 위에 중앙 색상 레이어를 표시합니다. OFF면 기존 디자인을 유지합니다.</p></fieldset>
           </fieldset>
           <p style={guideNote}>Hero 디자인은 <a href="/admin/hero-presets">Hero 프레임 관리</a>에서 별도로 편집합니다. 기존 본문 테마의 Hero 설정 데이터는 유지됩니다.</p>
           <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Background 저장"}</button>

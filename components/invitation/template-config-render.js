@@ -31,6 +31,11 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   const heroBackgroundUrl = hero?.backgroundAssetId ? assets[hero.backgroundAssetId] : null;
   const showCoverPhoto = hero?.mode !== "illustration";
 
+  if (background?.centerPanel?.enabled) {
+    const panel = background.centerPanel;
+    set(rootStyle, "--dd-center-panel-width", panel.width, "%");
+    rootStyle["--dd-center-panel-color"] = rgba(panel.color, panel.opacity / 100) || "transparent";
+  }
   if (background) {
     const custom = background.custom || {};
     const mode = background.mode || (background.assetId ? "image" : "custom");
@@ -83,6 +88,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroStyle.backgroundPosition = "center";
     heroMediaStyle.background = "transparent";
   }
+  if (hero?.photoFadeUp?.enabled) { heroMediaStyle.animation = `dd-hero-photo-fade-up ${hero.photoFadeUp.duration}s ease-out ${hero.photoFadeUp.delay}s both`; }
   const frame = hero?.photoFrame;
   if (frame && frame.shape !== "default") {
     heroStyle.aspectRatio = (hero?.aspectRatio || "4:5").replace(":", " / ");
@@ -143,7 +149,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     set(rootStyle, `--dd-${prefix}-letter-spacing`, item.letterSpacing, "px");
     set(rootStyle, `--dd-${prefix}-align`, item.textAlign);
   }
-  for (const [key, variable] of [["text", "text"], ["title", "title"], ["heroTitle", "hero-title"], ["muted", "muted"], ["accent", "accent"], ["buttonBackground", "button-bg"], ["buttonText", "button-text"], ["divider", "divider"]]) {
+  for (const [key, variable] of [["text", "text"], ["title", "title"], ["heroTitle", "hero-title"], ["muted", "muted"], ["caption", "caption"], ["accent", "accent"], ["buttonBackground", "button-bg"], ["buttonText", "button-text"], ["divider", "divider"]]) {
     set(rootStyle, `--dd-color-${variable}`, colors?.[key]);
   }
   if (buttonStyle) {
@@ -198,7 +204,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   }
   const safeAreaClass = safeArea ? " dd-template-safe-area" : "";
   const configured = Boolean(background || hero || typography || colors);
-  return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), buttonStyleConfigured: Boolean(buttonStyle), backgroundConfigured: Boolean(background), decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle, showCoverPhoto, illustrationMode: hero?.mode === "illustration", heroBackgroundConfigured: Boolean(heroBackgroundUrl) };
+  return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), buttonStyleConfigured: Boolean(buttonStyle), backgroundConfigured: Boolean(background), centerPanelConfigured: background?.centerPanel?.enabled === true, decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle, showCoverPhoto, illustrationMode: hero?.mode === "illustration", heroBackgroundConfigured: Boolean(heroBackgroundUrl) };
 }
 
 export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {} }) {
@@ -235,7 +241,7 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
           return <div key={layer.id} className="dd-template-hero-text-layer" style={{
             left: `${x}%`, top: `${y}%`, transform: `translate(${-x}%, -50%) rotate(${layer.rotation ?? 0}deg)`,
             width: "100%", textAlign: align,
-          }}><span style={{ ...textStyle, display: "inline-block", maxWidth: "100%" }}>{boundText}</span></div>;
+          }}><span className={layer.fadeUp?.enabled ? "dd-hero-text-fade-up" : undefined} style={{ ...textStyle, display: "inline-block", maxWidth: "100%", ...(layer.fadeUp?.enabled ? { animationDuration: `${layer.fadeUp.duration}s`, animationDelay: `${layer.fadeUp.delay}s` } : {}) }}>{boundText}</span></div>;
         })}
       </div>
     </>}
