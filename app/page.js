@@ -69,7 +69,7 @@ export default function Home() {
         <div className="hero-copy-v2">
           <p className="hero-handwriting">Good People<br />Good Moment</p>
           <h1>특별한 날을<br />쉽고, 멋지게</h1>
-          <span>누구나 쉽게 만드는<br />모바일 초대장 DearDay</span><p className="hero-side-note"><span>좋은 날,</span><span>좋은 사람들과 함께 ♡</span></p>
+          <span>누구나 쉽게 만드는<br />모바일 초대장 DearDay</span>
           <button className="landing-primary" onClick={start}>지금, 초대장 만들기 <b>→</b></button>
         </div>
         <div className="landing-hero-art" aria-hidden="true">
