@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
 import InvitationRenderer from "../../../components/invitation/invitation-renderer";
 import InvitationMap from "../../../components/invitation/invitation-map";
+import TransportGuide from "../../../components/invitation/transport-guide";
 import DearDayBrandFooter from "../../../components/invitation/dearday-brand-footer";
 import Gallery from "./gallery";
 import InvitationNotice from "./invitation-notice";
@@ -77,7 +78,7 @@ export default async function InvitationPage({ params, searchParams }) {
   return <main className="public-invitation shared-public-invitation">
     {ownerView && <nav className="owner-return-nav" aria-label="DearDay 관리 화면으로 돌아가기"><a href="/my-invitations">내 초대장</a><a href="/">DearDay 홈</a></nav>}
     <InvitationNotice notice={settings.notice} slug={slug} imageUrl={settings.notice?.imagePath ? supabase.storage.from("invitation-photos").getPublicUrl(settings.notice.imagePath).data.publicUrl : null} />
-    <div className="full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} templateConfig={templateConfig} templateAssets={templateAssets} placeActions={<><AddressCopy invitation={invitation} /><InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView /></>}>
+    <div className="full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} templateConfig={templateConfig} templateAssets={templateAssets} placeActions={<><AddressCopy invitation={invitation} /><InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView /><TransportGuide invitation={invitation} /></>}>
       <div className="public-invitation-sections"><Gallery photos={galleryPhotos} /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} slug={slug} startsAt={event.starts_at} /><LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} /><DearDayBrandFooter /></div>
     </InvitationRenderer></div>
 </main>;
