@@ -21,7 +21,7 @@ const placementFor = (assetId, saved) => {
   return base;
 };
 const heroDisplayDefaults = { eyebrow: true, eventLabel: true, title: true, relations: true, detail: true, note: true, schedule: true, venue: true };
-const backgroundDefaults = { mode: "custom", color: "#ffffff", assetId: null, overlayColor: "#000000", overlayOpacity: 0, custom: { mode: "solid", endColor: "#f3e8df", angle: 135, pattern: "dots", patternColor: "#bca08d", patternSize: 20, patternOpacity: .25 } };
+const backgroundDefaults = { mode: "custom", color: "#ffffff", assetId: null, overlayColor: "#000000", overlayOpacity: 0, centerPanel: { enabled: false, width: 85, color: "#fffcf7", opacity: 100 }, custom: { mode: "solid", endColor: "#f3e8df", angle: 135, pattern: "dots", patternColor: "#bca08d", patternSize: 20, patternOpacity: .25 } };
 const heroDefaults = { mode: "photo", aspectRatio: "4:5", positionX: 50, positionY: 50, textYPercent: 50, scheduleFontSize: 11, zoom: 1, backgroundAssetId: null, frameAssetId: null, overlayColor: "#000000", overlayOpacity: 0, headerVisible: true, mastheadVisible: true, mastheadText: "", display: heroDisplayDefaults };
 const typographyDefaults = {
   heroTitle: { fontFamily: "serif", fontSize: 32, fontWeight: 400, lineHeight: 1.3, letterSpacing: 0, textAlign: "center" },
@@ -141,7 +141,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     if (!versionResponse.ok) throw new Error(versions.error || "버전 정보를 불러오지 못했어요.");
     if (!assetResponse.ok) throw new Error(assets.error || "장식 Asset을 불러오지 못했어요.");
     const active = (assets.assets || []).filter((asset) => asset.is_active);
-    setBackground((previous) => preservePlacements ? previous : ({ ...fromConfig(backgroundDefaults, versions.draft?.background), mode: versions.draft?.background?.mode || (versions.draft?.background?.assetId ? "image" : "custom"), custom: { ...backgroundDefaults.custom, ...(versions.draft?.background?.custom || {}) } }));
+    setBackground((previous) => preservePlacements ? previous : ({ ...fromConfig(backgroundDefaults, versions.draft?.background), mode: versions.draft?.background?.mode || (versions.draft?.background?.assetId ? "image" : "custom"), centerPanel: { ...backgroundDefaults.centerPanel, ...(versions.draft?.background?.centerPanel || {}) }, custom: { ...backgroundDefaults.custom, ...(versions.draft?.background?.custom || {}) } }));
     setHero((previous) => preservePlacements ? previous : heroFromConfig(versions.draft?.hero));
     setTypography((previous) => preservePlacements ? previous : typographyFromConfig(versions.draft?.typography));
     setColors((previous) => preservePlacements ? previous : fromConfig(colorDefaults, { ...versions.draft?.colors, caption: versions.draft?.colors?.caption || versions.draft?.colors?.muted || colorDefaults.caption, heroTitle: versions.draft?.colors?.heroTitle || versions.draft?.colors?.title || colorDefaults.heroTitle }));
@@ -351,6 +351,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
               </>}
               <p style={guideNote}>이미지 Asset은 삭제되지 않으며, 직접 제작 모드에서는 이미지가 겹쳐 표시되지 않습니다.</p>
             </div>}
+            <fieldset style={{border:"1px solid #eadfd8",borderRadius:10,padding:12,display:"grid",gap:10}}><legend>중앙 본문 배경</legend><label><input type="checkbox" checked={background.centerPanel?.enabled===true} onChange={event=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,enabled:event.target.checked}}))}/> 중앙 본문 배경 사용</label>{background.centerPanel?.enabled&&<><label style={field}>중앙 본문 너비: {background.centerPanel.width}%<input type="range" min={65} max={100} step={1} value={background.centerPanel.width} onChange={event=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,width:Number(event.target.value)}}))}/></label><ColorControl label="중앙 본문 배경색" value={background.centerPanel.color} onChange={color=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,color}}))}/><label style={field}>불투명도: {background.centerPanel.opacity}%<input type="range" min={0} max={100} step={5} value={background.centerPanel.opacity} onChange={event=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,opacity:Number(event.target.value)}}))}/></label></>}<p style={guideNote}>기존 배경 위에 중앙 색상 레이어를 표시합니다. OFF면 기존 디자인을 유지합니다.</p></fieldset>
           </fieldset>
           <p style={guideNote}>Hero 디자인은 <a href="/admin/hero-presets">Hero 프레임 관리</a>에서 별도로 편집합니다. 기존 본문 테마의 Hero 설정 데이터는 유지됩니다.</p>
           <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Background 저장"}</button>
