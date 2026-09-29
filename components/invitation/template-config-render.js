@@ -83,7 +83,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroStyle.backgroundPosition = "center";
     heroMediaStyle.background = "transparent";
   }
-  if (hero?.photoFadeUp?.enabled) { heroMediaStyle.animation = `dd-hero-fade-up ${hero.photoFadeUp.duration}s ease-out ${hero.photoFadeUp.delay}s both`; }
+  if (hero?.photoFadeUp?.enabled) { heroMediaStyle.animation = `dd-hero-photo-fade-up ${hero.photoFadeUp.duration}s ease-out ${hero.photoFadeUp.delay}s both`; }
   const frame = hero?.photoFrame;
   if (frame && frame.shape !== "default") {
     heroStyle.aspectRatio = (hero?.aspectRatio || "4:5").replace(":", " / ");
