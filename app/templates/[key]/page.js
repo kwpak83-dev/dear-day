@@ -1,0 +1,21 @@
+"use client";
+import { useEffect,useState } from "react";
+import InvitationRenderer from "../../../components/invitation/invitation-renderer";
+import InvitationMap from "../../../components/invitation/invitation-map";
+import DearDayBrandFooter from "../../../components/invitation/dearday-brand-footer";
+import OptionalInvitationSections from "../../invite/[slug]/optional-invitation-sections";
+const sample={eventKind:"wedding",groom:"민준",bride:"서연",groomPhone:"010-0000-0001",bridePhone:"010-0000-0002",groomFatherName:"김정호",groomMotherName:"이영희",brideFatherName:"박성호",brideMotherName:"최미경",date:"2026-11-14",time:"14:00",venue:"디어데이 웨딩홀",venueAddress:"서울특별시 중구 세종대로 110",message:"저희 두 사람이 소중한 분들을 모시고 새로운 시작을 함께하려 합니다.",coverPhotoUrl:"/templates/modern-001/preview.png",rsvpEnabled:true,guestbookEnabled:true,screenEffectMode:"background"};
+function Tail({invitation}){return <div className="public-invitation-sections"><section className="invitation-gallery"><p className="gallery-kicker">OUR MOMENTS</p><h2>우리의 순간들</h2><div className="public-gallery-grid">{[2,3,4].map(n=><span className="public-gallery-photo" key={n}><img src={`/moment-${n}.png`} alt=""/></span>)}</div></section><section className="public-accounts"><h2>마음 전하실 곳</h2><article className="public-account-card"><p>신랑 측</p><strong>디어은행 · 민준</strong><div><span>123-456-7890</span><button type="button" disabled>계좌 복사</button></div></article></section><OptionalInvitationSections invitation={invitation} previewMode="admin-full"/><DearDayBrandFooter/></div>}
+export default function TemplatePreviewPage({params}){
+ const [state,setState]=useState({loading:true,error:"",data:null});
+ useEffect(()=>{let alive=true;(async()=>{try{const p=await params,r=await fetch(`/api/templates/collection/${encodeURIComponent(p.key)}`),j=await r.json();if(!r.ok)throw new Error(j.error);if(alive)setState({loading:false,error:"",data:j});}catch(e){if(alive)setState({loading:false,error:e.message,data:null});}})();return()=>{alive=false;};},[params]);
+ if(state.loading)return <main style={{padding:40,textAlign:"center"}}>미리보기를 준비하는 중이에요.</main>;
+ if(state.error)return <main style={{padding:40,textAlign:"center"}}>{state.error}</main>;
+ const {item,templateConfig,templateAssets}=state.data,invitation={...sample,templateId:item.body_template_id,heroPresetId:item.hero_preset_id};
+ const make=()=>{window.localStorage.setItem("dear-day-template-start",JSON.stringify({completedTemplateId:item.id,templateKey:item.template_key,eventKind:item.category==="wedding"?"wedding":item.category,heroPresetId:item.hero_preset_id,templateId:item.body_template_id}));window.location.assign("/create?template="+encodeURIComponent(item.template_key));};
+ return <main style={{minHeight:"100vh",background:"#f7f4f2",padding:"18px 12px 100px"}}>
+  <div style={{maxWidth:430,margin:"0 auto 12px",display:"flex",justifyContent:"space-between",alignItems:"center",gap:10}}><a href="/templates" style={{color:"#23439a",fontWeight:700,textDecoration:"none"}}>← 컬렉션</a><div style={{textAlign:"right"}}><strong>{item.name}</strong><div style={{fontSize:13,color:"#766"}}>{Number(item.price).toLocaleString()}원</div></div></div>
+  <div className="full-invitation-renderer" style={{width:390,maxWidth:"100%",margin:"0 auto",background:"#fff",boxShadow:"0 12px 35px rgba(0,0,0,.08)"}}><InvitationRenderer invitation={invitation} eventKind="wedding" templateId={item.body_template_id} templateConfig={templateConfig} templateAssets={templateAssets} placeActions={<><div className="public-address-copy"><button type="button" disabled>주소 복사</button></div><InvitationMap address={invitation.venueAddress} venue={invitation.venue}/></>}><Tail invitation={invitation}/></InvitationRenderer></div>
+  <div style={{position:"fixed",left:0,right:0,bottom:0,padding:"12px 16px",background:"rgba(255,255,255,.96)",borderTop:"1px solid #eee",zIndex:50}}><button type="button" onClick={make} style={{display:"block",width:"min(390px,100%)",margin:"0 auto",border:0,borderRadius:12,padding:"14px 18px",background:"#23439a",color:"#fff",fontSize:16,fontWeight:800,cursor:"pointer"}}>이 템플릿으로 제작하기</button></div>
+ </main>;
+}
