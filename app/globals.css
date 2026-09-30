@@ -2174,3 +2174,15 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-admin-hero-page .dd-hero-asset-section div[style*="border:"]{border-color:#d7e5fa!important}
 .dd-admin-hero-page .dd-hero-asset-section div[style*="dashed"]{background:#f8fbff!important;border-color:#bed4f6!important}
 .dd-admin-hero-page .dd-hero-asset-section :is(button,input):focus-visible{outline:2px solid #315be8;outline-offset:2px}
+
+
+/* DearDay UI refresh 04: admin body-theme management list. */
+.dd-admin-theme-page .dd-admin-template-list{gap:14px!important}
+.dd-admin-theme-page .dd-admin-template-card{background:#fff!important;border-color:#dce8fa!important;border-radius:14px!important;box-shadow:0 5px 20px rgba(25,65,125,.045);padding:20px!important}
+.dd-admin-theme-page .dd-admin-template-card h2{color:#172b51}
+.dd-admin-theme-page .dd-admin-template-card dl{color:#637895}
+.dd-admin-theme-page .dd-admin-template-card dt{color:#637895}
+.dd-admin-theme-page .dd-admin-template-card dd{color:#172b51;font-weight:600}
+.dd-admin-theme-page .dd-admin-template-card .save-button{min-height:36px;padding:8px 15px;border-radius:9px}
+.dd-admin-theme-page .dd-admin-template-list+.save-button{background:#1e3a8a}
+@media(max-width:800px){.dd-admin-theme-page .dd-admin-template-card{padding:16px!important}.dd-admin-theme-page .dd-admin-template-list{gap:11px!important}}
