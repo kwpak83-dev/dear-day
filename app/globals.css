@@ -2329,3 +2329,10 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .preview-content.full-invitation-renderer .invitation-template{
   min-height:0;
 }
+
+
+/* Published invitation: the DearDay footer is the real end of the document.
+   Remove the shared full-renderer viewport minimum so template artwork cannot continue below it. */
+.shared-public-invitation > .full-invitation-renderer > .invitation-template{
+  min-height:0;
+}
