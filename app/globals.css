@@ -2186,3 +2186,27 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-admin-theme-page .dd-admin-template-card .save-button{min-height:36px;padding:8px 15px;border-radius:9px}
 .dd-admin-theme-page .dd-admin-template-list+.save-button{background:#1e3a8a}
 @media(max-width:800px){.dd-admin-theme-page .dd-admin-template-card{padding:16px!important}.dd-admin-theme-page .dd-admin-template-list{gap:11px!important}}
+
+
+/* Admin body-theme editor finishing pass: nested controls, version editor and Assets. */
+.dd-admin-theme-page .admin-template-editor-controls,
+.dd-admin-theme-page .admin-template-assets{background:#fff!important;border-color:#d7e5fa!important}
+.dd-admin-theme-page .admin-template-editor-controls :is(fieldset,section,div[style*="border:"]),
+.dd-admin-theme-page .admin-template-assets :is(fieldset,section,div[style*="border:"]),
+.dd-admin-theme-page .admin-template-asset-slot,
+.dd-admin-theme-page .admin-template-asset-row{border-color:#d7e5fa!important}
+.dd-admin-theme-page .admin-template-editor-controls :is(input:not([type=checkbox]):not([type=color]),textarea,select),
+.dd-admin-theme-page .admin-template-assets :is(input:not([type=checkbox]):not([type=color]),textarea,select){border-color:#cfdef5!important;color:#172b51}
+.dd-admin-theme-page .admin-template-editor-controls :is(input:not([type=checkbox]):not([type=color]),textarea,select):focus,
+.dd-admin-theme-page .admin-template-assets :is(input:not([type=checkbox]):not([type=color]),textarea,select):focus{border-color:#315be8!important;outline:2px solid #dceaff;outline-offset:1px}
+.dd-admin-theme-page .admin-template-editor-controls :is(h2,h3,h4,strong,legend),
+.dd-admin-theme-page .admin-template-assets :is(h2,h3,h4,strong,legend){color:#172b51}
+.dd-admin-theme-page .admin-template-editor-controls :is(p,small),
+.dd-admin-theme-page .admin-template-assets :is(p,small){color:#637895!important}
+.dd-admin-theme-page .admin-template-editor-preview{background:#edf5ff!important;border-color:#d7e5fa!important}
+.dd-admin-theme-page .admin-template-assets .admin-template-asset-slot{background:#fff}
+.dd-admin-theme-page .admin-template-assets .admin-template-asset-row{background:#fff}
+.dd-admin-theme-page .admin-template-assets .admin-template-asset-row img{background:#f2f7ff}
+.dd-admin-theme-page .admin-template-assets [style*="dashed"]{border-color:#bed4f6!important;background:#f8fbff!important}
+.dd-admin-theme-page .admin-template-editor-controls .save-button,
+.dd-admin-theme-page .admin-template-assets .save-button{border-radius:8px}
