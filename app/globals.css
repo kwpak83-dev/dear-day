@@ -2274,3 +2274,13 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .venue-address button:hover{background:#315be8}
 .create-page .venue-address button:focus-visible{outline:2px solid #315be8;outline-offset:2px}
 
+
+
+/* DearDay invitation footer: align text and action colors with the blue brand identity. */
+.dearday-brand-footer{color:#526a8b}
+.dearday-compact-categories{color:#7b8fa9}
+.dearday-compact-action{color:#526a8b}
+.dearday-compact-action:hover{color:#315be8}
+.dearday-compact-arrow{background:#315be8;color:#fff}
+.dearday-compact-action:hover .dearday-compact-arrow{background:#1e3a8a}
+.dearday-compact-action:focus-visible{outline:2px solid #315be8;outline-offset:3px;border-radius:6px}
