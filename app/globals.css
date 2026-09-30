@@ -2274,7 +2274,3 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .venue-address button:hover{background:#315be8}
 .create-page .venue-address button:focus-visible{outline:2px solid #315be8;outline-offset:2px}
 
-
-/* DearDay shared account/editor header logo: match the navy landing identity. */
-.create-header .brand img,
-.member-header .brand img{filter:brightness(0) saturate(100%) invert(16%) sepia(24%) saturate(1842%) hue-rotate(179deg) brightness(91%) contrast(95%)}
