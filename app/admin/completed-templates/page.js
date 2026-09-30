@@ -4,20 +4,21 @@ import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 import AdminDesignNav from "../admin-design-nav";
 import CompletedTemplatePreview from "./completed-template-preview";
 
-const blank={name:"",template_key:"",category:"wedding",hero_preset_id:"",body_template_id:"",price:0,description:"",thumbnail_url:"",is_visible:false,sort_order:0};
+const blank={name:"",template_key:"",category:"wedding",hero_preset_id:"",body_template_id:"",price:0,description:"",thumbnail_url:"",thumbnail_1_url:"",thumbnail_2_url:"",is_visible:false,sort_order:0};
 const box={border:"1px solid #e5ddd8",borderRadius:14,padding:16,background:"#fff"};
 const input={width:"100%",boxSizing:"border-box",padding:"10px 12px",border:"1px solid #d8ccc5",borderRadius:8,background:"#fff"};
 const primaryButton={border:0,borderRadius:9,padding:"10px 16px",background:"#23439a",color:"#fff",fontWeight:700,cursor:"pointer"};
 const secondaryButton={border:"1px solid #23439a",borderRadius:9,padding:"9px 15px",background:"#fff",color:"#23439a",fontWeight:700,cursor:"pointer"};
 export default function CompletedTemplatesPage(){
- const [data,setData]=useState({items:[],heroes:[],bodies:[]}),[form,setForm]=useState(blank),[editing,setEditing]=useState(null),[notice,setNotice]=useState("");
+ const [data,setData]=useState({items:[],heroes:[],bodies:[]}),[form,setForm]=useState(blank),[editing,setEditing]=useState(null),[notice,setNotice]=useState(""),[uploading,setUploading]=useState(0);
  const auth=async()=>{const c=getSupabaseBrowserClient();const {data:{session}}=await c.auth.getSession();if(!session)throw new Error("다시 로그인해 주세요.");return {Authorization:`Bearer ${session.access_token}`};};
  const load=async()=>{const r=await fetch("/api/admin/completed-templates",{headers:await auth()});const j=await r.json();if(!r.ok)throw new Error(j.error);setData(j);};
  useEffect(()=>{load().catch(e=>setNotice(e.message));},[]);
  const hero=useMemo(()=>data.heroes.find(x=>x.id===form.hero_preset_id),[data,form.hero_preset_id]);
  const body=useMemo(()=>data.bodies.find(x=>x.id===form.body_template_id),[data,form.body_template_id]);
  const save=async(e)=>{e.preventDefault();setNotice("");try{const r=await fetch("/api/admin/completed-templates",{method:editing?"PATCH":"POST",headers:{...(await auth()),"Content-Type":"application/json"},body:JSON.stringify({...form,...(editing?{id:editing}:{})})});const j=await r.json();if(!r.ok)throw new Error(j.error);setForm(blank);setEditing(null);await load();setNotice("저장했습니다.");}catch(e){setNotice(e.message);}};
- const edit=x=>{setEditing(x.id);setForm({name:x.name,template_key:x.template_key,category:x.category,hero_preset_id:x.hero_preset_id,body_template_id:x.body_template_id,price:x.price,description:x.description||"",thumbnail_url:x.thumbnail_url||"",is_visible:x.is_visible,sort_order:x.sort_order});window.scrollTo({top:0,behavior:"smooth"});};
+ const edit=x=>{setEditing(x.id);setForm({name:x.name,template_key:x.template_key,category:x.category,hero_preset_id:x.hero_preset_id,body_template_id:x.body_template_id,price:x.price,description:x.description||"",thumbnail_url:x.thumbnail_url||"",thumbnail_1_url:x.thumbnail_1_url||"",thumbnail_2_url:x.thumbnail_2_url||"",is_visible:x.is_visible,sort_order:x.sort_order});window.scrollTo({top:0,behavior:"smooth"});};
+ const uploadThumbnail=async(slot,file)=>{if(!editing){setNotice("완성 템플릿을 먼저 저장한 뒤 대표 이미지를 업로드해 주세요.");return;}if(!file)return;setUploading(slot);setNotice("");try{const fd=new FormData();fd.append("completedTemplateId",editing);fd.append("slot",String(slot));fd.append("file",file);const r=await fetch("/api/admin/completed-templates/thumbnails",{method:"POST",headers:await auth(),body:fd});const j=await r.json();if(!r.ok)throw new Error(j.error);setForm(v=>({...v,[slot===1?"thumbnail_1_url":"thumbnail_2_url"]:j.url}));await load();setNotice(`대표 이미지 ${slot}을 저장했습니다.`);}catch(e){setNotice(e.message);}finally{setUploading(0);}};
  return <main style={{maxWidth:1100,margin:"32px auto",padding:"0 20px",fontFamily:"sans-serif"}}>
   <h1>완성 템플릿 관리</h1><AdminDesignNav current="completed"/><div style={{display:"flex",gap:8,flexWrap:"wrap",margin:"0 0 14px"}}><button type="button" style={secondaryButton} onClick={()=>document.getElementById("completed-template-list")?.scrollIntoView({behavior:"smooth",block:"start"})}>← 목록 보기</button><button type="submit" form="completed-template-form" style={primaryButton}>{editing?"수정 저장":"완성 템플릿 저장"}</button>{editing&&<button type="button" style={secondaryButton} onClick={()=>{setEditing(null);setForm(blank);}}>취소</button>}</div><p style={{color:"#766"}}>Hero 프리셋과 본문 테마를 조합해 사용자에게 보여줄 완성 템플릿을 만듭니다. 디자인 세부값은 여기서 수정하지 않습니다.</p>
   <form id="completed-template-form" onSubmit={save} style={{...box,display:"grid",gap:12}}>
@@ -26,7 +27,9 @@ export default function CompletedTemplatesPage(){
    {(hero||body)&&<div style={{padding:12,borderRadius:10,background:"#faf7f5"}}><b>조합 확인</b><div>Hero: {hero?.name||"-"} + 본문 테마: {body?.name||"-"}</div></div>}<section style={{...box,background:"#faf7f5"}}><CompletedTemplatePreview heroPresetId={form.hero_preset_id} bodyTemplateId={form.body_template_id}/></section>
    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}}><label>카테고리<select style={input} value={form.category} onChange={e=>setForm({...form,category:e.target.value})}>{[["wedding","결혼식"],["first-birthday","돌잔치"],["birthday","생일"],["gathering","모임·동창회"],["party","파티"],["custom","직접 만들기"]].map(x=><option key={x[0]} value={x[0]}>{x[1]}</option>)}</select></label><label>가격<input style={input} type="number" min="0" value={form.price} onChange={e=>setForm({...form,price:Number(e.target.value)})}/></label><label>정렬<input style={input} type="number" value={form.sort_order} onChange={e=>setForm({...form,sort_order:Number(e.target.value)})}/></label></div>
    <label>설명<textarea style={{...input,minHeight:70}} value={form.description} onChange={e=>setForm({...form,description:e.target.value})}/></label>
-   <label>대표 이미지 URL<input style={input} value={form.thumbnail_url} onChange={e=>setForm({...form,thumbnail_url:e.target.value})}/></label>
+   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+    {[1,2].map(slot=>{const url=form[slot===1?"thumbnail_1_url":"thumbnail_2_url"];return <div key={slot} style={{padding:12,border:"1px solid #e5ddd8",borderRadius:10}}><b>대표 이미지 {slot}</b><p style={{fontSize:12,color:"#766",margin:"6px 0 10px"}}>{editing?"JPG, PNG, WebP · 15MB 이하":"완성 템플릿을 먼저 저장하면 업로드할 수 있어요."}</p>{url&&<img src={url} alt={`대표 이미지 ${slot}`} style={{display:"block",width:"100%",maxWidth:220,height:150,objectFit:"cover",borderRadius:8,marginBottom:10}}/>}<input type="file" accept="image/jpeg,image/png,image/webp" disabled={!editing||uploading!==0} onChange={e=>{const file=e.target.files?.[0];e.target.value="";void uploadThumbnail(slot,file);}}/>{uploading===slot&&<small> 업로드 중...</small>}</div>;})}
+   </div>
    <label><input type="checkbox" checked={form.is_visible} onChange={e=>setForm({...form,is_visible:e.target.checked})}/> 컬렉션 노출</label>
   </form>
   {notice&&<p>{notice}</p>}
