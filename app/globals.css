@@ -2117,3 +2117,27 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .my-page .invitation-card>div>a:hover,.my-page .invitation-card>div>button:hover,.my-page .invitation-card .invitation-card-share button:hover{filter:brightness(.96)}
 .my-page .invitation-card :is(a,button):focus-visible{outline:2px solid #315be8;outline-offset:2px}
 @media(max-width:800px){.my-page .invitation-card{padding:18px 16px}.my-page .invitation-card>div{gap:7px}.my-page .invitation-card>div>a,.my-page .invitation-card>div>button,.my-page .invitation-card .invitation-card-share button{min-height:36px}}
+
+
+/* DearDay UI refresh 03: admin template / background / Hero editor chrome only. */
+body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
+.dd-admin-theme-page{color:#172b51}
+.dd-admin-theme-page>.section-kicker{color:#315be8}
+.dd-admin-theme-page>h1{color:#172b51}
+.dd-admin-theme-page>p:not(.section-kicker){color:#637895}
+.dd-admin-theme-page>p>a{color:#245ac7}
+.dd-admin-theme-page :is(.admin-template-form,.admin-template-assets,.hero-editor-live-preview,.hero-admin-preview-panel){border-color:#dce8fa!important;background:#fff!important;box-shadow:0 5px 20px rgba(25,65,125,.045)}
+.dd-admin-theme-page :is(.admin-template-form,.admin-template-assets) :is(input:not([type=checkbox]):not([type=color]),textarea,select){border-color:#cfdef5!important;color:#172b51}
+.dd-admin-theme-page :is(input:not([type=checkbox]):not([type=color]),textarea,select):focus{border-color:#315be8!important;outline:2px solid #dceaff;outline-offset:1px}
+.dd-admin-theme-page :is(.save-button,button):focus-visible{outline:2px solid #315be8;outline-offset:2px}
+.dd-admin-theme-page .save-button{background:#1e3a8a;color:#fff;border-color:#1e3a8a}
+.dd-admin-theme-page .save-button:hover:not(:disabled){background:#315be8;border-color:#315be8}
+.dd-admin-theme-page .admin-template-asset-slot{border-color:#e2ebfa}
+.dd-admin-theme-page .admin-template-asset-row img{background:#f2f7ff}
+.dd-admin-theme-page .admin-draft-preview{border-color:#dce8fa;background:#edf5ff}
+.dd-admin-theme-page .admin-draft-preview-toolbar{border-color:#dce8fa}
+.dd-admin-theme-page .admin-draft-preview-toolbar p,.dd-admin-theme-page .hero-editor-live-preview-label{color:#637895}
+.dd-admin-theme-page .admin-draft-preview-widths button{border-color:#cfdef5;color:#315b9b}
+.dd-admin-theme-page .admin-draft-preview-widths button.active{border-color:#315be8;background:#e7f0ff;color:#1e3a8a}
+.dd-admin-theme-page .admin-draft-preview-scroll{background:#eaf2ff}
+.dd-admin-theme-page .hero-admin-live-preview{background:#edf5ff!important;border-color:#dce8fa!important}
