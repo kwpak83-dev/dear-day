@@ -2232,3 +2232,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .my-page .guestbook-management-list article>button{color:#a45d61;text-decoration:none;border:1px solid #efd5d8;border-radius:7px;background:#fff;padding:5px 9px}
 .my-page .guestbook-management-list article>button:hover{background:#fff7f7}
 .my-page .guestbook-management-list article>button:focus-visible{outline:2px solid #315be8;outline-offset:2px}
+
+
+/* DearDay My Profile: align account information card with the blue member theme. */
+.my-page .profile-content>.section-kicker{color:#315be8}
+.my-page .profile-card{border-color:#d7e5fa;background:#fff;box-shadow:0 5px 20px rgba(25,65,125,.045)}
+.my-page .profile-card>div{border-bottom-color:#e5eefb}
+.my-page .profile-card dt{color:#637895}
+.my-page .profile-card dd{color:#172b51;font-weight:500}
