@@ -2385,11 +2385,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   margin-left:0 !important;margin-right:0 !important;
 }
 
-/* Admin background/template editor preview: center the compact quick-menu without changing other preview/public layouts. */
+/* Admin background/template editor preview: center the compact sticky quick-menu by auto margins. */
 @media (min-width:901px){
   .admin-draft-preview-device > .invitation-quick-menu--desktop-live.invitation-quick-menu--minimal.invitation-quick-menu--pills{
-    left:50% !important;right:auto !important;width:max-content !important;
-    max-width:calc(100% - 16px) !important;margin:-76px 0 8px !important;
-    transform:translateX(-50%) !important;
+    left:auto !important;right:auto !important;width:max-content !important;
+    max-width:calc(100% - 16px) !important;margin:-76px auto 8px !important;
+    transform:none !important;
   }
 }
