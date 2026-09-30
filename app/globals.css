@@ -2359,3 +2359,19 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   background:#dbeafe;
   color:#1e3a8a;
 }
+
+
+/* Required-field guidance: briefly highlight the first missing field after publish validation. */
+.dd-required-field-missing{
+  border-radius:12px;
+  outline:2px solid #315be8;
+  outline-offset:6px;
+  background:rgba(219,234,254,.55);
+  transition:background .2s ease,outline-color .2s ease;
+}
+.dd-required-field-missing input,
+.dd-required-field-missing select,
+.dd-required-field-missing textarea{
+  border-color:#315be8 !important;
+  box-shadow:0 0 0 3px rgba(49,91,232,.12);
+}
