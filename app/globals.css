@@ -2336,3 +2336,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .shared-public-invitation > .full-invitation-renderer > .invitation-template{
   min-height:0;
 }
+
+
+/* Published invitation shell: remove the legacy peach page canvas.
+   The template owns its artwork; the shell only supplies the neutral DearDay footer/quick-menu reserve. */
+.public-invitation.shared-public-invitation{
+  min-height:0;
+  background:#fffaf7;
+}
