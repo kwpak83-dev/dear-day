@@ -2095,3 +2095,25 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .my-page .member-navigation nav>a.active{background:#1e3a8a;border-color:#1e3a8a;color:#fff}
 .my-page .member-navigation nav>span{background:#edf3fb}
 }
+
+
+/* DearDay UI refresh 02b: My Invitations detail and action hierarchy. */
+.my-page .my-content>.section-kicker{color:#315be8}
+.my-page .my-intro{color:#637895}
+.my-page .invitation-list{display:grid;gap:13px}
+.my-page .invitation-card{padding:23px 24px;border-radius:16px}
+.my-page .invitation-card h2{margin:12px 0 9px}
+.my-page .invitation-card>p{line-height:1.55;margin:5px 0}
+.my-page .invitation-card>.status{background:#eaf2ff;color:#315bb4}
+.my-page .invitation-card>.status.published{background:#dfeaff;color:#1e4fbb}
+.my-page .invitation-card>.status.paid{background:#e9f1ff;color:#315bb4}
+.my-page .invitation-card>.status.suspended,.my-page .invitation-card>.status.archived{background:#edf0f5;color:#68788e}
+.my-page .invitation-card>div{gap:8px;margin-top:17px;padding-top:15px;border-top:1px solid #e8effa}
+.my-page .invitation-card>div>a,.my-page .invitation-card>div>button,.my-page .invitation-card .invitation-card-share button{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:7px 11px;border:1px solid #d3e2fa;border-radius:8px;background:#f8fbff;color:#245ac7;font-size:12px;font-weight:700;text-decoration:none;line-height:1.3;cursor:pointer;box-sizing:border-box}
+.my-page .invitation-card>div>a:first-child{background:#1e3a8a;border-color:#1e3a8a;color:#fff}
+.my-page .invitation-card .invitation-card-share{gap:8px;flex-wrap:wrap;align-items:center}
+.my-page .invitation-card .invitation-delete-button,.my-page .invitation-card .invitation-state-button{background:#fff;border-color:#efd5d8;color:#a45d61}
+.my-page .invitation-card .invitation-state-button.restore{background:#f8fbff;border-color:#d3e2fa;color:#245ac7}
+.my-page .invitation-card>div>a:hover,.my-page .invitation-card>div>button:hover,.my-page .invitation-card .invitation-card-share button:hover{filter:brightness(.96)}
+.my-page .invitation-card :is(a,button):focus-visible{outline:2px solid #315be8;outline-offset:2px}
+@media(max-width:800px){.my-page .invitation-card{padding:18px 16px}.my-page .invitation-card>div{gap:7px}.my-page .invitation-card>div>a,.my-page .invitation-card>div>button,.my-page .invitation-card .invitation-card-share button{min-height:36px}}
