@@ -2344,3 +2344,18 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   min-height:0;
   background:#fffaf7;
 }
+
+
+/* DearDay full-preview chrome: align toolbar actions and desktop canvas with the blue brand identity. */
+.full-preview-overlay{
+  background:#eaf2ff;
+}
+.full-preview-toolbar button{
+  background:#1e3a8a;
+  color:#fff;
+  box-shadow:none;
+}
+.full-preview-toolbar button.secondary{
+  background:#dbeafe;
+  color:#1e3a8a;
+}
