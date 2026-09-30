@@ -2322,3 +2322,10 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   background:#fffaf7 !important;
   background-image:none !important;
 }
+
+
+/* User editor Live Preview: let the invitation end at its real content height.
+   The shared full renderer's 100svh minimum otherwise exposes template background below the DearDay footer. */
+.create-page .preview-content.full-invitation-renderer .invitation-template{
+  min-height:0;
+}
