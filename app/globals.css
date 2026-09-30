@@ -2141,3 +2141,13 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-admin-theme-page .admin-draft-preview-widths button.active{border-color:#315be8;background:#e7f0ff;color:#1e3a8a}
 .dd-admin-theme-page .admin-draft-preview-scroll{background:#eaf2ff}
 .dd-admin-theme-page .hero-admin-live-preview{background:#edf5ff!important;border-color:#dce8fa!important}
+
+
+/* Hero editor inner chrome: override legacy inline peach borders, not invitation preview. */
+.dd-admin-hero-page .dd-admin-hero-form{border-color:#dce8fa!important;background:#fff!important;box-shadow:0 5px 20px rgba(25,65,125,.045)}
+.dd-admin-hero-page .dd-admin-hero-form :is(input:not([type=checkbox]):not([type=color]),textarea,select){border-color:#cfdef5!important;color:#172b51}
+.dd-admin-hero-page .dd-admin-hero-form :is(input:not([type=checkbox]):not([type=color]),textarea,select):focus{border-color:#315be8!important;outline:2px solid #dceaff;outline-offset:1px}
+.dd-admin-hero-page .dd-admin-hero-form .hero-admin-editor-grid>div>section{border-color:#dce8fa!important;background:#fff!important}
+.dd-admin-hero-page .dd-admin-hero-form .hero-admin-editor-grid>div>section>div[style*="border"]{border-color:#dce8fa!important}
+.dd-admin-hero-page .dd-admin-hero-form .hero-admin-editor-grid button.save-button{margin:2px;min-height:31px}
+.dd-admin-hero-page .dd-admin-hero-form .hero-admin-editor-grid button.save-button:focus-visible{outline:2px solid #315be8;outline-offset:2px}
