@@ -11,7 +11,7 @@ export async function GET(_request,{params}){
   s.from("hero_presets").select("id,name,config").eq("id",item.hero_preset_id).maybeSingle(),
   s.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path,is_active").eq("hero_preset_id",item.hero_preset_id).eq("is_active",true),
   s.from("template_versions").select("config,status,version").eq("template_id",item.body_template_id).order("version",{ascending:false}),
-  s.from("template_assets").select("id,asset_type,storage_bucket,storage_path,is_active").eq("template_id",item.body_template_id).eq("is_active",true)
+  s.from("template_assets").select("id,template_id,asset_type,storage_bucket,storage_path,is_active").eq("template_id",item.body_template_id).eq("is_active",true)
  ]);
  const version=(versions||[]).find(x=>x.status==="draft")||(versions||[]).find(x=>x.status==="active")||versions?.[0],base=configOf(version?.config);
  if(!hero||!base)return Response.json({error:"템플릿 미리보기를 준비하지 못했어요."},{status:409});
