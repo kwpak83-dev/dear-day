@@ -2293,3 +2293,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Compact pill quick menu no longer needs the old 165px A-large bottom reserve. */
 .shared-public-invitation{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+
+
+/* Keep the reserve behind the fixed compact quick actions neutral, independent of template artwork. */
+.shared-public-invitation{background-color:#fffaf7}
