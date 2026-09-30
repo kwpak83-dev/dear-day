@@ -740,7 +740,7 @@ export default function CreateInvitation() {
   const previewPlaceActions = () => invitation.venueAddress ? <><div className="public-address-copy"><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button><span role="status" aria-live="polite">{addressCopied ? "주소가 복사되었습니다." : ""}</span></div><InvitationMap address={invitation.venueAddress} /><TransportGuide invitation={invitation} /></> : null;
 
   return <main className="create-page">
-    <header className="create-header"><a className="brand" href="/"><img src="/dear-day-logo.png" alt="디어데이" /></a><div className="create-user"><span>{provider}로 시작했어요</span><a href="/my-invitations">내 초대장</a><a href="/">나가기</a></div></header>
+    <header className="create-header"><a className="brand" href="/"><img src="/dear-day-logo-blue.png" alt="디어데이" /></a><div className="create-user"><span>{provider}로 시작했어요</span><a href="/my-invitations">내 초대장</a><a href="/">나가기</a></div></header>
     <div className="create-layout">
       <section className="editor-panel">
         <nav className="dd-editor-steps" aria-label="초대장 제작 단계">{["필수입력", "맞춤설정", "효과설정", "공유설정", "결제·발행"].map((label, index) => <button key={label} type="button" className={editorStep === index ? "active" : ""} aria-current={editorStep === index ? "step" : undefined} onClick={() => setEditorStep(index)}><span>{String(index + 1).padStart(2, "0")}</span><strong>{label}</strong></button>)}</nav>
