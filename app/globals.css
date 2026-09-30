@@ -2314,3 +2314,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .preview-content{
   background:#fffaf7;
 }
+
+
+/* User editor Live Preview: keep the portaled quick-menu tray/footer reserve on DearDay ivory,
+   instead of inheriting the invitation template's peach quick-menu background. */
+.create-page .preview-phone > .invitation-quick-menu--desktop-live.invitation-quick-menu--minimal{
+  background:#fffaf7 !important;
+  background-image:none !important;
+}
