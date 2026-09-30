@@ -2266,3 +2266,10 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .my-page .inquiry-replies time{color:#7b8fa9}
 .my-page .inquiry-replies p{color:#637895}
 .my-page .inquiries-content :is(button,a,input,select,textarea):focus-visible{outline:2px solid #315be8;outline-offset:2px}
+
+
+/* DearDay user editor: venue address copy action. */
+.create-page .venue-address{border-color:#d7e5fa;background:#f8fbff;color:#526a8b}
+.create-page .venue-address button{background:#1e3a8a;color:#fff}
+.create-page .venue-address button:hover{background:#315be8}
+.create-page .venue-address button:focus-visible{outline:2px solid #315be8;outline-offset:2px}
