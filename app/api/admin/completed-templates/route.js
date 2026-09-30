@@ -24,7 +24,7 @@ const fields=(b)=>{
   if(!b||typeof b.name!=="string"||!b.name.trim()||typeof b.template_key!=="string"||!/^[a-z0-9][a-z0-9_-]{2,79}$/.test(b.template_key)||!uuid.test(b.hero_preset_id||"")||!uuid.test(b.body_template_id||""))return null;
   const price=Number(b.price),sort=Number(b.sort_order);
   if(!Number.isInteger(price)||price<0||!Number.isInteger(sort))return null;
-  return {name:b.name.trim(),template_key:b.template_key,category:String(b.category||"wedding"),hero_preset_id:b.hero_preset_id,body_template_id:b.body_template_id,price,description:String(b.description||""),thumbnail_url:b.thumbnail_url||null,is_visible:Boolean(b.is_visible),sort_order:sort,updated_at:new Date().toISOString()};
+  return {name:b.name.trim(),template_key:b.template_key,category:String(b.category||"wedding"),hero_preset_id:b.hero_preset_id,body_template_id:b.body_template_id,price,description:String(b.description||""),thumbnail_url:b.thumbnail_url||null,thumbnail_1_url:b.thumbnail_1_url||null,thumbnail_2_url:b.thumbnail_2_url||null,is_visible:Boolean(b.is_visible),sort_order:sort,updated_at:new Date().toISOString()};
 };
 export async function GET(request){
   const a=await getAdmin(request); if(a.error)return json({error:a.error},a.status);
