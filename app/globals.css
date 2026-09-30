@@ -2058,3 +2058,15 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .create-page .dd-editor-sticky-actions .dd-editor-preview-action{background:#f8fbff;border-color:#bfd3f4;color:#1e3a8a}
 .create-page .dd-editor-sticky-actions button:first-child{background:#fff;border-color:#bfd3f4;color:#1e3a8a}
 @media(max-width:800px){.create-page .dd-editor-sticky-actions{background:rgba(255,255,255,.97);border-color:#dfeafb}}
+
+
+/* DearDay editor UI refresh 01b: stage progress, location actions and preview surround. */
+.create-page .dd-editor-steps button{color:#6a7f9f}
+.create-page .dd-editor-steps button span{background:#eaf2ff;color:#3866b7}
+.create-page .dd-editor-steps button.active{color:#1e3a8a}
+.create-page .dd-editor-steps button.active span{background:#315be8;color:#fff;box-shadow:0 3px 9px rgba(49,91,232,.2)}
+.create-page .dd-editor-steps button:hover:not(.active) span{background:#dceaff;color:#1e4fbb}
+.create-page .place-search button{background:#1e3a8a;color:#fff;border:1px solid #1e3a8a;box-shadow:0 2px 6px rgba(30,58,138,.09)}
+.create-page .place-search button:hover{background:#315be8;border-color:#315be8}
+.create-page .place-search button:focus-visible{outline:2px solid #315be8;outline-offset:2px}
+.create-page .preview-panel{background:linear-gradient(145deg,#e9f3ff,#dceaff);border:1px solid #d7e7ff}
