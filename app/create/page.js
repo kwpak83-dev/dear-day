@@ -196,7 +196,7 @@ brideMotherDeceased: false,
 date: "", time: "", venue: "", venueAddress: "", venueBuilding: "", venueDetail: "", groomBank: "", groomAccount: "", groomAccountHolder: "", brideBank: "", brideAccount: "", brideAccountHolder: "", message: "" };
 const mapClientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
 
-function Field({ label, children }) { return <label className="form-field"><span>{label}</span>{children}</label>; }
+function Field({ label, children, fieldKey }) { return <label className="form-field" data-field-key={fieldKey || undefined}><span>{label}</span>{children}</label>; }
 
 const parseBirthDate = value => {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || "");
@@ -539,7 +539,7 @@ export default function CreateInvitation() {
   const eventConfig = getEventConfig(invitation.eventKind);
   const renderConfigField = (field) => {
     if (field.key === "birthDate") return <BirthDateField key={field.key} label={field.label} value={invitation.birthDate || ""} onChange={value => update("birthDate", value)} />;
-    if (field.type === "venue") return <div key={field.key}><Field label="장소명"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "장소 검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results">{placeResults.map((place) => <button type="button" key={[place.mapx, place.mapy, place.title].join("-")} onClick={() => selectPlace(place)}><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></button>)}<p className="place-search-guide">검색 결과는 최대 5개까지 보여드려요. 원하는 장소가 없다면 지역명과 함께 검색해 주세요.</p></div>}<Field label="기본주소"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), geocodeAddress(invitation.venueAddress))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>주소 검색</button></div></Field><Field label="건물명"><input placeholder="장소 검색으로 기본주소가 입력되면 별도 입력이 필요하지 않아요" value={invitation.venueBuilding || ""} onChange={(e) => update("venueBuilding", e.target.value)} disabled={venueBuildingAuto || Boolean(invitation.venueAddress?.trim())} aria-readonly={venueBuildingAuto || Boolean(invitation.venueAddress?.trim())} title={invitation.venueAddress?.trim() ? "기본주소가 입력되어 건물명은 별도로 입력하지 않습니다." : venueBuildingAuto ? "주소 검색으로 자동 입력된 건물명입니다." : undefined} /></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={setMapContainer} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div><div className="form-section"><label className="dd-transport-guide-toggle"><input type="checkbox" checked={invitation.transportGuideEnabled === true} onChange={event => update("transportGuideEnabled", event.target.checked)} /> 교통 안내 사용</label>{invitation.transportGuideEnabled === true && <Field label="교통 안내 내용"><textarea rows={5} placeholder={"지하철: 2호선 강남역 3번 출구\n버스: 146번, 341번\n주차: 건물 지하주차장 2시간 무료"} value={invitation.transportGuide || ""} onChange={event => update("transportGuide", event.target.value)} /></Field>}</div></div>;
+    if (field.type === "venue") return <div key={field.key}><Field label="장소명" fieldKey="venue"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "장소 검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results">{placeResults.map((place) => <button type="button" key={[place.mapx, place.mapy, place.title].join("-")} onClick={() => selectPlace(place)}><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></button>)}<p className="place-search-guide">검색 결과는 최대 5개까지 보여드려요. 원하는 장소가 없다면 지역명과 함께 검색해 주세요.</p></div>}<Field label="기본주소" fieldKey="venueAddress"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), geocodeAddress(invitation.venueAddress))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>주소 검색</button></div></Field><Field label="건물명"><input placeholder="장소 검색으로 기본주소가 입력되면 별도 입력이 필요하지 않아요" value={invitation.venueBuilding || ""} onChange={(e) => update("venueBuilding", e.target.value)} disabled={venueBuildingAuto || Boolean(invitation.venueAddress?.trim())} aria-readonly={venueBuildingAuto || Boolean(invitation.venueAddress?.trim())} title={invitation.venueAddress?.trim() ? "기본주소가 입력되어 건물명은 별도로 입력하지 않습니다." : venueBuildingAuto ? "주소 검색으로 자동 입력된 건물명입니다." : undefined} /></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={setMapContainer} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div><div className="form-section"><label className="dd-transport-guide-toggle"><input type="checkbox" checked={invitation.transportGuideEnabled === true} onChange={event => update("transportGuideEnabled", event.target.checked)} /> 교통 안내 사용</label>{invitation.transportGuideEnabled === true && <Field label="교통 안내 내용"><textarea rows={5} placeholder={"지하철: 2호선 강남역 3번 출구\n버스: 146번, 341번\n주차: 건물 지하주차장 2시간 무료"} value={invitation.transportGuide || ""} onChange={event => update("transportGuide", event.target.value)} /></Field>}</div></div>;
     if (field.type === "textarea") {
       const weddingMessage = field.key === "message" && invitation.eventKind === "wedding";
       return <Field key={field.key} label={field.label}>
@@ -581,7 +581,7 @@ export default function CreateInvitation() {
     />
   </div>
 );
-    return <Field key={field.key} label={field.label}><input type={field.type} inputMode={field.inputMode} placeholder={field.placeholder} value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} /></Field>;
+    return <Field key={field.key} label={field.label} fieldKey={field.key}><input type={field.type} inputMode={field.inputMode} placeholder={field.placeholder} value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} /></Field>;
   };
 
   const showSavedToast = (message) => {
@@ -662,7 +662,32 @@ export default function CreateInvitation() {
   const validateForPublish = () => {
     const missingFields = getMissingRequiredFields(invitation, invitation.eventKind);
     if (!missingFields.length) return true;
-    setFlowNotice(`발행을 위해 필요한 정보를 확인해 주세요. (${missingFields.join(", ")})`);
+
+    const message = `필수 항목을 입력해 주세요: ${missingFields.join(", ")}`;
+    setFlowNotice(message);
+    showSavedToast(message);
+
+    const fields = eventConfig.sections.flatMap((section) => section.rows.flat());
+    const firstMissing = missingFields[0];
+    const missingField = fields.find((field) => field.label === firstMissing);
+    const targetKey = missingField?.requiredKeys?.find((key) => !String(invitation[key] ?? "").trim()) || missingField?.key;
+
+    if (firstMissing === "템플릿") {
+      setEditorStep(1);
+    } else {
+      if (previewOpen) closePreview();
+      setEditorStep(0);
+      if (targetKey) {
+        window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+          const target = document.querySelector(`[data-field-key="${targetKey}"]`);
+          if (!target) return;
+          target.classList.add("dd-required-field-missing");
+          target.scrollIntoView({ behavior: "smooth", block: "center" });
+          target.querySelector("input,select,textarea")?.focus({ preventScroll: true });
+          window.setTimeout(() => target.classList.remove("dd-required-field-missing"), 2200);
+        }));
+      }
+    }
     return false;
   };
   const preparePayment = async () => {
