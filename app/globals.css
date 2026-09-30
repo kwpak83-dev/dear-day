@@ -2289,3 +2289,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* DearDay invitation footer: compact navy arrow action. */
 .dearday-compact-arrow{width:24px;height:24px;background:#1e3a8a}
 .dearday-compact-action:hover .dearday-compact-arrow{background:#172b51}
+
+
+/* Compact pill quick menu no longer needs the old 165px A-large bottom reserve. */
+.shared-public-invitation{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
