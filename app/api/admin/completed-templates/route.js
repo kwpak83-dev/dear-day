@@ -9,12 +9,16 @@ async function getAdmin(request){
   const token=request.headers.get("authorization")?.replace(/^Bearer\s+/i,"");
   if(!url||!key)return {error:"관리자 서비스를 준비하지 못했어요.",status:503};
   if(!token)return {error:"로그인이 필요합니다.",status:401};
-  const client=createClient(url,key,{auth:{autoRefreshToken:false,persistSession:false}});
-  const {data:{user},error}=await client.auth.getUser(token);
+  const serverClient=createClient(url,key,{auth:{autoRefreshToken:false,persistSession:false}});
+  const {data:{user},error}=await serverClient.auth.getUser(token);
   if(error||!user)return {error:"로그인이 만료되었습니다.",status:401};
-  const {data:isAdmin,error:adminError}=await client.rpc("is_admin");
-  if(adminError||isAdmin!==true)return {error:"관리자만 접근할 수 있습니다.",status:403};
-  return {client};
+  const publishableKey=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  if(!publishableKey)return {error:"관리자 서비스를 준비하지 못했어요.",status:503};
+  const adminClient=createClient(url,publishableKey,{global:{headers:{Authorization:`Bearer ${token}`}},auth:{autoRefreshToken:false,persistSession:false}});
+  const {data:isAdmin,error:adminError}=await adminClient.rpc("is_admin");
+  if(adminError)return {error:"관리자 권한을 확인하지 못했어요.",status:500};
+  if(isAdmin!==true)return {error:"관리자만 접근할 수 있습니다.",status:403};
+  return {client:serverClient};
 }
 const fields=(b)=>{
   if(!b||typeof b.name!=="string"||!b.name.trim()||typeof b.template_key!=="string"||!/^[a-z0-9][a-z0-9_-]{2,79}$/.test(b.template_key)||!uuid.test(b.hero_preset_id||"")||!uuid.test(b.body_template_id||""))return null;
