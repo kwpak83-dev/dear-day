@@ -327,7 +327,21 @@ export default function CreateInvitation() {
     const slug = query.get("slug") || "";
     // A URL slug is the only way to enter edit mode. A plain /create starts a new event.
     setEventSlug(slug);
-    if (!slug) setEventReady(true);
+    if (!slug) {
+      let startedFromTemplate=false;
+      if (query.get("template")) {
+        try {
+          const selected=JSON.parse(window.localStorage.getItem("dear-day-template-start")||"null");
+          if (selected?.templateKey===query.get("template")&&selected.heroPresetId&&selected.templateId) {
+            setInvitation(current=>({...current,eventKind:selected.eventKind||"wedding",heroPresetId:selected.heroPresetId,templateId:selected.templateId}));
+            setPreviewTemplateId(selected.templateId);
+            startedFromTemplate=true;
+          }
+        } catch {}
+      }
+      setEventReady(true);
+      if (startedFromTemplate) setEditorStep(0);
+    }
     if (!slug && query.get("resume") === "draft") {
       try {
         const draft = JSON.parse(window.localStorage.getItem("dear-day-draft") || "null");
