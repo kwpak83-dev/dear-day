@@ -2164,3 +2164,13 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-admin-hero-page .dd-hero-layer-actions>.save-button{margin:0!important;flex-shrink:0;padding:7px 9px;min-height:34px}
 .dd-admin-hero-page .dd-hero-layer-actions>.save-button:first-child{flex:1 1 150px;white-space:normal;overflow-wrap:anywhere}
 @media(max-width:800px){.dd-admin-hero-page .dd-hero-layer-actions{gap:6px}.dd-admin-hero-page .dd-hero-layer-actions>.save-button{min-height:36px}}
+
+
+/* Hero editor finishing pass: thumbnail capture and asset upload panels. */
+.dd-admin-hero-page .dd-hero-asset-section{border-color:#d7e5fa!important;background:#fff}
+.dd-admin-hero-page .dd-hero-asset-section legend{color:#172b51;font-weight:700}
+.dd-admin-hero-page .dd-hero-asset-section p,
+.dd-admin-hero-page .dd-hero-asset-section div[style*="color:"]{color:#637895!important}
+.dd-admin-hero-page .dd-hero-asset-section div[style*="border:"]{border-color:#d7e5fa!important}
+.dd-admin-hero-page .dd-hero-asset-section div[style*="dashed"]{background:#f8fbff!important;border-color:#bed4f6!important}
+.dd-admin-hero-page .dd-hero-asset-section :is(button,input):focus-visible{outline:2px solid #315be8;outline-offset:2px}
