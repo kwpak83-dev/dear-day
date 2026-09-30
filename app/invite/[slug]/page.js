@@ -40,6 +40,11 @@ export default async function InvitationPage({ params, searchParams }) {
   };
   let templateConfig = null;
   let templateAssets = {};
+  let userBgmUrl = null;
+  if (settings.bgmMode === "user" && settings.userBgmTrackId) {
+    const { data: track } = await supabase.from("bgm_tracks").select("storage_bucket,storage_path,is_active").eq("id", settings.userBgmTrackId).eq("is_active", true).maybeSingle();
+    if (track?.storage_bucket && track?.storage_path) userBgmUrl = supabase.storage.from(track.storage_bucket).getPublicUrl(track.storage_path).data.publicUrl;
+  }
   if (event.template_id && event.template_version_id) {
     const { data: pinnedVersion, error: versionError } = await supabase.from("template_versions")
       .select("id,template_id,status,config").eq("id", event.template_version_id)
@@ -78,7 +83,7 @@ export default async function InvitationPage({ params, searchParams }) {
   return <main className="public-invitation shared-public-invitation">
     {ownerView && <nav className="owner-return-nav" aria-label="DearDay 관리 화면으로 돌아가기"><a href="/my-invitations">내 초대장</a><a href="/">DearDay 홈</a></nav>}
     <InvitationNotice notice={settings.notice} slug={slug} imageUrl={settings.notice?.imagePath ? supabase.storage.from("invitation-photos").getPublicUrl(settings.notice.imagePath).data.publicUrl : null} />
-    <div className="full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} templateConfig={templateConfig} templateAssets={templateAssets} placeActions={<><AddressCopy invitation={invitation} /><InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView /><TransportGuide invitation={invitation} /></>}>
+    <div className="full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} templateConfig={templateConfig} templateAssets={templateAssets} userBgmUrl={userBgmUrl} placeActions={<><AddressCopy invitation={invitation} /><InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView /><TransportGuide invitation={invitation} /></>}>
       <div className="public-invitation-sections"><Gallery photos={galleryPhotos} /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} slug={slug} startsAt={event.starts_at} /><LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} /><DearDayBrandFooter /></div>
     </InvitationRenderer></div>
 </main>;

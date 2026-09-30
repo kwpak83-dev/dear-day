@@ -19,11 +19,13 @@ export const TEMPLATE_REGISTRY = {
   [TEMPLATE_IDS.modern]: ModernTemplate,
 };
 
-export default function InvitationRenderer({ invitation, eventKind, templateId, templateConfig, templateAssets, placeActions, children }) {
+export default function InvitationRenderer({ invitation, eventKind, templateId, templateConfig, templateAssets, userBgmUrl, placeActions, children }) {
   const Template = TEMPLATE_REGISTRY[templateId] || ClassicTemplate;
   const presentation = getInvitationPresentation(invitation, eventKind);
   const normalizedConfig = normalizeTemplateConfig(templateConfig);
-  const bgmUrl = normalizedConfig.bgm?.mode === "asset" ? templateAssets?.[normalizedConfig.bgm.assetId] : null;
+  const templateBgmUrl = normalizedConfig.bgm?.mode === "asset" ? templateAssets?.[normalizedConfig.bgm.assetId] : null;
+  const bgmMode = invitation.bgmMode || "background";
+  const bgmUrl = bgmMode === "none" ? null : bgmMode === "user" ? (userBgmUrl || null) : templateBgmUrl;
   const mode = invitation.screenEffectMode || (invitation.petalEffectEnabled === true ? "legacy-blossom" : "none");
   const allowedOrnaments = new Set(["green", "autumn", "snow", "rose", "lavender", "daisy", "heart", "color-confetti", "balloon", "bubble"]);
   const selectedOrnament = allowedOrnaments.has(invitation.userScreenEffectOrnament) ? invitation.userScreenEffectOrnament : "green";

@@ -271,7 +271,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 }
 .my-notice>p{margin:0}.my-login-button{display:inline-flex;align-items:center;justify-content:center;max-width:100%;margin-top:14px;padding:11px 20px;border-radius:999px;background:#ee7881;color:#fff;font-size:13px;font-weight:700;text-decoration:none;box-sizing:border-box}
 
-.invitation-map{position:relative;z-index:0;isolation:isolate;width:100%;min-width:0;margin-top:18px;overflow:visible;border:1px solid #ead8ce;border-radius:10px;background:#f8ede7;box-sizing:border-box}.invitation-map-canvas{width:100%;height:190px;min-width:0}.preview-content .invitation-map{margin-top:14px;border-radius:7px}.preview-content .invitation-map-canvas{height:145px}
+.invitation-map{position:relative;z-index:0;isolation:isolate;width:90%;min-width:0;margin:18px auto 0;overflow:visible;border:1px solid #ead8ce;border-radius:10px;background:#f8ede7;box-sizing:border-box}.invitation-map-canvas{width:100%;height:190px;min-width:0}.preview-content .invitation-map{margin-top:14px;border-radius:7px}.preview-content .invitation-map-canvas{height:145px}
 .my-action-notice{margin:22px 0 0;color:#8b7165;font-size:13px;line-height:1.6}.invitation-card .invitation-delete-button{border:0;background:transparent;color:#9a7d70;padding:0;font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:4px;cursor:pointer}.delete-invitation-modal{width:min(100%,390px);padding:34px 28px;border-radius:20px;background:#fffaf5;box-shadow:0 28px 70px rgba(54,35,27,.25);box-sizing:border-box;text-align:center}.delete-invitation-modal h2{margin:0;font-size:25px}.delete-invitation-modal p{margin:13px 0 25px;color:#8b7165;font-size:13px;line-height:1.6}.delete-invitation-modal>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.delete-invitation-modal button{min-width:0;padding:12px 10px;border:0;border-radius:10px;background:#f1e1d8;color:#765449;font-size:13px;font-weight:700;cursor:pointer}.delete-invitation-modal button.danger{background:#ef786c;color:#fff}.delete-invitation-modal button:disabled{opacity:.55;cursor:default}@media(max-width:380px){.delete-invitation-modal{padding:29px 20px}.delete-invitation-modal h2{font-size:22px}}.delete-invitation-modal .delete-invitation-error{margin:-12px 0 18px;color:#c94f48;font-weight:700}
 /* Classic 001 sales template */
 .classic-001{
@@ -1037,6 +1037,18 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   }
 }
 
+/* Keep the BGM control above invitation content in admin Draft previews so it remains clickable. */
+.admin-draft-preview-device .dd-template-bgm,
+.admin-draft-full-preview-device .dd-template-bgm{
+  z-index:40 !important;
+}
+.admin-draft-preview-device .dd-template-bgm-toggle,
+.admin-draft-full-preview-device .dd-template-bgm-toggle{
+  position:relative;
+  z-index:1;
+  pointer-events:auto;
+}
+
 /* Keep all compact LIVE PREVIEW bottom-sheet backdrops visually consistent. */
 @media (min-width:901px){
   .preview-phone > .invitation-bottom-sheet-layer--preview .invitation-bottom-sheet-backdrop,
@@ -1165,7 +1177,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-sections-configured .dd-wedding-contacts{order:calc(var(--dd-section-invitation-order) + 0.25)}
 
 /* Wedding parent-contact toggle uses the shared template Button Style controls. */
-.invitation-template.dd-template-button-style .dd-wedding-contacts button.dd-contact-toggle{width:100%;max-width:100%;min-width:0;flex-shrink:0;margin:15px auto 8px;padding:8px 12px;gap:10px;white-space:nowrap}
+.invitation-template.dd-template-button-style .dd-wedding-contacts button.dd-contact-toggle{width:72%;max-width:100%;min-width:0;flex-shrink:0;margin:15px auto 8px;padding:8px 12px;gap:10px;white-space:nowrap}
 /* DATE remains Caption / Small; all other Classic calendar/date text follows Body. */
 .dd-template-typography.classic-001 .classic-date :is(.classic-date-summary,.classic-calendar-month,.classic-calendar-grid span,.classic-calendar-weekdays span,.classic-dday,.classic-dday strong){font-family:var(--dd-body-font);font-size:var(--dd-body-size);font-weight:var(--dd-body-weight);line-height:var(--dd-body-line-height);letter-spacing:var(--dd-body-letter-spacing);text-align:var(--dd-body-align)}
 .dd-template-typography.classic-001 .classic-calendar-grid span{justify-content:center;text-align:center}
@@ -1588,18 +1600,18 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Strong final isolation: legacy theme selectors must not reshape the footer controls. */
 :is(.romantic-001,.modern-001,.classic-001,.dd-template-button-style,.dd-template-background) .public-share-copy.dd-public-share-pills,
 .public-share-copy.dd-public-share-pills{
-  display:grid !important;grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-  width:100% !important;max-width:100% !important;min-width:0 !important;
-  gap:6px !important;margin:0 !important;padding:14px 10px !important;
-  box-sizing:border-box !important;justify-content:stretch !important;align-items:center !important;
+  display:flex !important;
+  width:max-content !important;max-width:calc(100% - 16px) !important;min-width:0 !important;
+  gap:6px !important;margin:0 auto !important;padding:14px 0 !important;
+  box-sizing:border-box !important;justify-content:center !important;align-items:center !important;
 }
 :is(.romantic-001,.modern-001,.classic-001,.dd-template-button-style,.dd-template-background) .public-share-copy.dd-public-share-pills>button,
 .public-share-copy.dd-public-share-pills>button{
   display:flex !important;flex-direction:row !important;position:static !important;
   grid-column:auto !important;align-items:center !important;justify-content:center !important;
-  flex:none !important;min-width:0 !important;width:100% !important;max-width:none !important;
+  flex:0 0 auto !important;min-width:max-content !important;width:auto !important;max-width:none !important;
   height:40px !important;min-height:40px !important;aspect-ratio:auto !important;
-  padding:0 3px !important;margin:0 !important;border-radius:999px !important;
+  padding:0 11px !important;margin:0 !important;border-radius:999px !important;
   border-width:1.5px !important;border-style:solid !important;box-shadow:none !important;
   font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif !important;
   font-size:12px !important;font-weight:700 !important;letter-spacing:-.04em !important;
@@ -2035,3 +2047,361 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .landing-v2 .envelope-cta span{color:#647895}
 .landing-v2 .envelope-cta p{color:#4776bd;text-shadow:none}
 @media(max-width:800px){.landing-v2 .envelope-cta{background:linear-gradient(110deg,rgba(236,245,255,.95),rgba(247,250,255,.97)),url('/final-cta-envelope.png') center/cover;border-top-color:#e2edff}}
+
+
+/* DearDay UI refresh 01: user editor chrome only; invitation artwork/preview stays untouched. */
+.create-page{background:#f5f9ff;color:#172b51}
+.create-page .editor-panel,.create-page .preview-panel{border-color:#e1eaf9}
+.create-page .dd-editor-steps,.create-page .dd-required-fields .form-section,.create-page .dd-custom-accordion,.create-page .dd-share-card,.create-page .dd-final-card,.create-page .dd-editor-sticky-actions{background:#fff;border-color:#dfeafb;box-shadow:0 5px 20px rgba(25,65,125,.045)}
+.create-page .dd-editor-step-intro .section-kicker,.create-page .dd-final-eyebrow{color:#315be8}
+.create-page .dd-editor-step-intro h1,.create-page .dd-required-fields .form-section h2,.create-page .dd-share-card h2,.create-page .dd-final-card h2{color:#172b51}
+.create-page .dd-editor-step-intro .editor-intro,.create-page .dd-share-card-heading p,.create-page .dd-final-card p,.create-page .dd-final-summary dt,.create-page .dd-editor-final .dd-final-help,.create-page .dd-share-help{color:#637895}
+.create-page .dd-share-state{background:#f2f7ff;color:#536f98}
+.create-page .dd-share-switch input:checked+.dd-share-switch-track{background:#315be8}
+.create-page .dd-editor-steps button:focus-visible{outline-color:#315be8}
+.create-page .dd-final-summary,.create-page .dd-final-summary>div{border-color:#e5eefb}
+.create-page .dd-final-preview{color:#1e3a8a;border-color:#bed3f5;background:#f8fbff}
+.create-page .dd-final-primary{background:#1e3a8a;border-color:#1e3a8a}
+.create-page .dd-final-flow span{background:#f0f5fd;color:#6b7f9d}
+.create-page .dd-final-flow span.current{background:#dceaff;color:#1e4fbb}
+.create-page .dd-final-flow span.done{background:#e5f3ed;color:#34745c}
+.create-page .dd-editor-sticky-actions button{border-radius:10px}
+.create-page .dd-editor-sticky-actions .dd-editor-next-action{background:#1e3a8a;border-color:#1e3a8a;color:#fff}
+.create-page .dd-editor-sticky-actions .dd-editor-preview-action{background:#f8fbff;border-color:#bfd3f4;color:#1e3a8a}
+.create-page .dd-editor-sticky-actions button:first-child{background:#fff;border-color:#bfd3f4;color:#1e3a8a}
+@media(max-width:800px){.create-page .dd-editor-sticky-actions{background:rgba(255,255,255,.97);border-color:#dfeafb}}
+
+
+/* DearDay editor UI refresh 01b: stage progress, location actions and preview surround. */
+.create-page .dd-editor-steps button{color:#6a7f9f}
+.create-page .dd-editor-steps button span{background:#eaf2ff;color:#3866b7}
+.create-page .dd-editor-steps button.active{color:#1e3a8a}
+.create-page .dd-editor-steps button.active span{background:#315be8;color:#fff;box-shadow:0 3px 9px rgba(49,91,232,.2)}
+.create-page .dd-editor-steps button:hover:not(.active) span{background:#dceaff;color:#1e4fbb}
+.create-page .place-search button{background:#1e3a8a;color:#fff;border:1px solid #1e3a8a;box-shadow:0 2px 6px rgba(30,58,138,.09)}
+.create-page .place-search button:hover{background:#315be8;border-color:#315be8}
+.create-page .place-search button:focus-visible{outline:2px solid #315be8;outline-offset:2px}
+.create-page .preview-panel{background:linear-gradient(145deg,#e9f3ff,#dceaff);border:1px solid #d7e7ff}
+
+
+/* DearDay UI refresh 02: My Page shell, invitation cards and guest management. */
+.my-page.member-page{background:#f5f9ff;color:#172b51}
+.my-page .member-navigation>p{color:#315be8}
+.my-page .member-navigation>h1,.my-page .my-content h1,.my-page .guest-management-content h1{color:#172b51}
+.my-page .member-navigation nav>a{color:#526c91}
+.my-page .member-navigation nav>a:hover:not(.active){background:#eaf2ff;color:#1e3a8a}
+.my-page .member-navigation nav>a.active{background:#1e3a8a;color:#fff;border-color:#1e3a8a}
+.my-page .member-navigation nav>span{background:#edf3fb;color:#8295b0}
+.my-page .invitation-card,.my-page .guest-summary article,.my-page .guest-rsvp-list>article{background:#fff;border-color:#dfeafb;box-shadow:0 5px 20px rgba(25,65,125,.045)}
+.my-page .invitation-card h2,.my-page .guest-summary strong{color:#172b51}
+.my-page .invitation-card p,.my-page .guest-management-intro,.my-page .guest-summary span,.my-page .guest-empty{color:#637895}
+.my-page .invitation-card a,.my-page .invitation-card .invitation-card-share button,.my-page .invitation-card .invitation-state-button.restore{color:#245ac7}
+.my-page .invitation-card .invitation-delete-button{color:#a45d61}
+.my-page .guest-event-select select{border-color:#cfdef5;color:#172b51}
+.my-page .guest-filters button{border-color:#d4e3fa;color:#536e96}
+.my-page .guest-filters button.active{background:#315be8;border-color:#315be8;color:#fff}
+.my-page .guest-list-actions button,.my-page .my-login-button{background:#1e3a8a;color:#fff}
+.my-page .guest-empty{background:#fff;border:1px solid #dfeafb}
+@media(max-width:800px){
+.my-page .member-navigation nav>a,.my-page .member-navigation nav>span{border-color:#dce8fa;background:#fff}
+.my-page .member-navigation nav>a.active{background:#1e3a8a;border-color:#1e3a8a;color:#fff}
+.my-page .member-navigation nav>span{background:#edf3fb}
+}
+
+
+/* DearDay UI refresh 02b: My Invitations detail and action hierarchy. */
+.my-page .my-content>.section-kicker{color:#315be8}
+.my-page .my-intro{color:#637895}
+.my-page .invitation-list{display:grid;gap:13px}
+.my-page .invitation-card{padding:23px 24px;border-radius:16px}
+.my-page .invitation-card h2{margin:12px 0 9px}
+.my-page .invitation-card>p{line-height:1.55;margin:5px 0}
+.my-page .invitation-card>.status{background:#eaf2ff;color:#315bb4}
+.my-page .invitation-card>.status.published{background:#dfeaff;color:#1e4fbb}
+.my-page .invitation-card>.status.paid{background:#e9f1ff;color:#315bb4}
+.my-page .invitation-card>.status.suspended,.my-page .invitation-card>.status.archived{background:#edf0f5;color:#68788e}
+.my-page .invitation-card>div{gap:8px;margin-top:17px;padding-top:15px;border-top:1px solid #e8effa}
+.my-page .invitation-card>div>a,.my-page .invitation-card>div>button,.my-page .invitation-card .invitation-card-share button{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:7px 11px;border:1px solid #d3e2fa;border-radius:8px;background:#f8fbff;color:#245ac7;font-size:12px;font-weight:700;text-decoration:none;line-height:1.3;cursor:pointer;box-sizing:border-box}
+.my-page .invitation-card>div>a:first-child{background:#1e3a8a;border-color:#1e3a8a;color:#fff}
+.my-page .invitation-card .invitation-card-share{gap:8px;flex-wrap:wrap;align-items:center}
+.my-page .invitation-card .invitation-delete-button,.my-page .invitation-card .invitation-state-button{background:#fff;border-color:#efd5d8;color:#a45d61}
+.my-page .invitation-card .invitation-state-button.restore{background:#f8fbff;border-color:#d3e2fa;color:#245ac7}
+.my-page .invitation-card>div>a:hover,.my-page .invitation-card>div>button:hover,.my-page .invitation-card .invitation-card-share button:hover{filter:brightness(.96)}
+.my-page .invitation-card :is(a,button):focus-visible{outline:2px solid #315be8;outline-offset:2px}
+@media(max-width:800px){.my-page .invitation-card{padding:18px 16px}.my-page .invitation-card>div{gap:7px}.my-page .invitation-card>div>a,.my-page .invitation-card>div>button,.my-page .invitation-card .invitation-card-share button{min-height:36px}}
+
+
+/* DearDay UI refresh 03: admin template / background / Hero editor chrome only. */
+body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
+.dd-admin-theme-page{color:#172b51}
+.dd-admin-theme-page>.section-kicker{color:#315be8}
+.dd-admin-theme-page>h1{color:#172b51}
+.dd-admin-theme-page>p:not(.section-kicker){color:#637895}
+.dd-admin-theme-page>p>a{color:#245ac7}
+.dd-admin-theme-page :is(.admin-template-form,.admin-template-assets,.hero-editor-live-preview,.hero-admin-preview-panel){border-color:#dce8fa!important;background:#fff!important;box-shadow:0 5px 20px rgba(25,65,125,.045)}
+.dd-admin-theme-page :is(.admin-template-form,.admin-template-assets) :is(input:not([type=checkbox]):not([type=color]),textarea,select){border-color:#cfdef5!important;color:#172b51}
+.dd-admin-theme-page :is(input:not([type=checkbox]):not([type=color]),textarea,select):focus{border-color:#315be8!important;outline:2px solid #dceaff;outline-offset:1px}
+.dd-admin-theme-page :is(.save-button,button):focus-visible{outline:2px solid #315be8;outline-offset:2px}
+.dd-admin-theme-page .save-button{background:#1e3a8a;color:#fff;border-color:#1e3a8a}
+.dd-admin-theme-page .save-button:hover:not(:disabled){background:#315be8;border-color:#315be8}
+.dd-admin-theme-page .admin-template-asset-slot{border-color:#e2ebfa}
+.dd-admin-theme-page .admin-template-asset-row img{background:#f2f7ff}
+.dd-admin-theme-page .admin-draft-preview{border-color:#dce8fa;background:#edf5ff}
+.dd-admin-theme-page .admin-draft-preview-toolbar{border-color:#dce8fa}
+.dd-admin-theme-page .admin-draft-preview-toolbar p,.dd-admin-theme-page .hero-editor-live-preview-label{color:#637895}
+.dd-admin-theme-page .admin-draft-preview-widths button{border-color:#cfdef5;color:#315b9b}
+.dd-admin-theme-page .admin-draft-preview-widths button.active{border-color:#315be8;background:#e7f0ff;color:#1e3a8a}
+.dd-admin-theme-page .admin-draft-preview-scroll{background:#eaf2ff}
+.dd-admin-theme-page .hero-admin-live-preview{background:#edf5ff!important;border-color:#dce8fa!important}
+
+
+/* Hero editor inner chrome: override legacy inline peach borders, not invitation preview. */
+.dd-admin-hero-page .dd-admin-hero-form{border-color:#dce8fa!important;background:#fff!important;box-shadow:0 5px 20px rgba(25,65,125,.045)}
+.dd-admin-hero-page .dd-admin-hero-form :is(input:not([type=checkbox]):not([type=color]),textarea,select){border-color:#cfdef5!important;color:#172b51}
+.dd-admin-hero-page .dd-admin-hero-form :is(input:not([type=checkbox]):not([type=color]),textarea,select):focus{border-color:#315be8!important;outline:2px solid #dceaff;outline-offset:1px}
+.dd-admin-hero-page .dd-admin-hero-form .hero-admin-editor-grid>div>section{border-color:#dce8fa!important;background:#fff!important}
+.dd-admin-hero-page .dd-admin-hero-form .hero-admin-editor-grid>div>section>div[style*="border"]{border-color:#dce8fa!important}
+.dd-admin-hero-page .dd-admin-hero-form .hero-admin-editor-grid button.save-button{margin:2px;min-height:31px}
+.dd-admin-hero-page .dd-admin-hero-form .hero-admin-editor-grid button.save-button:focus-visible{outline:2px solid #315be8;outline-offset:2px}
+
+
+/* Hero editor finishing pass: settings groups and text layer controls only. */
+.dd-admin-hero-page .dd-admin-hero-form .hero-admin-editor-grid>div:first-child :is(fieldset,section,div[style*="border:"]){border-color:#d7e5fa!important}
+.dd-admin-hero-page .dd-admin-hero-form .hero-admin-editor-grid>div:first-child fieldset{background:#fff}
+.dd-admin-hero-page .dd-admin-hero-form .hero-admin-editor-grid>div:first-child fieldset legend,
+.dd-admin-hero-page .dd-admin-hero-form .hero-admin-editor-grid>div:first-child section strong{color:#172b51}
+.dd-admin-hero-page .dd-admin-hero-form .hero-admin-editor-grid>div:first-child section p,
+.dd-admin-hero-page .dd-admin-hero-form .hero-admin-editor-grid>div:first-child fieldset p{color:#637895!important}
+.dd-admin-hero-page .dd-hero-layer-actions{gap:5px;flex-wrap:wrap;justify-content:flex-start!important}
+.dd-admin-hero-page .dd-hero-layer-actions>.save-button{margin:0!important;flex-shrink:0;padding:7px 9px;min-height:34px}
+.dd-admin-hero-page .dd-hero-layer-actions>.save-button:first-child{flex:1 1 150px;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:800px){.dd-admin-hero-page .dd-hero-layer-actions{gap:6px}.dd-admin-hero-page .dd-hero-layer-actions>.save-button{min-height:36px}}
+
+
+/* Hero editor finishing pass: thumbnail capture and asset upload panels. */
+.dd-admin-hero-page .dd-hero-asset-section{border-color:#d7e5fa!important;background:#fff}
+.dd-admin-hero-page .dd-hero-asset-section legend{color:#172b51;font-weight:700}
+.dd-admin-hero-page .dd-hero-asset-section p,
+.dd-admin-hero-page .dd-hero-asset-section div[style*="color:"]{color:#637895!important}
+.dd-admin-hero-page .dd-hero-asset-section div[style*="border:"]{border-color:#d7e5fa!important}
+.dd-admin-hero-page .dd-hero-asset-section div[style*="dashed"]{background:#f8fbff!important;border-color:#bed4f6!important}
+.dd-admin-hero-page .dd-hero-asset-section :is(button,input):focus-visible{outline:2px solid #315be8;outline-offset:2px}
+
+
+/* DearDay UI refresh 04: admin body-theme management list. */
+.dd-admin-theme-page .dd-admin-template-list{gap:14px!important}
+.dd-admin-theme-page .dd-admin-template-card{background:#fff!important;border-color:#dce8fa!important;border-radius:14px!important;box-shadow:0 5px 20px rgba(25,65,125,.045);padding:20px!important}
+.dd-admin-theme-page .dd-admin-template-card h2{color:#172b51}
+.dd-admin-theme-page .dd-admin-template-card dl{color:#637895}
+.dd-admin-theme-page .dd-admin-template-card dt{color:#637895}
+.dd-admin-theme-page .dd-admin-template-card dd{color:#172b51;font-weight:600}
+.dd-admin-theme-page .dd-admin-template-card .save-button{min-height:36px;padding:8px 15px;border-radius:9px}
+.dd-admin-theme-page .dd-admin-template-list+.save-button{background:#1e3a8a}
+@media(max-width:800px){.dd-admin-theme-page .dd-admin-template-card{padding:16px!important}.dd-admin-theme-page .dd-admin-template-list{gap:11px!important}}
+
+
+/* Admin body-theme editor finishing pass: nested controls, version editor and Assets. */
+.dd-admin-theme-page .admin-template-editor-controls,
+.dd-admin-theme-page .admin-template-assets{background:#fff!important;border-color:#d7e5fa!important}
+.dd-admin-theme-page .admin-template-editor-controls :is(fieldset,section,div[style*="border:"]),
+.dd-admin-theme-page .admin-template-assets :is(fieldset,section,div[style*="border:"]),
+.dd-admin-theme-page .admin-template-asset-slot,
+.dd-admin-theme-page .admin-template-asset-row{border-color:#d7e5fa!important}
+.dd-admin-theme-page .admin-template-editor-controls :is(input:not([type=checkbox]):not([type=color]),textarea,select),
+.dd-admin-theme-page .admin-template-assets :is(input:not([type=checkbox]):not([type=color]),textarea,select){border-color:#cfdef5!important;color:#172b51}
+.dd-admin-theme-page .admin-template-editor-controls :is(input:not([type=checkbox]):not([type=color]),textarea,select):focus,
+.dd-admin-theme-page .admin-template-assets :is(input:not([type=checkbox]):not([type=color]),textarea,select):focus{border-color:#315be8!important;outline:2px solid #dceaff;outline-offset:1px}
+.dd-admin-theme-page .admin-template-editor-controls :is(h2,h3,h4,strong,legend),
+.dd-admin-theme-page .admin-template-assets :is(h2,h3,h4,strong,legend){color:#172b51}
+.dd-admin-theme-page .admin-template-editor-controls :is(p,small),
+.dd-admin-theme-page .admin-template-assets :is(p,small){color:#637895!important}
+.dd-admin-theme-page .admin-template-editor-preview{background:#edf5ff!important;border-color:#d7e5fa!important}
+.dd-admin-theme-page .admin-template-assets .admin-template-asset-slot{background:#fff}
+.dd-admin-theme-page .admin-template-assets .admin-template-asset-row{background:#fff}
+.dd-admin-theme-page .admin-template-assets .admin-template-asset-row img{background:#f2f7ff}
+.dd-admin-theme-page .admin-template-assets [style*="dashed"]{border-color:#bed4f6!important;background:#f8fbff!important}
+.dd-admin-theme-page .admin-template-editor-controls .save-button,
+.dd-admin-theme-page .admin-template-assets .save-button{border-radius:8px}
+
+
+/* DearDay My Page guest management finishing pass; public invitation guestbook is untouched. */
+.my-page .guest-management-content>.section-kicker,
+.my-page .guestbook-management>.section-kicker,
+.my-page .guestbook-management-heading .section-kicker{color:#315be8}
+.my-page .guest-list-actions>span,
+.my-page .guestbook-management-heading>span{color:#637895}
+.my-page .guest-list-actions button{background:#1e3a8a;border:1px solid #1e3a8a;color:#fff}
+.my-page .guest-list-actions button:hover:not(:disabled){background:#315be8;border-color:#315be8}
+.my-page .guest-rsvp-list>article{border-color:#dfeafb}
+.my-page .guest-rsvp-list :is(dt,time){color:#7b8fa9}
+.my-page .guest-rsvp-list dd{color:#172b51}
+.my-page .guestbook-management{border-top-color:#d7e5fa}
+.my-page .guestbook-management-heading h2{color:#172b51}
+.my-page .guestbook-management-list article{border-color:#d7e5fa;background:#fff;box-shadow:0 5px 20px rgba(25,65,125,.035)}
+.my-page .guestbook-management-list header strong{color:#172b51}
+.my-page .guestbook-management-list time{color:#8194ad}
+.my-page .guestbook-management-list article>p{color:#526a8b}
+.my-page .guestbook-management-list article>button{color:#a45d61;text-decoration:none;border:1px solid #efd5d8;border-radius:7px;background:#fff;padding:5px 9px}
+.my-page .guestbook-management-list article>button:hover{background:#fff7f7}
+.my-page .guestbook-management-list article>button:focus-visible{outline:2px solid #315be8;outline-offset:2px}
+
+
+/* DearDay My Profile: align account information card with the blue member theme. */
+.my-page .profile-content>.section-kicker{color:#315be8}
+.my-page .profile-card{border-color:#d7e5fa;background:#fff;box-shadow:0 5px 20px rgba(25,65,125,.045)}
+.my-page .profile-card>div{border-bottom-color:#e5eefb}
+.my-page .profile-card dt{color:#637895}
+.my-page .profile-card dd{color:#172b51;font-weight:500}
+
+
+/* DearDay My Inquiries: list, form and detail states. */
+.my-page .inquiries-content>.section-kicker{color:#315be8}
+.my-page .inquiry-primary{background:#1e3a8a;color:#fff;border:1px solid #1e3a8a}
+.my-page .inquiry-primary:hover:not(:disabled){background:#315be8;border-color:#315be8}
+.my-page :is(.inquiry-list>button,.inquiry-detail,.inquiry-form,.inquiry-empty){border-color:#d7e5fa;background:#fff;box-shadow:0 5px 20px rgba(25,65,125,.035)}
+.my-page .inquiry-list>button{color:#172b51}
+.my-page .inquiry-list>button:hover{border-color:#bcd3f6;background:#fbfdff}
+.my-page .inquiry-category{color:#315be8}
+.my-page .inquiry-meta{color:#7b8fa9}
+.my-page .inquiry-meta b{color:#526a8b}
+.my-page .inquiry-empty{color:#637895}
+.my-page .inquiry-form label{color:#526a8b}
+.my-page .inquiry-form :is(input,select,textarea){border-color:#cfdef5;color:#172b51}
+.my-page .inquiry-form :is(input,select,textarea):focus{border-color:#315be8;outline:2px solid #dceaff;outline-offset:1px}
+.my-page .inquiry-actions button,.my-page .inquiry-back{border:1px solid #d3e2fa;background:#f3f7fd;color:#315b9b}
+.my-page .inquiry-actions button:hover:not(:disabled),.my-page .inquiry-back:hover{background:#eaf2ff}
+.my-page .inquiry-actions .inquiry-primary{background:#1e3a8a;border-color:#1e3a8a;color:#fff}
+.my-page .inquiry-actions .inquiry-primary:hover:not(:disabled){background:#315be8;border-color:#315be8}
+.my-page .inquiry-detail h2,.my-page .inquiry-replies h3{color:#172b51}
+.my-page .inquiry-body,.my-page .inquiry-replies>div{border-color:#e5eefb}
+.my-page .inquiry-body{color:#172b51}
+.my-page .inquiry-replies time{color:#7b8fa9}
+.my-page .inquiry-replies p{color:#637895}
+.my-page .inquiries-content :is(button,a,input,select,textarea):focus-visible{outline:2px solid #315be8;outline-offset:2px}
+
+
+/* DearDay user editor: venue address copy action. */
+.create-page .venue-address{border-color:#d7e5fa;background:#f8fbff;color:#526a8b}
+.create-page .venue-address button{background:#1e3a8a;color:#fff}
+.create-page .venue-address button:hover{background:#315be8}
+.create-page .venue-address button:focus-visible{outline:2px solid #315be8;outline-offset:2px}
+
+
+
+/* DearDay invitation footer: align text and action colors with the blue brand identity. */
+.dearday-brand-footer{color:#526a8b}
+.dearday-compact-categories{color:#7b8fa9}
+.dearday-compact-action{color:#526a8b}
+.dearday-compact-action:hover{color:#315be8}
+.dearday-compact-arrow{background:#315be8;color:#fff}
+.dearday-compact-action:hover .dearday-compact-arrow{background:#1e3a8a}
+.dearday-compact-action:focus-visible{outline:2px solid #315be8;outline-offset:3px;border-radius:6px}
+
+
+/* DearDay invitation footer: compact navy arrow action. */
+.dearday-compact-arrow{width:24px;height:24px;background:#1e3a8a}
+.dearday-compact-action:hover .dearday-compact-arrow{background:#172b51}
+
+
+/* Compact pill quick menu no longer needs the old 165px A-large bottom reserve. */
+.shared-public-invitation{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+
+
+/* Keep the reserve behind the fixed compact quick actions neutral, independent of template artwork. */
+.shared-public-invitation{background-color:#fffaf7}
+
+
+/* Unify the DearDay footer and the fixed quick-action reserve as one ivory surface. */
+.dearday-brand-footer,
+.shared-public-invitation{
+  background-color:#fffaf7;
+}
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills{
+  background:transparent !important;
+}
+
+
+/* Live preview viewport: neutralize the legacy peach canvas visible below the invitation footer.
+   The invitation/template artwork itself remains unchanged. */
+.create-page .preview-content{
+  background:#fffaf7;
+}
+
+
+/* User editor Live Preview: keep the portaled quick-menu tray/footer reserve on DearDay ivory,
+   instead of inheriting the invitation template's peach quick-menu background. */
+.create-page .preview-phone > .invitation-quick-menu--desktop-live.invitation-quick-menu--minimal{
+  background:#fffaf7 !important;
+  background-image:none !important;
+}
+
+
+/* User editor Live Preview: let the invitation end at its real content height.
+   The shared full renderer's 100svh minimum otherwise exposes template background below the DearDay footer. */
+.create-page .preview-content.full-invitation-renderer .invitation-template{
+  min-height:0;
+}
+
+
+/* Published invitation: the DearDay footer is the real end of the document.
+   Remove the shared full-renderer viewport minimum so template artwork cannot continue below it. */
+.shared-public-invitation > .full-invitation-renderer > .invitation-template{
+  min-height:0;
+}
+
+
+/* Published invitation shell: remove the legacy peach page canvas.
+   The template owns its artwork; the shell only supplies the neutral DearDay footer/quick-menu reserve. */
+.public-invitation.shared-public-invitation{
+  min-height:0;
+  background:#fffaf7;
+}
+
+
+/* DearDay full-preview chrome: align toolbar actions and desktop canvas with the blue brand identity. */
+.full-preview-overlay{
+  background:#eaf2ff;
+}
+.full-preview-toolbar button{
+  background:#1e3a8a;
+  color:#fff;
+  box-shadow:none;
+}
+.full-preview-toolbar button.secondary{
+  background:#dbeafe;
+  color:#1e3a8a;
+}
+
+
+/* Required-field guidance: briefly highlight the first missing field after publish validation. */
+.dd-required-field-missing{
+  border-radius:12px;
+  outline:2px solid #315be8;
+  outline-offset:6px;
+  background:rgba(219,234,254,.55);
+  transition:background .2s ease,outline-color .2s ease;
+}
+.dd-required-field-missing input,
+.dd-required-field-missing select,
+.dd-required-field-missing textarea{
+  border-color:#315be8 !important;
+  box-shadow:0 0 0 3px rgba(49,91,232,.12);
+}
+
+
+/* Compact public footer actions: preserve one-line labels while exposing more template artwork. */
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills,
+.full-preview-document > .invitation-quick-menu--minimal.invitation-quick-menu--pills,
+.preview-phone > .invitation-quick-menu--minimal.invitation-quick-menu--pills {
+  left:50% !important;right:auto !important;transform:translateX(-50%) !important;
+  margin-left:0 !important;margin-right:0 !important;
+}
+
+/* Admin background/template editor preview: center the compact sticky quick-menu by auto margins. */
+@media (min-width:901px){
+  .admin-draft-preview-device > .invitation-quick-menu--desktop-live.invitation-quick-menu--minimal.invitation-quick-menu--pills{
+    left:auto !important;right:auto !important;width:max-content !important;
+    max-width:calc(100% - 16px) !important;margin:-76px auto 8px !important;
+    transform:none !important;
+  }
+}
