@@ -1037,6 +1037,18 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   }
 }
 
+/* Keep the BGM control above invitation content in admin Draft previews so it remains clickable. */
+.admin-draft-preview-device .dd-template-bgm,
+.admin-draft-full-preview-device .dd-template-bgm{
+  z-index:40 !important;
+}
+.admin-draft-preview-device .dd-template-bgm-toggle,
+.admin-draft-full-preview-device .dd-template-bgm-toggle{
+  position:relative;
+  z-index:1;
+  pointer-events:auto;
+}
+
 /* Keep all compact LIVE PREVIEW bottom-sheet backdrops visually consistent. */
 @media (min-width:901px){
   .preview-phone > .invitation-bottom-sheet-layer--preview .invitation-bottom-sheet-backdrop,
