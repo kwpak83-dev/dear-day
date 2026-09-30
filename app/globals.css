@@ -2297,3 +2297,13 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Keep the reserve behind the fixed compact quick actions neutral, independent of template artwork. */
 .shared-public-invitation{background-color:#fffaf7}
+
+
+/* Unify the DearDay footer and the fixed quick-action reserve as one ivory surface. */
+.dearday-brand-footer,
+.shared-public-invitation{
+  background-color:#fffaf7;
+}
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills{
+  background:transparent !important;
+}
