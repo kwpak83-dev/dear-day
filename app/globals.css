@@ -2284,3 +2284,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dearday-compact-arrow{background:#315be8;color:#fff}
 .dearday-compact-action:hover .dearday-compact-arrow{background:#1e3a8a}
 .dearday-compact-action:focus-visible{outline:2px solid #315be8;outline-offset:3px;border-radius:6px}
+
+
+/* DearDay invitation footer: compact navy arrow action. */
+.dearday-compact-arrow{width:24px;height:24px;background:#1e3a8a}
+.dearday-compact-action:hover .dearday-compact-arrow{background:#172b51}
