@@ -2307,3 +2307,10 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills{
   background:transparent !important;
 }
+
+
+/* Live preview viewport: neutralize the legacy peach canvas visible below the invitation footer.
+   The invitation/template artwork itself remains unchanged. */
+.create-page .preview-content{
+  background:#fffaf7;
+}
