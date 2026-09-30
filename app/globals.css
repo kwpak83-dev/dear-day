@@ -2070,3 +2070,28 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .create-page .place-search button:hover{background:#315be8;border-color:#315be8}
 .create-page .place-search button:focus-visible{outline:2px solid #315be8;outline-offset:2px}
 .create-page .preview-panel{background:linear-gradient(145deg,#e9f3ff,#dceaff);border:1px solid #d7e7ff}
+
+
+/* DearDay UI refresh 02: My Page shell, invitation cards and guest management. */
+.my-page.member-page{background:#f5f9ff;color:#172b51}
+.my-page .member-navigation>p{color:#315be8}
+.my-page .member-navigation>h1,.my-page .my-content h1,.my-page .guest-management-content h1{color:#172b51}
+.my-page .member-navigation nav>a{color:#526c91}
+.my-page .member-navigation nav>a:hover:not(.active){background:#eaf2ff;color:#1e3a8a}
+.my-page .member-navigation nav>a.active{background:#1e3a8a;color:#fff;border-color:#1e3a8a}
+.my-page .member-navigation nav>span{background:#edf3fb;color:#8295b0}
+.my-page .invitation-card,.my-page .guest-summary article,.my-page .guest-rsvp-list>article{background:#fff;border-color:#dfeafb;box-shadow:0 5px 20px rgba(25,65,125,.045)}
+.my-page .invitation-card h2,.my-page .guest-summary strong{color:#172b51}
+.my-page .invitation-card p,.my-page .guest-management-intro,.my-page .guest-summary span,.my-page .guest-empty{color:#637895}
+.my-page .invitation-card a,.my-page .invitation-card .invitation-card-share button,.my-page .invitation-card .invitation-state-button.restore{color:#245ac7}
+.my-page .invitation-card .invitation-delete-button{color:#a45d61}
+.my-page .guest-event-select select{border-color:#cfdef5;color:#172b51}
+.my-page .guest-filters button{border-color:#d4e3fa;color:#536e96}
+.my-page .guest-filters button.active{background:#315be8;border-color:#315be8;color:#fff}
+.my-page .guest-list-actions button,.my-page .my-login-button{background:#1e3a8a;color:#fff}
+.my-page .guest-empty{background:#fff;border:1px solid #dfeafb}
+@media(max-width:800px){
+.my-page .member-navigation nav>a,.my-page .member-navigation nav>span{border-color:#dce8fa;background:#fff}
+.my-page .member-navigation nav>a.active{background:#1e3a8a;border-color:#1e3a8a;color:#fff}
+.my-page .member-navigation nav>span{background:#edf3fb}
+}
