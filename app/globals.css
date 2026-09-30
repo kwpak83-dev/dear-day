@@ -2240,3 +2240,29 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .my-page .profile-card>div{border-bottom-color:#e5eefb}
 .my-page .profile-card dt{color:#637895}
 .my-page .profile-card dd{color:#172b51;font-weight:500}
+
+
+/* DearDay My Inquiries: list, form and detail states. */
+.my-page .inquiries-content>.section-kicker{color:#315be8}
+.my-page .inquiry-primary{background:#1e3a8a;color:#fff;border:1px solid #1e3a8a}
+.my-page .inquiry-primary:hover:not(:disabled){background:#315be8;border-color:#315be8}
+.my-page :is(.inquiry-list>button,.inquiry-detail,.inquiry-form,.inquiry-empty){border-color:#d7e5fa;background:#fff;box-shadow:0 5px 20px rgba(25,65,125,.035)}
+.my-page .inquiry-list>button{color:#172b51}
+.my-page .inquiry-list>button:hover{border-color:#bcd3f6;background:#fbfdff}
+.my-page .inquiry-category{color:#315be8}
+.my-page .inquiry-meta{color:#7b8fa9}
+.my-page .inquiry-meta b{color:#526a8b}
+.my-page .inquiry-empty{color:#637895}
+.my-page .inquiry-form label{color:#526a8b}
+.my-page .inquiry-form :is(input,select,textarea){border-color:#cfdef5;color:#172b51}
+.my-page .inquiry-form :is(input,select,textarea):focus{border-color:#315be8;outline:2px solid #dceaff;outline-offset:1px}
+.my-page .inquiry-actions button,.my-page .inquiry-back{border:1px solid #d3e2fa;background:#f3f7fd;color:#315b9b}
+.my-page .inquiry-actions button:hover:not(:disabled),.my-page .inquiry-back:hover{background:#eaf2ff}
+.my-page .inquiry-actions .inquiry-primary{background:#1e3a8a;border-color:#1e3a8a;color:#fff}
+.my-page .inquiry-actions .inquiry-primary:hover:not(:disabled){background:#315be8;border-color:#315be8}
+.my-page .inquiry-detail h2,.my-page .inquiry-replies h3{color:#172b51}
+.my-page .inquiry-body,.my-page .inquiry-replies>div{border-color:#e5eefb}
+.my-page .inquiry-body{color:#172b51}
+.my-page .inquiry-replies time{color:#7b8fa9}
+.my-page .inquiry-replies p{color:#637895}
+.my-page .inquiries-content :is(button,a,input,select,textarea):focus-visible{outline:2px solid #315be8;outline-offset:2px}
