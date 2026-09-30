@@ -2035,3 +2035,26 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .landing-v2 .envelope-cta span{color:#647895}
 .landing-v2 .envelope-cta p{color:#4776bd;text-shadow:none}
 @media(max-width:800px){.landing-v2 .envelope-cta{background:linear-gradient(110deg,rgba(236,245,255,.95),rgba(247,250,255,.97)),url('/final-cta-envelope.png') center/cover;border-top-color:#e2edff}}
+
+
+/* DearDay UI refresh 01: user editor chrome only; invitation artwork/preview stays untouched. */
+.create-page{background:#f5f9ff;color:#172b51}
+.create-page .editor-panel,.create-page .preview-panel{border-color:#e1eaf9}
+.create-page .dd-editor-steps,.create-page .dd-required-fields .form-section,.create-page .dd-custom-accordion,.create-page .dd-share-card,.create-page .dd-final-card,.create-page .dd-editor-sticky-actions{background:#fff;border-color:#dfeafb;box-shadow:0 5px 20px rgba(25,65,125,.045)}
+.create-page .dd-editor-step-intro .section-kicker,.create-page .dd-final-eyebrow{color:#315be8}
+.create-page .dd-editor-step-intro h1,.create-page .dd-required-fields .form-section h2,.create-page .dd-share-card h2,.create-page .dd-final-card h2{color:#172b51}
+.create-page .dd-editor-step-intro .editor-intro,.create-page .dd-share-card-heading p,.create-page .dd-final-card p,.create-page .dd-final-summary dt,.create-page .dd-editor-final .dd-final-help,.create-page .dd-share-help{color:#637895}
+.create-page .dd-share-state{background:#f2f7ff;color:#536f98}
+.create-page .dd-share-switch input:checked+.dd-share-switch-track{background:#315be8}
+.create-page .dd-editor-steps button:focus-visible{outline-color:#315be8}
+.create-page .dd-final-summary,.create-page .dd-final-summary>div{border-color:#e5eefb}
+.create-page .dd-final-preview{color:#1e3a8a;border-color:#bed3f5;background:#f8fbff}
+.create-page .dd-final-primary{background:#1e3a8a;border-color:#1e3a8a}
+.create-page .dd-final-flow span{background:#f0f5fd;color:#6b7f9d}
+.create-page .dd-final-flow span.current{background:#dceaff;color:#1e4fbb}
+.create-page .dd-final-flow span.done{background:#e5f3ed;color:#34745c}
+.create-page .dd-editor-sticky-actions button{border-radius:10px}
+.create-page .dd-editor-sticky-actions .dd-editor-next-action{background:#1e3a8a;border-color:#1e3a8a;color:#fff}
+.create-page .dd-editor-sticky-actions .dd-editor-preview-action{background:#f8fbff;border-color:#bfd3f4;color:#1e3a8a}
+.create-page .dd-editor-sticky-actions button:first-child{background:#fff;border-color:#bfd3f4;color:#1e3a8a}
+@media(max-width:800px){.create-page .dd-editor-sticky-actions{background:rgba(255,255,255,.97);border-color:#dfeafb}}
