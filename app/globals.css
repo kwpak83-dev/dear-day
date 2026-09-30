@@ -2210,3 +2210,25 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-admin-theme-page .admin-template-assets [style*="dashed"]{border-color:#bed4f6!important;background:#f8fbff!important}
 .dd-admin-theme-page .admin-template-editor-controls .save-button,
 .dd-admin-theme-page .admin-template-assets .save-button{border-radius:8px}
+
+
+/* DearDay My Page guest management finishing pass; public invitation guestbook is untouched. */
+.my-page .guest-management-content>.section-kicker,
+.my-page .guestbook-management>.section-kicker,
+.my-page .guestbook-management-heading .section-kicker{color:#315be8}
+.my-page .guest-list-actions>span,
+.my-page .guestbook-management-heading>span{color:#637895}
+.my-page .guest-list-actions button{background:#1e3a8a;border:1px solid #1e3a8a;color:#fff}
+.my-page .guest-list-actions button:hover:not(:disabled){background:#315be8;border-color:#315be8}
+.my-page .guest-rsvp-list>article{border-color:#dfeafb}
+.my-page .guest-rsvp-list :is(dt,time){color:#7b8fa9}
+.my-page .guest-rsvp-list dd{color:#172b51}
+.my-page .guestbook-management{border-top-color:#d7e5fa}
+.my-page .guestbook-management-heading h2{color:#172b51}
+.my-page .guestbook-management-list article{border-color:#d7e5fa;background:#fff;box-shadow:0 5px 20px rgba(25,65,125,.035)}
+.my-page .guestbook-management-list header strong{color:#172b51}
+.my-page .guestbook-management-list time{color:#8194ad}
+.my-page .guestbook-management-list article>p{color:#526a8b}
+.my-page .guestbook-management-list article>button{color:#a45d61;text-decoration:none;border:1px solid #efd5d8;border-radius:7px;background:#fff;padding:5px 9px}
+.my-page .guestbook-management-list article>button:hover{background:#fff7f7}
+.my-page .guestbook-management-list article>button:focus-visible{outline:2px solid #315be8;outline-offset:2px}
