@@ -1588,18 +1588,18 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Strong final isolation: legacy theme selectors must not reshape the footer controls. */
 :is(.romantic-001,.modern-001,.classic-001,.dd-template-button-style,.dd-template-background) .public-share-copy.dd-public-share-pills,
 .public-share-copy.dd-public-share-pills{
-  display:grid !important;grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-  width:100% !important;max-width:100% !important;min-width:0 !important;
-  gap:6px !important;margin:0 !important;padding:14px 10px !important;
-  box-sizing:border-box !important;justify-content:stretch !important;align-items:center !important;
+  display:flex !important;
+  width:max-content !important;max-width:calc(100% - 16px) !important;min-width:0 !important;
+  gap:6px !important;margin:0 auto !important;padding:14px 0 !important;
+  box-sizing:border-box !important;justify-content:center !important;align-items:center !important;
 }
 :is(.romantic-001,.modern-001,.classic-001,.dd-template-button-style,.dd-template-background) .public-share-copy.dd-public-share-pills>button,
 .public-share-copy.dd-public-share-pills>button{
   display:flex !important;flex-direction:row !important;position:static !important;
   grid-column:auto !important;align-items:center !important;justify-content:center !important;
-  flex:none !important;min-width:0 !important;width:100% !important;max-width:none !important;
+  flex:0 0 auto !important;min-width:max-content !important;width:auto !important;max-width:none !important;
   height:40px !important;min-height:40px !important;aspect-ratio:auto !important;
-  padding:0 3px !important;margin:0 !important;border-radius:999px !important;
+  padding:0 11px !important;margin:0 !important;border-radius:999px !important;
   border-width:1.5px !important;border-style:solid !important;box-shadow:none !important;
   font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif !important;
   font-size:12px !important;font-weight:700 !important;letter-spacing:-.04em !important;
@@ -2374,4 +2374,13 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-required-field-missing textarea{
   border-color:#315be8 !important;
   box-shadow:0 0 0 3px rgba(49,91,232,.12);
+}
+
+
+/* Compact public footer actions: preserve one-line labels while exposing more template artwork. */
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills,
+.full-preview-document > .invitation-quick-menu--minimal.invitation-quick-menu--pills,
+.preview-phone > .invitation-quick-menu--minimal.invitation-quick-menu--pills {
+  left:50% !important;right:auto !important;transform:translateX(-50%) !important;
+  margin-left:0 !important;margin-right:0 !important;
 }
