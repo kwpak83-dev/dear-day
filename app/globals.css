@@ -2420,3 +2420,18 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .template-picker-more:focus-visible{outline-color:#315be8}
 .create-page .dd-final-flow span.done{background:#eaf2ff;color:#3866b7}
 .create-page .dd-share-switch input:focus-visible+.dd-share-switch-track{outline-color:#315be8}
+
+
+/* DearDay editor UI refresh 02b: unify form controls and secondary actions. */
+.create-page :is(input:not([type="checkbox"]):not([type="radio"]):not([type="color"]),select,textarea){border-color:#cfdef5!important;background:#fff;color:#172b51}
+.create-page :is(input:not([type="checkbox"]):not([type="radio"]):not([type="color"]),select,textarea):focus{border-color:#315be8!important;outline:2px solid #dceaff;outline-offset:1px}
+.create-page .photo-editor input::file-selector-button,
+.create-page .gallery-editor input::file-selector-button{border:1px solid #bfd3f4;background:#f2f7ff;color:#1e3a8a}
+.create-page .photo-editor .save-button,
+.create-page .gallery-editor .save-button,
+.create-page .account-editor .save-button{background:#f2f7ff;color:#1e3a8a;border:1px solid #bfd3f4;box-shadow:none}
+.create-page .account-editor{border-color:#dfeafb;background:#f8fbff}
+.create-page .account-editor>strong{color:#172b51}
+.create-page .gallery-tile{border-color:#dfeafb}
+.create-page .form-section h2 small,.create-page .gallery-editor h2 small{color:#637895}
+.create-page .photo-editor>p,.create-page .gallery-editor>p{color:#637895}
