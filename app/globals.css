@@ -2405,3 +2405,18 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
     transform:none !important;
   }
 }
+
+
+/* DearDay editor UI refresh 02: unify selection and status colors across all six steps. */
+.create-page .template-choice{border-color:#dfeafb;color:#172b51}
+.create-page .template-choice:hover{border-color:#9dbbf0}
+.create-page .template-choice:focus-visible{outline-color:#315be8}
+.create-page .template-choice.selected{border-color:#315be8;background:#f5f9ff;box-shadow:0 7px 16px rgba(49,91,232,.10)}
+.create-page .template-choice-status{color:#6a7f9f}
+.create-page .template-choice.selected .template-choice-status{color:#1e4fbb}
+.create-page .template-picker-empty{background:#f2f7ff;color:#637895}
+.create-page .template-picker-more{border-color:#bfd3f4;background:#f8fbff;color:#1e3a8a}
+.create-page .template-picker-more:hover{background:#eef5ff}
+.create-page .template-picker-more:focus-visible{outline-color:#315be8}
+.create-page .dd-final-flow span.done{background:#eaf2ff;color:#3866b7}
+.create-page .dd-share-switch input:focus-visible+.dd-share-switch-track{outline-color:#315be8}
