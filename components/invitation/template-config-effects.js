@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 
 const SECTION_SELECTOR = [
   ".romantic-message", ".modern-message", ".classic-message",
-  ".romantic-information", ".modern-information", ".classic-information",
+  ".romantic-information", ".modern-information", ".classic-information", ".classic-date",
   ".invitation-gallery", ".public-accounts", ".public-rsvp", ".guestbook-section",
 ].join(",");
 
