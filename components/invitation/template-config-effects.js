@@ -39,7 +39,25 @@ export default function TemplateConfigEffects({ mode, trigger = 30 }) {
     }, { root: findScrollRoot(template), rootMargin: `0px 0px -${trigger}%`, threshold: 0.08 });
     targets.forEach((target) => observer.observe(target));
 
+    const shareTarget = targets.find((target) => target.classList.contains("dd-public-share-section"));
+    const revealShareAtBottom = () => {
+      if (!shareTarget || shareTarget.classList.contains("is-revealed")) return;
+      const root = findScrollRoot(template);
+      const atBottom = root
+        ? root.scrollTop + root.clientHeight >= root.scrollHeight - 4
+        : window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+      if (atBottom) {
+        shareTarget.classList.add("is-revealed");
+        observer.unobserve(shareTarget);
+      }
+    };
+    const scrollRoot = findScrollRoot(template);
+    const scrollTarget = scrollRoot || window;
+    scrollTarget.addEventListener("scroll", revealShareAtBottom, { passive: true });
+    revealShareAtBottom();
+
     return () => {
+      scrollTarget.removeEventListener("scroll", revealShareAtBottom);
       observer.disconnect();
       template.classList.remove("dd-reveal-ready", `dd-reveal-${mode}`);
       targets.forEach((target) => target.classList.remove("dd-reveal-target", "is-revealed"));
