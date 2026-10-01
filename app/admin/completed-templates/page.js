@@ -4,7 +4,8 @@ import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 import AdminDesignNav from "../admin-design-nav";
 import CompletedTemplatePreview from "./completed-template-preview";
 
-const emptySample={hero_image_url:"",groom_name:"",bride_name:"",groom_father_name:"",groom_mother_name:"",bride_father_name:"",bride_mother_name:"",event_date:"",event_time:"",venue:"",invitation_message:"",gallery_images:[]};\nconst blank={name:"",template_key:"",category:"wedding",hero_preset_id:"",body_template_id:"",price:0,description:"",thumbnail_url:"",thumbnail_1_url:"",thumbnail_2_url:"",sample_content:emptySample,is_visible:false,sort_order:0};
+const emptySample={hero_image_url:"",groom_name:"",bride_name:"",groom_father_name:"",groom_mother_name:"",bride_father_name:"",bride_mother_name:"",event_date:"",event_time:"",venue:"",invitation_message:"",gallery_images:[]};
+const blank={name:"",template_key:"",category:"wedding",hero_preset_id:"",body_template_id:"",price:0,description:"",thumbnail_url:"",thumbnail_1_url:"",thumbnail_2_url:"",sample_content:emptySample,is_visible:false,sort_order:0};
 const box={border:"1px solid #e5ddd8",borderRadius:14,padding:16,background:"#fff"};
 const input={width:"100%",boxSizing:"border-box",padding:"10px 12px",border:"1px solid #d8ccc5",borderRadius:8,background:"#fff"};
 const primaryButton={border:0,borderRadius:9,padding:"10px 16px",background:"#23439a",color:"#fff",fontWeight:700,cursor:"pointer"};
