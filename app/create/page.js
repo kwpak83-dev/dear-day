@@ -307,6 +307,7 @@ export default function CreateInvitation() {
   };
 
   useEffect(() => {
+    const initializeEditor = async () => {
     setProvider(window.localStorage.getItem("dear-day-provider") || "게스트");
     const query = new URLSearchParams(window.location.search);
     const slug = query.get("slug") || "";
@@ -344,6 +345,8 @@ export default function CreateInvitation() {
         setSaveNotice("기기에 저장된 작성 내용을 불러오지 못했어요.");
       }
     }
+    };
+    initializeEditor();
   }, []);
   useEffect(() => () => window.clearTimeout(saveToastTimer.current), []);
   useEffect(() => {
