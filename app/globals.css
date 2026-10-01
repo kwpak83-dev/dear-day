@@ -2459,7 +2459,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Hero entrance intro */
 .invitation-template{position:relative}
 .dd-hero-intro{position:absolute;inset:0 0 auto;z-index:80;height:100svh;min-height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:none;animation:dd-hero-intro-exit var(--dd-intro-fade) ease calc(var(--dd-intro-write) + var(--dd-intro-hold)) forwards}
-.dd-hero-intro-text{display:inline-block;max-width:88%;white-space:nowrap;overflow:hidden;clip-path:inset(0 100% 0 0);animation:dd-hero-intro-write var(--dd-intro-write) ease-out forwards}
-@keyframes dd-hero-intro-write{to{clip-path:inset(0 0 0 0)}}
+.dd-hero-intro-text{display:inline-block;max-width:88%;white-space:nowrap;overflow:hidden;width:0;animation:dd-hero-intro-write var(--dd-intro-write) ease-out forwards}
+@keyframes dd-hero-intro-write{from{width:0}to{width:min(88%,max-content)}}
 @keyframes dd-hero-intro-exit{0%{opacity:1;visibility:visible}99%{visibility:visible}100%{opacity:0;visibility:hidden}}
 @media (prefers-reduced-motion:reduce){.dd-hero-intro{display:none}}
