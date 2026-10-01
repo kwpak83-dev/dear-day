@@ -2472,3 +2472,17 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .public-account-side>summary span{transition:transform .2s ease}
 .public-account-side[open]>summary span{transform:rotate(180deg)}
 .public-account-side .public-account-card{margin:0;border-radius:0;border-width:1px 0 0}
+
+
+/* Invitation gallery: hero slide + thumbnail strip */
+.public-gallery-slider{position:relative;margin:22px auto 12px;width:min(100%,430px)}
+.public-gallery-main{display:block;width:100%;padding:0;border:0;background:transparent;border-radius:16px;overflow:hidden;cursor:zoom-in;aspect-ratio:4/5}
+.public-gallery-main img{display:block;width:100%;height:100%;object-fit:cover}
+.public-gallery-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:38px;height:38px;border:0;border-radius:50%;background:rgba(255,255,255,.9);box-shadow:0 2px 10px rgba(0,0,0,.12);font-size:28px;line-height:1;color:#5c4b43;cursor:pointer}
+.public-gallery-arrow.prev{left:10px}.public-gallery-arrow.next{right:10px}
+.public-gallery-count{position:absolute;right:10px;bottom:10px;padding:4px 9px;border-radius:999px;background:rgba(40,32,28,.62);color:#fff;font-size:11px;line-height:1.4}
+.public-gallery-thumbs{display:flex;gap:7px;width:min(100%,430px);margin:0 auto;overflow-x:auto;padding:3px 1px 8px;scrollbar-width:none}
+.public-gallery-thumbs::-webkit-scrollbar{display:none}
+.public-gallery-thumb{flex:0 0 58px;width:58px;height:58px;padding:0;border:2px solid transparent;border-radius:9px;overflow:hidden;background:transparent;opacity:.7;cursor:pointer}
+.public-gallery-thumb img{display:block;width:100%;height:100%;object-fit:cover}
+.public-gallery-thumb.is-active{opacity:1;border-color:currentColor}
