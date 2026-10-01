@@ -36,7 +36,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
 
   return <article className={`invitation-template invitation-template-modern modern-001${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.heroConfigured ? " dd-template-hero-configured" : ""}${renderConfig.typographyConfigured ? " dd-template-typography" : ""}${renderConfig.colorsConfigured ? " dd-template-colors" : ""}${renderConfig.buttonStyleConfigured ? " dd-template-button-style" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}${renderConfig.centerPanelConfigured ? " dd-template-center-panel" : ""}${renderConfig.decorationsConfigured ? " dd-template-decorated" : ""}${renderConfig.sectionClasses}${renderConfig.safeAreaClass}`} style={renderConfig.rootStyle}>
     <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="background" />
-    <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} />
+    <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} trigger={templateConfig?.effects?.scrollRevealTrigger} />
     {bgmControl}
     {screenEffect}
     {(showHeader || showMastheadText) && <header className={`modern-masthead${!showHeader && showMastheadText ? " event-only" : ""}`}>
