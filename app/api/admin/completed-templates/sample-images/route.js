@@ -26,3 +26,18 @@ export async function POST(request){
  if(updateError){await a.client.storage.from(bucket).remove([path]);return fail("샘플 이미지 정보를 저장하지 못했어요.",500);}
  return Response.json({url,sample_content:next});
 }
+
+export async function DELETE(request){
+ const a=await admin(request);if(a.error)return fail(a.error,a.status);
+ const body=await request.json().catch(()=>null),completedTemplateId=body?.completedTemplateId,url=String(body?.url||"");
+ if(!uuid.test(completedTemplateId||"")||!url)return fail("삭제할 샘플 이미지 정보를 확인해 주세요.",400);
+ const {data:item,error:itemError}=await a.client.from("completed_templates").select("id,sample_content").eq("id",completedTemplateId).maybeSingle();
+ if(itemError||!item)return fail("완성 템플릿을 찾지 못했어요.",404);
+ const current=item.sample_content&&typeof item.sample_content==="object"?item.sample_content:{},gallery=Array.isArray(current.gallery_images)?current.gallery_images:[];
+ const next={...current,gallery_images:gallery.filter(x=>x!==url)};
+ const {error:updateError}=await a.client.from("completed_templates").update({sample_content:next,updated_at:new Date().toISOString()}).eq("id",completedTemplateId);
+ if(updateError)return fail("샘플 이미지 정보를 삭제하지 못했어요.",500);
+ const marker="/storage/v1/object/public/"+bucket+"/",at=url.indexOf(marker);
+ if(at>=0){const storagePath=decodeURIComponent(url.slice(at+marker.length));if(storagePath.startsWith("completed-templates/"+completedTemplateId+"/samples/"))await a.client.storage.from(bucket).remove([storagePath]);}
+ return Response.json({sample_content:next});
+}
