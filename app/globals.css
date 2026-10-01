@@ -2517,3 +2517,12 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Gallery image controls stay neutral and are excluded from themed CTA colors above. */
 .public-gallery-thumb{border:1px solid rgba(80,70,65,.16);border-radius:9px;opacity:.72;box-shadow:none}
 .public-gallery-thumb.is-active{border-color:rgba(80,70,65,.48);opacity:1;box-shadow:none}
+
+
+/* Gallery image controls must never inherit invitation CTA fill colors. */
+.dd-template-colors .invitation-gallery button.public-gallery-slide,
+.dd-template-colors .invitation-gallery button.public-gallery-thumb{
+  background:none!important;
+  background-color:transparent!important;
+  color:inherit!important;
+}
