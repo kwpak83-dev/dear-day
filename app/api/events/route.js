@@ -63,7 +63,7 @@ async function getTemplateRenderData(supabase, templateId, versionId) {
   if (!templateId || !versionId) return { templateConfig: null, templateAssets: {} };
   const { data: version, error } = await supabase.from("template_versions")
     .select("id,template_id,status,config").eq("id", versionId).eq("template_id", templateId).maybeSingle();
-  if (error || !version || version.status === "draft") return { templateConfig: null, templateAssets: {} };
+  if (error || !version) return { templateConfig: null, templateAssets: {} };
   const references = getTemplateAssetReferences(version.config);
   if (!references.length) return { templateConfig: version.config, templateAssets: {} };
   const { data: assets, error: assetError } = await supabase.from("template_assets")
