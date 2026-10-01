@@ -2451,5 +2451,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 }
 .dd-address-detail{white-space:pre-wrap;}
 
-.public-account-bank{display:flex;align-items:center;justify-content:center;gap:7px;width:fit-content;margin-left:auto;margin-right:auto;}
-.public-account-bank img{width:24px;height:24px;object-fit:contain;flex:0 0 24px;}
+.public-account-card .public-account-bank{display:inline-flex;align-items:center;justify-content:center;gap:7px;width:auto;margin-left:auto;margin-right:auto;}
+.public-account-card .public-account-bank>img{width:24px;height:24px;object-fit:contain;flex:0 0 24px;}
+.public-account-card .public-account-bank>span{flex:0 1 auto;min-width:0;}
