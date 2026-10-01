@@ -106,7 +106,14 @@ export async function GET(request) {
   if (error) return json({ error: "초대장을 불러오지 못했어요." }, 500);
   if (!slug) return json({ events: data || [] });
   const event = data?.[0] || null;
-  const renderData = event ? await getTemplateRenderData(auth.supabase, event.template_id, event.template_version_id) : { templateConfig: null, templateAssets: {} };
+  let renderData = { templateConfig: null, templateAssets: {} };
+  if (event?.template_id) {
+    const { data: latestVersion, error: versionError } = await auth.supabase.from("template_versions")
+      .select("id").eq("template_id", event.template_id).order("version", { ascending: false }).limit(1).maybeSingle();
+    if (!versionError && latestVersion) {
+      renderData = await getTemplateRenderData(auth.supabase, event.template_id, latestVersion.id);
+    }
+  }
   return json({ event, ...renderData });
 }
 
