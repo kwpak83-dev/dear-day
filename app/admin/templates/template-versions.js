@@ -296,19 +296,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     <h2 style={{ marginTop: 0 }}>본문 테마 설정</h2>
     <div className="admin-template-editor-layout">
       <div className="admin-template-editor-controls">
-    {state.loading ? <p>버전 정보를 불러오는 중이에요.</p> : <>
-      <p>현재 판매 버전: {state.current ? `v${state.current.version}` : "없음"}</p>
-      <p>현재 편집 Draft: {state.draft ? `v${state.draft.version}` : "없음"}</p>
-      <p>템플릿 판매 상태: {state.template?.status === "on_sale" ? "판매중" : state.template?.status === "stopped" ? "판매중지" : "판매 준비중"}</p>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
-        {!state.draft && <button type="button" className="save-button" disabled={creating || workflowBusy} onClick={createDraft}>{creating ? "만드는 중..." : "새 Draft 버전 만들기"}</button>}
-        {state.draft && <button type="button" className="save-button" disabled={workflowBusy || assetChangesPending} onClick={() => runWorkflow("promote", { draftId: state.draft.id })}>{workflowBusy ? "처리 중..." : "판매 버전으로 확정"}</button>}
-        {state.current && state.template?.status !== "on_sale" && <button type="button" className="save-button" disabled={workflowBusy} onClick={() => runWorkflow("set-sale-status", { status: "on_sale" })}>판매 시작</button>}
-        {state.template?.status === "on_sale" && <button type="button" className="save-button" disabled={workflowBusy} onClick={() => runWorkflow("set-sale-status", { status: "stopped" })}>판매 중지</button>}
-      </div>
-      {state.draft && <>
-        <p>이 Draft가 Config 편집 대상입니다. 현재 판매 버전과 기존 초대장은 변경되지 않습니다.</p>
-        <form onSubmit={saveBackgroundHero} style={{ display: "grid", gap: 14, marginBottom: 28 }}>
+    {state.loading ? <p>본문 테마 설정을 불러오는 중이에요.</p> : <>\n      {!state.draft && <button type="button" className="save-button" disabled={creating} onClick={createDraft}>{creating ? "설정 준비 중..." : "본문 테마 설정 만들기"}</button>}\n      {state.draft && <>\n        <form onSubmit={saveBackgroundHero} style={{ display: "grid", gap: 14, marginBottom: 28 }}>
           <fieldset style={{ ...configSection, marginTop: 0 }}>
             <legend style={{ padding: "0 8px", fontWeight: 800, color: "#4f3d35", fontSize: 16 }}>Background 설정</legend>
             <p style={guideNote}>초대장 전체 페이지의 기본 배경과 배경 위 오버레이를 설정합니다.</p>
