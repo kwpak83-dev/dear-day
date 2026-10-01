@@ -2459,7 +2459,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Hero entrance intro */
 .invitation-template{position:relative}
 .dd-hero-intro{position:absolute;inset:0 0 auto;z-index:80;height:100svh;min-height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:none;animation:dd-hero-intro-exit var(--dd-intro-fade) ease calc(var(--dd-intro-write) + var(--dd-intro-hold)) forwards}
-.dd-hero-intro-text{display:inline-block;max-width:88%;white-space:nowrap;overflow:hidden;width:0;animation:dd-hero-intro-write var(--dd-intro-write) ease-out forwards}
-@keyframes dd-hero-intro-write{from{width:0}to{width:min(88%,max-content)}}
+.dd-hero-intro-text-wrap{position:relative;display:inline-block;max-width:88%}.dd-hero-intro-text{display:block;max-width:100%;white-space:nowrap}.dd-hero-intro-mask{position:absolute;inset:-.15em -.08em;background:var(--dd-intro-bg,#f8f4ef);transform-origin:right center;animation:dd-hero-intro-write var(--dd-intro-write) ease-out forwards;pointer-events:none}
+@keyframes dd-hero-intro-write{from{transform:scaleX(1)}to{transform:scaleX(0)}}
 @keyframes dd-hero-intro-exit{0%{opacity:1;visibility:visible}99%{visibility:visible}100%{opacity:0;visibility:hidden}}
 @media (prefers-reduced-motion:reduce){.dd-hero-intro{display:none}}
