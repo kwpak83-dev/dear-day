@@ -1556,12 +1556,12 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 }
 .invitation-quick-menu--minimal > button span {color:#222 !important;-webkit-text-fill-color:#222 !important;opacity:1 !important}
 
-/* Five editor stages stay on one row, including narrow mobile screens. */
-.create-page .dd-editor-steps{grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;padding:12px 6px}
-.create-page .dd-editor-steps button{gap:5px;padding:3px 0}
-.create-page .dd-editor-steps button span{width:25px;height:25px;font-size:10px}
-.create-page .dd-editor-steps button strong{font-size:10px;letter-spacing:-.065em;white-space:nowrap}
-@media(max-width:380px){.create-page .dd-editor-steps{gap:1px;padding:10px 3px}.create-page .dd-editor-steps button strong{font-size:9px}}
+/* Six editor stages stay on one compact row, including narrow mobile screens. */
+.create-page .dd-editor-steps{grid-template-columns:repeat(6,minmax(0,1fr));gap:1px;padding:10px 4px}
+.create-page .dd-editor-steps button{gap:4px;padding:2px 0}
+.create-page .dd-editor-steps button span{width:24px;height:24px;font-size:9px}
+.create-page .dd-editor-steps button strong{font-size:9px;letter-spacing:-.075em;white-space:nowrap}
+@media(max-width:380px){.create-page .dd-editor-steps{gap:0;padding:9px 2px}.create-page .dd-editor-steps button{gap:3px}.create-page .dd-editor-steps button span{width:23px;height:23px}.create-page .dd-editor-steps button strong{font-size:8px;letter-spacing:-.08em}}
 
 /* Public invitation notice */
 .shared-public-invitation{position:relative}
