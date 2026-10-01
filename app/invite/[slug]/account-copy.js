@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { getEventConfig } from "../../../lib/event-config";
+import { getBankLogo } from "../../../lib/bank-options";
 
 async function writeToClipboard(value) {
   if (navigator.clipboard?.writeText) {
@@ -20,13 +21,14 @@ async function writeToClipboard(value) {
 
 function AccountCard({ side, bank, holder, account }) {
   const [copied, setCopied] = useState(false);
+  const bankLogo = getBankLogo(bank);
   const copy = async () => {
     await writeToClipboard(account);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);
   };
 
-  return <article className="public-account-card"><p>{side}</p><strong>{bank || "계좌 안내"} · {holder}</strong><div><span>{account}</span><button type="button" onClick={copy}>{copied ? "복사됨" : "계좌 복사"}</button></div></article>;
+  return <article className="public-account-card"><p>{side}</p><strong className="public-account-bank">{bankLogo && <img src={bankLogo} alt="" />}<span>{bank || "계좌 안내"} · {holder}</span></strong><div><span>{account}</span><button type="button" onClick={copy}>{copied ? "복사됨" : "계좌 복사"}</button></div></article>;
 }
 
 export default function AccountCopy({ invitation, eventKind }) {
