@@ -321,6 +321,15 @@ export default function CreateInvitation() {
             setInvitation(current=>({...current,eventKind:selected.eventKind||"wedding",heroPresetId:selected.heroPresetId,templateId:selected.templateId}));
             setPreviewTemplateId(selected.templateId);
             startedFromTemplate=true;
+            try {
+              const response=await fetch(`/api/templates/collection/${encodeURIComponent(selected.templateKey)}`);
+              const result=await response.json().catch(()=>({}));
+              if(response.ok&&result.item?.body_template_id===selected.templateId){
+                setTemplateRender({config:result.templateConfig||null,assets:result.templateAssets||{}});
+              }
+            } catch {
+              setTemplateNotice("선택한 완성 템플릿 디자인을 불러오지 못했어요.");
+            }
           }
         } catch {}
       }
