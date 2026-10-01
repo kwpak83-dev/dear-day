@@ -237,8 +237,8 @@ function validScreenEffect(value) {
 }
 
 function validEffectsBgmSafeArea(effects, bgm, safeArea) {
-  return hasOnlyKeys(effects, ["scrollReveal", "scrollRevealDuration", "screenEffect"]) && scrollRevealValues.has(effects.scrollReveal) &&
-    decimal(effects.scrollRevealDuration, 0.4, 2.5) &&
+  return hasOnlyKeys(effects, ["scrollReveal", "scrollRevealDuration", "scrollRevealTrigger", "screenEffect"]) && scrollRevealValues.has(effects.scrollReveal) &&
+    decimal(effects.scrollRevealDuration, 0.4, 2.5) &&\n    Number.isInteger(effects.scrollRevealTrigger) && effects.scrollRevealTrigger >= 10 && effects.scrollRevealTrigger <= 50 &&
     validScreenEffect(effects.screenEffect) &&
     ((hasOnlyKeys(bgm, ["mode", "assetId"]) && bgm.mode === "none" && bgm.assetId === null) ||
       (hasOnlyKeys(bgm, ["mode", "assetId"]) && bgm.mode === "asset" && uuid.test(bgm.assetId || ""))) &&
