@@ -2490,3 +2490,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Keep the public DearDay footer above template artwork/background layers. */
 .dearday-brand-footer{position:relative;z-index:30;opacity:1}
+
+
+/* Keep the share wrapper at the end of configured invitation sections. */
+.dd-template-sections-configured .dd-public-share-section{order:900}
