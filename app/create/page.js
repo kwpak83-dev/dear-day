@@ -178,7 +178,7 @@ brideFatherDeceased: false,
 brideMotherName: "",
 brideMotherDeceased: false,
 
-date: "", time: "", venue: "", venueAddress: "", venueBuilding: "", venueDetail: "", groomBank: "", groomAccount: "", groomAccountHolder: "", brideBank: "", brideAccount: "", brideAccountHolder: "", message: "" };
+date: "", time: "", venue: "", venueAddress: "", venueBuilding: "", venueDetail: "", groomBank: "", groomAccount: "", groomAccountHolder: "", groomFatherBank: "", groomFatherAccount: "", groomFatherAccountHolder: "", groomMotherBank: "", groomMotherAccount: "", groomMotherAccountHolder: "", brideBank: "", brideAccount: "", brideAccountHolder: "", brideFatherBank: "", brideFatherAccount: "", brideFatherAccountHolder: "", brideMotherBank: "", brideMotherAccount: "", brideMotherAccountHolder: "", message: "" };
 const mapClientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
 
 function Field({ label, children, fieldKey }) { return <label className="form-field" data-field-key={fieldKey || undefined}><span>{label}</span>{children}</label>; }
@@ -842,7 +842,7 @@ export default function CreateInvitation() {
     value={invitation.brideBank}
     onChange={(bankName) => update("brideBank", bankName)}
   />
-</Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent2Name || "예금주 이름" : invitation.bride || "신부 이름"} value={invitation.brideAccountHolder} onChange={(e) => update("brideAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.brideAccount} onChange={(e) => update("brideAccount", e.target.value)} /></Field></div></div>}
+</Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent2Name || "예금주 이름" : invitation.bride || "신부 이름"} value={invitation.brideAccountHolder} onChange={(e) => update("brideAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.brideAccount} onChange={(e) => update("brideAccount", e.target.value)} /></Field></div>{invitation.eventKind==="wedding"&&[["신랑 아버지","groomFather",invitation.groomFatherName],["신랑 어머니","groomMother",invitation.groomMotherName],["신부 아버지","brideFather",invitation.brideFatherName],["신부 어머니","brideMother",invitation.brideMotherName]].map(([label,key,name])=><div className="account-editor" key={key}><strong>{label}</strong><div className="field-grid"><Field label="은행명"><BankSelector value={invitation[`${key}Bank`]||""} onChange={(bankName)=>update(`${key}Bank`,bankName)}/></Field><Field label="예금주"><input placeholder={name||"예금주 이름"} value={invitation[`${key}AccountHolder`]||""} onChange={(e)=>update(`${key}AccountHolder`,e.target.value)}/></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation[`${key}Account`]||""} onChange={(e)=>update(`${key}Account`,e.target.value)}/></Field></div>)}</div>}
         </div></details>
         </div>
         <div style={{display:editorStep === 5 ? undefined : "none"}} className="dd-editor-final">
