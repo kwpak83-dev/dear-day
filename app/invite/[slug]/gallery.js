@@ -6,13 +6,14 @@ const SWIPE_THRESHOLD = 50;
 
 export default function Gallery({ photos, idPrefix = "public-gallery" }) {
   const [active, setActive] = useState(null);
-  const [expanded, setExpanded] = useState(false);
+  const [current, setCurrent] = useState(0);
   const titleId = `${idPrefix}-title`;
   const dialog = useRef(null);
   const opener = useRef(null);
   const swipeStart = useRef(null);
   const historyEntry = useRef(false);
   const open = active !== null;
+  const moveCurrent = delta => setCurrent(index => (index + delta + photos.length) % photos.length);
   const close = () => {
     if (historyEntry.current) { window.history.back(); return; }
     dialog.current?.close(); setActive(null);
@@ -22,12 +23,12 @@ export default function Gallery({ photos, idPrefix = "public-gallery" }) {
     const next = index + delta;
     return bounded ? Math.max(0, Math.min(photos.length - 1, next)) : (next + photos.length) % photos.length;
   });
-  const startSwipe = event => {
+  const beginSwipe = (event, target) => {
     if (event.touches.length !== 1) { swipeStart.current = null; return; }
     const touch = event.touches[0];
-    swipeStart.current = { x: touch.clientX, y: touch.clientY };
+    swipeStart.current = { x: touch.clientX, y: touch.clientY, target };
   };
-  const endSwipe = event => {
+  const finishSwipe = event => {
     const start = swipeStart.current;
     swipeStart.current = null;
     if (!start || event.changedTouches.length !== 1) return;
@@ -35,7 +36,8 @@ export default function Gallery({ photos, idPrefix = "public-gallery" }) {
     const deltaX = touch.clientX - start.x;
     const deltaY = touch.clientY - start.y;
     if (Math.abs(deltaX) < SWIPE_THRESHOLD || Math.abs(deltaX) <= Math.abs(deltaY)) return;
-    step(deltaX < 0 ? 1 : -1, true);
+    const delta = deltaX < 0 ? 1 : -1;
+    if (start.target === "main") moveCurrent(delta); else step(delta, true);
   };
 
   useEffect(() => {
@@ -62,23 +64,26 @@ export default function Gallery({ photos, idPrefix = "public-gallery" }) {
   }, [open]);
 
   if (!photos.length) return null;
-
-  const visiblePhotos = expanded ? photos : photos.slice(0, 9);
-  const hasMore = photos.length > 9;
+  const showPhoto = (index, event) => { opener.current = event.currentTarget; setActive(index); };
 
   return <section className="invitation-gallery" aria-labelledby={titleId}>
     <p className="gallery-kicker">OUR MOMENTS</p><h2 id={titleId}>우리의 순간들</h2>
-    <div className="public-gallery-grid">{visiblePhotos.map((photo, index) => <button type="button" className="public-gallery-photo" key={photo.id} aria-label={`${index + 1}번 사진 전체보기`} onClick={event => { opener.current = event.currentTarget; setActive(index); }}>
-      <img src={photo.url} alt={`초대장의 소중한 순간 ${index + 1}`} loading="lazy" decoding="async" width="400" height="400" />
-    </button>)}</div>
-    {hasMore && <button type="button" className="public-gallery-more" aria-expanded={expanded} onClick={() => setExpanded(value => !value)}>{expanded ? "접기⌃" : "더 보기⌄"}</button>}
+    <div className="public-gallery-slider">
+      <button type="button" className="public-gallery-main" aria-label={`${current + 1}번 사진 전체보기`} onClick={event => showPhoto(current, event)}
+        onTouchStart={event => beginSwipe(event, "main")} onTouchEnd={finishSwipe} onTouchCancel={() => { swipeStart.current = null; }}>
+        <img key={photos[current].id} src={photos[current].url} alt={`초대장의 소중한 순간 ${current + 1}`} decoding="async" width="800" height="900" draggable={false} />
+      </button>
+      {photos.length > 1 && <><button type="button" className="public-gallery-arrow prev" aria-label="이전 사진" onClick={() => moveCurrent(-1)}>‹</button><button type="button" className="public-gallery-arrow next" aria-label="다음 사진" onClick={() => moveCurrent(1)}>›</button></>}
+      <span className="public-gallery-count" aria-live="polite">{current + 1} / {photos.length}</span>
+    </div>
+    {photos.length > 1 && <div className="public-gallery-thumbs" aria-label="갤러리 사진 선택">{photos.map((photo,index)=><button type="button" key={photo.id} className={`public-gallery-thumb${index===current?" is-active":""}`} aria-label={`${index+1}번 사진 보기`} aria-current={index===current?"true":undefined} onClick={()=>setCurrent(index)}><img src={photo.url} alt="" loading="lazy" decoding="async" width="100" height="100"/></button>)}</div>}
     <dialog ref={dialog} className="gallery-lightbox" aria-label="갤러리 사진 전체보기" onCancel={event => { event.preventDefault(); close(); }} onClose={() => setActive(null)} onKeyDown={event => {
       if (event.key === "ArrowLeft") { event.preventDefault(); step(-1); }
       if (event.key === "ArrowRight") { event.preventDefault(); step(1); }
     }}>
       {open && <div className="gallery-viewer">
         <div className="gallery-viewer-bar"><span aria-live="polite">{active + 1} / {photos.length}</span></div>
-        <div className="gallery-viewer-image" onTouchStart={startSwipe} onTouchEnd={endSwipe} onTouchCancel={() => { swipeStart.current = null; }}>
+        <div className="gallery-viewer-image" onTouchStart={event => beginSwipe(event, "lightbox")} onTouchEnd={finishSwipe} onTouchCancel={() => { swipeStart.current = null; }}>
           <img key={photos[active].id} src={photos[active].url} alt={`초대장의 소중한 순간 ${active + 1}`} decoding="async" draggable={false} />
         </div>
       </div>}
