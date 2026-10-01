@@ -2454,3 +2454,12 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .public-account-card .public-account-bank{display:inline-flex;align-items:center;justify-content:center;gap:7px;width:auto;margin-left:auto;margin-right:auto;}
 .public-account-card .public-account-bank>img{width:24px;height:24px;object-fit:contain;flex:0 0 24px;}
 .public-account-card .public-account-bank>span{flex:0 1 auto;min-width:0;}
+
+
+/* Hero entrance intro */
+.invitation-template{position:relative}
+.dd-hero-intro{position:absolute;inset:0 0 auto;z-index:80;height:100svh;min-height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:none;animation:dd-hero-intro-exit var(--dd-intro-total) linear both}
+.dd-hero-intro-text{display:inline-block;max-width:88%;white-space:nowrap;overflow:hidden;clip-path:inset(0 100% 0 0);animation:dd-hero-intro-write var(--dd-intro-write) ease-out forwards}
+@keyframes dd-hero-intro-write{to{clip-path:inset(0 0 0 0)}}
+@keyframes dd-hero-intro-exit{0%{opacity:1;visibility:visible}calc((var(--dd-intro-write) + var(--dd-intro-hold)) / var(--dd-intro-total) * 100%){opacity:1}99%{visibility:visible}100%{opacity:0;visibility:hidden}}
+@media (prefers-reduced-motion:reduce){.dd-hero-intro{display:none}}
