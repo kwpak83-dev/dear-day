@@ -66,7 +66,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
 
   return <section className="admin-draft-preview" aria-labelledby="admin-draft-preview-title">
     <div className="admin-draft-preview-toolbar">
-      <div><h3 id="admin-draft-preview-title">Draft Live Preview</h3><p>저장된 편집 Draft · 읽기 전용</p><label style={{display:"grid",gap:4,fontSize:12,fontWeight:700}}>미리보기 Hero<select value={heroPresetId} onChange={(e)=>setHeroPresetId(e.target.value)} style={{minHeight:36,padding:"6px 8px"}}><option value="">현재 템플릿 Hero (기존)</option>{heroPresets.map((preset)=><option key={preset.id} value={preset.id}>{preset.name}</option>)}</select></label></div>
+      <div><h3 id="admin-draft-preview-title">본문 테마 미리보기</h3><p>저장된 편집 Draft · 읽기 전용</p><label style={{display:"grid",gap:4,fontSize:12,fontWeight:700}}>미리보기 Hero<select value={heroPresetId} onChange={(e)=>setHeroPresetId(e.target.value)} style={{minHeight:36,padding:"6px 8px"}}><option value="">현재 템플릿 Hero (기존)</option>{heroPresets.map((preset)=><option key={preset.id} value={preset.id}>{preset.name}</option>)}</select></label></div>
       <div className="admin-draft-preview-widths" aria-label="미리보기 너비">
         {draft && <button type="button" onClick={openFullPreview}>전체 미리보기</button>}
         {[390, 540].map((value) => <button key={value} type="button" className={width === value ? "active" : ""} aria-pressed={width === value} onClick={() => setWidth(value)}>{value}px</button>)}
