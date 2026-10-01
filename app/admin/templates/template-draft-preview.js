@@ -7,6 +7,7 @@ import InvitationMap from "../../../components/invitation/invitation-map";
 import DearDayBrandFooter from "../../../components/invitation/dearday-brand-footer";
 import OptionalInvitationSections from "../../invite/[slug]/optional-invitation-sections";
 import { resolveTemplateAssetUrls } from "../../../lib/template-config";
+import { getBankLogo } from "../../../lib/bank-options";
 
 const sampleInvitation = {
   eventKind: "wedding", groom: "민준", bride: "서연",
@@ -33,7 +34,10 @@ function PreviewSections({ invitation, previewMode = "" }) {
       <p className="gallery-kicker">OUR MOMENTS</p><h2>우리의 순간들</h2>
       <div className="public-gallery-grid">{[2, 3, 4].map((number) => <span className="public-gallery-photo" key={number}><img src={`/moment-${number}.png`} alt="" /></span>)}</div>
     </section>
-    <section className="public-accounts"><h2>마음 전하실 곳</h2><article className="public-account-card"><p>신랑 측</p><strong>디어은행 · 경원</strong><div><span>123-456-7890</span><button type="button" disabled>계좌 복사</button></div></article></section>
+    <section className="public-accounts"><h2>마음 전하실 곳</h2>
+      {invitation.groomBank&&<article className="public-account-card"><p>신랑 측</p><strong className="public-account-holder">예금주 : {invitation.groomAccountHolder}</strong><div><span className="public-account-bank">{getBankLogo(invitation.groomBank)&&<img src={getBankLogo(invitation.groomBank)} alt="" />}<span>{invitation.groomBank} {invitation.groomAccount}</span></span><button type="button" disabled>계좌 복사</button></div></article>}
+      {invitation.brideBank&&<article className="public-account-card"><p>신부 측</p><strong className="public-account-holder">예금주 : {invitation.brideAccountHolder}</strong><div><span className="public-account-bank">{getBankLogo(invitation.brideBank)&&<img src={getBankLogo(invitation.brideBank)} alt="" />}<span>{invitation.brideBank} {invitation.brideAccount}</span></span><button type="button" disabled>계좌 복사</button></div></article>}
+    </section>
     <OptionalInvitationSections invitation={invitation} previewMode={previewMode} />
     <div className="public-share-copy dd-public-share-pills" aria-label="공유 버튼 디자인 미리보기">
       <button type="button" className="dd-share-kakao" disabled><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.4 2 10.7c0 2.8 1.9 5.3 4.8 6.7L6 21l4.2-2.5c.6.1 1.2.1 1.8.1 5.5 0 10-3.5 10-7.9S17.5 3 12 3z"/></svg>카톡공유</button>
@@ -49,14 +53,32 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
   const [full, setFull] = useState(false);
   const [heroPresets, setHeroPresets] = useState([]);
   const [heroPresetId, setHeroPresetId] = useState("");
+  const [sampleContent, setSampleContent] = useState(null);
   useEffect(() => { let active=true; (async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch("/api/admin/hero-presets",{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setHeroPresets(result.presets||[]);}catch{}})();return()=>{active=false;};},[]);
+  useEffect(() => { let active=true; (async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch("/api/admin/completed-template-sample-defaults",{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setSampleContent(result.sample_content||result.sampleContent||null);}catch{}})();return()=>{active=false;};},[]);
   const [heroAssets,setHeroAssets]=useState([]);
   const selectedHero = heroPresets.find((item)=>item.id===heroPresetId) || null;
   const activeHeroFrame = heroAssets.find((item)=>item.asset_type==="hero_frame"&&item.is_active) || null;
   const config = useMemo(() => { const base=draftConfig(draft); return base&&selectedHero?{...base,hero:{...base.hero,...selectedHero.config,frameAssetId:activeHeroFrame?.id||null}}:base; }, [draft,selectedHero,activeHeroFrame]);
   useEffect(()=>{let active=true;if(!heroPresetId){setHeroAssets([]);return()=>{active=false;};}(async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch(`/api/admin/hero-presets/assets?heroPresetId=${encodeURIComponent(heroPresetId)}`,{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setHeroAssets(result.assets||[]);}catch{}})();return()=>{active=false;};},[heroPresetId]);
   const resolvedAssets = useMemo(() => { const base=resolveTemplateAssetUrls(config, assets, templateId); const frame=heroAssets.find((item)=>item.asset_type==="hero_frame"&&item.is_active); return frame?.url?{...base,[frame.id]:frame.url}:base; }, [assets, config, templateId, heroAssets]);
-  const invitation = useMemo(() => ({ ...sampleInvitation, templateId }), [templateId]);
+  const invitation = useMemo(() => {
+    const sc=sampleContent||{};
+    return {
+      ...sampleInvitation, templateId,
+      groom:sc.groom_name||sampleInvitation.groom, bride:sc.bride_name||sampleInvitation.bride,
+      groomFatherName:sc.groom_father_name||sampleInvitation.groomFatherName, groomMotherName:sc.groom_mother_name||sampleInvitation.groomMotherName,
+      brideFatherName:sc.bride_father_name||sampleInvitation.brideFatherName, brideMotherName:sc.bride_mother_name||sampleInvitation.brideMotherName,
+      date:sc.event_date||sampleInvitation.date, time:sc.event_time||sampleInvitation.time,
+      venue:sc.venue||sampleInvitation.venue, venueAddress:sc.venue_address||sampleInvitation.venueAddress,
+      venueBuilding:sc.venue_building||"", venueDetail:sc.venue_detail||"",
+      message:sc.invitation_message||sampleInvitation.message,
+      coverPhotoUrl:sc.hero_image_url||sampleInvitation.coverPhotoUrl,
+      groomBank:sc.groom_bank||"", groomAccount:sc.groom_account||"", groomAccountHolder:sc.groom_account_holder||"",
+      brideBank:sc.bride_bank||"", brideAccount:sc.bride_account||"", brideAccountHolder:sc.bride_account_holder||"",
+      galleryPhotos:Array.isArray(sc.gallery_images)?sc.gallery_images:[],
+    };
+  }, [templateId,sampleContent]);
   const openFullPreview = () => setFull(true);
 
   const renderInvitation = (mapWidth, previewMode = "") => <InvitationRenderer invitation={invitation} eventKind="wedding" templateId={templateId} templateConfig={config} templateAssets={resolvedAssets}
@@ -66,7 +88,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
 
   return <section className="admin-draft-preview" aria-labelledby="admin-draft-preview-title">
     <div className="admin-draft-preview-toolbar">
-      <div><h3 id="admin-draft-preview-title">Draft Live Preview</h3><p>저장된 편집 Draft · 읽기 전용</p><label style={{display:"grid",gap:4,fontSize:12,fontWeight:700}}>미리보기 Hero<select value={heroPresetId} onChange={(e)=>setHeroPresetId(e.target.value)} style={{minHeight:36,padding:"6px 8px"}}><option value="">현재 템플릿 Hero (기존)</option>{heroPresets.map((preset)=><option key={preset.id} value={preset.id}>{preset.name}</option>)}</select></label></div>
+      <div><h3 id="admin-draft-preview-title">본문 테마 미리보기</h3><p>저장된 편집 Draft · 읽기 전용</p><label style={{display:"grid",gap:4,fontSize:12,fontWeight:700}}>미리보기 Hero<select value={heroPresetId} onChange={(e)=>setHeroPresetId(e.target.value)} style={{minHeight:36,padding:"6px 8px"}}><option value="">현재 템플릿 Hero (기존)</option>{heroPresets.map((preset)=><option key={preset.id} value={preset.id}>{preset.name}</option>)}</select></label></div>
       <div className="admin-draft-preview-widths" aria-label="미리보기 너비">
         {draft && <button type="button" onClick={openFullPreview}>전체 미리보기</button>}
         {[390, 540].map((value) => <button key={value} type="button" className={width === value ? "active" : ""} aria-pressed={width === value} onClick={() => setWidth(value)}>{value}px</button>)}

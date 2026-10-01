@@ -17,23 +17,8 @@ import { preparePhoto } from "../../lib/prepare-photo";
 import { normalizeNotice } from "../../lib/invitation-notice";
 import { getInvitationTitle } from "../../lib/invitation-title";
 import { EVENT_KIND_OPTIONS, getEventConfig, getMissingRequiredFields } from "../../lib/event-config";
+import { BANK_OPTIONS } from "../../lib/bank-options";
 
-const BANK_OPTIONS = [
-  { name: "국민은행", logo: "/banks/kb.png" },
-  { name: "신한은행", logo: "/banks/shinhan.png" },
-  { name: "하나은행", logo: "/banks/hana.png" },
-  { name: "우리은행", logo: "/banks/woori.png" },
-
-  { name: "농협은행", logo: "/banks/nh.png" },
-  { name: "기업은행", logo: "/banks/ibk.png" },
-  { name: "카카오뱅크", logo: "/banks/kakaobank.png" },
-  { name: "케이뱅크", logo: "/banks/kbank.png" },
-
-  { name: "SC제일은행", logo: "/banks/sc.png" },
-  { name: "부산은행", logo: "/banks/busan.png" },
-  { name: "새마을금고", logo: "/banks/mg.png" },
-  { name: "iM뱅크", logo: "/banks/imbank.png" },
-];
 const DEVELOPMENT_TEMPLATE_IDS = new Set(Object.values(TEMPLATE_IDS));
 const WEDDING_MESSAGE_EXAMPLES = [
   { label: "따뜻한 인사", text: "서로 다른 길을 걸어온 두 사람이\n이제 하나의 길을 함께 걸으려 합니다.\n소중한 분들을 모시고 기쁨을 나누고 싶습니다.\n귀한 걸음으로 축복해 주세요." },
@@ -193,7 +178,7 @@ brideFatherDeceased: false,
 brideMotherName: "",
 brideMotherDeceased: false,
 
-date: "", time: "", venue: "", venueAddress: "", venueBuilding: "", venueDetail: "", groomBank: "", groomAccount: "", groomAccountHolder: "", brideBank: "", brideAccount: "", brideAccountHolder: "", message: "" };
+date: "", time: "", venue: "", venueAddress: "", venueBuilding: "", venueDetail: "", groomBank: "", groomAccount: "", groomAccountHolder: "", groomFatherBank: "", groomFatherAccount: "", groomFatherAccountHolder: "", groomMotherBank: "", groomMotherAccount: "", groomMotherAccountHolder: "", brideBank: "", brideAccount: "", brideAccountHolder: "", brideFatherBank: "", brideFatherAccount: "", brideFatherAccountHolder: "", brideMotherBank: "", brideMotherAccount: "", brideMotherAccountHolder: "", message: "" };
 const mapClientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
 
 function Field({ label, children, fieldKey }) { return <label className="form-field" data-field-key={fieldKey || undefined}><span>{label}</span>{children}</label>; }
@@ -322,6 +307,7 @@ export default function CreateInvitation() {
   };
 
   useEffect(() => {
+    const initializeEditor = async () => {
     setProvider(window.localStorage.getItem("dear-day-provider") || "게스트");
     const query = new URLSearchParams(window.location.search);
     const slug = query.get("slug") || "";
@@ -336,6 +322,15 @@ export default function CreateInvitation() {
             setInvitation(current=>({...current,eventKind:selected.eventKind||"wedding",heroPresetId:selected.heroPresetId,templateId:selected.templateId}));
             setPreviewTemplateId(selected.templateId);
             startedFromTemplate=true;
+            try {
+              const response=await fetch(`/api/templates/collection/${encodeURIComponent(selected.templateKey)}`);
+              const result=await response.json().catch(()=>({}));
+              if(response.ok&&result.item?.body_template_id===selected.templateId){
+                setTemplateRender({config:result.templateConfig||null,assets:result.templateAssets||{}});
+              }
+            } catch {
+              setTemplateNotice("선택한 완성 템플릿 디자인을 불러오지 못했어요.");
+            }
           }
         } catch {}
       }
@@ -350,6 +345,8 @@ export default function CreateInvitation() {
         setSaveNotice("기기에 저장된 작성 내용을 불러오지 못했어요.");
       }
     }
+    };
+    initializeEditor();
   }, []);
   useEffect(() => () => window.clearTimeout(saveToastTimer.current), []);
   useEffect(() => {
@@ -845,7 +842,7 @@ export default function CreateInvitation() {
     value={invitation.brideBank}
     onChange={(bankName) => update("brideBank", bankName)}
   />
-</Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent2Name || "예금주 이름" : invitation.bride || "신부 이름"} value={invitation.brideAccountHolder} onChange={(e) => update("brideAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.brideAccount} onChange={(e) => update("brideAccount", e.target.value)} /></Field></div></div>}
+</Field><Field label="예금주"><input placeholder={eventConfig.accountMode === "parents" ? invitation.parent2Name || "예금주 이름" : invitation.bride || "신부 이름"} value={invitation.brideAccountHolder} onChange={(e) => update("brideAccountHolder", e.target.value)} /></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation.brideAccount} onChange={(e) => update("brideAccount", e.target.value)} /></Field></div>{invitation.eventKind==="wedding"&&[["신랑 아버지","groomFather",invitation.groomFatherName],["신랑 어머니","groomMother",invitation.groomMotherName],["신부 아버지","brideFather",invitation.brideFatherName],["신부 어머니","brideMother",invitation.brideMotherName]].map(([label,key,name])=><div className="account-editor" key={key}><strong>{label}</strong><div className="field-grid"><Field label="은행명"><BankSelector value={invitation[`${key}Bank`]||""} onChange={(bankName)=>update(`${key}Bank`,bankName)}/></Field><Field label="예금주"><input placeholder={name||"예금주 이름"} value={invitation[`${key}AccountHolder`]||""} onChange={(e)=>update(`${key}AccountHolder`,e.target.value)}/></Field></div><Field label="계좌번호"><input inputMode="numeric" placeholder="- 없이 입력해도 돼요" value={invitation[`${key}Account`]||""} onChange={(e)=>update(`${key}Account`,e.target.value)}/></Field></div>)}</div>}
         </div></details>
         </div>
         <div style={{display:editorStep === 5 ? undefined : "none"}} className="dd-editor-final">

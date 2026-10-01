@@ -4,8 +4,8 @@ import { useEffect, useRef } from "react";
 
 const SECTION_SELECTOR = [
   ".romantic-message", ".modern-message", ".classic-message",
-  ".romantic-information", ".modern-information", ".classic-information",
-  ".invitation-gallery", ".public-accounts", ".public-rsvp", ".guestbook-section",
+  ".romantic-information", ".modern-information", ".classic-information", ".classic-date", ".dd-wedding-contacts",
+  ".invitation-gallery", ".public-accounts", ".public-rsvp", ".guestbook-section", ".dd-public-share-section",
 ].join(",");
 
 function findScrollRoot(element) {
@@ -18,7 +18,7 @@ function findScrollRoot(element) {
   return null;
 }
 
-export default function TemplateConfigEffects({ mode }) {
+export default function TemplateConfigEffects({ mode, trigger = 30 }) {
   const markerRef = useRef(null);
 
   useEffect(() => {
@@ -36,15 +36,33 @@ export default function TemplateConfigEffects({ mode }) {
         entry.target.classList.add("is-revealed");
         observer.unobserve(entry.target);
       });
-    }, { root: findScrollRoot(template), rootMargin: "0px 0px -8%", threshold: 0.08 });
+    }, { root: findScrollRoot(template), rootMargin: `0px 0px -${trigger}%`, threshold: 0.08 });
     targets.forEach((target) => observer.observe(target));
 
+    const shareTarget = targets.find((target) => target.classList.contains("dd-public-share-section"));
+    const revealShareAtBottom = () => {
+      if (!shareTarget || shareTarget.classList.contains("is-revealed")) return;
+      const root = findScrollRoot(template);
+      const atBottom = root
+        ? root.scrollTop + root.clientHeight >= root.scrollHeight - 4
+        : window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+      if (atBottom) {
+        shareTarget.classList.add("is-revealed");
+        observer.unobserve(shareTarget);
+      }
+    };
+    const scrollRoot = findScrollRoot(template);
+    const scrollTarget = scrollRoot || window;
+    scrollTarget.addEventListener("scroll", revealShareAtBottom, { passive: true });
+    revealShareAtBottom();
+
     return () => {
+      scrollTarget.removeEventListener("scroll", revealShareAtBottom);
       observer.disconnect();
       template.classList.remove("dd-reveal-ready", `dd-reveal-${mode}`);
       targets.forEach((target) => target.classList.remove("dd-reveal-target", "is-revealed"));
     };
-  }, [mode]);
+  }, [mode, trigger]);
 
   return <span ref={markerRef} className="dd-template-effects-marker" hidden aria-hidden="true" />;
 }

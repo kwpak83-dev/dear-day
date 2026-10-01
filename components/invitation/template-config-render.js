@@ -27,6 +27,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   const colors = config?.colors;
   const buttonStyle = config?.buttonStyle;
   const quickMenu = config?.quickMenu;
+  if (config?.effects?.scrollRevealDuration != null) rootStyle["--dd-reveal-duration"] = `${config.effects.scrollRevealDuration}s`;
   const backgroundUrl = background?.assetId ? assets[background.assetId] : null;
   const heroBackgroundUrl = hero?.backgroundAssetId ? assets[hero.backgroundAssetId] : null;
   const showCoverPhoto = hero?.mode !== "illustration";
@@ -205,6 +206,16 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   const safeAreaClass = safeArea ? " dd-template-safe-area" : "";
   const configured = Boolean(background || hero || typography || colors);
   return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), buttonStyleConfigured: Boolean(buttonStyle), backgroundConfigured: Boolean(background), centerPanelConfigured: background?.centerPanel?.enabled === true, decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle, showCoverPhoto, illustrationMode: hero?.mode === "illustration", heroBackgroundConfigured: Boolean(heroBackgroundUrl) };
+}
+
+export function TemplateConfigHeroIntro({ config }) {
+  const intro = config?.hero?.intro;
+  if (!intro?.enabled || !intro.text?.trim()) return null;
+  const total = intro.writeDuration + intro.holdDuration + intro.fadeDuration;
+  return <div className="dd-hero-intro" style={{ backgroundColor:intro.backgroundColor, "--dd-intro-write":`${intro.writeDuration}s`, "--dd-intro-hold":`${intro.holdDuration}s`, "--dd-intro-fade":`${intro.fadeDuration}s`, "--dd-intro-total":`${total}s` }} aria-hidden="true">
+    <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />
+    <span className="dd-hero-intro-text-wrap" style={{ "--dd-intro-bg":intro.backgroundColor }}><span className="dd-hero-intro-text" style={{ fontFamily:getHeroFont(intro.fontId).family, fontSize:`${intro.fontSize}px`, color:intro.textColor }}>{intro.text}</span><span className="dd-hero-intro-mask" aria-hidden="true" /></span>
+  </div>;
 }
 
 export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {} }) {

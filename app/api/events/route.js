@@ -63,7 +63,7 @@ async function getTemplateRenderData(supabase, templateId, versionId) {
   if (!templateId || !versionId) return { templateConfig: null, templateAssets: {} };
   const { data: version, error } = await supabase.from("template_versions")
     .select("id,template_id,status,config").eq("id", versionId).eq("template_id", templateId).maybeSingle();
-  if (error || !version || version.status === "draft") return { templateConfig: null, templateAssets: {} };
+  if (error || !version) return { templateConfig: null, templateAssets: {} };
   const references = getTemplateAssetReferences(version.config);
   if (!references.length) return { templateConfig: version.config, templateAssets: {} };
   const { data: assets, error: assetError } = await supabase.from("template_assets")
@@ -87,12 +87,15 @@ export async function GET(request) {
     if (!url || !serviceRoleKey) return json({ error: "템플릿 서비스를 준비하지 못했어요." }, 503);
     const supabase = createClient(url, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
     const { data: template, error: templateError } = await supabase.from("templates")
-      .select("id,current_sale_version_id,is_active").eq("id", previewTemplateId).maybeSingle();
+      .select("id,is_active").eq("id", previewTemplateId).maybeSingle();
     if (templateError) return json({ error: "템플릿을 불러오지 못했어요." }, 500);
-    if (!template?.is_active || !template.current_sale_version_id) return json({ error: "현재 판매 중인 템플릿을 찾지 못했어요." }, 404);
-    const renderData = await getTemplateRenderData(supabase, template.id, template.current_sale_version_id);
+    if (!template?.is_active) return json({ error: "현재 사용할 수 있는 템플릿을 찾지 못했어요." }, 404);
+    const { data: latestVersion, error: versionError } = await supabase.from("template_versions")
+      .select("id").eq("template_id", template.id).order("version", { ascending: false }).limit(1).maybeSingle();
+    if (versionError || !latestVersion) return json({ error: "템플릿 디자인을 불러오지 못했어요." }, 409);
+    const renderData = await getTemplateRenderData(supabase, template.id, latestVersion.id);
     if (!renderData.templateConfig) return json({ error: "템플릿 디자인을 불러오지 못했어요." }, 409);
-    return json({ templateId: template.id, templateVersionId: template.current_sale_version_id, ...renderData });
+    return json({ templateId: template.id, templateVersionId: latestVersion.id, ...renderData });
   }
   const auth = await getAuthenticatedClient(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
@@ -103,7 +106,14 @@ export async function GET(request) {
   if (error) return json({ error: "초대장을 불러오지 못했어요." }, 500);
   if (!slug) return json({ events: data || [] });
   const event = data?.[0] || null;
-  const renderData = event ? await getTemplateRenderData(auth.supabase, event.template_id, event.template_version_id) : { templateConfig: null, templateAssets: {} };
+  let renderData = { templateConfig: null, templateAssets: {} };
+  if (event?.template_id) {
+    const { data: latestVersion, error: versionError } = await auth.supabase.from("template_versions")
+      .select("id").eq("template_id", event.template_id).order("version", { ascending: false }).limit(1).maybeSingle();
+    if (!versionError && latestVersion) {
+      renderData = await getTemplateRenderData(auth.supabase, event.template_id, latestVersion.id);
+    }
+  }
   return json({ event, ...renderData });
 }
 

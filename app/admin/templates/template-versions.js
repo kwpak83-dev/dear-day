@@ -48,7 +48,7 @@ const sectionsFromConfig = (saved) => Array.isArray(saved) && saved.length === s
   new Set(saved.map((item) => item?.key)).size === sectionLabels.length &&
   saved.every((item) => sectionLabels.some(([key]) => key === item?.key) && typeof item.enabled === "boolean")
     ? saved.map(({ key, enabled }) => ({ key, enabled })) : defaultSections();
-const effectsDefaults = { scrollReveal: "none", screenEffect: null };
+const effectsDefaults = { scrollReveal: "none", scrollRevealDuration: 0.55, scrollRevealTrigger: 30, screenEffect: null };
 const screenEffectDefaults = { ornament: "blossom", motion: "fall", count: 8, minSize: 18, maxSize: 36, minDuration: 10, maxDuration: 18, sway: 30, rotate: true, opacity: 0.8 };
 const screenOrnamentCategories = [
   ["nature", "자연", [["blossom","벚꽃잎"],["green","초록 나뭇잎"],["autumn","가을 낙엽"],["snow","솜눈"],["rose","장미 꽃잎"],["lavender","라벤더 꽃잎"],["daisy","데이지 꽃"],["ginkgo","은행잎"],["feather","하얀 깃털"],["butterfly","나비"],["blossom-flower","벚꽃 송이"]]],
@@ -293,22 +293,10 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   };
 
   return <section style={{ border: "1px solid #eadfd8", borderRadius: 14, padding: 16, background: "#fff", margin: "16px 0" }}>
-    <h2 style={{ marginTop: 0 }}>템플릿 버전</h2>
+    <h2 style={{ marginTop: 0 }}>본문 테마 설정</h2>
     <div className="admin-template-editor-layout">
       <div className="admin-template-editor-controls">
-    {state.loading ? <p>버전 정보를 불러오는 중이에요.</p> : <>
-      <p>현재 판매 버전: {state.current ? `v${state.current.version}` : "없음"}</p>
-      <p>현재 편집 Draft: {state.draft ? `v${state.draft.version}` : "없음"}</p>
-      <p>템플릿 판매 상태: {state.template?.status === "on_sale" ? "판매중" : state.template?.status === "stopped" ? "판매중지" : "판매 준비중"}</p>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
-        {!state.draft && <button type="button" className="save-button" disabled={creating || workflowBusy} onClick={createDraft}>{creating ? "만드는 중..." : "새 Draft 버전 만들기"}</button>}
-        {state.draft && <button type="button" className="save-button" disabled={workflowBusy || assetChangesPending} onClick={() => runWorkflow("promote", { draftId: state.draft.id })}>{workflowBusy ? "처리 중..." : "판매 버전으로 확정"}</button>}
-        {state.current && state.template?.status !== "on_sale" && <button type="button" className="save-button" disabled={workflowBusy} onClick={() => runWorkflow("set-sale-status", { status: "on_sale" })}>판매 시작</button>}
-        {state.template?.status === "on_sale" && <button type="button" className="save-button" disabled={workflowBusy} onClick={() => runWorkflow("set-sale-status", { status: "stopped" })}>판매 중지</button>}
-      </div>
-      {state.draft && <>
-        <p>이 Draft가 Config 편집 대상입니다. 현재 판매 버전과 기존 초대장은 변경되지 않습니다.</p>
-        <form onSubmit={saveBackgroundHero} style={{ display: "grid", gap: 14, marginBottom: 28 }}>
+    {state.loading ? <p>본문 테마 설정을 불러오는 중이에요.</p> : <>\n      {!state.draft && <button type="button" className="save-button" disabled={creating} onClick={createDraft}>{creating ? "설정 준비 중..." : "본문 테마 설정 만들기"}</button>}\n      {state.draft && <>\n        <form onSubmit={saveBackgroundHero} style={{ display: "grid", gap: 14, marginBottom: 28 }}>
           <fieldset style={{ ...configSection, marginTop: 0 }}>
             <legend style={{ padding: "0 8px", fontWeight: 800, color: "#4f3d35", fontSize: 16 }}>Background 설정</legend>
             <p style={guideNote}>초대장 전체 페이지의 기본 배경과 배경 위 오버레이를 설정합니다.</p>
@@ -565,6 +553,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
             <label style={field}>Scroll Effect<select style={input} value={effects.scrollReveal} onChange={(event) => setEffects((current) => ({ ...current, scrollReveal: event.target.value }))}>
               <option value="none">없음</option><option value="fade">Fade</option><option value="fade-up">Fade Up</option>
             </select></label>
+            {effects.scrollReveal==="fade-up"&&<label style={field}>Fade Up 등장 속도 <span style={{fontSize:12,color:"#8b6d5d"}}>{effects.scrollRevealDuration.toFixed(2)}초</span><input type="range" min="0.4" max="2.5" step="0.05" value={effects.scrollRevealDuration} onChange={(event)=>setEffects((current)=>({...current,scrollRevealDuration:Number(event.target.value)}))}/><small style={guideNote}>값이 클수록 천천히 올라옵니다.</small></label>}\n            {effects.scrollReveal==="fade-up"&&<label style={field}>Fade Up 시작 위치 <span style={{fontSize:12,color:"#8b6d5d"}}>{effects.scrollRevealTrigger}%</span><input type="range" min="10" max="50" step="1" value={effects.scrollRevealTrigger} onChange={(event)=>setEffects((current)=>({...current,scrollRevealTrigger:Number(event.target.value)}))}/><small style={guideNote}>값이 클수록 화면 안으로 더 내려온 뒤 나타납니다.</small></label>}
             <fieldset style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 12 }}>
               <legend>Screen Effect</legend>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>

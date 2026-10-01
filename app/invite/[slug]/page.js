@@ -45,19 +45,19 @@ export default async function InvitationPage({ params, searchParams }) {
     const { data: track } = await supabase.from("bgm_tracks").select("storage_bucket,storage_path,is_active").eq("id", settings.userBgmTrackId).eq("is_active", true).maybeSingle();
     if (track?.storage_bucket && track?.storage_path) userBgmUrl = supabase.storage.from(track.storage_bucket).getPublicUrl(track.storage_path).data.publicUrl;
   }
-  if (event.template_id && event.template_version_id) {
-    const { data: pinnedVersion, error: versionError } = await supabase.from("template_versions")
-      .select("id,template_id,status,config").eq("id", event.template_version_id)
-      .eq("template_id", event.template_id).maybeSingle();
-    if (versionError) console.error("Pinned template version query failed:", versionError.code);
-    if (pinnedVersion && pinnedVersion.status !== "draft") {
-      templateConfig = pinnedVersion.config;
+  if (event.template_id) {
+    const { data: latestVersion, error: versionError } = await supabase.from("template_versions")
+      .select("id,template_id,status,config").eq("template_id", event.template_id)
+      .order("version", { ascending: false }).limit(1).maybeSingle();
+    if (versionError) console.error("Latest template version query failed:", versionError.code);
+    if (latestVersion) {
+      templateConfig = latestVersion.config;
       const references = getTemplateAssetReferences(templateConfig);
       if (references.length) {
         const { data: assets, error: assetError } = await supabase.from("template_assets")
           .select("id,template_id,asset_type,storage_bucket,storage_path")
           .eq("template_id", event.template_id).in("id", references.map((item) => item.id));
-        if (assetError) console.error("Pinned template asset query failed:", assetError.code);
+        if (assetError) console.error("Latest template asset query failed:", assetError.code);
         templateAssets = resolveTemplateAssetUrls(templateConfig, assets, event.template_id, (asset) =>
           supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl);
       }
