@@ -73,12 +73,12 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
       venue:sc.venue||sampleInvitation.venue, venueAddress:sc.venue_address||sampleInvitation.venueAddress,
       venueBuilding:sc.venue_building||"", venueDetail:sc.venue_detail||"",
       message:sc.invitation_message||sampleInvitation.message,
-      coverPhotoUrl:sc.hero_image_url||sampleInvitation.coverPhotoUrl,
+      coverPhotoUrl:activeHeroFrame?.url||sc.hero_image_url||sampleInvitation.coverPhotoUrl,
       groomBank:sc.groom_bank||"", groomAccount:sc.groom_account||"", groomAccountHolder:sc.groom_account_holder||"",
       brideBank:sc.bride_bank||"", brideAccount:sc.bride_account||"", brideAccountHolder:sc.bride_account_holder||"",
       galleryPhotos:Array.isArray(sc.gallery_images)?sc.gallery_images:[],
     };
-  }, [templateId,sampleContent]);
+  }, [templateId,sampleContent,activeHeroFrame]);
   const openFullPreview = () => setFull(true);
 
   const renderInvitation = (mapWidth, previewMode = "") => <InvitationRenderer invitation={invitation} eventKind="wedding" templateId={templateId} templateConfig={config} templateAssets={resolvedAssets}
