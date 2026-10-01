@@ -2486,3 +2486,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .public-gallery-thumb{flex:0 0 58px;width:58px;height:58px;padding:0;border:2px solid transparent;border-radius:9px;overflow:hidden;background:transparent;opacity:.7;cursor:pointer}
 .public-gallery-thumb img{display:block;width:100%;height:100%;object-fit:cover}
 .public-gallery-thumb.is-active{opacity:1;border-color:currentColor}
+
+
+/* Keep the public DearDay footer above template artwork/background layers. */
+.dearday-brand-footer{position:relative;z-index:30;opacity:1}
