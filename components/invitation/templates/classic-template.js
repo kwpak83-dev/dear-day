@@ -1,5 +1,5 @@
 import TemplateConfigEffects from "../template-config-effects";
-import { getTemplateConfigRenderProps, TemplateConfigDecorations, TemplateConfigHeroLayers } from "../template-config-render";
+import { getTemplateConfigRenderProps, TemplateConfigDecorations, TemplateConfigHeroIntro, TemplateConfigHeroLayers } from "../template-config-render";
 
 function ClassicHeading({ eyebrow, children }) {
   return <header className="classic-section-heading"><p>{eyebrow}</p><h3>{children}</h3></header>;
@@ -80,6 +80,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
 
   return <article className={`invitation-template invitation-template-classic classic-001${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.heroConfigured ? " dd-template-hero-configured" : ""}${renderConfig.typographyConfigured ? " dd-template-typography" : ""}${renderConfig.colorsConfigured ? " dd-template-colors" : ""}${renderConfig.buttonStyleConfigured ? " dd-template-button-style" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}${renderConfig.centerPanelConfigured ? " dd-template-center-panel" : ""}${renderConfig.decorationsConfigured ? " dd-template-decorated" : ""}${renderConfig.sectionClasses}${renderConfig.safeAreaClass}`} style={renderConfig.rootStyle}>
     <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="background" />
+    <TemplateConfigHeroIntro config={templateConfig} />
     <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} trigger={templateConfig?.effects?.scrollRevealTrigger} />
     {bgmControl}
     {screenEffect}
