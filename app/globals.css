@@ -713,7 +713,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Apply Caption / Small typography consistently to gallery kickers and CSS-generated account kickers. */
 .dd-template-typography .invitation-gallery .gallery-kicker,.dd-template-typography.romantic-001 .public-accounts h2::before,.dd-template-typography.modern-001 .public-accounts h2::before,.dd-template-typography.classic-001 .public-accounts h2::before{font-family:var(--dd-caption-font);font-size:var(--dd-caption-size);font-weight:var(--dd-caption-weight);line-height:var(--dd-caption-line-height);letter-spacing:var(--dd-caption-letter-spacing);text-align:var(--dd-caption-align)}
 .dd-template-colors .classic-section-heading i,.dd-template-colors .romantic-section-heading span,.dd-template-colors .modern-section-heading p,.dd-template-colors a{color:var(--dd-color-accent)}
-.dd-template-colors button:not(.gallery-lightbox button){background-color:var(--dd-color-button-bg);color:var(--dd-color-button-text)}
+.dd-template-colors button:not(.gallery-lightbox button):not(.public-gallery-slide):not(.public-gallery-thumb){background-color:var(--dd-color-button-bg);color:var(--dd-color-button-text)}
 .dd-template-colors .classic-section,.dd-template-colors .modern-section,.dd-template-colors .public-accounts,.dd-template-colors .public-rsvp,.dd-template-colors .guestbook-section{border-color:var(--dd-color-divider)}
 .dd-template-colors .classic-information-body :where(p,strong,time,span),.dd-template-colors .romantic-information :where(p,strong,time,span),.dd-template-colors .modern-information-body :where(p,strong,time,span),.dd-template-colors .public-account-card :where(p,strong,span),.dd-template-colors .public-rsvp :where(p,label,legend,input,select,textarea),.dd-template-colors .guestbook-section :where(p,label,input,textarea){color:var(--dd-color-text)}
 .dd-template-typography .classic-information-body :where(p,strong,time,span),.dd-template-typography .romantic-information :where(p,strong,time,span),.dd-template-typography .modern-information-body :where(p,strong,time,span),.dd-template-typography .public-account-card :where(p,strong,span),.dd-template-typography .public-rsvp :where(p,label,legend,input,select,textarea),.dd-template-typography .guestbook-section :where(p,label,input,textarea){font-family:var(--dd-body-font);font-size:var(--dd-body-size);font-weight:var(--dd-body-weight);line-height:var(--dd-body-line-height);letter-spacing:var(--dd-body-letter-spacing);text-align:var(--dd-body-align)}
@@ -2494,3 +2494,35 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Keep the share wrapper at the end of configured invitation sections. */
 .dd-template-sections-configured .dd-public-share-section{order:900}
+
+.dd-transport-guide-list{display:grid;gap:18px}
+.dd-transport-guide-item h4{display:flex;align-items:center;gap:6px;margin:0 0 6px;font:inherit;font-weight:700;color:inherit}
+.dd-transport-guide-icon{display:inline-flex;width:17px;height:17px;flex:0 0 17px}
+.dd-transport-guide-icon svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.dd-transport-guide-editor{display:grid;gap:10px;margin-top:14px}
+.dd-transport-guide-editor-item{padding:12px;border:1px solid #eadfd9;border-radius:10px;background:#fff}
+.dd-transport-guide-item-toggle{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+.dd-transport-guide-editor-item textarea{width:100%;box-sizing:border-box;margin-top:10px;border:1px solid #e5ded9;border-radius:10px;background:#fff;padding:11px 13px;color:#34302e;font:14px/1.6 Arial,"Apple SD Gothic Neo",sans-serif;resize:vertical}
+
+
+/* Gallery carousel: theme-aware, swipe-first presentation. */
+.public-gallery-main{position:relative;display:block;width:100%;padding:0;border:0;background:transparent;border-radius:16px;overflow:hidden;cursor:default;aspect-ratio:4/5;touch-action:pan-y}
+.public-gallery-track{display:flex;width:100%;height:100%;transition:transform .42s cubic-bezier(.22,.61,.36,1);will-change:transform}
+.public-gallery-slide{display:block;flex:0 0 100%;width:100%;height:100%;padding:0;border:0;background:transparent;overflow:hidden;cursor:zoom-in}
+.public-gallery-slide img{display:block;width:100%;height:100%;object-fit:cover}
+.public-gallery-thumb{border-color:transparent;background:transparent}
+.public-gallery-thumb.is-active{border-color:var(--dd-color-accent,currentColor);box-shadow:0 0 0 1px color-mix(in srgb,var(--dd-color-accent,currentColor) 20%,transparent)}
+
+
+/* Gallery image controls stay neutral and are excluded from themed CTA colors above. */
+.public-gallery-thumb{border:1px solid rgba(80,70,65,.16);border-radius:9px;opacity:.72;box-shadow:none}
+.public-gallery-thumb.is-active{border-color:rgba(80,70,65,.48);opacity:1;box-shadow:none}
+
+
+/* Gallery image controls must never inherit invitation CTA fill colors. */
+.dd-template-colors .invitation-gallery button.public-gallery-slide,
+.dd-template-colors .invitation-gallery button.public-gallery-thumb{
+  background:none!important;
+  background-color:transparent!important;
+  color:inherit!important;
+}

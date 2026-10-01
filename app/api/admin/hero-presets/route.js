@@ -7,7 +7,7 @@ const json = (body, status = 200) => NextResponse.json(body, { status });
 const statuses = new Set(["draft", "on_sale", "stopped"]);
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const heroModes = new Set(["photo", "frame", "illustration"]);
-const heroRatios = new Set(["4:5", "1:1", "3:4", "16:9"]);
+const heroRatios = new Set(["4:5", "1:1", "3:4", "2:3", "9:16", "16:9"]);
 const heroDisplayKeys = ["eyebrow","eventLabel","title","relations","detail","note","schedule","venue"];
 const defaultDisplay = Object.fromEntries(heroDisplayKeys.map((key) => [key, true]));
 const defaultConfig = { mode:"photo", aspectRatio:"4:5", positionX:50, positionY:50, textYPercent:50, scheduleFontSize:11, nameFontSize:21, nameFontFamily:"inherit", nameFontWeight:400, nameLineHeight:1.5, nameLetterSpacing:0, nameTextAlign:"center", nameColor:"#ffffff", separatorFontSize:16, separatorColor:"#d8b985", zoom:1, overlayColor:"#000000", overlayOpacity:0, headerVisible:true, mastheadVisible:true, mastheadText:"", display:defaultDisplay };
@@ -114,8 +114,8 @@ export async function PATCH(request){
   if(lookup) return json({error:"Hero 프리셋을 확인하지 못했어요."},500); if(!existing) return json({error:"Hero 프리셋을 찾지 못했어요."},404);
   if(existing.preset_key!==value.preset_key) return json({error:"기존 preset key는 변경할 수 없어요."},400);
   const {preset_key:_key,...updates}=value; updates.updated_at=new Date().toISOString();
-  const {error,count}=await auth.serverClient.from("hero_presets").update(updates,{count:"exact"}).eq("id",body.id);
-  if(error||count!==1) return json({error:"Hero 프리셋을 수정하지 못했어요."},500);
-  return json({id:body.id});
+  const {data:saved,error}=await auth.serverClient.from("hero_presets").update(updates).eq("id",body.id).select("id,name,preset_key,description,status,is_visible,sort_order,config,created_at,updated_at").single();
+  if(error||!saved) return json({error:"Hero 프리셋을 수정하지 못했어요."},500);
+  return json({id:body.id,preset:saved});
 }
 export { defaultConfig };

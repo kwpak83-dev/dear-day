@@ -69,14 +69,14 @@ export default function Gallery({ photos, idPrefix = "public-gallery" }) {
   return <section className="invitation-gallery" aria-labelledby={titleId}>
     <p className="gallery-kicker">OUR MOMENTS</p><h2 id={titleId}>우리의 순간들</h2>
     <div className="public-gallery-slider">
-      <button type="button" className="public-gallery-main" aria-label={`${current + 1}번 사진 전체보기`} onClick={event => showPhoto(current, event)}
-        onTouchStart={event => beginSwipe(event, "main")} onTouchEnd={finishSwipe} onTouchCancel={() => { swipeStart.current = null; }}>
-        <img key={photos[current].id} src={photos[current].url} alt={`초대장의 소중한 순간 ${current + 1}`} decoding="async" width="800" height="900" draggable={false} />
-      </button>
-      {photos.length > 1 && <><button type="button" className="public-gallery-arrow prev" aria-label="이전 사진" onClick={() => moveCurrent(-1)}>‹</button><button type="button" className="public-gallery-arrow next" aria-label="다음 사진" onClick={() => moveCurrent(1)}>›</button></>}
+      <div className="public-gallery-main" onTouchStart={event => beginSwipe(event, "main")} onTouchEnd={finishSwipe} onTouchCancel={() => { swipeStart.current = null; }}>
+        <div className="public-gallery-track" style={{ transform: `translate3d(-${current * 100}%,0,0)` }}>
+          {photos.map((photo,index)=><div role="button" tabIndex={0} className="public-gallery-slide" key={photo.id} aria-label={`${index + 1}번 사진 전체보기`} onClick={event => showPhoto(index,event)} onKeyDown={event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();showPhoto(index,event);}}}><img src={photo.url} alt={`초대장의 소중한 순간 ${index + 1}`} decoding="async" width="800" height="900" draggable={false}/></div>)}
+        </div>
+      </div>
       <span className="public-gallery-count" aria-live="polite">{current + 1} / {photos.length}</span>
     </div>
-    {photos.length > 1 && <div className="public-gallery-thumbs" aria-label="갤러리 사진 선택">{photos.map((photo,index)=><button type="button" key={photo.id} className={`public-gallery-thumb${index===current?" is-active":""}`} aria-label={`${index+1}번 사진 보기`} aria-current={index===current?"true":undefined} onClick={()=>setCurrent(index)}><img src={photo.url} alt="" loading="lazy" decoding="async" width="100" height="100"/></button>)}</div>}
+    {photos.length > 1 && <div className="public-gallery-thumbs" aria-label="갤러리 사진 선택">{photos.map((photo,index)=><div role="button" tabIndex={0} key={photo.id} className={`public-gallery-thumb${index===current?" is-active":""}`} aria-label={`${index+1}번 사진 보기`} aria-current={index===current?"true":undefined} onClick={()=>setCurrent(index)} onKeyDown={event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();setCurrent(index);}}}><img src={photo.url} alt="" loading="lazy" decoding="async" width="100" height="100"/></div>)}</div>}
     <dialog ref={dialog} className="gallery-lightbox" aria-label="갤러리 사진 전체보기" onCancel={event => { event.preventDefault(); close(); }} onClose={() => setActive(null)} onKeyDown={event => {
       if (event.key === "ArrowLeft") { event.preventDefault(); step(-1); }
       if (event.key === "ArrowRight") { event.preventDefault(); step(1); }
