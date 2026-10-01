@@ -20,7 +20,7 @@ export async function POST(request){
  const bytes=new Uint8Array(await file.arrayBuffer());if(!validImage(bytes,file.type))return fail("올바른 이미지 파일을 선택해 주세요.",400);
  const path=`completed-templates/${completedTemplateId}/samples/${kind}-${randomUUID()}.${extensions[file.type]}`;
  const {error:uploadError}=await a.client.storage.from(bucket).upload(path,bytes,{contentType:file.type,upsert:false});if(uploadError)return fail("샘플 이미지를 업로드하지 못했어요.",500);
- const url=a.client.storage.from(bucket).getPublicUrl(path).data.publicUrl,current=item.sample_content&&typeof item.sample_content==="object"?item.sample_content:{};
+ const url=a.client.storage.from(bucket).getPublicUrl(path).data.publicUrl,posted=form?.get("sampleContent");let supplied=null;try{supplied=posted?JSON.parse(String(posted)):null;}catch{}const current=supplied&&typeof supplied==="object"&&!Array.isArray(supplied)?supplied:(item.sample_content&&typeof item.sample_content==="object"?item.sample_content:{});
  const next=kind==="hero"?{...current,hero_image_url:url}:{...current,gallery_images:[...(Array.isArray(current.gallery_images)?current.gallery_images:[]),url].slice(0,20)};
  const {error:updateError}=await a.client.from("completed_templates").update({sample_content:next,updated_at:new Date().toISOString()}).eq("id",completedTemplateId);
  if(updateError){await a.client.storage.from(bucket).remove([path]);return fail("샘플 이미지 정보를 저장하지 못했어요.",500);}
