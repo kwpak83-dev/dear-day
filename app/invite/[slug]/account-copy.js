@@ -23,12 +23,12 @@ function AccountCard({ side, bank, holder, account }) {
   const [copied, setCopied] = useState(false);
   const bankLogo = getBankLogo(bank);
   const copy = async () => {
-    await writeToClipboard(account);
+    await writeToClipboard([bank, account].filter(Boolean).join(" "));
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);
   };
 
-  return <article className="public-account-card"><p>{side}</p><strong className="public-account-bank">{bankLogo && <img src={bankLogo} alt="" />}<span>{bank || "계좌 안내"} · {holder}</span></strong><div><span>{account}</span><button type="button" onClick={copy}>{copied ? "복사됨" : "계좌 복사"}</button></div></article>;
+  return <article className="public-account-card"><p>{side}</p><strong className="public-account-holder">예금주 : {holder}</strong><div><span className="public-account-bank">{bankLogo && <img src={bankLogo} alt="" />}<span>{[bank, account].filter(Boolean).join(" ")}</span></span><button type="button" onClick={copy}>{copied ? "복사됨" : "계좌 복사"}</button></div></article>;
 }
 
 export default function AccountCopy({ invitation, eventKind }) {
