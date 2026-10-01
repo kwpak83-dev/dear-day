@@ -2494,3 +2494,12 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Keep the share wrapper at the end of configured invitation sections. */
 .dd-template-sections-configured .dd-public-share-section{order:900}
+
+.dd-transport-guide-list{display:grid;gap:18px}
+.dd-transport-guide-item h4{display:flex;align-items:center;gap:6px;margin:0 0 6px;font:inherit;font-weight:700;color:inherit}
+.dd-transport-guide-icon{display:inline-flex;width:17px;height:17px;flex:0 0 17px}
+.dd-transport-guide-icon svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.dd-transport-guide-editor{display:grid;gap:10px;margin-top:14px}
+.dd-transport-guide-editor-item{padding:12px;border:1px solid #eadfd9;border-radius:10px;background:#fff}
+.dd-transport-guide-item-toggle{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+.dd-transport-guide-editor-item textarea{width:100%;box-sizing:border-box;margin-top:10px;border:1px solid #e5ded9;border-radius:10px;background:#fff;padding:11px 13px;color:#34302e;font:14px/1.6 Arial,"Apple SD Gothic Neo",sans-serif;resize:vertical}
