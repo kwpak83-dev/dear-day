@@ -208,6 +208,16 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), buttonStyleConfigured: Boolean(buttonStyle), backgroundConfigured: Boolean(background), centerPanelConfigured: background?.centerPanel?.enabled === true, decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle, showCoverPhoto, illustrationMode: hero?.mode === "illustration", heroBackgroundConfigured: Boolean(heroBackgroundUrl) };
 }
 
+export function TemplateConfigHeroIntro({ config }) {
+  const intro = config?.hero?.intro;
+  if (!intro?.enabled || !intro.text?.trim()) return null;
+  const total = intro.writeDuration + intro.holdDuration + intro.fadeDuration;
+  return <div className="dd-hero-intro" style={{ backgroundColor:intro.backgroundColor, "--dd-intro-write":`${intro.writeDuration}s`, "--dd-intro-hold":`${intro.holdDuration}s`, "--dd-intro-fade":`${intro.fadeDuration}s`, "--dd-intro-total":`${total}s` }} aria-hidden="true">
+    <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />
+    <span className="dd-hero-intro-text" style={{ fontFamily:getHeroFont(intro.fontId).family, fontSize:`${intro.fontSize}px`, color:intro.textColor }}>{intro.text}</span>
+  </div>;
+}
+
 export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {} }) {
   const frameUrl = config?.hero?.frameAssetId ? assets[config.hero.frameAssetId] : null;
   const overlay = rgba(config?.hero?.overlayColor, config?.hero?.overlayOpacity);
