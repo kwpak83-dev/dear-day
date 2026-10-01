@@ -6,7 +6,7 @@ function SectionHeading({ eyebrow, children }) {
 }
 
 export default function RomanticTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, weddingContacts, bgmControl, screenEffect, children }) {
-  const { kindLabel, title, detail, note, heroSchedule, schedule, venue, address, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
+  const { kindLabel, title, detail, note, heroSchedule, schedule, venue, address, addressDetail, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map(value => value.trim()).filter(Boolean) : [];
   const hasCouple = wedding && couple.length > 0;
@@ -83,6 +83,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
       {schedule && <time>{schedule}</time>}
       {venue && <strong>{venue}</strong>}
       {address && <p>{address}</p>}
+      {addressDetail && <p className="dd-address-detail">{addressDetail}</p>}
       {placeActions}
     </section>}
 
