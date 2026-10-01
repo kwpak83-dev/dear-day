@@ -18,7 +18,7 @@ function findScrollRoot(element) {
   return null;
 }
 
-export default function TemplateConfigEffects({ mode }) {
+export default function TemplateConfigEffects({ mode, trigger = 30 }) {
   const markerRef = useRef(null);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function TemplateConfigEffects({ mode }) {
         entry.target.classList.add("is-revealed");
         observer.unobserve(entry.target);
       });
-    }, { root: findScrollRoot(template), rootMargin: "0px 0px -8%", threshold: 0.08 });
+    }, { root: findScrollRoot(template), rootMargin: `0px 0px -${trigger}%`, threshold: 0.08 });
     targets.forEach((target) => observer.observe(target));
 
     return () => {
@@ -44,7 +44,7 @@ export default function TemplateConfigEffects({ mode }) {
       template.classList.remove("dd-reveal-ready", `dd-reveal-${mode}`);
       targets.forEach((target) => target.classList.remove("dd-reveal-target", "is-revealed"));
     };
-  }, [mode]);
+  }, [mode, trigger]);
 
   return <span ref={markerRef} className="dd-template-effects-marker" hidden aria-hidden="true" />;
 }
