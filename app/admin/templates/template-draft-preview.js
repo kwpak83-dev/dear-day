@@ -35,8 +35,8 @@ function PreviewSections({ invitation, previewMode = "" }) {
       <div className="public-gallery-grid">{[2, 3, 4].map((number) => <span className="public-gallery-photo" key={number}><img src={`/moment-${number}.png`} alt="" /></span>)}</div>
     </section>
     <section className="public-accounts"><h2>마음 전하실 곳</h2>
-      {invitation.groomBank&&<article className="public-account-card"><p>신랑 측</p><strong className="public-account-bank">{getBankLogo(invitation.groomBank)&&<img src={getBankLogo(invitation.groomBank)} alt="" />}<span>{invitation.groomBank} · {invitation.groomAccountHolder}</span></strong><div><span>{invitation.groomAccount}</span><button type="button" disabled>계좌 복사</button></div></article>}
-      {invitation.brideBank&&<article className="public-account-card"><p>신부 측</p><strong className="public-account-bank">{getBankLogo(invitation.brideBank)&&<img src={getBankLogo(invitation.brideBank)} alt="" />}<span>{invitation.brideBank} · {invitation.brideAccountHolder}</span></strong><div><span>{invitation.brideAccount}</span><button type="button" disabled>계좌 복사</button></div></article>}
+      {invitation.groomBank&&<article className="public-account-card"><p>신랑 측</p><strong className="public-account-holder">예금주 : {invitation.groomAccountHolder}</strong><div><span className="public-account-bank">{getBankLogo(invitation.groomBank)&&<img src={getBankLogo(invitation.groomBank)} alt="" />}<span>{invitation.groomBank} {invitation.groomAccount}</span></span><button type="button" disabled>계좌 복사</button></div></article>}
+      {invitation.brideBank&&<article className="public-account-card"><p>신부 측</p><strong className="public-account-holder">예금주 : {invitation.brideAccountHolder}</strong><div><span className="public-account-bank">{getBankLogo(invitation.brideBank)&&<img src={getBankLogo(invitation.brideBank)} alt="" />}<span>{invitation.brideBank} {invitation.brideAccount}</span></span><button type="button" disabled>계좌 복사</button></div></article>}
     </section>
     <OptionalInvitationSections invitation={invitation} previewMode={previewMode} />
     <div className="public-share-copy dd-public-share-pills" aria-label="공유 버튼 디자인 미리보기">
