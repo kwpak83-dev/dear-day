@@ -293,7 +293,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   };
 
   return <section style={{ border: "1px solid #eadfd8", borderRadius: 14, padding: 16, background: "#fff", margin: "16px 0" }}>
-    <h2 style={{ marginTop: 0 }}>템플릿 버전</h2>
+    <h2 style={{ marginTop: 0 }}>본문 테마 설정</h2>
     <div className="admin-template-editor-layout">
       <div className="admin-template-editor-controls">
     {state.loading ? <p>버전 정보를 불러오는 중이에요.</p> : <>
