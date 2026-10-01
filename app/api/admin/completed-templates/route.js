@@ -26,7 +26,7 @@ const cleanSampleContent=(value)=>{
   return {
     hero_image_url:text("hero_image_url",2000),groom_name:text("groom_name",80),bride_name:text("bride_name",80),
     groom_father_name:text("groom_father_name",80),groom_mother_name:text("groom_mother_name",80),bride_father_name:text("bride_father_name",80),bride_mother_name:text("bride_mother_name",80),
-    event_date:text("event_date",40),event_time:text("event_time",40),venue:text("venue",200),invitation_message:text("invitation_message",2000),
+    event_date:text("event_date",40),event_time:text("event_time",40),venue:text("venue",200),venue_address:text("venue_address",500),venue_building:text("venue_building",200),venue_detail:text("venue_detail",200),groom_bank:text("groom_bank",80),groom_account:text("groom_account",100),groom_account_holder:text("groom_account_holder",80),bride_bank:text("bride_bank",80),bride_account:text("bride_account",100),bride_account_holder:text("bride_account_holder",80),invitation_message:text("invitation_message",2000),
     gallery_images:Array.isArray(s.gallery_images)?s.gallery_images.filter(x=>typeof x==="string"&&x).slice(0,20).map(x=>x.slice(0,2000)):[]
   };
 };
