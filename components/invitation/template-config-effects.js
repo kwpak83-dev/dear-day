@@ -37,16 +37,7 @@ export default function TemplateConfigEffects({ mode, trigger = 30 }) {
         observer.unobserve(entry.target);
       });
     }, { root: findScrollRoot(template), rootMargin: `0px 0px -${trigger}%`, threshold: 0.08 });
-    targets.forEach((target) => {
-      observer.observe(target);
-      const root = findScrollRoot(template);
-      const rect = target.getBoundingClientRect();
-      const rootBottom = root ? root.getBoundingClientRect().bottom : window.innerHeight;
-      if (rect.top < rootBottom && rect.bottom > 0) {
-        target.classList.add("is-revealed");
-        observer.unobserve(target);
-      }
-    });
+    targets.forEach((target) => observer.observe(target));
 
     return () => {
       observer.disconnect();
