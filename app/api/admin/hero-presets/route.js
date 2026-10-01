@@ -114,8 +114,8 @@ export async function PATCH(request){
   if(lookup) return json({error:"Hero 프리셋을 확인하지 못했어요."},500); if(!existing) return json({error:"Hero 프리셋을 찾지 못했어요."},404);
   if(existing.preset_key!==value.preset_key) return json({error:"기존 preset key는 변경할 수 없어요."},400);
   const {preset_key:_key,...updates}=value; updates.updated_at=new Date().toISOString();
-  const {error,count}=await auth.serverClient.from("hero_presets").update(updates,{count:"exact"}).eq("id",body.id);
-  if(error||count!==1) return json({error:"Hero 프리셋을 수정하지 못했어요."},500);
-  return json({id:body.id});
+  const {data:saved,error}=await auth.serverClient.from("hero_presets").update(updates).eq("id",body.id).select("id,name,preset_key,description,status,is_visible,sort_order,config,created_at,updated_at").single();
+  if(error||!saved) return json({error:"Hero 프리셋을 수정하지 못했어요."},500);
+  return json({id:body.id,preset:saved});
 }
 export { defaultConfig };
