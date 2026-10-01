@@ -49,14 +49,32 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
   const [full, setFull] = useState(false);
   const [heroPresets, setHeroPresets] = useState([]);
   const [heroPresetId, setHeroPresetId] = useState("");
+  const [sampleContent, setSampleContent] = useState(null);
   useEffect(() => { let active=true; (async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch("/api/admin/hero-presets",{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setHeroPresets(result.presets||[]);}catch{}})();return()=>{active=false;};},[]);
+  useEffect(() => { let active=true; (async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch("/api/admin/completed-templates/sample-defaults",{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setSampleContent(result.sample_content||result.sampleContent||null);}catch{}})();return()=>{active=false;};},[]);
   const [heroAssets,setHeroAssets]=useState([]);
   const selectedHero = heroPresets.find((item)=>item.id===heroPresetId) || null;
   const activeHeroFrame = heroAssets.find((item)=>item.asset_type==="hero_frame"&&item.is_active) || null;
   const config = useMemo(() => { const base=draftConfig(draft); return base&&selectedHero?{...base,hero:{...base.hero,...selectedHero.config,frameAssetId:activeHeroFrame?.id||null}}:base; }, [draft,selectedHero,activeHeroFrame]);
   useEffect(()=>{let active=true;if(!heroPresetId){setHeroAssets([]);return()=>{active=false;};}(async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch(`/api/admin/hero-presets/assets?heroPresetId=${encodeURIComponent(heroPresetId)}`,{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setHeroAssets(result.assets||[]);}catch{}})();return()=>{active=false;};},[heroPresetId]);
   const resolvedAssets = useMemo(() => { const base=resolveTemplateAssetUrls(config, assets, templateId); const frame=heroAssets.find((item)=>item.asset_type==="hero_frame"&&item.is_active); return frame?.url?{...base,[frame.id]:frame.url}:base; }, [assets, config, templateId, heroAssets]);
-  const invitation = useMemo(() => ({ ...sampleInvitation, templateId }), [templateId]);
+  const invitation = useMemo(() => {
+    const sc=sampleContent||{};
+    return {
+      ...sampleInvitation, templateId,
+      groom:sc.groom_name||sampleInvitation.groom, bride:sc.bride_name||sampleInvitation.bride,
+      groomFatherName:sc.groom_father_name||sampleInvitation.groomFatherName, groomMotherName:sc.groom_mother_name||sampleInvitation.groomMotherName,
+      brideFatherName:sc.bride_father_name||sampleInvitation.brideFatherName, brideMotherName:sc.bride_mother_name||sampleInvitation.brideMotherName,
+      date:sc.event_date||sampleInvitation.date, time:sc.event_time||sampleInvitation.time,
+      venue:sc.venue||sampleInvitation.venue, venueAddress:sc.venue_address||sampleInvitation.venueAddress,
+      venueBuilding:sc.venue_building||"", venueDetail:sc.venue_detail||"",
+      message:sc.invitation_message||sampleInvitation.message,
+      coverPhotoUrl:sc.hero_image_url||sampleInvitation.coverPhotoUrl,
+      groomBank:sc.groom_bank||"", groomAccount:sc.groom_account||"", groomAccountHolder:sc.groom_account_holder||"",
+      brideBank:sc.bride_bank||"", brideAccount:sc.bride_account||"", brideAccountHolder:sc.bride_account_holder||"",
+      galleryPhotos:Array.isArray(sc.gallery_images)?sc.gallery_images:[],
+    };
+  }, [templateId,sampleContent]);
   const openFullPreview = () => setFull(true);
 
   const renderInvitation = (mapWidth, previewMode = "") => <InvitationRenderer invitation={invitation} eventKind="wedding" templateId={templateId} templateConfig={config} templateAssets={resolvedAssets}
