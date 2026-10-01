@@ -550,9 +550,9 @@ export default function CreateInvitation() {
   const selectedHero=heroOptions.find((item)=>item.id===invitation.heroPresetId)||null;
   const selectedHeroFrame=selectedHero?.assets?.hero_frame||null;
   const composedTemplateRender=selectedHero?{config:templateRender.config?{...templateRender.config,hero:{...templateRender.config.hero,...selectedHero.config,textLayers:[...(selectedHero.config?.textLayers||[]),...(invitation.heroExtraTextLayers||[])].map((layer)=>({...layer,...(invitation.heroLayerOverrides?.[layer.id]||{}),text:typeof invitation.heroTextOverrides?.[layer.id]==="string"?invitation.heroTextOverrides[layer.id]:layer.text})),frameAssetId:selectedHeroFrame?.id||null}}:templateRender.config,assets:selectedHeroFrame?.url?{...templateRender.assets,[selectedHeroFrame.id]:selectedHeroFrame.url}:templateRender.assets}:templateRender;
-  // The sample image is editor-only; never write it into invitation settings or published events.
-  const previewInvitation = selectedHero && !invitation.coverPhotoUrl && selectedHero.config?.mode !== "illustration"
-    ? { ...invitation, coverPhotoUrl: "/templates/modern-001/preview.png" }
+  // Use the active Hero photo as the editor preview fallback; never persist it into invitation settings.
+  const previewInvitation = selectedHero && !invitation.coverPhotoUrl && selectedHero.config?.mode !== "illustration" && selectedHeroFrame?.url
+    ? { ...invitation, coverPhotoUrl: selectedHeroFrame.url }
     : invitation;
   const eventConfig = getEventConfig(invitation.eventKind);
   const selectedBgmTrack = bgmTracks.find((track) => track.id === invitation.userBgmTrackId) || null;
