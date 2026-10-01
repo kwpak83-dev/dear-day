@@ -20,7 +20,17 @@ async function getAdmin(request){
   if(isAdmin!==true)return {error:"관리자만 접근할 수 있습니다.",status:403};
   return {client:serverClient};
 }
-const cleanSampleContent=(value)=>{\n  const s=value&&typeof value==="object"&&!Array.isArray(value)?value:{};\n  const text=(key,max=500)=>String(s[key]||"").slice(0,max);\n  return {\n    hero_image_url:text("hero_image_url",2000),groom_name:text("groom_name",80),bride_name:text("bride_name",80),\n    groom_father_name:text("groom_father_name",80),groom_mother_name:text("groom_mother_name",80),bride_father_name:text("bride_father_name",80),bride_mother_name:text("bride_mother_name",80),\n    event_date:text("event_date",40),event_time:text("event_time",40),venue:text("venue",200),invitation_message:text("invitation_message",2000),\n    gallery_images:Array.isArray(s.gallery_images)?s.gallery_images.filter(x=>typeof x==="string"&&x).slice(0,20).map(x=>x.slice(0,2000)):[]\n  };\n};\nconst fields=(b)=>{
+const cleanSampleContent=(value)=>{
+  const s=value&&typeof value==="object"&&!Array.isArray(value)?value:{};
+  const text=(key,max=500)=>String(s[key]||"").slice(0,max);
+  return {
+    hero_image_url:text("hero_image_url",2000),groom_name:text("groom_name",80),bride_name:text("bride_name",80),
+    groom_father_name:text("groom_father_name",80),groom_mother_name:text("groom_mother_name",80),bride_father_name:text("bride_father_name",80),bride_mother_name:text("bride_mother_name",80),
+    event_date:text("event_date",40),event_time:text("event_time",40),venue:text("venue",200),invitation_message:text("invitation_message",2000),
+    gallery_images:Array.isArray(s.gallery_images)?s.gallery_images.filter(x=>typeof x==="string"&&x).slice(0,20).map(x=>x.slice(0,2000)):[]
+  };
+};
+const fields=(b)=>{
   if(!b||typeof b.name!=="string"||!b.name.trim()||typeof b.template_key!=="string"||!/^[a-z0-9][a-z0-9_-]{2,79}$/.test(b.template_key)||!uuid.test(b.hero_preset_id||"")||!uuid.test(b.body_template_id||""))return null;
   const price=Number(b.price),sort=Number(b.sort_order);
   if(!Number.isInteger(price)||price<0||!Number.isInteger(sort))return null;
