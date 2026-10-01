@@ -2512,3 +2512,12 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .public-gallery-slide img{display:block;width:100%;height:100%;object-fit:cover}
 .public-gallery-thumb{border-color:transparent;background:transparent}
 .public-gallery-thumb.is-active{border-color:var(--dd-color-accent,currentColor);box-shadow:0 0 0 1px color-mix(in srgb,var(--dd-color-accent,currentColor) 20%,transparent)}
+
+
+/* Keep gallery controls neutral even when template button colors are configured. */
+.dd-template-colors .public-gallery-main,
+.dd-template-colors .public-gallery-track,
+.dd-template-colors .public-gallery-slide,
+.dd-template-colors .public-gallery-thumb{background:transparent!important;color:inherit}
+.public-gallery-thumb{border:1px solid rgba(80,70,65,.16)!important;border-radius:9px!important;opacity:.72;box-shadow:none!important}
+.public-gallery-thumb.is-active{border-color:rgba(80,70,65,.48)!important;opacity:1;box-shadow:none!important}
