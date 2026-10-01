@@ -27,6 +27,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   const colors = config?.colors;
   const buttonStyle = config?.buttonStyle;
   const quickMenu = config?.quickMenu;
+  if (config?.effects?.scrollRevealDuration != null) rootStyle["--dd-reveal-duration"] = `${config.effects.scrollRevealDuration}s`;
   const backgroundUrl = background?.assetId ? assets[background.assetId] : null;
   const heroBackgroundUrl = hero?.backgroundAssetId ? assets[hero.backgroundAssetId] : null;
   const showCoverPhoto = hero?.mode !== "illustration";
