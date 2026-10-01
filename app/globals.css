@@ -814,7 +814,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-bgm .dd-template-bgm-icon{display:block;width:22px;height:22px}.dd-template-bgm .dd-template-bgm-icon svg{display:block;width:100%;height:100%;overflow:visible}.dd-template-bgm .dd-template-bgm-note{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.dd-template-bgm .dd-template-bgm-wave{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}.dd-template-bgm .dd-template-bgm-off{fill:none;stroke:#d9868e;stroke-width:1.7;stroke-linecap:round}
 .dd-template-bgm small{position:absolute;top:42px;right:12px;max-width:calc(100% - 24px);padding:5px 8px;border-radius:6px;background:rgba(255,255,255,.94);color:#8b3f35;font-size:11px;pointer-events:auto}
 .dd-template-background.classic-001 .classic-footer{background:inherit}
-.dd-template-screen-effect{position:sticky;z-index:20;order:-30;top:0;width:100%;height:0;pointer-events:none;overflow:visible}
+.dd-template-screen-effect{position:sticky;z-index:20;top:0;width:100%;height:0;pointer-events:none;overflow:visible}
 .dd-template-screen-effect img{position:absolute;top:-80px;left:var(--dd-screen-x);width:var(--dd-screen-size);height:auto;opacity:var(--dd-screen-opacity);pointer-events:none;will-change:transform;animation:dd-screen-fall var(--dd-screen-duration) linear var(--dd-screen-delay) infinite}
 @keyframes dd-screen-fall{from{transform:translate3d(0,-10vh,0) rotate(0deg)}to{transform:translate3d(var(--dd-screen-sway),110vh,0) rotate(var(--dd-screen-rotation))}}
 @media(prefers-reduced-motion:reduce){.dd-template-screen-effect{display:none}}
