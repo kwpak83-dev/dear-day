@@ -33,7 +33,10 @@ function PreviewSections({ invitation, previewMode = "" }) {
       <p className="gallery-kicker">OUR MOMENTS</p><h2>우리의 순간들</h2>
       <div className="public-gallery-grid">{[2, 3, 4].map((number) => <span className="public-gallery-photo" key={number}><img src={`/moment-${number}.png`} alt="" /></span>)}</div>
     </section>
-    <section className="public-accounts"><h2>마음 전하실 곳</h2><article className="public-account-card"><p>신랑 측</p><strong>디어은행 · 경원</strong><div><span>123-456-7890</span><button type="button" disabled>계좌 복사</button></div></article></section>
+    <section className="public-accounts"><h2>마음 전하실 곳</h2>
+      {invitation.groomBank&&<article className="public-account-card"><p>신랑 측</p><strong>{invitation.groomBank} · {invitation.groomAccountHolder}</strong><div><span>{invitation.groomAccount}</span><button type="button" disabled>계좌 복사</button></div></article>}
+      {invitation.brideBank&&<article className="public-account-card"><p>신부 측</p><strong>{invitation.brideBank} · {invitation.brideAccountHolder}</strong><div><span>{invitation.brideAccount}</span><button type="button" disabled>계좌 복사</button></div></article>}
+    </section>
     <OptionalInvitationSections invitation={invitation} previewMode={previewMode} />
     <div className="public-share-copy dd-public-share-pills" aria-label="공유 버튼 디자인 미리보기">
       <button type="button" className="dd-share-kakao" disabled><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.4 2 10.7c0 2.8 1.9 5.3 4.8 6.7L6 21l4.2-2.5c.6.1 1.2.1 1.8.1 5.5 0 10-3.5 10-7.9S17.5 3 12 3z"/></svg>카톡공유</button>
