@@ -14,7 +14,7 @@ export async function GET(_request,{params}){
   s.from("template_assets").select("id,template_id,asset_type,storage_bucket,storage_path,is_active").eq("template_id",item.body_template_id).eq("is_active",true),
   s.from("completed_template_sample_defaults").select("sample_content").eq("id","default").maybeSingle()
  ]);
- const version=(versions||[]).find(x=>x.status==="draft")||(versions||[]).find(x=>x.status==="active")||versions?.[0],base=configOf(version?.config);
+ const version=(versions||[])[0],base=configOf(version?.config);
  if(!hero||!base)return Response.json({error:"템플릿 미리보기를 준비하지 못했어요."},{status:409});
  const frame=(heroAssets||[]).find(x=>x.asset_type==="hero_frame"),config={...base,hero:{...base.hero,...hero.config,frameAssetId:frame?.id||null}};
  const assets=resolveTemplateAssetUrls(config,bodyAssets||[],item.body_template_id,(asset)=>asset?.storage_bucket&&asset?.storage_path?s.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl:null);
