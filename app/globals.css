@@ -2435,3 +2435,18 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .gallery-tile{border-color:#dfeafb}
 .create-page .form-section h2 small,.create-page .gallery-editor h2 small{color:#637895}
 .create-page .photo-editor>p,.create-page .gallery-editor>p{color:#637895}
+
+
+/* Keep long venue names visually aligned when they wrap in template previews and invitations. */
+.classic-information-body>strong,
+.modern-information-body>strong,
+.romantic-information>strong{
+  width:min(100%,280px);
+  margin-left:auto;
+  margin-right:auto;
+  box-sizing:border-box;
+  text-align:center;
+  overflow-wrap:break-word;
+  word-break:keep-all;
+}
+.dd-address-detail{white-space:pre-wrap;}
