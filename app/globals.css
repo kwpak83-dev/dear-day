@@ -2463,3 +2463,12 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 @keyframes dd-hero-intro-write{from{transform:scaleX(1)}to{transform:scaleX(0)}}
 @keyframes dd-hero-intro-exit{0%{opacity:1;visibility:visible}99%{visibility:visible}100%{opacity:0;visibility:hidden}}
 @media (prefers-reduced-motion:reduce){.dd-hero-intro{display:none}}
+
+
+/* Couple and parents account groups */
+.public-account-side{margin:10px 0;border:1px solid rgba(130,105,90,.16);border-radius:10px;overflow:hidden;background:rgba(255,255,255,.28)}
+.public-account-side>summary{list-style:none;cursor:pointer;padding:13px 15px;display:flex;align-items:center;justify-content:space-between;font-weight:600}
+.public-account-side>summary::-webkit-details-marker{display:none}
+.public-account-side>summary span{transition:transform .2s ease}
+.public-account-side[open]>summary span{transform:rotate(180deg)}
+.public-account-side .public-account-card{margin:0;border-radius:0;border-width:1px 0 0}
