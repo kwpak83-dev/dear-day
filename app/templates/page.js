@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 const categories=[["","전체"],["wedding","결혼식"],["first-birthday","돌잔치"],["birthday","생일"],["gathering","모임·동창회"],["party","파티"],["custom","직접 만들기"]];
 export default function TemplateCollectionPage(){
  const [items,setItems]=useState([]),[category,setCategory]=useState(""),[loading,setLoading]=useState(true);
+ useEffect(()=>{const requested=new URLSearchParams(window.location.search).get("category")||"";if(categories.some(([value])=>value===requested))setCategory(requested);},[]);
  useEffect(()=>{setLoading(true);fetch("/api/templates/collection"+(category?`?category=${encodeURIComponent(category)}`:"")).then(r=>r.json()).then(j=>setItems(j.items||[])).finally(()=>setLoading(false));},[category]);
  return <main style={{maxWidth:1100,margin:"0 auto",padding:"28px 20px 60px",fontFamily:"sans-serif"}}>
   <a href="/" style={{textDecoration:"none",color:"#173f91",fontWeight:800}}>DearDay</a>
