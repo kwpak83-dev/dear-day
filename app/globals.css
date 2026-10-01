@@ -713,7 +713,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Apply Caption / Small typography consistently to gallery kickers and CSS-generated account kickers. */
 .dd-template-typography .invitation-gallery .gallery-kicker,.dd-template-typography.romantic-001 .public-accounts h2::before,.dd-template-typography.modern-001 .public-accounts h2::before,.dd-template-typography.classic-001 .public-accounts h2::before{font-family:var(--dd-caption-font);font-size:var(--dd-caption-size);font-weight:var(--dd-caption-weight);line-height:var(--dd-caption-line-height);letter-spacing:var(--dd-caption-letter-spacing);text-align:var(--dd-caption-align)}
 .dd-template-colors .classic-section-heading i,.dd-template-colors .romantic-section-heading span,.dd-template-colors .modern-section-heading p,.dd-template-colors a{color:var(--dd-color-accent)}
-.dd-template-colors button:not(.gallery-lightbox button){background-color:var(--dd-color-button-bg);color:var(--dd-color-button-text)}
+.dd-template-colors button:not(.gallery-lightbox button):not(.public-gallery-slide):not(.public-gallery-thumb){background-color:var(--dd-color-button-bg);color:var(--dd-color-button-text)}
 .dd-template-colors .classic-section,.dd-template-colors .modern-section,.dd-template-colors .public-accounts,.dd-template-colors .public-rsvp,.dd-template-colors .guestbook-section{border-color:var(--dd-color-divider)}
 .dd-template-colors .classic-information-body :where(p,strong,time,span),.dd-template-colors .romantic-information :where(p,strong,time,span),.dd-template-colors .modern-information-body :where(p,strong,time,span),.dd-template-colors .public-account-card :where(p,strong,span),.dd-template-colors .public-rsvp :where(p,label,legend,input,select,textarea),.dd-template-colors .guestbook-section :where(p,label,input,textarea){color:var(--dd-color-text)}
 .dd-template-typography .classic-information-body :where(p,strong,time,span),.dd-template-typography .romantic-information :where(p,strong,time,span),.dd-template-typography .modern-information-body :where(p,strong,time,span),.dd-template-typography .public-account-card :where(p,strong,span),.dd-template-typography .public-rsvp :where(p,label,legend,input,select,textarea),.dd-template-typography .guestbook-section :where(p,label,input,textarea){font-family:var(--dd-body-font);font-size:var(--dd-body-size);font-weight:var(--dd-body-weight);line-height:var(--dd-body-line-height);letter-spacing:var(--dd-body-letter-spacing);text-align:var(--dd-body-align)}
@@ -2514,21 +2514,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .public-gallery-thumb.is-active{border-color:var(--dd-color-accent,currentColor);box-shadow:0 0 0 1px color-mix(in srgb,var(--dd-color-accent,currentColor) 20%,transparent)}
 
 
-/* Keep gallery controls neutral even when template button colors are configured. */
-.dd-template-colors .public-gallery-main,
-.dd-template-colors .public-gallery-track,
-.dd-template-colors .public-gallery-slide,
-.dd-template-colors .public-gallery-thumb{background:transparent!important;color:inherit}
-.public-gallery-thumb{border:1px solid rgba(80,70,65,.16)!important;border-radius:9px!important;opacity:.72;box-shadow:none!important}
-.public-gallery-thumb.is-active{border-color:rgba(80,70,65,.48)!important;opacity:1;box-shadow:none!important}
-
-
-/* Gallery buttons are image controls, not themed CTA buttons. */
-.dd-template-colors .invitation-gallery button.public-gallery-slide,
-.dd-template-colors .invitation-gallery button.public-gallery-thumb{
-  background:transparent!important;
-  background-color:transparent!important;
-  color:inherit!important;
-}
-.dd-template-colors .invitation-gallery .public-gallery-main,
-.dd-template-colors .invitation-gallery .public-gallery-track{background:transparent!important;background-color:transparent!important}
+/* Gallery image controls stay neutral and are excluded from themed CTA colors above. */
+.public-gallery-thumb{border:1px solid rgba(80,70,65,.16);border-radius:9px;opacity:.72;box-shadow:none}
+.public-gallery-thumb.is-active{border-color:rgba(80,70,65,.48);opacity:1;box-shadow:none}
