@@ -4,6 +4,27 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import QRCode from "qrcode";
 
+const KAKAO_SDK_SRC = "https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js";
+
+function loadKakaoSdk() {
+  if (typeof window === "undefined") return Promise.reject(new Error("Kakao SDK is only available in the browser"));
+  if (window.Kakao) return Promise.resolve(window.Kakao);
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${KAKAO_SDK_SRC}"]`);
+    const script = existing || document.createElement("script");
+    const onLoad = () => window.Kakao ? resolve(window.Kakao) : reject(new Error("Kakao SDK unavailable"));
+    const onError = () => reject(new Error("Kakao SDK failed to load"));
+    script.addEventListener("load", onLoad, { once: true });
+    script.addEventListener("error", onError, { once: true });
+    if (!existing) {
+      script.src = KAKAO_SDK_SRC;
+      script.async = true;
+      script.crossOrigin = "anonymous";
+      document.head.appendChild(script);
+    }
+  });
+}
+
 export async function writeToClipboard(value) {
   if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(value);
   const textarea = document.createElement("textarea");
@@ -17,7 +38,7 @@ export async function writeToClipboard(value) {
   if (!copied) throw new Error("Clipboard unavailable");
 }
 
-export default function ShareActions({ path, title = "DearDay 초대장", text, className = "", showPath = false, previewOnly = false }) {
+export default function ShareActions({ path, title = "DearDay 초대장", text, imageUrl = "", className = "", showPath = false, previewOnly = false }) {
   const [notice, setNotice] = useState("");
   const [copied, setCopied] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
@@ -78,6 +99,37 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
       if (error?.name !== "AbortError") showNotice("공유하지 못했습니다. 다시 시도해 주세요.");
     }
   };
+  const shareKakao = async () => {
+    if (previewOnly) return showNotice("미리보기입니다. 발행 후 공유할 수 있어요.");
+    const jsKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
+    if (!jsKey) return showNotice("카카오 공유 설정을 확인해 주세요.");
+    try {
+      const Kakao = await loadKakaoSdk();
+      if (!Kakao.isInitialized()) Kakao.init(jsKey);
+      const url = publicUrl();
+      const content = {
+        title,
+        description: text || "초대장을 확인해 주세요.",
+        link: { mobileWebUrl: url, webUrl: url },
+      };
+      if (imageUrl) {
+        content.imageUrl = new URL(imageUrl, window.location.origin).toString();
+        content.imageWidth = 800;
+        content.imageHeight = 600;
+      }
+      Kakao.Share.sendDefault({
+        objectType: "feed",
+        content,
+        buttons: [{
+          title: "초대장 보기",
+          link: { mobileWebUrl: url, webUrl: url },
+        }],
+      });
+    } catch (error) {
+      console.error("Kakao share failed:", error);
+      showNotice("카카오톡 공유를 열지 못했습니다. 다시 시도해 주세요.");
+    }
+  };
   const openQr = async () => {
     if (previewOnly) return showNotice("미리보기입니다. 발행 후 QR 코드를 사용할 수 있어요.");
     const url = publicUrl();
@@ -115,7 +167,7 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
     {showPath && <div className="share-link"><span>{path}</span><button type="button" onClick={() => copy()}>{copied ? "복사됨" : "링크 복사"}</button></div>}
     <div className={`${className.includes("public-share-copy") ? "dd-public-share-pills" : "share-actions"} ${className}`.trim()}>
       {className.includes("public-share-copy") ? <>
-        <button type="button" className="dd-share-kakao" onClick={share}><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.4 2 10.7c0 2.8 1.9 5.3 4.8 6.7L6 21l4.2-2.5c.6.1 1.2.1 1.8.1 5.5 0 10-3.5 10-7.9S17.5 3 12 3z"/></svg>카톡공유</button>
+        <button type="button" className="dd-share-kakao" onClick={shareKakao}><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.4 2 10.7c0 2.8 1.9 5.3 4.8 6.7L6 21l4.2-2.5c.6.1 1.2.1 1.8.1 5.5 0 10-3.5 10-7.9S17.5 3 12 3z"/></svg>카톡공유</button>
         <button type="button" className="dd-share-link" onClick={() => copy()}><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>링크복사</button>
         <button type="button" className="dd-share-qr" onClick={openQr}><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm10-2h3v3h-3v-3zm5 0h3v3h-3v-3zm-5 5h3v3h-3v-3zm5 0h3v3h-3v-3z"/></svg>QR코드</button>
       </> : <>
