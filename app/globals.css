@@ -2611,6 +2611,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dearday-logo--compact .dearday-logo-symbol-image img{position:static;width:32px!important;height:auto!important}
 
 
-/* DearDay wordmark: slim modern script */
-.dearday-logo-copy b{font-family:"Segoe Script","Brush Script MT","URW Chancery L",cursive!important;font-weight:400!important;font-style:normal!important;letter-spacing:-.06em!important;line-height:1!important}
-.dearday-logo--compact .dearday-logo-copy b{font-family:"Segoe Script","Brush Script MT","URW Chancery L",cursive!important;font-weight:400!important;font-style:normal!important;letter-spacing:-.06em!important;line-height:1!important}
+/* DearDay wordmark: Alex Brush */
+.dearday-logo-copy b{font-family:var(--font-alex-brush),cursive!important;font-weight:400!important;font-style:normal!important;letter-spacing:0!important;line-height:1!important}
+.dearday-logo--compact .dearday-logo-copy b{font-family:var(--font-alex-brush),cursive!important;font-weight:400!important;font-style:normal!important;letter-spacing:0!important;line-height:1!important}
