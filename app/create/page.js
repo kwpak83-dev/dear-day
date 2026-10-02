@@ -13,7 +13,7 @@ import AccountCopy from "../invite/[slug]/account-copy";
 import OptionalInvitationSections from "../invite/[slug]/optional-invitation-sections";
 
 import GalleryEditor from "./gallery-editor";
-import { preparePhoto } from "../../lib/prepare-photo";
+import { preparePhoto, prepareKakaoSharePhoto } from "../../lib/prepare-photo";
 import { normalizeNotice } from "../../lib/invitation-notice";
 import { getInvitationTitle } from "../../lib/invitation-title";
 import { EVENT_KIND_OPTIONS, getEventConfig, getMissingRequiredFields } from "../../lib/event-config";
@@ -516,7 +516,7 @@ export default function CreateInvitation() {
       if (!supabase) throw new Error("사진 저장 서비스를 준비하지 못했어요.");
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("로그인 후 사진을 첨부할 수 있어요.");
-      const photo = await preparePhoto(file);
+      const photo = await prepareKakaoSharePhoto(file);
       setKakaoSharePhotoNotice("카카오 공유 이미지를 업로드하고 있어요.");
       const response = await fetch("/api/photos", { method: "POST", headers: { "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
       const result = await response.json().catch(() => ({}));
