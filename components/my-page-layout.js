@@ -1,3 +1,5 @@
+import DearDayLogo from "./dearday-logo";
+
 const menuItems = [
   { key: "invitations", label: "내 초대장", href: "/my-invitations" },
   { key: "guests", label: "하객 관리", href: "/guest-management" },
@@ -8,7 +10,7 @@ const menuItems = [
 
 export default function MyPageLayout({ current, children }) {
   return <main className="my-page member-page">
-    <header className="create-header"><a className="brand" href="/"><img src="/dear-day-logo-blue.png" alt="디어데이" /></a><div className="create-user"><a href="/create">새 초대장 만들기</a><a href="/">나가기</a></div></header>
+    <header className="create-header"><a className="brand" href="/" aria-label="DearDay 홈"><DearDayLogo /></a><div className="create-user"><a href="/create">새 초대장 만들기</a><a href="/">나가기</a></div></header>
     <div className="member-page-layout">
       <aside className="member-navigation">
         <p>MY PAGE</p>
