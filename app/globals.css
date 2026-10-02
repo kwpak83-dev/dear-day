@@ -2603,3 +2603,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Logo symbol crop only: hide the first Korean-letter fragment from the source artwork. */
 .dearday-logo-symbol-image{width:39px;flex-basis:39px}
 .dearday-logo--compact .dearday-logo-symbol-image{width:32px;flex-basis:32px}
+
+/* Standalone symbol asset: no CSS cropping. */
+.dearday-logo-symbol-image{width:39px;height:31px;flex-basis:39px;overflow:visible}
+.dearday-logo-symbol-image img{position:static;display:block;width:39px!important;height:auto!important;max-width:100%!important;object-fit:contain}
+.dearday-logo--compact .dearday-logo-symbol-image{width:32px;height:26px;flex-basis:32px}
+.dearday-logo--compact .dearday-logo-symbol-image img{position:static;width:32px!important;height:auto!important}
