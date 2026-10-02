@@ -263,6 +263,9 @@ export default function CreateInvitation() {
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [photoNotice, setPhotoNotice] = useState("");
   const [kakaoSharePhotoNotice, setKakaoSharePhotoNotice] = useState("");
+  const [kakaoCrop, setKakaoCrop] = useState(null);
+  const [kakaoCropX, setKakaoCropX] = useState(50);
+  const [kakaoCropY, setKakaoCropY] = useState(50);
   const photoBusy = useRef(false);
   const saveToastTimer = useRef(null);
   const [mapContainer, setMapContainer] = useState(null);
@@ -504,31 +507,31 @@ export default function CreateInvitation() {
       setUploadingPhoto(false);
     }
   };
-  const uploadKakaoSharePhoto = async (event) => {
+  const uploadKakaoSharePhoto = (event) => {
     const file = event.target.files?.[0];
     event.target.value = "";
     if (!file || photoBusy.current || submitting || galleryBusy) return;
-    photoBusy.current = true;
-    setUploadingPhoto(true);
-    setKakaoSharePhotoNotice("카카오 공유 이미지를 준비하고 있어요.");
+    setKakaoCrop(current => { if (current?.previewUrl) URL.revokeObjectURL(current.previewUrl); return { file, previewUrl: URL.createObjectURL(file) }; });
+    setKakaoCropX(50); setKakaoCropY(50);
+    setKakaoSharePhotoNotice("사진 위치를 맞춘 뒤 공유 이미지 저장을 눌러 주세요.");
+  };
+  const saveKakaoSharePhoto = async () => {
+    if (!kakaoCrop?.file || photoBusy.current || submitting || galleryBusy) return;
+    photoBusy.current = true; setUploadingPhoto(true); setKakaoSharePhotoNotice("카카오 공유 이미지를 저장하고 있어요.");
     try {
       const supabase = getSupabaseBrowserClient();
       if (!supabase) throw new Error("사진 저장 서비스를 준비하지 못했어요.");
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("로그인 후 사진을 첨부할 수 있어요.");
-      const photo = await prepareKakaoSharePhoto(file);
-      setKakaoSharePhotoNotice("카카오 공유 이미지를 업로드하고 있어요.");
+      const photo = await prepareKakaoSharePhoto(kakaoCrop.file, kakaoCropX, kakaoCropY);
       const response = await fetch("/api/photos", { method: "POST", headers: { "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.url) throw new Error(result.error || "사진 업로드에 실패했어요.");
       update("kakaoShareImageUrl", result.url);
-      setKakaoSharePhotoNotice("카카오 공유 대표 이미지를 첨부했어요. 임시 저장 또는 발행으로 반영해 주세요.");
-    } catch (error) {
-      setKakaoSharePhotoNotice(error.message || "사진을 읽지 못했어요. 다른 사진으로 다시 시도해 주세요.");
-    } finally {
-      photoBusy.current = false;
-      setUploadingPhoto(false);
-    }
+      URL.revokeObjectURL(kakaoCrop.previewUrl); setKakaoCrop(null);
+      setKakaoSharePhotoNotice("카카오 공유 대표 이미지를 저장했어요. 임시 저장 또는 발행으로 반영해 주세요.");
+    } catch (error) { setKakaoSharePhotoNotice(error.message || "공유 이미지 저장에 실패했어요."); }
+    finally { photoBusy.current = false; setUploadingPhoto(false); }
   };
   const updateNotice = (key, value) => setInvitation(current => ({ ...current, notice: { ...normalizeNotice(current.notice), [key]: value } }));
   const [noticeUploadBusy, setNoticeUploadBusy] = useState(false);
@@ -834,7 +837,7 @@ export default function CreateInvitation() {
         <div style={{display:editorStep === 2 ? undefined : "none"}}>
         <details className="dd-custom-accordion" open><summary><span><strong>대표사진</strong><small>초대장 대표사진을 등록하거나 교체해요.</small></span><span className="dd-accordion-chevron" aria-hidden="true">⌄</span></summary><div className="dd-accordion-body">
         <div className="form-section photo-editor"><h2>대표사진 <small>선택</small></h2><p>초대장에 보여줄 대표사진을 등록해보세요.</p><Field label={invitation.coverPhotoUrl ? "사진 교체" : "사진 선택"}><input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadPhoto} disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} aria-describedby="photo-help" /></Field><p id="photo-help">JPG · PNG · WEBP, 최대 15MB · 사진은 자동으로 크기를 줄여요.</p>{invitation.coverPhotoUrl && <div className="photo-selection"><img src={invitation.coverPhotoUrl} alt="첨부한 대표사진" /><button type="button" className="save-button" disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} onClick={() => { update("coverPhotoUrl", ""); setPhotoNotice("사진을 뺐어요. 임시 저장 또는 발행으로 반영해 주세요."); }}>사진 삭제</button></div>}<p className="photo-notice" role="status" aria-live="polite">{photoNotice}</p>
-        <div className="kakao-share-photo-editor"><h3>카카오 공유 대표 이미지 <small>선택</small></h3><p>카카오톡 공유 카드에만 사용하는 이미지예요. 미설정 시 초대장 대표사진이 자동으로 사용됩니다.</p><Field label={invitation.kakaoShareImageUrl ? "공유 이미지 교체" : "공유 이미지 선택"}><input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadKakaoSharePhoto} disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} aria-describedby="kakao-share-photo-help" /></Field><p id="kakao-share-photo-help">JPG · PNG · WEBP, 최대 15MB · 가로형 약 2:1 비율을 권장해요.</p>{invitation.kakaoShareImageUrl && <div className="photo-selection"><img src={invitation.kakaoShareImageUrl} alt="카카오 공유 대표 이미지" /><button type="button" className="save-button" disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} onClick={() => { update("kakaoShareImageUrl", ""); setKakaoSharePhotoNotice("공유 전용 이미지를 삭제했어요. 이제 초대장 대표사진이 자동으로 사용됩니다."); }}>공유 이미지 삭제</button></div>}<p className="photo-notice" role="status" aria-live="polite">{kakaoSharePhotoNotice}</p></div></div>
+        <div className="kakao-share-photo-editor"><h3>카카오 공유 대표 이미지 <small>선택</small></h3><p>카카오톡 공유 카드에만 사용하는 이미지예요. 미설정 시 초대장 대표사진이 자동으로 사용됩니다.</p><Field label={invitation.kakaoShareImageUrl ? "공유 이미지 교체" : "공유 이미지 선택"}><input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadKakaoSharePhoto} disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} aria-describedby="kakao-share-photo-help" /></Field><p id="kakao-share-photo-help">JPG · PNG · WEBP, 최대 15MB · 카카오 카드용 2:1 비율로 저장돼요.</p>{kakaoCrop && <div className="kakao-crop-editor"><div className="kakao-crop-preview" style={{backgroundImage:`url("${kakaoCrop.previewUrl}")`,backgroundPosition:`${kakaoCropX}% ${kakaoCropY}%`}} /><label>좌우 위치 <input type="range" min="0" max="100" value={kakaoCropX} onChange={event=>setKakaoCropX(Number(event.target.value))}/></label><label>상하 위치 <input type="range" min="0" max="100" value={kakaoCropY} onChange={event=>setKakaoCropY(Number(event.target.value))}/></label><div><button type="button" className="save-button" onClick={saveKakaoSharePhoto} disabled={uploadingPhoto}>공유 이미지 저장</button><button type="button" onClick={()=>{URL.revokeObjectURL(kakaoCrop.previewUrl);setKakaoCrop(null);setKakaoSharePhotoNotice("");}}>취소</button></div></div>}{invitation.kakaoShareImageUrl && <div className="photo-selection"><img src={invitation.kakaoShareImageUrl} alt="카카오 공유 대표 이미지" /><button type="button" className="save-button" disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} onClick={() => { update("kakaoShareImageUrl", ""); setKakaoSharePhotoNotice("공유 전용 이미지를 삭제했어요. 이제 초대장 대표사진이 자동으로 사용됩니다."); }}>공유 이미지 삭제</button></div>}<p className="photo-notice" role="status" aria-live="polite">{kakaoSharePhotoNotice}</p></div></div>
         </div></details>
         <details className="dd-custom-accordion"><summary><span><strong>우리의 순간들</strong><small>갤러리에 사진을 추가하고 관리해요.</small></span><span className="dd-accordion-chevron" aria-hidden="true">⌄</span></summary><div className="dd-accordion-body">
         <GalleryEditor slug={eventSlug} disabled={Boolean(submitting) || uploadingPhoto} onSaveInvitation={saveDraft} onBusyChange={setGalleryBusy} onPhotosChange={setGalleryPhotos} />
