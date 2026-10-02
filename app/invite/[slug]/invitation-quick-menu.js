@@ -259,13 +259,13 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   return <>
     <span ref={markerRef} className="invitation-quick-menu-trigger" aria-hidden="true" />
     {visible && (isDesktopLivePreview && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu invitation-quick-menu--minimal invitation-quick-menu--pills${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}${isEditorFullPreview ? " invitation-quick-menu--editor-full" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
-      {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => openSheet("rsvp")}><QuickMenuIcon kind="rsvp" /><span>참석여부 알리기</span></button>}
+      {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => openSheet("rsvp")}><QuickMenuIcon kind="rsvp" /><span className="invitation-quick-copy"><strong>참석여부 알리기</strong><small>함께 해주실건가요?</small></span></button>}
       
-      {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><QuickMenuIcon kind="guestbook" /><span>방명록 글쓰기</span></button>}
+      {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><QuickMenuIcon kind="guestbook" /><span className="invitation-quick-copy"><strong>방명록 글쓰기</strong><small>축하 메시지를 남겨주세요</small></span></button>}
     </nav>, desktopLivePortal) : <nav className={`invitation-quick-menu invitation-quick-menu--minimal invitation-quick-menu--pills${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
-      {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => openSheet("rsvp")}><QuickMenuIcon kind="rsvp" /><span>참석여부 알리기</span></button>}
+      {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => openSheet("rsvp")}><QuickMenuIcon kind="rsvp" /><span className="invitation-quick-copy"><strong>참석여부 알리기</strong><small>함께 해주실건가요?</small></span></button>}
       
-      {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><QuickMenuIcon kind="guestbook" /><span>방명록 글쓰기</span></button>}
+      {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><QuickMenuIcon kind="guestbook" /><span className="invitation-quick-copy"><strong>방명록 글쓰기</strong><small>축하 메시지를 남겨주세요</small></span></button>}
     </nav>)}
     {sheet === "rsvp" && rsvpEnabled && <BottomSheet title="참석 여부" onClose={closeSheet} portalTarget={isDesktopLivePreview ? desktopLivePortal : null} preview={isDesktopLivePreview}>
       <RsvpForm slug={slug} startsAt={startsAt} />
