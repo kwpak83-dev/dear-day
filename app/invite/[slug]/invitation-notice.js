@@ -9,10 +9,12 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl }) 
   const storageKey = `dearday-notice:${slug}:${notice.version}`;
   useEffect(() => {
     if (!notice.enabled || !notice.title || !notice.body) return;
+    const releaseHeroIntro = () => document.querySelector(".shared-public-invitation")?.classList.remove("dd-hero-intro-waits-for-notice");
     try {
       const hiddenDate = window.localStorage.getItem(storageKey);
       const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
       if (hiddenDate !== today) setOpen(true);
+      else releaseHeroIntro();
     } catch { setOpen(true); }
   }, [notice.enabled, notice.title, notice.body, storageKey]);
   if (!notice.enabled || !notice.title || !notice.body) return null;
@@ -25,6 +27,7 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl }) 
     }
     setOpen(false);
     setSkipToday(false);
+    document.querySelector(".shared-public-invitation")?.classList.remove("dd-hero-intro-waits-for-notice");
   };
   return <>
     <button type="button" className="dd-notice-trigger" onClick={() => setOpen(true)}>공지사항</button>
