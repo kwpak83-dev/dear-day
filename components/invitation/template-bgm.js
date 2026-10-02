@@ -47,9 +47,7 @@ export default function TemplateBgm({ src }) {
   };
 
   const toggle = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (!audio.paused && !audio.ended) {
+    if (playing) {
       stop();
       return;
     }
