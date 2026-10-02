@@ -1653,6 +1653,43 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .invitation-quick-menu--minimal.invitation-quick-menu--pills > button:focus-visible {outline:2px solid #222 !important;outline-offset:2px !important;border-radius:999px !important}
 @media(max-width:360px){.invitation-quick-menu--minimal.invitation-quick-menu--pills{gap:6px !important;padding:5px !important}.invitation-quick-menu--minimal.invitation-quick-menu--pills > button{padding:0 9px !important;font-size:11px !important}}
 
+/* D-style quick actions: compact descriptive cards, preserving existing actions and template palette accents. */
+.invitation-quick-menu--minimal.invitation-quick-menu--pills{gap:8px !important;padding:7px 8px !important;border-radius:16px !important}
+.invitation-quick-menu--minimal.invitation-quick-menu--pills > button,
+.dd-template-button-style .invitation-quick-menu--minimal.invitation-quick-menu--pills > button,
+.dd-template-background .invitation-quick-menu--minimal.invitation-quick-menu--pills > button{
+  display:grid !important;grid-template-columns:26px minmax(0,1fr) !important;grid-template-rows:auto !important;
+  align-items:center !important;justify-items:start !important;column-gap:9px !important;
+  width:190px !important;max-width:calc(50vw - 18px) !important;min-height:58px !important;height:58px !important;
+  padding:7px 12px !important;border:1px solid #e7e0dc !important;border-radius:12px !important;
+  background:#fff !important;color:#222 !important;-webkit-text-fill-color:#222 !important;
+  box-shadow:0 2px 7px rgba(0,0,0,.07) !important;text-align:left !important;
+}
+.invitation-quick-menu--minimal.invitation-quick-menu--pills > button + button{border-left:1px solid #e7e0dc !important}
+.invitation-quick-menu--minimal.invitation-quick-menu--pills > button svg{
+  grid-column:1 !important;width:22px !important;height:22px !important;flex:none !important;
+  color:var(--dd-quick-menu-item-bg,var(--dd-invite-action-accent,#b78b72)) !important;
+  stroke:currentColor !important;
+}
+.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy{
+  grid-column:2 !important;display:grid !important;gap:2px !important;min-width:0 !important;
+  overflow:visible !important;white-space:normal !important;text-align:left !important;
+}
+.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong{
+  display:block;font:600 12px/1.25 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#222;
+  white-space:nowrap;
+}
+.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small{
+  display:block;font:400 9px/1.25 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#8a817c !important;
+  white-space:nowrap;
+}
+@media(max-width:380px){
+  .invitation-quick-menu--minimal.invitation-quick-menu--pills{gap:6px !important;padding:6px !important}
+  .invitation-quick-menu--minimal.invitation-quick-menu--pills > button{width:166px !important;max-width:calc(50vw - 12px) !important;padding:6px 8px !important;column-gap:6px !important}
+  .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong{font-size:11px}
+  .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small{font-size:8px}
+}
+
 /* Keep Korean words together in invitation messages; preserve authored newlines and template typography. */
 :is(.romantic-message,.modern-message,.classic-message) blockquote{word-break:keep-all;overflow-wrap:break-word;white-space:pre-line}
 
