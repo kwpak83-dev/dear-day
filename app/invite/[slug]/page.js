@@ -11,6 +11,7 @@ import AddressCopy from "./address-copy";
 import LinkCopy from "./link-copy";
 import OptionalInvitationSections from "./optional-invitation-sections";
 import { getInvitationTitle } from "../../../lib/invitation-title";
+import { normalizeNotice } from "../../../lib/invitation-notice";
 import { isPublicPeriodExpired } from "../../../lib/invitation-retention";
 import { getTemplateAssetReferences, resolveTemplateAssetUrls } from "../../../lib/template-config";
 
@@ -80,7 +81,10 @@ export default async function InvitationPage({ params, searchParams }) {
   if (galleryError) console.error("Gallery query failed:", galleryError.code);
   const galleryPhotos = (galleryRows || []).map(row => ({ id: row.id, url: supabase.storage.from("invitation-photos").getPublicUrl(row.storage_path).data.publicUrl }));
 
-  return <main className="public-invitation shared-public-invitation">
+  const publicNotice = normalizeNotice(settings.notice);
+  const waitForNoticeBeforeHeroIntro = publicNotice.enabled && Boolean(publicNotice.title) && Boolean(publicNotice.body);
+
+  return <main className={`public-invitation shared-public-invitation${waitForNoticeBeforeHeroIntro ? " dd-hero-intro-waits-for-notice" : ""}`}>
     {ownerView && <nav className="owner-return-nav" aria-label="DearDay 관리 화면으로 돌아가기"><a href="/my-invitations">내 초대장</a><a href="/">DearDay 홈</a></nav>}
     <InvitationNotice notice={settings.notice} slug={slug} imageUrl={settings.notice?.imagePath ? supabase.storage.from("invitation-photos").getPublicUrl(settings.notice.imagePath).data.publicUrl : null} />
     <div className="full-invitation-renderer"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} templateConfig={templateConfig} templateAssets={templateAssets} userBgmUrl={userBgmUrl} placeActions={<><AddressCopy invitation={invitation} /><InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView /><TransportGuide invitation={invitation} /></>}>
