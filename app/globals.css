@@ -2584,3 +2584,18 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Original envelope artwork, cropped from the existing DearDay logo asset. */
 .dearday-logo-symbol-image{position:relative;display:inline-block;width:34px;height:30px;overflow:hidden;flex:0 0 auto}.dearday-logo-symbol-image img{position:absolute;height:42px;width:auto;max-width:none;left:-1px;top:-6px}.dearday-logo--compact .dearday-logo-symbol-image{width:27px;height:24px}.dearday-logo--compact .dearday-logo-symbol-image img{height:34px;top:-5px}.dearday-logo{gap:6px}
+
+/* Brand logo correction: match homepage typography, keep the envelope artwork fully visible,
+   and force the compact footer logo to stay in one horizontal row. */
+.dearday-logo{display:inline-flex;align-items:center;flex-direction:row!important;flex-wrap:nowrap;gap:7px;color:#152b52;white-space:nowrap}
+.dearday-logo-copy{display:block;flex:0 0 auto;text-align:left}
+.dearday-logo-copy b{display:block;font:800 29px/1.05 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:-.055em;color:#152b52}
+.dearday-logo-copy small{display:block;margin-top:2px;font:600 8px/1.4 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:.065em;color:#536781}
+.dearday-logo-symbol-image{position:relative;display:block;width:45px;height:32px;overflow:hidden;flex:0 0 45px}
+.dearday-logo-symbol-image img{position:absolute;display:block;height:42px!important;width:auto!important;max-width:none!important;left:-5px;top:-6px}
+.dearday-logo--compact{display:inline-flex!important;align-items:center!important;flex-direction:row!important;gap:6px}
+.dearday-logo--compact .dearday-logo-symbol-image{width:37px;height:27px;flex-basis:37px}
+.dearday-logo--compact .dearday-logo-symbol-image img{height:34px!important;left:-4px;top:-5px}
+.dearday-logo--compact .dearday-logo-copy b{font:800 19px/1.05 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:-.055em}
+.dearday-logo--compact .dearday-logo-copy small{margin-top:2px;font:600 6px/1.35 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:.065em}
+.dearday-compact-logo{display:inline-flex!important;align-items:center!important;justify-content:center;flex-direction:row!important;width:auto!important}
