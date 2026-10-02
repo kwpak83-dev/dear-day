@@ -72,7 +72,7 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
     if (previewOnly) return showNotice("미리보기입니다. 발행 후 공유할 수 있어요.");
     if (!navigator.share) return copy(true);
     try {
-      await navigator.share({ title, text: text || `${title}을 확인해 주세요.`, url: publicUrl() });
+      await navigator.share({ title, url: publicUrl() });
       showNotice("공유를 완료했습니다.");
     } catch (error) {
       if (error?.name !== "AbortError") showNotice("공유하지 못했습니다. 다시 시도해 주세요.");

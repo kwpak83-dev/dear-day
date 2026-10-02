@@ -55,7 +55,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Development invitation preview templates */
 .invitation-template{height:100%;overflow-y:auto;padding:25px 20px;color:#6c5146;text-align:center}.invitation-template-header p{margin:0;font:700 8px Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.2em}.invitation-template-header i{display:block;width:30px;height:1px;margin:12px auto 16px;background:currentColor;opacity:.35}.invitation-template-photo{height:164px;display:grid;place-items:center;overflow:hidden;background:#eadfd7;color:#9e8a7f;font:10px Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.18em}.invitation-template-photo img{width:100%;height:100%;object-fit:cover}.invitation-template-main h2{margin:20px 0 7px;font-size:22px;font-weight:500;line-height:1.3}.invitation-template-detail,.invitation-template-note{margin:4px 0;color:inherit;font-size:9px;line-height:1.5}.invitation-template-main time{display:block;margin-top:13px;font:400 9px Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.04em}.invitation-template-place{margin-top:16px;padding-top:14px;border-top:1px solid rgba(100,75,65,.2)}.invitation-template-place strong,.invitation-template-place span{display:block;font:400 9px Arial,"Apple SD Gothic Neo",sans-serif;line-height:1.6}.invitation-template-place strong{font-weight:700}.invitation-template-main blockquote{margin:18px 0 0;white-space:pre-line;color:inherit;font-size:10px;line-height:1.7}.invitation-template-classic{background:#fff9ef;font-family:Georgia,"Times New Roman",serif}.invitation-template-classic .invitation-template-photo{border:1px solid #dfcfc3;background:linear-gradient(145deg,#f2e8de,#dfd0c4)}.invitation-template-romantic{background:#fff2f2;color:#8d5c64;font-family:Georgia,"Times New Roman",serif}.invitation-template-romantic .invitation-template-header i{width:42px}.invitation-template-romantic .invitation-template-photo{border-radius:90px 90px 10px 10px;background:linear-gradient(145deg,#f4dfe1,#e9c8cc)}.invitation-template-romantic .invitation-template-main h2{font-style:italic}.invitation-template-modern{background:#f7f5f2;color:#3d3936;text-align:left;font-family:Arial,"Apple SD Gothic Neo",sans-serif}.invitation-template-modern .invitation-template-header i{width:100%;margin-left:0}.invitation-template-modern .invitation-template-photo{background:#ddd9d4}.invitation-template-modern .invitation-template-main h2{font-family:Arial,"Apple SD Gothic Neo",sans-serif;font-size:24px;font-weight:800;letter-spacing:-.05em}.invitation-template-modern .invitation-template-place{border-top:2px solid #3d3936}
 /* Full editor preview and shared public invitation renderer */
-.full-invitation-renderer{width:100%;min-width:0;overflow-wrap:anywhere}.full-invitation-renderer .invitation-template{height:auto;min-height:100vh;min-height:100svh;overflow:visible;padding:54px clamp(20px,7vw,42px)}.full-invitation-renderer .invitation-template-header p{font-size:10px}.full-invitation-renderer .invitation-template-photo{height:auto;aspect-ratio:4/3}.full-invitation-renderer .invitation-template-main h2{font-size:clamp(29px,8vw,38px);overflow-wrap:anywhere}.full-invitation-renderer .invitation-template-detail,.full-invitation-renderer .invitation-template-note{font-size:13px}.full-invitation-renderer .invitation-template-main time{font-size:12px}.full-invitation-renderer .invitation-template-place strong,.full-invitation-renderer .invitation-template-place span{font-size:12px;overflow-wrap:anywhere}.full-invitation-renderer .invitation-template-main blockquote{font-size:14px;overflow-wrap:anywhere}.full-preview-overlay{position:fixed;z-index:70;inset:0;display:flex;min-width:0;flex-direction:column;overflow:hidden;background:#e9ddd7}.full-preview-toolbar{z-index:1;display:flex;min-height:58px;flex:none;align-items:center;justify-content:space-between;gap:16px;padding:max(10px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) 10px max(18px,env(safe-area-inset-left));background:rgba(255,250,245,.97);box-shadow:0 4px 18px rgba(70,43,35,.12)}.full-preview-toolbar strong{color:#8b6659;font-size:12px;letter-spacing:.08em}.full-preview-toolbar button{border:0;border-radius:9px;background:#ef786c;color:#fff;padding:10px 13px;font-size:12px;font-weight:700;white-space:nowrap}.full-preview-scroll{min-width:0;min-height:0;flex:1;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain}.full-preview-document{width:min(100%,540px);margin:0 auto;background:#fffaf5;box-shadow:0 18px 45px rgba(71,45,36,.18)}.shared-public-invitation{width:min(100%,540px);max-width:540px;padding:0;overflow-x:hidden}.public-invitation-sections{padding:0 0 40px}.shared-public-invitation .invitation-gallery{margin-top:0;padding-top:40px}
+.full-invitation-renderer{width:100%;min-width:0;overflow-wrap:anywhere}.full-invitation-renderer .invitation-template{height:auto;min-height:100vh;min-height:100svh;overflow:visible;padding:54px clamp(20px,7vw,42px)}.full-invitation-renderer .invitation-template-header p{font-size:10px}.full-invitation-renderer .invitation-template-photo{height:auto;aspect-ratio:4/3}.full-invitation-renderer .invitation-template-main h2{font-size:clamp(29px,8vw,38px);overflow-wrap:anywhere}.full-invitation-renderer .invitation-template-detail,.full-invitation-renderer .invitation-template-note{font-size:13px}.full-invitation-renderer .invitation-template-main time{font-size:12px}.full-invitation-renderer .invitation-template-place strong,.full-invitation-renderer .invitation-template-place span{font-size:12px;overflow-wrap:anywhere}.full-invitation-renderer .invitation-template-main blockquote{font-size:14px;overflow-wrap:anywhere}.full-preview-overlay{position:fixed;z-index:70;inset:0;display:flex;min-width:0;flex-direction:column;overflow:hidden;background:#e9ddd7}.full-preview-toolbar{z-index:1;display:flex;min-height:58px;flex:none;align-items:center;justify-content:space-between;gap:16px;padding:max(10px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) 10px max(18px,env(safe-area-inset-left));background:rgba(255,250,245,.97);box-shadow:0 4px 18px rgba(70,43,35,.12)}.full-preview-toolbar strong{color:#8b6659;font-size:12px;letter-spacing:.08em}.full-preview-toolbar button{border:0;border-radius:9px;background:#ef786c;color:#fff;padding:10px 13px;font-size:12px;font-weight:700;white-space:nowrap}.full-preview-scroll{min-width:0;min-height:0;flex:1;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain}.full-preview-document{width:min(100%,540px);margin:0 auto;background:#fffaf5;box-shadow:0 18px 45px rgba(71,45,36,.18)}.shared-public-invitation{width:min(100%,540px);max-width:540px;padding:0;overflow-x:clip}.public-invitation-sections{padding:0 0 40px}.shared-public-invitation .invitation-gallery{margin-top:0;padding-top:40px}
 @media (max-width:760px){.preview-panel{display:none}.editor-actions{display:grid;grid-template-columns:1fr 1fr}.editor-actions .publish-button{grid-column:1/-1}.full-preview-document{box-shadow:none}}
 /* Shared preview sections, birth date selector, and public address copy */
 .invitation-template-sections{min-width:0;margin-top:38px}.preview-content .invitation-template-sections{margin-top:25px}.preview-content .invitation-gallery{margin:24px 0}.preview-content .invitation-gallery h2{margin:7px 0 13px;font-size:17px}.preview-content .public-gallery-grid{gap:6px}.preview-content .public-gallery-photo{border-radius:5px}.preview-content .public-accounts{margin:24px 0 0;padding:17px 8px}.preview-content .public-accounts h2{font-size:15px}.preview-content .public-account-card{padding:10px 0}.preview-content .public-account-card strong,.preview-content .public-account-card span{font-size:9px}.preview-content .public-account-card button{padding:7px;font-size:8px}.birth-date-field{min-width:0;border:0;padding:0}.birth-date-field legend{margin-bottom:8px;padding:0;font-size:12px;font-weight:700;color:#755d52}.birth-date-field>div{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px}.public-address-copy{display:flex;min-height:37px;align-items:center;justify-content:center;gap:10px;margin:0 0 28px}.public-address-copy button{border:0;border-radius:7px;background:#ef786c;color:#fff;padding:9px 12px;font-size:11px;font-weight:700;white-space:nowrap}.public-address-copy span{min-width:0;color:#8b7165;font-size:11px;line-height:1.4}.shared-public-invitation .invitation-template-sections{margin-top:0;padding-top:28px}
@@ -808,10 +808,10 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* Template BGM */
 .dd-template-bgm{position:sticky;top:max(12px,env(safe-area-inset-top));z-index:30;display:flex;width:100%;height:0;box-sizing:border-box;justify-content:flex-end;padding:0 12px;pointer-events:none}
-.dd-template-bgm .dd-template-bgm-toggle{display:grid;width:36px;height:36px;place-items:center;padding:0;pointer-events:auto;border:0;border-radius:50%;background:linear-gradient(145deg,#f7c4c8 0%,#e99ba4 55%,#dc7f8c 100%);color:#fff;box-shadow:0 2px 6px rgba(190,105,117,.24);cursor:pointer}
-.dd-template-bgm .dd-template-bgm-toggle:hover,.dd-template-bgm .dd-template-bgm-toggle:focus-visible{background:linear-gradient(145deg,#f9cdd0 0%,#eca4ac 55%,#df8793 100%)}
+.dd-template-bgm .dd-template-bgm-toggle{display:grid;width:36px;height:36px;place-items:center;padding:0;pointer-events:auto;border:0;border-radius:0;background:transparent;color:#111;box-shadow:none;cursor:pointer}
+.dd-template-bgm .dd-template-bgm-toggle:hover,.dd-template-bgm .dd-template-bgm-toggle:focus-visible{background:transparent;color:#000}
 .dd-template-bgm .dd-template-bgm-toggle:focus-visible{outline:2px solid currentColor;outline-offset:2px}
-.dd-template-bgm .dd-template-bgm-icon{display:block;width:22px;height:22px}.dd-template-bgm .dd-template-bgm-icon svg{display:block;width:100%;height:100%;overflow:visible}.dd-template-bgm .dd-template-bgm-note{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.dd-template-bgm .dd-template-bgm-wave{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}.dd-template-bgm .dd-template-bgm-off{fill:none;stroke:#d9868e;stroke-width:1.7;stroke-linecap:round}
+.dd-template-bgm .dd-template-bgm-icon{display:block;width:22px;height:22px}.dd-template-bgm .dd-template-bgm-icon svg{display:block;width:100%;height:100%;overflow:visible}.dd-template-bgm .dd-template-bgm-note{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.dd-template-bgm .dd-template-bgm-wave{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}.dd-template-bgm .dd-template-bgm-off{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
 .dd-template-bgm small{position:absolute;top:42px;right:12px;max-width:calc(100% - 24px);padding:5px 8px;border-radius:6px;background:rgba(255,255,255,.94);color:#8b3f35;font-size:11px;pointer-events:auto}
 .dd-template-background.classic-001 .classic-footer{background:inherit}
 .dd-template-screen-effect{position:sticky;z-index:20;top:0;width:100%;height:0;pointer-events:none;overflow:visible}
@@ -1653,6 +1653,43 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .invitation-quick-menu--minimal.invitation-quick-menu--pills > button:focus-visible {outline:2px solid #222 !important;outline-offset:2px !important;border-radius:999px !important}
 @media(max-width:360px){.invitation-quick-menu--minimal.invitation-quick-menu--pills{gap:6px !important;padding:5px !important}.invitation-quick-menu--minimal.invitation-quick-menu--pills > button{padding:0 9px !important;font-size:11px !important}}
 
+/* D-style quick actions: compact descriptive cards, preserving existing actions and template palette accents. */
+.invitation-quick-menu--minimal.invitation-quick-menu--pills{gap:8px !important;padding:7px 8px !important;border-radius:16px !important}
+.invitation-quick-menu--minimal.invitation-quick-menu--pills > button,
+.dd-template-button-style .invitation-quick-menu--minimal.invitation-quick-menu--pills > button,
+.dd-template-background .invitation-quick-menu--minimal.invitation-quick-menu--pills > button{
+  display:grid !important;grid-template-columns:26px minmax(0,1fr) !important;grid-template-rows:auto !important;
+  align-items:center !important;justify-items:start !important;column-gap:9px !important;
+  width:190px !important;max-width:calc(50vw - 18px) !important;min-height:58px !important;height:58px !important;
+  padding:7px 12px !important;border:1px solid #e7e0dc !important;border-radius:12px !important;
+  background:#fff !important;color:#222 !important;-webkit-text-fill-color:#222 !important;
+  box-shadow:0 2px 7px rgba(0,0,0,.07) !important;text-align:left !important;
+}
+.invitation-quick-menu--minimal.invitation-quick-menu--pills > button + button{border-left:1px solid #e7e0dc !important}
+.invitation-quick-menu--minimal.invitation-quick-menu--pills > button svg{
+  grid-column:1 !important;width:22px !important;height:22px !important;flex:none !important;
+  color:var(--dd-quick-menu-item-text,var(--dd-invite-action-accent,#9b6f5a)) !important;
+  stroke:currentColor !important;stroke-width:2 !important;opacity:1 !important;
+}
+.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy{
+  grid-column:2 !important;display:grid !important;gap:2px !important;min-width:0 !important;
+  overflow:visible !important;white-space:normal !important;text-align:left !important;
+}
+.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong{
+  display:block;font:600 12px/1.25 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#222;
+  white-space:nowrap;
+}
+.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small{
+  display:block;font:400 9px/1.25 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#8a817c !important;
+  white-space:nowrap;
+}
+@media(max-width:380px){
+  .invitation-quick-menu--minimal.invitation-quick-menu--pills{gap:6px !important;padding:6px !important}
+  .invitation-quick-menu--minimal.invitation-quick-menu--pills > button{width:166px !important;max-width:calc(50vw - 12px) !important;padding:6px 8px !important;column-gap:6px !important}
+  .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong{font-size:11px}
+  .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small{font-size:8px}
+}
+
 /* Keep Korean words together in invitation messages; preserve authored newlines and template typography. */
 :is(.romantic-message,.modern-message,.classic-message) blockquote{word-break:keep-all;overflow-wrap:break-word;white-space:pre-line}
 
@@ -1674,7 +1711,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Optional central reading surface over the existing full-page background. */
 .invitation-template.dd-template-center-panel{position:relative;isolation:isolate}
 .invitation-template.dd-template-center-panel::before{content:"";position:absolute;inset:0 auto 0 50%;translate:-50% 0;width:var(--dd-center-panel-width,85%);background:var(--dd-center-panel-color,transparent);pointer-events:none;z-index:0}
-.invitation-template.dd-template-center-panel > *{position:relative;z-index:1}
+.invitation-template.dd-template-center-panel > :not(.dd-template-screen-effect):not(.dd-template-bgm){position:relative;z-index:1}
 
 
 /* HOME-01: DearDay navy landing rebrand. Scoped to the homepage only. */
@@ -2460,6 +2497,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .invitation-template{position:relative}
 .classic-hero>.dd-hero-intro{position:absolute;inset:0;z-index:80;width:100%;height:100%;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:none;animation:dd-hero-intro-exit var(--dd-intro-fade) ease calc(var(--dd-intro-write) + var(--dd-intro-hold)) forwards}
 .dd-hero-intro-text-wrap{position:relative;display:inline-block;max-width:88%}.dd-hero-intro-text{display:block;max-width:100%;white-space:nowrap}.dd-hero-intro-mask{position:absolute;inset:-.15em -.08em;background:var(--dd-intro-bg,#f8f4ef);transform-origin:right center;animation:dd-hero-intro-write var(--dd-intro-write) ease-out forwards;pointer-events:none}
+.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-mask{animation-play-state:paused}
 @keyframes dd-hero-intro-write{from{transform:scaleX(1)}to{transform:scaleX(0)}}
 @keyframes dd-hero-intro-exit{0%{opacity:1;visibility:visible}99%{visibility:visible}100%{opacity:0;visibility:hidden}}
 @media (prefers-reduced-motion:reduce){.dd-hero-intro{display:none}}
@@ -2525,4 +2563,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   background:none!important;
   background-color:transparent!important;
   color:inherit!important;
+}
+
+
+/* Sales template preview: keep the invitation quick actions above the fixed purchase CTA. */
+.invitation-quick-menu--sales-preview{
+  bottom:max(82px,calc(70px + env(safe-area-inset-bottom))) !important;
+  z-index:80 !important;
 }
