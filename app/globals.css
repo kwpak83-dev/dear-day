@@ -1668,8 +1668,8 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .invitation-quick-menu--minimal.invitation-quick-menu--pills > button + button{border-left:1px solid #e7e0dc !important}
 .invitation-quick-menu--minimal.invitation-quick-menu--pills > button svg{
   grid-column:1 !important;width:22px !important;height:22px !important;flex:none !important;
-  color:var(--dd-quick-menu-item-bg,var(--dd-invite-action-accent,#b78b72)) !important;
-  stroke:currentColor !important;
+  color:var(--dd-quick-menu-item-text,var(--dd-invite-action-accent,#9b6f5a)) !important;
+  stroke:currentColor !important;stroke-width:2 !important;opacity:1 !important;
 }
 .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy{
   grid-column:2 !important;display:grid !important;gap:2px !important;min-width:0 !important;
