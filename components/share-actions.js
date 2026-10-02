@@ -106,7 +106,7 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
     try {
       const Kakao = await loadKakaoSdk();
       if (!Kakao.isInitialized()) Kakao.init(jsKey);
-      const url = publicUrl();
+      const url = new URL(path, "https://dear-day-seven.vercel.app").toString();
       const content = {
         title,
         description: text || "초대장을 확인해 주세요.",
