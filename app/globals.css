@@ -2599,3 +2599,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dearday-logo--compact .dearday-logo-copy b{font:800 19px/1.05 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:-.055em}
 .dearday-logo--compact .dearday-logo-copy small{margin-top:2px;font:600 6px/1.35 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:.065em}
 .dearday-compact-logo{display:inline-flex!important;align-items:center!important;justify-content:center;flex-direction:row!important;width:auto!important}
+
+/* Logo symbol crop only: hide the first Korean-letter fragment from the source artwork. */
+.dearday-logo-symbol-image{width:39px;flex-basis:39px}
+.dearday-logo--compact .dearday-logo-symbol-image{width:32px;flex-basis:32px}
