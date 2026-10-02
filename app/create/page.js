@@ -13,11 +13,12 @@ import AccountCopy from "../invite/[slug]/account-copy";
 import OptionalInvitationSections from "../invite/[slug]/optional-invitation-sections";
 
 import GalleryEditor from "./gallery-editor";
-import { preparePhoto } from "../../lib/prepare-photo";
+import { preparePhoto, prepareKakaoSharePhoto } from "../../lib/prepare-photo";
 import { normalizeNotice } from "../../lib/invitation-notice";
 import { getInvitationTitle } from "../../lib/invitation-title";
 import { EVENT_KIND_OPTIONS, getEventConfig, getMissingRequiredFields } from "../../lib/event-config";
 import { BANK_OPTIONS } from "../../lib/bank-options";
+import DearDayLogo from "../../components/dearday-logo";
 
 const DEVELOPMENT_TEMPLATE_IDS = new Set(Object.values(TEMPLATE_IDS));
 const WEDDING_MESSAGE_EXAMPLES = [
@@ -165,7 +166,7 @@ function BankSelector({ value, onChange }) {
   );
 }
 const USER_SCREEN_EFFECTS = [["green", "초록 나뭇잎"], ["autumn", "가을 낙엽"], ["snow", "눈송이"], ["rose", "장미 꽃잎"], ["lavender", "라벤더 꽃잎"], ["daisy", "데이지 꽃"], ["heart", "하트"], ["color-confetti", "컬러 컨페티"], ["balloon", "파스텔 풍선"], ["bubble", "비눗방울"]];
-const initialInvitation = { eventKind: "wedding", templateId: "", heroPresetId: "", heroTextOverrides: {}, heroLayerOverrides: {}, heroExtraTextLayers: [], rsvpEnabled: true, guestbookEnabled: true, eventTitle: "", hostName: "", person1Name: "", person2Name: "", childName: "", parent1Name: "", parent2Name: "", birthDate: "", dueDate: "", age: "", anniversaryYears: "", organizationName: "", programName: "", coverPhotoUrl: "", 
+const initialInvitation = { eventKind: "wedding", templateId: "", heroPresetId: "", heroTextOverrides: {}, heroLayerOverrides: {}, heroExtraTextLayers: [], rsvpEnabled: true, guestbookEnabled: true, eventTitle: "", hostName: "", person1Name: "", person2Name: "", childName: "", parent1Name: "", parent2Name: "", birthDate: "", dueDate: "", age: "", anniversaryYears: "", organizationName: "", programName: "", coverPhotoUrl: "", kakaoShareImageUrl: "", 
 groom: "", groomPhone: "", groomFatherPhone: "", groomMotherPhone: "", bridePhone: "", brideFatherPhone: "", brideMotherPhone: "",
 groomFatherName: "",
 groomFatherDeceased: false,
@@ -262,6 +263,9 @@ export default function CreateInvitation() {
   const [galleryPhotos, setGalleryPhotos] = useState([]);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [photoNotice, setPhotoNotice] = useState("");
+  const [kakaoSharePhotoNotice, setKakaoSharePhotoNotice] = useState("");
+  const [kakaoCrop, setKakaoCrop] = useState(null);
+  const [kakaoCropY, setKakaoCropY] = useState(50);
   const photoBusy = useRef(false);
   const saveToastTimer = useRef(null);
   const [mapContainer, setMapContainer] = useState(null);
@@ -502,6 +506,32 @@ export default function CreateInvitation() {
       photoBusy.current = false;
       setUploadingPhoto(false);
     }
+  };
+  const uploadKakaoSharePhoto = (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || photoBusy.current || submitting || galleryBusy) return;
+    setKakaoCrop(current => { if (current?.previewUrl) URL.revokeObjectURL(current.previewUrl); return { file, previewUrl: URL.createObjectURL(file) }; });
+    setKakaoCropY(50);
+    setKakaoSharePhotoNotice("사진 위치를 맞춘 뒤 공유 이미지 저장을 눌러 주세요.");
+  };
+  const saveKakaoSharePhoto = async () => {
+    if (!kakaoCrop?.file || photoBusy.current || submitting || galleryBusy) return;
+    photoBusy.current = true; setUploadingPhoto(true); setKakaoSharePhotoNotice("카카오 공유 이미지를 저장하고 있어요.");
+    try {
+      const supabase = getSupabaseBrowserClient();
+      if (!supabase) throw new Error("사진 저장 서비스를 준비하지 못했어요.");
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("로그인 후 사진을 첨부할 수 있어요.");
+      const photo = await prepareKakaoSharePhoto(kakaoCrop.file, 50, kakaoCropY);
+      const response = await fetch("/api/photos", { method: "POST", headers: { "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.url) throw new Error(result.error || "사진 업로드에 실패했어요.");
+      update("kakaoShareImageUrl", result.url);
+      URL.revokeObjectURL(kakaoCrop.previewUrl); setKakaoCrop(null);
+      setKakaoSharePhotoNotice("카카오 공유 대표 이미지를 저장했어요. 임시 저장 또는 발행으로 반영해 주세요.");
+    } catch (error) { setKakaoSharePhotoNotice(error.message || "공유 이미지 저장에 실패했어요."); }
+    finally { photoBusy.current = false; setUploadingPhoto(false); }
   };
   const updateNotice = (key, value) => setInvitation(current => ({ ...current, notice: { ...normalizeNotice(current.notice), [key]: value } }));
   const [noticeUploadBusy, setNoticeUploadBusy] = useState(false);
@@ -784,7 +814,7 @@ export default function CreateInvitation() {
   const previewPlaceActions = () => invitation.venueAddress ? <><div className="public-address-copy"><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button><span role="status" aria-live="polite">{addressCopied ? "주소가 복사되었습니다." : ""}</span></div><InvitationMap address={invitation.venueAddress} /><TransportGuide invitation={invitation} /></> : null;
 
   return <main className="create-page">
-    <header className="create-header"><a className="brand" href="/"><img src="/dear-day-logo-blue.png" alt="디어데이" /></a><div className="create-user"><span>{provider}로 시작했어요</span><a href="/my-invitations">내 초대장</a><a href="/">나가기</a></div></header>
+    <header className="create-header"><a className="brand" href="/" aria-label="DearDay 홈"><DearDayLogo /></a><div className="create-user"><span>{provider}로 시작했어요</span><a href="/my-invitations">내 초대장</a><a href="/">나가기</a></div></header>
     <div className="create-layout">
       <section className="editor-panel">
         <nav className="dd-editor-steps" aria-label="초대장 제작 단계">{["디자인", "기본정보", "사진·연락처", "음악·효과", "부가기능", "확인·발행"].map((label, index) => <button key={label} type="button" className={editorStep === index ? "active" : ""} aria-current={editorStep === index ? "step" : undefined} onClick={() => setEditorStep(index)}><span>{String(index + 1).padStart(2, "0")}</span><strong>{label}</strong></button>)}</nav>
@@ -806,7 +836,8 @@ export default function CreateInvitation() {
         </div>
         <div style={{display:editorStep === 2 ? undefined : "none"}}>
         <details className="dd-custom-accordion" open><summary><span><strong>대표사진</strong><small>초대장 대표사진을 등록하거나 교체해요.</small></span><span className="dd-accordion-chevron" aria-hidden="true">⌄</span></summary><div className="dd-accordion-body">
-        <div className="form-section photo-editor"><h2>대표사진 <small>선택</small></h2><p>초대장에 보여줄 대표사진을 등록해보세요.</p><Field label={invitation.coverPhotoUrl ? "사진 교체" : "사진 선택"}><input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadPhoto} disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} aria-describedby="photo-help" /></Field><p id="photo-help">JPG · PNG · WEBP, 최대 15MB · 사진은 자동으로 크기를 줄여요.</p>{invitation.coverPhotoUrl && <div className="photo-selection"><img src={invitation.coverPhotoUrl} alt="첨부한 대표사진" /><button type="button" className="save-button" disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} onClick={() => { update("coverPhotoUrl", ""); setPhotoNotice("사진을 뺐어요. 임시 저장 또는 발행으로 반영해 주세요."); }}>사진 삭제</button></div>}<p className="photo-notice" role="status" aria-live="polite">{photoNotice}</p></div>
+        <div className="form-section photo-editor"><h2>대표사진 <small>선택</small></h2><p>초대장에 보여줄 대표사진을 등록해보세요.</p><Field label={invitation.coverPhotoUrl ? "사진 교체" : "사진 선택"}><input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadPhoto} disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} aria-describedby="photo-help" /></Field><p id="photo-help">JPG · PNG · WEBP, 최대 15MB · 사진은 자동으로 크기를 줄여요.</p>{invitation.coverPhotoUrl && <div className="photo-selection"><img src={invitation.coverPhotoUrl} alt="첨부한 대표사진" /><button type="button" className="save-button" disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} onClick={() => { update("coverPhotoUrl", ""); setPhotoNotice("사진을 뺐어요. 임시 저장 또는 발행으로 반영해 주세요."); }}>사진 삭제</button></div>}<p className="photo-notice" role="status" aria-live="polite">{photoNotice}</p>
+        <div className="kakao-share-photo-editor"><h3>카카오 공유 대표 이미지 <small>선택</small></h3><p>카카오톡 공유 카드에만 사용하는 이미지예요. 미설정 시 초대장 대표사진이 자동으로 사용됩니다.</p><Field label={invitation.kakaoShareImageUrl ? "공유 이미지 교체" : "공유 이미지 선택"}><input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadKakaoSharePhoto} disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} aria-describedby="kakao-share-photo-help" /></Field><p id="kakao-share-photo-help">JPG · PNG · WEBP, 최대 15MB · 카카오 카드용 2:1 비율로 저장돼요.</p>{kakaoCrop && <div className="kakao-crop-editor"><div className="kakao-crop-preview" style={{backgroundImage:`url("${kakaoCrop.previewUrl}")`,backgroundPosition:`50% ${kakaoCropY}%`}} /><label>상하 위치 <input type="range" min="0" max="100" value={kakaoCropY} onChange={event=>setKakaoCropY(Number(event.target.value))}/></label><div><button type="button" className="save-button" onClick={saveKakaoSharePhoto} disabled={uploadingPhoto}>공유 이미지 저장</button><button type="button" onClick={()=>{URL.revokeObjectURL(kakaoCrop.previewUrl);setKakaoCrop(null);setKakaoSharePhotoNotice("");}}>취소</button></div></div>}{invitation.kakaoShareImageUrl && <div className="photo-selection"><img src={invitation.kakaoShareImageUrl} alt="카카오 공유 대표 이미지" /><button type="button" className="save-button" disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} onClick={() => { update("kakaoShareImageUrl", ""); setKakaoSharePhotoNotice("공유 전용 이미지를 삭제했어요. 이제 초대장 대표사진이 자동으로 사용됩니다."); }}>공유 이미지 삭제</button></div>}<p className="photo-notice" role="status" aria-live="polite">{kakaoSharePhotoNotice}</p></div></div>
         </div></details>
         <details className="dd-custom-accordion"><summary><span><strong>우리의 순간들</strong><small>갤러리에 사진을 추가하고 관리해요.</small></span><span className="dd-accordion-chevron" aria-hidden="true">⌄</span></summary><div className="dd-accordion-body">
         <GalleryEditor slug={eventSlug} disabled={Boolean(submitting) || uploadingPhoto} onSaveInvitation={saveDraft} onBusyChange={setGalleryBusy} onPhotosChange={setGalleryPhotos} />

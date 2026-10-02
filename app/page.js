@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../lib/supabase/browser";
 import { DEFAULT_AUTH_RETURN_PATH, getSafeAuthReturnPath } from "../lib/auth-return-url";
+import DearDayLogo from "../components/dearday-logo";
 
 const invitationTypes = [["Wedding", "결혼식", "꽃다발", "wedding"], ["1st Birthday", "돌잔치", "첫돌", "first"], ["Birthday", "생일", "케이크", "birthday"], ["Gathering", "모임 / 동창회", "건배", "gathering"], ["Party", "파티", "파티", "party"], ["Custom", "직접 만들기", "✉", "custom"]];
 const steps = [["01", "▧", "템플릿 선택", "마음에 드는 디자인을 골라주세요."], ["02", "✎", "내용 입력", "날짜, 장소, 사진 등 간단히 입력하세요."], ["03", "➤", "완성하고 공유", "카카오톡, 링크로 바로 공유하세요."]];
@@ -57,7 +58,7 @@ export default function Home() {
 
   return <main className="landing-v2">
     <header className="landing-header">
-      <a className="landing-brand" href="#top" aria-label="디어데이 홈"><span><b>DearDay</b><small>GOOD PEOPLE GOOD MOMENT</small></span></a>
+      <a className="landing-brand" href="#top" aria-label="DearDay 홈"><DearDayLogo /></a>
       <nav className="landing-nav"><button onClick={start}>초대장 만들기</button><a href="#templates">템플릿</a><a href="#how">이용안내</a><a href="#story">고객센터</a></nav>
       <div className="landing-actions">{user ? <><span>{providerLabel}</span><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={start}>지금, 초대장 만들기 →</button></div>
       <div className="landing-mobile-actions"><button aria-label="검색" onClick={comingSoon}>⌕</button><button className="landing-menu" aria-label="메뉴 열기" onClick={() => setMenuOpen(!menuOpen)}>☰</button></div>

@@ -1,7 +1,9 @@
+import DearDayLogo from "../dearday-logo";
+
 export default function DearDayBrandFooter() {
   return <footer className="dearday-brand-footer dearday-brand-footer--compact">
     <a className="dearday-compact-logo" href="/" aria-label="DearDay 홈으로">
-      <img src="/dear-day-logo-blue.png" alt="DearDay" />
+      <DearDayLogo compact />
     </a>
     <p className="dearday-compact-categories">결혼식 · 돌잔치 · 생일 · 모임·동창회 · 파티</p>
     <a href="/" className="dearday-compact-action" aria-label="DearDay에서 초대장 만들기">

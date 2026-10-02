@@ -1565,7 +1565,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* Public invitation notice */
 .shared-public-invitation{position:relative}
-.dd-notice-trigger{position:absolute;z-index:25;top:12px;right:12px;border:1px solid #e9dfd8;border-radius:30px;background:#fff;color:#423b37;padding:8px 13px;font:600 12px inherit;box-shadow:0 2px 12px #00000012;cursor:pointer}
+.dd-notice-trigger{position:absolute;z-index:25;top:6px;right:10px;min-height:30px;border:1px solid #e9dfd8;border-radius:30px;background:#fff;color:#423b37;padding:5px 10px;font:600 10px/1.2 inherit;box-shadow:0 2px 12px #00000012;cursor:pointer}
 .dd-notice-overlay{position:fixed;inset:0;z-index:10000;background:#0008;display:flex;align-items:center;justify-content:center;padding:20px}
 .dd-notice-dialog{box-sizing:border-box;width:min(100%,420px);max-height:min(85dvh,720px);overflow:auto;background:#fff;border-radius:18px;padding:24px;color:#302b29;box-shadow:0 16px 60px #0003}
 .dd-notice-top,.dd-notice-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -2571,3 +2571,46 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   bottom:max(82px,calc(70px + env(safe-area-inset-bottom))) !important;
   z-index:80 !important;
 }
+
+.kakao-share-photo-editor{margin-top:22px;padding-top:20px;border-top:1px solid #eadfd8}.kakao-share-photo-editor h3{margin:0 0 6px;font-size:14px}.kakao-share-photo-editor h3 small{color:#8f776c;font-size:11px;font-weight:400}.kakao-share-photo-editor>p{font-size:12px;color:#8f776c;line-height:1.7}.kakao-share-photo-editor .photo-selection img{aspect-ratio:2/1;height:auto;object-fit:cover}
+
+.kakao-crop-editor{display:grid;gap:10px;margin:14px 0;padding:12px;border:1px solid #eadfd8;border-radius:10px;background:#fffaf7}.kakao-crop-preview{width:100%;aspect-ratio:2/1;background-size:cover;background-repeat:no-repeat;border-radius:8px}.kakao-crop-editor label{display:grid;grid-template-columns:70px 1fr;align-items:center;gap:8px;color:#80695f;font-size:11px}.kakao-crop-editor input[type=range]{width:100%}.kakao-crop-editor>div:last-child{display:flex;gap:8px}.kakao-crop-editor>div:last-child button{min-height:38px;border:0;border-radius:8px;padding:8px 12px;cursor:pointer}
+
+/* Shared DearDay brand */
+.dearday-logo{display:inline-flex;align-items:center;gap:8px;line-height:1;color:#251919}.dearday-logo-symbol{display:grid;place-items:center;width:27px;height:27px;border-radius:50%;background:#f7e5e7;color:#df7c86;font-size:13px;transform:rotate(-8deg)}.dearday-logo-copy{display:block;text-align:left}.dearday-logo-copy b{display:block;font:25px/1 Georgia,serif;font-weight:700}.dearday-logo-copy small{display:block;margin-top:4px;font:600 8px/1 Arial,sans-serif;letter-spacing:.04em;white-space:nowrap}.dearday-logo--compact{gap:6px}.dearday-logo--compact .dearday-logo-symbol{width:22px;height:22px;font-size:10px}.dearday-logo--compact .dearday-logo-copy b{font-size:19px}.dearday-logo--compact .dearday-logo-copy small{font-size:6px;margin-top:3px}.landing-brand .dearday-logo{color:inherit}.create-header .brand{display:inline-flex;align-items:center;text-decoration:none}.create-header .brand .dearday-logo{transform:none}.dearday-compact-logo{display:inline-flex;justify-content:center;text-decoration:none}
+
+/* Keep the original landing DearDay wordmark; shared locations inherit this exact mark. */
+.dearday-logo{gap:0}.dearday-logo-symbol{display:none}.dearday-logo-copy b{font:700 25px/1 Georgia,serif}.dearday-logo-copy small{margin-top:4px;font:600 8px/1 Arial,sans-serif;letter-spacing:.04em}.dearday-logo--compact .dearday-logo-copy b{font-size:19px}.dearday-logo--compact .dearday-logo-copy small{font-size:6px}
+
+/* Original envelope artwork, cropped from the existing DearDay logo asset. */
+.dearday-logo-symbol-image{position:relative;display:inline-block;width:34px;height:30px;overflow:hidden;flex:0 0 auto}.dearday-logo-symbol-image img{position:absolute;height:42px;width:auto;max-width:none;left:-1px;top:-6px}.dearday-logo--compact .dearday-logo-symbol-image{width:27px;height:24px}.dearday-logo--compact .dearday-logo-symbol-image img{height:34px;top:-5px}.dearday-logo{gap:6px}
+
+/* Brand logo correction: match homepage typography, keep the envelope artwork fully visible,
+   and force the compact footer logo to stay in one horizontal row. */
+.dearday-logo{display:inline-flex;align-items:center;flex-direction:row!important;flex-wrap:nowrap;gap:7px;color:#152b52;white-space:nowrap}
+.dearday-logo-copy{display:block;flex:0 0 auto;text-align:left}
+.dearday-logo-copy b{display:block;font:800 29px/1.05 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:-.055em;color:#152b52}
+.dearday-logo-copy small{display:block;margin-top:2px;font:600 8px/1.4 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:.065em;color:#536781}
+.dearday-logo-symbol-image{position:relative;display:block;width:45px;height:32px;overflow:hidden;flex:0 0 45px}
+.dearday-logo-symbol-image img{position:absolute;display:block;height:42px!important;width:auto!important;max-width:none!important;left:-5px;top:-6px}
+.dearday-logo--compact{display:inline-flex!important;align-items:center!important;flex-direction:row!important;gap:6px}
+.dearday-logo--compact .dearday-logo-symbol-image{width:37px;height:27px;flex-basis:37px}
+.dearday-logo--compact .dearday-logo-symbol-image img{height:34px!important;left:-4px;top:-5px}
+.dearday-logo--compact .dearday-logo-copy b{font:800 19px/1.05 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:-.055em}
+.dearday-logo--compact .dearday-logo-copy small{margin-top:2px;font:600 6px/1.35 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:.065em}
+.dearday-compact-logo{display:inline-flex!important;align-items:center!important;justify-content:center;flex-direction:row!important;width:auto!important}
+
+/* Logo symbol crop only: hide the first Korean-letter fragment from the source artwork. */
+.dearday-logo-symbol-image{width:39px;flex-basis:39px}
+.dearday-logo--compact .dearday-logo-symbol-image{width:32px;flex-basis:32px}
+
+/* Standalone symbol asset: no CSS cropping. */
+.dearday-logo-symbol-image{width:39px;height:31px;flex-basis:39px;overflow:visible}
+.dearday-logo-symbol-image img{position:static;display:block;width:39px!important;height:auto!important;max-width:100%!important;object-fit:contain}
+.dearday-logo--compact .dearday-logo-symbol-image{width:32px;height:26px;flex-basis:32px}
+.dearday-logo--compact .dearday-logo-symbol-image img{position:static;width:32px!important;height:auto!important}
+
+
+/* DearDay wordmark: Alex Brush */
+.dearday-logo-copy b{font-family:var(--font-alex-brush),cursive!important;font-weight:400!important;font-style:normal!important;letter-spacing:0!important;line-height:1!important}
+.dearday-logo--compact .dearday-logo-copy b{font-family:var(--font-alex-brush),cursive!important;font-weight:400!important;font-style:normal!important;letter-spacing:0!important;line-height:1!important}
