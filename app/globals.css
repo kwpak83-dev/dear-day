@@ -2564,3 +2564,10 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   background-color:transparent!important;
   color:inherit!important;
 }
+
+
+/* Sales template preview: keep the invitation quick actions above the fixed purchase CTA. */
+.invitation-quick-menu--sales-preview{
+  bottom:max(82px,calc(70px + env(safe-area-inset-bottom))) !important;
+  z-index:80 !important;
+}
