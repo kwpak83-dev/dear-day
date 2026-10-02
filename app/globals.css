@@ -2581,3 +2581,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Keep the original landing DearDay wordmark; shared locations inherit this exact mark. */
 .dearday-logo{gap:0}.dearday-logo-symbol{display:none}.dearday-logo-copy b{font:700 25px/1 Georgia,serif}.dearday-logo-copy small{margin-top:4px;font:600 8px/1 Arial,sans-serif;letter-spacing:.04em}.dearday-logo--compact .dearday-logo-copy b{font-size:19px}.dearday-logo--compact .dearday-logo-copy small{font-size:6px}
+
+/* Original envelope artwork, cropped from the existing DearDay logo asset. */
+.dearday-logo-symbol-image{position:relative;display:inline-block;width:34px;height:30px;overflow:hidden;flex:0 0 auto}.dearday-logo-symbol-image img{position:absolute;height:42px;width:auto;max-width:none;left:-1px;top:-6px}.dearday-logo--compact .dearday-logo-symbol-image{width:27px;height:24px}.dearday-logo--compact .dearday-logo-symbol-image img{height:34px;top:-5px}.dearday-logo{gap:6px}
