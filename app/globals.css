@@ -2758,3 +2758,12 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  .landing-v2 .landing-hero-benefits>div>strong{font-size:14px!important;line-height:1.2!important;white-space:nowrap!important;letter-spacing:-.035em!important}
  .landing-v2 .landing-hero-benefits>div>small{font-size:10px!important;line-height:1.3!important;white-space:nowrap!important;letter-spacing:-.025em!important}
 }
+
+/* Hero background: stronger sky-blue wash across the benefit side. */
+.landing-v2 .landing-hero{background:
+ radial-gradient(circle at 7% 16%,rgba(255,255,255,.72) 0 4%,transparent 18%),
+ radial-gradient(circle at 88% 13%,rgba(255,231,164,.20) 0 3%,transparent 19%),
+ radial-gradient(ellipse at 82% 52%,rgba(184,218,255,.42) 0 16%,transparent 48%),
+ radial-gradient(ellipse at 48% 70%,rgba(157,203,255,.30) 0 12%,transparent 43%),
+ linear-gradient(112deg,#f2f8ff 0%,#e6f2ff 42%,#edf7ff 72%,#e2f1ff 100%)!important}
+@media(max-width:800px){.landing-v2 .landing-hero{background:radial-gradient(circle at 86% 9%,rgba(255,231,166,.18),transparent 23%),radial-gradient(circle at 68% 52%,rgba(168,208,255,.36),transparent 42%),linear-gradient(155deg,#f4f9ff 0%,#e6f2ff 58%,#edf7ff 100%)!important}}
