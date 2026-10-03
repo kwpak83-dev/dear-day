@@ -49,7 +49,7 @@ export default function MyInvitations() {
     loadEvents();
   }, []);
 
-  const deleteDraft = async () => {
+  const deleteInvitation = async () => {
     if (!deleteTarget || deletingSlug) return;
     setDeletingSlug(deleteTarget.slug);
     setActionNotice("");
@@ -115,7 +115,7 @@ export default function MyInvitations() {
         <h2>{getInvitationTitle(event.settings, event.kind)}</h2>
         <p>{event.starts_at ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "long", timeStyle: "short" }).format(new Date(event.starts_at)) : "날짜 미정"}</p>
         {retentionNotice(event) && <p>{retentionNotice(event)}</p>}
-        <div><a href={`/create?slug=${event.slug}`}>편집하기</a>{event.status === "paid" && <><a href={`/create?slug=${event.slug}&preview=final`}>최종 미리보기</a><a href={`/create?slug=${event.slug}&publish=ready`}>초대장 발행하기</a></>}{event.status === "published" && <><a href={`/invite/${event.slug}?from=owner`}>초대장 보기</a><a href={`/guest-management?slug=${event.slug}`}>하객 관리</a><ShareActions path={`/invite/${event.slug}`} title={getInvitationTitle(event.settings, event.kind)} className="invitation-card-share" /><button type="button" className="invitation-state-button" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>발행 중지</button></>}{event.status === "suspended" && <button type="button" className="invitation-state-button restore" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>다시 발행하기</button>}{event.status === "draft" && <button type="button" className="invitation-delete-button" onClick={() => { setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}>삭제하기</button>}</div>
+        <div><a href={`/create?slug=${event.slug}`}>편집하기</a>{event.status === "paid" && <><a href={`/create?slug=${event.slug}&preview=final`}>최종 미리보기</a><a href={`/create?slug=${event.slug}&publish=ready`}>초대장 발행하기</a></>}{event.status === "published" && <><a href={`/invite/${event.slug}?from=owner`}>초대장 보기</a><a href={`/guest-management?slug=${event.slug}`}>하객 관리</a><ShareActions path={`/invite/${event.slug}`} title={getInvitationTitle(event.settings, event.kind)} className="invitation-card-share" /><button type="button" className="invitation-state-button" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>발행 중지</button></>}{event.status === "suspended" && <><button type="button" className="invitation-state-button restore" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>다시 발행하기</button><button type="button" className="invitation-delete-button" onClick={() => { setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}>삭제하기</button></>}{event.status === "draft" && <button type="button" className="invitation-delete-button" onClick={() => { setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}>삭제하기</button>}</div>
       </article>)}</div>
     </section>
     {publicationTarget && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="publication-state-title">
@@ -131,7 +131,7 @@ export default function MyInvitations() {
         <h2 id="delete-invitation-title">이 초대장을 삭제할까요?</h2>
         <p>삭제한 초대장은 복구할 수 없습니다.</p>
         {deleteError && <p className="delete-invitation-error" role="alert">{deleteError}</p>}
-        <div><button type="button" onClick={() => setDeleteTarget(null)} disabled={Boolean(deletingSlug)}>취소</button><button type="button" className="danger" onClick={deleteDraft} disabled={Boolean(deletingSlug)}>{deletingSlug ? "삭제 중..." : "삭제하기"}</button></div>
+        <div><button type="button" onClick={() => setDeleteTarget(null)} disabled={Boolean(deletingSlug)}>취소</button><button type="button" className="danger" onClick={deleteInvitation} disabled={Boolean(deletingSlug)}>{deletingSlug ? "삭제 중..." : "삭제하기"}</button></div>
       </div>
     </div>}
   </MyPageLayout>;
