@@ -2614,3 +2614,156 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* DearDay wordmark: Alex Brush */
 .dearday-logo-copy b{font-family:var(--font-alex-brush),cursive!important;font-weight:400!important;font-style:normal!important;letter-spacing:0!important;line-height:1!important}
 .dearday-logo--compact .dearday-logo-copy b{font-family:var(--font-alex-brush),cursive!important;font-weight:400!important;font-style:normal!important;letter-spacing:0!important;line-height:1!important}
+
+
+/* DearDay slogan: slim & compact shared style */
+.dearday-logo-copy small{display:block!important;margin-top:2px!important;font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif!important;font-size:7px!important;font-weight:500!important;line-height:1.2!important;letter-spacing:.04em!important;color:#6b7280!important;white-space:nowrap!important}
+.dearday-logo--compact .dearday-logo-copy small{font-size:6px!important;letter-spacing:.035em!important;color:#6b7280!important}
+
+/* Footer logo uses the same DearDay slogan treatment as shared headers. */
+.dearday-brand-footer .dearday-logo--compact .dearday-logo-copy small{font-size:7px!important;font-weight:500!important;line-height:1.2!important;letter-spacing:.04em!important;color:#6b7280!important}
+
+/* Footer logo scale adjustment. */
+.dearday-brand-footer .dearday-logo--compact{gap:7px!important}
+.dearday-brand-footer .dearday-logo--compact .dearday-logo-symbol-image{width:35px!important;height:29px!important;flex-basis:35px!important}
+.dearday-brand-footer .dearday-logo--compact .dearday-logo-symbol-image img{width:35px!important;height:auto!important}
+.dearday-brand-footer .dearday-logo--compact .dearday-logo-copy b{font-size:22px!important}
+.dearday-brand-footer .dearday-logo--compact .dearday-logo-copy small{font-size:6px!important}
+
+/* Footer CTA: slightly smaller text and link arrow. */
+.dearday-brand-footer .dearday-compact-action{font-size:9px!important;gap:7px!important}
+.dearday-brand-footer .dearday-compact-arrow{width:22px!important;height:22px!important;font-size:13px!important}
+
+
+/* Notice image attachment editor */
+.dd-notice-image-editor{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 0 2px}
+.dd-notice-image-state{width:100%;margin:0;color:#6b7280;font-size:12px}
+.dd-notice-file-button,.dd-notice-image-delete{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 14px;border-radius:10px;font:600 12px/1.2 inherit;cursor:pointer}
+.dd-notice-file-button{background:#315be8;color:#fff;border:1px solid #315be8}
+.dd-notice-file-button input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.dd-notice-image-delete{border:1px solid #ead9d1;background:#fff7f3;color:#8a5b49}
+.dd-notice-image-preview{width:100%;display:flex;align-items:center;gap:10px;padding:8px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa}
+.dd-notice-image-preview img{display:block;width:88px;height:66px;object-fit:cover;border-radius:8px}
+.dd-notice-image-preview small{color:#6b7280;font-size:11px}
+
+
+/* Landing benefit copy refresh */
+.landing-hero-benefits>div{gap:3px!important}
+.landing-hero-benefits>div>strong{display:block;font-size:11px;line-height:1.25;color:#173f91}
+.landing-hero-benefits>div>small{display:block;font-size:8px;line-height:1.25;color:#6b7280;font-weight:500}
+.dd-benefit-emoji{display:block!important;font-size:23px!important;line-height:1!important;margin-bottom:5px}
+.dd-home03-feature{align-items:flex-start!important}
+.dd-home03-feature>div{min-width:0}
+.dd-home03-feature strong{display:block;line-height:1.3}
+.dd-home03-feature small{display:block;margin-top:3px;line-height:1.35}
+.dd-home03-emoji{flex:0 0 auto;font-size:22px;line-height:1.1}
+@media(max-width:700px){
+  .landing-hero-benefits>div>strong{font-size:11px}
+  .landing-hero-benefits>div>small{font-size:8px}
+  .dd-benefit-emoji{font-size:22px!important}
+  .dd-home03-features{display:grid!important;grid-template-columns:1fr!important;gap:9px!important}
+  .dd-home03-feature{display:flex!important;gap:12px!important;padding:13px 14px!important;border-radius:14px!important;background:#fff!important}
+  .dd-home03-emoji{font-size:26px}
+  .dd-home03-feature strong{font-size:13px!important}
+  .dd-home03-feature small{font-size:10px!important}
+}
+
+/* Mobile hero benefits: 2 x 2 grid */
+@media(max-width:700px){
+  .landing-hero-benefits{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  .landing-hero-benefits>div{width:auto!important;min-width:0!important}
+}
+
+/* Ensure all four mobile hero benefit cards are visible. */
+@media(max-width:700px){
+  .landing-v2 .landing-hero-benefits{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:repeat(2,auto)!important;height:auto!important;max-height:none!important;overflow:visible!important}
+  .landing-v2 .landing-hero-benefits>div{display:flex!important;visibility:visible!important;opacity:1!important;grid-column:auto!important;grid-row:auto!important}
+}
+
+/* Mobile hero benefits: compact horizontal icon + copy cards */
+@media(max-width:700px){
+  .landing-v2 .landing-hero-benefits{gap:8px!important;padding:8px!important}
+  .landing-v2 .landing-hero-benefits>div{min-height:72px!important;padding:9px 8px!important;display:grid!important;grid-template-columns:38px minmax(0,1fr)!important;grid-template-rows:auto auto!important;column-gap:7px!important;row-gap:1px!important;align-content:center!important;align-items:center!important;text-align:left!important;border-radius:12px!important}
+  .landing-v2 .landing-hero-benefits>div>.dd-benefit-emoji{grid-column:1!important;grid-row:1 / span 2!important;width:38px!important;height:38px!important;margin:0!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:21px!important}
+  .landing-v2 .landing-hero-benefits>div>strong{grid-column:2!important;grid-row:1!important;margin:0!important;font-size:10px!important;line-height:1.2!important;white-space:normal!important}
+  .landing-v2 .landing-hero-benefits>div>small{grid-column:2!important;grid-row:2!important;margin:0!important;font-size:7px!important;line-height:1.25!important;white-space:normal!important}
+}
+
+/* Mobile hero benefits: tighter cards and larger copy */
+@media(max-width:700px){
+  .landing-v2 .landing-hero-benefits{gap:7px!important;padding:7px!important}
+  .landing-v2 .landing-hero-benefits>div{min-height:60px!important;padding:6px 7px!important;grid-template-columns:36px minmax(0,1fr)!important;column-gap:6px!important;border-radius:11px!important}
+  .landing-v2 .landing-hero-benefits>div>.dd-benefit-emoji{width:36px!important;height:36px!important;font-size:21px!important}
+  .landing-v2 .landing-hero-benefits>div>strong{font-size:12px!important;line-height:1.15!important}
+  .landing-v2 .landing-hero-benefits>div>small{font-size:9px!important;line-height:1.2!important}
+}
+
+/* Keep mobile hero benefit titles on one line. */
+@media(max-width:700px){
+  .landing-v2 .landing-hero-benefits>div{grid-template-columns:34px minmax(0,1fr)!important;column-gap:4px!important;padding-left:6px!important;padding-right:6px!important}
+  .landing-v2 .landing-hero-benefits>div>.dd-benefit-emoji{width:34px!important;height:34px!important}
+  .landing-v2 .landing-hero-benefits>div>strong{white-space:nowrap!important;letter-spacing:-.04em!important}
+}
+
+/* DearDay hero: airy gradient + ribbon background, without large floral overlays. */
+.landing-v2 .landing-hero{background:
+ radial-gradient(circle at 8% 18%,rgba(255,255,255,.92) 0 3%,transparent 12%),
+ radial-gradient(circle at 90% 12%,rgba(255,232,174,.34) 0 2%,transparent 16%),
+ radial-gradient(circle at 56% 72%,rgba(171,207,255,.28) 0 7%,transparent 26%),
+ linear-gradient(118deg,#f8fbff 0%,#edf6ff 38%,#fffdf8 69%,#eef7ff 100%)!important;
+ position:relative}
+.landing-v2 .landing-hero:before,.landing-v2 .landing-hero:after{content:"";position:absolute;pointer-events:none;z-index:0;border-radius:50%;filter:blur(.2px)}
+.landing-v2 .landing-hero:before{width:82%;height:150px;left:-12%;bottom:-35px;border:2px solid rgba(105,165,239,.23);border-left-color:transparent;border-right-color:transparent;transform:rotate(8deg);box-shadow:0 -18px 42px rgba(126,183,246,.08)}
+.landing-v2 .landing-hero:after{width:76%;height:120px;right:-16%;bottom:6px;border:1px solid rgba(89,155,235,.25);border-left-color:transparent;border-right-color:transparent;transform:rotate(-9deg);box-shadow:0 18px 48px rgba(124,180,244,.09)}
+.landing-v2 .landing-hero-layout{z-index:1}
+@media(max-width:800px){
+ .landing-v2 .landing-hero{background:radial-gradient(circle at 88% 7%,rgba(255,231,166,.25),transparent 22%),radial-gradient(circle at 18% 30%,rgba(178,213,255,.3),transparent 26%),linear-gradient(155deg,#f8fbff 0%,#edf6ff 55%,#fffdf8 100%)!important}
+ .landing-v2 .landing-hero:before{width:130%;height:95px;left:-30%;bottom:135px;opacity:.75}
+ .landing-v2 .landing-hero:after{width:120%;height:82px;right:-32%;bottom:88px;opacity:.65}
+}
+
+/* Desktop hero benefits: denser panel beside the phone. */
+@media(min-width:801px){
+ .landing-v2 .landing-hero-layout{grid-template-columns:38% 40% 22%!important}
+ .landing-v2 .landing-hero-benefits{gap:8px!important;padding:9px!important;transform:scale(.92)!important;transform-origin:left center!important}
+ .landing-v2 .landing-hero-benefits>div{min-height:88px!important;padding:8px 5px!important}
+ .landing-v2 .landing-hero-benefits>div span{width:34px!important;height:34px!important;font-size:20px!important}
+}
+
+/* Desktop hero benefits: balanced card proportions. */
+@media(min-width:801px){
+ .landing-v2 .landing-hero-benefits{gap:9px!important;padding:10px!important;transform:scale(.96)!important}
+ .landing-v2 .landing-hero-benefits>div{min-height:108px!important;padding:11px 7px!important}
+ .landing-v2 .landing-hero-benefits>div>.dd-benefit-emoji{width:40px!important;height:40px!important;font-size:23px!important;margin-bottom:5px!important}
+ .landing-v2 .landing-hero-benefits>div>strong{font-size:12px!important;line-height:1.25!important}
+ .landing-v2 .landing-hero-benefits>div>small{font-size:9px!important;line-height:1.3!important;margin-top:3px!important}
+}
+
+/* Desktop hero benefit panel: visibly taller, fuller cards. */
+@media(min-width:801px){
+ .landing-v2 .landing-hero-benefits{transform:none!important;gap:10px!important;padding:11px!important}
+ .landing-v2 .landing-hero-benefits>div{min-height:128px!important;padding:14px 8px!important;gap:7px!important}
+ .landing-v2 .landing-hero-benefits>div>.dd-benefit-emoji{width:44px!important;height:44px!important;font-size:25px!important;margin-bottom:4px!important}
+ .landing-v2 .landing-hero-benefits>div>strong{font-size:13px!important}
+ .landing-v2 .landing-hero-benefits>div>small{font-size:10px!important}
+}
+
+/* Desktop hero: shift artwork left and give benefit panel more room. */
+@media(min-width:1101px){
+ .landing-v2 .landing-hero-layout{grid-template-columns:34% 38% 28%!important}
+ .landing-v2 .landing-hero-art{transform:translateX(-22px)!important}
+ .landing-v2 .landing-hero-benefits{transform:translateX(-8px)!important;width:calc(100% + 18px)!important}
+ .landing-v2 .landing-hero-benefits>div{min-height:132px!important;padding:14px 10px!important}
+ .landing-v2 .landing-hero-benefits>div>.dd-benefit-emoji{width:48px!important;height:48px!important;font-size:27px!important}
+ .landing-v2 .landing-hero-benefits>div>strong{font-size:14px!important;line-height:1.2!important;white-space:nowrap!important;letter-spacing:-.035em!important}
+ .landing-v2 .landing-hero-benefits>div>small{font-size:10px!important;line-height:1.3!important;white-space:nowrap!important;letter-spacing:-.025em!important}
+}
+
+/* Hero background: stronger sky-blue wash across the benefit side. */
+.landing-v2 .landing-hero{background:
+ radial-gradient(circle at 7% 16%,rgba(255,255,255,.72) 0 4%,transparent 18%),
+ radial-gradient(circle at 88% 13%,rgba(255,231,164,.20) 0 3%,transparent 19%),
+ radial-gradient(ellipse at 82% 52%,rgba(184,218,255,.42) 0 16%,transparent 48%),
+ radial-gradient(ellipse at 48% 70%,rgba(157,203,255,.30) 0 12%,transparent 43%),
+ linear-gradient(112deg,#f2f8ff 0%,#e6f2ff 42%,#edf7ff 72%,#e2f1ff 100%)!important}
+@media(max-width:800px){.landing-v2 .landing-hero{background:radial-gradient(circle at 86% 9%,rgba(255,231,166,.18),transparent 23%),radial-gradient(circle at 68% 52%,rgba(168,208,255,.36),transparent 42%),linear-gradient(155deg,#f4f9ff 0%,#e6f2ff 58%,#edf7ff 100%)!important}}
