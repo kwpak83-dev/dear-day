@@ -50,31 +50,44 @@ export default function HeroPresetsPage(){
  const [copiedTextStyle,setCopiedTextStyle]=useState(null);
  const fontCategories=[...new Set(HERO_FONTS.map((font)=>font.category))];
  const filteredFonts=HERO_FONTS.filter((font)=>(fontCategory==="all"||font.category===fontCategory)&&`${font.name} ${font.category}`.toLowerCase().includes(fontQuery.trim().toLowerCase()));
- const [state,setState]=useState({loading:true,error:"",presets:[]}); const [editing,setEditing]=useState(null); const [form,setForm]=useState(empty); const [saving,setSaving]=useState(false); const [notice,setNotice]=useState(""); const [assets,setAssets]=useState([]); const [decorationLibrary,setDecorationLibrary]=useState([]); const [decorLibraryOpen,setDecorLibraryOpen]=useState(false); const [assetBusy,setAssetBusy]=useState(""); const heroPreviewRef=useRef(null);
+ const [state,setState]=useState({loading:true,error:"",presets:[]}); const [editing,setEditing]=useState(null); const [newHeroBaseId,setNewHeroBaseId]=useState(""); const [form,setForm]=useState(empty); const [saving,setSaving]=useState(false); const [notice,setNotice]=useState(""); const [assets,setAssets]=useState([]); const [decorationLibrary,setDecorationLibrary]=useState([]); const [decorLibraryOpen,setDecorLibraryOpen]=useState(false); const [assetBusy,setAssetBusy]=useState(""); const heroPreviewRef=useRef(null);
  const auth=async()=>{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)throw new Error("로그인이 필요합니다.");return {Authorization:`Bearer ${session.access_token}`};};
  const load=async()=>{const response=await fetch("/api/admin/hero-presets",{headers:await auth()});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||"Hero 프리셋 목록을 불러오지 못했어요.");setState({loading:false,error:"",presets:result.presets||[]});};
  useEffect(()=>{load().catch((e)=>setState({loading:false,error:e.message,presets:[]}));},[]);
  const loadAssets=async(id)=>{const response=await fetch(`/api/admin/hero-presets/assets?heroPresetId=${encodeURIComponent(id)}`,{headers:await auth()});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||"Hero Asset을 불러오지 못했어요.");setAssets(result.assets||[]);};
  const loadDecorationLibrary=async()=>{const response=await fetch("/api/admin/hero-decoration-library",{headers:await auth(),cache:"no-store"});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||"장식 라이브러리를 불러오지 못했어요.");setDecorationLibrary(result.assets||[]);return result.assets||[];};
- const open=(preset=null)=>{
-  // Copy the latest saved Full Photo configuration, never its uploaded assets.
-  const fullPhoto=state.presets.find((item)=>["full-photo","full_photo","fullphoto"].includes((item.preset_key||"").toLowerCase()))
-    ||state.presets.find((item)=>(item.name||"").trim().toLowerCase()==="full photo");
-  const source=preset||fullPhoto;
+ const configFromBase=(source=null,{editingExisting=false}={})=>{
   const sourceConfig=source?.config||defaultConfig;
-  const copiedConfig={
+  return {
     ...defaultConfig,...structuredClone(sourceConfig),
     display:{...defaultDisplay,...sourceConfig.display},
     heroBackdrop:{...defaultConfig.heroBackdrop,...sourceConfig.heroBackdrop},
     photoFrame:{...defaultConfig.photoFrame,...sourceConfig.photoFrame},
-    textLayers:Array.isArray(sourceConfig.textLayers)?structuredClone(sourceConfig.textLayers).map(layer=>preset?layer:{...layer,fadeUp:{enabled:false,duration:0.8,delay:0.3}}):[],
-    decorLayers:preset&&Array.isArray(sourceConfig.decorLayers)?structuredClone(sourceConfig.decorLayers):[],
-    photoFadeUp:preset?{...defaultConfig.photoFadeUp,...sourceConfig.photoFadeUp}:{...defaultConfig.photoFadeUp},
+    textLayers:Array.isArray(sourceConfig.textLayers)?structuredClone(sourceConfig.textLayers).map(layer=>editingExisting?layer:{...layer,fadeUp:{enabled:false,duration:0.8,delay:0.3}}):[],
+    decorLayers:Array.isArray(sourceConfig.decorLayers)?structuredClone(sourceConfig.decorLayers):[],
+    photoFadeUp:editingExisting?{...defaultConfig.photoFadeUp,...sourceConfig.photoFadeUp}:{...defaultConfig.photoFadeUp,...sourceConfig.photoFadeUp},
     intro:{...defaultConfig.intro,...sourceConfig.intro},
   };
-  if(!preset){
-  }
-  setExpandedLayerId(null);setDecorLibraryOpen(false);setEditing(preset?.id||"new");setAssets([]);if(preset?.id){loadAssets(preset.id).catch((e)=>setNotice(e.message));loadDecorationLibrary().catch((e)=>setNotice(e.message));}setForm(preset?{name:preset.name,preset_key:preset.preset_key,description:preset.description||"",status:preset.status,is_visible:preset.is_visible,sort_order:preset.sort_order,config:copiedConfig}:{...empty,config:copiedConfig});setNotice("");};
+ };
+ const open=(preset=null)=>{
+  const fullPhoto=state.presets.find((item)=>["full-photo","full_photo","fullphoto"].includes((item.preset_key||"").toLowerCase()))
+    ||state.presets.find((item)=>(item.name||"").trim().toLowerCase()==="full photo");
+  const defaultBase=preset?null:fullPhoto;
+  const copiedConfig=configFromBase(preset||defaultBase,{editingExisting:!!preset});
+  setNewHeroBaseId(defaultBase?.id||"");
+  setExpandedLayerId(null);setDecorLibraryOpen(false);setEditing(preset?.id||"new");setAssets([]);
+  if(preset?.id){loadAssets(preset.id).catch((e)=>setNotice(e.message));loadDecorationLibrary().catch((e)=>setNotice(e.message));}
+  else loadDecorationLibrary().catch((e)=>setNotice(e.message));
+  setForm(preset?{name:preset.name,preset_key:preset.preset_key,description:preset.description||"",status:preset.status,is_visible:preset.is_visible,sort_order:preset.sort_order,config:copiedConfig}:{...empty,config:copiedConfig});
+  setNotice("");
+ };
+ const changeNewHeroBase=(id)=>{
+  if(editing!=="new")return;
+  const source=id?state.presets.find(item=>item.id===id)||null:null;
+  setNewHeroBaseId(id);
+  setForm(current=>({...current,config:configFromBase(source)}));
+  setExpandedLayerId(null);
+ };
  const setPhotoFadeUp=(key,value)=>setForm(current=>({...current,config:{...current.config,photoFadeUp:{...defaultConfig.photoFadeUp,...current.config.photoFadeUp,[key]:value}}}));
  const setPhotoFrame=(key,value)=>setForm(current=>({...current,config:{...current.config,photoFrame:{...defaultConfig.photoFrame,...current.config.photoFrame,[key]:value}}}));
  const setBackdrop=(key,value)=>setForm(current=>({...current,config:{...current.config,heroBackdrop:{...defaultConfig.heroBackdrop,...current.config.heroBackdrop,[key]:value}}}));
@@ -117,7 +130,7 @@ export default function HeroPresetsPage(){
  <style>{`.hero-admin-editor-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,390px);gap:16px;align-items:start}.hero-admin-preview-panel{align-self:start}@media(max-width:800px){.hero-admin-editor-grid{grid-template-columns:minmax(0,1fr)}.hero-admin-preview-panel{position:static!important}}`}</style>{editing?<form className="dd-admin-hero-form" onSubmit={save} style={{...card,display:"grid",gap:14,marginTop:16}}><h2 style={{margin:0}}>{editing==="new"?"새 Hero 프리셋":"Hero 프리셋 수정"}</h2>
  <label style={field}>이름<input style={input} required maxLength={100} value={form.name} onChange={(e)=>setForm({...form,name:e.target.value})}/></label>
  <label style={field}>Preset key<input style={input} required pattern="[a-z0-9](?:[a-z0-9]|_|-){2,79}" disabled={editing!=="new"} value={form.preset_key} onChange={(e)=>setForm({...form,preset_key:e.target.value.trim()})}/></label>
- <label style={field}>설명<textarea style={input} rows={3} maxLength={2000} value={form.description} onChange={(e)=>setForm({...form,description:e.target.value})}/></label>
+ <label style={field}>설명<textarea style={input} rows={3} maxLength={2000} value={form.description} onChange={(e)=>setForm({...form,description:e.target.value})}/></label>{editing==="new"&&<label style={field}>신규 Hero 디자인 기본값<select style={input} value={newHeroBaseId} onChange={(e)=>changeNewHeroBase(e.target.value)}><option value="">기본 설정 없이 시작</option>{state.presets.map((item)=><option key={item.id} value={item.id}>{item.name}{item.status==="draft"?" (제작중)":""}</option>)}</select><small style={{color:"#806f66",lineHeight:1.5}}>선택한 Hero의 저장된 디자인 설정을 상속합니다. Hero 프레임·썸네일 업로드 파일은 복사하지 않고, 공용 장식은 배치 설정만 상속합니다.</small></label>}
  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:10}}>
  <label style={field}>상태<select style={input} value={form.status} onChange={(e)=>setForm({...form,status:e.target.value})}><option value="draft">제작중</option><option value="on_sale">사용중</option><option value="stopped">사용중지</option></select></label>
  <label style={field}>정렬순서<input style={input} type="number" min={-10000} max={10000} value={form.sort_order} onChange={(e)=>setForm({...form,sort_order:Number(e.target.value)})}/></label>
