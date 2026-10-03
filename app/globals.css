@@ -2767,3 +2767,12 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  radial-gradient(ellipse at 48% 70%,rgba(157,203,255,.30) 0 12%,transparent 43%),
  linear-gradient(112deg,#f2f8ff 0%,#e6f2ff 42%,#edf7ff 72%,#e2f1ff 100%)!important}
 @media(max-width:800px){.landing-v2 .landing-hero{background:radial-gradient(circle at 86% 9%,rgba(255,231,166,.18),transparent 23%),radial-gradient(circle at 68% 52%,rgba(168,208,255,.36),transparent 42%),linear-gradient(155deg,#f4f9ff 0%,#e6f2ff 58%,#edf7ff 100%)!important}}
+
+
+/* Mobile hero handwriting: keep position, tighten copy away from phone artwork. */
+@media(max-width:800px){
+ .landing-v2 .hero-copy-v2 .hero-handwriting{
+  font-size:26px!important;
+  letter-spacing:-.065em!important;
+ }
+}
