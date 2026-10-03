@@ -70,10 +70,16 @@ export default async function InvitationPage({ params, searchParams }) {
     const { data: heroPreset, error: heroError } = await supabase.from("hero_presets").select("id,config").eq("id", event.hero_preset_id).maybeSingle();
     if (heroError) console.error("Hero preset query failed:", heroError.code);
     if (heroPreset) {
-      const { data: heroAssets, error: heroAssetError } = await supabase.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path").eq("hero_preset_id", heroPreset.id).in("asset_type", ["hero_frame","hero_decoration"]).eq("is_active", true);
+      const { data: heroAssets, error: heroAssetError } = await supabase.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path").eq("hero_preset_id", heroPreset.id).eq("asset_type", "hero_frame").eq("is_active", true).limit(1);
       if (heroAssetError) console.error("Hero asset query failed:", heroAssetError.code);
-      const frame = heroAssets?.find((asset) => asset.asset_type === "hero_frame") || null;
-      const decorations = (heroAssets || []).filter((asset) => asset.asset_type === "hero_decoration");
+      const frame = heroAssets?.[0] || null;
+      const decorIds = new Set((heroPreset.config?.decorLayers || []).map((layer) => layer.assetId).filter(Boolean));
+      let decorations = [];
+      if (decorIds.size) {
+        const listed = await supabase.storage.from("template-assets").list("hero-decoration-library", { limit: 1000 });
+        if (listed.error) console.error("Hero decoration library query failed:", listed.error.message);
+        else decorations = (listed.data || []).map((file) => ({ id: file.name.split(".")[0], storage_bucket: "template-assets", storage_path: `hero-decoration-library/${file.name}` })).filter((asset) => decorIds.has(asset.id));
+      }
       templateConfig = templateConfig ? { ...templateConfig, hero: { ...templateConfig.hero, ...(heroPreset.config || {}), textLayers: [...(heroPreset.config?.textLayers || []), ...(Array.isArray(settings.heroExtraTextLayers) ? settings.heroExtraTextLayers.slice(0, 20) : [])].map((layer) => ({ ...layer, ...(settings.heroLayerOverrides?.[layer.id] || {}), text: typeof settings.heroTextOverrides?.[layer.id] === "string" ? settings.heroTextOverrides[layer.id].slice(0, 200) : layer.text })), frameAssetId: frame?.id || null } } : templateConfig;
       templateAssets = { ...templateAssets, ...Object.fromEntries(decorations.map((asset) => [asset.id, supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl])), ...(frame ? { [frame.id]: supabase.storage.from(frame.storage_bucket).getPublicUrl(frame.storage_path).data.publicUrl } : {}) };
     }
