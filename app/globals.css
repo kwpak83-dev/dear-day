@@ -2629,3 +2629,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dearday-brand-footer .dearday-logo--compact .dearday-logo-symbol-image img{width:35px!important;height:auto!important}
 .dearday-brand-footer .dearday-logo--compact .dearday-logo-copy b{font-size:22px!important}
 .dearday-brand-footer .dearday-logo--compact .dearday-logo-copy small{font-size:6px!important}
+
+/* Footer CTA: slightly smaller text and link arrow. */
+.dearday-brand-footer .dearday-compact-action{font-size:9px!important;gap:7px!important}
+.dearday-brand-footer .dearday-compact-arrow{width:22px!important;height:22px!important;font-size:13px!important}
