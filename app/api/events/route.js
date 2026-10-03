@@ -41,6 +41,51 @@ async function removeUnreferencedCover(supabase, path) {
   const { error } = await supabase.storage.from(photoBucket).remove([path]);
   return !error;
 }
+const bgmBucket = "invitation-bgm";
+
+function collectOwnedStoragePaths(value, supabaseUrl, ownerId, found = { photos: new Set(), bgm: new Set() }) {
+  if (typeof value === "string") {
+    if (value.startsWith(ownerId + "/") && value.endsWith(".mp3")) found.bgm.add(value);
+    try {
+      const parsed = new URL(value);
+      const project = new URL(supabaseUrl);
+      if (parsed.origin === project.origin) {
+        for (const [bucket, target] of [[photoBucket, found.photos], [bgmBucket, found.bgm]]) {
+          const prefix = `/storage/v1/object/public/${bucket}/`;
+          if (parsed.pathname.startsWith(prefix)) {
+            const path = decodeURIComponent(parsed.pathname.slice(prefix.length));
+            if (path.startsWith(ownerId + "/")) target.add(path);
+          }
+        }
+      }
+    } catch {}
+    return found;
+  }
+  if (Array.isArray(value)) {
+    value.forEach((item) => collectOwnedStoragePaths(item, supabaseUrl, ownerId, found));
+    return found;
+  }
+  if (value && typeof value === "object") {
+    Object.values(value).forEach((item) => collectOwnedStoragePaths(item, supabaseUrl, ownerId, found));
+  }
+  return found;
+}
+
+async function removeIfUnreferenced(supabase, bucket, path, ownerId) {
+  if (!path.startsWith(ownerId + "/")) return false;
+  const publicUrl = supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+  const { data: remaining, error } = await supabase.from("events").select("id,cover_image_url,settings").eq("owner_id", ownerId);
+  if (error) return false;
+  const referenced = (remaining || []).some((row) =>
+    row.cover_image_url === publicUrl ||
+    JSON.stringify(row.settings || {}).includes(publicUrl) ||
+    JSON.stringify(row.settings || {}).includes(path)
+  );
+  if (referenced) return true;
+  const { error: removeError } = await supabase.storage.from(bucket).remove([path]);
+  return !removeError;
+}
+
 function json(body, status = 200) {
   return NextResponse.json(body, { status });
 }
@@ -272,25 +317,44 @@ export async function DELETE(request) {
   if (lookupError) return json({ error: "초대장을 확인하지 못했어요." }, 500);
   if (!event) return json({ error: "초대장을 찾지 못했어요." }, 404);
   if (event.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 삭제할 수 없어요." }, 403);
-  if (event.status !== "draft") return json({ error: "임시저장 초대장만 삭제할 수 있어요." }, 409);
+  if (!["draft", "suspended"].includes(event.status)) return json({ error: "제작중 또는 발행 중지 상태의 초대장만 삭제할 수 있어요." }, 409);
 
-  const coverPaths = [...new Set([event.cover_image_url, event.settings?.coverPhotoUrl]
-    .map((value) => ownedCoverPath(value, process.env.NEXT_PUBLIC_SUPABASE_URL, user.id)).filter(Boolean))];
+  // Capture every event-owned Storage object before the DB cascade removes its rows.
+  const owned = collectOwnedStoragePaths(
+    { coverImageUrl: event.cover_image_url, settings: event.settings },
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    user.id
+  );
+  const { data: media, error: mediaError } = await supabase.from("event_media")
+    .select("storage_path").eq("event_id", event.id);
+  if (mediaError) return json({ error: "초대장 파일 정보를 확인하지 못했어요." }, 500);
+  for (const row of media || []) {
+    if (typeof row.storage_path === "string" && row.storage_path.startsWith(user.id + "/")) owned.photos.add(row.storage_path);
+  }
+
+  const deletingStatus = event.status;
   const { data: deleted, error: deleteError } = await supabase.from("events").delete()
-    .eq("id", event.id).eq("owner_id", user.id).eq("status", "draft").select("id").maybeSingle();
+    .eq("id", event.id).eq("owner_id", user.id).eq("status", deletingStatus).select("id").maybeSingle();
   if (deleteError) {
-    console.error("Draft invitation delete failed", { code: deleteError.code, message: deleteError.message, details: deleteError.details, hint: deleteError.hint });
+    console.error("Invitation delete failed", { code: deleteError.code, message: deleteError.message, details: deleteError.details, hint: deleteError.hint });
     return json({ error: "초대장을 삭제하지 못했어요. 다시 시도해 주세요." }, 500);
   }
   if (!deleted) return json({ error: "초대장 상태가 변경되었어요. 새로고침 후 확인해 주세요." }, 409);
 
+  // DB children (RSVP, guestbook, media, etc.) are removed by FK cascade.
+  // Storage has no FK cascade, so remove captured objects only when no remaining invitation references them.
   let cleanupPending = false;
-  for (const path of coverPaths) {
+  for (const path of owned.photos) {
     try {
-      if (!await removeUnreferencedCover(supabase, path)) cleanupPending = true;
-    } catch {
-      cleanupPending = true;
-    }
+      if (!await removeIfUnreferenced(supabase, photoBucket, path, user.id)) cleanupPending = true;
+      else await supabase.from("gallery_storage_cleanup").delete().eq("storage_path", path).eq("owner_id", user.id);
+    } catch { cleanupPending = true; }
   }
+  for (const path of owned.bgm) {
+    try {
+      if (!await removeIfUnreferenced(supabase, bgmBucket, path, user.id)) cleanupPending = true;
+    } catch { cleanupPending = true; }
+  }
+
   return json({ deleted: true, slug, cleanupPending });
 }
