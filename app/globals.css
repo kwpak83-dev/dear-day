@@ -2776,3 +2776,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   letter-spacing:-.065em!important;
  }
 }
+
+
+/* My Page header actions */
+.my-page-header-actions{gap:9px}.create-user.my-page-header-actions .my-page-header-button{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:0 14px;border:1px solid #d9e3f6;border-radius:999px;background:#fff;color:#17376d;text-decoration:none;font-weight:700;line-height:1;box-shadow:0 2px 8px rgba(26,61,124,.05)}.create-user.my-page-header-actions .my-page-header-button.primary{border-color:#23469b;background:#23469b;color:#fff}.create-user.my-page-header-actions .my-page-header-button:hover{filter:brightness(.98)}
+@media(max-width:760px){.create-user.my-page-header-actions{gap:6px}.create-user.my-page-header-actions .my-page-header-button{min-height:31px;padding:0 10px;font-size:10px}}
