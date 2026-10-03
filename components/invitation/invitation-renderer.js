@@ -25,7 +25,7 @@ export default function InvitationRenderer({ invitation, eventKind, templateId, 
   const normalizedConfig = normalizeTemplateConfig(templateConfig);
   const templateBgmUrl = normalizedConfig.bgm?.mode === "asset" ? templateAssets?.[normalizedConfig.bgm.assetId] : null;
   const bgmMode = invitation.bgmMode || "background";
-  const bgmUrl = bgmMode === "none" ? null : bgmMode === "user" ? (userBgmUrl || null) : templateBgmUrl;
+  const bgmUrl = bgmMode === "none" ? null : (bgmMode === "user" || bgmMode === "upload") ? (userBgmUrl || null) : templateBgmUrl;
   const mode = invitation.screenEffectMode || (invitation.petalEffectEnabled === true ? "legacy-blossom" : "none");
   const allowedOrnaments = new Set(["green", "autumn", "snow", "rose", "lavender", "daisy", "heart", "color-confetti", "balloon", "bubble"]);
   const selectedOrnament = allowedOrnaments.has(invitation.userScreenEffectOrnament) ? invitation.userScreenEffectOrnament : "green";
