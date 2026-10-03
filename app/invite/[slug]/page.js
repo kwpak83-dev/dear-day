@@ -73,7 +73,7 @@ export default async function InvitationPage({ params, searchParams }) {
       const { data: heroAssets, error: heroAssetError } = await supabase.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path").eq("hero_preset_id", heroPreset.id).eq("asset_type", "hero_frame").eq("is_active", true).limit(1);
       if (heroAssetError) console.error("Hero asset query failed:", heroAssetError.code);
       const frame = heroAssets?.[0] || null;
-      const decorIds = new Set((heroPreset.config?.decorLayers || []).map((layer) => layer.assetId).filter(Boolean));
+      const decorIds = new Set([...(heroPreset.config?.decorLayers || []).map((layer) => layer.assetId),...(templateConfig?.decorations || []).map((item) => item.assetId)].filter(Boolean));
       let decorations = [];
       if (decorIds.size) {
         const listed = await supabase.storage.from("template-assets").list("hero-decoration-library", { limit: 1000 });
