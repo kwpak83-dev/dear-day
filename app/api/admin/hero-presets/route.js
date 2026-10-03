@@ -64,8 +64,8 @@ function validConfig(value){
     if(!value.decorLayers.every((layer)=>layer&&typeof layer==="object"&&!Array.isArray(layer)
       &&typeof layer.id==="string"&&layer.id.length>0&&layer.id.length<=100
       &&typeof layer.assetId==="string"&&uuid.test(layer.assetId)
-      &&number(layer.x,0,100)&&number(layer.y,0,100)&&number(layer.width,1,100)
-      &&number(layer.rotation,-180,180)&&number(layer.opacity,0,1)
+      &&decimal(layer.x,0,100)&&decimal(layer.y,0,100)&&decimal(layer.width,1,100)
+      &&decimal(layer.rotation,-180,180)&&decimal(layer.opacity,0,1)
       &&Number.isInteger(layer.zIndex)&&layer.zIndex>=0&&layer.zIndex<=100
       &&typeof layer.visible==="boolean"))return false;
     if(new Set(value.decorLayers.map((layer)=>layer.id)).size!==value.decorLayers.length)return false;
