@@ -10,6 +10,7 @@ const steps = [["01", "▧", "템플릿 선택", "마음에 드는 디자인을 
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [featuredTemplates, setFeaturedTemplates] = useState([]);
   const featuredTrackRef = useRef(null);
   const [authOpen, setAuthOpen] = useState(false);
   const [authMessage, setAuthMessage] = useState("");
@@ -18,6 +19,10 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
   const [authReturnPath, setAuthReturnPath] = useState(DEFAULT_AUTH_RETURN_PATH);
+
+  useEffect(() => {
+    fetch("/api/templates/collection?featured=1").then(r => r.ok ? r.json() : { items: [] }).then(j => setFeaturedTemplates(j.items || [])).catch(() => setFeaturedTemplates([]));
+  }, []);
 
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();
@@ -60,7 +65,7 @@ export default function Home() {
     <header className="landing-header">
       <a className="landing-brand" href="#top" aria-label="DearDay 홈"><DearDayLogo /></a>
       <nav className="landing-nav"><button onClick={start}>초대장 만들기</button><a href="#templates">템플릿</a><a href="#how">이용안내</a><a href="#story">고객센터</a></nav>
-      <div className="landing-actions">{user ? <><span>{providerLabel}</span><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={start}>지금, 초대장 만들기 →</button></div>
+      <div className="landing-actions">{user ? <><span>{providerLabel}</span><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={() => window.location.assign("/templates")}>지금, 초대장 만들기 →</button></div>
       <div className="landing-mobile-actions"><button aria-label="검색" onClick={comingSoon}>⌕</button><button className="landing-menu" aria-label="메뉴 열기" onClick={() => setMenuOpen(!menuOpen)}>☰</button></div>
       {menuOpen && <div className="landing-mobile-nav"><button onClick={() => { setMenuOpen(false); start(); }}>초대장 만들기</button><a href="#templates" onClick={() => setMenuOpen(false)}>템플릿</a><a href="#how" onClick={() => setMenuOpen(false)}>이용안내</a><a href="#story" onClick={() => setMenuOpen(false)}>고객센터</a>{user ? <><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <button onClick={() => openLogin()}>로그인</button>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>}
     </header>
@@ -71,7 +76,7 @@ export default function Home() {
           <p className="hero-handwriting">Good People<br />Good Moment</p>
           <h1>특별한 날을<br />쉽고, 멋지게</h1>
           <span>누구나 쉽게 만드는<br />모바일 초대장 DearDay</span>
-          <button className="landing-primary" onClick={start}>지금, 초대장 만들기 <b>→</b></button>
+          <button className="landing-primary" onClick={() => window.location.assign("/templates")}>지금, 초대장 만들기 <b>→</b></button>
         </div>
         <div className="landing-hero-art" aria-hidden="true">
           <img className="landing-hero-phone-image" src="/landing/hero-phone.png" alt="" />
@@ -99,11 +104,10 @@ export default function Home() {
         <div className="dd-home03-carousel">
           <button className="dd-home03-arrow" type="button" aria-label="이전 템플릿" onClick={() => featuredTrackRef.current?.scrollBy({left:-320,behavior:"smooth"})}>‹</button>
           <div className="dd-home03-track" ref={featuredTrackRef}>
-            {[
-              {id:"modern-001",name:"모던 블루",image:"/templates/modern-001/preview.png"},
-              {id:"classic-001",name:"심플 화이트",image:"/templates/classic-001/preview.png"},
-              {id:"romantic-001",name:"로맨틱",image:"/templates/romantic-001/preview.png"},
-            ].map(template => <button type="button" className="dd-home03-template" key={template.id} onClick={start}><img src={template.image} alt={template.name + " 템플릿 미리보기"} loading="lazy" /><strong>{template.name}</strong></button>)}
+            {featuredTemplates.map(template => <button type="button" className="dd-home03-template" key={template.id} onClick={() => window.location.assign(`/templates/${encodeURIComponent(template.template_key)}`)}>
+              <span className="dd-home03-template-images">{[template.thumbnail_1_url,template.thumbnail_2_url].map((src,i)=>src?<img key={i} src={src} alt={`${template.name} 대표 이미지 ${i+1}`} loading="lazy" />:<span key={i} className="dd-home03-template-placeholder">IMAGE {i+1}</span>)}</span>
+              <strong>{template.name}</strong>
+            </button>)}
           </div>
           <button className="dd-home03-arrow" type="button" aria-label="다음 템플릿" onClick={() => featuredTrackRef.current?.scrollBy({left:320,behavior:"smooth"})}>›</button>
         </div>
@@ -111,7 +115,7 @@ export default function Home() {
     </section>
     <section className="how-v2" id="how"><div className="landing-shell"><p className="landing-kicker">HOW IT WORKS</p><h2>3단계로, 쉽고 빠르게</h2><p className="landing-subtitle">누구나 몇 분 만에, 나만의 초대장이 완성됩니다.</p><div className="how-v2-grid">{steps.map(([number, icon, title, description]) => <article key={number}><span className="step-number">{number}</span><div>{icon}</div><section><h3>{title}</h3><p>{description}</p></section></article>)}</div></div></section>
 
-    <section className="envelope-cta" id="story"><div className="landing-shell"><p>MAKE<br />SPECIAL MOMENTS<br />TOGETHER</p><div><h2>모든 특별한 날,<br /><b>Dear Day</b>가 함께합니다.</h2><span>부담은 가볍게, 마음은 충분히.</span></div><button className="landing-primary" onClick={start}>지금, 초대장 만들기 <b>→</b></button></div></section>
+    <section className="envelope-cta" id="story"><div className="landing-shell"><p>MAKE<br />SPECIAL MOMENTS<br />TOGETHER</p><div><h2>모든 특별한 날,<br /><b>Dear Day</b>가 함께합니다.</h2><span>부담은 가볍게, 마음은 충분히.</span></div><button className="landing-primary" onClick={() => window.location.assign("/templates")}>지금, 초대장 만들기 <b>→</b></button></div></section>
     {notice && <p className="landing-notice" role="status">{notice}</p>}
     {authOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="간편 로그인"><div className="login-modal"><button className="modal-close" onClick={() => setAuthOpen(false)} aria-label="닫기">×</button><p className="section-kicker">WELCOME TO DEAR DAY</p><h2>3분 만에 시작하는<br /><em>우리의 청첩장</em></h2><p>간편 로그인 후 언제든 수정할 수 있어요.</p><button className="social-login kakao" disabled={Boolean(authLoading)} onClick={() => chooseLogin("kakao")}>💬 <span>{authLoading === "kakao" ? "카카오로 연결 중..." : "카카오로 계속하기"}</span></button><button className="social-login naver" disabled={Boolean(authLoading)} onClick={() => chooseLogin("naver")}>N <span>{authLoading === "naver" ? "네이버로 연결 중..." : "네이버로 계속하기"}</span></button>{authMessage && <p role="status">{authMessage}</p>}<small>로그인하면 디어데이 이용약관 및 개인정보 처리방침에 동의하게 됩니다.</small></div></div>}
   </main>;

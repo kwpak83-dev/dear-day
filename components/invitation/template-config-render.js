@@ -224,6 +224,13 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
   return <>
     {overlay && <span className="dd-template-hero-overlay" style={{ background: overlay }} aria-hidden="true" />}
     {config?.hero?.mode === "frame" && frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
+    {Array.isArray(config?.hero?.decorLayers) && config.hero.decorLayers.some((layer) => layer.visible !== false && assets[layer.assetId]) && <div className="dd-template-hero-decor-layers" aria-hidden="true" style={{position:"absolute",inset:0,pointerEvents:"none",zIndex:4}}>
+      {config.hero.decorLayers.filter((layer) => layer.visible !== false && assets[layer.assetId]).map((layer) => <img key={layer.id} src={assets[layer.assetId]} alt="" style={{
+        position:"absolute",left:`${Math.min(100,Math.max(0,Number(layer.x??50)))}%`,top:`${Math.min(100,Math.max(0,Number(layer.y??50)))}%`,
+        width:`${Math.min(100,Math.max(1,Number(layer.width??25)))}%`,height:"auto",
+        transform:`translate(-50%, -50%) rotate(${layer.rotation??0}deg)`,opacity:layer.opacity??1,zIndex:layer.zIndex??10
+      }}/>)}
+    </div>}
     {config?.typography && <link rel="stylesheet" href={BODY_FONT_STYLESHEET} />}
     {config?.hero?.nameFontFamily && config.hero.nameFontFamily !== "inherit" && <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />}
     {Array.isArray(config?.hero?.textLayers) && config.hero.textLayers.some((layer) => (layer.source && layer.source !== "custom") || layer.text?.trim()) && <>
@@ -234,7 +241,7 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
           if (!boundText?.trim()) return null;
           const x = Math.min(100, Math.max(0, Number(layer.x ?? 50)));
           const y = Math.min(100, Math.max(0, Number(layer.y ?? 50)));
-          const align = ["left", "center", "right"].includes(layer.align) ? layer.align : "center";
+          
           const stroke = layer.stroke?.enabled ? layer.stroke : null;
           const shadow = layer.shadow?.enabled ? layer.shadow : null;
           const gradient = layer.gradient?.enabled ? layer.gradient : null;
@@ -250,8 +257,8 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
             ...(gradient ? { backgroundImage: `linear-gradient(${gradient.angle}deg, ${gradient.start}, ${gradient.end})`, WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent" } : {}),
           };
           return <div key={layer.id} className="dd-template-hero-text-layer" style={{
-            left: `${x}%`, top: `${y}%`, transform: `translate(${-x}%, -50%) rotate(${layer.rotation ?? 0}deg)`,
-            width: "100%", textAlign: align,
+            left: `${x}%`, top: `${y}%`, transform: `translate(-50%, -50%) rotate(${layer.rotation ?? 0}deg)`,
+            width: "max-content", maxWidth: "100%", textAlign: "center",
           }}><span className={layer.fadeUp?.enabled ? "dd-hero-text-fade-up" : undefined} style={{ ...textStyle, display: "inline-block", maxWidth: "100%", ...(layer.fadeUp?.enabled ? { animationDuration: `${layer.fadeUp.duration}s`, animationDelay: `${layer.fadeUp.delay}s` } : {}) }}>{boundText}</span></div>;
         })}
       </div>

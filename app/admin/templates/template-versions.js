@@ -100,6 +100,8 @@ const MappingTable = ({ rows }) => <div style={mappingGrid}>
 
 export default function TemplateVersions({ templateId, assetRevision = 0, assetChangesPending = false, onWorkflowChange }) {
   const [state, setState] = useState({ loading: true, template: null, current: null, draft: null, assets: [], allAssets: [], error: "" });
+  const [sharedDecorations,setSharedDecorations]=useState([]);
+  const [sharedDecorOpen,setSharedDecorOpen]=useState(false);
   const loaded = useRef(null);
   const [placements, setPlacements] = useState([]);
   const [background, setBackground] = useState(backgroundDefaults);
@@ -132,14 +134,18 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   };
   const load = async (preservePlacements = false) => {
     const headers = await authorization();
-    const [versionResponse, assetResponse] = await Promise.all([
+    const [versionResponse, assetResponse, sharedResponse] = await Promise.all([
       fetch(`/api/admin/templates/versions?templateId=${encodeURIComponent(templateId)}`, { headers }),
       fetch(`/api/admin/templates/assets?templateId=${encodeURIComponent(templateId)}`, { headers }),
+      fetch("/api/admin/hero-decoration-library",{headers,cache:"no-store"}),
     ]);
     const versions = await versionResponse.json().catch(() => ({}));
     const assets = await assetResponse.json().catch(() => ({}));
+    const shared = await sharedResponse.json().catch(() => ({}));
     if (!versionResponse.ok) throw new Error(versions.error || "버전 정보를 불러오지 못했어요.");
     if (!assetResponse.ok) throw new Error(assets.error || "장식 Asset을 불러오지 못했어요.");
+    if (!sharedResponse.ok) throw new Error(shared.error || "공용 장식 라이브러리를 불러오지 못했어요.");
+    setSharedDecorations(shared.assets||[]);
     const active = (assets.assets || []).filter((asset) => asset.is_active);
     setBackground((previous) => preservePlacements ? previous : ({ ...fromConfig(backgroundDefaults, versions.draft?.background), mode: versions.draft?.background?.mode || (versions.draft?.background?.assetId ? "image" : "custom"), centerPanel: { ...backgroundDefaults.centerPanel, ...(versions.draft?.background?.centerPanel || {}) }, custom: { ...backgroundDefaults.custom, ...(versions.draft?.background?.custom || {}) } }));
     setHero((previous) => preservePlacements ? previous : heroFromConfig(versions.draft?.hero));
@@ -151,9 +157,15 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     setEffects((previous) => preservePlacements ? previous : fromConfig(effectsDefaults, versions.draft?.effects));
     setBgm((previous) => preservePlacements ? previous : fromConfig(bgmDefaults, versions.draft?.bgm));
     setSafeArea((previous) => preservePlacements ? previous : fromConfig(safeAreaDefaults, versions.draft?.safeArea));
-    setPlacements((previous) => active.filter((asset) => asset.asset_type === "decoration").map((asset) =>
-      placementFor(asset.id, (preservePlacements ? previous.find((item) => item.assetId === asset.id) : null) ||
-        versions.draft?.decorations?.find((item) => item.assetId === asset.id))));
+    setPlacements((previous) => {
+      const local=active.filter((asset) => asset.asset_type === "decoration").map((asset) =>
+        placementFor(asset.id, (preservePlacements ? previous.find((item) => item.assetId === asset.id) : null) ||
+          versions.draft?.decorations?.find((item) => item.assetId === asset.id)));
+      const localIds=new Set(local.map(item=>item.assetId));
+      const sharedIds=new Set((shared.assets||[]).map(item=>item.id));
+      const savedShared=(versions.draft?.decorations||[]).filter(item=>sharedIds.has(item.assetId)&&!localIds.has(item.assetId)).map(item=>placementFor(item.assetId,preservePlacements?previous.find(p=>p.assetId===item.assetId)||item:item));
+      return [...local,...savedShared];
+    });
     setState({ loading: false, template: versions.template, current: versions.current, draft: versions.draft, assets: active, allAssets: assets.assets || [], error: "" });
     loaded.current = templateId;
   };
@@ -275,6 +287,8 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
   }));
   const update = (assetId, key, value) => setPlacements((current) =>
     current.map((item) => item.assetId === assetId ? { ...item, [key]: value } : item));
+  const addSharedDecoration=(assetId)=>setPlacements(current=>current.some(item=>item.assetId===assetId)?current:[...current,defaults(assetId)]);
+  const removeSharedDecoration=(assetId)=>setPlacements(current=>current.filter(item=>item.assetId!==assetId));
   const saveDecorations = async (event) => {
     event.preventDefault();
     if (saving || !state.draft) return;
@@ -513,14 +527,16 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
           ["표시", "해당 장식 노출 여부", "체크 해제 = 숨김"],
         ]} /></div>
             </details>
-        {!decorationAssets.length ? <p>활성 장식 Asset이 없습니다. 아래 Asset 영역에서 장식을 등록해 주세요.</p> :
+        <div style={{border:"1px solid #eadfd8",borderRadius:10,padding:10,margin:"12px 0",background:"#fffaf7"}}><button type="button" className="save-button" onClick={()=>setSharedDecorOpen(v=>!v)}>{sharedDecorOpen?"공용 라이브러리 닫기":"+ 공용 장식 라이브러리에서 추가"}</button>{sharedDecorOpen&&<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(90px,1fr))",gap:8,marginTop:10}}>{sharedDecorations.map(asset=>{const used=placements.some(item=>item.assetId===asset.id);return <button key={asset.id} type="button" disabled={used} onClick={()=>addSharedDecoration(asset.id)} style={{border:"1px solid #eadfd8",borderRadius:8,padding:6,background:"#fff",cursor:used?"default":"pointer",opacity:used?.55:1}}><img src={asset.url} alt="" style={{width:"100%",height:68,objectFit:"contain"}}/><small>{used?"사용 중":"+ 본문에 추가"}</small></button>})}</div>}<p style={{...guideNote,margin:"8px 0 0"}}>Hero와 같은 공용 라이브러리입니다. 기존 템플릿 전용 Asset은 아래 방식 그대로 사용할 수 있습니다.</p></div>
+          {!(decorationAssets.length||placements.some(item=>sharedDecorations.some(asset=>asset.id===item.assetId))) ? <p>배치할 장식이 없습니다. 공용 라이브러리에서 선택하거나 아래 Asset 영역에서 장식을 등록해 주세요.</p> :
           <form onSubmit={saveDecorations} style={{ display: "grid", gap: 16 }}>
-            {decorationAssets.map((asset) => {
+            {[...decorationAssets,...sharedDecorations.filter(asset=>placements.some(item=>item.assetId===asset.id)&&!decorationAssets.some(local=>local.id===asset.id))].map((asset) => {
               const placement = placements.find((item) => item.assetId === asset.id) || defaults(asset.id);
+              const shared=sharedDecorations.some(item=>item.id===asset.id)&&!decorationAssets.some(local=>local.id===asset.id);
               return <div key={asset.id} style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: 12, minWidth: 0 }}>
                 <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
                   {asset.url && <img src={asset.url} alt="" style={{ width: 64, height: 64, objectFit: "contain" }} />}
-                  <strong style={{ overflowWrap: "anywhere" }}>{asset.name || asset.id}</strong>
+                  <strong style={{ overflowWrap: "anywhere" }}>{asset.name || asset.id}{shared?" · 공용":""}</strong>{shared&&<button type="button" onClick={()=>removeSharedDecoration(asset.id)}>현재 본문에서 제거</button>}
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10, marginTop: 12 }}>
                   <label style={field}>Slot<select style={input} value={placement.slot} onChange={(event) => update(asset.id, "slot", event.target.value)}>{slots.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
@@ -604,7 +620,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     {(state.error || notice) && <p role="status">{state.error || notice}</p>}
       </div>
       <aside className="admin-template-editor-preview">
-        <TemplateDraftPreview templateId={templateId} draft={state.draft ? { ...state.draft, background, typography, colors, buttonStyle, quickMenu } : null} assets={state.allAssets} loading={state.loading} />
+        <TemplateDraftPreview templateId={templateId} draft={state.draft ? { ...state.draft, background, typography, colors, buttonStyle, quickMenu, decorations:placements } : null} assets={[...state.allAssets,...sharedDecorations.map(asset=>({...asset,asset_type:"decoration",is_active:true}))]} loading={state.loading} />
       </aside>
     </div>
   </section>;

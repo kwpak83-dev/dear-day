@@ -157,12 +157,17 @@ export async function PATCH(request) {
 
   const ids = body.decorations.map((item) => item.assetId);
   if (ids.length) {
+    const uniqueIds=[...new Set(ids)];
     const { data: assets, error: assetError } = await auth.adminClient.from("template_assets")
-      .select("id,template_id,asset_type,is_active").in("id", ids);
+      .select("id,template_id,asset_type,is_active").in("id", uniqueIds);
     if (assetError) return fail("장식 Asset을 확인하지 못했어요.", 500);
-    if (assets?.length !== ids.length || assets.some((asset) =>
-      asset.template_id !== body.templateId || asset.asset_type !== "decoration" || !asset.is_active)) {
-      return fail("현재 템플릿의 활성 장식 Asset만 저장할 수 있어요.", 400);
+    const localIds=new Set((assets||[]).filter((asset)=>asset.template_id===body.templateId&&asset.asset_type==="decoration"&&asset.is_active).map((asset)=>asset.id));
+    const sharedIds=uniqueIds.filter((id)=>!localIds.has(id));
+    if(sharedIds.length){
+      const {data:files,error:listError}=await auth.adminClient.storage.from("template-assets").list("hero-decoration-library",{limit:1000});
+      if(listError)return fail("공용 장식 라이브러리를 확인하지 못했어요.",500);
+      const libraryIds=new Set((files||[]).map((file)=>file.name.split(".")[0]));
+      if(sharedIds.some((id)=>!libraryIds.has(id)))return fail("현재 템플릿 장식 또는 공용 장식 라이브러리에 있는 이미지만 저장할 수 있어요.",400);
     }
   }
 
