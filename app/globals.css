@@ -2667,3 +2667,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   .dd-home03-feature strong{font-size:13px!important}
   .dd-home03-feature small{font-size:10px!important}
 }
+
+/* Mobile hero benefits: 2 x 2 grid */
+@media(max-width:700px){
+  .landing-hero-benefits{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  .landing-hero-benefits>div{width:auto!important;min-width:0!important}
+}
