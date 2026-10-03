@@ -2721,3 +2721,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  .landing-v2 .landing-hero:before{width:130%;height:95px;left:-30%;bottom:135px;opacity:.75}
  .landing-v2 .landing-hero:after{width:120%;height:82px;right:-32%;bottom:88px;opacity:.65}
 }
+
+/* Desktop hero benefits: denser panel beside the phone. */
+@media(min-width:801px){
+ .landing-v2 .landing-hero-layout{grid-template-columns:38% 40% 22%!important}
+ .landing-v2 .landing-hero-benefits{gap:8px!important;padding:9px!important;transform:scale(.92)!important;transform-origin:left center!important}
+ .landing-v2 .landing-hero-benefits>div{min-height:88px!important;padding:8px 5px!important}
+ .landing-v2 .landing-hero-benefits>div span{width:34px!important;height:34px!important;font-size:20px!important}
+}
