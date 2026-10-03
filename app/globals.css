@@ -2808,3 +2808,31 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
     overflow-wrap: normal !important;
   }
 }
+
+
+/* Preview BGM control: keep the same neutral control appearance as published invitations. */
+.dd-bgm-public-style .dd-template-bgm .dd-template-bgm-toggle,
+.dd-bgm-public-style .dd-template-bgm .dd-template-bgm-toggle:hover,
+.dd-bgm-public-style .dd-template-bgm .dd-template-bgm-toggle:active {
+  width:36px !important;
+  height:36px !important;
+  min-width:36px !important;
+  min-height:36px !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:#111 !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+.dd-bgm-public-style .dd-template-bgm .dd-template-bgm-icon {
+  display:block !important;
+  width:22px !important;
+  height:22px !important;
+}
+.dd-bgm-public-style .dd-template-bgm .dd-template-bgm-icon svg {
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+}
