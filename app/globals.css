@@ -2679,3 +2679,12 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   .landing-v2 .landing-hero-benefits{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:repeat(2,auto)!important;height:auto!important;max-height:none!important;overflow:visible!important}
   .landing-v2 .landing-hero-benefits>div{display:flex!important;visibility:visible!important;opacity:1!important;grid-column:auto!important;grid-row:auto!important}
 }
+
+/* Mobile hero benefits: compact horizontal icon + copy cards */
+@media(max-width:700px){
+  .landing-v2 .landing-hero-benefits{gap:8px!important;padding:8px!important}
+  .landing-v2 .landing-hero-benefits>div{min-height:72px!important;padding:9px 8px!important;display:grid!important;grid-template-columns:38px minmax(0,1fr)!important;grid-template-rows:auto auto!important;column-gap:7px!important;row-gap:1px!important;align-content:center!important;align-items:center!important;text-align:left!important;border-radius:12px!important}
+  .landing-v2 .landing-hero-benefits>div>.dd-benefit-emoji{grid-column:1!important;grid-row:1 / span 2!important;width:38px!important;height:38px!important;margin:0!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:21px!important}
+  .landing-v2 .landing-hero-benefits>div>strong{grid-column:2!important;grid-row:1!important;margin:0!important;font-size:10px!important;line-height:1.2!important;white-space:normal!important}
+  .landing-v2 .landing-hero-benefits>div>small{grid-column:2!important;grid-row:2!important;margin:0!important;font-size:7px!important;line-height:1.25!important;white-space:normal!important}
+}
