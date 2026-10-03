@@ -536,10 +536,13 @@ export default function CreateInvitation() {
   const updateNotice = (key, value) => setInvitation(current => ({ ...current, notice: { ...normalizeNotice(current.notice), [key]: value } }));
   const [noticeUploadBusy, setNoticeUploadBusy] = useState(false);
   const [noticeUploadMessage, setNoticeUploadMessage] = useState("");
+  const [noticePreviewUrl, setNoticePreviewUrl] = useState("");
   const uploadNoticePhoto = async event => {
     const file = event.target.files?.[0];
     event.target.value = "";
     if (!file || !eventSlug || noticeUploadBusy) return;
+    if (noticePreviewUrl) URL.revokeObjectURL(noticePreviewUrl);
+    setNoticePreviewUrl(URL.createObjectURL(file));
     setNoticeUploadBusy(true);
     setNoticeUploadMessage("공지 이미지를 올리고 있어요.");
     try {
@@ -853,7 +856,7 @@ export default function CreateInvitation() {
         <div className="dd-share-settings" style={{display:editorStep === 4 ? undefined : "none"}}>
           <div className="dd-share-card"><div className="dd-share-card-heading"><div><h2>공지사항 팝업</h2><p>초대장 접속 시 중요한 안내를 보여줘요.</p></div><label className="dd-share-switch"><input type="checkbox" checked={invitation.notice?.enabled === true} onChange={event => updateNotice("enabled", event.target.checked)} aria-label="공지사항 팝업 사용" /><span className="dd-share-switch-track" aria-hidden="true" /></label></div>
             {invitation.notice?.enabled === true && <>
-              <div className="form-section"><Field label="공지 제목"><input maxLength={80} placeholder="하객 안내사항" value={invitation.notice?.title || ""} onChange={event => updateNotice("title", event.target.value)} /></Field><Field label="공지 내용"><textarea rows={5} maxLength={3000} placeholder="셔틀버스 및 주차 안내 등을 입력하세요." value={invitation.notice?.body || ""} onChange={event => updateNotice("body", event.target.value)} /></Field><Field label="이미지 1장 (선택)"><input type="file" accept="image/jpeg,image/png,image/webp" disabled={!eventSlug || noticeUploadBusy} onChange={uploadNoticePhoto} /></Field>{!eventSlug && <p>이미지를 올리려면 초대장을 먼저 임시저장해 주세요.</p>}{invitation.notice?.imagePath && <button type="button" className="save-button" onClick={() => updateNotice("imagePath", "")}>첨부 이미지 삭제</button>}{noticeUploadMessage && <p role="status">{noticeUploadMessage}</p>}</div>
+              <div className="form-section"><Field label="공지 제목"><input maxLength={80} placeholder="하객 안내사항" value={invitation.notice?.title || ""} onChange={event => updateNotice("title", event.target.value)} /></Field><Field label="공지 내용"><textarea rows={5} maxLength={3000} placeholder="셔틀버스 및 주차 안내 등을 입력하세요." value={invitation.notice?.body || ""} onChange={event => updateNotice("body", event.target.value)} /></Field><Field label="이미지 1장 (선택)"><div className="dd-notice-image-editor">{invitation.notice?.imagePath ? <p className="dd-notice-image-state">현재 이미지가 첨부되어 있습니다.</p> : <p className="dd-notice-image-state">첨부된 이미지가 없습니다.</p>}{noticePreviewUrl && <div className="dd-notice-image-preview"><img src={noticePreviewUrl} alt="새 공지 이미지 미리보기" /><small>새로 선택한 이미지 미리보기</small></div>}<label className="dd-notice-file-button">{invitation.notice?.imagePath ? "이미지 변경" : "이미지 선택"}<input type="file" accept="image/jpeg,image/png,image/webp" disabled={!eventSlug || noticeUploadBusy} onChange={uploadNoticePhoto} /></label>{invitation.notice?.imagePath && <button type="button" className="dd-notice-image-delete" onClick={() => { updateNotice("imagePath", ""); setNoticePreviewUrl(""); setNoticeUploadMessage("첨부 이미지를 삭제했어요. 수정사항 반영을 눌러 주세요."); }}>첨부 이미지 삭제</button>}</div></Field>{!eventSlug && <p>이미지를 올리려면 초대장을 먼저 임시저장해 주세요.</p>}{noticeUploadMessage && <p role="status">{noticeUploadMessage}</p>}</div>
               <p className="dd-share-help">접속 시 자동 표시 · 오늘 하루 보지 않기 · 내용 수정 시 다시 표시. 제목과 내용을 입력해야 활성화됩니다.</p>
             </>}</div>
           <p className="dd-share-help">참석 여부와 방명록 현황은 마이페이지 → 하객관리에서 실시간으로 확인할 수 있어요.</p>
