@@ -45,6 +45,8 @@ export default async function InvitationPage({ params, searchParams }) {
   if (settings.bgmMode === "user" && settings.userBgmTrackId) {
     const { data: track } = await supabase.from("bgm_tracks").select("storage_bucket,storage_path,is_active").eq("id", settings.userBgmTrackId).eq("is_active", true).maybeSingle();
     if (track?.storage_bucket && track?.storage_path) userBgmUrl = supabase.storage.from(track.storage_bucket).getPublicUrl(track.storage_path).data.publicUrl;
+  } else if (settings.bgmMode === "upload" && settings.userBgmUploadPath) {
+    userBgmUrl = supabase.storage.from("invitation-bgm").getPublicUrl(settings.userBgmUploadPath).data.publicUrl;
   }
   if (event.template_id) {
     const { data: latestVersion, error: versionError } = await supabase.from("template_versions")
