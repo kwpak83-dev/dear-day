@@ -76,8 +76,6 @@ export default function Home() {
         <div className="landing-hero-art" aria-hidden="true">
           <img className="landing-hero-phone-image" src="/landing/hero-phone.png" alt="" />
           <img className="landing-hero-mobile-image" src="/landing/hero-mobile.png" alt="" />
-          <img className="landing-hero-flower landing-hero-flower-blue" src="/landing/hero-flower-blue.png" alt="" />
-          <img className="landing-hero-flower landing-hero-flower-yellow" src="/landing/hero-flower-yellow.png" alt="" />
         </div>
         <div className="landing-hero-benefits">
           <div><span className="dd-benefit-emoji" aria-hidden="true">📝</span><strong>쉽고 빠른 제작</strong><small>최소 입력으로 완성</small></div>
