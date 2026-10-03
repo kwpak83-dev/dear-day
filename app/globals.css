@@ -2772,7 +2772,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Mobile hero handwriting: keep position, tighten copy away from phone artwork. */
 @media(max-width:800px){
  .landing-v2 .hero-copy-v2 .hero-handwriting{
-  font-size:26px!important;
+  font-size:24px!important;
   letter-spacing:-.065em!important;
  }
 }
