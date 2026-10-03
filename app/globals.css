@@ -2704,3 +2704,20 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   .landing-v2 .landing-hero-benefits>div>.dd-benefit-emoji{width:34px!important;height:34px!important}
   .landing-v2 .landing-hero-benefits>div>strong{white-space:nowrap!important;letter-spacing:-.04em!important}
 }
+
+/* DearDay hero: airy gradient + ribbon background, without large floral overlays. */
+.landing-v2 .landing-hero{background:
+ radial-gradient(circle at 8% 18%,rgba(255,255,255,.92) 0 3%,transparent 12%),
+ radial-gradient(circle at 90% 12%,rgba(255,232,174,.34) 0 2%,transparent 16%),
+ radial-gradient(circle at 56% 72%,rgba(171,207,255,.28) 0 7%,transparent 26%),
+ linear-gradient(118deg,#f8fbff 0%,#edf6ff 38%,#fffdf8 69%,#eef7ff 100%)!important;
+ position:relative}
+.landing-v2 .landing-hero:before,.landing-v2 .landing-hero:after{content:"";position:absolute;pointer-events:none;z-index:0;border-radius:50%;filter:blur(.2px)}
+.landing-v2 .landing-hero:before{width:82%;height:150px;left:-12%;bottom:-35px;border:2px solid rgba(105,165,239,.23);border-left-color:transparent;border-right-color:transparent;transform:rotate(8deg);box-shadow:0 -18px 42px rgba(126,183,246,.08)}
+.landing-v2 .landing-hero:after{width:76%;height:120px;right:-16%;bottom:6px;border:1px solid rgba(89,155,235,.25);border-left-color:transparent;border-right-color:transparent;transform:rotate(-9deg);box-shadow:0 18px 48px rgba(124,180,244,.09)}
+.landing-v2 .landing-hero-layout{z-index:1}
+@media(max-width:800px){
+ .landing-v2 .landing-hero{background:radial-gradient(circle at 88% 7%,rgba(255,231,166,.25),transparent 22%),radial-gradient(circle at 18% 30%,rgba(178,213,255,.3),transparent 26%),linear-gradient(155deg,#f8fbff 0%,#edf6ff 55%,#fffdf8 100%)!important}
+ .landing-v2 .landing-hero:before{width:130%;height:95px;left:-30%;bottom:135px;opacity:.75}
+ .landing-v2 .landing-hero:after{width:120%;height:82px;right:-32%;bottom:88px;opacity:.65}
+}
