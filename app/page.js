@@ -83,7 +83,7 @@ export default function Home() {
           <div><span className="dd-benefit-emoji" aria-hidden="true">📝</span><strong>쉽고 빠른 제작</strong><small>최소 입력으로 완성</small></div>
           <div><span className="dd-benefit-emoji" aria-hidden="true">🎨</span><strong>내가 고르는 디자인</strong><small>표지·배경 직접 선택</small></div>
           <div><span className="dd-benefit-emoji" aria-hidden="true">✏️</span><strong>발행 후에도 수정</strong><small>실수해도 언제든 변경</small></div>
-          <div><span className="dd-benefit-emoji" aria-hidden="true">🔄</span><strong>템플릿 자유 변경</strong><small>추가 비용 없이 변경</small></div>
+          <div><span className="dd-benefit-emoji" aria-hidden="true">🔄</span><strong>템플릿 자유 변경</strong><small>발행 전·후 자유롭게</small></div>
         </div>
       </div>
     </section>
@@ -94,8 +94,8 @@ export default function Home() {
           <div className="dd-home03-feature"><span className="dd-home03-emoji" aria-hidden="true">💗</span><div><strong>정말 쉬운 초대장 제작</strong><small>복잡한 설정 없이 필요한 정보만 입력하면 멋진 초대장이 완성돼요.</small></div></div>
           <div className="dd-home03-feature"><span className="dd-home03-emoji" aria-hidden="true">🎨</span><div><strong>직관적인 디자인 선택</strong><small>표지와 배경을 직접 고르며 내 취향에 맞게 간편하게 꾸밀 수 있어요.</small></div></div>
           <div className="dd-home03-feature"><span className="dd-home03-emoji" aria-hidden="true">📋</span><div><strong>꼭 필요한 기능만 담았어요</strong><small>다양한 모바일 초대장을 살펴보고 실제로 필요한 기능을 중심으로 구성했어요.</small></div></div>
-          <div className="dd-home03-feature"><span className="dd-home03-emoji" aria-hidden="true">⚙️</span><div><strong>발행 후에도 걱정 없이 수정</strong><small>날짜나 장소를 잘못 입력해도 괜찮아요. 발행 후 언제든 수정할 수 있어요.</small></div></div>
-          <div className="dd-home03-feature"><span className="dd-home03-emoji" aria-hidden="true">🔄</span><div><strong>추가 비용 없는 템플릿 변경</strong><small>발행 후에도 마음이 바뀌면 추가 결제 없이 다른 템플릿으로 변경할 수 있어요.</small></div></div>
+          <div className="dd-home03-feature"><span className="dd-home03-emoji" aria-hidden="true">⚙️</span><div><strong>발행 후에도 자유롭게 수정</strong><small>날짜·장소·사진도 발행 후 언제든 수정할 수 있어요.</small></div></div>
+          <div className="dd-home03-feature"><span className="dd-home03-emoji" aria-hidden="true">🔄</span><div><strong>가격 고민 없이, 디자인은 마음껏</strong><small>모든 템플릿은 하나의 가격. 발행 전·후 언제든 마음에 드는 디자인으로 자유롭게 변경하세요.</small></div></div>
         </div>
         <div className="dd-home03-heading"><h2>인기 템플릿 미리보기</h2><button type="button" onClick={start}>전체보기 →</button></div>
         <div className="dd-home03-carousel">
