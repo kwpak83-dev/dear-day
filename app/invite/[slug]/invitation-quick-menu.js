@@ -270,10 +270,10 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><QuickMenuIcon kind="guestbook" /><span className="invitation-quick-copy"><strong>방명록 글쓰기</strong><small>축하 메시지를 남겨주세요</small></span></button>}
     </nav>)}
-    {sheet === "rsvp" && rsvpEnabled && <BottomSheet title="참석 여부" onClose={closeSheet} portalTarget={isDesktopLivePreview ? desktopLivePortal : null} preview={isDesktopLivePreview}>
+    {sheet === "rsvp" && rsvpEnabled && <BottomSheet title="참석 여부" onClose={closeSheet} portalTarget={usesPreviewPortal ? desktopLivePortal : null} preview={usesPreviewPortal}>
       <RsvpForm slug={slug} startsAt={startsAt} />
     </BottomSheet>}
-    {sheet === "guestbook" && guestbookEnabled && <BottomSheet title="축하 메시지" onClose={closeSheet} portalTarget={isDesktopLivePreview ? desktopLivePortal : null} preview={isDesktopLivePreview}>
+    {sheet === "guestbook" && guestbookEnabled && <BottomSheet title="축하 메시지" onClose={closeSheet} portalTarget={usesPreviewPortal ? desktopLivePortal : null} preview={usesPreviewPortal}>
       <Guestbook slug={slug} />
     </BottomSheet>}
   </>;
