@@ -2622,3 +2622,10 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Footer logo uses the same DearDay slogan treatment as shared headers. */
 .dearday-brand-footer .dearday-logo--compact .dearday-logo-copy small{font-size:7px!important;font-weight:500!important;line-height:1.2!important;letter-spacing:.04em!important;color:#6b7280!important}
+
+/* Footer logo scale adjustment. */
+.dearday-brand-footer .dearday-logo--compact{gap:7px!important}
+.dearday-brand-footer .dearday-logo--compact .dearday-logo-symbol-image{width:35px!important;height:29px!important;flex-basis:35px!important}
+.dearday-brand-footer .dearday-logo--compact .dearday-logo-symbol-image img{width:35px!important;height:auto!important}
+.dearday-brand-footer .dearday-logo--compact .dearday-logo-copy b{font-size:22px!important}
+.dearday-brand-footer .dearday-logo--compact .dearday-logo-copy small{font-size:6px!important}
