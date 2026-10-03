@@ -2781,3 +2781,10 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* My Page header actions */
 .my-page-header-actions{gap:9px}.create-user.my-page-header-actions .my-page-header-button{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:0 14px;border:1px solid #d9e3f6;border-radius:999px;background:#fff;color:#17376d;text-decoration:none;font-weight:700;line-height:1;box-shadow:0 2px 8px rgba(26,61,124,.05)}.create-user.my-page-header-actions .my-page-header-button.primary{border-color:#23469b;background:#23469b;color:#fff}.create-user.my-page-header-actions .my-page-header-button:hover{filter:brightness(.98)}
 @media(max-width:760px){.create-user.my-page-header-actions{gap:6px}.create-user.my-page-header-actions .my-page-header-button{min-height:31px;padding:0 10px;font-size:10px}}
+
+
+/* Homepage featured template cards: use completed-template representative images 1 + 2. */
+.landing-v2 .dd-home03-template-images{display:grid;grid-template-columns:1fr 1fr;width:100%;height:166px;overflow:hidden;border-radius:11px;border:1px solid #e9eef8;background:#f7f4f2;box-shadow:0 3px 8px rgba(20,40,80,.06)}
+.landing-v2 .dd-home03-template-images img{width:100%;height:100%;min-width:0;object-fit:cover;object-position:top center;border:0;border-radius:0;box-shadow:none}
+.landing-v2 .dd-home03-template-placeholder{display:grid;place-items:center;min-width:0;background:#f7f4f2;color:#aaa;font-size:10px}
+@media(max-width:800px){.landing-v2 .dd-home03-template-images{height:135px}}
