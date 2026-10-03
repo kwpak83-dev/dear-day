@@ -12,6 +12,6 @@ export async function GET(){
  let assets=[];
  if(ids.length){const result=await client.from("hero_preset_assets").select("id,hero_preset_id,asset_type,storage_bucket,storage_path").in("hero_preset_id",ids).eq("is_active",true);if(result.error)return json({error:"Hero 이미지를 불러오지 못했어요."},500);assets=result.data||[];}
  const byPreset={};
- for(const asset of assets){(byPreset[asset.hero_preset_id]??={})[asset.asset_type]={id:asset.id,url:client.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl};}
+ for(const asset of assets){const bucket=(byPreset[asset.hero_preset_id]??={});const item={id:asset.id,url:client.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl};if(asset.asset_type==="hero_decoration"){(bucket.hero_decorations??=[]).push(item);}else{bucket[asset.asset_type]=item;}}
  return json({presets:(data||[]).map(p=>({...p,assets:byPreset[p.id]||{}}))});
 }
