@@ -12,6 +12,9 @@ export async function GET(){
  let assets=[];
  if(ids.length){const result=await client.from("hero_preset_assets").select("id,hero_preset_id,asset_type,storage_bucket,storage_path").in("hero_preset_id",ids).eq("is_active",true);if(result.error)return json({error:"Hero 이미지를 불러오지 못했어요."},500);assets=result.data||[];}
  const byPreset={};
- for(const asset of assets){const bucket=(byPreset[asset.hero_preset_id]??={});const item={id:asset.id,url:client.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl};if(asset.asset_type==="hero_decoration"){(bucket.hero_decorations??=[]).push(item);}else{bucket[asset.asset_type]=item;}}
- return json({presets:(data||[]).map(p=>({...p,assets:byPreset[p.id]||{}}))});
+ for(const asset of assets){const target=(byPreset[asset.hero_preset_id]??={});target[asset.asset_type]={id:asset.id,url:client.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl};}
+ const decorIds=new Set((data||[]).flatMap(p=>Array.isArray(p.config?.decorLayers)?p.config.decorLayers.map(layer=>layer.assetId):[]).filter(Boolean));
+ let library={};
+ if(decorIds.size){const listed=await client.storage.from("template-assets").list("hero-decoration-library",{limit:1000});if(!listed.error)library=Object.fromEntries((listed.data||[]).map(file=>{const id=file.name.split(".")[0];return decorIds.has(id)?[id,{id,url:client.storage.from("template-assets").getPublicUrl(`hero-decoration-library/${file.name}`).data.publicUrl}]:null;}).filter(Boolean));}
+ return json({presets:(data||[]).map(p=>({...p,assets:{...(byPreset[p.id]||{}),hero_decorations:(p.config?.decorLayers||[]).map(layer=>library[layer.assetId]).filter(Boolean)}}))});
 }
