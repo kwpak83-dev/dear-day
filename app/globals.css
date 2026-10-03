@@ -2697,3 +2697,10 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   .landing-v2 .landing-hero-benefits>div>strong{font-size:12px!important;line-height:1.15!important}
   .landing-v2 .landing-hero-benefits>div>small{font-size:9px!important;line-height:1.2!important}
 }
+
+/* Keep mobile hero benefit titles on one line. */
+@media(max-width:700px){
+  .landing-v2 .landing-hero-benefits>div{grid-template-columns:34px minmax(0,1fr)!important;column-gap:4px!important;padding-left:6px!important;padding-right:6px!important}
+  .landing-v2 .landing-hero-benefits>div>.dd-benefit-emoji{width:34px!important;height:34px!important}
+  .landing-v2 .landing-hero-benefits>div>strong{white-space:nowrap!important;letter-spacing:-.04em!important}
+}
