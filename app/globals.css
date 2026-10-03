@@ -2614,3 +2614,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* DearDay wordmark: Alex Brush */
 .dearday-logo-copy b{font-family:var(--font-alex-brush),cursive!important;font-weight:400!important;font-style:normal!important;letter-spacing:0!important;line-height:1!important}
 .dearday-logo--compact .dearday-logo-copy b{font-family:var(--font-alex-brush),cursive!important;font-weight:400!important;font-style:normal!important;letter-spacing:0!important;line-height:1!important}
+
+
+/* DearDay slogan: slim & compact shared style */
+.dearday-logo-copy small{display:block!important;margin-top:2px!important;font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif!important;font-size:7px!important;font-weight:500!important;line-height:1.2!important;letter-spacing:.04em!important;color:#6b7280!important;white-space:nowrap!important}
+.dearday-logo--compact .dearday-logo-copy small{font-size:6px!important;letter-spacing:.035em!important;color:#6b7280!important}
