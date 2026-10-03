@@ -5,7 +5,7 @@ export async function GET(_request,{params}){
  const {key}=await params,url=process.env.NEXT_PUBLIC_SUPABASE_URL,service=process.env.SUPABASE_SERVICE_ROLE_KEY;
  if(!url||!service)return Response.json({error:"템플릿 서비스를 준비하지 못했어요."},{status:503});
  const s=createClient(url,service,{auth:{autoRefreshToken:false,persistSession:false}});
- const {data:item,error}=await s.from("completed_templates").select("*").eq("template_key",key).eq("is_visible",true).maybeSingle();
+ const {data:item,error}=await s.from("completed_templates").select("*").eq("template_key",key).or("is_visible.eq.true,is_featured.eq.true").maybeSingle();
  if(error||!item)return Response.json({error:"템플릿을 찾지 못했어요."},{status:404});
  const [{data:hero},{data:heroAssets},{data:versions},{data:bodyAssets},{data:defaults}]=await Promise.all([
   s.from("hero_presets").select("id,name,config").eq("id",item.hero_preset_id).maybeSingle(),
