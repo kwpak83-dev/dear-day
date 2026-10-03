@@ -2619,3 +2619,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* DearDay slogan: slim & compact shared style */
 .dearday-logo-copy small{display:block!important;margin-top:2px!important;font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif!important;font-size:7px!important;font-weight:500!important;line-height:1.2!important;letter-spacing:.04em!important;color:#6b7280!important;white-space:nowrap!important}
 .dearday-logo--compact .dearday-logo-copy small{font-size:6px!important;letter-spacing:.035em!important;color:#6b7280!important}
+
+/* Footer logo uses the same DearDay slogan treatment as shared headers. */
+.dearday-brand-footer .dearday-logo--compact .dearday-logo-copy small{font-size:7px!important;font-weight:500!important;line-height:1.2!important;letter-spacing:.04em!important;color:#6b7280!important}
