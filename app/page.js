@@ -10,6 +10,7 @@ const steps = [["01", "▧", "템플릿 선택", "마음에 드는 디자인을 
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [featuredTemplates, setFeaturedTemplates] = useState([]);
   const featuredTrackRef = useRef(null);
   const [authOpen, setAuthOpen] = useState(false);
   const [authMessage, setAuthMessage] = useState("");
@@ -18,6 +19,10 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
   const [authReturnPath, setAuthReturnPath] = useState(DEFAULT_AUTH_RETURN_PATH);
+
+  useEffect(() => {
+    fetch("/api/templates/collection?featured=1").then(r => r.ok ? r.json() : { items: [] }).then(j => setFeaturedTemplates(j.items || [])).catch(() => setFeaturedTemplates([]));
+  }, []);
 
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();
@@ -99,11 +104,10 @@ export default function Home() {
         <div className="dd-home03-carousel">
           <button className="dd-home03-arrow" type="button" aria-label="이전 템플릿" onClick={() => featuredTrackRef.current?.scrollBy({left:-320,behavior:"smooth"})}>‹</button>
           <div className="dd-home03-track" ref={featuredTrackRef}>
-            {[
-              {id:"modern-001",name:"모던 블루",image:"/templates/modern-001/preview.png"},
-              {id:"classic-001",name:"심플 화이트",image:"/templates/classic-001/preview.png"},
-              {id:"romantic-001",name:"로맨틱",image:"/templates/romantic-001/preview.png"},
-            ].map(template => <button type="button" className="dd-home03-template" key={template.id} onClick={start}><img src={template.image} alt={template.name + " 템플릿 미리보기"} loading="lazy" /><strong>{template.name}</strong></button>)}
+            {featuredTemplates.map(template => <button type="button" className="dd-home03-template" key={template.id} onClick={() => window.location.assign(`/templates/${encodeURIComponent(template.template_key)}`)}>
+              <span className="dd-home03-template-images">{[template.thumbnail_1_url,template.thumbnail_2_url].map((src,i)=>src?<img key={i} src={src} alt={`${template.name} 대표 이미지 ${i+1}`} loading="lazy" />:<span key={i} className="dd-home03-template-placeholder">IMAGE {i+1}</span>)}</span>
+              <strong>{template.name}</strong>
+            </button>)}
           </div>
           <button className="dd-home03-arrow" type="button" aria-label="다음 템플릿" onClick={() => featuredTrackRef.current?.scrollBy({left:320,behavior:"smooth"})}>›</button>
         </div>
