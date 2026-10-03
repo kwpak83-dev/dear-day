@@ -234,7 +234,7 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
           if (!boundText?.trim()) return null;
           const x = Math.min(100, Math.max(0, Number(layer.x ?? 50)));
           const y = Math.min(100, Math.max(0, Number(layer.y ?? 50)));
-          const align = ["left", "center", "right"].includes(layer.align) ? layer.align : "center";
+          
           const stroke = layer.stroke?.enabled ? layer.stroke : null;
           const shadow = layer.shadow?.enabled ? layer.shadow : null;
           const gradient = layer.gradient?.enabled ? layer.gradient : null;
@@ -250,8 +250,8 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
             ...(gradient ? { backgroundImage: `linear-gradient(${gradient.angle}deg, ${gradient.start}, ${gradient.end})`, WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent" } : {}),
           };
           return <div key={layer.id} className="dd-template-hero-text-layer" style={{
-            left: `${x}%`, top: `${y}%`, transform: `translate(${-x}%, -50%) rotate(${layer.rotation ?? 0}deg)`,
-            width: "100%", textAlign: align,
+            left: `${x}%`, top: `${y}%`, transform: `translate(-50%, -50%) rotate(${layer.rotation ?? 0}deg)`,
+            width: "max-content", maxWidth: "100%", textAlign: "center",
           }}><span className={layer.fadeUp?.enabled ? "dd-hero-text-fade-up" : undefined} style={{ ...textStyle, display: "inline-block", maxWidth: "100%", ...(layer.fadeUp?.enabled ? { animationDuration: `${layer.fadeUp.duration}s`, animationDelay: `${layer.fadeUp.delay}s` } : {}) }}>{boundText}</span></div>;
         })}
       </div>
