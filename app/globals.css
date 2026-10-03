@@ -2796,3 +2796,15 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   word-break: keep-all;
   overflow-wrap: normal;
 }
+
+
+/* HOME-03 feature descriptions: preserve Korean word boundaries on desktop. */
+@media (min-width: 801px) {
+  .landing-v2 .dd-home03-feature > div {
+    min-width: 0;
+  }
+  .landing-v2 .dd-home03-feature small {
+    word-break: keep-all !important;
+    overflow-wrap: normal !important;
+  }
+}
