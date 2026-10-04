@@ -237,7 +237,7 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
       <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />
       <div className="dd-template-hero-text-layers">
         {config.hero.textLayers.filter((layer) => layer.visible !== false && ((layer.source && layer.source !== "custom") || layer.text?.trim())).map((layer) => {
-          const boundText = layer.source === "title" ? presentation.title : layer.source === "schedule" ? presentation.heroSchedule : layer.source === "venue" ? presentation.venue : layer.text;
+          const boundText = layer.source === "title" ? (presentation.heroTitle || presentation.title) : layer.source === "schedule" ? presentation.heroSchedule : layer.source === "venue" ? presentation.venue : layer.text;
           if (!boundText?.trim()) return null;
           const x = Math.min(100, Math.max(0, Number(layer.x ?? 50)));
           const y = Math.min(100, Math.max(0, Number(layer.y ?? 50)));
