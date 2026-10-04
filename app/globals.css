@@ -2958,3 +2958,29 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   backdrop-filter:blur(2px);
   -webkit-backdrop-filter:blur(2px);
 }
+
+
+/* Bottom Sheet neutral controls: prevent inherited template button fills on backdrop/close. */
+.dd-template-button-style .invitation-bottom-sheet-layer > .invitation-bottom-sheet-backdrop,
+.dd-template-colors .invitation-bottom-sheet-layer > .invitation-bottom-sheet-backdrop,
+.invitation-bottom-sheet-layer > .invitation-bottom-sheet-backdrop{
+  background:rgba(0,0,0,.35) !important;
+  border:0 !important;
+  border-radius:0 !important;
+  color:transparent !important;
+}
+.dd-template-button-style .invitation-bottom-sheet>header>button,
+.dd-template-colors .invitation-bottom-sheet>header>button,
+.invitation-bottom-sheet>header>button{
+  width:auto !important;
+  min-width:0 !important;
+  height:auto !important;
+  min-height:0 !important;
+  padding:2px 5px !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  color:#222 !important;
+  font:400 26px/1 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif !important;
+}
