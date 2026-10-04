@@ -2985,6 +2985,3 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   font:400 26px/1 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif !important;
 }
 
-
-/* Keep the RSVP closing phrase together on narrow Bottom Sheet screens. */
-.invitation-bottom-sheet-layer .rsvp-intro-nowrap{white-space:nowrap}
