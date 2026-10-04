@@ -738,7 +738,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-decorated>.romantic-hero,.dd-template-decorated>.modern-hero,.dd-template-decorated>.classic-hero,
 .dd-template-decorated>.romantic-section,.dd-template-decorated>.modern-section,.dd-template-decorated>.classic-section,
 .dd-template-decorated>.romantic-footer,.dd-template-decorated>.modern-footer,.dd-template-decorated>.classic-footer,
-.dd-template-decorated .invitation-gallery,.dd-template-decorated .public-accounts,.dd-template-decorated .public-rsvp,
+.dd-template-decorated .invitation-gallery,.dd-template-decorated .dd-growth-timeline,.dd-template-decorated .public-accounts,.dd-template-decorated .public-rsvp,
 .dd-template-decorated .guestbook-section,.dd-template-decorated .public-share-copy{position:relative;z-index:1}
 .dd-template-decorated .romantic-message>:not(.dd-template-decoration-layer),
 .dd-template-decorated .modern-message>:not(.dd-template-decoration-layer),
@@ -2836,3 +2836,185 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   width:100% !important;
   height:100% !important;
 }
+
+
+/* RSVP / Guestbook Bottom Sheet: neutral DearDay system UI.
+   Scoped to the shared sheet so template body/quick-menu styling remains untouched. */
+.invitation-bottom-sheet-layer .invitation-bottom-sheet{
+  background:rgba(255,255,255,.96);
+  color:#222;
+  border-radius:22px 22px 0 0;
+  box-shadow:0 -18px 45px rgba(0,0,0,.18);
+  font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-handle{background:#b7b7b7}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet>header{
+  padding:10px 22px 12px;
+  border-bottom:1px solid #e2e2e2;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet>header h2{
+  color:#222;
+  font:600 17px/1.4 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  letter-spacing:0;
+  text-align:left;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet>header button,
+.dd-template-colors .invitation-bottom-sheet-layer .invitation-bottom-sheet>header button{
+  background:transparent;
+  color:#222;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section{
+  margin:0;
+  padding-right:24px;
+  padding-left:24px;
+  border:0;
+  background:transparent;
+  color:#222;
+  font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size:13px;
+  font-weight:400;
+  line-height:1.6;
+  letter-spacing:0;
+  text-align:left;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.rsvp-kicker,.section-kicker){
+  color:#777;
+  font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.public-rsvp h2,.guestbook-section>h2){
+  color:#222;
+  font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size:24px;
+  font-weight:600;
+  line-height:1.4;
+  letter-spacing:0;
+  text-align:center;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .rsvp-intro{color:#555}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.public-rsvp label>span,.public-rsvp legend,.guestbook-form label>span){color:#333}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.public-rsvp label>span b,.public-rsvp legend b){color:#666}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.public-rsvp label>span small,.rsvp-count){color:#777}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.public-rsvp input:not([type=radio]),.public-rsvp select,.public-rsvp textarea,.guestbook-form input,.guestbook-form textarea){
+  border:1px solid #ddd;
+  border-radius:9px;
+  background:#fff;
+  color:#222;
+  font:400 13px/1.4 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .rsvp-status-options span{
+  border:1px solid #ddd;
+  border-radius:9px;
+  background:#fff;
+  color:#444;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .rsvp-status-options input:checked+span{
+  border-color:#333;
+  background:#fff;
+  color:#222;
+  font-weight:700;
+}
+.dd-template-button-style .invitation-bottom-sheet-content :is(.public-rsvp form>button,.guestbook-form>button),
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.public-rsvp form>button,.guestbook-form>button){
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  justify-self:center;
+  width:min(100%,270px);
+  min-width:0;
+  height:42px;
+  min-height:42px;
+  padding:0 18px;
+  box-sizing:border-box;
+  border:1px solid #333;
+  border-radius:999px;
+  background:#fff;
+  color:#222;
+  font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size:13px;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:0;
+  text-align:center;
+  white-space:nowrap;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.public-rsvp form>button,.guestbook-form>button):disabled{
+  border-color:#ccc;
+  background:#f5f5f5;
+  color:#888;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.guestbook-notice,.rsvp-edit-guide,.rsvp-copy-notice){color:#666}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.guestbook-list article,.guestbook-management-list article){
+  border-color:#ddd;
+  background:#fff;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .guestbook-list header strong{color:#222}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .guestbook-list time{color:#888}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .guestbook-list article>p{color:#444}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .guestbook-list article>button{color:#666}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-backdrop,
+.dd-template-colors .invitation-bottom-sheet-layer .invitation-bottom-sheet-backdrop{
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+}
+
+
+/* Bottom Sheet neutral controls: prevent inherited template button fills on backdrop/close. */
+.dd-template-button-style .invitation-bottom-sheet-layer > .invitation-bottom-sheet-backdrop,
+.dd-template-colors .invitation-bottom-sheet-layer > .invitation-bottom-sheet-backdrop,
+.invitation-bottom-sheet-layer > .invitation-bottom-sheet-backdrop{
+  background:rgba(0,0,0,.35) !important;
+  border:0 !important;
+  border-radius:0 !important;
+  color:transparent !important;
+}
+.dd-template-button-style .invitation-bottom-sheet>header>button,
+.dd-template-colors .invitation-bottom-sheet>header>button,
+.invitation-bottom-sheet>header>button{
+  width:auto !important;
+  min-width:0 !important;
+  height:auto !important;
+  min-height:0 !important;
+  padding:2px 5px !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  color:#222 !important;
+  font:400 26px/1 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif !important;
+}
+
+
+
+/* First-birthday growth timeline: neutral alternating C-style. */
+.dd-growth-timeline{padding:54px 22px 58px;text-align:center;background:transparent;color:inherit}
+.dd-growth-timeline-heading{margin:0 0 34px}
+.dd-template-colors .dd-growth-timeline-heading>p,.dd-growth-timeline-heading>p{margin:0 0 7px;font-family:var(--dd-caption-font,var(--dd-body-font,inherit));font-size:var(--dd-caption-size,9px);font-weight:var(--dd-caption-weight,400);line-height:var(--dd-caption-line-height,1.4);letter-spacing:var(--dd-caption-letter-spacing,.24em);color:var(--dd-color-caption,var(--dd-color-muted,currentColor));opacity:1}
+.dd-template-colors .dd-growth-timeline .dd-growth-timeline-heading>h2,.dd-growth-timeline .dd-growth-timeline-heading>h2{margin:0;font-family:var(--dd-section-title-font,var(--dd-body-font,inherit));font-size:var(--dd-section-title-size,22px);font-weight:max(500,var(--dd-section-title-weight,500));line-height:var(--dd-section-title-line-height,1.35);letter-spacing:var(--dd-section-title-letter-spacing,normal);color:var(--dd-color-text,currentColor)!important;-webkit-text-fill-color:var(--dd-color-text,currentColor)!important;filter:none!important;opacity:1!important}
+.dd-growth-timeline-heading>h2:after{content:"";display:block;width:42px;height:1px;margin:12px auto 0;background:currentColor;opacity:.16}
+.dd-growth-timeline-list{position:relative;max-width:500px;margin:0 auto;padding:3px 0}
+.dd-growth-timeline-list:before{content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;background:currentColor;opacity:.14;transform:translateX(-.5px)}
+.dd-growth-timeline-item{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 30px minmax(0,1fr);align-items:center;margin:0 0 20px;text-align:left}
+.dd-growth-timeline-item:last-child{margin-bottom:0}
+.dd-growth-timeline-item:nth-child(odd) .dd-growth-timeline-card{grid-column:1}
+.dd-growth-timeline-item:nth-child(odd) .dd-growth-timeline-copy{grid-column:3}
+.dd-growth-timeline-item:nth-child(even) .dd-growth-timeline-card{grid-column:3}
+.dd-growth-timeline-item:nth-child(even) .dd-growth-timeline-copy{grid-column:1;text-align:right}
+.dd-growth-timeline-marker{grid-column:2;grid-row:1;display:grid;place-items:center;z-index:1}
+.dd-growth-timeline-marker i{display:block;width:9px;height:9px;border-radius:50%;background:Canvas;border:1.5px solid currentColor;opacity:.55}
+.dd-growth-timeline-card{grid-row:1;min-width:0;background:transparent}
+.dd-growth-timeline-card img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;box-shadow:0 3px 12px rgba(0,0,0,.07)}
+.dd-growth-timeline-copy{grid-row:1;align-self:center;min-width:0;padding:0 8px;color:inherit}
+.dd-template-typography .dd-growth-timeline-copy time{font-family:var(--dd-caption-font,var(--dd-body-font,inherit));font-size:var(--dd-caption-size,10px);font-weight:var(--dd-caption-weight,400);line-height:var(--dd-caption-line-height,1.35);letter-spacing:var(--dd-caption-letter-spacing,.06em)}
+.dd-growth-timeline-copy time{display:block;margin-bottom:5px;font-size:10px;line-height:1.35;letter-spacing:.06em;color:var(--dd-color-caption,var(--dd-color-muted,currentColor))}
+.dd-template-typography .dd-growth-timeline-copy p{font-family:var(--dd-body-font,inherit);font-size:var(--dd-body-size,12px);font-weight:var(--dd-body-weight,400);line-height:var(--dd-body-line-height,1.5);letter-spacing:var(--dd-body-letter-spacing,normal)}
+.dd-growth-timeline-copy p{margin:0;font-size:12px;font-weight:400;line-height:1.5;color:var(--dd-color-text,currentColor);word-break:keep-all}
+@media(max-width:420px){.dd-growth-timeline{padding:48px 18px 52px}.dd-growth-timeline-heading{margin-bottom:28px}.dd-growth-timeline-item{grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr);margin-bottom:18px}.dd-growth-timeline-card img{border-radius:12px}}
+.dd-growth-timeline-editor-list{display:grid;gap:14px;margin:14px 0}
+.dd-growth-timeline-editor-item{padding:14px;border:1px solid #e7e0dc;border-radius:14px;background:#fff}
+.dd-growth-timeline-editor-item>strong{display:block;margin-bottom:10px}
+.dd-growth-timeline-editor-photo{display:flex;align-items:center;gap:10px;margin:8px 0 12px}
+.dd-growth-timeline-editor-photo img{width:76px;height:76px;object-fit:cover;border-radius:10px}
+.dd-growth-timeline-editor-photo button,.dd-growth-timeline-remove{border:0;background:transparent;text-decoration:underline;color:#756b66;cursor:pointer}
+@media(max-width:420px){.dd-growth-timeline{padding-left:18px;padding-right:18px}.dd-growth-timeline-item{grid-template-columns:1fr 22px 1fr;gap:0}.dd-growth-timeline-card img{border-radius:13px}}
