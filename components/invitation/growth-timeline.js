@@ -15,10 +15,10 @@ export default function GrowthTimeline({ invitation, eventKind }) {
         <div className="dd-growth-timeline-marker" aria-hidden="true"><i /></div>
         <div className="dd-growth-timeline-card">
           {item.photoUrl && <img src={item.photoUrl} alt={item.text ? `성장 기록: ${item.text}` : `성장 기록 ${index + 1}`} loading="lazy" decoding="async" />}
-          <div>
-            {item.date && <time>{item.date.replaceAll("-", ".")}</time>}
-            {item.text && <p>{item.text}</p>}
-          </div>
+        </div>
+        <div className="dd-growth-timeline-copy">
+          {item.date && <time>{item.date.replaceAll("-", ".")}</time>}
+          {item.text && <p>{item.text}</p>}
         </div>
       </article>)}
     </div>
