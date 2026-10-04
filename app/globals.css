@@ -2836,3 +2836,125 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   width:100% !important;
   height:100% !important;
 }
+
+
+/* RSVP / Guestbook Bottom Sheet: neutral DearDay system UI.
+   Scoped to the shared sheet so template body/quick-menu styling remains untouched. */
+.invitation-bottom-sheet-layer .invitation-bottom-sheet{
+  background:rgba(255,255,255,.96);
+  color:#222;
+  border-radius:22px 22px 0 0;
+  box-shadow:0 -18px 45px rgba(0,0,0,.18);
+  font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-handle{background:#b7b7b7}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet>header{
+  padding:10px 22px 12px;
+  border-bottom:1px solid #e2e2e2;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet>header h2{
+  color:#222;
+  font:600 17px/1.4 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  letter-spacing:0;
+  text-align:left;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet>header button,
+.dd-template-colors .invitation-bottom-sheet-layer .invitation-bottom-sheet>header button{
+  background:transparent;
+  color:#222;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section{
+  margin:0;
+  padding-right:24px;
+  padding-left:24px;
+  border:0;
+  background:transparent;
+  color:#222;
+  font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size:13px;
+  font-weight:400;
+  line-height:1.6;
+  letter-spacing:0;
+  text-align:left;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.rsvp-kicker,.section-kicker){
+  color:#777;
+  font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.public-rsvp h2,.guestbook-section>h2){
+  color:#222;
+  font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size:24px;
+  font-weight:600;
+  line-height:1.4;
+  letter-spacing:0;
+  text-align:center;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .rsvp-intro{color:#555}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.public-rsvp label>span,.public-rsvp legend,.guestbook-form label>span){color:#333}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.public-rsvp label>span b,.public-rsvp legend b){color:#666}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.public-rsvp label>span small,.rsvp-count){color:#777}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.public-rsvp input:not([type=radio]),.public-rsvp select,.public-rsvp textarea,.guestbook-form input,.guestbook-form textarea){
+  border:1px solid #ddd;
+  border-radius:9px;
+  background:#fff;
+  color:#222;
+  font:400 13px/1.4 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .rsvp-status-options span{
+  border:1px solid #ddd;
+  border-radius:9px;
+  background:#fff;
+  color:#444;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .rsvp-status-options input:checked+span{
+  border-color:#333;
+  background:#fff;
+  color:#222;
+  font-weight:700;
+}
+.dd-template-button-style .invitation-bottom-sheet-content :is(.public-rsvp form>button,.guestbook-form>button),
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.public-rsvp form>button,.guestbook-form>button){
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  justify-self:center;
+  width:min(100%,270px);
+  min-width:0;
+  height:42px;
+  min-height:42px;
+  padding:0 18px;
+  box-sizing:border-box;
+  border:1px solid #333;
+  border-radius:999px;
+  background:#fff;
+  color:#222;
+  font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size:13px;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:0;
+  text-align:center;
+  white-space:nowrap;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.public-rsvp form>button,.guestbook-form>button):disabled{
+  border-color:#ccc;
+  background:#f5f5f5;
+  color:#888;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.guestbook-notice,.rsvp-edit-guide,.rsvp-copy-notice){color:#666}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content :is(.guestbook-list article,.guestbook-management-list article){
+  border-color:#ddd;
+  background:#fff;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .guestbook-list header strong{color:#222}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .guestbook-list time{color:#888}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .guestbook-list article>p{color:#444}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .guestbook-list article>button{color:#666}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-backdrop,
+.dd-template-colors .invitation-bottom-sheet-layer .invitation-bottom-sheet-backdrop{
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+}
