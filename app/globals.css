@@ -2985,3 +2985,29 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   font:400 26px/1 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif !important;
 }
 
+
+
+/* First-birthday growth timeline: isolated from gallery and other event types. */
+.dd-growth-timeline{padding:58px 22px 64px;text-align:center;background:transparent}
+.dd-growth-timeline-heading{margin:0 0 30px}
+.dd-growth-timeline-heading>p{margin:0 0 7px;font-size:10px;letter-spacing:.22em;color:#9b918c}
+.dd-growth-timeline-heading>h2{margin:0;font-size:23px;font-weight:500;color:#302c2a}
+.dd-growth-timeline-list{position:relative;max-width:520px;margin:0 auto;padding:5px 0}
+.dd-growth-timeline-list:before{content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;background:#ddd5d0;transform:translateX(-.5px)}
+.dd-growth-timeline-item{position:relative;display:grid;grid-template-columns:1fr 26px 1fr;align-items:center;margin:0 0 26px;text-align:left}
+.dd-growth-timeline-item:nth-child(odd) .dd-growth-timeline-card{grid-column:1}
+.dd-growth-timeline-item:nth-child(even) .dd-growth-timeline-card{grid-column:3}
+.dd-growth-timeline-marker{grid-column:2;grid-row:1;display:grid;place-items:center;z-index:1}
+.dd-growth-timeline-marker i{display:block;width:9px;height:9px;border-radius:50%;background:#fff;border:2px solid #a99d96}
+.dd-growth-timeline-card{grid-row:1;min-width:0}
+.dd-growth-timeline-card img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:16px}
+.dd-growth-timeline-card>div{padding:9px 4px 0}
+.dd-growth-timeline-card time{display:block;margin-bottom:3px;font-size:10px;letter-spacing:.08em;color:#9a8f89}
+.dd-growth-timeline-card p{margin:0;font-size:12px;line-height:1.55;color:#514a46;word-break:keep-all}
+.dd-growth-timeline-editor-list{display:grid;gap:14px;margin:14px 0}
+.dd-growth-timeline-editor-item{padding:14px;border:1px solid #e7e0dc;border-radius:14px;background:#fff}
+.dd-growth-timeline-editor-item>strong{display:block;margin-bottom:10px}
+.dd-growth-timeline-editor-photo{display:flex;align-items:center;gap:10px;margin:8px 0 12px}
+.dd-growth-timeline-editor-photo img{width:76px;height:76px;object-fit:cover;border-radius:10px}
+.dd-growth-timeline-editor-photo button,.dd-growth-timeline-remove{border:0;background:transparent;text-decoration:underline;color:#756b66;cursor:pointer}
+@media(max-width:420px){.dd-growth-timeline{padding-left:18px;padding-right:18px}.dd-growth-timeline-item{grid-template-columns:1fr 22px 1fr;gap:0}.dd-growth-timeline-card img{border-radius:13px}}
