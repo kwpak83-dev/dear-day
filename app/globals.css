@@ -1680,7 +1680,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   white-space:nowrap;
 }
 .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small{
-  display:block;font:400 9px/1.25 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#8a817c !important;
+  display:block;width:100%;margin:0 !important;padding:0 !important;text-align:left !important;font:400 9px/1.25 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#8a817c !important;
   white-space:nowrap;
 }
 @media(max-width:380px){
