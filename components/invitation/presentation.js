@@ -3,6 +3,7 @@ import { getEventConfig } from "../../lib/event-config";
 const clean = (value) => typeof value === "string" ? value.trim() : value == null ? "" : String(value).trim();
 const join = (values, separator = " · ") => values.map(clean).filter(Boolean).join(separator);
 const titledPerson = (title, person) => join(title && person ? [title, person] : [title || person]);
+const heroName = (item, key) => clean(item[`${key}FirstName`]) || clean(item[key]);
 
 function parentRelation(item, parentFields, personField, relation) {
   const person = clean(item[personField]);
@@ -66,10 +67,16 @@ export function getInvitationPresentation(invitation = {}, eventKind) {
   const kind = eventKind || invitation.eventKind || "wedding";
   const config = getEventConfig(kind);
   const event = (EVENT_PRESENTERS[kind] || EVENT_PRESENTERS.other)(invitation);
+  const heroTitle = kind === "wedding" ? join([heroName(invitation, "groom"), heroName(invitation, "bride")], " & ")
+    : kind === "first_birthday" || kind === "baby_shower" ? heroName(invitation, "childName")
+    : kind === "birthday" || kind === "bridal_shower" || kind === "graduation" ? heroName(invitation, "person1Name")
+    : kind === "anniversary" && !clean(invitation.eventTitle) ? join([heroName(invitation, "person1Name"), heroName(invitation, "person2Name")], " & ")
+    : clean(event.title);
 
   return {
     kindLabel: config.label,
     title: clean(event.title),
+    heroTitle: clean(heroTitle),
     detail: clean(event.detail),
     note: clean(event.note),
     groomRelation: clean(event.groomRelation),

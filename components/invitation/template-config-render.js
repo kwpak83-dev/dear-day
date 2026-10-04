@@ -89,7 +89,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroStyle.backgroundPosition = "center";
     heroMediaStyle.background = "transparent";
   }
-  if (hero?.photoFadeUp?.enabled) { heroMediaStyle.animation = `dd-hero-photo-fade-up ${hero.photoFadeUp.duration}s ease-out ${hero.photoFadeUp.delay}s both`; }
+  if (hero?.photoFadeUp?.enabled) { const introDelay=hero?.intro?.enabled&&hero.intro.text?.trim()?Number(hero.intro.writeDuration||0)+Number(hero.intro.holdDuration||0)+Number(hero.intro.fadeDuration||0):0; heroMediaStyle.animation = `dd-hero-photo-fade-up ${hero.photoFadeUp.duration}s ease-out ${introDelay+Number(hero.photoFadeUp.delay||0)}s both`; }
   const frame = hero?.photoFrame;
   if (frame && frame.shape !== "default") {
     heroStyle.aspectRatio = (hero?.aspectRatio || "4:5").replace(":", " / ");
@@ -237,7 +237,7 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
       <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />
       <div className="dd-template-hero-text-layers">
         {config.hero.textLayers.filter((layer) => layer.visible !== false && ((layer.source && layer.source !== "custom") || layer.text?.trim())).map((layer) => {
-          const boundText = layer.source === "title" ? presentation.title : layer.source === "schedule" ? presentation.heroSchedule : layer.source === "venue" ? presentation.venue : layer.text;
+          const boundText = layer.source === "title" ? (presentation.heroTitle || presentation.title) : layer.source === "schedule" ? presentation.heroSchedule : layer.source === "venue" ? presentation.venue : layer.text;
           if (!boundText?.trim()) return null;
           const x = Math.min(100, Math.max(0, Number(layer.x ?? 50)));
           const y = Math.min(100, Math.max(0, Number(layer.y ?? 50)));
@@ -256,10 +256,11 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
             ...(stroke ? { WebkitTextStroke: `${stroke.width}px ${stroke.color}`, paintOrder: "stroke fill" } : {}),
             ...(gradient ? { backgroundImage: `linear-gradient(${gradient.angle}deg, ${gradient.start}, ${gradient.end})`, WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent" } : {}),
           };
+          const introDelay = config?.hero?.intro?.enabled && config.hero.intro.text?.trim() ? Number(config.hero.intro.writeDuration||0) + Number(config.hero.intro.holdDuration||0) + Number(config.hero.intro.fadeDuration||0) : 0;
           return <div key={layer.id} className="dd-template-hero-text-layer" style={{
             left: `${x}%`, top: `${y}%`, transform: `translate(-50%, -50%) rotate(${layer.rotation ?? 0}deg)`,
             width: "max-content", maxWidth: "100%", textAlign: "center",
-          }}><span className={layer.fadeUp?.enabled ? "dd-hero-text-fade-up" : undefined} style={{ ...textStyle, display: "inline-block", maxWidth: "100%", ...(layer.fadeUp?.enabled ? { animationDuration: `${layer.fadeUp.duration}s`, animationDelay: `${layer.fadeUp.delay}s` } : {}) }}>{boundText}</span></div>;
+          }}><span className={layer.fadeUp?.enabled ? "dd-hero-text-fade-up" : undefined} style={{ ...textStyle, display: "inline-block", maxWidth: "100%", ...(layer.fadeUp?.enabled ? { animationDuration: `${layer.fadeUp.duration}s`, animationDelay: `${introDelay + Number(layer.fadeUp.delay||0)}s` } : {}) }}>{boundText}</span></div>;
         })}
       </div>
     </>}

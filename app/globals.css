@@ -1660,8 +1660,8 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-background .invitation-quick-menu--minimal.invitation-quick-menu--pills > button{
   display:grid !important;grid-template-columns:26px minmax(0,1fr) !important;grid-template-rows:auto !important;
   align-items:center !important;justify-items:start !important;column-gap:9px !important;
-  width:190px !important;max-width:calc(50vw - 18px) !important;min-height:58px !important;height:58px !important;
-  padding:7px 12px !important;border:1px solid #e7e0dc !important;border-radius:12px !important;
+  width:auto !important;max-width:calc(50vw - 18px) !important;min-height:58px !important;height:58px !important;
+  padding:7px 14px !important;border:1px solid #e7e0dc !important;border-radius:999px !important;
   background:#fff !important;color:#222 !important;-webkit-text-fill-color:#222 !important;
   box-shadow:0 2px 7px rgba(0,0,0,.07) !important;text-align:left !important;
 }
@@ -1680,7 +1680,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   white-space:nowrap;
 }
 .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small{
-  display:block;font:400 9px/1.25 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#8a817c !important;
+  display:block;width:100%;margin:0 !important;padding:0 !important;text-align:left !important;font:400 9px/1.25 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#8a817c !important;
   white-space:nowrap;
 }
 @media(max-width:380px){
