@@ -4,6 +4,7 @@ import InvitationRenderer from "../../../components/invitation/invitation-render
 import InvitationMap from "../../../components/invitation/invitation-map";
 import TransportGuide from "../../../components/invitation/transport-guide";
 import DearDayBrandFooter from "../../../components/invitation/dearday-brand-footer";
+import GrowthTimeline from "../../../components/invitation/growth-timeline";
 import Gallery from "./gallery";
 import InvitationNotice from "./invitation-notice";
 import AccountCopy from "./account-copy";
@@ -97,7 +98,7 @@ export default async function InvitationPage({ params, searchParams }) {
     {ownerView && <nav className="owner-return-nav" aria-label="DearDay 관리 화면으로 돌아가기"><a href="/my-invitations">내 초대장</a><a href="/">DearDay 홈</a></nav>}
     <InvitationNotice notice={settings.notice} slug={slug} imageUrl={settings.notice?.imagePath ? supabase.storage.from("invitation-photos").getPublicUrl(settings.notice.imagePath).data.publicUrl : null} />
     <div className="full-invitation-renderer dd-bgm-public-style"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} templateId={invitation.templateId} templateConfig={templateConfig} templateAssets={templateAssets} userBgmUrl={userBgmUrl} placeActions={<><AddressCopy invitation={invitation} /><InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView /><TransportGuide invitation={invitation} /></>}>
-      <div className="public-invitation-sections"><Gallery photos={galleryPhotos} /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} slug={slug} startsAt={event.starts_at} /><LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} imageUrl={invitation.kakaoShareImageUrl || invitation.coverPhotoUrl || templateAssets?.[templateConfig?.hero?.frameAssetId] || invitation.heroImageUrl || invitation.hero_image_url || galleryPhotos[0]?.url || ""} /><DearDayBrandFooter /></div>
+      <div className="public-invitation-sections"><GrowthTimeline invitation={invitation} eventKind={invitation.eventKind} /><Gallery photos={galleryPhotos} /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} /><OptionalInvitationSections invitation={invitation} slug={slug} startsAt={event.starts_at} /><LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} imageUrl={invitation.kakaoShareImageUrl || invitation.coverPhotoUrl || templateAssets?.[templateConfig?.hero?.frameAssetId] || invitation.heroImageUrl || invitation.hero_image_url || galleryPhotos[0]?.url || ""} /><DearDayBrandFooter /></div>
     </InvitationRenderer></div>
 </main>;
 }
