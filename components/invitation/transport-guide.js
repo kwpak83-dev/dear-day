@@ -10,8 +10,8 @@ function GuideIcon({ type }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 17V7h3.2a3.2 3.2 0 010 6.4H10M10 13.4h3.2"/></svg>;
 }
 
-export default function TransportGuide({ invitation, title = "교통 안내" }) {
-  if (invitation?.transportGuideEnabled !== true) return null;
+export default function TransportGuide({ invitation, title = "교통 안내", required = false }) {
+  if (!required && invitation?.transportGuideEnabled !== true) return null;
   const enabled = items.filter(([enabledKey, valueKey]) => invitation?.[enabledKey] === true && invitation?.[valueKey]?.trim());
   if (enabled.length) return <section className="dd-transport-guide" aria-label={title}><h3>{title}</h3><div className="dd-transport-guide-list">{enabled.map(([enabledKey,valueKey,label,type])=><div className="dd-transport-guide-item" key={enabledKey}><h4><span className="dd-transport-guide-icon"><GuideIcon type={type}/></span>{label}</h4><p>{invitation[valueKey]}</p></div>)}</div></section>;
   if (!invitation?.transportGuide?.trim()) return null;
