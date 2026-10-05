@@ -620,7 +620,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     {(state.error || notice) && <p role="status">{state.error || notice}</p>}
       </div>
       <aside className="admin-template-editor-preview">
-        <TemplateDraftPreview templateId={templateId} draft={state.draft ? { ...state.draft, background, typography, colors, buttonStyle, quickMenu, decorations:placements } : null} assets={[...state.allAssets,...sharedDecorations.map(asset=>({...asset,asset_type:"decoration",is_active:true}))]} loading={state.loading} />
+        <TemplateDraftPreview templateId={templateId} category={state.template?.category} draft={state.draft ? { ...state.draft, background, typography, colors, buttonStyle, quickMenu, decorations:placements } : null} assets={[...state.allAssets,...sharedDecorations.map(asset=>({...asset,asset_type:"decoration",is_active:true}))]} loading={state.loading} />
       </aside>
     </div>
   </section>;
