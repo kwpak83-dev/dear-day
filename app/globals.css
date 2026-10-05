@@ -3164,3 +3164,26 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   -webkit-text-fill-color:var(--dd-color-text,#684d43) !important;
   opacity:1 !important;
 }
+
+/* First-birthday readable foregrounds: use the same concrete visual values as the
+   working parents-intro section. Do not resolve through pale BODY theme variables. */
+.dd-template-colors .dd-growth-timeline-heading>h2,
+.dd-template-colors .invitation-gallery h2,
+.dd-template-colors .public-accounts h2{
+  color:#684d43 !important;
+  -webkit-text-fill-color:#684d43 !important;
+}
+.dd-template-colors .dd-growth-timeline-heading>p,
+.dd-template-colors .dd-growth-timeline-copy time,
+.dd-template-colors .invitation-gallery .gallery-kicker,
+.dd-template-colors .public-accounts h2::before,
+.dd-template-colors .public-accounts .public-account-card>p{
+  color:#8b7165 !important;
+  -webkit-text-fill-color:#8b7165 !important;
+}
+.dd-template-colors .dd-growth-timeline-copy>p,
+.dd-template-colors .public-accounts .public-account-card strong,
+.dd-template-colors .public-accounts .public-account-card span{
+  color:#684d43 !important;
+  -webkit-text-fill-color:#684d43 !important;
+}
