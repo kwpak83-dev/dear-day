@@ -3068,3 +3068,19 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   filter:none !important;
   mix-blend-mode:normal !important;
 }
+
+/* Account/footer content uses readable foreground colors, independent of pale theme
+   palette values. Theme background/decorations remain unchanged. */
+.dd-template-colors .public-accounts h2{
+  color:var(--dd-color-text,#684d43) !important;
+  -webkit-text-fill-color:var(--dd-color-text,#684d43) !important;
+}
+.dd-template-colors .public-account-card,
+.dd-template-colors .public-account-card :where(p,strong,span){
+  color:var(--dd-color-text,#684d43) !important;
+  -webkit-text-fill-color:var(--dd-color-text,#684d43) !important;
+}
+.dd-template-colors .public-accounts h2::before{
+  color:var(--dd-color-caption,var(--dd-color-text,#684d43)) !important;
+  -webkit-text-fill-color:var(--dd-color-caption,var(--dd-color-text,#684d43)) !important;
+}
