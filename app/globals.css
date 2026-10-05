@@ -731,6 +731,13 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-decorated{position:relative;isolation:isolate}
 .dd-template-decoration-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}
 .dd-template-decoration-layer-background{z-index:0}
+/* Background decorations are visual background only. Keep every real template
+   section above them so large/opaque decoration assets can never wash out content. */
+.dd-template-decorated > :not(.dd-template-decoration-layer-background):not(.dd-template-screen-effect):not(.dd-template-effects-marker){
+  position:relative;
+  z-index:2;
+}
+.dd-template-decorated > .dd-template-decoration-layer-background{z-index:0!important}
 .dd-template-decoration-layer-hero{z-index:1}
 .dd-template-decoration-layer-section{z-index:0}
 .dd-template-decoration{position:absolute;display:block;max-width:none;height:auto;transform-origin:center;pointer-events:none;user-select:none}
