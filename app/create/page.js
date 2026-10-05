@@ -860,7 +860,9 @@ export default function CreateInvitation() {
       setEditorStep(1);
     } else {
       if (previewOpen) closePreview();
-      setEditorStep(0);
+      if (firstMissing === galleryMatrix.label) setEditorStep(2);
+      else if (firstMissing === noticeMatrix.label) setEditorStep(4);
+      else setEditorStep(0);
       if (targetKey) {
         window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
           const target = document.querySelector(`[data-field-key="${targetKey}"]`);
