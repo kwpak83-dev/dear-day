@@ -9,6 +9,7 @@ import OptionalInvitationSections from "../../invite/[slug]/optional-invitation-
 import { resolveTemplateAssetUrls } from "../../../lib/template-config";
 import { getBankLogo } from "../../../lib/bank-options";
 import { EVENT_KIND_OPTIONS } from "../../../lib/event-config";
+import GrowthTimeline from "../../../components/invitation/growth-timeline";
 
 const sampleInvitation = {
   eventKind: "wedding", groom: "민준", bride: "서연", childName: "박유빈", childNameLastName: "박", childNameFirstName: "유빈", parent1Name: "박정우", parent2Name: "김수지",
@@ -31,6 +32,7 @@ const draftConfig = (draft) => draft ? ({
 
 function PreviewSections({ invitation, previewMode = "" }) {
   return <div className="public-invitation-sections">
+    <GrowthTimeline invitation={invitation} eventKind={invitation.eventKind} />
     <section className="invitation-gallery" aria-label="샘플 갤러리">
       <p className="gallery-kicker">OUR MOMENTS</p><h2>우리의 순간들</h2>
       <div className="public-gallery-grid">{[2, 3, 4].map((number) => <span className="public-gallery-photo" key={number}><img src={`/moment-${number}.png`} alt="" /></span>)}</div>
@@ -56,8 +58,8 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
   const [heroPresets, setHeroPresets] = useState([]);
   const [heroPresetId, setHeroPresetId] = useState("");
   const [sampleContent, setSampleContent] = useState(null);
-  useEffect(() => { let active=true; (async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch("/api/admin/hero-presets",{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setHeroPresets(result.presets||[]);}catch{}})();return()=>{active=false;};},[]);
-  useEffect(() => { let active=true; (async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch("/api/admin/completed-template-sample-defaults",{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setSampleContent(result.sample_content||result.sampleContent||null);}catch{}})();return()=>{active=false;};},[]);
+  useEffect(() => { let active=true; (async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch("/api/admin/hero-presets",{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setHeroPresets(result.presets||[]);}catch{}})();return()=>{active=false;};},[eventKind]);
+  useEffect(() => { let active=true; (async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch(`/api/admin/completed-template-sample-defaults?eventKind=${encodeURIComponent(eventKind)}`,{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setSampleContent(result.sample_content||result.sampleContent||null);}catch{}})();return()=>{active=false;};},[]);
   const [heroAssets,setHeroAssets]=useState([]);
   const [decorLibrary,setDecorLibrary]=useState([]);
   const selectedHero = heroPresets.find((item)=>item.id===heroPresetId) || null;
@@ -81,8 +83,9 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
       groomBank:sc.groom_bank||"", groomAccount:sc.groom_account||"", groomAccountHolder:sc.groom_account_holder||"",
       brideBank:sc.bride_bank||"", brideAccount:sc.bride_account||"", brideAccountHolder:sc.bride_account_holder||"",
       galleryPhotos:Array.isArray(sc.gallery_images)?sc.gallery_images:[],
+      eventKind, timelineEnabled:sc.timeline_enabled===true, timelineItems:Array.isArray(sc.timeline_items)?sc.timeline_items:[],
     };
-  }, [templateId,sampleContent,activeHeroFrame]);
+  }, [templateId,sampleContent,activeHeroFrame,eventKind]);
   const heroDebug = (config?.hero?.textLayers || []).map((layer, index) => ({
     index: index + 1, text: layer.text, source: layer.source || "custom", x: layer.x, y: layer.y, visible: layer.visible !== false,
     bound: layer.source === "parent1" ? invitation.parent1Name : layer.source === "parent2" ? invitation.parent2Name : layer.source === "title" ? (invitation.childNameFirstName || invitation.childName || invitation.groom || invitation.bride || "") : layer.source === "schedule" ? `${invitation.date || ""} ${invitation.time || ""}`.trim() : layer.source === "venue" ? invitation.venue : layer.text,
