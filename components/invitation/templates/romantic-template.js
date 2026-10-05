@@ -5,7 +5,7 @@ function SectionHeading({ eyebrow, children }) {
   return <header className="romantic-section-heading"><span aria-hidden="true">♡</span><p>{eyebrow}</p><h3>{children}</h3><i aria-hidden="true" /></header>;
 }
 
-export default function RomanticTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, weddingContacts, bgmControl, screenEffect, children }) {
+export default function RomanticTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, weddingContacts, bgmControl, screenEffect, afterMessage, children }) {
   const { kindLabel, title, detail, note, heroSchedule, schedule, venue, address, addressDetail, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map(value => value.trim()).filter(Boolean) : [];
@@ -69,6 +69,8 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
       <SectionHeading eyebrow="A SPECIAL MESSAGE">초대의 글</SectionHeading>
       <blockquote>{message}</blockquote>
     </section>}
+
+    {afterMessage}
 
     {weddingContacts}
 
