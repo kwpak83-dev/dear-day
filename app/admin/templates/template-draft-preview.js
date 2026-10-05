@@ -32,11 +32,11 @@ const draftConfig = (draft) => draft ? ({
 
 function PreviewSections({ invitation, previewMode = "" }) {
   return <div className="public-invitation-sections">
-    <GrowthTimeline invitation={invitation} eventKind={invitation.eventKind} />
     <section className="invitation-gallery" aria-label="샘플 갤러리">
       <p className="gallery-kicker">OUR MOMENTS</p><h2>우리의 순간들</h2>
       <div className="public-gallery-grid">{[2, 3, 4].map((number) => <span className="public-gallery-photo" key={number}><img src={`/moment-${number}.png`} alt="" /></span>)}</div>
     </section>
+    <GrowthTimeline invitation={invitation} eventKind={invitation.eventKind} />
     <section className="public-accounts"><h2>마음 전하실 곳</h2>
       {invitation.groomBank&&<article className="public-account-card"><p>신랑 측</p><strong className="public-account-holder">예금주 : {invitation.groomAccountHolder}</strong><div><span className="public-account-bank">{getBankLogo(invitation.groomBank)&&<img src={getBankLogo(invitation.groomBank)} alt="" />}<span>{invitation.groomBank} {invitation.groomAccount}</span></span><button type="button" disabled>계좌 복사</button></div></article>}
       {invitation.brideBank&&<article className="public-account-card"><p>신부 측</p><strong className="public-account-holder">예금주 : {invitation.brideAccountHolder}</strong><div><span className="public-account-bank">{getBankLogo(invitation.brideBank)&&<img src={getBankLogo(invitation.brideBank)} alt="" />}<span>{invitation.brideBank} {invitation.brideAccount}</span></span><button type="button" disabled>계좌 복사</button></div></article>}
@@ -62,6 +62,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
   useEffect(() => { let active=true; (async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch(`/api/admin/completed-template-sample-defaults?eventKind=${encodeURIComponent(eventKind)}`,{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setSampleContent(result.sample_content||result.sampleContent||null);}catch{}})();return()=>{active=false;};},[eventKind]);
   const [heroAssets,setHeroAssets]=useState([]);
   const [decorLibrary,setDecorLibrary]=useState([]);
+  useEffect(()=>{const selected=heroPresets.find(item=>item.id===heroPresetId);if(selected&&(selected.event_kind||"wedding")!==eventKind)setHeroPresetId("");},[eventKind,heroPresetId,heroPresets]);
   const selectedHero = heroPresets.find((item)=>item.id===heroPresetId) || null;
   const activeHeroFrame = heroAssets.find((item)=>item.asset_type==="hero_frame"&&item.is_active) || null;
   const config = useMemo(() => { const base=draftConfig(draft); return base&&selectedHero?{...base,hero:{...base.hero,...selectedHero.config,frameAssetId:activeHeroFrame?.id||null}}:base; }, [draft,selectedHero,activeHeroFrame]);
@@ -99,7 +100,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
 
   return <section className="admin-draft-preview" aria-labelledby="admin-draft-preview-title">
     <div className="admin-draft-preview-toolbar">
-      <div><h3 id="admin-draft-preview-title">본문 테마 미리보기</h3><p>저장된 편집 Draft · 읽기 전용</p><label style={{display:"grid",gap:4,fontSize:12,fontWeight:700}}>미리보기 유형<select value={eventKind} onChange={(e)=>setEventKind(e.target.value)} style={{minHeight:36,padding:"6px 8px"}}>{EVENT_KIND_OPTIONS.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label><label style={{display:"grid",gap:4,fontSize:12,fontWeight:700}}>미리보기 Hero<select value={heroPresetId} onChange={(e)=>setHeroPresetId(e.target.value)} style={{minHeight:36,padding:"6px 8px"}}><option value="">현재 템플릿 Hero (기존)</option>{heroPresets.map((preset)=><option key={preset.id} value={preset.id}>{preset.name}</option>)}</select></label></div>
+      <div><h3 id="admin-draft-preview-title">본문 테마 미리보기</h3><p>저장된 편집 Draft · 읽기 전용</p><label style={{display:"grid",gap:4,fontSize:12,fontWeight:700}}>미리보기 유형<select value={eventKind} onChange={(e)=>setEventKind(e.target.value)} style={{minHeight:36,padding:"6px 8px"}}>{EVENT_KIND_OPTIONS.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label><label style={{display:"grid",gap:4,fontSize:12,fontWeight:700}}>미리보기 Hero<select value={heroPresetId} onChange={(e)=>setHeroPresetId(e.target.value)} style={{minHeight:36,padding:"6px 8px"}}><option value="">현재 템플릿 Hero (기존)</option>{heroPresets.filter(preset=>(preset.event_kind||"wedding")===eventKind).map((preset)=><option key={preset.id} value={preset.id}>{preset.name}</option>)}</select></label></div>
       <div className="admin-draft-preview-widths" aria-label="미리보기 너비">
         {draft && <button type="button" onClick={openFullPreview}>전체 미리보기</button>}
         {[390, 540].map((value) => <button key={value} type="button" className={width === value ? "active" : ""} aria-pressed={width === value} onClick={() => setWidth(value)}>{value}px</button>)}
