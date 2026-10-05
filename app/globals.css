@@ -3140,37 +3140,27 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   -webkit-text-fill-color:var(--dd-color-text) !important;
 }
 
-/* Match first-birthday custom section foregrounds to the readable parents-intro path. */
-.dd-template-colors .dd-growth-timeline,
-.dd-template-colors .invitation-gallery{
-  color:inherit !important;
-}
-.dd-template-colors .dd-growth-timeline .dd-growth-timeline-heading>p,
-.dd-template-colors .dd-growth-timeline .dd-growth-timeline-heading>h2,
-.dd-template-colors .dd-growth-timeline .dd-growth-timeline-copy time,
-.dd-template-colors .dd-growth-timeline .dd-growth-timeline-copy p,
-.dd-template-colors .invitation-gallery .gallery-kicker,
-.dd-template-colors .invitation-gallery h2{
-  color:inherit !important;
-  -webkit-text-fill-color:currentColor !important;
+/* Match growth/gallery/account foregrounds to the working parents-intro palette path. */
+.dd-template-colors .dd-growth-timeline-heading>h2,
+.dd-template-colors .invitation-gallery h2,
+.dd-template-colors .public-accounts h2{
+  color:var(--dd-color-title,#684d43) !important;
+  -webkit-text-fill-color:var(--dd-color-title,#684d43) !important;
   opacity:1 !important;
-  filter:none !important;
 }
-
-/* Keep the payment-info section on the same readable inherited foreground path. */
-.dd-template-colors .public-accounts{
-  color:inherit !important;
+.dd-template-colors .dd-growth-timeline-heading>p,
+.dd-template-colors .dd-growth-timeline-copy time,
+.dd-template-colors .invitation-gallery .gallery-kicker,
+.dd-template-colors .public-accounts h2::before,
+.dd-template-colors .public-accounts .public-account-card>p{
+  color:var(--dd-color-caption,var(--dd-color-muted,#8b7165)) !important;
+  -webkit-text-fill-color:var(--dd-color-caption,var(--dd-color-muted,#8b7165)) !important;
+  opacity:1 !important;
 }
-.dd-template-colors .public-accounts h2,
-.dd-template-colors .public-accounts .public-account-card>p,
+.dd-template-colors .dd-growth-timeline-copy>p,
 .dd-template-colors .public-accounts .public-account-card strong,
 .dd-template-colors .public-accounts .public-account-card span{
-  color:inherit !important;
-  -webkit-text-fill-color:currentColor !important;
+  color:var(--dd-color-text,#684d43) !important;
+  -webkit-text-fill-color:var(--dd-color-text,#684d43) !important;
   opacity:1 !important;
-  filter:none !important;
-}
-.dd-template-colors .public-accounts h2::before{
-  color:inherit !important;
-  -webkit-text-fill-color:currentColor !important;
 }
