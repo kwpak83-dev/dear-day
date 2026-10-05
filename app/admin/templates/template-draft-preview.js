@@ -10,7 +10,7 @@ import { resolveTemplateAssetUrls } from "../../../lib/template-config";
 import { getBankLogo } from "../../../lib/bank-options";
 
 const sampleInvitation = {
-  eventKind: "wedding", groom: "민준", bride: "서연",
+  eventKind: "wedding", groom: "민준", bride: "서연", childName: "박유빈", parent1Name: "박정우", parent2Name: "김수지",
   groomPhone: "010-0000-0001", bridePhone: "010-0000-0002",
   groomFatherName: "김정호", groomFatherPhone: "010-0000-0003",
   groomMotherName: "이영희", groomMotherPhone: "010-0000-0004",
@@ -67,7 +67,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
     const sc=sampleContent||{};
     return {
       ...sampleInvitation, templateId,
-      groom:sc.groom_name||sampleInvitation.groom, bride:sc.bride_name||sampleInvitation.bride,
+      groom:sc.groom_name||sampleInvitation.groom, bride:sc.bride_name||sampleInvitation.bride,\n      childName:sc.child_name||sampleInvitation.childName, parent1Name:sc.parent1_name||sampleInvitation.parent1Name, parent2Name:sc.parent2_name||sampleInvitation.parent2Name,
       groomFatherName:sc.groom_father_name||sampleInvitation.groomFatherName, groomMotherName:sc.groom_mother_name||sampleInvitation.groomMotherName,
       brideFatherName:sc.bride_father_name||sampleInvitation.brideFatherName, brideMotherName:sc.bride_mother_name||sampleInvitation.brideMotherName,
       date:sc.event_date||sampleInvitation.date, time:sc.event_time||sampleInvitation.time,
