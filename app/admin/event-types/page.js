@@ -9,6 +9,8 @@ const FIELD_ORDER=[
  ["rsvp","RSVP"],["guestbook","방명록"],["parents_intro","부모소개"],["timeline","성장기록"]
 ];
 const STATES=[["required","필수"],["optional","선택"],["none","없음"]];
+const DETAIL={contacts:{key:"roles",title:"연락 대상"},accounts:{key:"groups",title:"계좌 그룹"}};
+const detailItems=(field,item)=>Array.isArray(item?.[DETAIL[field]?.key])?item[DETAIL[field].key]:[];
 const defaultFields=()=>Object.fromEntries(FIELD_ORDER.map(([key,label])=>[key,{state:"optional",label}]));
 async function token(){const s=getSupabaseBrowserClient(); const {data:{session}}=s?await s.auth.getSession():{data:{}}; return session?.access_token||"";}
 
@@ -18,6 +20,7 @@ export default function EventTypesAdmin(){
  const load=async()=>{setLoading(true);const t=await token();if(!t){setNotice("로그인이 필요합니다.");setLoading(false);return;}const r=await fetch("/api/admin/event-types",{headers:{Authorization:`Bearer ${t}`}});const j=await r.json().catch(()=>({}));if(r.ok)setTypes(j.types||[]);else setNotice(j.error||"불러오지 못했어요.");setLoading(false);};
  useEffect(()=>{load();},[]);
  const patch=(kind,fn)=>setTypes(v=>v.map(x=>x.kind===kind?fn(x):x));
+ const setDetail=(kind,field,items)=>patch(kind,x=>{const f=x.fields?.[field]||{state:"optional",label:field};const prop=DETAIL[field].key;return {...x,fields:{...x.fields,[field]:{...f,[prop]:items}}};});
  const save=async(item,method="PATCH")=>{setNotice("");const t=await token();const r=await fetch("/api/admin/event-types",{method,headers:{"Content-Type":"application/json",Authorization:`Bearer ${t}`},body:JSON.stringify(item)});const j=await r.json().catch(()=>({}));if(!r.ok){setNotice(j.error||"저장하지 못했어요.");return false;}setNotice("행사 유형 설정을 저장했습니다.");await load();return true;};
  return <main style={{maxWidth:1500,margin:"0 auto",padding:"32px 16px 64px"}}>
   <p className="section-kicker">ADMIN · EVENT TYPES</p><h1>행사 유형 관리</h1>
