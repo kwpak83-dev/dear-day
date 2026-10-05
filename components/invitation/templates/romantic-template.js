@@ -13,6 +13,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
   const hasInformation = Boolean(schedule || venue || address);
   const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
   const showHero = (key) => templateConfig?.hero?.display?.[key] !== false && !((key === "title" || key === "schedule" || key === "venue") && templateConfig?.hero?.textLayers?.some((layer) => layer.source === key));
+  const hideFirstBirthdayParentDetail = eventKind === "first_birthday" && templateConfig?.hero?.textLayers?.some((layer) => layer.source === "parent1" || layer.source === "parent2");
   const mastheadLabels = {
     wedding: "WEDDING INVITATION",
     first_birthday: "FIRST BIRTHDAY",
@@ -57,7 +58,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
           {groomRelation && <p>{groomRelation}</p>}
           {brideRelation && <p>{brideRelation}</p>}
         </div>}
-        {showHero("detail") && detail && <p className="romantic-detail">{detail}</p>}
+        {showHero("detail") && !hideFirstBirthdayParentDetail && detail && <p className="romantic-detail">{detail}</p>}
         {showHero("note") && note && <p className="romantic-note">{note}</p>}
         {showHero("schedule") && heroSchedule && <time>{heroSchedule}</time>}
       </div>
