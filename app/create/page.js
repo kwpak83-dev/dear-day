@@ -415,9 +415,9 @@ export default function CreateInvitation() {
     const loadTemplates = async () => {
       const supabase = getSupabaseBrowserClient();
       if (!supabase) return setTemplateNotice("템플릿 목록을 불러오지 못했어요.");
-      const { data, error } = await supabase.from("templates").select("id,name,template_assets(id,asset_type,storage_bucket,storage_path,is_active)").eq("is_active", true).order("sort_order", { ascending: true });
+      const { data, error } = await supabase.from("templates").select("id,name,event_kind,status,is_visible,template_assets(id,asset_type,storage_bucket,storage_path,is_active)").eq("status","on_sale").eq("is_visible",true).order("sort_order", { ascending: true });
       if (error) return setTemplateNotice("템플릿 목록을 불러오지 못했어요.");
-      const templates = (data || []).map((template) => {
+      const templates = (data || []).filter(template=>(template.event_kind||"wedding")===invitation.eventKind).map((template) => {
         const thumbnail = template.template_assets?.find((asset) => asset.asset_type === "thumbnail" && asset.is_active);
         const thumbnailUrl = thumbnail?.storage_bucket && thumbnail?.storage_path
           ? supabase.storage.from(thumbnail.storage_bucket).getPublicUrl(thumbnail.storage_path).data.publicUrl
