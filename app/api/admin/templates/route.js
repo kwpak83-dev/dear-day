@@ -135,9 +135,6 @@ export async function PATCH(request) {
   if (lookupError) return json({ error: "템플릿을 확인하지 못했어요." }, 500);
   if (!existing) return json({ error: "템플릿을 찾지 못했어요." }, 404);
   if (fields.template_key !== existing.template_key) return json({ error: "기존 template key는 변경할 수 없어요." }, 400);
-  if (fields.status === "on_sale" && !existing.current_sale_version_id) {
-    return json({ error: "판매 상태로 변경하려면 템플릿 버전이 필요해요." }, 409);
-  }
   const { template_key: _unchangedKey, ...updates } = fields;
   if (fields.status !== existing.status || fields.is_visible !== existing.is_visible) {
     updates.is_active = fields.status === "on_sale" && fields.is_visible;
