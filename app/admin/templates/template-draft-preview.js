@@ -50,7 +50,7 @@ function PreviewSections({ invitation, previewMode = "" }) {
 }
 
 export default function TemplateDraftPreview({ templateId, draft, assets = [], loading = false }) {
-  const [eventKind, setEventKind] = useState("wedding");
+  const [eventKind, setEventKind] = useState("first_birthday");
   const [width, setWidth] = useState(390);
   const [full, setFull] = useState(false);
   const [heroPresets, setHeroPresets] = useState([]);
