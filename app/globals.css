@@ -3118,3 +3118,24 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-template-sections-configured > .public-accounts{
   color:var(--dd-color-text,#684d43) !important;
 }
+
+/* First-birthday custom sections use the same theme title/caption/body palette as
+   the established invitation/gallery sections. Do not fall back to inherited
+   ultra-pale foreground values. */
+.dd-template-colors .dd-growth-timeline-heading>h2,
+.dd-template-colors .dd-parents-intro-heading>h2{
+  color:var(--dd-color-title) !important;
+  -webkit-text-fill-color:var(--dd-color-title) !important;
+}
+.dd-template-colors .dd-growth-timeline-heading>p,
+.dd-template-colors .dd-parents-intro-heading>p,
+.dd-template-colors .dd-growth-timeline-copy time{
+  color:var(--dd-color-caption,var(--dd-color-muted)) !important;
+  -webkit-text-fill-color:var(--dd-color-caption,var(--dd-color-muted)) !important;
+}
+.dd-template-colors .dd-growth-timeline-copy>p,
+.dd-template-colors .dd-parent-intro-card>p,
+.dd-template-colors .dd-parent-intro-card>strong{
+  color:var(--dd-color-text) !important;
+  -webkit-text-fill-color:var(--dd-color-text) !important;
+}
