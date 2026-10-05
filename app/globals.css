@@ -3042,5 +3042,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-template-decorated .public-accounts,
 .dd-template-decorated .public-share-copy{
   position:relative !important;
-  z-index:20 !important;
+  z-index:30 !important;
+  isolation:isolate !important;
 }
