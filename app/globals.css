@@ -3084,3 +3084,20 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   color:var(--dd-color-caption,var(--dd-color-text,#684d43)) !important;
   -webkit-text-fill-color:var(--dd-color-caption,var(--dd-color-text,#684d43)) !important;
 }
+
+/* Center-panel artwork is always a background layer. Some BODY themes use the
+   center panel without dd-template-decorated, so protect content independently. */
+.invitation-template.dd-template-center-panel{
+  isolation:isolate;
+}
+.invitation-template.dd-template-center-panel::before{
+  z-index:0 !important;
+  pointer-events:none !important;
+}
+.invitation-template.dd-template-center-panel > :not(.dd-template-screen-effect):not(.dd-template-effects-marker){
+  position:relative;
+  z-index:1;
+}
+.invitation-template.dd-template-center-panel > .invitation-template-sections{
+  z-index:2;
+}
