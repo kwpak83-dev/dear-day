@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 const SECTION_SELECTOR = [
   ".romantic-message", ".modern-message", ".classic-message",
   ".romantic-information", ".modern-information", ".classic-information", ".classic-date", ".dd-wedding-contacts",
-  ".invitation-gallery", ".public-accounts", ".public-rsvp", ".guestbook-section", ".dd-public-share-section",
+  ".invitation-gallery", ".public-rsvp", ".guestbook-section",
 ].join(",");
 
 function findScrollRoot(element) {
