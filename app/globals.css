@@ -3101,3 +3101,20 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .invitation-template.dd-template-center-panel > .invitation-template-sections{
   z-index:2;
 }
+
+/* Configured BODY sections are display:contents; style late account/share/footer content
+   like the normal invitation sections instead of relying on wrapper stacking. */
+.dd-template-sections-configured > .public-accounts,
+.dd-template-sections-configured > .dd-public-share-section,
+.dd-template-sections-configured > .public-share-copy,
+.dd-template-sections-configured > .dearday-brand-footer{
+  position:relative !important;
+  z-index:30 !important;
+  opacity:1 !important;
+  filter:none !important;
+  mix-blend-mode:normal !important;
+  isolation:isolate;
+}
+.dd-template-sections-configured > .public-accounts{
+  color:var(--dd-color-text,#684d43) !important;
+}
