@@ -21,7 +21,16 @@ export const TEMPLATE_REGISTRY = {
 
 export default function InvitationRenderer({ invitation, eventKind, eventTypeConfig, templateId, templateConfig, templateAssets, userBgmUrl, placeActions, afterMessage, children }) {
   const Template = TEMPLATE_REGISTRY[templateId] || ClassicTemplate;
-  const presentation = getInvitationPresentation(invitation, eventKind);
+  const basePresentation = getInvitationPresentation(invitation, eventKind);
+  const matrixFields = eventTypeConfig?.fields || {};
+  const presentation = {
+    ...basePresentation,
+    ...(matrixFields.subject?.state === "none" ? { title: "", heroTitle: "" } : {}),
+    ...(matrixFields.host?.state === "none" ? { detail: "" } : {}),
+    ...(matrixFields.schedule?.state === "none" ? { eventDate: "", eventTime: "", heroSchedule: "", schedule: "" } : {}),
+    ...(matrixFields.venue?.state === "none" ? { venue: "", address: "", addressDetail: "" } : {}),
+    ...(matrixFields.message?.state === "none" ? { message: "" } : {}),
+  };
   const normalizedConfig = normalizeTemplateConfig(templateConfig);
   const templateBgmUrl = normalizedConfig.bgm?.mode === "asset" ? templateAssets?.[normalizedConfig.bgm.assetId] : null;
   const bgmMode = invitation.bgmMode || "background";
