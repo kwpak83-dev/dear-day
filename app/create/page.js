@@ -838,6 +838,13 @@ export default function CreateInvitation() {
   };
   const validateForPublish = () => {
     const missingFields = getMissingRequiredFields(invitation, invitation.eventKind, eventTypeConfig);
+    if (galleryMatrix.state === "required" && galleryPhotos.length === 0) missingFields.push(galleryMatrix.label);
+    if (transportMatrix.state === "required") {
+      const hasTransport = [["transportPublicEnabled","transportPublic"],["transportCarEnabled","transportCar"],["transportParkingEnabled","transportParking"]]
+        .some(([enabledKey, valueKey]) => invitation[enabledKey] === true && String(invitation[valueKey] || "").trim());
+      if (!hasTransport) missingFields.push(transportMatrix.label);
+    }
+    if (noticeMatrix.state === "required" && (!String(invitation.notice?.title || "").trim() || !String(invitation.notice?.body || "").trim())) missingFields.push(noticeMatrix.label);
     if (!missingFields.length) return true;
 
     const message = `필수 항목을 입력해 주세요: ${missingFields.join(", ")}`;
@@ -939,7 +946,7 @@ export default function CreateInvitation() {
     setAddressCopied(true);
     window.setTimeout(() => setAddressCopied(false), 1800);
   };
-  const previewPlaceActions = () => invitation.venueAddress ? <><div className="public-address-copy"><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button><span role="status" aria-live="polite">{addressCopied ? "주소가 복사되었습니다." : ""}</span></div><InvitationMap address={invitation.venueAddress} />{transportMatrix.state !== "none" && <TransportGuide invitation={invitation} title={transportMatrix.label} />}</> : null;
+  const previewPlaceActions = () => invitation.venueAddress ? <><div className="public-address-copy"><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button><span role="status" aria-live="polite">{addressCopied ? "주소가 복사되었습니다." : ""}</span></div><InvitationMap address={invitation.venueAddress} />{transportMatrix.state !== "none" && <TransportGuide invitation={invitation} title={transportMatrix.label} required={transportMatrix.state === "required"} />}</> : null;
 
   return <main className="create-page">
     <header className="create-header"><a className="brand" href="/" aria-label="DearDay 홈"><DearDayLogo /></a><div className="create-user"><span>{provider}로 시작했어요</span><a href="/my-invitations">내 초대장</a><a href="/">나가기</a></div></header>
