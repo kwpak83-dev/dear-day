@@ -102,7 +102,7 @@ export async function POST(request) {
   }
   const fields = readFields(body);
   if (!fields) return json({ error: "템플릿 기본정보를 확인해 주세요." }, 400);
-  if (fields.status === "on_sale") return json({ error: "버전을 만든 뒤 판매 상태로 변경할 수 있어요." }, 409);
+  
   // Copy only the visual background settings from the selected spring template.
   // Never copy uploaded asset references or alter the source template.
   const sourceId = body?.backgroundSourceTemplateId;
