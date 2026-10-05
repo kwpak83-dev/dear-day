@@ -3045,3 +3045,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   z-index:30 !important;
   isolation:isolate !important;
 }
+
+/* Keep the complete optional/footer content stack above template screen effects.
+   Raising individual descendants cannot escape a lower ancestor stacking context. */
+.dd-template-decorated > .invitation-template-sections{
+  position:relative !important;
+  z-index:30 !important;
+  isolation:isolate !important;
+}
