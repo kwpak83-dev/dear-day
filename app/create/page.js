@@ -29,6 +29,11 @@ const WEDDING_MESSAGE_EXAMPLES = [
   { label: "짧고 심플하게", text: "저희 두 사람,\n평생을 함께하기로 약속했습니다.\n새로운 시작의 순간을 함께해 주세요." },
   { label: "감성적인 인사", text: "함께한 시간이 쌓여 사랑이 되었고,\n이제 그 사랑으로 한 가정을 이루려 합니다.\n저희의 새로운 시작을\n따뜻한 마음으로 축복해 주세요." },
 ];
+const FIRST_BIRTHDAY_MESSAGE_EXAMPLES = [
+  { label: "따뜻한 초대", text: "우리 아이의 첫 번째 생일에 소중한 분들을 초대합니다.\n함께해 주시고 따뜻한 축복을 나누어 주세요." },
+  { label: "감사한 마음", text: "작고 소중한 아이가 저희에게 온 지 어느덧 한 해가 되었습니다.\n첫 번째 생일의 행복한 순간을 감사한 분들과 함께하고 싶습니다." },
+  { label: "첫돌의 순간", text: "첫 웃음, 첫 걸음, 그리고 첫 번째 생일.\n하루하루 사랑으로 자라온 우리 아이의 특별한 날에 소중한 분들을 초대합니다." },
+];
 function HeroEditorPreview({ invitation, eventKind, templateId, templateConfig, templateAssets }) {
   const frameRef = useRef(null);
   const contentRef = useRef(null);
@@ -681,18 +686,24 @@ export default function CreateInvitation() {
     if (field.key === "birthDate") return <BirthDateField key={field.key} label={field.label} value={invitation.birthDate || ""} onChange={value => update("birthDate", value)} />;
     if (field.type === "venue") return <div key={field.key}><Field label="장소명" fieldKey="venue"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "장소 검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results">{placeResults.map((place) => <button type="button" key={[place.mapx, place.mapy, place.title].join("-")} onClick={() => selectPlace(place)}><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></button>)}<p className="place-search-guide">검색 결과는 최대 5개까지 보여드려요. 원하는 장소가 없다면 지역명과 함께 검색해 주세요.</p></div>}<Field label="기본주소" fieldKey="venueAddress"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), geocodeAddress(invitation.venueAddress))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>주소 검색</button></div></Field><Field label="건물명"><input placeholder="장소 검색으로 기본주소가 입력되면 별도 입력이 필요하지 않아요" value={invitation.venueBuilding || ""} onChange={(e) => update("venueBuilding", e.target.value)} disabled={venueBuildingAuto || Boolean(invitation.venueAddress?.trim())} aria-readonly={venueBuildingAuto || Boolean(invitation.venueAddress?.trim())} title={invitation.venueAddress?.trim() ? "기본주소가 입력되어 건물명은 별도로 입력하지 않습니다." : venueBuildingAuto ? "주소 검색으로 자동 입력된 건물명입니다." : undefined} /></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={setMapContainer} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div><div className="form-section"><label className="dd-transport-guide-toggle"><input type="checkbox" checked={invitation.transportGuideEnabled === true} onChange={event => update("transportGuideEnabled", event.target.checked)} /> 교통 안내 사용</label>{invitation.transportGuideEnabled === true && <div className="dd-transport-guide-editor">{[["transportPublicEnabled","transportPublic","대중교통","지하철·버스 등 대중교통 이용 방법을 입력하세요."],["transportCarEnabled","transportCar","자가용 이용 시","자가용 이용 시 찾아오는 방법을 입력하세요."],["transportParkingEnabled","transportParking","주차 안내","주차 위치·무료 주차 시간 등을 입력하세요."]].map(([enabledKey,valueKey,label,placeholder])=><div className="dd-transport-guide-editor-item" key={enabledKey}><label className="dd-transport-guide-item-toggle"><input type="checkbox" checked={invitation[enabledKey] === true} onChange={event => update(enabledKey,event.target.checked)} /> {label}</label>{invitation[enabledKey] === true && <textarea rows={3} placeholder={placeholder} value={invitation[valueKey] || ""} onChange={event => update(valueKey,event.target.value)} />}</div>)}</div>}</div></div>;
     if (field.type === "textarea") {
-      const weddingMessage = field.key === "message" && invitation.eventKind === "wedding";
+      const messageExamples = field.key === "message"
+        ? invitation.eventKind === "wedding"
+          ? WEDDING_MESSAGE_EXAMPLES
+          : invitation.eventKind === "first_birthday"
+            ? FIRST_BIRTHDAY_MESSAGE_EXAMPLES
+            : null
+        : null;
       return <Field key={field.key} label={field.label}>
-        {weddingMessage && <select className="message-example-select" defaultValue="" onChange={(e) => {
+        {messageExamples && <select className="message-example-select" defaultValue="" onChange={(e) => {
           if (e.target.value === "direct") {
             update("message", "");
             return;
           }
-          const example = WEDDING_MESSAGE_EXAMPLES[Number(e.target.value)];
+          const example = messageExamples[Number(e.target.value)];
           if (example) update("message", example.text);
         }}>
           <option value="">예시문 선택</option>
-          {WEDDING_MESSAGE_EXAMPLES.map((example, index) => <option key={example.label} value={index}>{example.label}</option>)}
+          {messageExamples.map((example, index) => <option key={example.label} value={index}>{example.label}</option>)}
           <option value="direct">직접 입력</option>
         </select>}
         <textarea rows="4" value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} />
