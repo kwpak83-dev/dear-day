@@ -8,6 +8,7 @@ import DearDayBrandFooter from "../../../components/invitation/dearday-brand-foo
 import OptionalInvitationSections from "../../invite/[slug]/optional-invitation-sections";
 import { resolveTemplateAssetUrls } from "../../../lib/template-config";
 import { getBankLogo } from "../../../lib/bank-options";
+import { EVENT_KIND_OPTIONS } from "../../../lib/event-config";
 
 const sampleInvitation = {
   eventKind: "wedding", groom: "민준", bride: "서연", childName: "박유빈", childNameLastName: "박", childNameFirstName: "유빈", parent1Name: "박정우", parent2Name: "김수지",
@@ -48,8 +49,8 @@ function PreviewSections({ invitation, previewMode = "" }) {
   </div>;
 }
 
-export default function TemplateDraftPreview({ templateId, category, draft, assets = [], loading = false }) {
-  const eventKind = category === "first-birthday" ? "first_birthday" : "wedding";
+export default function TemplateDraftPreview({ templateId, draft, assets = [], loading = false }) {
+  const [eventKind, setEventKind] = useState("wedding");
   const [width, setWidth] = useState(390);
   const [full, setFull] = useState(false);
   const [heroPresets, setHeroPresets] = useState([]);
@@ -95,7 +96,7 @@ export default function TemplateDraftPreview({ templateId, category, draft, asse
 
   return <section className="admin-draft-preview" aria-labelledby="admin-draft-preview-title">
     <div className="admin-draft-preview-toolbar">
-      <div><h3 id="admin-draft-preview-title">본문 테마 미리보기</h3><p>저장된 편집 Draft · 읽기 전용</p><label style={{display:"grid",gap:4,fontSize:12,fontWeight:700}}>미리보기 Hero<select value={heroPresetId} onChange={(e)=>setHeroPresetId(e.target.value)} style={{minHeight:36,padding:"6px 8px"}}><option value="">현재 템플릿 Hero (기존)</option>{heroPresets.map((preset)=><option key={preset.id} value={preset.id}>{preset.name}</option>)}</select></label></div>
+      <div><h3 id="admin-draft-preview-title">본문 테마 미리보기</h3><p>저장된 편집 Draft · 읽기 전용</p><label style={{display:"grid",gap:4,fontSize:12,fontWeight:700}}>미리보기 유형<select value={eventKind} onChange={(e)=>setEventKind(e.target.value)} style={{minHeight:36,padding:"6px 8px"}}>{EVENT_KIND_OPTIONS.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label><label style={{display:"grid",gap:4,fontSize:12,fontWeight:700}}>미리보기 Hero<select value={heroPresetId} onChange={(e)=>setHeroPresetId(e.target.value)} style={{minHeight:36,padding:"6px 8px"}}><option value="">현재 템플릿 Hero (기존)</option>{heroPresets.map((preset)=><option key={preset.id} value={preset.id}>{preset.name}</option>)}</select></label></div>
       <div className="admin-draft-preview-widths" aria-label="미리보기 너비">
         {draft && <button type="button" onClick={openFullPreview}>전체 미리보기</button>}
         {[390, 540].map((value) => <button key={value} type="button" className={width === value ? "active" : ""} aria-pressed={width === value} onClick={() => setWidth(value)}>{value}px</button>)}
