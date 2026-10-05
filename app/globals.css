@@ -738,8 +738,10 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-decorated>.romantic-hero,.dd-template-decorated>.modern-hero,.dd-template-decorated>.classic-hero,
 .dd-template-decorated>.romantic-section,.dd-template-decorated>.modern-section,.dd-template-decorated>.classic-section,
 .dd-template-decorated>.romantic-footer,.dd-template-decorated>.modern-footer,.dd-template-decorated>.classic-footer,
-.dd-template-decorated .invitation-gallery,.dd-template-decorated .dd-growth-timeline,.dd-template-decorated .public-accounts,.dd-template-decorated .public-rsvp,
-.dd-template-decorated .guestbook-section,.dd-template-decorated .public-share-copy{position:relative;z-index:1}
+.dd-template-decorated .invitation-gallery,.dd-template-decorated .dd-growth-timeline,.dd-template-decorated .public-rsvp,
+.dd-template-decorated .guestbook-section{position:relative;z-index:1}
+/* Account and footer share controls must stay above full-body decorations/effects. */
+.dd-template-decorated .public-accounts,.dd-template-decorated .public-share-copy{position:relative;z-index:5;isolation:isolate}
 .dd-template-decorated .romantic-message>:not(.dd-template-decoration-layer),
 .dd-template-decorated .modern-message>:not(.dd-template-decoration-layer),
 .dd-template-decorated .classic-message>:not(.dd-template-decoration-layer){position:relative;z-index:1}
