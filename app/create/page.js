@@ -407,10 +407,10 @@ export default function CreateInvitation() {
   }, []);
   useEffect(() => {
     const loadHeroes = async () => {
-      try { const response=await fetch("/api/hero-presets"); const result=await response.json().catch(()=>({})); if(response.ok) setHeroOptions(result.presets||[]); } catch {}
+      try { const response=await fetch("/api/hero-presets"); const result=await response.json().catch(()=>({})); if(response.ok) setHeroOptions((result.presets||[]).filter(hero=>(hero.event_kind||"wedding")===invitation.eventKind)); } catch {}
     };
     loadHeroes();
-  }, []);
+  }, [invitation.eventKind]);
   useEffect(() => {
     const loadTemplates = async () => {
       const supabase = getSupabaseBrowserClient();
