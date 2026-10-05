@@ -4,8 +4,8 @@ import AdminDesignNav from "../admin-design-nav";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 
 const FIELD_ORDER=[
- ["subject","주인공"],["host","주최자/담당자"],["schedule","일시"],["venue","장소"],["message","초대글/안내"],
- ["contacts","연락처"],["gallery","갤러리"],["accounts","계좌"],["transport","교통/주차"],["notice","공지사항"],
+ ["event_title","행사명/제목"],["subject","주인공"],["host","주최자/담당자"],["schedule","일시"],["venue","장소"],["message","초대글/안내"],
+ ["contacts","연락처"],["gallery","갤러리"],["accounts","계좌"],["transport","교통/주차"],["notice","공지사항"],["details","행사 세부안내"],["external_link","외부링크"],["brand_image","로고/대표이미지"],
  ["rsvp","RSVP"],["guestbook","방명록"],["parents_intro","부모소개"],["timeline","성장기록"]
 ];
 const STATES=[["required","필수"],["optional","선택"],["none","없음"]];
