@@ -3139,3 +3139,20 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   color:var(--dd-color-text) !important;
   -webkit-text-fill-color:var(--dd-color-text) !important;
 }
+
+/* Match first-birthday custom section foregrounds to the readable parents-intro path. */
+.dd-template-colors .dd-growth-timeline,
+.dd-template-colors .invitation-gallery{
+  color:inherit !important;
+}
+.dd-template-colors .dd-growth-timeline .dd-growth-timeline-heading>p,
+.dd-template-colors .dd-growth-timeline .dd-growth-timeline-heading>h2,
+.dd-template-colors .dd-growth-timeline .dd-growth-timeline-copy time,
+.dd-template-colors .dd-growth-timeline .dd-growth-timeline-copy p,
+.dd-template-colors .invitation-gallery .gallery-kicker,
+.dd-template-colors .invitation-gallery h2{
+  color:inherit !important;
+  -webkit-text-fill-color:currentColor !important;
+  opacity:1 !important;
+  filter:none !important;
+}
