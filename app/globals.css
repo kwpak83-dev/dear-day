@@ -3156,3 +3156,21 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   opacity:1 !important;
   filter:none !important;
 }
+
+/* Keep the payment-info section on the same readable inherited foreground path. */
+.dd-template-colors .public-accounts{
+  color:inherit !important;
+}
+.dd-template-colors .public-accounts h2,
+.dd-template-colors .public-accounts .public-account-card>p,
+.dd-template-colors .public-accounts .public-account-card strong,
+.dd-template-colors .public-accounts .public-account-card span{
+  color:inherit !important;
+  -webkit-text-fill-color:currentColor !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+.dd-template-colors .public-accounts h2::before{
+  color:inherit !important;
+  -webkit-text-fill-color:currentColor !important;
+}
