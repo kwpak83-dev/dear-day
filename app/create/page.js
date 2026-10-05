@@ -446,7 +446,7 @@ export default function CreateInvitation() {
       }
     };
     loadTemplates();
-  }, []);
+  }, [invitation.eventKind]);
   useEffect(() => {
     if (!mapClientId || !mapContainer) return;
     const scriptId = "naver-map-sdk";
