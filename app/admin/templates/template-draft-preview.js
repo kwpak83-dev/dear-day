@@ -8,9 +8,11 @@ import DearDayBrandFooter from "../../../components/invitation/dearday-brand-foo
 import OptionalInvitationSections from "../../invite/[slug]/optional-invitation-sections";
 import { resolveTemplateAssetUrls } from "../../../lib/template-config";
 import { getBankLogo } from "../../../lib/bank-options";
+import { EVENT_KIND_OPTIONS } from "../../../lib/event-config";
+import GrowthTimeline from "../../../components/invitation/growth-timeline";
 
 const sampleInvitation = {
-  eventKind: "wedding", groom: "민준", bride: "서연",
+  eventKind: "wedding", groom: "민준", bride: "서연", childName: "박유빈", childNameLastName: "박", childNameFirstName: "유빈", parent1Name: "박정우", parent2Name: "김수지",
   groomPhone: "010-0000-0001", bridePhone: "010-0000-0002",
   groomFatherName: "김정호", groomFatherPhone: "010-0000-0003",
   groomMotherName: "이영희", groomMotherPhone: "010-0000-0004",
@@ -49,15 +51,17 @@ function PreviewSections({ invitation, previewMode = "" }) {
 }
 
 export default function TemplateDraftPreview({ templateId, draft, assets = [], loading = false }) {
+  const [eventKind, setEventKind] = useState("first_birthday");
   const [width, setWidth] = useState(390);
   const [full, setFull] = useState(false);
   const [heroPresets, setHeroPresets] = useState([]);
   const [heroPresetId, setHeroPresetId] = useState("");
   const [sampleContent, setSampleContent] = useState(null);
   useEffect(() => { let active=true; (async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch("/api/admin/hero-presets",{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setHeroPresets(result.presets||[]);}catch{}})();return()=>{active=false;};},[]);
-  useEffect(() => { let active=true; (async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch("/api/admin/completed-template-sample-defaults",{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setSampleContent(result.sample_content||result.sampleContent||null);}catch{}})();return()=>{active=false;};},[]);
+  useEffect(() => { let active=true; (async()=>{try{const client=getSupabaseBrowserClient();const {data:{session}}=client?await client.auth.getSession():{data:{}};if(!session)return;const response=await fetch(`/api/admin/completed-template-sample-defaults?eventKind=${encodeURIComponent(eventKind)}`,{headers:{Authorization:`Bearer ${session.access_token}`}});const result=await response.json().catch(()=>({}));if(active&&response.ok)setSampleContent(result.sample_content||result.sampleContent||null);}catch{}})();return()=>{active=false;};},[eventKind]);
   const [heroAssets,setHeroAssets]=useState([]);
   const [decorLibrary,setDecorLibrary]=useState([]);
+  useEffect(()=>{const selected=heroPresets.find(item=>item.id===heroPresetId);if(selected&&(selected.event_kind||"wedding")!==eventKind)setHeroPresetId("");},[eventKind,heroPresetId,heroPresets]);
   const selectedHero = heroPresets.find((item)=>item.id===heroPresetId) || null;
   const activeHeroFrame = heroAssets.find((item)=>item.asset_type==="hero_frame"&&item.is_active) || null;
   const config = useMemo(() => { const base=draftConfig(draft); return base&&selectedHero?{...base,hero:{...base.hero,...selectedHero.config,frameAssetId:activeHeroFrame?.id||null}}:base; }, [draft,selectedHero,activeHeroFrame]);
@@ -68,6 +72,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
     return {
       ...sampleInvitation, templateId,
       groom:sc.groom_name||sampleInvitation.groom, bride:sc.bride_name||sampleInvitation.bride,
+      childName:sc.child_name||sampleInvitation.childName, childNameLastName:sc.child_last_name||sampleInvitation.childNameLastName, childNameFirstName:sc.child_first_name||sampleInvitation.childNameFirstName, parent1Name:sc.parent1_name||sampleInvitation.parent1Name, parent2Name:sc.parent2_name||sampleInvitation.parent2Name,
       groomFatherName:sc.groom_father_name||sampleInvitation.groomFatherName, groomMotherName:sc.groom_mother_name||sampleInvitation.groomMotherName,
       brideFatherName:sc.bride_father_name||sampleInvitation.brideFatherName, brideMotherName:sc.bride_mother_name||sampleInvitation.brideMotherName,
       date:sc.event_date||sampleInvitation.date, time:sc.event_time||sampleInvitation.time,
@@ -78,18 +83,23 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
       groomBank:sc.groom_bank||"", groomAccount:sc.groom_account||"", groomAccountHolder:sc.groom_account_holder||"",
       brideBank:sc.bride_bank||"", brideAccount:sc.bride_account||"", brideAccountHolder:sc.bride_account_holder||"",
       galleryPhotos:Array.isArray(sc.gallery_images)?sc.gallery_images:[],
+      eventKind, timelineEnabled:sc.timeline_enabled===true, timelineItems:Array.isArray(sc.timeline_items)?sc.timeline_items:[],
     };
-  }, [templateId,sampleContent,activeHeroFrame]);
+  }, [templateId,sampleContent,activeHeroFrame,eventKind]);
+  const heroDebug = (config?.hero?.textLayers || []).map((layer, index) => ({
+    index: index + 1, text: layer.text, source: layer.source || "custom", x: layer.x, y: layer.y, visible: layer.visible !== false,
+    bound: layer.source === "parent1" ? invitation.parent1Name : layer.source === "parent2" ? invitation.parent2Name : layer.source === "title" ? (invitation.childNameFirstName || invitation.childName || invitation.groom || invitation.bride || "") : layer.source === "schedule" ? `${invitation.date || ""} ${invitation.time || ""}`.trim() : layer.source === "venue" ? invitation.venue : layer.text,
+  }));
   const openFullPreview = () => setFull(true);
 
-  const renderInvitation = (mapWidth, previewMode = "") => <InvitationRenderer invitation={invitation} eventKind="wedding" templateId={templateId} templateConfig={config} templateAssets={resolvedAssets}
+  const renderInvitation = (mapWidth, previewMode = "") => <InvitationRenderer invitation={invitation} eventKind={eventKind} templateId={templateId} templateConfig={config} templateAssets={resolvedAssets} afterMessage={<GrowthTimeline invitation={invitation} eventKind={eventKind} />}
     placeActions={<><div className="public-address-copy"><button type="button" disabled>주소 복사</button></div><InvitationMap key={mapWidth} address={invitation.venueAddress} venue={invitation.venue} /></>}>
     <PreviewSections invitation={invitation} previewMode={previewMode} />
   </InvitationRenderer>;
 
   return <section className="admin-draft-preview" aria-labelledby="admin-draft-preview-title">
     <div className="admin-draft-preview-toolbar">
-      <div><h3 id="admin-draft-preview-title">본문 테마 미리보기</h3><p>저장된 편집 Draft · 읽기 전용</p><label style={{display:"grid",gap:4,fontSize:12,fontWeight:700}}>미리보기 Hero<select value={heroPresetId} onChange={(e)=>setHeroPresetId(e.target.value)} style={{minHeight:36,padding:"6px 8px"}}><option value="">현재 템플릿 Hero (기존)</option>{heroPresets.map((preset)=><option key={preset.id} value={preset.id}>{preset.name}</option>)}</select></label></div>
+      <div><h3 id="admin-draft-preview-title">본문 테마 미리보기</h3><p>저장된 편집 Draft · 읽기 전용</p><label style={{display:"grid",gap:4,fontSize:12,fontWeight:700}}>미리보기 유형<select value={eventKind} onChange={(e)=>setEventKind(e.target.value)} style={{minHeight:36,padding:"6px 8px"}}>{EVENT_KIND_OPTIONS.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label><label style={{display:"grid",gap:4,fontSize:12,fontWeight:700}}>미리보기 Hero<select value={heroPresetId} onChange={(e)=>setHeroPresetId(e.target.value)} style={{minHeight:36,padding:"6px 8px"}}><option value="">현재 템플릿 Hero (기존)</option>{heroPresets.filter(preset=>(preset.event_kind||"wedding")===eventKind).map((preset)=><option key={preset.id} value={preset.id}>{preset.name}</option>)}</select></label></div>
       <div className="admin-draft-preview-widths" aria-label="미리보기 너비">
         {draft && <button type="button" onClick={openFullPreview}>전체 미리보기</button>}
         {[390, 540].map((value) => <button key={value} type="button" className={width === value ? "active" : ""} aria-pressed={width === value} onClick={() => setWidth(value)}>{value}px</button>)}
@@ -101,6 +111,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
       <div className="admin-draft-preview-scroll">
         <div className="admin-draft-preview-device full-invitation-renderer dd-bgm-public-style" style={{ width }}>{renderInvitation(width, "admin-live")}</div>
       </div>}
+    {draft && !full && <details style={{width:540,maxWidth:"100%",margin:"8px auto",padding:8,border:"1px dashed #b8a9a1",background:"#fff",fontSize:11}}><summary style={{cursor:"pointer",fontWeight:700}}>Hero 데이터 디버그</summary><pre style={{whiteSpace:"pre-wrap",overflowWrap:"anywhere"}}>{JSON.stringify({ eventKind, invitation: { childName: invitation.childName, childNameLastName: invitation.childNameLastName, childNameFirstName: invitation.childNameFirstName, parent1Name: invitation.parent1Name, parent2Name: invitation.parent2Name, venue: invitation.venue }, textLayers: heroDebug }, null, 2)}</pre></details>}
     {full && <div className="admin-draft-full-preview" role="dialog" aria-modal="true" aria-label="Draft 전체 미리보기" onKeyDown={(event) => { if (event.key === "Escape") setFull(false); }}>
       <div className="admin-draft-full-preview-toolbar" style={{ width, maxWidth: "100%" }}><strong>{`Draft 전체 미리보기 · ${width}px`}</strong><button type="button" onClick={() => setFull(false)}>닫기</button></div>
       <div className="admin-draft-full-preview-device full-invitation-renderer dd-bgm-public-style" style={{ width, maxWidth: "100%" }}>{renderInvitation(width, "admin-full")}</div>

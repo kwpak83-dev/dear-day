@@ -5,6 +5,7 @@ import { HERO_FONTS } from "../../../../lib/hero-fonts";
 
 const json = (body, status = 200) => NextResponse.json(body, { status });
 const statuses = new Set(["draft", "on_sale", "stopped"]);
+const eventKinds = new Set(["wedding","first_birthday","birthday","baby_shower","bridal_shower","anniversary","housewarming","graduation","corporate","party","other"]);
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const heroModes = new Set(["photo", "frame", "illustration"]);
 const heroRatios = new Set(["4:5", "1:1", "3:4", "2:3", "9:16", "16:9"]);
@@ -83,7 +84,7 @@ function validConfig(value){
     &&(layer.x===undefined||decimal(layer.x,0,100))
     &&(layer.y===undefined||decimal(layer.y,0,100))
     &&(layer.align===undefined||["left","center","right"].includes(layer.align))
-    &&(layer.source===undefined||["custom","title","schedule","venue"].includes(layer.source))
+    &&(layer.source===undefined||["custom","title","parent1","parent2","schedule","venue"].includes(layer.source))
     &&(layer.visible===undefined||typeof layer.visible==="boolean")
     &&(layer.stroke===undefined||(layer.stroke&&typeof layer.stroke==="object"&&!Array.isArray(layer.stroke)&&typeof layer.stroke.enabled==="boolean"&&hex(layer.stroke.color)&&decimal(layer.stroke.width,0,6)))
     &&(layer.shadow===undefined||(layer.shadow&&typeof layer.shadow==="object"&&!Array.isArray(layer.shadow)&&typeof layer.shadow.enabled==="boolean"&&hex(layer.shadow.color)&&decimal(layer.shadow.x,-20,20)&&decimal(layer.shadow.y,-20,20)&&decimal(layer.shadow.blur,0,30)&&decimal(layer.shadow.opacity,0,1)))
@@ -98,14 +99,15 @@ function validConfig(value){
 function fields(body){
   if(!body||typeof body!=="object"||Array.isArray(body)) return null;
   const {name,preset_key,description,status,is_visible,sort_order,config}=body;
+  const event_kind=eventKinds.has(body.event_kind)?body.event_kind:"wedding";
   if(typeof name!=="string"||!name.trim()||name.trim().length>100) return null;
   if(typeof preset_key!=="string"||!/^[a-z0-9][a-z0-9_-]{2,79}$/.test(preset_key.trim())) return null;
   if(typeof description!=="string"||description.length>2000||!statuses.has(status)||typeof is_visible!=="boolean"||!Number.isInteger(sort_order)||sort_order < -10000||sort_order > 10000||!validConfig(config)) return null;
-  return {name:name.trim(),preset_key:preset_key.trim(),description:description.trim(),status,is_visible,sort_order,config};
+  return {name:name.trim(),preset_key:preset_key.trim(),description:description.trim(),status,is_visible,sort_order,event_kind,config};
 }
 export async function GET(request){
   const auth=await getAdmin(request); if(auth.error) return json({error:auth.error},auth.status);
-  const {data,error}=await auth.serverClient.from("hero_presets").select("id,name,preset_key,description,status,is_visible,sort_order,config,created_at,updated_at").order("sort_order").order("created_at");
+  const {data,error}=await auth.serverClient.from("hero_presets").select("id,name,preset_key,description,status,is_visible,sort_order,event_kind,config,created_at,updated_at").order("sort_order").order("created_at");
   if(error){ console.error("Hero preset list failed", { code:error.code, message:error.message, details:error.details, hint:error.hint }); return json({error:`Hero 프리셋 목록 오류: ${error.message}`},500); }
   return json({presets:data||[]});
 }
@@ -125,7 +127,7 @@ export async function PATCH(request){
   if(lookup) return json({error:"Hero 프리셋을 확인하지 못했어요."},500); if(!existing) return json({error:"Hero 프리셋을 찾지 못했어요."},404);
   if(existing.preset_key!==value.preset_key) return json({error:"기존 preset key는 변경할 수 없어요."},400);
   const {preset_key:_key,...updates}=value; updates.updated_at=new Date().toISOString();
-  const {data:saved,error}=await auth.serverClient.from("hero_presets").update(updates).eq("id",body.id).select("id,name,preset_key,description,status,is_visible,sort_order,config,created_at,updated_at").single();
+  const {data:saved,error}=await auth.serverClient.from("hero_presets").update(updates).eq("id",body.id).select("id,name,preset_key,description,status,is_visible,sort_order,event_kind,config,created_at,updated_at").single();
   if(error||!saved) return json({error:"Hero 프리셋을 수정하지 못했어요."},500);
   return json({id:body.id,preset:saved});
 }

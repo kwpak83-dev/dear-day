@@ -731,6 +731,13 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-decorated{position:relative;isolation:isolate}
 .dd-template-decoration-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}
 .dd-template-decoration-layer-background{z-index:0}
+/* Background decorations are visual background only. Keep every real template
+   section above them so large/opaque decoration assets can never wash out content. */
+.dd-template-decorated > :not(.dd-template-decoration-layer-background):not(.dd-template-screen-effect):not(.dd-template-effects-marker){
+  position:relative;
+  z-index:2;
+}
+.dd-template-decorated > .dd-template-decoration-layer-background{z-index:0!important}
 .dd-template-decoration-layer-hero{z-index:1}
 .dd-template-decoration-layer-section{z-index:0}
 .dd-template-decoration{position:absolute;display:block;max-width:none;height:auto;transform-origin:center;pointer-events:none;user-select:none}
@@ -738,8 +745,10 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-decorated>.romantic-hero,.dd-template-decorated>.modern-hero,.dd-template-decorated>.classic-hero,
 .dd-template-decorated>.romantic-section,.dd-template-decorated>.modern-section,.dd-template-decorated>.classic-section,
 .dd-template-decorated>.romantic-footer,.dd-template-decorated>.modern-footer,.dd-template-decorated>.classic-footer,
-.dd-template-decorated .invitation-gallery,.dd-template-decorated .dd-growth-timeline,.dd-template-decorated .public-accounts,.dd-template-decorated .public-rsvp,
-.dd-template-decorated .guestbook-section,.dd-template-decorated .public-share-copy{position:relative;z-index:1}
+.dd-template-decorated .invitation-gallery,.dd-template-decorated .dd-growth-timeline,.dd-template-decorated .public-rsvp,
+.dd-template-decorated .guestbook-section{position:relative;z-index:1}
+/* Account and footer share controls must stay above full-body decorations/effects. */
+.dd-template-decorated .public-accounts,.dd-template-decorated .public-share-copy{position:relative;z-index:5;isolation:isolate}
 .dd-template-decorated .romantic-message>:not(.dd-template-decoration-layer),
 .dd-template-decorated .modern-message>:not(.dd-template-decoration-layer),
 .dd-template-decorated .classic-message>:not(.dd-template-decoration-layer){position:relative;z-index:1}
@@ -751,6 +760,8 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-sections-configured .romantic-hero,.dd-template-sections-configured .modern-hero,.dd-template-sections-configured .classic-hero{order:-10}
 .dd-template-sections-configured .romantic-message,.dd-template-sections-configured .modern-message,.dd-template-sections-configured .classic-message{order:var(--dd-section-invitation-order)}
 .dd-template-sections-configured .romantic-information,.dd-template-sections-configured .modern-information,.dd-template-sections-configured .classic-information{order:var(--dd-section-location-order)}
+.dd-template-sections-configured .dd-parents-intro{order:calc(var(--dd-section-invitation-order) + 0.4)}
+.dd-template-sections-configured .dd-growth-timeline{order:calc(var(--dd-section-invitation-order) + 0.5)}
 .dd-template-sections-configured .invitation-gallery{order:var(--dd-section-gallery-order)}
 .dd-template-sections-configured .public-accounts{order:var(--dd-section-account-order)}
 .dd-template-sections-configured .public-rsvp{order:var(--dd-section-rsvp-order)}
@@ -1710,7 +1721,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* Optional central reading surface over the existing full-page background. */
 .invitation-template.dd-template-center-panel{position:relative;isolation:isolate}
-.invitation-template.dd-template-center-panel::before{content:"";position:absolute;inset:0 auto 0 50%;translate:-50% 0;width:var(--dd-center-panel-width,85%);background:var(--dd-center-panel-color,transparent);pointer-events:none;z-index:0}
+.invitation-template.dd-template-center-panel::before{content:"";position:absolute;inset:0 auto 0 50%;translate:-50% 0;width:var(--dd-center-panel-width,85%);background:var(--dd-center-panel-color,transparent);pointer-events:none;z-index:-1}
 .invitation-template.dd-template-center-panel > :not(.dd-template-screen-effect):not(.dd-template-bgm){position:relative;z-index:1}
 
 
@@ -3018,3 +3029,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-growth-timeline-editor-photo img{width:76px;height:76px;object-fit:cover;border-radius:10px}
 .dd-growth-timeline-editor-photo button,.dd-growth-timeline-remove{border:0;background:transparent;text-decoration:underline;color:#756b66;cursor:pointer}
 @media(max-width:420px){.dd-growth-timeline{padding-left:18px;padding-right:18px}.dd-growth-timeline-item{grid-template-columns:1fr 22px 1fr;gap:0}.dd-growth-timeline-card img{border-radius:13px}}
+
+.dd-parents-intro{position:relative;z-index:1;padding:52px 20px 54px;text-align:center;background:transparent;color:inherit}
+.dd-parents-intro-heading{margin-bottom:28px}.dd-parents-intro-heading>p{margin:0 0 7px;font-family:var(--dd-caption-font,var(--dd-body-font,inherit));font-size:var(--dd-caption-size,9px);letter-spacing:.24em;color:var(--dd-color-caption,var(--dd-color-muted,currentColor))}
+.dd-parents-intro-heading>h2{margin:0;font-family:var(--dd-section-title-font,var(--dd-body-font,inherit));font-size:var(--dd-section-title-size,22px);font-weight:var(--dd-section-title-weight,500);color:var(--dd-color-text,currentColor)}
+.dd-parents-intro-heading>h2:after{content:"";display:block;width:42px;height:1px;margin:12px auto 0;background:currentColor;opacity:.16}
+.dd-parents-intro-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:500px;margin:0 auto}.dd-parent-intro-card{min-width:0}.dd-parent-intro-card img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:14px;margin-bottom:13px}.dd-parent-intro-card strong{display:block;font-family:var(--dd-body-font,inherit);font-size:14px;font-weight:500}.dd-parent-intro-card strong small{display:block;margin-bottom:3px;font-size:10px;font-weight:400;color:var(--dd-color-muted,currentColor)}.dd-parent-intro-card p{margin:8px 0 0;font-size:12px;line-height:1.65;white-space:pre-line;word-break:keep-all;color:var(--dd-color-text,currentColor)}
+.dd-parents-intro-editor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}.dd-parents-intro-editor-grid>article{padding:14px;border:1px solid #e7e0dc;border-radius:14px;background:#fff}.dd-parent-intro-editor-photo{display:flex;align-items:center;gap:10px;margin:8px 0 12px}.dd-parent-intro-editor-photo img{width:76px;height:76px;object-fit:cover;border-radius:10px}.dd-parent-intro-editor-photo button{border:0;background:transparent;text-decoration:underline;color:#756b66;cursor:pointer}
+@media(max-width:520px){.dd-parents-intro-editor-grid{grid-template-columns:1fr}.dd-parents-intro{padding-left:18px;padding-right:18px}}

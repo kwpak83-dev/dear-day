@@ -77,6 +77,8 @@ export function getInvitationPresentation(invitation = {}, eventKind) {
     kindLabel: config.label,
     title: clean(event.title),
     heroTitle: clean(heroTitle),
+    heroParent1: clean(invitation.parent1Name),
+    heroParent2: clean(invitation.parent2Name),
     detail: clean(event.detail),
     note: clean(event.note),
     groomRelation: clean(event.groomRelation),

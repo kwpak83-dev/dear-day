@@ -6,7 +6,7 @@ export async function GET(){
  const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.SUPABASE_SERVICE_ROLE_KEY;
  if(!url||!key)return json({error:"Hero 서비스를 준비하지 못했어요."},503);
  const client=createClient(url,key,{auth:{autoRefreshToken:false,persistSession:false}});
- const {data,error}=await client.from("hero_presets").select("id,name,description,config,sort_order").eq("status","on_sale").eq("is_visible",true).order("sort_order",{ascending:true});
+ const {data,error}=await client.from("hero_presets").select("id,name,description,event_kind,config,sort_order").eq("status","on_sale").eq("is_visible",true).order("sort_order",{ascending:true});
  if(error)return json({error:"Hero 목록을 불러오지 못했어요."},500);
  const ids=(data||[]).map(x=>x.id);
  let assets=[];

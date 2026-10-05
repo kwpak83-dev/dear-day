@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 
 const json = (body, status = 200) => NextResponse.json(body, { status });
 const statuses = new Set(["draft", "on_sale", "stopped", "archived"]);
+const eventKinds = new Set(["wedding","first_birthday","birthday","baby_shower","bridal_shower","anniversary","housewarming","graduation","corporate","party","other"]);
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 async function getAdmin(request) {
@@ -30,12 +31,13 @@ async function getAdmin(request) {
 function readFields(body) {
   if (!body || typeof body !== "object" || Array.isArray(body)) return null;
   const { name, template_key: templateKey, description, status, is_visible: isVisible, sort_order: sortOrder } = body;
+  const eventKind = eventKinds.has(body.event_kind) ? body.event_kind : "wedding";
   if (typeof name !== "string" || !name.trim() || name.trim().length > 100) return null;
   if (typeof templateKey !== "string" || !/^[a-z0-9][a-z0-9_-]{2,79}$/.test(templateKey.trim())) return null;
   if (typeof description !== "string" || description.length > 2000) return null;
   if (!statuses.has(status) || typeof isVisible !== "boolean") return null;
   if (!Number.isInteger(sortOrder) || sortOrder < -10000 || sortOrder > 10000) return null;
-  return { name: name.trim(), template_key: templateKey.trim(), description: description.trim(), status, is_visible: isVisible, sort_order: sortOrder };
+  return { name: name.trim(), template_key: templateKey.trim(), description: description.trim(), status, is_visible: isVisible, sort_order: sortOrder, event_kind: eventKind };
 }
 
 const cleanInheritedConfig = (config) => {
@@ -75,7 +77,7 @@ export async function GET(request) {
   if (auth.error) return json({ error: auth.error }, auth.status);
   // The public SELECT policy only covers active templates; an admin must see drafts too.
   const { data, error } = await auth.serverClient.from("templates")
-    .select("id,name,template_key,description,status,is_visible,sort_order,current_sale_version_id")
+    .select("id,name,template_key,description,status,is_visible,sort_order,event_kind,current_sale_version_id")
     .order("sort_order", { ascending: true });
   if (error) return json({ error: "템플릿 목록을 불러오지 못했어요." }, 500);
   return json({ templates: data || [] });
@@ -100,7 +102,7 @@ export async function POST(request) {
   }
   const fields = readFields(body);
   if (!fields) return json({ error: "템플릿 기본정보를 확인해 주세요." }, 400);
-  if (fields.status === "on_sale") return json({ error: "버전을 만든 뒤 판매 상태로 변경할 수 있어요." }, 409);
+  
   // Copy only the visual background settings from the selected spring template.
   // Never copy uploaded asset references or alter the source template.
   const sourceId = body?.backgroundSourceTemplateId;
@@ -129,13 +131,10 @@ export async function PATCH(request) {
   const fields = readFields(body);
   if (!fields) return json({ error: "템플릿 기본정보를 확인해 주세요." }, 400);
   const { data: existing, error: lookupError } = await auth.serverClient.from("templates")
-    .select("id,template_key,status,is_visible,is_active,current_sale_version_id").eq("id", body.id).maybeSingle();
+    .select("id,template_key,status,is_visible,is_active,event_kind,current_sale_version_id").eq("id", body.id).maybeSingle();
   if (lookupError) return json({ error: "템플릿을 확인하지 못했어요." }, 500);
   if (!existing) return json({ error: "템플릿을 찾지 못했어요." }, 404);
   if (fields.template_key !== existing.template_key) return json({ error: "기존 template key는 변경할 수 없어요." }, 400);
-  if (fields.status === "on_sale" && !existing.current_sale_version_id) {
-    return json({ error: "판매 상태로 변경하려면 템플릿 버전이 필요해요." }, 409);
-  }
   const { template_key: _unchangedKey, ...updates } = fields;
   if (fields.status !== existing.status || fields.is_visible !== existing.is_visible) {
     updates.is_active = fields.status === "on_sale" && fields.is_visible;

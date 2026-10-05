@@ -50,13 +50,14 @@ function ClassicDateSection({ eventDate, eventTime, title, wedding }) {
   </section>;
 }
 
-export default function ClassicTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, weddingContacts, bgmControl, screenEffect, children }) {
+export default function ClassicTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, weddingContacts, bgmControl, screenEffect, afterMessage, children }) {
   const { kindLabel, title, detail, note, eventDate, eventTime, heroSchedule, schedule, venue, address, addressDetail, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map((value) => value.trim()).filter(Boolean) : [];
   const hasInformation = Boolean(schedule || venue || address);
   const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
   const showHero = (key) => templateConfig?.hero?.display?.[key] !== false && !((key === "title" || key === "schedule" || key === "venue") && templateConfig?.hero?.textLayers?.some((layer) => layer.source === key));
+  const hideFirstBirthdayParentDetail = eventKind === "first_birthday" && templateConfig?.hero?.textLayers?.some((layer) => layer.source === "parent1" || layer.source === "parent2");
   const mastheadLabels = {
     wedding: "WEDDING INVITATION",
     first_birthday: "FIRST BIRTHDAY",
@@ -101,7 +102,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
           {groomRelation && <p>{groomRelation}</p>}
           {brideRelation && <p>{brideRelation}</p>}
         </div>}
-        {showHero("detail") && detail && <span className="classic-detail">{detail}</span>}
+        {showHero("detail") && !hideFirstBirthdayParentDetail && detail && <span className="classic-detail">{detail}</span>}
         {showHero("note") && note && <span className="classic-note">{note}</span>}
         {showHero("schedule") && heroSchedule && <time>{heroSchedule}</time>}
         {showHero("venue") && venue && <strong>{venue}</strong>}
@@ -117,6 +118,8 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
         {brideRelation && <p>{brideRelation}</p>}
       </div>}
     </section>}
+
+    {afterMessage}
 
     {weddingContacts}
 

@@ -8,6 +8,11 @@ function Person({ title, name, phone }) {
 }
 export default function WeddingContacts({ invitation }) {
   const [expanded, setExpanded] = useState(false);
+  if (invitation?.eventKind === "first_birthday") {
+    const parent1Phone=invitation.parent1Phone, parent2Phone=invitation.parent2Phone;
+    if(!parent1Phone&&!parent2Phone)return null;
+    return <section className="dd-wedding-contacts" aria-label="부모 연락처"><div className="dd-contact-grid"><Person title="아빠" name={invitation.parent1Name} phone={parent1Phone}/><Person title="엄마" name={invitation.parent2Name} phone={parent2Phone}/></div></section>;
+  }
   if (invitation?.eventKind !== "wedding") return null;
   const parents = [
     { title: "신랑 측 혼주", members: [["아버지", invitation.groomFatherName, invitation.groomFatherPhone], ["어머니", invitation.groomMotherName, invitation.groomMotherPhone]] },

@@ -5,7 +5,7 @@ function SectionHeading({ eyebrow, children }) {
   return <header className="modern-section-heading"><p>{eyebrow}</p><h3>{children}</h3><i aria-hidden="true" /></header>;
 }
 
-export default function ModernTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, weddingContacts, bgmControl, screenEffect, children }) {
+export default function ModernTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, weddingContacts, bgmControl, screenEffect, afterMessage, children }) {
   const { kindLabel, title, detail, note, heroSchedule, schedule, venue, address, addressDetail, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map(value => value.trim()).filter(Boolean) : [];
@@ -13,6 +13,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
   const hasInformation = Boolean(schedule || venue || address);
   const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
   const showHero = (key) => templateConfig?.hero?.display?.[key] !== false && !((key === "title" || key === "schedule" || key === "venue") && templateConfig?.hero?.textLayers?.some((layer) => layer.source === key));
+  const hideFirstBirthdayParentDetail = eventKind === "first_birthday" && templateConfig?.hero?.textLayers?.some((layer) => layer.source === "parent1" || layer.source === "parent2");
   const mastheadLabels = {
     wedding: "WEDDING INVITATION",
     first_birthday: "FIRST BIRTHDAY",
@@ -56,7 +57,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
           {groomRelation && <p>{groomRelation}</p>}
           {brideRelation && <p>{brideRelation}</p>}
         </div>}
-        {showHero("detail") && detail && <span>{detail}</span>}
+        {showHero("detail") && !hideFirstBirthdayParentDetail && detail && <span>{detail}</span>}
         {showHero("note") && note && <span>{note}</span>}
         {showHero("schedule") && heroSchedule && <time>{heroSchedule}</time>}
       </div>
@@ -67,6 +68,8 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
       <SectionHeading eyebrow="INVITATION">초대의 글</SectionHeading>
       <blockquote>{message}</blockquote>
     </section>}
+
+    {afterMessage}
 
     {weddingContacts}
 

@@ -255,13 +255,13 @@ export async function POST(request) {
 
   let templateVersionId = existing?.template_version_id || null;
   if (templateId) {
-    const { data: templates, error: templateError } = await supabase.from("templates").select("id,current_sale_version_id,is_active").eq("id", templateId).limit(1);
+    const { data: templates, error: templateError } = await supabase.from("templates").select("id,status,is_visible,is_active,current_sale_version_id").eq("id", templateId).limit(1);
     if (templateError) return json({ error: "템플릿을 확인하지 못했어요." }, 500);
     if (!templates?.[0]) return json({ error: "선택한 템플릿을 찾지 못했어요." }, 400);
     const shouldPinCurrentVersion = !existing || existing.template_id !== templateId || templateSelectionChanged;
     if (shouldPinCurrentVersion) {
-      if (!templates[0].is_active || !templates[0].current_sale_version_id) return json({ error: "현재 판매 중인 템플릿을 선택해 주세요." }, 409);
-      templateVersionId = templates[0].current_sale_version_id;
+      if (templates[0].status !== "on_sale" || !templates[0].is_visible) return json({ error: "현재 사용할 수 없는 본문 테마예요." }, 409);
+      templateVersionId = templates[0].current_sale_version_id || null;
     }
   } else if (hasTemplateId) {
     templateVersionId = null;
