@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-export default function Guestbook({ slug, preview = false }) {
+export default function Guestbook({ slug, preview = false, title = "방명록" }) {
   const [entries, setEntries] = useState([]);
   const [form, setForm] = useState({ authorName: "", message: "", password: "" });
   const [notice, setNotice] = useState("방명록을 불러오는 중이에요.");
@@ -38,7 +38,7 @@ export default function Guestbook({ slug, preview = false }) {
       setEntries((current) => current.filter((entry) => entry.id !== deleteTarget.id)); setDeleteTarget(null); setDeletePassword(""); setNotice("방명록을 삭제했습니다.");
     } catch { setDeleteNotice("방명록을 삭제하지 못했어요. 다시 시도해 주세요."); } finally { setSubmitting(false); }
   };
-  return <section className="guestbook-section"><p className="section-kicker">GUESTBOOK</p><h2>방명록</h2>
+  return <section className="guestbook-section"><p className="section-kicker">GUESTBOOK</p><h2>{title}</h2>
     <form className="guestbook-form" onSubmit={submit}>
       <label><span>이름</span><input required maxLength={20} value={form.authorName} onChange={(event) => setForm({ ...form, authorName: event.target.value })} /></label>
       <label><span>메시지</span><textarea required maxLength={200} value={form.message} onChange={(event) => setForm({ ...form, message: event.target.value })} /></label>
