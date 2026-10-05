@@ -3037,3 +3037,19 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-parents-intro-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:500px;margin:0 auto}.dd-parent-intro-card{min-width:0}.dd-parent-intro-card img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:14px;margin-bottom:13px}.dd-parent-intro-card strong{display:block;font-family:var(--dd-body-font,inherit);font-size:14px;font-weight:500}.dd-parent-intro-card strong small{display:block;margin-bottom:3px;font-size:10px;font-weight:400;color:var(--dd-color-muted,currentColor)}.dd-parent-intro-card p{margin:8px 0 0;font-size:12px;line-height:1.65;white-space:pre-line;word-break:keep-all;color:var(--dd-color-text,currentColor)}
 .dd-parents-intro-editor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}.dd-parents-intro-editor-grid>article{padding:14px;border:1px solid #e7e0dc;border-radius:14px;background:#fff}.dd-parent-intro-editor-photo{display:flex;align-items:center;gap:10px;margin:8px 0 12px}.dd-parent-intro-editor-photo img{width:76px;height:76px;object-fit:cover;border-radius:10px}.dd-parent-intro-editor-photo button{border:0;background:transparent;text-decoration:underline;color:#756b66;cursor:pointer}
 @media(max-width:520px){.dd-parents-intro-editor-grid{grid-template-columns:1fr}.dd-parents-intro{padding-left:18px;padding-right:18px}}
+
+
+/* DearDay publish flow: align pre-publish/payment dialogs with the blue editor palette. */
+.create-page :is(.payment-card,.publish-card,.publish-confirm-card){background:#fff;color:#172b51;border:1px solid #dfeafb;box-shadow:0 24px 64px rgba(25,65,125,.18)}
+.create-page :is(.payment-card,.publish-card,.publish-confirm-card) :is(h2,dt,dd){color:#172b51}
+.create-page :is(.payment-card,.publish-card,.publish-confirm-card)>p:not(.section-kicker){color:#637895}
+.create-page :is(.payment-card,.publish-card,.publish-confirm-card) .section-kicker{color:#315be8}
+.create-page .publish-heart{background:#eaf2ff;color:#315be8}
+.create-page :is(.payment-card,.publish-card,.publish-confirm-card) .publish-button{background:#1e3a8a;color:#fff;box-shadow:0 7px 16px rgba(30,58,138,.14)}
+.create-page :is(.payment-card,.publish-card,.publish-confirm-card) .publish-button:hover{background:#315be8}
+.create-page :is(.payment-card,.publish-card,.publish-confirm-card) .save-button,.create-page .publish-card .publish-button.secondary{background:#f2f7ff;color:#1e3a8a;border:1px solid #bfd3f4;box-shadow:none}
+.create-page .publish-card .share-link{border-color:#d7e5fa;background:#fff;color:#526a8b}
+.create-page .publish-card .share-link button{background:#eaf2ff;color:#1e3a8a}
+.create-page .publish-card :is(.share-actions button,.share-actions a){border-color:#d3e2fa;background:#f8fbff;color:#245ac7}
+.create-page .test-payment-notice{border-color:#d7e5fa!important;background:#f2f7ff!important;color:#315b9b!important}
+.create-page .payment-error{color:#a45d61}
