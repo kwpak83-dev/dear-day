@@ -36,7 +36,6 @@ function PreviewSections({ invitation, previewMode = "" }) {
       <p className="gallery-kicker">OUR MOMENTS</p><h2>우리의 순간들</h2>
       <div className="public-gallery-grid">{[2, 3, 4].map((number) => <span className="public-gallery-photo" key={number}><img src={`/moment-${number}.png`} alt="" /></span>)}</div>
     </section>
-    <GrowthTimeline invitation={invitation} eventKind={invitation.eventKind} />
     <section className="public-accounts"><h2>마음 전하실 곳</h2>
       {invitation.groomBank&&<article className="public-account-card"><p>신랑 측</p><strong className="public-account-holder">예금주 : {invitation.groomAccountHolder}</strong><div><span className="public-account-bank">{getBankLogo(invitation.groomBank)&&<img src={getBankLogo(invitation.groomBank)} alt="" />}<span>{invitation.groomBank} {invitation.groomAccount}</span></span><button type="button" disabled>계좌 복사</button></div></article>}
       {invitation.brideBank&&<article className="public-account-card"><p>신부 측</p><strong className="public-account-holder">예금주 : {invitation.brideAccountHolder}</strong><div><span className="public-account-bank">{getBankLogo(invitation.brideBank)&&<img src={getBankLogo(invitation.brideBank)} alt="" />}<span>{invitation.brideBank} {invitation.brideAccount}</span></span><button type="button" disabled>계좌 복사</button></div></article>}
@@ -93,7 +92,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
   }));
   const openFullPreview = () => setFull(true);
 
-  const renderInvitation = (mapWidth, previewMode = "") => <InvitationRenderer invitation={invitation} eventKind={eventKind} templateId={templateId} templateConfig={config} templateAssets={resolvedAssets}
+  const renderInvitation = (mapWidth, previewMode = "") => <InvitationRenderer invitation={invitation} eventKind={eventKind} templateId={templateId} templateConfig={config} templateAssets={resolvedAssets} afterMessage={<GrowthTimeline invitation={invitation} eventKind={eventKind} />}
     placeActions={<><div className="public-address-copy"><button type="button" disabled>주소 복사</button></div><InvitationMap key={mapWidth} address={invitation.venueAddress} venue={invitation.venue} /></>}>
     <PreviewSections invitation={invitation} previewMode={previewMode} />
   </InvitationRenderer>;
