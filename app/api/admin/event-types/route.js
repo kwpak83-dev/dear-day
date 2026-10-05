@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 const json=(body,status=200)=>NextResponse.json(body,{status});
 const STATES=new Set(["required","optional","none"]);
 const KEY=/^[a-z][a-z0-9_]{1,49}$/;
+const ROLE_KEY=/^[a-z][a-z0-9_]{0,49}$/;
 
 async function admin(request){
   const url=process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -20,12 +21,30 @@ async function admin(request){
   if(adminError||isAdmin!==true)return{error:"관리자 권한이 필요합니다.",status:403};
   return{serverClient,user};
 }
+function cleanItems(value){
+  if(value===undefined)return undefined;
+  if(!Array.isArray(value)||value.length>12)return null;
+  const seen=new Set(),out=[];
+  for(const item of value){
+    const key=String(item?.key||"").trim(),label=String(item?.label||"").trim();
+    if(!ROLE_KEY.test(key)||!label||label.length>80||seen.has(key))return null;
+    seen.add(key);out.push({key,label});
+  }
+  return out;
+}
 function cleanFields(value){
   if(!value||typeof value!=="object"||Array.isArray(value))return null;
   const out={};
   for(const [key,item] of Object.entries(value)){
     if(!KEY.test(key)||!item||!STATES.has(item.state))return null;
-    out[key]={state:item.state,label:String(item.label||"").trim().slice(0,80)};
+    const field={state:item.state,label:String(item.label||"").trim().slice(0,80)};
+    if(key==="contacts"){
+      const roles=cleanItems(item.roles); if(roles===null)return null; if(roles!==undefined)field.roles=roles;
+    }
+    if(key==="accounts"){
+      const groups=cleanItems(item.groups); if(groups===null)return null; if(groups!==undefined)field.groups=groups;
+    }
+    out[key]=field;
   }
   return out;
 }
