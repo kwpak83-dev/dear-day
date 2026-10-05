@@ -751,6 +751,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-sections-configured .romantic-hero,.dd-template-sections-configured .modern-hero,.dd-template-sections-configured .classic-hero{order:-10}
 .dd-template-sections-configured .romantic-message,.dd-template-sections-configured .modern-message,.dd-template-sections-configured .classic-message{order:var(--dd-section-invitation-order)}
 .dd-template-sections-configured .romantic-information,.dd-template-sections-configured .modern-information,.dd-template-sections-configured .classic-information{order:var(--dd-section-location-order)}
+.dd-template-sections-configured .dd-growth-timeline{order:calc(var(--dd-section-invitation-order) + 0.5)}
 .dd-template-sections-configured .invitation-gallery{order:var(--dd-section-gallery-order)}
 .dd-template-sections-configured .public-accounts{order:var(--dd-section-account-order)}
 .dd-template-sections-configured .public-rsvp{order:var(--dd-section-rsvp-order)}
