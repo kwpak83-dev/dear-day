@@ -48,7 +48,8 @@ function PreviewSections({ invitation, previewMode = "" }) {
   </div>;
 }
 
-export default function TemplateDraftPreview({ templateId, draft, assets = [], loading = false }) {
+export default function TemplateDraftPreview({ templateId, category, draft, assets = [], loading = false }) {
+  const eventKind = category === "first-birthday" ? "first_birthday" : "wedding";
   const [width, setWidth] = useState(390);
   const [full, setFull] = useState(false);
   const [heroPresets, setHeroPresets] = useState([]);
@@ -87,7 +88,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
   }));
   const openFullPreview = () => setFull(true);
 
-  const renderInvitation = (mapWidth, previewMode = "") => <InvitationRenderer invitation={invitation} eventKind="wedding" templateId={templateId} templateConfig={config} templateAssets={resolvedAssets}
+  const renderInvitation = (mapWidth, previewMode = "") => <InvitationRenderer invitation={invitation} eventKind={eventKind} templateId={templateId} templateConfig={config} templateAssets={resolvedAssets}
     placeActions={<><div className="public-address-copy"><button type="button" disabled>주소 복사</button></div><InvitationMap key={mapWidth} address={invitation.venueAddress} venue={invitation.venue} /></>}>
     <PreviewSections invitation={invitation} previewMode={previewMode} />
   </InvitationRenderer>;
@@ -106,7 +107,7 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
       <div className="admin-draft-preview-scroll">
         <div className="admin-draft-preview-device full-invitation-renderer dd-bgm-public-style" style={{ width }}>{renderInvitation(width, "admin-live")}</div>
       </div>}
-    {draft && !full && <details style={{width:540,maxWidth:"100%",margin:"8px auto",padding:8,border:"1px dashed #b8a9a1",background:"#fff",fontSize:11}}><summary style={{cursor:"pointer",fontWeight:700}}>Hero 데이터 디버그</summary><pre style={{whiteSpace:"pre-wrap",overflowWrap:"anywhere"}}>{JSON.stringify({ invitation: { childName: invitation.childName, childNameLastName: invitation.childNameLastName, childNameFirstName: invitation.childNameFirstName, parent1Name: invitation.parent1Name, parent2Name: invitation.parent2Name, venue: invitation.venue }, textLayers: heroDebug }, null, 2)}</pre></details>}
+    {draft && !full && <details style={{width:540,maxWidth:"100%",margin:"8px auto",padding:8,border:"1px dashed #b8a9a1",background:"#fff",fontSize:11}}><summary style={{cursor:"pointer",fontWeight:700}}>Hero 데이터 디버그</summary><pre style={{whiteSpace:"pre-wrap",overflowWrap:"anywhere"}}>{JSON.stringify({ eventKind, invitation: { childName: invitation.childName, childNameLastName: invitation.childNameLastName, childNameFirstName: invitation.childNameFirstName, parent1Name: invitation.parent1Name, parent2Name: invitation.parent2Name, venue: invitation.venue }, textLayers: heroDebug }, null, 2)}</pre></details>}
     {full && <div className="admin-draft-full-preview" role="dialog" aria-modal="true" aria-label="Draft 전체 미리보기" onKeyDown={(event) => { if (event.key === "Escape") setFull(false); }}>
       <div className="admin-draft-full-preview-toolbar" style={{ width, maxWidth: "100%" }}><strong>{`Draft 전체 미리보기 · ${width}px`}</strong><button type="button" onClick={() => setFull(false)}>닫기</button></div>
       <div className="admin-draft-full-preview-device full-invitation-renderer dd-bgm-public-style" style={{ width, maxWidth: "100%" }}>{renderInvitation(width, "admin-full")}</div>
