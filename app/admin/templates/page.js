@@ -7,7 +7,7 @@ import TemplateAssets from "./template-assets";
 import TemplateVersions from "./template-versions";
 import { EVENT_KIND_OPTIONS } from "../../../lib/event-config";
 
-const statusOptions = [["draft", "제작중"], ["on_sale", "판매중"], ["stopped", "판매중지"], ["archived", "보관"]];
+const statusOptions = [["draft", "제작중"], ["on_sale", "사용중"], ["stopped", "사용중지"]];
 const emptyForm = { name: "", template_key: "", description: "", event_kind: "wedding", status: "draft", is_visible: false, sort_order: 0 };
 const fieldStyle = { display: "grid", gap: 4, minWidth: 0 };
 const inputStyle = { width: "100%", boxSizing: "border-box" };
@@ -120,8 +120,7 @@ export default function AdminTemplatesPage() {
         {editing !== "new" && <div style={{ ...cardStyle, display: "grid", gap: 8 }}><strong>현재 설정에 디자인 다시 적용</strong><small>Typography·Colors·버튼·퀵메뉴 등 디자인을 상속합니다. 현재 설정의 해당 항목은 덮어쓰며 업로드 Asset은 복사하지 않습니다.</small><select style={inputStyle} value={backgroundSourceTemplateId} onChange={e=>setBackgroundSourceTemplateId(e.target.value)}><option value="">원본 템플릿 선택</option>{state.templates.filter(item=>item.id!==editing).map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</select><button type="button" className="save-button" disabled={saving || !backgroundSourceTemplateId} onClick={inheritExistingDraft}>현재 설정에 디자인 상속</button></div>}
         <label style={fieldStyle}>행사 유형<select style={inputStyle} value={form.event_kind||"wedding"} onChange={e=>setForm({...form,event_kind:e.target.value})}>{EVENT_KIND_OPTIONS.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
         <label style={fieldStyle}>설명<textarea style={inputStyle} maxLength={2000} rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></label>
-        <label style={fieldStyle}>상태 <small style={{ fontWeight: 400, color: "#806f66" }}>템플릿의 운영 상태입니다.</small><select style={{ ...inputStyle, background: "#f5f1ee", color: "#6f625b", cursor: "not-allowed" }} value={form.status} disabled aria-label="현재 템플릿 상태">{statusOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-        <label><input type="checkbox" checked={form.is_visible} onChange={(e) => setForm({ ...form, is_visible: e.target.checked })} /> 노출</label>
+        <div style={{display:"grid",gridTemplateColumns:"220px 160px 1fr",gap:8,alignItems:"end"}}><label style={fieldStyle}>상태<select style={inputStyle} value={form.status==="archived"?"stopped":form.status} onChange={e=>setForm({...form,status:e.target.value})}>{statusOptions.map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label><label style={fieldStyle}>정렬순서<input style={inputStyle} type="number" value={form.sort_order} onChange={e=>setForm({...form,sort_order:Number(e.target.value)})}/></label><label style={{paddingBottom:12}}><input type="checkbox" checked={form.is_visible} onChange={(e)=>setForm({ ...form, is_visible: e.target.checked })} /> 사용자 선택에 노출</label></div>
         <label style={fieldStyle}>표시 순서<input style={inputStyle} type="number" min={-10000} max={10000} required value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })} /></label>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "저장하기"}</button><button type="button" className="save-button" disabled={saving} onClick={cancel}>취소</button></div>
       </form>}
