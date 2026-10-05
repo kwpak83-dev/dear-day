@@ -3053,3 +3053,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   z-index:30 !important;
   isolation:isolate !important;
 }
+
+/* Optional/footer sections must remain fully opaque. Opacity/filter on an ancestor
+   fades every descendant regardless of the descendants' own opacity values. */
+.dd-template-decorated > .invitation-template-sections{
+  opacity:1 !important;
+  filter:none !important;
+  mix-blend-mode:normal !important;
+}
