@@ -40,8 +40,8 @@ export async function GET(request){
   const a=await getAdmin(request); if(a.error)return json({error:a.error},a.status);
   const [{data,error},{data:heroes},{data:bodies}]=await Promise.all([
     a.client.from("completed_templates").select("*").order("sort_order").order("created_at"),
-    a.client.from("hero_presets").select("id,name,status,is_visible").order("sort_order"),
-    a.client.from("templates").select("id,name,status,is_visible,current_sale_version_id").order("sort_order")
+    a.client.from("hero_presets").select("id,name,status,is_visible,event_kind").order("sort_order"),
+    a.client.from("templates").select("id,name,status,is_visible,event_kind,current_sale_version_id").order("sort_order")
   ]);
   if(error)return json({error:"완성 템플릿 목록을 불러오지 못했어요."},500);
   return json({items:data||[],heroes:heroes||[],bodies:bodies||[]});
