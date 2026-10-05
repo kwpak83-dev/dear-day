@@ -13,6 +13,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
   const hasInformation = Boolean(schedule || venue || address);
   const renderConfig = getTemplateConfigRenderProps(templateConfig, templateAssets);
   const showHero = (key) => templateConfig?.hero?.display?.[key] !== false && !((key === "title" || key === "schedule" || key === "venue") && templateConfig?.hero?.textLayers?.some((layer) => layer.source === key));
+  const hideFirstBirthdayParentDetail = eventKind === "first_birthday" && templateConfig?.hero?.textLayers?.some((layer) => layer.source === "parent1" || layer.source === "parent2");
   const mastheadLabels = {
     wedding: "WEDDING INVITATION",
     first_birthday: "FIRST BIRTHDAY",
@@ -56,7 +57,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
           {groomRelation && <p>{groomRelation}</p>}
           {brideRelation && <p>{brideRelation}</p>}
         </div>}
-        {showHero("detail") && detail && <span>{detail}</span>}
+        {showHero("detail") && !hideFirstBirthdayParentDetail && detail && <span>{detail}</span>}
         {showHero("note") && note && <span>{note}</span>}
         {showHero("schedule") && heroSchedule && <time>{heroSchedule}</time>}
       </div>
