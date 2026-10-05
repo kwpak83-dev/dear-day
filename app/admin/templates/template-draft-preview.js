@@ -67,7 +67,8 @@ export default function TemplateDraftPreview({ templateId, draft, assets = [], l
     const sc=sampleContent||{};
     return {
       ...sampleInvitation, templateId,
-      groom:sc.groom_name||sampleInvitation.groom, bride:sc.bride_name||sampleInvitation.bride,\n      childName:sc.child_name||sampleInvitation.childName, parent1Name:sc.parent1_name||sampleInvitation.parent1Name, parent2Name:sc.parent2_name||sampleInvitation.parent2Name,
+      groom:sc.groom_name||sampleInvitation.groom, bride:sc.bride_name||sampleInvitation.bride,
+      childName:sc.child_name||sampleInvitation.childName, parent1Name:sc.parent1_name||sampleInvitation.parent1Name, parent2Name:sc.parent2_name||sampleInvitation.parent2Name,
       groomFatherName:sc.groom_father_name||sampleInvitation.groomFatherName, groomMotherName:sc.groom_mother_name||sampleInvitation.groomMotherName,
       brideFatherName:sc.bride_father_name||sampleInvitation.brideFatherName, brideMotherName:sc.bride_mother_name||sampleInvitation.brideMotherName,
       date:sc.event_date||sampleInvitation.date, time:sc.event_time||sampleInvitation.time,
