@@ -18,7 +18,7 @@ import GalleryEditor from "./gallery-editor";
 import { preparePhoto, prepareKakaoSharePhoto } from "../../lib/prepare-photo";
 import { normalizeNotice } from "../../lib/invitation-notice";
 import { getInvitationTitle } from "../../lib/invitation-title";
-import { EVENT_KIND_OPTIONS, getConfiguredEventConfig, getMissingRequiredFields } from "../../lib/event-config";
+import { EVENT_KIND_OPTIONS, getConfiguredEventConfig, getAllMissingRequiredFields } from "../../lib/event-config";
 import { getEventContactRoles } from "../../lib/event-contact-roles";
 import { getEventAccountGroups } from "../../lib/event-account-groups";
 import { BANK_OPTIONS } from "../../lib/bank-options";
@@ -882,25 +882,8 @@ export default function CreateInvitation() {
     window.location.assign(`/?login=required&returnUrl=${encodeURIComponent(returnPath)}`);
   };
   const validateForPublish = () => {
-    const missingFields = getMissingRequiredFields(invitation, invitation.eventKind, eventTypeConfig);
-    if (galleryMatrix.state === "required" && galleryPhotos.length === 0) missingFields.push(galleryMatrix.label);
-    if (transportMatrix.state === "required") {
-      const hasTransport = [["transportPublicEnabled","transportPublic"],["transportCarEnabled","transportCar"],["transportParkingEnabled","transportParking"]]
-        .some(([enabledKey, valueKey]) => invitation[enabledKey] === true && String(invitation[valueKey] || "").trim());
-      if (!hasTransport) missingFields.push(transportMatrix.label);
-    }
-    if (noticeMatrix.state === "required" && (!String(invitation.notice?.title || "").trim() || !String(invitation.notice?.body || "").trim())) missingFields.push(noticeMatrix.label);
-    if (detailsMatrix.state === "required" && !String(invitation.details || "").trim()) missingFields.push(detailsMatrix.label);
-    if (externalLinkMatrix.state === "required" && !String(invitation.externalLink || "").trim()) missingFields.push(externalLinkMatrix.label);
-    if (brandImageMatrix.state === "required" && !String(invitation.brandImageUrl || "").trim()) missingFields.push(brandImageMatrix.label);
-    if (parentsIntroMatrix.state === "required") {
-      const hasParentIntro = [invitation.parent1PhotoUrl, invitation.parent1Intro, invitation.parent2PhotoUrl, invitation.parent2Intro].some(value => String(value || "").trim());
-      if (!hasParentIntro) missingFields.push(parentsIntroMatrix.label);
-    }
-    if (timelineMatrix.state === "required") {
-      const hasTimeline = (Array.isArray(invitation.timelineItems) ? invitation.timelineItems : []).some(item => item && (String(item.photoUrl || "").trim() || String(item.date || "").trim() || String(item.text || "").trim()));
-      if (!hasTimeline) missingFields.push(timelineMatrix.label);
-    }
+    const invitationForValidation = { ...invitation, galleryImages: galleryPhotos.map((photo) => photo.url).filter(Boolean) };
+    const missingFields = getAllMissingRequiredFields(invitationForValidation, invitation.eventKind, eventTypeConfig);
     if (!missingFields.length) return true;
 
     const message = `필수 항목을 입력해 주세요: ${missingFields.join(", ")}`;
