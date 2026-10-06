@@ -2549,7 +2549,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 .dd-transport-guide-list{display:grid;gap:18px;text-align:left}
 .dd-transport-guide-item{text-align:left}
-.dd-transport-guide-item h4{display:flex;align-items:center;justify-content:flex-start;gap:7px;margin:0 0 9px;padding:0 0 8px;border-bottom:1px solid currentColor;font:inherit;font-weight:700;color:inherit;text-align:left;opacity:.9}
+.dd-transport-guide-item h4{display:flex;align-items:center;justify-content:flex-start;gap:7px;margin:0 0 9px;padding:0 0 8px;border-bottom:1px solid rgba(120,120,120,.22);font:inherit;font-weight:700;color:inherit;text-align:left;opacity:.9}
 .dd-transport-guide-item p{text-align:left;opacity:.78}
 .dd-transport-guide-icon{display:inline-flex;width:17px;height:17px;flex:0 0 17px}
 .dd-transport-guide-icon svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
