@@ -1576,11 +1576,11 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* Public invitation notice */
 .shared-public-invitation{position:relative}
-.dd-notice-trigger{position:fixed;z-index:85;right:max(12px,calc((100vw - min(100vw,540px))/2 + 12px));bottom:100px;min-height:30px;border:1px solid #e9dfd8 !important;border-radius:30px !important;background:rgba(255,255,255,.94) !important;background-image:none !important;color:#423b37 !important;-webkit-text-fill-color:#423b37 !important;padding:5px 10px;font:600 10px/1.2 inherit;box-shadow:0 2px 12px #00000012;cursor:pointer}
+.dd-notice-trigger{position:fixed;z-index:85;right:max(0px,calc((100vw - min(100vw,540px))/2));top:50%;bottom:auto;transform:translateY(-50%);min-width:34px;min-height:54px;border:1px solid #e9dfd8 !important;border-right:0 !important;border-radius:14px 0 0 14px !important;background:rgba(255,255,255,.94) !important;background-image:none !important;color:#423b37 !important;-webkit-text-fill-color:#423b37 !important;padding:8px 6px;font:600 10px/1.25 inherit;line-height:1.25;writing-mode:vertical-rl;text-orientation:upright;letter-spacing:.08em;box-shadow:-2px 2px 12px #00000012;cursor:pointer}
 @media (min-width:901px){
-  .preview-content .dd-notice-trigger{position:absolute;right:10px;bottom:94px;z-index:85;background:rgba(255,255,255,.94) !important;color:#423b37 !important;-webkit-text-fill-color:#423b37 !important}
+  .preview-content .dd-notice-trigger{position:absolute;right:0;top:50%;bottom:auto;transform:translateY(-50%);z-index:85;background:rgba(255,255,255,.94) !important;color:#423b37 !important;-webkit-text-fill-color:#423b37 !important}
 }
-.full-preview-document .dd-notice-trigger{right:max(12px,calc((100vw - min(100vw,540px))/2 + 12px));bottom:100px;background:rgba(255,255,255,.94) !important;color:#423b37 !important;-webkit-text-fill-color:#423b37 !important}
+.full-preview-document .dd-notice-trigger{right:max(0px,calc((100vw - min(100vw,540px))/2));top:50%;bottom:auto;transform:translateY(-50%);background:rgba(255,255,255,.94) !important;color:#423b37 !important;-webkit-text-fill-color:#423b37 !important}
 .dd-notice-overlay{position:fixed;inset:0;z-index:10000;background:#0008;display:flex;align-items:center;justify-content:center;padding:20px}
 .dd-notice-dialog{box-sizing:border-box;width:min(100%,420px);max-height:min(85dvh,720px);overflow:auto;background:#fff;border-radius:18px;padding:24px;color:#302b29;box-shadow:0 16px 60px #0003}
 .dd-notice-top,.dd-notice-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px}
