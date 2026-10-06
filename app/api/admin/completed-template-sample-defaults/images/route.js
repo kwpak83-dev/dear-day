@@ -13,7 +13,7 @@ async function admin(request){
 }
 function validImage(bytes,mime){if(mime==="image/jpeg")return bytes.length>3&&bytes[0]===255&&bytes[1]===216&&bytes[2]===255;if(mime==="image/png")return bytes.length>8&&Buffer.from(bytes.subarray(0,8)).equals(Buffer.from([137,80,78,71,13,10,26,10]));return mime==="image/webp"&&bytes.length>12&&Buffer.from(bytes.subarray(0,4)).toString()==="RIFF"&&Buffer.from(bytes.subarray(8,12)).toString()==="WEBP";}
 export async function POST(request){
- const a=await admin(request);if(a.error)return fail(a.error,a.status);const form=await request.formData().catch(()=>null),file=form?.get("file"),eventKind=safeKind(form?.get("eventKind")),kind=["gallery","timeline","parents_intro"].includes(String(form?.get("kind")||""))?String(form.get("kind")):"timeline";
+ const a=await admin(request);if(a.error)return fail(a.error,a.status);const form=await request.formData().catch(()=>null),file=form?.get("file"),eventKind=safeKind(form?.get("eventKind")),kind=["gallery","timeline","parents_intro","notice"].includes(String(form?.get("kind")||""))?String(form.get("kind")):"timeline";
  if(!(file instanceof File)||!extensions[file.type]||!file.size||file.size>maxBytes)return fail("15MB 이하의 JPG, PNG, WebP 이미지를 선택해 주세요.",400);
  const bytes=new Uint8Array(await file.arrayBuffer());if(!validImage(bytes,file.type))return fail("올바른 이미지 파일을 선택해 주세요.",400);
  const path=`completed-template-sample-defaults/${eventKind}/${kind}-${randomUUID()}.${extensions[file.type]}`;
