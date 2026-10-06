@@ -98,7 +98,7 @@ const MappingTable = ({ rows }) => <div style={mappingGrid}>
   {rows.map((row) => <MappingRow key={row[0]} item={row[0]} mapping={row[1]} example={row[2]} />)}
 </div>;
 
-export default function TemplateVersions({ templateId, assetRevision = 0, assetChangesPending = false, onWorkflowChange }) {
+export default function TemplateVersions({ templateId, eventKind = "wedding", assetRevision = 0, assetChangesPending = false, onWorkflowChange }) {
   const [state, setState] = useState({ loading: true, template: null, current: null, draft: null, assets: [], allAssets: [], error: "" });
   const [sharedDecorations,setSharedDecorations]=useState([]);
   const [sharedDecorOpen,setSharedDecorOpen]=useState(false);
@@ -620,7 +620,7 @@ export default function TemplateVersions({ templateId, assetRevision = 0, assetC
     {(state.error || notice) && <p role="status">{state.error || notice}</p>}
       </div>
       <aside className="admin-template-editor-preview">
-        <TemplateDraftPreview templateId={templateId} draft={state.draft ? { ...state.draft, background, typography, colors, buttonStyle, quickMenu, decorations:placements } : null} assets={[...state.allAssets,...sharedDecorations.map(asset=>({...asset,asset_type:"decoration",is_active:true}))]} loading={state.loading} />
+        <TemplateDraftPreview templateId={templateId} templateEventKind={eventKind} draft={state.draft ? { ...state.draft, background, typography, colors, buttonStyle, quickMenu, decorations:placements } : null} assets={[...state.allAssets,...sharedDecorations.map(asset=>({...asset,asset_type:"decoration",is_active:true}))]} loading={state.loading} />
       </aside>
     </div>
   </section>;

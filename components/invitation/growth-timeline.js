@@ -1,5 +1,7 @@
-export default function GrowthTimeline({ invitation, eventKind }) {
-  if (eventKind !== "first_birthday" || invitation?.timelineEnabled !== true) return null;
+export default function GrowthTimeline({ invitation, eventKind, eventTypeConfig }) {
+  const setting = eventTypeConfig?.fields?.timeline;
+  if (eventKind !== "first_birthday" || setting?.state === "none") return null;
+  if (setting?.state !== "required" && invitation?.timelineEnabled !== true) return null;
   const items = Array.isArray(invitation.timelineItems)
     ? invitation.timelineItems.filter((item) => item && (item.photoUrl || item.date || item.text)).slice(0, 6)
     : [];
@@ -8,7 +10,7 @@ export default function GrowthTimeline({ invitation, eventKind }) {
   return <section className="dd-growth-timeline" aria-labelledby="dd-growth-timeline-title">
     <header className="dd-growth-timeline-heading">
       <p>GROWING UP</p>
-      <h2 id="dd-growth-timeline-title">성장 기록</h2>
+      <h2 id="dd-growth-timeline-title">{setting?.label || "성장 기록"}</h2>
     </header>
     <div className="dd-growth-timeline-list">
       {items.map((item, index) => <article className="dd-growth-timeline-item" key={item.id || index}>

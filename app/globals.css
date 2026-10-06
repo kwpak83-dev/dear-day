@@ -221,15 +221,6 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .modern-001 .public-address-copy{justify-content:flex-start;margin:22px 0 0}
 .modern-001 .public-address-copy button,.modern-001 .public-share-copy button,.modern-001 .public-account-card button{border:1px solid var(--modern-ink);border-radius:0;background:transparent;color:var(--modern-ink);box-shadow:none}
 .modern-001 .invitation-template-sections,.modern-001 .public-invitation-sections{display:contents}
-/* Optional section order contract for flex-based templates. Content and ON/OFF state stay independent from template layout. */
-.modern-001{--dd-gallery-order:4;--dd-account-order:6;--dd-rsvp-order:7;--dd-guestbook-order:8;--dd-share-order:9;--dd-footer-order:10}
-.classic-001{--dd-gallery-order:4;--dd-account-order:5;--dd-rsvp-order:6;--dd-guestbook-order:7;--dd-share-order:8;--dd-footer-order:9}
-.modern-001 .invitation-gallery,.classic-001 .invitation-gallery{order:var(--dd-gallery-order)}
-.modern-001 .public-accounts,.classic-001 .public-accounts{order:var(--dd-account-order)}
-.modern-001 .public-rsvp,.classic-001 .public-rsvp{order:var(--dd-rsvp-order)}
-.modern-001 .guestbook-section,.classic-001 .guestbook-section{order:var(--dd-guestbook-order)}
-.modern-001 .public-share-copy,.classic-001 .public-share-copy{order:var(--dd-share-order)}
-.modern-001 .modern-footer,.classic-001 .classic-footer{order:var(--dd-footer-order)}
 .modern-001 .invitation-gallery{margin:0;padding:68px clamp(18px,6vw,34px);border-bottom:1px solid var(--modern-line);background:#fff}
 .modern-001 .invitation-gallery .gallery-kicker{margin:0;color:var(--modern-muted);font:8px/1.4 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.22em}
 .modern-001 .invitation-gallery h2{margin:8px 0 32px;color:var(--modern-ink);font:400 25px/1.3 Georgia,"Batang",serif;text-align:left}
@@ -722,7 +713,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .admin-draft-preview-toolbar h3,.admin-draft-preview-toolbar p{margin:0}.admin-draft-preview-toolbar p{margin-top:3px;color:#876f64;font-size:12px}
 .admin-draft-preview-widths{display:flex;gap:6px;flex:none}.admin-draft-preview-widths button{border:1px solid #d9c5b9;border-radius:7px;background:#fff;padding:7px 9px;color:#60483e}.admin-draft-preview-widths button.active{border-color:#a86f5d;background:#f3dfd6;font-weight:700}
 .admin-draft-preview-status{margin:0;padding:28px 16px;text-align:center;color:#806b62}
-.admin-draft-preview-scroll{max-height:720px;overflow:auto;padding:16px 10px;background:#e9e1dc;overscroll-behavior:contain}
+.admin-draft-preview-scroll{position:relative;max-height:720px;overflow:auto;padding:16px 10px;background:#e9e1dc;overscroll-behavior:contain}
 .admin-draft-preview-device{max-width:100%;margin:0 auto;background:#fffaf5;box-shadow:0 10px 28px rgba(70,43,35,.14);transition:width .2s ease}
 .admin-draft-preview-device .invitation-template{min-height:0}.admin-draft-preview-device button:disabled{cursor:default}
 @media(max-width:600px){.admin-draft-preview-toolbar{align-items:flex-start;flex-direction:column}.admin-draft-preview-widths{width:100%}.admin-draft-preview-widths button{flex:1}.admin-draft-preview-scroll{max-height:70vh;padding:10px 6px}}
@@ -756,17 +747,25 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-sections-configured{display:flex;flex-direction:column}
 .dd-template-sections-configured .invitation-template-sections,
 .dd-template-sections-configured .public-invitation-sections{display:contents}
+/* One shared render-order contract. Template editor section arrays control visibility, not physical placement. */
 .dd-template-sections-configured .romantic-masthead,.dd-template-sections-configured .modern-masthead,.dd-template-sections-configured .classic-masthead{order:-20}
 .dd-template-sections-configured .romantic-hero,.dd-template-sections-configured .modern-hero,.dd-template-sections-configured .classic-hero{order:-10}
-.dd-template-sections-configured .romantic-message,.dd-template-sections-configured .modern-message,.dd-template-sections-configured .classic-message{order:var(--dd-section-invitation-order)}
-.dd-template-sections-configured .romantic-information,.dd-template-sections-configured .modern-information,.dd-template-sections-configured .classic-information{order:var(--dd-section-location-order)}
-.dd-template-sections-configured .dd-parents-intro{order:calc(var(--dd-section-invitation-order) + 0.4)}
-.dd-template-sections-configured .dd-growth-timeline{order:calc(var(--dd-section-invitation-order) + 0.5)}
-.dd-template-sections-configured .invitation-gallery{order:var(--dd-section-gallery-order)}
-.dd-template-sections-configured .public-accounts{order:var(--dd-section-account-order)}
-.dd-template-sections-configured .public-rsvp{order:var(--dd-section-rsvp-order)}
-.dd-template-sections-configured .guestbook-section{order:var(--dd-section-guestbook-order)}
-.dd-template-sections-configured .romantic-couple,.dd-template-sections-configured .modern-couple{order:calc(var(--dd-section-invitation-order) + 1)}
+.dd-template-sections-configured .romantic-message,.dd-template-sections-configured .modern-message,.dd-template-sections-configured .classic-message{order:10}
+.dd-template-sections-configured .dd-wedding-contacts{order:12}
+.dd-template-sections-configured .romantic-couple,.dd-template-sections-configured .modern-couple{order:14}
+.dd-template-sections-configured .classic-date{order:20}
+.dd-template-sections-configured .romantic-information,.dd-template-sections-configured .modern-information,.dd-template-sections-configured .classic-information{order:30}
+.dd-template-sections-configured .dd-transport-guide{order:32}
+.dd-template-sections-configured .dd-extended-event-info{order:40}
+.dd-template-sections-configured .dd-parents-intro{order:42}
+.dd-template-sections-configured .dd-growth-timeline{order:44}
+.dd-template-sections-configured.dd-event-first_birthday .dd-parents-intro{order:34}
+.dd-template-sections-configured.dd-event-first_birthday .dd-growth-timeline{order:36}
+.dd-template-sections-configured.dd-event-first_birthday .dd-extended-event-info{order:38}
+.dd-template-sections-configured .invitation-gallery{order:50}
+.dd-template-sections-configured .public-accounts{order:70}
+.dd-template-sections-configured .public-rsvp{order:80}
+.dd-template-sections-configured .guestbook-section{order:90}
 .dd-template-sections-configured .public-share-copy{order:900}
 .dd-template-sections-configured .romantic-footer,.dd-template-sections-configured .modern-footer,.dd-template-sections-configured .classic-footer{order:1000}
 .dd-template-sections-configured.dd-section-hidden-invitation .romantic-message,
@@ -1576,7 +1575,13 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* Public invitation notice */
 .shared-public-invitation{position:relative}
-.dd-notice-trigger{position:absolute;z-index:25;top:6px;right:10px;min-height:30px;border:1px solid #e9dfd8;border-radius:30px;background:#fff;color:#423b37;padding:5px 10px;font:600 10px/1.2 inherit;box-shadow:0 2px 12px #00000012;cursor:pointer}
+.dd-notice-trigger{position:fixed;z-index:85;right:max(0px,calc((100vw - min(100vw,540px))/2));top:50%;bottom:auto;transform:translateY(-50%);width:34px;min-width:34px;max-width:34px;height:auto;min-height:54px;max-height:none;border:1px solid #e9dfd8 !important;border-right:0 !important;border-radius:14px 0 0 14px !important;background:rgba(255,255,255,.94) !important;background-image:none !important;color:#423b37 !important;-webkit-text-fill-color:#423b37 !important;padding:8px 6px;font:600 10px/1.25 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.25;writing-mode:vertical-rl;text-orientation:upright;white-space:nowrap;word-break:keep-all;overflow-wrap:normal;letter-spacing:.08em;box-sizing:border-box;box-shadow:-2px 2px 12px #00000012;cursor:pointer}
+@media (min-width:901px){
+  .preview-content .dd-notice-trigger{position:absolute;right:0;top:50%;bottom:auto;transform:translateY(-50%);z-index:85;background:rgba(255,255,255,.94) !important;color:#423b37 !important;-webkit-text-fill-color:#423b37 !important}
+}
+.full-preview-document .dd-notice-trigger{right:max(0px,calc((100vw - min(100vw,540px))/2));top:50%;bottom:auto;transform:translateY(-50%);background:rgba(255,255,255,.94) !important;color:#423b37 !important;-webkit-text-fill-color:#423b37 !important}
+.admin-draft-preview-scroll>.dd-notice-trigger-preview,
+.admin-draft-full-preview>.dd-notice-trigger-preview{z-index:85;margin:0}
 .dd-notice-overlay{position:fixed;inset:0;z-index:10000;background:#0008;display:flex;align-items:center;justify-content:center;padding:20px}
 .dd-notice-dialog{box-sizing:border-box;width:min(100%,420px);max-height:min(85dvh,720px);overflow:auto;background:#fff;border-radius:18px;padding:24px;color:#302b29;box-shadow:0 16px 60px #0003}
 .dd-notice-top,.dd-notice-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -1705,8 +1710,8 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 :is(.romantic-message,.modern-message,.classic-message) blockquote{word-break:keep-all;overflow-wrap:break-word;white-space:pre-line}
 
 /* Optional transport information follows the map and inherits the place section palette. */
-.dd-transport-guide{margin:18px auto 0;padding:0 16px;max-width:440px;box-sizing:border-box;color:inherit;text-align:left;font-family:inherit}
-.dd-transport-guide h3{margin:0 0 10px;font:inherit;font-weight:700;color:inherit;text-align:center}
+.dd-transport-guide{width:100%;margin:4px 0 0;padding:0 28px;box-sizing:border-box;color:inherit;text-align:left;font-family:inherit}
+.dd-transport-guide h3{display:none}
 .dd-transport-guide p{margin:0;white-space:pre-wrap;overflow-wrap:break-word;word-break:keep-all;font:inherit;color:inherit}
 .dd-transport-guide-toggle{display:flex;align-items:center;gap:8px;font-weight:600}
 
@@ -2544,8 +2549,10 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Keep the share wrapper at the end of configured invitation sections. */
 .dd-template-sections-configured .dd-public-share-section{order:900}
 
-.dd-transport-guide-list{display:grid;gap:18px}
-.dd-transport-guide-item h4{display:flex;align-items:center;gap:6px;margin:0 0 6px;font:inherit;font-weight:700;color:inherit}
+.dd-transport-guide-list{display:grid;gap:18px;text-align:left}
+.dd-transport-guide-item{text-align:left}
+.dd-transport-guide-item h4{display:flex;align-items:center;justify-content:flex-start;gap:7px;margin:0 0 9px;padding:0 0 8px;border-bottom:1px solid rgba(120,120,120,.22);font:inherit;font-weight:700;color:inherit;text-align:left;opacity:.9}
+.dd-transport-guide-item p{text-align:left;opacity:.78}
 .dd-transport-guide-icon{display:inline-flex;width:17px;height:17px;flex:0 0 17px}
 .dd-transport-guide-icon svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .dd-transport-guide-editor{display:grid;gap:10px;margin-top:14px}
@@ -3037,3 +3044,30 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-parents-intro-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:500px;margin:0 auto}.dd-parent-intro-card{min-width:0}.dd-parent-intro-card img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:14px;margin-bottom:13px}.dd-parent-intro-card strong{display:block;font-family:var(--dd-body-font,inherit);font-size:14px;font-weight:500}.dd-parent-intro-card strong small{display:block;margin-bottom:3px;font-size:10px;font-weight:400;color:var(--dd-color-muted,currentColor)}.dd-parent-intro-card p{margin:8px 0 0;font-size:12px;line-height:1.65;white-space:pre-line;word-break:keep-all;color:var(--dd-color-text,currentColor)}
 .dd-parents-intro-editor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}.dd-parents-intro-editor-grid>article{padding:14px;border:1px solid #e7e0dc;border-radius:14px;background:#fff}.dd-parent-intro-editor-photo{display:flex;align-items:center;gap:10px;margin:8px 0 12px}.dd-parent-intro-editor-photo img{width:76px;height:76px;object-fit:cover;border-radius:10px}.dd-parent-intro-editor-photo button{border:0;background:transparent;text-decoration:underline;color:#756b66;cursor:pointer}
 @media(max-width:520px){.dd-parents-intro-editor-grid{grid-template-columns:1fr}.dd-parents-intro{padding-left:18px;padding-right:18px}}
+
+
+/* DearDay publish flow: align pre-publish/payment dialogs with the blue editor palette. */
+.create-page :is(.payment-card,.publish-card,.publish-confirm-card){background:#fff;color:#172b51;border:1px solid #dfeafb;box-shadow:0 24px 64px rgba(25,65,125,.18)}
+.create-page :is(.payment-card,.publish-card,.publish-confirm-card) :is(h2,dt,dd){color:#172b51}
+.create-page :is(.payment-card,.publish-card,.publish-confirm-card)>p:not(.section-kicker){color:#637895}
+.create-page :is(.payment-card,.publish-card,.publish-confirm-card) .section-kicker{color:#315be8}
+.create-page .publish-heart{background:#eaf2ff;color:#315be8}
+.create-page :is(.payment-card,.publish-card,.publish-confirm-card) .publish-button{background:#1e3a8a;color:#fff;box-shadow:0 7px 16px rgba(30,58,138,.14)}
+.create-page :is(.payment-card,.publish-card,.publish-confirm-card) .publish-button:hover{background:#315be8}
+.create-page :is(.payment-card,.publish-card,.publish-confirm-card) .save-button,.create-page .publish-card .publish-button.secondary{background:#f2f7ff;color:#1e3a8a;border:1px solid #bfd3f4;box-shadow:none}
+.create-page .publish-card .share-link{border-color:#d7e5fa;background:#fff;color:#526a8b}
+.create-page .publish-card .share-link button{background:#eaf2ff;color:#1e3a8a}
+.create-page .publish-card :is(.share-actions button,.share-actions a){border-color:#d3e2fa;background:#f8fbff;color:#245ac7}
+.create-page .test-payment-notice{border-color:#d7e5fa!important;background:#f2f7ff!important;color:#315b9b!important}
+.create-page .payment-error{color:#a45d61}
+
+/* Shared extended event information */
+.dd-extended-event-info{margin:32px auto 0;padding:30px 24px;text-align:center;white-space:pre-line}
+.dd-extended-event-info>img{display:block;width:min(100%,240px);max-height:180px;object-fit:contain;margin:0 auto 22px;border-radius:10px}
+.dd-extended-event-info h2{margin:7px 0 12px;font-size:20px}
+.dd-extended-event-info p{overflow-wrap:anywhere;line-height:1.8}
+.dd-extended-event-info>a{display:inline-flex;align-items:center;justify-content:center;margin-top:18px;padding:10px 16px;border:1px solid currentColor;border-radius:999px;color:inherit;font-size:12px;font-weight:700;text-decoration:none}
+.preview-content .dd-extended-event-info{margin-top:22px;padding:20px 14px}
+.preview-content .dd-extended-event-info>img{max-width:160px;max-height:110px;margin-bottom:14px}
+.preview-content .dd-extended-event-info h2{font-size:16px}
+.preview-content .dd-extended-event-info p,.preview-content .dd-extended-event-info>a{font-size:10px}

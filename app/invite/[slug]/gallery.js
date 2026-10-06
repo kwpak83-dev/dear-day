@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 const SWIPE_THRESHOLD = 50;
 
-export default function Gallery({ photos, idPrefix = "public-gallery" }) {
+export default function Gallery({ photos, idPrefix = "public-gallery", title = "우리의 순간들" }) {
   const [active, setActive] = useState(null);
   const [current, setCurrent] = useState(0);
   const titleId = `${idPrefix}-title`;
@@ -67,7 +67,7 @@ export default function Gallery({ photos, idPrefix = "public-gallery" }) {
   const showPhoto = (index, event) => { opener.current = event.currentTarget; setActive(index); };
 
   return <section className="invitation-gallery" aria-labelledby={titleId}>
-    <p className="gallery-kicker">OUR MOMENTS</p><h2 id={titleId}>우리의 순간들</h2>
+    <p className="gallery-kicker">OUR MOMENTS</p><h2 id={titleId}>{title}</h2>
     <div className="public-gallery-slider">
       <div className="public-gallery-main" onTouchStart={event => beginSwipe(event, "main")} onTouchEnd={finishSwipe} onTouchCancel={() => { swipeStart.current = null; }}>
         <div className="public-gallery-track" style={{ transform: `translate3d(-${current * 100}%,0,0)` }}>

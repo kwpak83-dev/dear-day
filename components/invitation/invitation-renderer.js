@@ -19,9 +19,18 @@ export const TEMPLATE_REGISTRY = {
   [TEMPLATE_IDS.modern]: ModernTemplate,
 };
 
-export default function InvitationRenderer({ invitation, eventKind, templateId, templateConfig, templateAssets, userBgmUrl, placeActions, afterMessage, children }) {
+export default function InvitationRenderer({ invitation, eventKind, eventTypeConfig, templateId, templateConfig, templateAssets, userBgmUrl, placeActions, afterMessage, children }) {
   const Template = TEMPLATE_REGISTRY[templateId] || ClassicTemplate;
-  const presentation = getInvitationPresentation(invitation, eventKind);
+  const basePresentation = getInvitationPresentation(invitation, eventKind);
+  const matrixFields = eventTypeConfig?.fields || {};
+  const presentation = {
+    ...basePresentation,
+    ...(matrixFields.subject?.state === "none" ? { title: "", heroTitle: "" } : {}),
+    ...(matrixFields.host?.state === "none" ? { detail: "" } : {}),
+    ...(matrixFields.schedule?.state === "none" ? { eventDate: "", eventTime: "", heroSchedule: "", schedule: "" } : {}),
+    ...(matrixFields.venue?.state === "none" ? { venue: "", address: "", addressDetail: "" } : {}),
+    ...(matrixFields.message?.state === "none" ? { message: "" } : {}),
+  };
   const normalizedConfig = normalizeTemplateConfig(templateConfig);
   const templateBgmUrl = normalizedConfig.bgm?.mode === "asset" ? templateAssets?.[normalizedConfig.bgm.assetId] : null;
   const bgmMode = invitation.bgmMode || "background";
@@ -30,7 +39,8 @@ export default function InvitationRenderer({ invitation, eventKind, templateId, 
   const allowedOrnaments = new Set(["green", "autumn", "snow", "rose", "lavender", "daisy", "heart", "color-confetti", "balloon", "bubble"]);
   const selectedOrnament = allowedOrnaments.has(invitation.userScreenEffectOrnament) ? invitation.userScreenEffectOrnament : "green";
   const templateScreenEffect = normalizedConfig.effects?.screenEffect;
-  const screenEffect = mode === "background" ? templateScreenEffect : mode === "user" ? (templateScreenEffect ? { ...templateScreenEffect, ornament: selectedOrnament } : null) : mode === "legacy-blossom" ? { ornament: "blossom", motion: "flutter", count: 10, minSize: 14, maxSize: 28, minDuration: 10, maxDuration: 18, sway: 35, rotate: true, opacity: 0.75 } : null;
+  const defaultUserScreenEffect = { motion: "fall", count: 12, minSize: 18, maxSize: 24, minDuration: 20, maxDuration: 25, sway: 40, rotate: true, opacity: 0.8 };
+  const screenEffect = mode === "background" ? templateScreenEffect : mode === "user" ? { ...defaultUserScreenEffect, ...(templateScreenEffect || {}), ornament: selectedOrnament } : mode === "legacy-blossom" ? { ornament: "blossom", motion: "flutter", count: 10, minSize: 14, maxSize: 28, minDuration: 10, maxDuration: 18, sway: 35, rotate: true, opacity: 0.75 } : null;
   const effectConfig = { ...normalizedConfig, effects: { ...normalizedConfig.effects, screenEffect } };
-  return <Template presentation={presentation} templateConfig={normalizedConfig} templateAssets={templateAssets} eventKind={eventKind || invitation.eventKind || "wedding"} placeActions={placeActions} weddingContacts={<WeddingContacts invitation={invitation} />} bgmControl={<TemplateBgm src={bgmUrl} />} screenEffect={<TemplateScreenEffect config={effectConfig} assets={templateAssets} />} afterMessage={afterMessage}>{children}</Template>;
+  return <Template presentation={presentation} templateConfig={normalizedConfig} templateAssets={templateAssets} eventKind={eventKind || invitation.eventKind || "wedding"} placeActions={placeActions} weddingContacts={<WeddingContacts invitation={invitation} eventTypeConfig={eventTypeConfig} />} bgmControl={<TemplateBgm src={bgmUrl} />} screenEffect={<TemplateScreenEffect config={effectConfig} assets={templateAssets} />} afterMessage={afterMessage}>{children}</Template>;
 }

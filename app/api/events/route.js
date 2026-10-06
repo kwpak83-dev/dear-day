@@ -2,7 +2,7 @@ import { prepareNoticeForSave } from "../../../lib/invitation-notice";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { getInvitationTitle } from "../../../lib/invitation-title";
-import { getMissingRequiredFields } from "../../../lib/event-config";
+import { getAllMissingRequiredFields } from "../../../lib/event-config";
 import { calculateRetentionDates } from "../../../lib/invitation-retention";
 import { getTemplateAssetReferences, resolveTemplateAssetUrls } from "../../../lib/template-config";
 
@@ -10,7 +10,7 @@ const slugPattern = /^[a-z0-9-]{4,80}$/;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const photoBucket = "invitation-photos";
 const eventKinds = new Set([
-  "wedding", "first_birthday", "birthday", "baby_shower",
+  "wedding", "first_birthday", "birthday", "milestone_birthday", "gathering", "opening", "baby_shower",
   "bridal_shower", "anniversary", "housewarming", "graduation",
   "corporate", "party", "other",
 ]);
@@ -102,6 +102,16 @@ async function getAuthenticatedClient(request) {
   const { data: { user }, error: authError } = await supabase.auth.getUser(token);
   if (authError || !user) return { error: "로그인이 만료되었어요. 다시 로그인해 주세요.", status: 401 };
   return { supabase, user };
+}
+
+async function getEventTypeConfig(supabase, eventKind) {
+  const { data, error } = await supabase.from("event_type_configs")
+    .select("kind,label,fields").eq("kind", eventKind).maybeSingle();
+  if (error) {
+    console.error("Event type config query failed:", error.code);
+    return null;
+  }
+  return data || null;
 }
 
 async function getTemplateRenderData(supabase, templateId, versionId) {
@@ -197,7 +207,8 @@ export async function POST(request) {
     if (paymentEvent.status === "published") return json({ error: "이미 발행된 초대장이에요." }, 409);
     if (paymentEvent.status !== "draft") return json({ error: "현재 상태에서는 테스트 결제를 진행할 수 없어요." }, 409);
     const paymentInvitation = { ...(paymentEvent.settings || {}), eventKind: paymentEvent.kind, templateId: paymentEvent.template_id || paymentEvent.settings?.templateId || "" };
-    const missingFields = getMissingRequiredFields(paymentInvitation, paymentEvent.kind);
+    const paymentEventTypeConfig = await getEventTypeConfig(supabase, paymentEvent.kind);
+    const missingFields = getAllMissingRequiredFields(paymentInvitation, paymentEvent.kind, paymentEventTypeConfig);
     if (missingFields.length) return json({ error: "발행을 위해 필요한 정보를 확인해 주세요.", missingFields }, 400);
 
     const paidAt = paymentEvent.paid_at || new Date().toISOString();
@@ -218,7 +229,8 @@ export async function POST(request) {
   const eventKind = invitation.eventKind || "wedding";
   if (!eventKinds.has(eventKind)) return json({ error: "지원하지 않는 행사 종류예요." }, 400);
   if (publish) {
-    const missingFields = getMissingRequiredFields(invitation, eventKind);
+    const eventTypeConfig = await getEventTypeConfig(supabase, eventKind);
+    const missingFields = getAllMissingRequiredFields(invitation, eventKind, eventTypeConfig);
     if (missingFields.length) return json({ error: "발행을 위해 필요한 정보를 확인해 주세요.", missingFields }, 400);
   }
   const hasTemplateId = Object.prototype.hasOwnProperty.call(invitation, "templateId");
@@ -244,7 +256,8 @@ export async function POST(request) {
   // Validate the complete incoming editor payload before allowing a published save.
   if (existing?.status === "published") {
     const publishedKind = invitation.eventKind || existing.kind || "wedding";
-    const missingFields = getMissingRequiredFields(invitation, publishedKind);
+    const publishedEventTypeConfig = await getEventTypeConfig(supabase, publishedKind);
+    const missingFields = getAllMissingRequiredFields(invitation, publishedKind, publishedEventTypeConfig);
     if (missingFields.length) {
       return json({
         error: "발행된 초대장의 필수 정보가 비어 있어 저장을 중단했어요. 새로고침 후 다시 확인해 주세요.",
