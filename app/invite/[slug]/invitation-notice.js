@@ -2,13 +2,14 @@
 import { useEffect, useState } from "react";
 import { normalizeNotice } from "../../../lib/invitation-notice";
 
-export default function InvitationNotice({ notice: rawNotice, slug, imageUrl }) {
+export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, preview = false }) {
   const notice = normalizeNotice(rawNotice);
   const [open, setOpen] = useState(false);
   const [skipToday, setSkipToday] = useState(false);
   const storageKey = `dearday-notice:${slug}:${notice.version}`;
   useEffect(() => {
     if (!notice.enabled || !notice.title || !notice.body) return;
+    if (preview) { setOpen(true); return; }
     const releaseHeroIntro = () => document.querySelector(".shared-public-invitation")?.classList.remove("dd-hero-intro-waits-for-notice");
     try {
       const hiddenDate = window.localStorage.getItem(storageKey);
@@ -16,7 +17,7 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl }) 
       if (hiddenDate !== today) setOpen(true);
       else releaseHeroIntro();
     } catch { setOpen(true); }
-  }, [notice.enabled, notice.title, notice.body, storageKey]);
+  }, [notice.enabled, notice.title, notice.body, storageKey, preview]);
   if (!notice.enabled || !notice.title || !notice.body) return null;
   const close = () => {
     if (skipToday) {
