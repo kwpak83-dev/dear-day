@@ -764,7 +764,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-sections-configured .dd-growth-timeline{order:calc(var(--dd-section-invitation-order) + 0.5)}
 .dd-template-sections-configured .classic-date{order:calc(var(--dd-section-location-order) - 0.25)}
 .dd-template-sections-configured .dd-extended-event-info{order:calc(var(--dd-section-location-order) + 0.25)}
-.dd-template-sections-configured .dd-transport-guide{order:calc(var(--dd-section-gallery-order) + 0.25)}
+.dd-template-sections-configured .dd-transport-guide{order:calc(var(--dd-section-gallery-order, var(--dd-section-location-order)) + 0.25)}
 .dd-template-sections-configured.dd-event-first_birthday .dd-parents-intro{order:calc(var(--dd-section-location-order) + 0.1)}
 .dd-template-sections-configured.dd-event-first_birthday .dd-growth-timeline{order:calc(var(--dd-section-location-order) + 0.2)}
 .dd-template-sections-configured.dd-event-first_birthday .dd-extended-event-info{order:calc(var(--dd-section-location-order) + 0.3)}
