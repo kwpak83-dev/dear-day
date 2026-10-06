@@ -175,7 +175,7 @@ function BankSelector({ value, onChange }) {
   );
 }
 const USER_SCREEN_EFFECTS = [["green", "초록 나뭇잎"], ["autumn", "가을 낙엽"], ["snow", "눈송이"], ["rose", "장미 꽃잎"], ["lavender", "라벤더 꽃잎"], ["daisy", "데이지 꽃"], ["heart", "하트"], ["color-confetti", "컬러 컨페티"], ["balloon", "파스텔 풍선"], ["bubble", "비눗방울"]];
-const initialInvitation = { eventKind: "wedding", templateId: "", heroPresetId: "", heroTextOverrides: {}, heroLayerOverrides: {}, heroExtraTextLayers: [], rsvpEnabled: true, guestbookEnabled: true, eventTitle: "", hostName: "", person1Name: "", person1NameLastName: "", person1NameFirstName: "", person2Name: "", person2NameLastName: "", person2NameFirstName: "", childName: "", childNameLastName: "", childNameFirstName: "", parent1Name: "", parent2Name: "", birthDate: "", dueDate: "", age: "", anniversaryYears: "", organizationName: "", programName: "", coverPhotoUrl: "", kakaoShareImageUrl: "", 
+const initialInvitation = { eventKind: "wedding", templateId: "", heroPresetId: "", heroTextOverrides: {}, heroLayerOverrides: {}, heroExtraTextLayers: [], rsvpEnabled: true, guestbookEnabled: true, eventTitle: "", hostName: "", person1Name: "", person1NameLastName: "", person1NameFirstName: "", person2Name: "", person2NameLastName: "", person2NameFirstName: "", childName: "", childNameLastName: "", childNameFirstName: "", parent1Name: "", parent2Name: "", birthDate: "", dueDate: "", age: "", anniversaryYears: "", organizationName: "", programName: "", details: "", externalLink: "", brandImageUrl: "", coverPhotoUrl: "", kakaoShareImageUrl: "", 
 parentsIntroEnabled: false, parent1PhotoUrl: "", parent1Intro: "", parent2PhotoUrl: "", parent2Intro: "", timelineEnabled: false, timelineItems: [], parent1Phone: "", parent2Phone: "", groom: "", groomLastName: "", groomFirstName: "", groomPhone: "", groomFatherPhone: "", groomMotherPhone: "", bridePhone: "", brideFatherPhone: "", brideMotherPhone: "",
 groomFatherName: "",
 groomFatherDeceased: false,
@@ -558,6 +558,31 @@ export default function CreateInvitation() {
       setUploadingPhoto(false);
     }
   };
+  const uploadBrandImage = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || photoBusy.current || submitting || galleryBusy) return;
+    photoBusy.current = true;
+    setUploadingPhoto(true);
+    setPhotoNotice("로고·대표이미지를 준비하고 있어요.");
+    try {
+      const supabase = getSupabaseBrowserClient();
+      if (!supabase) throw new Error("사진 저장 서비스를 준비하지 못했어요.");
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("로그인 후 이미지를 첨부할 수 있어요.");
+      const photo = await preparePhoto(file);
+      const response = await fetch("/api/photos", { method: "POST", headers: { "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.url) throw new Error(result.error || "이미지 업로드에 실패했어요.");
+      update("brandImageUrl", result.url);
+      setPhotoNotice("로고·대표이미지를 첨부했어요.");
+    } catch (error) {
+      setPhotoNotice(error.message || "이미지를 업로드하지 못했어요.");
+    } finally {
+      photoBusy.current = false;
+      setUploadingPhoto(false);
+    }
+  };
   const uploadParentIntroPhoto = async (event, key) => {
     const file=event.target.files?.[0]; event.target.value="";
     if(!file||photoBusy.current||submitting||galleryBusy)return;
@@ -691,6 +716,9 @@ export default function CreateInvitation() {
   const noticeMatrix = matrixField("notice", "공지사항");
   const rsvpMatrix = matrixField("rsvp", "참석 여부");
   const guestbookMatrix = matrixField("guestbook", "방명록");
+  const detailsMatrix = matrixField("details", "행사 세부안내");
+  const externalLinkMatrix = matrixField("external_link", "외부링크");
+  const brandImageMatrix = matrixField("brand_image", "로고·대표이미지");
   const selectedBgmTrack = bgmTracks.find((track) => track.id === invitation.userBgmTrackId) || null;
   const renderConfigField = (field) => {
     if (field.type === "splitName") {
@@ -845,6 +873,9 @@ export default function CreateInvitation() {
       if (!hasTransport) missingFields.push(transportMatrix.label);
     }
     if (noticeMatrix.state === "required" && (!String(invitation.notice?.title || "").trim() || !String(invitation.notice?.body || "").trim())) missingFields.push(noticeMatrix.label);
+    if (detailsMatrix.state === "required" && !String(invitation.details || "").trim()) missingFields.push(detailsMatrix.label);
+    if (externalLinkMatrix.state === "required" && !String(invitation.externalLink || "").trim()) missingFields.push(externalLinkMatrix.label);
+    if (brandImageMatrix.state === "required" && !String(invitation.brandImageUrl || "").trim()) missingFields.push(brandImageMatrix.label);
     if (!missingFields.length) return true;
 
     const message = `필수 항목을 입력해 주세요: ${missingFields.join(", ")}`;
@@ -959,6 +990,11 @@ export default function CreateInvitation() {
         <div className="dd-required-fields" style={{display:editorStep === 0 ? undefined : "none"}}>
         <div className="form-section"><h2>행사 종류</h2><Field label="초대장 종류"><select value={invitation.eventKind} onChange={(e) => update("eventKind", e.target.value)}>{EVENT_KIND_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></Field></div>
         {eventConfig.sections.map((section) => <div className="form-section" key={section.id}><h2>{section.title}</h2>{section.rows.map((row, rowIndex) => row.length > 1 ? <div className="field-grid" key={rowIndex}>{row.map(renderConfigField)}</div> : row.map(renderConfigField))}</div>)}
+        {(detailsMatrix.state !== "none" || externalLinkMatrix.state !== "none" || brandImageMatrix.state !== "none") && <div className="form-section"><h2>추가 행사 정보</h2>
+          {detailsMatrix.state !== "none" && <Field label={detailsMatrix.label} fieldKey="details"><textarea rows={5} maxLength={2000} value={invitation.details || ""} onChange={event => update("details", event.target.value)} /></Field>}
+          {externalLinkMatrix.state !== "none" && <Field label={externalLinkMatrix.label} fieldKey="externalLink"><input type="url" inputMode="url" placeholder="https://..." value={invitation.externalLink || ""} onChange={event => update("externalLink", event.target.value)} /></Field>}
+          {brandImageMatrix.state !== "none" && <Field label={brandImageMatrix.label} fieldKey="brandImageUrl"><div className="dd-notice-image-editor">{invitation.brandImageUrl && <div className="dd-notice-image-preview"><img src={invitation.brandImageUrl} alt={brandImageMatrix.label} /></div>}<label className="dd-notice-file-button">{invitation.brandImageUrl ? "이미지 변경" : "이미지 선택"}<input type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadBrandImage} disabled={uploadingPhoto || Boolean(submitting) || galleryBusy} /></label>{invitation.brandImageUrl && <button type="button" className="dd-notice-image-delete" onClick={() => update("brandImageUrl", "")}>이미지 삭제</button>}</div></Field>}
+        </div>}
         </div>
         <div style={{display:editorStep === 1 ? undefined : "none"}}>
         <details className="dd-custom-accordion" open><summary><span><strong>HERO 프레임</strong><small>초대장의 첫 화면 디자인을 선택하세요.</small></span><span className="dd-accordion-chevron" aria-hidden="true">⌄</span></summary><div className="dd-accordion-body">
