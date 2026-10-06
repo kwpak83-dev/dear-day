@@ -1,11 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { normalizeNotice } from "../../../lib/invitation-notice";
 
 export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, preview = false }) {
   const notice = normalizeNotice(rawNotice);
   const [open, setOpen] = useState(false);
   const [skipToday, setSkipToday] = useState(false);
+  const [previewPortal, setPreviewPortal] = useState(null);
   const storageKey = `dearday-notice:${slug}:${notice.version}`;
   useEffect(() => {
     if (!notice.enabled || !notice.title || !notice.body) return;
@@ -18,6 +20,11 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
       else releaseHeroIntro();
     } catch { setOpen(true); }
   }, [notice.enabled, storageKey, preview]);
+  useEffect(() => {
+    if (!preview) { setPreviewPortal(null); return; }
+    const marker = document.querySelector(`[data-dd-notice-preview="${slug}"]`);
+    setPreviewPortal(marker?.closest(".admin-draft-preview-device, .admin-draft-full-preview-device, .full-preview-document, .preview-phone") || null);
+  }, [preview, slug]);
   if (!notice.enabled || !notice.title || !notice.body) return null;
   const close = () => {
     if (skipToday) {
@@ -30,8 +37,10 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
     setSkipToday(false);
     document.querySelector(".shared-public-invitation")?.classList.remove("dd-hero-intro-waits-for-notice");
   };
+  const trigger = <button type="button" className="dd-notice-trigger" onClick={() => setOpen(true)}>공지사항</button>;
   return <>
-    <button type="button" className="dd-notice-trigger" onClick={() => setOpen(true)}>공지사항</button>
+    <span data-dd-notice-preview={preview ? slug : undefined} style={{display:"none"}} />
+    {preview && previewPortal ? createPortal(trigger, previewPortal) : trigger}
     {open && <div className="dd-notice-overlay" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) close(); }}>
       <section className="dd-notice-dialog" role="dialog" aria-modal="true" aria-labelledby="dd-notice-title">
         <div className="dd-notice-top"><span>NOTICE</span><button type="button" aria-label="공지사항 닫기" onClick={close}>×</button></div>
