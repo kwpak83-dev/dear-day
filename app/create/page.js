@@ -505,6 +505,34 @@ export default function CreateInvitation() {
     if (lastMappedAddress.current === invitation.venueAddress.trim()) return;
     geocodeAddress(invitation.venueAddress, { updateAddress: false });
   }, [invitation.venueAddress, mapRevision]);
+  const changeEventKind = (nextEventKind) => {
+    if (!nextEventKind || nextEventKind === invitation.eventKind) return;
+    if (eventStatus === "published") {
+      window.alert("발행된 초대장은 행사 유형을 변경할 수 없어요. 같은 행사 유형의 템플릿만 변경할 수 있습니다.");
+      return;
+    }
+    const confirmed = window.confirm("행사 유형을 변경하면 현재 작성한 내용과 선택한 템플릿이 모두 초기화됩니다.\n\n초기화 후 변경하시겠습니까?");
+    if (!confirmed) return;
+
+    setInvitation({ ...initialInvitation, eventKind: nextEventKind });
+    setGalleryPhotos([]);
+    setPreviewTemplateId("");
+    setTemplateRender({ config: null, assets: {} });
+    setPreviewOpen(false);
+    setEditorStep(0);
+    setTemplateNotice("");
+    setFlowNotice("");
+    setSaveNotice("");
+    setPhotoNotice("");
+    setBgmNotice("");
+    setKakaoSharePhotoNotice("");
+    setVenueBuildingAuto(false);
+    setPlaceResults([]);
+    lastMappedAddress.current = "";
+    templateSelectionChanged.current = false;
+    window.localStorage.removeItem("dear-day-draft");
+    window.localStorage.removeItem("dear-day-template-start");
+  };
   const update = (key, value) => setInvitation((current) => ({ ...current, [key]: value }));
   const uploadBgm = async (event) => {
     const file = event.target.files?.[0];
@@ -992,7 +1020,7 @@ export default function CreateInvitation() {
         <nav className="dd-editor-steps" aria-label="초대장 제작 단계">{["기본정보", "디자인", "사진·연락처", "음악·효과", "부가기능", "확인·발행"].map((label, index) => <button key={label} type="button" className={editorStep === index ? "active" : ""} aria-current={editorStep === index ? "step" : undefined} onClick={() => setEditorStep(index)}><span>{String(index + 1).padStart(2, "0")}</span><strong>{label}</strong></button>)}</nav>
         <div className="dd-editor-step-intro"><p className="section-kicker">STEP {editorStep + 1} OF 6</p><h1>{["기본정보", "디자인", "사진·연락처", "음악·효과", "부가기능", "확인·발행"][editorStep]}</h1><p className="editor-intro">{["초대장에 필요한 기본 정보와 마음 전하실 곳을 입력해 주세요.", "HERO 프레임과 본문 테마를 선택해 주세요.", "대표사진과 갤러리, 연락처를 설정해 주세요.", "배경음악과 화면 효과를 설정해 주세요.", "공지사항과 참석 여부, 방명록 기능을 설정해 주세요.", "최종 확인 후 결제하고 직접 발행해 주세요."][editorStep]}</p></div>
         <div className="dd-required-fields" style={{display:editorStep === 0 ? undefined : "none"}}>
-        <div className="form-section"><h2>행사 종류</h2><Field label="초대장 종류"><select value={invitation.eventKind} onChange={(e) => update("eventKind", e.target.value)}>{EVENT_KIND_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></Field></div>
+        <div className="form-section"><h2>행사 종류</h2><Field label="초대장 종류"><select value={invitation.eventKind} onChange={(e) => changeEventKind(e.target.value)} disabled={eventStatus === "published"}>{EVENT_KIND_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></Field></div>
         {eventConfig.sections.map((section) => <div className="form-section" key={section.id}><h2>{section.title}</h2>{section.rows.map((row, rowIndex) => row.length > 1 ? <div className="field-grid" key={rowIndex}>{row.map(renderConfigField)}</div> : row.map(renderConfigField))}</div>)}
         {(detailsMatrix.state !== "none" || externalLinkMatrix.state !== "none" || brandImageMatrix.state !== "none") && <div className="form-section"><h2>추가 행사 정보</h2>
           {detailsMatrix.state !== "none" && <Field label={detailsMatrix.label} fieldKey="details"><textarea rows={5} maxLength={2000} value={invitation.details || ""} onChange={event => update("details", event.target.value)} /></Field>}
