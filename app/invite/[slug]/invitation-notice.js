@@ -17,7 +17,7 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
       if (hiddenDate !== today) setOpen(true);
       else releaseHeroIntro();
     } catch { setOpen(true); }
-  }, [notice.enabled, notice.title, notice.body, storageKey, preview]);
+  }, [notice.enabled, storageKey, preview]);
   if (!notice.enabled || !notice.title || !notice.body) return null;
   const close = () => {
     if (skipToday) {
