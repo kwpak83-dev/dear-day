@@ -670,10 +670,18 @@ export default function CreateInvitation() {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "업로드 실패");
       updateNotice("imagePath", result.path);
+      if (result.url) setNoticePreviewUrl(result.url);
       setNoticeUploadMessage("이미지가 첨부됐어요. 수정사항 반영을 눌러 주세요.");
     } catch (error) { setNoticeUploadMessage(error.message || "이미지 업로드 실패"); }
     finally { setNoticeUploadBusy(false); }
   };
+  useEffect(() => {
+    if (noticePreviewUrl || !invitation.notice?.imagePath) return;
+    const supabase = getSupabaseBrowserClient();
+    const publicUrl = supabase.storage.from("invitation-photos").getPublicUrl(invitation.notice.imagePath).data.publicUrl;
+    if (publicUrl) setNoticePreviewUrl(publicUrl);
+  }, [invitation.notice?.imagePath, noticePreviewUrl]);
+
   const searchPlaces = async () => {
     const query = invitation.venue.trim();
     if (!query) return setMapNotice("예식장 이름을 입력해 주세요.");
