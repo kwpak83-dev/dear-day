@@ -52,7 +52,10 @@ const EVENT_PRESENTERS = {
     brideRelation: parentRelation(item, [["brideFatherName", "brideFatherDeceased"], ["brideMotherName", "brideMotherDeceased"]], "bride", "딸"),
   }),
   first_birthday: (item) => ({ title: clean(item.childName), detail: join([item.parent1Name, item.parent2Name]), note: item.birthDate ? "생일 " + formatDate(item.birthDate) : "" }),
-  birthday: (item) => ({ title: clean(item.person1Name), detail: item.age ? clean(item.age) + "번째 생일" : "" }),
+  birthday: (item) => ({ title: clean(item.eventTitle) || clean(item.person1Name), detail: item.eventTitle ? clean(item.person1Name) : item.age ? clean(item.age) + "번째 생일" : "" }),
+  milestone_birthday: (item) => ({ title: clean(item.eventTitle) || clean(item.person1Name), detail: item.eventTitle ? join([item.person1Name, item.hostName]) : clean(item.hostName) }),
+  gathering: (item) => ({ title: clean(item.eventTitle), detail: join([item.person1Name, item.hostName]) }),
+  opening: (item) => ({ title: clean(item.eventTitle), detail: join([item.person1Name, item.hostName]) }),
   baby_shower: (item) => ({ title: clean(item.childName), detail: join([item.parent1Name, item.parent2Name]), note: item.dueDate ? "출산 예정일 " + formatDate(item.dueDate) : "" }),
   bridal_shower: (item) => ({ title: titledPerson(item.eventTitle, item.person1Name) }),
   anniversary: (item) => ({ title: clean(item.eventTitle) || join([item.person1Name, item.person2Name], " & "), detail: item.anniversaryYears ? clean(item.anniversaryYears) + "주년" : "", note: item.eventTitle ? join([item.person1Name, item.person2Name]) : "" }),
@@ -69,7 +72,9 @@ export function getInvitationPresentation(invitation = {}, eventKind) {
   const event = (EVENT_PRESENTERS[kind] || EVENT_PRESENTERS.other)(invitation);
   const heroTitle = kind === "wedding" ? join([heroName(invitation, "groom"), heroName(invitation, "bride")], " & ")
     : kind === "first_birthday" || kind === "baby_shower" ? heroName(invitation, "childName")
-    : kind === "birthday" || kind === "bridal_shower" || kind === "graduation" ? heroName(invitation, "person1Name")
+    : kind === "birthday" && !clean(invitation.eventTitle) ? heroName(invitation, "person1Name")
+    : kind === "milestone_birthday" && !clean(invitation.eventTitle) ? heroName(invitation, "person1Name")
+    : kind === "bridal_shower" || kind === "graduation" ? heroName(invitation, "person1Name")
     : kind === "anniversary" && !clean(invitation.eventTitle) ? join([heroName(invitation, "person1Name"), heroName(invitation, "person2Name")], " & ")
     : clean(event.title);
 
