@@ -37,7 +37,7 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
     setSkipToday(false);
     document.querySelector(".shared-public-invitation")?.classList.remove("dd-hero-intro-waits-for-notice");
   };
-  const trigger = <button type="button" className="dd-notice-trigger" onClick={() => setOpen(true)}>공지사항</button>;
+  const trigger = <button type="button" className={`dd-notice-trigger${preview && previewPortal ? " dd-notice-trigger-preview" : ""}`} onClick={() => setOpen(true)}>공지사항</button>;
   return <>
     <span data-dd-notice-preview={preview ? slug : undefined} style={{display:"none"}} />
     {preview && previewPortal ? createPortal(trigger, previewPortal) : trigger}
