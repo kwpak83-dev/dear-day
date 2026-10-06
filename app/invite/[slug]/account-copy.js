@@ -34,7 +34,7 @@ function AccountCard({ side, bank, holder, account }) {
 export default function AccountCopy({ invitation, eventKind, eventTypeConfig }) {
   const accountConfig = getEventAccountGroups(eventKind, eventTypeConfig);
   if (!accountConfig.enabled) return null;
-  if (eventKind === "first_birthday") {
+  if (eventKind !== "wedding") {
     const rows = accountConfig.groups.map((group) => ({
       ...group,
       account: invitation[group.accountKey]?.trim(),
@@ -47,7 +47,7 @@ export default function AccountCopy({ invitation, eventKind, eventTypeConfig }) 
   const groomSide=[["신랑",invitation.groomBank,invitation.groomAccountHolder||invitation.groom, groomAccount],["신랑 아버지",invitation.groomFatherBank,invitation.groomFatherAccountHolder||invitation.groomFatherName,invitation.groomFatherAccount?.trim()],["신랑 어머니",invitation.groomMotherBank,invitation.groomMotherAccountHolder||invitation.groomMotherName,invitation.groomMotherAccount?.trim()]].filter(([, , ,account])=>account);
   const brideSide=[["신부",invitation.brideBank,invitation.brideAccountHolder||invitation.bride, brideAccount],["신부 아버지",invitation.brideFatherBank,invitation.brideFatherAccountHolder||invitation.brideFatherName,invitation.brideFatherAccount?.trim()],["신부 어머니",invitation.brideMotherBank,invitation.brideMotherAccountHolder||invitation.brideMotherName,invitation.brideMotherAccount?.trim()]].filter(([, , ,account])=>account);
   if (!groomSide.length && !brideSide.length) return null;
-  const Side=({title,rows})=>rows.length?<details className="public-account-side"><summary>{title}<span aria-hidden="true">⌄</span></summary>{rows.map(([side,bank,holder,account])=><AccountCard key={side} side={side} bank={bank} holder={holder||"예금주"} account={account}/>)}</details>:null;
+  const Side=({title,rows})=>Array.isArray(rows)&&rows.length?<details className="public-account-side"><summary>{title}<span aria-hidden="true">⌄</span></summary>{rows.map(([side,bank,holder,account])=><AccountCard key={side} side={side} bank={bank} holder={holder||"예금주"} account={account}/>)}</details>:null;
   const rowsByGroup = { groom: groomSide, bride: brideSide };
   return <section className="public-accounts"><h2>{accountConfig.sectionLabel}</h2>{accountConfig.groups.map((group) => <Side key={group.key} title={group.renderLabel} rows={rowsByGroup[group.key]}/>)}</section>;
 }
