@@ -755,14 +755,14 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-sections-configured .romantic-couple,.dd-template-sections-configured .modern-couple{order:14}
 .dd-template-sections-configured .classic-date{order:20}
 .dd-template-sections-configured .romantic-information,.dd-template-sections-configured .modern-information,.dd-template-sections-configured .classic-information{order:30}
+.dd-template-sections-configured .dd-transport-guide{order:32}
 .dd-template-sections-configured .dd-extended-event-info{order:40}
 .dd-template-sections-configured .dd-parents-intro{order:42}
 .dd-template-sections-configured .dd-growth-timeline{order:44}
-.dd-template-sections-configured.dd-event-first_birthday .dd-parents-intro{order:32}
-.dd-template-sections-configured.dd-event-first_birthday .dd-growth-timeline{order:34}
-.dd-template-sections-configured.dd-event-first_birthday .dd-extended-event-info{order:36}
+.dd-template-sections-configured.dd-event-first_birthday .dd-parents-intro{order:34}
+.dd-template-sections-configured.dd-event-first_birthday .dd-growth-timeline{order:36}
+.dd-template-sections-configured.dd-event-first_birthday .dd-extended-event-info{order:38}
 .dd-template-sections-configured .invitation-gallery{order:50}
-.dd-template-sections-configured .dd-transport-guide{order:60}
 .dd-template-sections-configured .public-accounts{order:70}
 .dd-template-sections-configured .public-rsvp{order:80}
 .dd-template-sections-configured .guestbook-section{order:90}
