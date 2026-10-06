@@ -1708,7 +1708,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 :is(.romantic-message,.modern-message,.classic-message) blockquote{word-break:keep-all;overflow-wrap:break-word;white-space:pre-line}
 
 /* Optional transport information follows the map and inherits the place section palette. */
-.dd-transport-guide{margin:18px auto 0;padding:0 16px;max-width:440px;box-sizing:border-box;color:inherit;text-align:left;font-family:inherit}
+.dd-transport-guide{width:100%;margin:18px 0 0;padding:0 28px;box-sizing:border-box;color:inherit;text-align:left;font-family:inherit}
 .dd-transport-guide h3{margin:0 0 10px;font:inherit;font-weight:700;color:inherit;text-align:center}
 .dd-transport-guide p{margin:0;white-space:pre-wrap;overflow-wrap:break-word;word-break:keep-all;font:inherit;color:inherit}
 .dd-transport-guide-toggle{display:flex;align-items:center;gap:8px;font-weight:600}
