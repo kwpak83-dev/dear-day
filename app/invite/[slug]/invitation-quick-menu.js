@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import RsvpForm from "./rsvp-form";
 import Guestbook from "./guestbook";
 
-function BottomSheet({ title, onClose, children, portalTarget = null, preview = false }) {
+function BottomSheet({ title, onClose, children, portalTarget = null, preview = false, layerStyle }) {
   useEffect(() => {
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -17,7 +17,7 @@ function BottomSheet({ title, onClose, children, portalTarget = null, preview = 
     };
   }, [onClose]);
 
-  const sheet = <div className={`invitation-bottom-sheet-layer${preview ? " invitation-bottom-sheet-layer--preview" : ""}`}>
+  const sheet = <div className={`invitation-bottom-sheet-layer${preview ? " invitation-bottom-sheet-layer--preview" : ""}`} style={layerStyle}>
     <button className="invitation-bottom-sheet-backdrop" type="button" aria-label="닫기" onClick={onClose} />
     <section className="invitation-bottom-sheet" role="dialog" aria-modal="true" aria-label={title}>
       <i className="invitation-bottom-sheet-handle" aria-hidden="true" />
@@ -39,6 +39,8 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const [sheet, setSheet] = useState(null);
   const [desktopLivePortal, setDesktopLivePortal] = useState(null);
   const [desktopLiveStyle, setDesktopLiveStyle] = useState(undefined);
+  const [previewSheetPortal, setPreviewSheetPortal] = useState(null);
+  const [previewSheetStyle, setPreviewSheetStyle] = useState(undefined);
   const markerRef = useRef(null);
   const desktopLiveStartedAtTopRef = useRef(false);
   const desktopLiveScrolledRef = useRef(false);
@@ -136,6 +138,28 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     scroller.scrollTop = 0;
     desktopLiveScrolledRef.current = false;
     setVisible(previewMode === "admin-live" || previewMode === "admin-full" || isEditorFullPreview);
+
+    const positionPreviewSheet = () => {
+      const viewportRect = scroller.getBoundingClientRect();
+      const phoneRect = phone?.getBoundingClientRect() || viewportRect;
+      const left = Math.max(viewportRect.left, phoneRect.left);
+      const right = Math.min(viewportRect.right, phoneRect.right);
+      const top = Math.max(viewportRect.top, phoneRect.top);
+      const bottom = Math.min(viewportRect.bottom, phoneRect.bottom);
+      setPreviewSheetStyle({ position: "fixed", inset: "auto", left, top, width: Math.max(0, right - left), height: Math.max(0, bottom - top) });
+    };
+    setPreviewSheetPortal(document.body);
+    positionPreviewSheet();
+    scroller.addEventListener("scroll", positionPreviewSheet, { passive: true });
+    window.addEventListener("resize", positionPreviewSheet);
+    const resizeObserver = new ResizeObserver(positionPreviewSheet);
+    resizeObserver.observe(scroller);
+    if (phone) resizeObserver.observe(phone);
+    return () => {
+      scroller.removeEventListener("scroll", positionPreviewSheet);
+      window.removeEventListener("resize", positionPreviewSheet);
+      resizeObserver.disconnect();
+    };
   }, [isDesktopLivePreview, isEditorFullPreview, isSalesPreview, previewMode, invitation.templateId]);
 
   useEffect(() => {
@@ -270,10 +294,10 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><QuickMenuIcon kind="guestbook" /><span className="invitation-quick-copy"><strong>{guestbookLabel}</strong><small>축하 메시지 남겨주세요~!</small></span></button>}
     </nav>)}
-    {sheet === "rsvp" && rsvpEnabled && <BottomSheet title={rsvpLabel} onClose={closeSheet} portalTarget={usesPreviewPortal ? desktopLivePortal : null} preview={usesPreviewPortal}>
+    {sheet === "rsvp" && rsvpEnabled && <BottomSheet title={rsvpLabel} onClose={closeSheet} portalTarget={usesPreviewPortal ? (isDesktopLivePreview ? previewSheetPortal : desktopLivePortal) : null} preview={usesPreviewPortal} layerStyle={isDesktopLivePreview ? previewSheetStyle : undefined}>
       <RsvpForm slug={slug} startsAt={startsAt} preview={Boolean(previewMode)} title={rsvpLabel} />
     </BottomSheet>}
-    {sheet === "guestbook" && guestbookEnabled && <BottomSheet title={guestbookLabel} onClose={closeSheet} portalTarget={usesPreviewPortal ? desktopLivePortal : null} preview={usesPreviewPortal}>
+    {sheet === "guestbook" && guestbookEnabled && <BottomSheet title={guestbookLabel} onClose={closeSheet} portalTarget={usesPreviewPortal ? (isDesktopLivePreview ? previewSheetPortal : desktopLivePortal) : null} preview={usesPreviewPortal} layerStyle={isDesktopLivePreview ? previewSheetStyle : undefined}>
       <Guestbook slug={slug} preview={Boolean(previewMode)} title={guestbookLabel} />
     </BottomSheet>}
   </>;

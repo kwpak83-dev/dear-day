@@ -713,7 +713,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .admin-draft-preview-toolbar h3,.admin-draft-preview-toolbar p{margin:0}.admin-draft-preview-toolbar p{margin-top:3px;color:#876f64;font-size:12px}
 .admin-draft-preview-widths{display:flex;gap:6px;flex:none}.admin-draft-preview-widths button{border:1px solid #d9c5b9;border-radius:7px;background:#fff;padding:7px 9px;color:#60483e}.admin-draft-preview-widths button.active{border-color:#a86f5d;background:#f3dfd6;font-weight:700}
 .admin-draft-preview-status{margin:0;padding:28px 16px;text-align:center;color:#806b62}
-.admin-draft-preview-scroll{max-height:720px;overflow:auto;padding:16px 10px;background:#e9e1dc;overscroll-behavior:contain}
+.admin-draft-preview-scroll{position:relative;max-height:720px;overflow:auto;padding:16px 10px;background:#e9e1dc;overscroll-behavior:contain}
 .admin-draft-preview-device{max-width:100%;margin:0 auto;background:#fffaf5;box-shadow:0 10px 28px rgba(70,43,35,.14);transition:width .2s ease}
 .admin-draft-preview-device .invitation-template{min-height:0}.admin-draft-preview-device button:disabled{cursor:default}
 @media(max-width:600px){.admin-draft-preview-toolbar{align-items:flex-start;flex-direction:column}.admin-draft-preview-widths{width:100%}.admin-draft-preview-widths button{flex:1}.admin-draft-preview-scroll{max-height:70vh;padding:10px 6px}}
@@ -1575,13 +1575,13 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* Public invitation notice */
 .shared-public-invitation{position:relative}
-.dd-notice-trigger{position:fixed;z-index:85;right:max(0px,calc((100vw - min(100vw,540px))/2));top:50%;bottom:auto;transform:translateY(-50%);min-width:34px;min-height:54px;border:1px solid #e9dfd8 !important;border-right:0 !important;border-radius:14px 0 0 14px !important;background:rgba(255,255,255,.94) !important;background-image:none !important;color:#423b37 !important;-webkit-text-fill-color:#423b37 !important;padding:8px 6px;font:600 10px/1.25 inherit;line-height:1.25;writing-mode:vertical-rl;text-orientation:upright;letter-spacing:.08em;box-shadow:-2px 2px 12px #00000012;cursor:pointer}
+.dd-notice-trigger{position:fixed;z-index:85;right:max(0px,calc((100vw - min(100vw,540px))/2));top:50%;bottom:auto;transform:translateY(-50%);width:34px;min-width:34px;max-width:34px;height:auto;min-height:54px;max-height:none;border:1px solid #e9dfd8 !important;border-right:0 !important;border-radius:14px 0 0 14px !important;background:rgba(255,255,255,.94) !important;background-image:none !important;color:#423b37 !important;-webkit-text-fill-color:#423b37 !important;padding:8px 6px;font:600 10px/1.25 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.25;writing-mode:vertical-rl;text-orientation:upright;white-space:nowrap;word-break:keep-all;overflow-wrap:normal;letter-spacing:.08em;box-sizing:border-box;box-shadow:-2px 2px 12px #00000012;cursor:pointer}
 @media (min-width:901px){
   .preview-content .dd-notice-trigger{position:absolute;right:0;top:50%;bottom:auto;transform:translateY(-50%);z-index:85;background:rgba(255,255,255,.94) !important;color:#423b37 !important;-webkit-text-fill-color:#423b37 !important}
 }
 .full-preview-document .dd-notice-trigger{right:max(0px,calc((100vw - min(100vw,540px))/2));top:50%;bottom:auto;transform:translateY(-50%);background:rgba(255,255,255,.94) !important;color:#423b37 !important;-webkit-text-fill-color:#423b37 !important}
 .admin-draft-preview-scroll>.dd-notice-trigger-preview,
-.admin-draft-full-preview>.dd-notice-trigger-preview{position:sticky;float:right;top:50%;right:0;transform:translateY(-50%);z-index:85;margin-left:-34px}
+.admin-draft-full-preview>.dd-notice-trigger-preview{z-index:85;margin:0}
 .dd-notice-overlay{position:fixed;inset:0;z-index:10000;background:#0008;display:flex;align-items:center;justify-content:center;padding:20px}
 .dd-notice-dialog{box-sizing:border-box;width:min(100%,420px);max-height:min(85dvh,720px);overflow:auto;background:#fff;border-radius:18px;padding:24px;color:#302b29;box-shadow:0 16px 60px #0003}
 .dd-notice-top,.dd-notice-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px}

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { normalizeNotice } from "../../../lib/invitation-notice";
 
@@ -8,6 +8,8 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
   const [open, setOpen] = useState(false);
   const [skipToday, setSkipToday] = useState(false);
   const [previewPortal, setPreviewPortal] = useState(null);
+  const [previewTriggerStyle, setPreviewTriggerStyle] = useState(undefined);
+  const previewMarkerRef = useRef(null);
   const storageKey = `dearday-notice:${slug}:${notice.version}`;
   useEffect(() => {
     if (!notice.enabled || !notice.title || !notice.body) return;
@@ -21,10 +23,36 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
     } catch { setOpen(true); }
   }, [notice.enabled, storageKey, preview]);
   useEffect(() => {
-    if (!preview) { setPreviewPortal(null); return; }
-    const marker = document.querySelector(`[data-dd-notice-preview="${slug}"]`);
-    const device = marker?.closest(".admin-draft-preview-device, .admin-draft-full-preview-device, .full-preview-document, .preview-phone");
-    setPreviewPortal(device?.closest(".admin-draft-preview-scroll, .admin-draft-full-preview") || device || null);
+    if (!preview) { setPreviewPortal(null); setPreviewTriggerStyle(undefined); return; }
+    const marker = previewMarkerRef.current;
+    const device = marker?.closest(".admin-draft-preview-device, .admin-draft-full-preview-device, .full-preview-document, .preview-phone, .full-invitation-renderer");
+    const adminViewport = device?.closest(".admin-draft-preview-scroll, .admin-draft-full-preview") || null;
+    if (!device) { setPreviewPortal(null); setPreviewTriggerStyle(undefined); return; }
+    if (!adminViewport) { setPreviewPortal(device); setPreviewTriggerStyle(undefined); return; }
+
+    const positionTrigger = () => {
+      const viewportRect = adminViewport.getBoundingClientRect();
+      const deviceRect = device.getBoundingClientRect();
+      setPreviewTriggerStyle({
+        position: "absolute",
+        top: adminViewport.scrollTop + adminViewport.clientHeight / 2,
+        left: adminViewport.scrollLeft + deviceRect.right - viewportRect.left,
+        right: "auto",
+        transform: "translate(-100%, -50%)",
+      });
+    };
+    positionTrigger();
+    setPreviewPortal(adminViewport);
+    adminViewport.addEventListener("scroll", positionTrigger, { passive: true });
+    window.addEventListener("resize", positionTrigger);
+    const resizeObserver = new ResizeObserver(positionTrigger);
+    resizeObserver.observe(adminViewport);
+    resizeObserver.observe(device);
+    return () => {
+      adminViewport.removeEventListener("scroll", positionTrigger);
+      window.removeEventListener("resize", positionTrigger);
+      resizeObserver.disconnect();
+    };
   }, [preview, slug]);
   if (!notice.enabled || !notice.title || !notice.body) return null;
   const close = () => {
@@ -38,10 +66,10 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
     setSkipToday(false);
     document.querySelector(".shared-public-invitation")?.classList.remove("dd-hero-intro-waits-for-notice");
   };
-  const trigger = <button type="button" className={`dd-notice-trigger${preview && previewPortal ? " dd-notice-trigger-preview" : ""}`} onClick={() => setOpen(true)}>공지사항</button>;
+  const trigger = <button type="button" className={`dd-notice-trigger${preview && previewPortal ? " dd-notice-trigger-preview" : ""}`} style={previewTriggerStyle} onClick={() => setOpen(true)}>공지사항</button>;
   return <>
-    <span data-dd-notice-preview={preview ? slug : undefined} style={{display:"none"}} />
-    {preview && previewPortal ? createPortal(trigger, previewPortal) : trigger}
+    <span ref={previewMarkerRef} data-dd-notice-preview={preview ? slug : undefined} style={{display:"none"}} />
+    {preview ? (previewPortal ? createPortal(trigger, previewPortal) : null) : trigger}
     {open && <div className="dd-notice-overlay" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) close(); }}>
       <section className="dd-notice-dialog" role="dialog" aria-modal="true" aria-labelledby="dd-notice-title">
         <div className="dd-notice-top"><span>NOTICE</span><button type="button" aria-label="공지사항 닫기" onClick={close}>×</button></div>
