@@ -10,7 +10,7 @@ const slugPattern = /^[a-z0-9-]{4,80}$/;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const photoBucket = "invitation-photos";
 const eventKinds = new Set([
-  "wedding", "first_birthday", "birthday", "baby_shower",
+  "wedding", "first_birthday", "birthday", "milestone_birthday", "gathering", "opening", "baby_shower",
   "bridal_shower", "anniversary", "housewarming", "graduation",
   "corporate", "party", "other",
 ]);
