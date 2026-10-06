@@ -23,6 +23,7 @@ import { getEventContactRoles } from "../../lib/event-contact-roles";
 import { getEventAccountGroups } from "../../lib/event-account-groups";
 import { BANK_OPTIONS } from "../../lib/bank-options";
 import DearDayLogo from "../../components/dearday-logo";
+import ExtendedEventInfo from "../../components/invitation/extended-event-info";
 
 const DEVELOPMENT_TEMPLATE_IDS = new Set(Object.values(TEMPLATE_IDS));
 const WEDDING_MESSAGE_EXAMPLES = [
@@ -174,21 +175,7 @@ function BankSelector({ value, onChange }) {
     </div>
   );
 }
-function ExtendedEventInfo({ invitation, eventTypeConfig }) {
-  const fields = eventTypeConfig?.fields || {};
-  const details = fields.details;
-  const externalLink = fields.external_link;
-  const brandImage = fields.brand_image;
-  const showDetails = details?.state && details.state !== "none" && String(invitation.details || "").trim();
-  const showLink = externalLink?.state && externalLink.state !== "none" && String(invitation.externalLink || "").trim();
-  const showImage = brandImage?.state && brandImage.state !== "none" && String(invitation.brandImageUrl || "").trim();
-  if (!showDetails && !showLink && !showImage) return null;
-  return <section className="dd-extended-event-info">
-    {showImage && <img src={invitation.brandImageUrl} alt={brandImage?.label || "로고·대표이미지"} />}
-    {showDetails && <div><p className="section-kicker">INFORMATION</p><h2>{details?.label || "행사 세부안내"}</h2><p>{invitation.details}</p></div>}
-    {showLink && <a href={invitation.externalLink} target="_blank" rel="noopener noreferrer">{externalLink?.label || "외부링크"} ↗</a>}
-  </section>;
-}
+
 const USER_SCREEN_EFFECTS = [["green", "초록 나뭇잎"], ["autumn", "가을 낙엽"], ["snow", "눈송이"], ["rose", "장미 꽃잎"], ["lavender", "라벤더 꽃잎"], ["daisy", "데이지 꽃"], ["heart", "하트"], ["color-confetti", "컬러 컨페티"], ["balloon", "파스텔 풍선"], ["bubble", "비눗방울"]];
 const initialInvitation = { eventKind: "wedding", templateId: "", heroPresetId: "", heroTextOverrides: {}, heroLayerOverrides: {}, heroExtraTextLayers: [], rsvpEnabled: true, guestbookEnabled: true, eventTitle: "", hostName: "", person1Name: "", person1NameLastName: "", person1NameFirstName: "", person2Name: "", person2NameLastName: "", person2NameFirstName: "", childName: "", childNameLastName: "", childNameFirstName: "", parent1Name: "", parent2Name: "", birthDate: "", dueDate: "", age: "", anniversaryYears: "", organizationName: "", programName: "", details: "", externalLink: "", brandImageUrl: "", coverPhotoUrl: "", kakaoShareImageUrl: "", 
 parentsIntroEnabled: false, parent1PhotoUrl: "", parent1Intro: "", parent2PhotoUrl: "", parent2Intro: "", timelineEnabled: false, timelineItems: [], parent1Phone: "", parent2Phone: "", groom: "", groomLastName: "", groomFirstName: "", groomPhone: "", groomFatherPhone: "", groomMotherPhone: "", bridePhone: "", brideFatherPhone: "", brideMotherPhone: "",
