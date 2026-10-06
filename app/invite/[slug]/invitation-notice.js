@@ -23,7 +23,8 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
   useEffect(() => {
     if (!preview) { setPreviewPortal(null); return; }
     const marker = document.querySelector(`[data-dd-notice-preview="${slug}"]`);
-    setPreviewPortal(marker?.closest(".admin-draft-preview-device, .admin-draft-full-preview-device, .full-preview-document, .preview-phone") || null);
+    const device = marker?.closest(".admin-draft-preview-device, .admin-draft-full-preview-device, .full-preview-document, .preview-phone");
+    setPreviewPortal(device?.closest(".admin-draft-preview-scroll, .admin-draft-full-preview") || device || null);
   }, [preview, slug]);
   if (!notice.enabled || !notice.title || !notice.body) return null;
   const close = () => {
