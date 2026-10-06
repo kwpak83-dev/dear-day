@@ -11,7 +11,7 @@ export default function WeddingContacts({ invitation, eventTypeConfig }) {
   const [expanded, setExpanded] = useState(false);
   const contacts = getEventContactRoles(invitation?.eventKind, eventTypeConfig);
   if (!contacts.enabled) return null;
-  if (invitation?.eventKind === "first_birthday") {
+  if (invitation?.eventKind !== "wedding") {
     if (!contacts.roles.some((role) => invitation[role.phoneKey])) return null;
     return <section className="dd-wedding-contacts" aria-label={contacts.sectionLabel}><div className="dd-contact-grid">{contacts.roles.map((role) => <Person key={role.key} title={role.renderLabel} name={invitation[role.nameKey]} phone={invitation[role.phoneKey]} />)}</div></section>;
   }
