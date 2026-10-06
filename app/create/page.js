@@ -511,12 +511,16 @@ export default function CreateInvitation() {
       window.alert("발행된 초대장은 행사 유형을 변경할 수 없어요. 같은 행사 유형의 템플릿만 변경할 수 있습니다.");
       return;
     }
+    // Auto-selected defaults (the first body template, preview state, etc.) are not
+    // user-authored data and must not trigger the destructive-change warning.
+    const systemManagedKeys = new Set(["eventKind", "templateId"]);
     const hasUserData =
       Object.keys(initialInvitation).some((key) => {
-        if (key === "eventKind") return false;
+        if (systemManagedKeys.has(key)) return false;
         return JSON.stringify(invitation[key] ?? null) !== JSON.stringify(initialInvitation[key] ?? null);
       }) ||
-      galleryPhotos.length > 0;
+      galleryPhotos.length > 0 ||
+      templateSelectionChanged.current;
 
     if (hasUserData) {
       const confirmed = window.confirm("행사 유형을 변경하면 현재 작성한 내용과 선택한 템플릿이 모두 초기화됩니다.\n\n초기화 후 변경하시겠습니까?");
