@@ -17,6 +17,22 @@ import { normalizeNotice } from "../../../lib/invitation-notice";
 import { isPublicPeriodExpired } from "../../../lib/invitation-retention";
 import { getTemplateAssetReferences, resolveTemplateAssetUrls } from "../../../lib/template-config";
 
+function ExtendedEventInfo({ invitation, eventTypeConfig }) {
+  const fields = eventTypeConfig?.fields || {};
+  const details = fields.details;
+  const externalLink = fields.external_link;
+  const brandImage = fields.brand_image;
+  const showDetails = details?.state && details.state !== "none" && String(invitation.details || "").trim();
+  const showLink = externalLink?.state && externalLink.state !== "none" && String(invitation.externalLink || "").trim();
+  const showImage = brandImage?.state && brandImage.state !== "none" && String(invitation.brandImageUrl || "").trim();
+  if (!showDetails && !showLink && !showImage) return null;
+  return <section className="dd-extended-event-info">
+    {showImage && <img src={invitation.brandImageUrl} alt={brandImage?.label || "로고·대표이미지"} />}
+    {showDetails && <div><p className="section-kicker">INFORMATION</p><h2>{details?.label || "행사 세부안내"}</h2><p>{invitation.details}</p></div>}
+    {showLink && <a href={invitation.externalLink} target="_blank" rel="noopener noreferrer">{externalLink?.label || "외부링크"} ↗</a>}
+  </section>;
+}
+
 export default async function InvitationPage({ params, searchParams }) {
   const { slug } = await params;
   const ownerView = (await searchParams)?.from === "owner";
@@ -106,7 +122,7 @@ export default async function InvitationPage({ params, searchParams }) {
     {ownerView && <nav className="owner-return-nav" aria-label="DearDay 관리 화면으로 돌아가기"><a href="/my-invitations">내 초대장</a><a href="/">DearDay 홈</a></nav>}
     {matrixFields.notice?.state !== "none" && <InvitationNotice notice={effectiveNotice} slug={slug} imageUrl={settings.notice?.imagePath ? supabase.storage.from("invitation-photos").getPublicUrl(settings.notice.imagePath).data.publicUrl : null} />}
     <div className="full-invitation-renderer dd-bgm-public-style"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} templateId={invitation.templateId} templateConfig={templateConfig} templateAssets={templateAssets} userBgmUrl={userBgmUrl} placeActions={<><AddressCopy invitation={invitation} /><InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView />{matrixFields.transport?.state !== "none" && <TransportGuide invitation={invitation} title={matrixFields.transport?.label || "교통 안내"} required={matrixFields.transport?.state === "required"} />}</>}>
-      <div className="public-invitation-sections"><ParentsIntro invitation={invitation} eventKind={invitation.eventKind} /><GrowthTimeline invitation={invitation} eventKind={invitation.eventKind} />{matrixFields.gallery?.state !== "none" && <Gallery photos={galleryPhotos} title={matrixFields.gallery?.label || "우리의 순간들"} />}<AccountCopy invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><OptionalInvitationSections invitation={invitation} eventTypeConfig={eventTypeConfig} slug={slug} startsAt={event.starts_at} /><LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} imageUrl={invitation.kakaoShareImageUrl || invitation.coverPhotoUrl || templateAssets?.[templateConfig?.hero?.frameAssetId] || invitation.heroImageUrl || invitation.hero_image_url || galleryPhotos[0]?.url || ""} /><DearDayBrandFooter /></div>
+      <div className="public-invitation-sections"><ParentsIntro invitation={invitation} eventKind={invitation.eventKind} /><GrowthTimeline invitation={invitation} eventKind={invitation.eventKind} /><ExtendedEventInfo invitation={invitation} eventTypeConfig={eventTypeConfig} />{matrixFields.gallery?.state !== "none" && <Gallery photos={galleryPhotos} title={matrixFields.gallery?.label || "우리의 순간들"} />}<AccountCopy invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><OptionalInvitationSections invitation={invitation} eventTypeConfig={eventTypeConfig} slug={slug} startsAt={event.starts_at} /><LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} imageUrl={invitation.kakaoShareImageUrl || invitation.coverPhotoUrl || templateAssets?.[templateConfig?.hero?.frameAssetId] || invitation.heroImageUrl || invitation.hero_image_url || galleryPhotos[0]?.url || ""} /><DearDayBrandFooter /></div>
     </InvitationRenderer></div>
 </main>;
 }
