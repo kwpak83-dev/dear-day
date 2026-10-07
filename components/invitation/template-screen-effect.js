@@ -2,7 +2,10 @@ const ORNAMENTS = new Set(["blossom","green","autumn","snow","star","heart","ros
 
 export default function TemplateScreenEffect({ config, assets = {} }) {
   const effect = config?.effects?.screenEffect;
-  const src = ORNAMENTS.has(effect?.ornament) ? `/screen-effects/${effect.ornament}.svg` : effect?.assetId ? assets[effect.assetId] : null;
+  const blueBalloonSrc = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill='none'%3E%3Cpath d='M32 8C19 8 14 19 17 32c2 8 9 14 15 17 7-4 13-10 15-18 3-13-3-23-15-23Z' fill='%23b9dff2'/%3E%3Cpath d='m32 49-4 5h8Z' fill='%238fc5df'/%3E%3Cpath d='M32 54q-6 4 0 8' stroke='%2391aebc' stroke-width='1.5' fill='none'/%3E%3Cellipse cx='24' cy='23' rx='3' ry='8' transform='rotate(25 24 23)' fill='%23e8f7ff' opacity='.75'/%3E%3C/svg%3E";
+  const src = effect?.ornament === "blue-balloon"
+    ? blueBalloonSrc
+    : ORNAMENTS.has(effect?.ornament) ? `/screen-effects/${effect.ornament}.svg` : effect?.assetId ? assets[effect.assetId] : null;
   if (!effect || !src) return null;
   const motion = ["fall", "flutter", "sparkle"].includes(effect.motion) ? effect.motion : "fall";
   const range = (min, max, index, factor) => min + ((index * factor) % 101) / 100 * (max - min);
