@@ -52,7 +52,7 @@ const effectsDefaults = { scrollReveal: "none", scrollRevealDuration: 0.55, scro
 const screenEffectDefaults = { ornament: "blossom", motion: "fall", count: 8, minSize: 18, maxSize: 36, minDuration: 10, maxDuration: 18, sway: 30, rotate: true, opacity: 0.8 };
 const screenOrnamentCategories = [
   ["nature", "자연", [["blossom","벚꽃잎"],["green","초록 나뭇잎"],["autumn","가을 낙엽"],["snow","솜눈"],["rose","장미 꽃잎"],["lavender","라벤더 꽃잎"],["daisy","데이지 꽃"],["ginkgo","은행잎"],["feather","하얀 깃털"],["butterfly","나비"],["blossom-flower","벚꽃 송이"]]],
-  ["party", "파티", [["heart","하트"],["gold-confetti","골드 컨페티"],["color-confetti","컬러 컨페티"],["balloon","파스텔 풍선"],["ribbon","리본"]]],
+  ["party", "파티", [["heart","하트"],["gold-confetti","골드 컨페티"],["color-confetti","컬러 컨페티"],["balloon","파스텔 풍선"],["blue-balloon","하늘색 풍선"],["ribbon","리본"]]],
   ["light", "빛", [["star","별빛"],["bubble","비눗방울"],["moon","초승달"]]],
   ["theme", "테마", [["music","음표"]]],
 ];
