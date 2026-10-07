@@ -39,7 +39,7 @@ function PreviewSections({ invitation, eventTypeConfig, previewMode = "" }) {
   return <div className="public-invitation-sections">
     <Gallery photos={gallery} idPrefix={`body-${previewMode || "preview"}-gallery`} title={eventTypeConfig?.fields?.gallery?.label || "우리의 순간들"} />
     <TransportGuide invitation={invitation} title={eventTypeConfig?.fields?.transport?.label || "교통·주차"} />
-    <AccountCopy invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} previewExpanded />
+    <AccountCopy invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} />
     <OptionalInvitationSections invitation={invitation} eventTypeConfig={eventTypeConfig} previewMode={previewMode} />
     <div className="public-share-copy dd-public-share-pills" aria-label="공유 버튼 디자인 미리보기">
       <button type="button" className="dd-share-kakao" disabled><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.4 2 10.7c0 2.8 1.9 5.3 4.8 6.7L6 21l4.2-2.5c.6.1 1.2.1 1.8.1 5.5 0 10-3.5 10-7.9S17.5 3 12 3z"/></svg>카톡공유</button>
