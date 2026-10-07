@@ -13,7 +13,6 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
   const storageKey = `dearday-notice:${slug}:${notice.version}`;
   useEffect(() => {
     if (!notice.enabled || !notice.title || !notice.body) return;
-    if (preview) { setOpen(true); return; }
     const releaseHeroIntro = () => document.querySelector(".shared-public-invitation")?.classList.remove("dd-hero-intro-waits-for-notice");
     try {
       const hiddenDate = window.localStorage.getItem(storageKey);

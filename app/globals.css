@@ -55,7 +55,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Development invitation preview templates */
 .invitation-template{height:100%;overflow-y:auto;padding:25px 20px;color:#6c5146;text-align:center}.invitation-template-header p{margin:0;font:700 8px Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.2em}.invitation-template-header i{display:block;width:30px;height:1px;margin:12px auto 16px;background:currentColor;opacity:.35}.invitation-template-photo{height:164px;display:grid;place-items:center;overflow:hidden;background:#eadfd7;color:#9e8a7f;font:10px Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.18em}.invitation-template-photo img{width:100%;height:100%;object-fit:cover}.invitation-template-main h2{margin:20px 0 7px;font-size:22px;font-weight:500;line-height:1.3}.invitation-template-detail,.invitation-template-note{margin:4px 0;color:inherit;font-size:9px;line-height:1.5}.invitation-template-main time{display:block;margin-top:13px;font:400 9px Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.04em}.invitation-template-place{margin-top:16px;padding-top:14px;border-top:1px solid rgba(100,75,65,.2)}.invitation-template-place strong,.invitation-template-place span{display:block;font:400 9px Arial,"Apple SD Gothic Neo",sans-serif;line-height:1.6}.invitation-template-place strong{font-weight:700}.invitation-template-main blockquote{margin:18px 0 0;white-space:pre-line;color:inherit;font-size:10px;line-height:1.7}.invitation-template-classic{background:#fff9ef;font-family:Georgia,"Times New Roman",serif}.invitation-template-classic .invitation-template-photo{border:1px solid #dfcfc3;background:linear-gradient(145deg,#f2e8de,#dfd0c4)}.invitation-template-romantic{background:#fff2f2;color:#8d5c64;font-family:Georgia,"Times New Roman",serif}.invitation-template-romantic .invitation-template-header i{width:42px}.invitation-template-romantic .invitation-template-photo{border-radius:90px 90px 10px 10px;background:linear-gradient(145deg,#f4dfe1,#e9c8cc)}.invitation-template-romantic .invitation-template-main h2{font-style:italic}.invitation-template-modern{background:#f7f5f2;color:#3d3936;text-align:left;font-family:Arial,"Apple SD Gothic Neo",sans-serif}.invitation-template-modern .invitation-template-header i{width:100%;margin-left:0}.invitation-template-modern .invitation-template-photo{background:#ddd9d4}.invitation-template-modern .invitation-template-main h2{font-family:Arial,"Apple SD Gothic Neo",sans-serif;font-size:24px;font-weight:800;letter-spacing:-.05em}.invitation-template-modern .invitation-template-place{border-top:2px solid #3d3936}
 /* Full editor preview and shared public invitation renderer */
-.full-invitation-renderer{width:100%;min-width:0;overflow-wrap:anywhere}.full-invitation-renderer .invitation-template{height:auto;min-height:100vh;min-height:100svh;overflow:visible;padding:54px clamp(20px,7vw,42px)}.full-invitation-renderer .invitation-template-header p{font-size:10px}.full-invitation-renderer .invitation-template-photo{height:auto;aspect-ratio:4/3}.full-invitation-renderer .invitation-template-main h2{font-size:clamp(29px,8vw,38px);overflow-wrap:anywhere}.full-invitation-renderer .invitation-template-detail,.full-invitation-renderer .invitation-template-note{font-size:13px}.full-invitation-renderer .invitation-template-main time{font-size:12px}.full-invitation-renderer .invitation-template-place strong,.full-invitation-renderer .invitation-template-place span{font-size:12px;overflow-wrap:anywhere}.full-invitation-renderer .invitation-template-main blockquote{font-size:14px;overflow-wrap:anywhere}.full-preview-overlay{position:fixed;z-index:70;inset:0;display:flex;min-width:0;flex-direction:column;overflow:hidden;background:#e9ddd7}.full-preview-toolbar{z-index:1;display:flex;min-height:58px;flex:none;align-items:center;justify-content:space-between;gap:16px;padding:max(10px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) 10px max(18px,env(safe-area-inset-left));background:rgba(255,250,245,.97);box-shadow:0 4px 18px rgba(70,43,35,.12)}.full-preview-toolbar strong{color:#8b6659;font-size:12px;letter-spacing:.08em}.full-preview-toolbar button{border:0;border-radius:9px;background:#ef786c;color:#fff;padding:10px 13px;font-size:12px;font-weight:700;white-space:nowrap}.full-preview-scroll{min-width:0;min-height:0;flex:1;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain}.full-preview-document{width:min(100%,540px);margin:0 auto;background:#fffaf5;box-shadow:0 18px 45px rgba(71,45,36,.18)}.shared-public-invitation{width:min(100%,540px);max-width:540px;padding:0;overflow-x:clip}.public-invitation-sections{padding:0 0 40px}.shared-public-invitation .invitation-gallery{margin-top:0;padding-top:40px}
+.full-invitation-renderer{width:100%;min-width:0;overflow-wrap:anywhere}.full-invitation-renderer .invitation-template{height:auto;min-height:100vh;min-height:100svh;overflow:visible;padding:54px clamp(20px,7vw,42px)}.full-invitation-renderer .invitation-template-header p{font-size:10px}.full-invitation-renderer .invitation-template-photo{height:auto;aspect-ratio:4/3}.full-invitation-renderer .invitation-template-main h2{font-size:clamp(29px,8vw,38px);overflow-wrap:anywhere}.full-invitation-renderer .invitation-template-detail,.full-invitation-renderer .invitation-template-note{font-size:13px}.full-invitation-renderer .invitation-template-main time{font-size:12px}.full-invitation-renderer .invitation-template-place strong,.full-invitation-renderer .invitation-template-place span{font-size:12px;overflow-wrap:anywhere}.full-invitation-renderer .invitation-template-main blockquote{font-size:14px;overflow-wrap:anywhere}.full-preview-overlay{position:fixed;z-index:70;inset:0;display:flex;min-width:0;flex-direction:column;overflow:hidden;background:#e9ddd7}.full-preview-toolbar{z-index:1;display:flex;min-height:58px;flex:none;align-items:center;justify-content:space-between;gap:16px;padding:max(10px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) 10px max(18px,env(safe-area-inset-left));background:rgba(255,250,245,.97);box-shadow:0 4px 18px rgba(70,43,35,.12)}.full-preview-toolbar strong{color:#8b6659;font-size:12px;letter-spacing:.08em}.full-preview-toolbar button{border:0;border-radius:9px;background:#ef786c;color:#fff;padding:10px 13px;font-size:12px;font-weight:700;white-space:nowrap}.full-preview-scroll{min-width:0;min-height:0;flex:1;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain}.full-preview-document{width:min(100%,375px);margin:0 auto;background:#fffaf5;box-shadow:0 18px 45px rgba(71,45,36,.18)}.shared-public-invitation{width:min(100%,540px);max-width:540px;padding:0;overflow-x:clip}.public-invitation-sections{padding:0 0 40px}.shared-public-invitation .invitation-gallery{margin-top:0;padding-top:40px}
 @media (max-width:760px){.preview-panel{display:none}.editor-actions{display:grid;grid-template-columns:1fr 1fr}.editor-actions .publish-button{grid-column:1/-1}.full-preview-document{box-shadow:none}}
 /* Shared preview sections, birth date selector, and public address copy */
 .invitation-template-sections{min-width:0;margin-top:38px}.preview-content .invitation-template-sections{margin-top:25px}.preview-content .invitation-gallery{margin:24px 0}.preview-content .invitation-gallery h2{margin:7px 0 13px;font-size:17px}.preview-content .public-gallery-grid{gap:6px}.preview-content .public-gallery-photo{border-radius:5px}.preview-content .public-accounts{margin:24px 0 0;padding:17px 8px}.preview-content .public-accounts h2{font-size:15px}.preview-content .public-account-card{padding:10px 0}.preview-content .public-account-card strong,.preview-content .public-account-card span{font-size:9px}.preview-content .public-account-card button{padding:7px;font-size:8px}.birth-date-field{min-width:0;border:0;padding:0}.birth-date-field legend{margin-bottom:8px;padding:0;font-size:12px;font-weight:700;color:#755d52}.birth-date-field>div{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px}.public-address-copy{display:flex;min-height:37px;align-items:center;justify-content:center;gap:10px;margin:0 0 28px}.public-address-copy button{border:0;border-radius:7px;background:#ef786c;color:#fff;padding:9px 12px;font-size:11px;font-weight:700;white-space:nowrap}.public-address-copy span{min-width:0;color:#8b7165;font-size:11px;line-height:1.4}.shared-public-invitation .invitation-template-sections{margin-top:0;padding-top:28px}
@@ -829,8 +829,8 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 @keyframes dd-screen-fall{from{transform:translate3d(0,-10vh,0) rotate(0deg)}to{transform:translate3d(var(--dd-screen-sway),110vh,0) rotate(var(--dd-screen-rotation))}}
 @media(prefers-reduced-motion:reduce){.dd-template-screen-effect{display:none}}
 .admin-draft-full-preview{position:fixed;z-index:100;inset:0;overflow:auto;background:#e9e1dc;padding:18px 10px 40px}
-.admin-draft-full-preview-toolbar{position:sticky;z-index:101;top:0;display:flex;justify-content:space-between;align-items:center;width:min(390px,100%);box-sizing:border-box;margin:0 auto 12px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.96);box-shadow:0 5px 18px rgba(70,43,35,.15)}
-.admin-draft-full-preview-device{width:min(390px,100%);margin:0 auto;background:#fffaf5;box-shadow:0 10px 28px rgba(70,43,35,.14)}
+.admin-draft-full-preview-toolbar{position:sticky;z-index:101;top:0;display:flex;justify-content:space-between;align-items:center;width:min(390px,100%);box-sizing:border-box;margin:0 auto 12px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.96);box-shadow:0 5px 18px rgba(70,43,35,.15);transform:translateX(20px)}
+.admin-draft-full-preview-device{width:min(390px,100%);margin:0 auto;background:#fffaf5;box-shadow:0 10px 28px rgba(70,43,35,.14);transform:translateX(20px)}
 
 .invitation-quick-menu-trigger{display:block;width:1px;height:1px;pointer-events:none}
 .invitation-quick-menu{position:fixed;z-index:70;right:50%;bottom:max(12px,env(safe-area-inset-bottom));display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);width:min(calc(100% - 24px),516px);padding:7px;border:1px solid rgba(218,201,191,.85);border-radius:17px;background:rgba(255,252,249,.94);box-shadow:0 10px 30px rgba(57,39,32,.18);backdrop-filter:blur(10px);transform:translateX(50%);animation:dd-quick-menu-in .22s ease-out}
@@ -1078,6 +1078,8 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* Custom Hero typography: above overlay/frame and the built-in hero copy. */
 .dd-template-hero-text-layers{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
+/* Published desktop Hero text uses the same 390px design coordinate width as editor/full preview. */
+.shared-public-invitation .dd-template-hero-text-layers{width:min(100%,390px);left:50%;right:auto;transform:translateX(-50%)}
 .dd-template-hero-text-layer{position:absolute;line-height:1.2;font-weight:400;text-shadow:0 1px 8px rgba(0,0,0,.24);padding:0 8px;box-sizing:border-box}
 
 /* Hero preset typography for event title, names and wedding separator. */
@@ -1684,7 +1686,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .invitation-quick-menu--minimal.invitation-quick-menu--pills > button + button{border-left:1px solid #e7e0dc !important}
 .invitation-quick-menu--minimal.invitation-quick-menu--pills > button svg{
   grid-column:1 !important;width:22px !important;height:22px !important;flex:none !important;
-  color:var(--dd-quick-menu-item-text,var(--dd-invite-action-accent,#9b6f5a)) !important;
+  color:var(--dd-invite-action-accent,var(--dd-quick-menu-item-text,#9b6f5a)) !important;
   stroke:currentColor !important;stroke-width:2 !important;opacity:1 !important;
 }
 .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy{
@@ -2206,6 +2208,28 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-admin-theme-page .admin-draft-preview-widths button.active{border-color:#315be8;background:#e7f0ff;color:#1e3a8a}
 .dd-admin-theme-page .admin-draft-preview-scroll{background:#eaf2ff}
 .dd-admin-theme-page .hero-admin-live-preview{background:#edf5ff!important;border-color:#dce8fa!important}
+.hero-admin-live-preview{
+ width:100%;
+ max-width:390px;
+ margin:0 auto;
+ overflow:hidden;
+ border-radius:10px;
+ background:#fff;
+}
+.hero-admin-live-preview-canvas{
+ width:390px;
+ transform-origin:top left;
+}
+.hero-admin-live-preview-canvas>.invitation-template{
+ width:390px!important;
+ max-width:none!important;
+ min-height:0!important;
+ margin:0!important;
+ box-shadow:none!important;
+}
+.hero-admin-live-preview-canvas>.invitation-template>:not(.classic-masthead):not(.classic-hero):not(.dd-hero-intro){display:none!important}
+.hero-admin-live-preview-canvas .classic-hero{width:390px!important;margin-bottom:0!important}
+.hero-admin-live-preview-canvas .dd-hero-intro{height:100%!important;min-height:0!important}
 
 
 /* Hero editor inner chrome: override legacy inline peach borders, not invitation preview. */
@@ -3041,7 +3065,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-parents-intro-heading{margin-bottom:28px}.dd-parents-intro-heading>p{margin:0 0 7px;font-family:var(--dd-caption-font,var(--dd-body-font,inherit));font-size:var(--dd-caption-size,9px);letter-spacing:.24em;color:var(--dd-color-caption,var(--dd-color-muted,currentColor))}
 .dd-parents-intro-heading>h2{margin:0;font-family:var(--dd-section-title-font,var(--dd-body-font,inherit));font-size:var(--dd-section-title-size,22px);font-weight:var(--dd-section-title-weight,500);color:var(--dd-color-text,currentColor)}
 .dd-parents-intro-heading>h2:after{content:"";display:block;width:42px;height:1px;margin:12px auto 0;background:currentColor;opacity:.16}
-.dd-parents-intro-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:500px;margin:0 auto}.dd-parent-intro-card{min-width:0}.dd-parent-intro-card img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:14px;margin-bottom:13px}.dd-parent-intro-card strong{display:block;font-family:var(--dd-body-font,inherit);font-size:14px;font-weight:500}.dd-parent-intro-card strong small{display:block;margin-bottom:3px;font-size:10px;font-weight:400;color:var(--dd-color-muted,currentColor)}.dd-parent-intro-card p{margin:8px 0 0;font-size:12px;line-height:1.65;white-space:pre-line;word-break:keep-all;color:var(--dd-color-text,currentColor)}
+.dd-parents-intro-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px;max-width:500px;margin:0 auto}.dd-parent-intro-card{min-width:0}.dd-parent-intro-card img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;margin-bottom:13px}.dd-parent-intro-card strong{display:block;font-family:var(--dd-body-font,inherit);font-size:14px;font-weight:500}.dd-parent-intro-card strong small{display:block;margin-bottom:3px;font-size:10px;font-weight:400;color:var(--dd-color-muted,currentColor)}.dd-parent-intro-card p{margin:8px 0 0;font-size:12px;line-height:1.65;white-space:pre-line;word-break:keep-all;color:var(--dd-color-text,currentColor)}
 .dd-parents-intro-editor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}.dd-parents-intro-editor-grid>article{padding:14px;border:1px solid #e7e0dc;border-radius:14px;background:#fff}.dd-parent-intro-editor-photo{display:flex;align-items:center;gap:10px;margin:8px 0 12px}.dd-parent-intro-editor-photo img{width:76px;height:76px;object-fit:cover;border-radius:10px}.dd-parent-intro-editor-photo button{border:0;background:transparent;text-decoration:underline;color:#756b66;cursor:pointer}
 @media(max-width:520px){.dd-parents-intro-editor-grid{grid-template-columns:1fr}.dd-parents-intro{padding-left:18px;padding-right:18px}}
 
@@ -3071,3 +3095,37 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .preview-content .dd-extended-event-info>img{max-width:160px;max-height:110px;margin-bottom:14px}
 .preview-content .dd-extended-event-info h2{font-size:16px}
 .preview-content .dd-extended-event-info p,.preview-content .dd-extended-event-info>a{font-size:10px}
+
+/* Configured template general action buttons: the editor palette is the source of truth.
+   Branded share pills and Quick Menu keep their dedicated fixed/separate styling. */
+.invitation-template.dd-template-button-style :is(
+  .public-address-copy button,
+  .public-account-card button,
+  .public-rsvp form>button,
+  .guestbook-form>button,
+  .guestbook-delete-backdrop footer button:last-child,
+  .rsvp-edit-actions a,
+  .rsvp-edit-actions button,
+  .dd-contact-toggle
+){
+  background:var(--dd-color-button-bg,#b78b72) !important;
+  color:var(--dd-color-button-text,#fff) !important;
+  border-color:var(--dd-color-divider,#e8e2de) !important;
+}
+
+
+/* User editor desktop LIVE PREVIEW: the 390px device includes an 8px frame inset.
+   Give the rendered invitation the same 390px design canvas used by the admin previews,
+   then scale it into the 374px inner viewport. This keeps Hero geometry/crop consistent
+   without changing the published invitation or the phone chrome. */
+@media (min-width:761px){
+  .create-page .preview-content.full-invitation-renderer{
+    position:relative;
+  }
+  .create-page .preview-content.full-invitation-renderer > .invitation-template{
+    width:390px !important;
+    max-width:none !important;
+    transform:scale(0.958974359);
+    transform-origin:top left;
+  }
+}

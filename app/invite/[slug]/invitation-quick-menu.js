@@ -7,15 +7,18 @@ import Guestbook from "./guestbook";
 
 function BottomSheet({ title, onClose, children, portalTarget = null, preview = false, layerStyle }) {
   useEffect(() => {
+    // Preview sheets are visually constrained to the preview viewport, so they
+    // must not lock the surrounding admin/editor page. Published invitations
+    // still lock the document body while a modal sheet is open.
     const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    if (!preview) document.body.style.overflow = "hidden";
     const escape = (event) => { if (event.key === "Escape") onClose(); };
     document.addEventListener("keydown", escape);
     return () => {
-      document.body.style.overflow = previous;
+      if (!preview) document.body.style.overflow = previous;
       document.removeEventListener("keydown", escape);
     };
-  }, [onClose]);
+  }, [onClose, preview]);
 
   const sheet = <div className={`invitation-bottom-sheet-layer${preview ? " invitation-bottom-sheet-layer--preview" : ""}`} style={layerStyle}>
     <button className="invitation-bottom-sheet-backdrop" type="button" aria-label="닫기" onClick={onClose} />
@@ -104,7 +107,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       setDesktopLiveStyle({
         "--dd-invite-action-bg": computed.getPropertyValue("--dd-invite-action-bg"),
         "--dd-invite-action-text": computed.getPropertyValue("--dd-invite-action-text"),
-        "--dd-invite-action-accent": computed.getPropertyValue("--dd-invite-action-accent"),
+        "--dd-invite-action-accent": computed.getPropertyValue("--dd-color-accent").trim() || computed.getPropertyValue("--dd-invite-action-accent"),
         "--dd-invite-action-divider": computed.getPropertyValue("--dd-invite-action-divider"),
         "--dd-invite-action-radius": computed.getPropertyValue("--dd-invite-action-radius"),
         "--dd-quick-menu-bg": computed.getPropertyValue("--dd-quick-menu-bg") || computed.getPropertyValue("--dd-template-quick-bg"),
@@ -151,12 +154,17 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     setPreviewSheetPortal(document.body);
     positionPreviewSheet();
     scroller.addEventListener("scroll", positionPreviewSheet, { passive: true });
+    // The preview itself moves when the surrounding admin/editor page scrolls.
+    // Recompute the fixed body-portal rectangle for both inner preview scrolling
+    // and outer document scrolling so the sheet stays attached to the preview.
+    window.addEventListener("scroll", positionPreviewSheet, { passive: true });
     window.addEventListener("resize", positionPreviewSheet);
     const resizeObserver = new ResizeObserver(positionPreviewSheet);
     resizeObserver.observe(scroller);
     if (phone) resizeObserver.observe(phone);
     return () => {
       scroller.removeEventListener("scroll", positionPreviewSheet);
+      window.removeEventListener("scroll", positionPreviewSheet);
       window.removeEventListener("resize", positionPreviewSheet);
       resizeObserver.disconnect();
     };

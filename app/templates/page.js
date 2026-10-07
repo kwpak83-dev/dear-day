@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import DearDayLogo from "../../components/dearday-logo";
-const categories=[["","전체"],["wedding","결혼식"],["first-birthday","돌잔치"],["birthday","생일"],["gathering","모임·동창회"],["party","파티"],["custom","직접 만들기"]];
+const categories=[["","전체"],["wedding","결혼식"],["first-birthday","돌잔치"],["birthday","생일"],["milestone_birthday","환갑·칠순·팔순"],["gathering","모임·행사"],["opening","개업·오픈"]];
 export default function TemplateCollectionPage(){
- const [items,setItems]=useState([]),[category,setCategory]=useState(""),[loading,setLoading]=useState(true);
- useEffect(()=>{const requested=new URLSearchParams(window.location.search).get("category")||"";if(categories.some(([value])=>value===requested))setCategory(requested);},[]);
- useEffect(()=>{setLoading(true);fetch("/api/templates/collection"+(category?`?category=${encodeURIComponent(category)}`:"")).then(r=>r.json()).then(j=>setItems(j.items||[])).finally(()=>setLoading(false));},[category]);
+ const [items,setItems]=useState([]),[category,setCategory]=useState(""),[loading,setLoading]=useState(true),[ready,setReady]=useState(false);
+ useEffect(()=>{const requested=new URLSearchParams(window.location.search).get("category")||"";setCategory(categories.some(([value])=>value===requested)?requested:"");setReady(true);},[]);
+ useEffect(()=>{if(!ready)return;let active=true;setLoading(true);fetch("/api/templates/collection"+(category?`?category=${encodeURIComponent(category)}`:"")).then(r=>r.json()).then(j=>{if(active)setItems(j.items||[]);}).finally(()=>{if(active)setLoading(false);});return()=>{active=false;};},[category,ready]);
  return <main style={{maxWidth:1100,margin:"0 auto",padding:"28px 20px 60px",fontFamily:"sans-serif"}}>
   <a href="/" className="landing-brand" style={{display:"inline-flex",textDecoration:"none"}}><DearDayLogo /></a>
   <div style={{margin:"30px 0 20px"}}><h1 style={{marginBottom:8}}>템플릿 컬렉션</h1><p style={{color:"#6f6a67"}}>표지와 본문 분위기를 함께 보고 마음에 드는 디자인을 골라보세요.</p></div>

@@ -34,7 +34,7 @@ const SHARED_BUTTON_PRESETS = [{id:"soft-rose",name:"Soft Rose",background:"#d78
 const buttonStyleDefaults = { width: 100, height: 44, fontSize: 12, borderRadius: 9, borderWidth: 0, borderColor: "#b78b72", background: "#b78b72", text: "#ffffff", fontFamily: "sans", fontWeight: 400, syncQuickMenu: false };
 const quickMenuDefaults = { rsvpIcon: "✓", locationIcon: "⌖", guestbookIcon: "♡", rsvpIconAssetId: null, locationIconAssetId: null, guestbookIconAssetId: null, fontSize: 11, iconSize: 18 };
 const typographyRoles = [["heroTitle", "Hero Title"], ["sectionTitle", "Section Title"], ["body", "Body"], ["caption", "Caption / Small"]];
-const colorLabels = [["text", "기본 글자색"], ["title", "본문 제목 색상"], ["muted", "보조 글자색"], ["caption", "Caption / Small 글자색"], ["accent", "포인트 색상 · 달력 선택 날짜"], ["buttonBackground", "버튼 배경"], ["buttonText", "버튼 글자"], ["divider", "구분선"]];
+const colorLabels = [["text", "기본 글자색"], ["title", "본문 제목 색상"], ["muted", "보조 글자색"], ["caption", "Caption / Small 글자색"], ["accent", "포인트 색상 달력 · 퀵메뉴아이콘"], ["buttonBackground", "버튼 배경"], ["buttonText", "버튼 글자"], ["divider", "구분선"]];
 const fromConfig = (defaults, saved) => Object.fromEntries(Object.keys(defaults).map((key) => [key, saved && typeof saved === "object" && saved[key] !== undefined ? saved[key] : defaults[key]]));
 const heroFromConfig = (saved) => ({ ...fromConfig(heroDefaults, saved), display: fromConfig(heroDisplayDefaults, saved?.display) });
 const typographyFromConfig = (saved) => Object.fromEntries(typographyRoles.map(([role]) => [role, fromConfig(typographyDefaults[role], saved?.[role])]));
@@ -52,7 +52,7 @@ const effectsDefaults = { scrollReveal: "none", scrollRevealDuration: 0.55, scro
 const screenEffectDefaults = { ornament: "blossom", motion: "fall", count: 8, minSize: 18, maxSize: 36, minDuration: 10, maxDuration: 18, sway: 30, rotate: true, opacity: 0.8 };
 const screenOrnamentCategories = [
   ["nature", "자연", [["blossom","벚꽃잎"],["green","초록 나뭇잎"],["autumn","가을 낙엽"],["snow","솜눈"],["rose","장미 꽃잎"],["lavender","라벤더 꽃잎"],["daisy","데이지 꽃"],["ginkgo","은행잎"],["feather","하얀 깃털"],["butterfly","나비"],["blossom-flower","벚꽃 송이"]]],
-  ["party", "파티", [["heart","하트"],["gold-confetti","골드 컨페티"],["color-confetti","컬러 컨페티"],["balloon","파스텔 풍선"],["ribbon","리본"]]],
+  ["party", "파티", [["heart","하트"],["gold-confetti","골드 컨페티"],["color-confetti","컬러 컨페티"],["balloon","파스텔 풍선"],["blue-balloon","하늘색 풍선"],["ribbon","리본"]]],
   ["light", "빛", [["star","별빛"],["bubble","비눗방울"],["moon","초승달"]]],
   ["theme", "테마", [["music","음표"]]],
 ];
@@ -152,7 +152,15 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
     setTypography((previous) => preservePlacements ? previous : typographyFromConfig(versions.draft?.typography));
     setColors((previous) => preservePlacements ? previous : fromConfig(colorDefaults, { ...versions.draft?.colors, caption: versions.draft?.colors?.caption || versions.draft?.colors?.muted || colorDefaults.caption, heroTitle: versions.draft?.colors?.heroTitle || versions.draft?.colors?.title || colorDefaults.heroTitle }));
     setButtonStyle((previous) => preservePlacements ? previous : fromConfig(buttonStyleDefaults, versions.draft?.buttonStyle));
-    setQuickMenu((previous) => preservePlacements ? previous : fromConfig(quickMenuDefaults, versions.draft?.quickMenu));
+    setQuickMenu((previous) => {
+      if (preservePlacements) return previous;
+      const next = fromConfig(quickMenuDefaults, versions.draft?.quickMenu);
+      const activeQuickMenuIds = new Set(active.filter((asset) => asset.asset_type === "quick_menu_icon").map((asset) => asset.id));
+      for (const key of ["rsvpIconAssetId", "locationIconAssetId", "guestbookIconAssetId"]) {
+        if (next[key] && !activeQuickMenuIds.has(next[key])) next[key] = null;
+      }
+      return next;
+    });
     setSections((previous) => preservePlacements ? previous : sectionsFromConfig(versions.draft?.sections));
     setEffects((previous) => preservePlacements ? previous : fromConfig(effectsDefaults, versions.draft?.effects));
     setBgm((previous) => preservePlacements ? previous : fromConfig(bgmDefaults, versions.draft?.bgm));
@@ -620,7 +628,7 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
     {(state.error || notice) && <p role="status">{state.error || notice}</p>}
       </div>
       <aside className="admin-template-editor-preview">
-        <TemplateDraftPreview templateId={templateId} templateEventKind={eventKind} draft={state.draft ? { ...state.draft, background, typography, colors, buttonStyle, quickMenu, decorations:placements } : null} assets={[...state.allAssets,...sharedDecorations.map(asset=>({...asset,asset_type:"decoration",is_active:true}))]} loading={state.loading} />
+        <TemplateDraftPreview templateId={templateId} templateEventKind={eventKind} draft={state.draft ? { ...state.draft, background, typography, colors, buttonStyle, quickMenu, effects, decorations:placements } : null} assets={[...state.allAssets,...sharedDecorations.map(asset=>({...asset,asset_type:"decoration",is_active:true}))]} loading={state.loading} />
       </aside>
     </div>
   </section>;
