@@ -107,7 +107,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       setDesktopLiveStyle({
         "--dd-invite-action-bg": computed.getPropertyValue("--dd-invite-action-bg"),
         "--dd-invite-action-text": computed.getPropertyValue("--dd-invite-action-text"),
-        "--dd-invite-action-accent": computed.getPropertyValue("--dd-invite-action-accent"),
+        "--dd-invite-action-accent": computed.getPropertyValue("--dd-color-accent").trim() || computed.getPropertyValue("--dd-invite-action-accent"),
         "--dd-invite-action-divider": computed.getPropertyValue("--dd-invite-action-divider"),
         "--dd-invite-action-radius": computed.getPropertyValue("--dd-invite-action-radius"),
         "--dd-quick-menu-bg": computed.getPropertyValue("--dd-quick-menu-bg") || computed.getPropertyValue("--dd-template-quick-bg"),
