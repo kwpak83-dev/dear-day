@@ -101,7 +101,7 @@ export default function TemplateDraftPreview({ templateId, templateEventKind = "
       <p className="admin-draft-preview-status">Draft 버전을 만든 후 미리보기를 확인할 수 있어요.</p> :
       full ? <p className="admin-draft-preview-status">전체 미리보기를 표시하고 있어요.</p> :
       <div className="admin-draft-preview-scroll">
-        <div style={{width,maxWidth:"100%",margin:"0 auto",transform:"translateX(10px)"}}><div className="admin-draft-preview-device full-invitation-renderer dd-bgm-public-style" style={{ width:"100%" }}>{renderInvitation(width, "admin-live")}</div></div>
+        <div style={{width,maxWidth:"100%",margin:"0 auto",transform:"translateX(30px)"}}><div className="admin-draft-preview-device full-invitation-renderer dd-bgm-public-style" style={{ width:"100%" }}>{renderInvitation(width, "admin-live")}</div></div>
       </div>}
     {draft && !full && <details style={{width:540,maxWidth:"100%",margin:"8px auto",padding:8,border:"1px dashed #b8a9a1",background:"#fff",fontSize:11}}><summary style={{cursor:"pointer",fontWeight:700}}>Hero 데이터 디버그</summary><pre style={{whiteSpace:"pre-wrap",overflowWrap:"anywhere"}}>{JSON.stringify({ eventKind, invitation: { childName: invitation.childName, childNameLastName: invitation.childNameLastName, childNameFirstName: invitation.childNameFirstName, parent1Name: invitation.parent1Name, parent2Name: invitation.parent2Name, venue: invitation.venue }, textLayers: heroDebug }, null, 2)}</pre></details>}
     {full && <div className="admin-draft-full-preview" role="dialog" aria-modal="true" aria-label="Draft 전체 미리보기" onKeyDown={(event) => { if (event.key === "Escape") setFull(false); }}>
