@@ -152,7 +152,15 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
     setTypography((previous) => preservePlacements ? previous : typographyFromConfig(versions.draft?.typography));
     setColors((previous) => preservePlacements ? previous : fromConfig(colorDefaults, { ...versions.draft?.colors, caption: versions.draft?.colors?.caption || versions.draft?.colors?.muted || colorDefaults.caption, heroTitle: versions.draft?.colors?.heroTitle || versions.draft?.colors?.title || colorDefaults.heroTitle }));
     setButtonStyle((previous) => preservePlacements ? previous : fromConfig(buttonStyleDefaults, versions.draft?.buttonStyle));
-    setQuickMenu((previous) => preservePlacements ? previous : fromConfig(quickMenuDefaults, versions.draft?.quickMenu));
+    setQuickMenu((previous) => {
+      if (preservePlacements) return previous;
+      const next = fromConfig(quickMenuDefaults, versions.draft?.quickMenu);
+      const activeQuickMenuIds = new Set(active.filter((asset) => asset.asset_type === "quick_menu_icon").map((asset) => asset.id));
+      for (const key of ["rsvpIconAssetId", "locationIconAssetId", "guestbookIconAssetId"]) {
+        if (next[key] && !activeQuickMenuIds.has(next[key])) next[key] = null;
+      }
+      return next;
+    });
     setSections((previous) => preservePlacements ? previous : sectionsFromConfig(versions.draft?.sections));
     setEffects((previous) => preservePlacements ? previous : fromConfig(effectsDefaults, versions.draft?.effects));
     setBgm((previous) => preservePlacements ? previous : fromConfig(bgmDefaults, versions.draft?.bgm));
