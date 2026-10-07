@@ -3,8 +3,7 @@ import { useEffect, useState } from "react";
 import DearDayLogo from "../../components/dearday-logo";
 const categories=[["","전체"],["wedding","결혼식"],["first-birthday","돌잔치"],["birthday","생일"],["milestone_birthday","환갑·칠순·팔순"],["gathering","모임·행사"],["opening","개업·오픈"]];
 export default function TemplateCollectionPage(){
- const [items,setItems]=useState([]),[category,setCategory]=useState(""),[loading,setLoading]=useState(true);
- useEffect(()=>{const requested=new URLSearchParams(window.location.search).get("category")||"";if(categories.some(([value])=>value===requested))setCategory(requested);},[]);
+ const [items,setItems]=useState([]),[category,setCategory]=useState(()=>{if(typeof window==="undefined")return "";const requested=new URLSearchParams(window.location.search).get("category")||"";return categories.some(([value])=>value===requested)?requested:"";}),[loading,setLoading]=useState(true);
  useEffect(()=>{setLoading(true);fetch("/api/templates/collection"+(category?`?category=${encodeURIComponent(category)}`:"")).then(r=>r.json()).then(j=>setItems(j.items||[])).finally(()=>setLoading(false));},[category]);
  return <main style={{maxWidth:1100,margin:"0 auto",padding:"28px 20px 60px",fontFamily:"sans-serif"}}>
   <a href="/" className="landing-brand" style={{display:"inline-flex",textDecoration:"none"}}><DearDayLogo /></a>
