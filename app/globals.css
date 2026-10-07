@@ -1078,6 +1078,8 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* Custom Hero typography: above overlay/frame and the built-in hero copy. */
 .dd-template-hero-text-layers{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
+/* Published desktop Hero text uses the same 390px design coordinate width as editor/full preview. */
+.shared-public-invitation .dd-template-hero-text-layers{width:min(100%,390px);left:50%;right:auto;transform:translateX(-50%)}
 .dd-template-hero-text-layer{position:absolute;line-height:1.2;font-weight:400;text-shadow:0 1px 8px rgba(0,0,0,.24);padding:0 8px;box-sizing:border-box}
 
 /* Hero preset typography for event title, names and wedding separator. */
