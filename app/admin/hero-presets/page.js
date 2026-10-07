@@ -42,6 +42,38 @@ function HeroHexColor({label,value,onChange}){
   {!valid&&<span role="status" style={{fontSize:11,color:"#b43b3b"}}>HEX 6자리로 입력해 주세요. 유효한 값만 적용됩니다.</span>}
  </div>;
 }
+function HeroLivePreview({previewRef,children}){
+ const viewportRef=useRef(null);
+ const canvasRef=useRef(null);
+ const [layout,setLayout]=useState({scale:1,height:0});
+ useEffect(()=>{
+  const viewport=viewportRef.current;
+  const canvas=canvasRef.current;
+  if(!viewport||!canvas)return;
+  const measure=()=>{
+   const availableWidth=Math.min(390,viewport.clientWidth||390);
+   const scale=availableWidth/390;
+   const article=canvas.querySelector(":scope > .invitation-template");
+   const masthead=article?.querySelector(":scope > .classic-masthead");
+   const hero=article?.querySelector(":scope > .classic-hero");
+   const contentHeight=(masthead?.offsetHeight||0)+(hero?.offsetHeight||0);
+   const next={scale,height:Math.ceil(contentHeight*scale)};
+   setLayout(current=>current.scale===next.scale&&current.height===next.height?current:next);
+  };
+  const observer=new ResizeObserver(measure);
+  observer.observe(viewport);
+  observer.observe(canvas);
+  canvas.querySelectorAll("img").forEach(image=>image.addEventListener("load",measure));
+  measure();
+  return ()=>{
+   observer.disconnect();
+   canvas.querySelectorAll("img").forEach(image=>image.removeEventListener("load",measure));
+  };
+ },[]);
+ return <div ref={(node)=>{viewportRef.current=node;if(previewRef)previewRef.current=node;}} className="hero-admin-live-preview full-invitation-renderer" style={{height:layout.height||undefined}}>
+  <div ref={canvasRef} className="hero-admin-live-preview-canvas" style={{transform:`scale(${layout.scale})`}}>{children}</div>
+ </div>;
+}
 export default function HeroPresetsPage(){
  const [fontLibraryOpen,setFontLibraryOpen]=useState(false);
  const [animationReplay,setAnimationReplay]=useState(0);
@@ -167,7 +199,7 @@ export default function HeroPresetsPage(){
  <label style={field}>상단 문구<input style={input} maxLength={60} value={form.config.mastheadText} onChange={(e)=>setConfig("mastheadText",e.target.value)}/></label>
  </div><div style={{display:"flex",gap:12,flexWrap:"wrap",marginTop:12}}><label><input type="checkbox" checked={form.config.headerVisible} onChange={(e)=>setConfig("headerVisible",e.target.checked)}/> DearDay 표시</label><label><input type="checkbox" checked={form.config.mastheadVisible} onChange={(e)=>setConfig("mastheadVisible",e.target.checked)}/> 상단 행사문구 표시</label></div>
  <fieldset style={{marginTop:12,border:"1px solid #eadfd8",borderRadius:8}}><legend>Hero 표시 항목</legend><div style={{display:"flex",gap:12,flexWrap:"wrap"}}>{displayLabels.map(([key,label])=><label key={key}><input type="checkbox" checked={form.config.display[key]} onChange={(e)=>setConfig("display",{...form.config.display,[key]:e.target.checked})}/>{label}</label>)}</div></fieldset></fieldset></div></div>
- <aside className="hero-admin-preview-panel" style={{position:"sticky",top:16,border:"1px solid #eadfd8",borderRadius:12,padding:10,background:"#f8f3ef"}}><strong style={{display:"block",marginBottom:8}}>Hero LIVE PREVIEW</strong><p style={{fontSize:12,color:"#806f66",margin:"0 0 8px"}}>설정값이 저장 전에도 즉시 반영됩니다.</p><button type="button" className="save-button" style={{marginBottom:10}} onClick={()=>setAnimationReplay(current=>current+1)}>↻ 애니메이션 다시 보기</button><p style={{fontSize:11,color:"#806f66",margin:"0 0 8px"}}>아래 실제 Hero 프레임에 저장된 이미지가 LIVE PREVIEW에 바로 표시됩니다.</p><div ref={heroPreviewRef} className="hero-admin-live-preview" style={{width:"100%",overflow:"visible",borderRadius:10,background:"#fff"}}><InvitationRenderer key={`${editing}-${animationReplay}`} invitation={liveInvitation} eventKind={form.event_kind||"wedding"} templateConfig={liveConfig} templateAssets={liveAssets}/><style>{`.hero-admin-live-preview .invitation-template > :not(.classic-masthead):not(.classic-hero):not(.dd-hero-intro){display:none!important}.hero-admin-live-preview .invitation-template{min-height:0!important}.hero-admin-live-preview .dd-hero-intro{height:100%!important;min-height:0!important}.hero-admin-live-preview .classic-hero{margin-bottom:0!important}`}</style></div></aside></div>
+ <aside className="hero-admin-preview-panel" style={{position:"sticky",top:16,border:"1px solid #eadfd8",borderRadius:12,padding:10,background:"#f8f3ef"}}><strong style={{display:"block",marginBottom:8}}>Hero LIVE PREVIEW</strong><p style={{fontSize:12,color:"#806f66",margin:"0 0 8px"}}>설정값이 저장 전에도 즉시 반영됩니다.</p><button type="button" className="save-button" style={{marginBottom:10}} onClick={()=>setAnimationReplay(current=>current+1)}>↻ 애니메이션 다시 보기</button><p style={{fontSize:11,color:"#806f66",margin:"0 0 8px"}}>아래 실제 Hero 프레임에 저장된 이미지가 LIVE PREVIEW에 바로 표시됩니다.</p><HeroLivePreview previewRef={heroPreviewRef}><InvitationRenderer key={`${editing}-${animationReplay}`} invitation={liveInvitation} eventKind={form.event_kind||"wedding"} templateConfig={liveConfig} templateAssets={liveAssets}/></HeroLivePreview></aside></div>
  {editing!=="new"&&<fieldset className="dd-hero-asset-section" style={{border:"1px solid #eadfd8",borderRadius:10,padding:12}}><legend>Hero 사진</legend><p style={{marginTop:0,color:"#806f66",fontSize:13}}>실제 Hero에 사용할 사진입니다. 새 사진을 올리면 기존 활성 사진을 교체하고 LIVE PREVIEW에도 바로 반영됩니다.</p>{activeFrame?.url?<img src={activeFrame.url} alt="현재 Hero 사진" style={{display:"block",width:"100%",maxHeight:320,objectFit:"contain",margin:"10px 0",borderRadius:8,background:"#f7f3f0"}}/>:<p style={{fontSize:12,color:"#8d7a70"}}>등록된 Hero 사진이 없습니다.</p>}<label className="save-button" style={{display:"inline-block",cursor:assetBusy?"wait":"pointer"}}>{assetBusy==="hero_frame"?"업로드 중...":activeFrame?"Hero 사진 교체":"Hero 사진 업로드"}<input type="file" accept="image/jpeg,image/png,image/webp" disabled={!!assetBusy} style={{display:"none"}} onChange={(e)=>{const file=e.target.files?.[0];e.target.value="";if(file)uploadAsset("hero_frame",file);}}/></label></fieldset>}
 {editing==="new"&&<p style={{margin:0,color:"#806f66",fontSize:13}}>기본정보를 먼저 저장한 뒤 Hero 사진을 업로드할 수 있습니다.</p>}
  <div style={{display:"flex",gap:8}}><button className="save-button" disabled={saving}>{saving?"저장 중...":"저장"}</button><button type="button" className="save-button" disabled={saving} onClick={()=>setEditing(null)}>취소</button></div></form>:

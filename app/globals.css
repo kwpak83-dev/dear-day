@@ -2208,6 +2208,28 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-admin-theme-page .admin-draft-preview-widths button.active{border-color:#315be8;background:#e7f0ff;color:#1e3a8a}
 .dd-admin-theme-page .admin-draft-preview-scroll{background:#eaf2ff}
 .dd-admin-theme-page .hero-admin-live-preview{background:#edf5ff!important;border-color:#dce8fa!important}
+.hero-admin-live-preview{
+ width:100%;
+ max-width:390px;
+ margin:0 auto;
+ overflow:hidden;
+ border-radius:10px;
+ background:#fff;
+}
+.hero-admin-live-preview-canvas{
+ width:390px;
+ transform-origin:top left;
+}
+.hero-admin-live-preview-canvas>.invitation-template{
+ width:390px!important;
+ max-width:none!important;
+ min-height:0!important;
+ margin:0!important;
+ box-shadow:none!important;
+}
+.hero-admin-live-preview-canvas>.invitation-template>:not(.classic-masthead):not(.classic-hero):not(.dd-hero-intro){display:none!important}
+.hero-admin-live-preview-canvas .classic-hero{width:390px!important;margin-bottom:0!important}
+.hero-admin-live-preview-canvas .dd-hero-intro{height:100%!important;min-height:0!important}
 
 
 /* Hero editor inner chrome: override legacy inline peach borders, not invitation preview. */
