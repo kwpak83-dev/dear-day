@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import DearDayLogo from "../../components/dearday-logo";
-const categories=[["","전체"],["wedding","결혼식"],["first-birthday","돌잔치"],["birthday","생일"],["gathering","모임·동창회"],["party","파티"],["custom","직접 만들기"]];
+const categories=[["","전체"],["wedding","결혼식"],["first-birthday","돌잔치"],["birthday","생일"],["milestone_birthday","환갑·칠순·팔순"],["gathering","모임·행사"],["opening","개업·오픈"]];
 export default function TemplateCollectionPage(){
  const [items,setItems]=useState([]),[category,setCategory]=useState(""),[loading,setLoading]=useState(true);
  useEffect(()=>{const requested=new URLSearchParams(window.location.search).get("category")||"";if(categories.some(([value])=>value===requested))setCategory(requested);},[]);
