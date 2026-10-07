@@ -154,12 +154,17 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     setPreviewSheetPortal(document.body);
     positionPreviewSheet();
     scroller.addEventListener("scroll", positionPreviewSheet, { passive: true });
+    // The preview itself moves when the surrounding admin/editor page scrolls.
+    // Recompute the fixed body-portal rectangle for both inner preview scrolling
+    // and outer document scrolling so the sheet stays attached to the preview.
+    window.addEventListener("scroll", positionPreviewSheet, { passive: true });
     window.addEventListener("resize", positionPreviewSheet);
     const resizeObserver = new ResizeObserver(positionPreviewSheet);
     resizeObserver.observe(scroller);
     if (phone) resizeObserver.observe(phone);
     return () => {
       scroller.removeEventListener("scroll", positionPreviewSheet);
+      window.removeEventListener("scroll", positionPreviewSheet);
       window.removeEventListener("resize", positionPreviewSheet);
       resizeObserver.disconnect();
     };
