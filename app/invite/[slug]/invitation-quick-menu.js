@@ -7,15 +7,18 @@ import Guestbook from "./guestbook";
 
 function BottomSheet({ title, onClose, children, portalTarget = null, preview = false, layerStyle }) {
   useEffect(() => {
+    // Preview sheets are visually constrained to the preview viewport, so they
+    // must not lock the surrounding admin/editor page. Published invitations
+    // still lock the document body while a modal sheet is open.
     const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    if (!preview) document.body.style.overflow = "hidden";
     const escape = (event) => { if (event.key === "Escape") onClose(); };
     document.addEventListener("keydown", escape);
     return () => {
-      document.body.style.overflow = previous;
+      if (!preview) document.body.style.overflow = previous;
       document.removeEventListener("keydown", escape);
     };
-  }, [onClose]);
+  }, [onClose, preview]);
 
   const sheet = <div className={`invitation-bottom-sheet-layer${preview ? " invitation-bottom-sheet-layer--preview" : ""}`} style={layerStyle}>
     <button className="invitation-bottom-sheet-backdrop" type="button" aria-label="닫기" onClick={onClose} />
