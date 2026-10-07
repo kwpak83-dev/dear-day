@@ -628,7 +628,7 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
     {(state.error || notice) && <p role="status">{state.error || notice}</p>}
       </div>
       <aside className="admin-template-editor-preview">
-        <TemplateDraftPreview templateId={templateId} templateEventKind={eventKind} draft={state.draft ? { ...state.draft, background, typography, colors, buttonStyle, quickMenu, decorations:placements } : null} assets={[...state.allAssets,...sharedDecorations.map(asset=>({...asset,asset_type:"decoration",is_active:true}))]} loading={state.loading} />
+        <TemplateDraftPreview templateId={templateId} templateEventKind={eventKind} draft={state.draft ? { ...state.draft, background, typography, colors, buttonStyle, quickMenu, effects, decorations:placements } : null} assets={[...state.allAssets,...sharedDecorations.map(asset=>({...asset,asset_type:"decoration",is_active:true}))]} loading={state.loading} />
       </aside>
     </div>
   </section>;
