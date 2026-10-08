@@ -67,6 +67,13 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     rootStyle["--dd-template-quick-bg"] = background.color || "#fffaf5";
     if (rootStyle.backgroundImage) rootStyle["--dd-template-quick-image"] = rootStyle.backgroundImage;
   }
+  const heroPanel = hero?.heroCenterPanel;
+  if (heroPanel?.enabled) {
+    const bodyPanel = heroPanel.inheritBody && background?.centerPanel?.enabled ? background.centerPanel : heroPanel;
+    set(heroStyle, "--dd-hero-center-panel-width", bodyPanel.width, "%");
+    heroStyle["--dd-hero-center-panel-color"] = rgba(bodyPanel.color, bodyPanel.opacity / 100) || "transparent";
+    if (heroPanel.inheritBody && background?.color) heroStyle.backgroundColor = background.color;
+  }
   const backdrop = hero?.heroBackdrop;
   if (backdrop && backdrop.mode !== "inherit") {
     const base = backdrop.color || "#f3ebe2";
