@@ -19,7 +19,7 @@ async function writeToClipboard(value) {
   textarea.remove();
 }
 
-function AccountCard({ side, bank, holder, account }) {
+function AccountCard({ side, bank, holder, account, showSide = true }) {
   const [copied, setCopied] = useState(false);
   const bankLogo = getBankLogo(bank);
   const copy = async () => {
@@ -28,7 +28,7 @@ function AccountCard({ side, bank, holder, account }) {
     window.setTimeout(() => setCopied(false), 1800);
   };
 
-  return <article className="public-account-card"><p>{side}</p><strong className="public-account-holder">예금주 : {holder}</strong><div><span className="public-account-bank">{bankLogo && <img src={bankLogo} alt="" />}<span>{[bank, account].filter(Boolean).join(" ")}</span></span><button type="button" onClick={copy}>{copied ? "복사됨" : "계좌 복사"}</button></div></article>;
+  return <article className="public-account-card">{showSide && <p>{side}</p>}<strong className="public-account-holder">예금주 : {holder}</strong><div><span className="public-account-bank">{bankLogo && <img src={bankLogo} alt="" />}<span>{[bank, account].filter(Boolean).join(" ")}</span></span><button type="button" onClick={copy}>{copied ? "복사됨" : "계좌 복사"}</button></div></article>;
 }
 
 export default function AccountCopy({ invitation, eventKind, eventTypeConfig, previewExpanded = false }) {
@@ -40,7 +40,7 @@ export default function AccountCopy({ invitation, eventKind, eventTypeConfig, pr
       account: invitation[group.accountKey]?.trim(),
     })).filter((group) => group.account);
     if (!rows.length) return null;
-    return <section className="public-accounts"><h2>{accountConfig.sectionLabel}</h2>{rows.map((group) => <details className="public-account-side" key={group.key} open={previewExpanded || undefined}><summary>{group.renderLabel}<span aria-hidden="true">⌄</span></summary><AccountCard side={group.renderLabel} bank={invitation[group.bankKey]} holder={invitation[group.holderKey]||invitation[group.nameKey]||"예금주"} account={group.account}/></details>)}</section>;
+    return <section className="public-accounts"><h2>{accountConfig.sectionLabel}</h2>{rows.map((group) => <details className="public-account-side" key={group.key} open={previewExpanded || undefined}><summary>{group.renderLabel}<span aria-hidden="true">⌄</span></summary><AccountCard side={group.renderLabel} showSide={false} bank={invitation[group.bankKey]} holder={invitation[group.holderKey]||invitation[group.nameKey]||"예금주"} account={group.account}/></details>)}</section>;
   }
   const groomAccount = invitation.groomAccount?.trim();
   const brideAccount = invitation.brideAccount?.trim();
