@@ -2549,6 +2549,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .public-account-side>summary span{transition:transform .2s ease}
 .public-account-side[open]>summary span{transform:rotate(180deg)}
 .public-account-side .public-account-card{margin:0;border-radius:0;border-width:1px 0 0}
+/* Account details keep the template body font/color but use a compact, readable size. */
+.dd-template-typography .public-account-card :is(.public-account-holder,.public-account-bank,.public-account-bank > span){font-size:14px;}
+.dd-template-typography .public-account-card .public-account-bank > span{line-height:1.6;}
 
 
 /* Invitation gallery: hero slide + thumbnail strip */
