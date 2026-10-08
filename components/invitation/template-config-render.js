@@ -68,11 +68,14 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     if (rootStyle.backgroundImage) rootStyle["--dd-template-quick-image"] = rootStyle.backgroundImage;
   }
   const heroPanel = hero?.heroCenterPanel;
-  if (heroPanel?.enabled) {
-    const bodyPanel = heroPanel.inheritBody && background?.centerPanel?.enabled ? background.centerPanel : heroPanel;
-    set(heroStyle, "--dd-hero-center-panel-width", bodyPanel.width, "%");
-    heroStyle["--dd-hero-center-panel-color"] = rgba(bodyPanel.color, bodyPanel.opacity / 100) || "transparent";
-    if (heroPanel.inheritBody && background?.color) heroStyle.backgroundColor = background.color;
+  // The body panel already spans the entire invitation. When sharing it with
+  // the Hero, do not paint a second panel on top of the same translucent layer.
+  const shareBodyPanel = heroPanel?.enabled === true
+    && heroPanel.inheritBody === true
+    && background?.centerPanel?.enabled === true;
+  if (heroPanel?.enabled && !shareBodyPanel) {
+    set(heroStyle, "--dd-hero-center-panel-width", heroPanel.width, "%");
+    heroStyle["--dd-hero-center-panel-color"] = rgba(heroPanel.color, heroPanel.opacity / 100) || "transparent";
   }
   const backdrop = hero?.heroBackdrop;
   if (backdrop && backdrop.mode !== "inherit") {
@@ -95,6 +98,13 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroStyle.backgroundSize = "cover";
     heroStyle.backgroundPosition = "center";
     heroMediaStyle.background = "transparent";
+  }
+  if (shareBodyPanel && !heroBackgroundUrl) {
+    // Let the page-wide body background and its single center panel show
+    // through the Hero. Keep the photo/frame background on heroMediaStyle.
+    heroStyle.backgroundColor = "transparent";
+    heroStyle.backgroundImage = "none";
+    heroStyle["--dd-hero-center-panel-width"] = "0%";
   }
   if (hero?.photoFadeUp?.enabled) { const introDelay=hero?.intro?.enabled&&hero.intro.text?.trim()?Number(hero.intro.writeDuration||0)+Number(hero.intro.holdDuration||0)+Number(hero.intro.fadeDuration||0):0; heroMediaStyle.animation = `dd-hero-photo-fade-up ${hero.photoFadeUp.duration}s ease-out ${introDelay+Number(hero.photoFadeUp.delay||0)}s both`; }
   const frame = hero?.photoFrame;
