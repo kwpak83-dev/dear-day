@@ -219,6 +219,8 @@ export function TemplateConfigHeroIntro({ config }) {
 }
 
 export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {} }) {
+  // Match the editor's 390px canvas while following the actual Hero width.
+  const designLength = (value) => `calc(${value} * var(--dd-hero-design-unit, 1px))`;
   const frameUrl = config?.hero?.frameAssetId ? assets[config.hero.frameAssetId] : null;
   const overlay = rgba(config?.hero?.overlayColor, config?.hero?.overlayOpacity);
   return <>
@@ -246,15 +248,15 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
           const shadow = layer.shadow?.enabled ? layer.shadow : null;
           const gradient = layer.gradient?.enabled ? layer.gradient : null;
           const shadowColor = shadow ? rgba(shadow.color, shadow.opacity) : null;
-          const textShadow = shadowColor ? `${shadow.x}px ${shadow.y}px ${shadow.blur}px ${shadowColor}` : "none";
+          const textShadow = shadowColor ? `${designLength(shadow.x)} ${designLength(shadow.y)} ${designLength(shadow.blur)} ${shadowColor}` : "none";
           const textStyle = {
             fontFamily: getHeroFont(layer.fontId).family,
-            fontSize: `${Math.min(100, Math.max(8, Number(layer.fontSize ?? 32)))}px`,
+            fontSize: designLength(Math.min(100, Math.max(8, Number(layer.fontSize ?? 32)))),
             fontWeight: layer.fontWeight === 700 ? 700 : 400,
             color: layer.color || "#ffffff", whiteSpace: "pre-wrap", overflowWrap: "anywhere",
-            opacity: layer.opacity ?? 1, letterSpacing: `${layer.letterSpacing ?? 0}px`,
+            opacity: layer.opacity ?? 1, letterSpacing: designLength(layer.letterSpacing ?? 0),
             lineHeight: layer.lineHeight ?? 1.5, textShadow,
-            ...(stroke ? { WebkitTextStroke: `${stroke.width}px ${stroke.color}`, paintOrder: "stroke fill" } : {}),
+            ...(stroke ? { WebkitTextStroke: `${designLength(stroke.width)} ${stroke.color}`, paintOrder: "stroke fill" } : {}),
             ...(gradient ? { backgroundImage: `linear-gradient(${gradient.angle}deg, ${gradient.start}, ${gradient.end})`, WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent" } : {}),
           };
           const introDelay = config?.hero?.intro?.enabled && config.hero.intro.text?.trim() ? Number(config.hero.intro.writeDuration||0) + Number(config.hero.intro.holdDuration||0) + Number(config.hero.intro.fadeDuration||0) : 0;
