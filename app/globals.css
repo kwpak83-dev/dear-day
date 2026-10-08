@@ -329,7 +329,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .classic-001 .invitation-gallery h2{margin:9px 0 28px;color:var(--classic-ink);font-size:24px;font-weight:400}
 .classic-001 .public-gallery-grid{gap:8px}
 .classic-001 .public-gallery-photo{border:1px solid rgba(170,141,86,.22);border-radius:2px;background:#e9e1d3;box-shadow:none}
-.classic-001 .public-accounts{margin:0;padding:68px clamp(25px,9vw,50px);border:0;border-bottom:1px solid rgba(170,141,86,.3);background:var(--classic-paper);text-align:left}
+.classic-001 .public-accounts{margin:0;padding:68px clamp(25px,9vw,50px);border:0;border-bottom:0;background:var(--classic-paper);text-align:left}
 .classic-001 .public-accounts h2{margin:0 0 29px;color:var(--classic-ink);font:400 24px/1.4 Georgia,"Batang",serif;text-align:center}
 .classic-001 .public-accounts h2::before{content:"ACCOUNT";display:block;margin-bottom:9px;color:var(--classic-gold);font:8px/1.4 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.3em}
 .classic-001 .public-account-card{padding:18px 0;border-color:var(--classic-line)}
