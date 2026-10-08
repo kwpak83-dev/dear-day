@@ -241,6 +241,11 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
         {config.hero.textLayers.filter((layer) => layer.visible !== false && ((layer.source && layer.source !== "custom") || layer.text?.trim())).map((layer) => {
           const boundText = layer.source === "title" ? (presentation.heroTitle || presentation.title) : layer.source === "parent1" ? presentation.heroParent1 : layer.source === "parent2" ? presentation.heroParent2 : layer.source === "schedule" ? presentation.heroSchedule : layer.source === "venue" ? presentation.venue : layer.text;
           if (!boundText?.trim()) return null;
+          const birthdayTitle = presentation.eventKind === "first_birthday"
+            ? boundText.match(/^(\S+)(의\s+첫\s*번째\s+생일)$/) : null;
+          const renderedText = birthdayTitle
+            ? <><span style={{ marginInlineEnd: designLength(4) }}>{birthdayTitle[1]}</span>{birthdayTitle[2]}</>
+            : boundText;
           const x = Math.min(100, Math.max(0, Number(layer.x ?? 50)));
           const y = Math.min(100, Math.max(0, Number(layer.y ?? 50)));
           
@@ -263,7 +268,7 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
           return <div key={layer.id} className="dd-template-hero-text-layer" style={{
             left: `${x}%`, top: `${y}%`, transform: `translate(-50%, -50%) rotate(${layer.rotation ?? 0}deg)`,
             width: "max-content", maxWidth: "100%", textAlign: "center",
-          }}><span className={layer.fadeUp?.enabled ? "dd-hero-text-fade-up" : undefined} style={{ ...textStyle, display: "inline-block", maxWidth: "100%", ...(layer.fadeUp?.enabled ? { animationDuration: `${layer.fadeUp.duration}s`, animationDelay: `${introDelay + Number(layer.fadeUp.delay||0)}s` } : {}) }}>{boundText}</span></div>;
+          }}><span className={layer.fadeUp?.enabled ? "dd-hero-text-fade-up" : undefined} style={{ ...textStyle, display: "inline-block", maxWidth: "100%", ...(layer.fadeUp?.enabled ? { animationDuration: `${layer.fadeUp.duration}s`, animationDelay: `${introDelay + Number(layer.fadeUp.delay||0)}s` } : {}) }}>{renderedText}</span></div>;
         })}
       </div>
     </>}
