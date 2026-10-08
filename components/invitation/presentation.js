@@ -79,6 +79,7 @@ export function getInvitationPresentation(invitation = {}, eventKind) {
     : clean(event.title);
 
   return {
+    eventKind: kind,
     kindLabel: config.label,
     title: clean(event.title),
     heroTitle: clean(heroTitle),

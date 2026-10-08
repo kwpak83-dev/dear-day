@@ -329,7 +329,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .classic-001 .invitation-gallery h2{margin:9px 0 28px;color:var(--classic-ink);font-size:24px;font-weight:400}
 .classic-001 .public-gallery-grid{gap:8px}
 .classic-001 .public-gallery-photo{border:1px solid rgba(170,141,86,.22);border-radius:2px;background:#e9e1d3;box-shadow:none}
-.classic-001 .public-accounts{margin:0;padding:68px clamp(25px,9vw,50px);border:0;border-bottom:1px solid rgba(170,141,86,.3);background:var(--classic-paper);text-align:left}
+.classic-001 .public-accounts{margin:0;padding:68px clamp(25px,9vw,50px);border:0;border-bottom:0;background:var(--classic-paper);text-align:left}
 .classic-001 .public-accounts h2{margin:0 0 29px;color:var(--classic-ink);font:400 24px/1.4 Georgia,"Batang",serif;text-align:center}
 .classic-001 .public-accounts h2::before{content:"ACCOUNT";display:block;margin-bottom:9px;color:var(--classic-gold);font:8px/1.4 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.3em}
 .classic-001 .public-account-card{padding:18px 0;border-color:var(--classic-line)}
@@ -1077,10 +1077,9 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 }
 
 /* Custom Hero typography: above overlay/frame and the built-in hero copy. */
-.dd-template-hero-text-layers{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
-/* Published desktop Hero text uses the same 390px design coordinate width as editor/full preview. */
-.shared-public-invitation .dd-template-hero-text-layers{width:min(100%,390px);left:50%;right:auto;transform:translateX(-50%)}
-.dd-template-hero-text-layer{position:absolute;line-height:1.2;font-weight:400;text-shadow:0 1px 8px rgba(0,0,0,.24);padding:0 8px;box-sizing:border-box}
+.dd-template-hero-text-layers{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden;container-type:inline-size}
+/* Coordinates share the photo/decor Hero bounds; pixel design values scale from 390px. */
+.dd-template-hero-text-layer{--dd-hero-design-unit:calc(100cqw / 390);position:absolute;line-height:1.2;font-weight:400;text-shadow:0 calc(1 * var(--dd-hero-design-unit)) calc(8 * var(--dd-hero-design-unit)) rgba(0,0,0,.24);padding:0 calc(8 * var(--dd-hero-design-unit));box-sizing:border-box}
 
 /* Hero preset typography for event title, names and wedding separator. */
 .dd-template-hero-configured .classic-hero-copy h2,.dd-template-hero-configured .romantic-hero-copy h2,.dd-template-hero-configured .modern-hero-copy h2{font-size:var(--dd-hero-name-size,21px);color:var(--dd-hero-name-color,inherit)}
