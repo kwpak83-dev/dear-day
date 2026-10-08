@@ -2624,9 +2624,25 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   justify-content:center !important;
 }
 .invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills > button{
-  width:148px !important;
+  width:170px !important;
   max-width:calc((100vw - 44px)/2) !important;
   box-sizing:border-box !important;
+}
+/* Keep sales-preview labels readable at the desktop size on narrow phones. */
+.invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong{
+  font-size:12px !important;
+}
+.invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small{
+  font-size:9px !important;
+}
+/* Fit the secondary label within the pill rather than spilling over its edge. */
+.invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy{
+  max-width:100% !important;
+  overflow:hidden !important;
+}
+.invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small{
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
 }
 
 .kakao-share-photo-editor{margin-top:22px;padding-top:20px;border-top:1px solid #eadfd8}.kakao-share-photo-editor h3{margin:0 0 6px;font-size:14px}.kakao-share-photo-editor h3 small{color:#8f776c;font-size:11px;font-weight:400}.kakao-share-photo-editor>p{font-size:12px;color:#8f776c;line-height:1.7}.kakao-share-photo-editor .photo-selection img{aspect-ratio:2/1;height:auto;object-fit:cover}
