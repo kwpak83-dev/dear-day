@@ -52,7 +52,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   // A published invitation uses one history entry for its open bottom sheet.
   // Android back/swipe pops that entry and closes the sheet without leaving the page.
   useEffect(() => {
-    if (previewMode) return;
+    if (previewMode && previewMode !== "sales-preview") return;
     const onPopState = () => {
       if (!sheetHistoryRef.current) return;
       sheetHistoryRef.current = null;
@@ -63,7 +63,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   }, [previewMode]);
 
   const openSheet = (nextSheet) => {
-    if (!previewMode && !sheetHistoryRef.current) {
+    if ((!previewMode || previewMode === "sales-preview") && !sheetHistoryRef.current) {
       const token = `dd-invitation-sheet-${Date.now()}-${Math.random().toString(36).slice(2)}`;
       window.history.pushState({ ...window.history.state, ddInvitationSheet: token }, "", window.location.href);
       sheetHistoryRef.current = token;
@@ -72,7 +72,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   };
 
   const closeSheet = () => {
-    if (!previewMode && sheetHistoryRef.current) {
+    if ((!previewMode || previewMode === "sales-preview") && sheetHistoryRef.current) {
       const token = sheetHistoryRef.current;
       sheetHistoryRef.current = null;
       setSheet(null);

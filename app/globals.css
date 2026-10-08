@@ -2549,6 +2549,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .public-account-side>summary span{transition:transform .2s ease}
 .public-account-side[open]>summary span{transform:rotate(180deg)}
 .public-account-side .public-account-card{margin:0;border-radius:0;border-width:1px 0 0}
+/* Account details keep the template body font/color but use a compact, readable size. */
+.dd-template-typography .public-account-card :is(.public-account-holder,.public-account-bank,.public-account-bank > span){font-size:14px;}
+.dd-template-typography .public-account-card .public-account-bank > span{line-height:1.6;}
 
 
 /* Invitation gallery: hero slide + thumbnail strip */
@@ -2611,6 +2614,38 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .invitation-quick-menu--sales-preview{
   bottom:max(82px,calc(70px + env(safe-area-inset-bottom))) !important;
   z-index:80 !important;
+}
+/* Sales preview only: keep the two D-style actions compact and centered on mobile. */
+.invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills{
+  left:50% !important;
+  right:auto !important;
+  width:max-content !important;
+  max-width:calc(100vw - 24px) !important;
+  margin-left:0 !important;
+  margin-right:0 !important;
+  transform:translateX(-50%) !important;
+  justify-content:center !important;
+}
+.invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills > button{
+  width:170px !important;
+  max-width:calc((100vw - 44px)/2) !important;
+  box-sizing:border-box !important;
+}
+/* Keep sales-preview labels readable at the desktop size on narrow phones. */
+.invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong{
+  font-size:12px !important;
+}
+.invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small{
+  font-size:9px !important;
+}
+/* Fit the secondary label within the pill rather than spilling over its edge. */
+.invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy{
+  max-width:100% !important;
+  overflow:hidden !important;
+}
+.invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small{
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
 }
 
 .kakao-share-photo-editor{margin-top:22px;padding-top:20px;border-top:1px solid #eadfd8}.kakao-share-photo-editor h3{margin:0 0 6px;font-size:14px}.kakao-share-photo-editor h3 small{color:#8f776c;font-size:11px;font-weight:400}.kakao-share-photo-editor>p{font-size:12px;color:#8f776c;line-height:1.7}.kakao-share-photo-editor .photo-selection img{aspect-ratio:2/1;height:auto;object-fit:cover}
@@ -3128,3 +3163,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
     transform-origin:top left;
   }
 }
+
+/* Optional Hero-only central reading surface, behind the photo and text. */
+.dd-template-hero-configured .classic-hero::before,.dd-template-hero-configured .romantic-hero::before,.dd-template-hero-configured .modern-hero::before{content:"";position:absolute;inset:0 auto 0 50%;transform:translateX(-50%);width:var(--dd-hero-center-panel-width,0%);background:var(--dd-hero-center-panel-color,transparent);pointer-events:none;z-index:0}
+.dd-template-hero-configured .classic-hero>figure,.dd-template-hero-configured .romantic-hero>figure,.dd-template-hero-configured .modern-hero>figure{z-index:1}
