@@ -3163,3 +3163,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
     transform-origin:top left;
   }
 }
+
+/* Optional Hero-only central reading surface, behind the photo and text. */
+.dd-template-hero-configured .classic-hero::before,.dd-template-hero-configured .romantic-hero::before,.dd-template-hero-configured .modern-hero::before{content:"";position:absolute;inset:0 auto 0 50%;transform:translateX(-50%);width:var(--dd-hero-center-panel-width,0%);background:var(--dd-hero-center-panel-color,transparent);pointer-events:none;z-index:0}
+.dd-template-hero-configured .classic-hero>figure,.dd-template-hero-configured .romantic-hero>figure,.dd-template-hero-configured .modern-hero>figure{z-index:1}
