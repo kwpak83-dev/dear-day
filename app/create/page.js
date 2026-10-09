@@ -747,9 +747,10 @@ export default function CreateInvitation() {
   };
   const selectedHero=heroOptions.find((item)=>item.id===invitation.heroPresetId)||null;
   const selectedHeroFrame=selectedHero?.assets?.hero_frame||null;
+  const selectedHeroBackground=selectedHero?.assets?.hero_background||null;
   const selectedHeroDecorations=selectedHero?.assets?.hero_decorations||[];
   const selectedHeroAssets=Object.fromEntries(selectedHeroDecorations.filter(item=>item?.id&&item?.url).map(item=>[item.id,item.url]));
-  const composedTemplateRender=selectedHero?{config:templateRender.config?{...templateRender.config,hero:{...templateRender.config.hero,...selectedHero.config,textLayers:[...(selectedHero.config?.textLayers||[]),...(invitation.heroExtraTextLayers||[])].map((layer)=>({...layer,...(invitation.heroLayerOverrides?.[layer.id]||{}),text:typeof invitation.heroTextOverrides?.[layer.id]==="string"?invitation.heroTextOverrides[layer.id]:layer.text})),frameAssetId:selectedHeroFrame?.id||null}}:templateRender.config,assets:{...templateRender.assets,...selectedHeroAssets,...(selectedHeroFrame?.url?{[selectedHeroFrame.id]:selectedHeroFrame.url}:{})}}:templateRender;
+  const composedTemplateRender=selectedHero?{config:templateRender.config?{...templateRender.config,hero:{...templateRender.config.hero,...selectedHero.config,textLayers:[...(selectedHero.config?.textLayers||[]),...(invitation.heroExtraTextLayers||[])].map((layer)=>({...layer,...(invitation.heroLayerOverrides?.[layer.id]||{}),text:typeof invitation.heroTextOverrides?.[layer.id]==="string"?invitation.heroTextOverrides[layer.id]:layer.text})),frameAssetId:selectedHeroFrame?.id||null,backgroundAssetId:selectedHeroBackground?.id||null}}:templateRender.config,assets:{...templateRender.assets,...selectedHeroAssets,...(selectedHeroFrame?.url?{[selectedHeroFrame.id]:selectedHeroFrame.url}:{}),...(selectedHeroBackground?.url?{[selectedHeroBackground.id]:selectedHeroBackground.url}:{})}}:templateRender;
   // Use the active Hero photo as the editor preview fallback; never persist it into invitation settings.
   const previewInvitation = selectedHero && !invitation.coverPhotoUrl && selectedHero.config?.mode !== "illustration" && selectedHeroFrame?.url
     ? { ...invitation, coverPhotoUrl: selectedHeroFrame.url }
