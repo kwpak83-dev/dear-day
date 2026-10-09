@@ -85,7 +85,7 @@ export default function TemplateDraftPreview({ templateId, templateEventKind = "
   const openFullPreview = () => setFull(true);
   const eventTypeConfig = eventTypeConfigs.find((item) => item.kind === eventKind) || null;
 
-  const renderInvitation = (mapWidth, previewMode = "") => <><InvitationNotice notice={invitation.notice} slug={`body-template-${previewMode}`} imageUrl={invitation.notice?.imagePath || null} preview /><InvitationRenderer invitation={invitation} eventKind={eventKind} eventTypeConfig={eventTypeConfig} templateId={templateId} templateConfig={config} templateAssets={resolvedAssets} afterMessage={<GrowthTimeline invitation={invitation} eventKind={eventKind} eventTypeConfig={eventTypeConfig} />}
+  const renderInvitation = (mapWidth, previewMode = "") => <><InvitationNotice notice={invitation.notice} slug={`body-template-${previewMode}`} imageUrl={invitation.notice?.imagePath || null} preview autoOpen={false} /><InvitationRenderer invitation={invitation} eventKind={eventKind} eventTypeConfig={eventTypeConfig} templateId={templateId} templateConfig={config} templateAssets={resolvedAssets} afterMessage={<GrowthTimeline invitation={invitation} eventKind={eventKind} eventTypeConfig={eventTypeConfig} />}
     placeActions={<><div className="public-address-copy"><button type="button" disabled>주소 복사</button></div><InvitationMap key={mapWidth} address={invitation.venueAddress} venue={invitation.venue} /></>}>
     <PreviewSections invitation={invitation} eventTypeConfig={eventTypeConfig} previewMode={previewMode} />
   </InvitationRenderer></>;
