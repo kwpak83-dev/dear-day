@@ -285,7 +285,7 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
       <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />
       <div className="dd-template-hero-text-layers">
         {config.hero.textLayers.filter((layer) => layer.visible !== false && ((layer.source && layer.source !== "custom") || layer.text?.trim())).map((layer) => {
-          const boundText = layer.source === "title" ? (presentation.heroTitle || presentation.title) : layer.source === "parent1" ? presentation.heroParent1 : layer.source === "parent2" ? presentation.heroParent2 : layer.source === "schedule" ? presentation.heroSchedule : layer.source === "venue" ? presentation.venue : layer.text;
+          const boundText = layer.source === "title" ? (presentation.heroTitle || presentation.title) : layer.source === "name" ? presentation.heroName : layer.source === "event_title" ? presentation.heroEventTitle : layer.source === "parent1" ? presentation.heroParent1 : layer.source === "parent2" ? presentation.heroParent2 : layer.source === "schedule" ? presentation.heroSchedule : layer.source === "venue" ? presentation.venue : layer.text;
           if (!boundText?.trim()) return null;
           const birthdayTitle = presentation.eventKind === "first_birthday"
             ? boundText.match(/^(\S+)(의\s+첫\s*번째\s+생일)$/) : null;
