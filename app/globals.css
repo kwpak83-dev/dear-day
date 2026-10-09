@@ -3157,10 +3157,12 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
     position:relative;
   }
   .create-page .preview-content.full-invitation-renderer > .invitation-template{
+    /* Scale the layout canvas itself so its background and center panel
+       share the same centered coordinate system inside the 374px viewport. */
     width:390px !important;
     max-width:none !important;
-    transform:scale(0.958974359);
-    transform-origin:top left;
+    zoom:0.958974359;
+    transform:none;
   }
 }
 
