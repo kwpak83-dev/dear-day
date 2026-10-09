@@ -97,7 +97,8 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroStyle.backgroundImage = `url("${heroBackgroundUrl}")`;
     heroStyle.backgroundSize = "cover";
     heroStyle.backgroundPosition = "center";
-    heroMediaStyle.background = "transparent";
+    heroMediaStyle.backgroundColor = "transparent";
+    heroMediaStyle.backgroundImage = "none";
   }
   if (shareBodyPanel && !heroBackgroundUrl) {
     // Let the page-wide body background and its single center panel show
