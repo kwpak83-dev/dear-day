@@ -138,9 +138,24 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroImageStyle.width = "100%";
     heroImageStyle.height = "100%";
     heroImageStyle.objectFit = "cover";
-    heroImageStyle.objectPosition = `${frame.imageX ?? 50}% ${frame.imageY ?? 50}%`;
-    heroImageStyle.transform = `scale(${frame.imageZoom ?? 1})`;
-    heroImageStyle.transformOrigin = `${frame.imageX ?? 50}% ${frame.imageY ?? 50}%`;
+    if (frame.autoPan === true) {
+      // Pan against the frame, even when object-fit: cover leaves no overflow on
+      // one axis. Grow only as much as needed to keep the frame fully covered.
+      const x = Math.max(0, Math.min(100, Number(frame.imageX ?? 50)));
+      const y = Math.max(0, Math.min(100, Number(frame.imageY ?? 50)));
+      const dx = (50 - x) / 2;
+      const dy = (50 - y) / 2;
+      const zoom = Math.max(1, Number(frame.imageZoom ?? 1));
+      const effectiveZoom = Math.max(zoom, 1 + Math.max(Math.abs(dx), Math.abs(dy)) / 50);
+      heroImageStyle.objectPosition = "center";
+      heroImageStyle.transformOrigin = "center";
+      heroImageStyle.transform = `translate(${dx}%, ${dy}%) scale(${effectiveZoom})`;
+    } else {
+      // Previously saved presets retain their exact original crop.
+      heroImageStyle.objectPosition = `${frame.imageX ?? 50}% ${frame.imageY ?? 50}%`;
+      heroImageStyle.transform = `scale(${frame.imageZoom ?? 1})`;
+      heroImageStyle.transformOrigin = `${frame.imageX ?? 50}% ${frame.imageY ?? 50}%`;
+    }
   }
   if (hero?.aspectRatio && !customFrameActive) heroMediaStyle.aspectRatio = hero.aspectRatio.replace(":", " / ");
   // In the legacy frame mode the photo uses the same sizing/cropping as photo mode.
