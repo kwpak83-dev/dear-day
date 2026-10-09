@@ -34,6 +34,16 @@ const cleanSampleContent=(value)=>{
     gallery_images:Array.isArray(s.gallery_images)?s.gallery_images.filter(x=>typeof x==="string"&&x).slice(0,20).map(x=>x.slice(0,2000)):[],timeline_enabled:s.timeline_enabled===true,timeline_items:Array.isArray(s.timeline_items)?s.timeline_items.slice(0,6).map((item,index)=>({id:String(item?.id||`sample-${index+1}`).slice(0,100),date:String(item?.date||"").slice(0,40),text:String(item?.text||"").slice(0,80),photoUrl:String(item?.photoUrl||item?.photo_url||"").slice(0,2000)})):[]
   };
 };
+const fieldError=(b)=>{
+  if(!b||typeof b!=="object")return "저장할 데이터를 확인해 주세요.";
+  if(typeof b.name!=="string"||!b.name.trim())return "완성 템플릿 이름을 입력해 주세요.";
+  if(typeof b.template_key!=="string"||!/^[a-z0-9][a-z0-9_-]{2,79}$/.test(b.template_key))return "Template key는 영문 소문자 또는 숫자로 시작하는 3~80자의 영문 소문자·숫자·-·_만 사용할 수 있어요.";
+  if(!uuid.test(b.hero_preset_id||""))return "Hero 프리셋을 선택해 주세요.";
+  if(!uuid.test(b.body_template_id||""))return "본문 테마를 선택해 주세요.";
+  if(!Number.isInteger(Number(b.price))||Number(b.price)<0)return "가격은 0 이상의 정수로 입력해 주세요.";
+  if(!Number.isInteger(Number(b.sort_order)))return "정렬 순서는 정수로 입력해 주세요.";
+  return "완성 템플릿 정보를 확인해 주세요.";
+};
 const fields=(b)=>{
   if(!b||typeof b.name!=="string"||!b.name.trim()||typeof b.template_key!=="string"||!/^[a-z0-9][a-z0-9_-]{2,79}$/.test(b.template_key)||!uuid.test(b.hero_preset_id||"")||!uuid.test(b.body_template_id||""))return null;
   const price=Number(b.price),sort=Number(b.sort_order);
@@ -52,7 +62,7 @@ export async function GET(request){
 }
 export async function POST(request){
   const a=await getAdmin(request); if(a.error)return json({error:a.error},a.status);
-  const f=fields(await request.json().catch(()=>null)); if(!f)return json({error:"완성 템플릿 정보를 확인해 주세요."},400);
+  const b=await request.json().catch(()=>null); const f=fields(b); if(!f)return json({error:fieldError(b)},400);
   const {updated_at,...insert}=f;
   const {error}=await a.client.from("completed_templates").insert({id:randomUUID(),...insert});
   if(error?.code==="23505")return json({error:"이미 사용 중인 template key예요."},409);
@@ -62,7 +72,7 @@ export async function POST(request){
 export async function PATCH(request){
   const a=await getAdmin(request); if(a.error)return json({error:a.error},a.status);
   const b=await request.json().catch(()=>null); if(!uuid.test(b?.id||""))return json({error:"완성 템플릿을 확인해 주세요."},400);
-  const f=fields(b); if(!f)return json({error:"완성 템플릿 정보를 확인해 주세요."},400);
+  const f=fields(b); if(!f)return json({error:fieldError(b)},400);
   const {error}=await a.client.from("completed_templates").update(f).eq("id",b.id);
   if(error)return json({error:"완성 템플릿을 수정하지 못했어요."},500);
   return json({ok:true});
