@@ -142,15 +142,14 @@ export async function GET(request) {
     if (!url || !serviceRoleKey) return json({ error: "템플릿 서비스를 준비하지 못했어요." }, 503);
     const supabase = createClient(url, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
     const { data: template, error: templateError } = await supabase.from("templates")
-      .select("id,is_active").eq("id", previewTemplateId).maybeSingle();
+      .select("id,is_active,current_sale_version_id").eq("id", previewTemplateId).maybeSingle();
     if (templateError) return json({ error: "템플릿을 불러오지 못했어요." }, 500);
     if (!template?.is_active) return json({ error: "현재 사용할 수 있는 템플릿을 찾지 못했어요." }, 404);
-    const { data: latestVersion, error: versionError } = await supabase.from("template_versions")
-      .select("id").eq("template_id", template.id).order("version", { ascending: false }).limit(1).maybeSingle();
-    if (versionError || !latestVersion) return json({ error: "템플릿 디자인을 불러오지 못했어요." }, 409);
-    const renderData = await getTemplateRenderData(supabase, template.id, latestVersion.id);
+    const saleVersionId = template.current_sale_version_id;
+    if (!saleVersionId) return json({ error: "판매 중인 템플릿 디자인이 없어요." }, 409);
+    const renderData = await getTemplateRenderData(supabase, template.id, saleVersionId);
     if (!renderData.templateConfig) return json({ error: "템플릿 디자인을 불러오지 못했어요." }, 409);
-    return json({ templateId: template.id, templateVersionId: latestVersion.id, ...renderData });
+    return json({ templateId: template.id, templateVersionId: saleVersionId, ...renderData });
   }
   const auth = await getAuthenticatedClient(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
@@ -163,11 +162,15 @@ export async function GET(request) {
   const event = data?.[0] || null;
   let renderData = { templateConfig: null, templateAssets: {} };
   if (event?.template_id) {
-    const { data: latestVersion, error: versionError } = await auth.supabase.from("template_versions")
-      .select("id").eq("template_id", event.template_id).order("version", { ascending: false }).limit(1).maybeSingle();
-    if (!versionError && latestVersion) {
-      renderData = await getTemplateRenderData(auth.supabase, event.template_id, latestVersion.id);
+    let versionId = event.template_version_id;
+    if (!versionId) {
+      // Preserve the existing latest-version fallback only for legacy unpinned events.
+      const { data: latestVersion, error: versionError } = await auth.supabase.from("template_versions")
+        .select("id").eq("template_id", event.template_id).order("version", { ascending: false }).limit(1).maybeSingle();
+      if (versionError) console.error("Legacy template version query failed:", versionError.code);
+      versionId = latestVersion?.id || null;
     }
+    if (versionId) renderData = await getTemplateRenderData(auth.supabase, event.template_id, versionId);
   }
   return json({ event, ...renderData });
 }
