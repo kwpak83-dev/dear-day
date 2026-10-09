@@ -38,6 +38,12 @@ const FIRST_BIRTHDAY_MESSAGE_EXAMPLES = [
   { label: "감사한 마음", text: "작고 소중한 아이가 저희에게 온 지 어느덧 한 해가 되었습니다.\n첫 번째 생일의 행복한 순간을 감사한 분들과 함께하고 싶습니다." },
   { label: "첫돌의 순간", text: "첫 웃음, 첫 걸음, 그리고 첫 번째 생일.\n하루하루 사랑으로 자라온 우리 아이의 특별한 날에 소중한 분들을 초대합니다." },
 ];
+const BIRTHDAY_MESSAGE_EXAMPLES = [
+  { label: "밝고 신나는 초대", text: "신나는 생일 파티가 열려요!\n함께 웃고 놀며 즐거운 추억을 만들어요.\n생일 파티에 꼭 놀러 와 주세요!" },
+  { label: "친구들에게", text: "친구들아, 내 생일 파티에 초대할게!\n맛있는 간식도 먹고 신나게 놀자.\n너희와 함께하면 더 행복한 생일이 될 거야!" },
+  { label: "따뜻한 초대", text: "소중한 우리 아이의 생일을 맞아\n작은 파티를 준비했습니다.\n함께 자리해 주셔서 즐거운 시간을 나눠 주세요." },
+  { label: "짧고 귀엽게", text: "오늘의 주인공은 바로 나!\n웃음 가득한 생일 파티에 놀러 오세요.\n우리 함께 신나게 즐겨요!" },
+];
 function HeroEditorPreview({ invitation, eventKind, templateId, templateConfig, templateAssets }) {
   const frameRef = useRef(null);
   const contentRef = useRef(null);
@@ -800,7 +806,9 @@ export default function CreateInvitation() {
           ? WEDDING_MESSAGE_EXAMPLES
           : invitation.eventKind === "first_birthday"
             ? FIRST_BIRTHDAY_MESSAGE_EXAMPLES
-            : null
+            : invitation.eventKind === "birthday"
+              ? BIRTHDAY_MESSAGE_EXAMPLES
+              : null
         : null;
       return <Field key={field.key} label={field.label}>
         {messageExamples && <select className="message-example-select" defaultValue="" onChange={(e) => {
