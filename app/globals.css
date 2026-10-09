@@ -3148,20 +3148,19 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 }
 
 
-/* User editor desktop LIVE PREVIEW: the 390px device includes an 8px frame inset.
-   Give the rendered invitation the same 390px design canvas used by the admin previews,
-   then scale it into the 374px inner viewport. This keeps Hero geometry/crop consistent
-   without changing the published invitation or the phone chrome. */
+/* The live preview must use the phone's actual inner width as its canvas.
+   A fixed 390px template inside the 374px scrollport crops one side of the
+   decorative background and shifts the center reading panel. */
 @media (min-width:761px){
   .create-page .preview-content.full-invitation-renderer{
     position:relative;
   }
   .create-page .preview-content.full-invitation-renderer > .invitation-template{
-    /* Scale the layout canvas itself so its background and center panel
-       share the same centered coordinate system inside the 374px viewport. */
-    width:390px !important;
-    max-width:none !important;
-    zoom:0.958974359;
+    width:100% !important;
+    max-width:100% !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    zoom:1;
     transform:none;
   }
 }
