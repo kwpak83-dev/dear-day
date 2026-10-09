@@ -774,8 +774,13 @@ export default function CreateInvitation() {
           const response = await fetch("/api/templates/collection");
           if (!response.ok) return;
           const items = (await response.json()).items || [];
-          const matches = items.filter(row => row.hero_preset_id === heroId && row.body_template_id === bodyId && row.category === invitation.eventKind);
-          if (matches.length === 1) item = matches[0];
+          // Legacy published invitations may have no template key, and their
+          // category may differ from the current completed-template category.
+          const matches = items.filter(row => row.hero_preset_id === heroId && row.body_template_id === bodyId);
+          const sameCategory = matches.filter(row => row.category === invitation.eventKind);
+          const candidates = sameCategory.length ? sameCategory : matches;
+          // Only infer a template when the matching pair is unambiguous.
+          if (candidates.length === 1) item = candidates[0];
         }
         if (!cancelled && item?.hero_preset_id === heroId && item?.body_template_id === bodyId) {
           setCompletedCardImages({heroPresetId:heroId,templateId:bodyId,heroUrl:item.thumbnail_1_url||null,bodyUrl:item.thumbnail_2_url||null});
