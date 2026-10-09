@@ -127,6 +127,11 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroMediaStyle.boxSizing = "border-box";
     if (frame.shape === "circle") heroMediaStyle.aspectRatio = "1 / 1";
     if (frame.shadow) heroMediaStyle.filter = `drop-shadow(0 6px ${frame.shadowBlur ?? 12}px rgba(0,0,0,.35))`;
+    // Keep the image inside the independently sized frame; do not let its intrinsic
+    // dimensions or template figure rules stretch it or change the frame geometry.
+    heroImageStyle.position = "absolute";
+    heroImageStyle.inset = 0;
+    heroImageStyle.display = "block";
     heroImageStyle.width = "100%";
     heroImageStyle.height = "100%";
     heroImageStyle.objectFit = "cover";
@@ -135,6 +140,14 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroImageStyle.transformOrigin = `${frame.imageX ?? 50}% ${frame.imageY ?? 50}%`;
   }
   if (hero?.aspectRatio && (!frame || frame.shape === "default")) heroMediaStyle.aspectRatio = hero.aspectRatio.replace(":", " / ");
+  // In the legacy frame mode the photo uses the same sizing/cropping as photo mode.
+  // The decorative frame image is an overlay, not the photo container.
+  if (hero?.mode === "frame" && (!frame || frame.shape === "default")) {
+    heroMediaStyle.width = "100%";
+    heroImageStyle.objectFit = "cover";
+    heroImageStyle.width = "100%";
+    heroImageStyle.height = "100%";
+  }
   if ((!frame || frame.shape === "default") && hero?.positionX !== null && hero?.positionX !== undefined) heroImageStyle.objectPosition = `${hero.positionX}% ${hero?.positionY ?? 50}%`;
   if ((!frame || frame.shape === "default") && hero && hero.zoom !== null) { heroImageStyle.transform = `scale(${hero.zoom})`; heroImageStyle.transformOrigin = `${hero?.positionX ?? 50}% ${hero?.positionY ?? 50}%`; }
   if (hero?.nameFontFamily && hero.nameFontFamily !== "inherit") set(rootStyle, "--dd-hero-title-font", getHeroFont(hero.nameFontFamily).family);
@@ -242,7 +255,7 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
   const overlay = rgba(config?.hero?.overlayColor, config?.hero?.overlayOpacity);
   return <>
     {overlay && <span className="dd-template-hero-overlay" style={{ background: overlay }} aria-hidden="true" />}
-    {config?.hero?.mode === "frame" && frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
+    {config?.hero?.mode === "frame" && (!config?.hero?.photoFrame || config.hero.photoFrame.shape === "default") && frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
     {Array.isArray(config?.hero?.decorLayers) && config.hero.decorLayers.some((layer) => layer.visible !== false && assets[layer.assetId]) && <div className="dd-template-hero-decor-layers" aria-hidden="true" style={{position:"absolute",inset:0,pointerEvents:"none",zIndex:4}}>
       {config.hero.decorLayers.filter((layer) => layer.visible !== false && assets[layer.assetId]).map((layer) => <img key={layer.id} src={assets[layer.assetId]} alt="" style={{
         position:"absolute",left:`${Math.min(100,Math.max(0,Number(layer.x??50)))}%`,top:`${Math.min(100,Math.max(0,Number(layer.y??50)))}%`,
