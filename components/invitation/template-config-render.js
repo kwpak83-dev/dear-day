@@ -139,17 +139,15 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroImageStyle.height = "100%";
     heroImageStyle.objectFit = "cover";
     if (frame.autoPan === true) {
-      // Pan against the frame, even when object-fit: cover leaves no overflow on
-      // one axis. Grow only as much as needed to keep the frame fully covered.
+      // Free pan (option B): never enlarge the image automatically.
+      // At zoom 1, movement may reveal empty space inside the frame.
       const x = Math.max(0, Math.min(100, Number(frame.imageX ?? 50)));
       const y = Math.max(0, Math.min(100, Number(frame.imageY ?? 50)));
       const dx = (50 - x) / 2;
       const dy = (50 - y) / 2;
-      const zoom = Math.max(1, Number(frame.imageZoom ?? 1));
-      const effectiveZoom = Math.max(zoom, 1 + Math.max(Math.abs(dx), Math.abs(dy)) / 50);
       heroImageStyle.objectPosition = "center";
       heroImageStyle.transformOrigin = "center";
-      heroImageStyle.transform = `translate(${dx}%, ${dy}%) scale(${effectiveZoom})`;
+      heroImageStyle.transform = `translate(${dx}%, ${dy}%) scale(${Math.max(1, Number(frame.imageZoom ?? 1))})`;
     } else {
       // Previously saved presets retain their exact original crop.
       heroImageStyle.objectPosition = `${frame.imageX ?? 50}% ${frame.imageY ?? 50}%`;
