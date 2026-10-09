@@ -138,22 +138,21 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroImageStyle.width = "100%";
     heroImageStyle.height = "100%";
     heroImageStyle.objectFit = "cover";
-    if (frame.autoPan === true) {
-      // Free pan (option B): never enlarge the image automatically.
-      // At zoom 1, movement may reveal empty space inside the frame.
-      const x = Math.max(0, Math.min(100, Number(frame.imageX ?? 50)));
-      const y = Math.max(0, Math.min(100, Number(frame.imageY ?? 50)));
-      const dx = (50 - x) / 2;
-      const dy = (50 - y) / 2;
-      heroImageStyle.objectPosition = "center";
-      heroImageStyle.transformOrigin = "center";
-      heroImageStyle.transform = `translate(${dx}%, ${dy}%) scale(${Math.max(1, Number(frame.imageZoom ?? 1))})`;
+    // Keep the original cover crop intact. An explicit pixel offset in
+    // object-position pans even when the image exactly fits one axis.
+    // Do not switch to a translate/scale coordinate system on first edit.
+    const hasPanBase = Number.isFinite(frame.panBaseX) && Number.isFinite(frame.panBaseY);
+    if (frame.autoPan === true && hasPanBase) {
+      const ratio = String(hero?.aspectRatio || "4:5").split(":").map(Number);
+      const heroHeight = 390 * (ratio[1] > 0 && ratio[0] > 0 ? ratio[1] / ratio[0] : 1.25);
+      const panX = ((Number(frame.panBaseX) - Number(frame.imageX ?? 50)) / 100) * (390 * width / 100);
+      const panY = ((Number(frame.panBaseY) - Number(frame.imageY ?? 50)) / 100) * (heroHeight * height / 100);
+      heroImageStyle.objectPosition = `calc(${frame.panBaseX}% + ${panX}px) calc(${frame.panBaseY}% + ${panY}px)`;
     } else {
-      // Previously saved presets retain their exact original crop.
       heroImageStyle.objectPosition = `${frame.imageX ?? 50}% ${frame.imageY ?? 50}%`;
-      heroImageStyle.transform = `scale(${frame.imageZoom ?? 1})`;
-      heroImageStyle.transformOrigin = `${frame.imageX ?? 50}% ${frame.imageY ?? 50}%`;
     }
+    heroImageStyle.transform = `scale(${frame.imageZoom ?? 1})`;
+    heroImageStyle.transformOrigin = `${frame.imageX ?? 50}% ${frame.imageY ?? 50}%`;
   }
   if (hero?.aspectRatio && !customFrameActive) heroMediaStyle.aspectRatio = hero.aspectRatio.replace(":", " / ");
   // In the legacy frame mode the photo uses the same sizing/cropping as photo mode.
