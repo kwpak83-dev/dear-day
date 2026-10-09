@@ -32,6 +32,28 @@ export default function InvitationRenderer({ invitation, eventKind, eventTypeCon
     ...(matrixFields.message?.state === "none" ? { message: "" } : {}),
   };
   const normalizedConfig = normalizeTemplateConfig(templateConfig);
+  // User-specific photo focus overrides the rendered crop, never the shared Hero preset.
+  const photoFrame = normalizedConfig?.hero?.photoFrame;
+  const focusX = Number(invitation?.heroPhotoFocusX);
+  const focusY = Number(invitation?.heroPhotoFocusY);
+  const hasFocusX = invitation?.heroPhotoFocusX != null && Number.isFinite(focusX) && focusX >= 0 && focusX <= 100;
+  const hasFocusY = invitation?.heroPhotoFocusY != null && Number.isFinite(focusY) && focusY >= 0 && focusY <= 100;
+  if (photoFrame && (hasFocusX || hasFocusY)) {
+    normalizedConfig.hero = {
+      ...normalizedConfig.hero,
+      photoFrame: {
+        ...photoFrame,
+        imageX: hasFocusX ? focusX : photoFrame.imageX,
+        imageY: hasFocusY ? focusY : photoFrame.imageY,
+      },
+    };
+  } else if (!photoFrame && normalizedConfig?.hero && (hasFocusX || hasFocusY)) {
+    normalizedConfig.hero = {
+      ...normalizedConfig.hero,
+      positionX: hasFocusX ? focusX : normalizedConfig.hero.positionX,
+      positionY: hasFocusY ? focusY : normalizedConfig.hero.positionY,
+    };
+  }
   const templateBgmUrl = normalizedConfig.bgm?.mode === "asset" ? templateAssets?.[normalizedConfig.bgm.assetId] : null;
   const bgmMode = invitation.bgmMode || "background";
   const bgmUrl = bgmMode === "none" ? null : (bgmMode === "user" || bgmMode === "upload") ? (userBgmUrl || null) : templateBgmUrl;
