@@ -172,14 +172,23 @@ export async function GET(request) {
     }
     if (versionId) renderData = await getTemplateRenderData(auth.supabase, event.template_id, versionId);
     if (renderData.templateConfig) {
-      const { data: template, error: saleLookupError } = await auth.supabase.from("templates")
-        .select("current_sale_version_id,status").eq("id", event.template_id).maybeSingle();
-      if (saleLookupError) console.error("Sale template lookup failed:", saleLookupError.code);
-      if (template?.status === "on_sale" && template.current_sale_version_id && template.current_sale_version_id !== versionId) {
-        const { data: saleVersion, error: saleVersionError } = await auth.supabase.from("template_versions")
-          .select("config").eq("id", template.current_sale_version_id).eq("template_id", event.template_id).maybeSingle();
-        if (saleVersionError) console.error("Sale template version lookup failed:", saleVersionError.code);
-        if (saleVersion) renderData.templateConfig = applySaleTemplateStyles(renderData.templateConfig, saleVersion.config);
+      // Prefer the admin's saved draft styling, without changing pinned content.
+      const { data: draft, error: draftError } = await auth.supabase.from("template_versions")
+        .select("config").eq("template_id", event.template_id).eq("status", "draft")
+        .order("version", { ascending: false }).limit(1).maybeSingle();
+      if (draftError) console.error("Draft style lookup failed:", draftError.code);
+      if (draft?.config) {
+        renderData.templateConfig = applySaleTemplateStyles(renderData.templateConfig, draft.config);
+      } else {
+        const { data: template, error: saleLookupError } = await auth.supabase.from("templates")
+          .select("current_sale_version_id,status").eq("id", event.template_id).maybeSingle();
+        if (saleLookupError) console.error("Sale template lookup failed:", saleLookupError.code);
+        if (template?.status === "on_sale" && template.current_sale_version_id && template.current_sale_version_id !== versionId) {
+          const { data: saleVersion, error: saleVersionError } = await auth.supabase.from("template_versions")
+            .select("config").eq("id", template.current_sale_version_id).eq("template_id", event.template_id).maybeSingle();
+          if (saleVersionError) console.error("Sale template version lookup failed:", saleVersionError.code);
+          if (saleVersion?.config) renderData.templateConfig = applySaleTemplateStyles(renderData.templateConfig, saleVersion.config);
+        }
       }
     }
   }
