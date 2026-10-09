@@ -781,6 +781,11 @@ export default function CreateInvitation() {
         }
         if (!cancelled && matchesCompletedTemplate(item, heroId, bodyId)) {
           setCompletedCardImages(completedTemplateCardImages(item));
+          // Persist a safely recovered legacy identity on the next save.
+          if (!savedKey && item.template_key) setInvitation(current =>
+            current.heroPresetId === heroId && current.templateId === bodyId && !current.completedTemplateKey
+              ? { ...current, completedTemplateKey: item.template_key }
+              : current);
         }
       } catch {
         // Keep the existing preset thumbnail when the collection cannot be reached.
