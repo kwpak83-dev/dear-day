@@ -5,7 +5,7 @@ import { createClient } from "@supabase/supabase-js";
 
 const bucket="template-assets", maxBytes=15*1024*1024;
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const types=new Set(["thumbnail","hero_frame"]);
+const types=new Set(["thumbnail","hero_frame","hero_background"]);
 const extensions={"image/jpeg":"jpg","image/png":"png","image/webp":"webp"};
 const fail=(error,status)=>Response.json({error},{status});
 async function admin(request){
@@ -23,3 +23,18 @@ async function preset(client,id){const {data,error}=await client.from("hero_pres
 function validImage(bytes,mime){if(mime==="image/jpeg")return bytes.length>3&&bytes[0]===255&&bytes[1]===216&&bytes[2]===255;if(mime==="image/png")return bytes.length>8&&Buffer.from(bytes.subarray(0,8)).equals(Buffer.from([137,80,78,71,13,10,26,10]));return mime==="image/webp"&&bytes.length>12&&Buffer.from(bytes.subarray(0,4)).toString()==="RIFF"&&Buffer.from(bytes.subarray(8,12)).toString()==="WEBP";}
 export async function GET(request){const a=await admin(request);if(a.error)return fail(a.error,a.status);const id=new URL(request.url).searchParams.get("heroPresetId");if(!uuid.test(id||""))return fail("Hero 프리셋 정보가 올바르지 않아요.",400);const bad=await preset(a.client,id);if(bad)return bad;const {data,error}=await a.client.from("hero_preset_assets").select("*").eq("hero_preset_id",id).order("created_at",{ascending:false});if(error)return fail("Hero Asset 목록을 불러오지 못했어요.",500);return Response.json({assets:(data||[]).map(row=>({...row,url:row.storage_bucket===bucket?a.client.storage.from(bucket).getPublicUrl(row.storage_path).data.publicUrl:null}))},{headers:{"Cache-Control":"no-store, no-cache, must-revalidate, max-age=0"}});}
 export async function POST(request){const a=await admin(request);if(a.error)return fail(a.error,a.status);const form=await request.formData().catch(()=>null),heroPresetId=form?.get("heroPresetId"),type=form?.get("assetType"),file=form?.get("file"),width=Number(form?.get("width")),height=Number(form?.get("height"));if(typeof heroPresetId!=="string"||!uuid.test(heroPresetId)||typeof type!=="string"||!types.has(type))return fail("Hero Asset 정보가 올바르지 않아요.",400);if(!(file instanceof File)||!extensions[file.type]||!file.size||file.size>maxBytes)return fail("15MB 이하의 JPG, PNG, WebP 이미지를 선택해 주세요.",400);if(!Number.isSafeInteger(width)||width<1||!Number.isSafeInteger(height)||height<1)return fail("이미지 크기를 확인하지 못했어요.",400);const bad=await preset(a.client,heroPresetId);if(bad)return bad;const bytes=new Uint8Array(await file.arrayBuffer());if(!validImage(bytes,file.type))return fail("올바른 이미지 파일을 선택해 주세요.",400);const id=randomUUID(),path=`hero-presets/${heroPresetId}/${type}/${id}.${extensions[file.type]}`;const {error:uploadError}=await a.client.storage.from(bucket).upload(path,bytes,{contentType:file.type,upsert:false});if(uploadError)return fail("Hero 이미지를 업로드하지 못했어요.",500);const {data:previous,error:lookup}=await a.client.from("hero_preset_assets").select("id").eq("hero_preset_id",heroPresetId).eq("asset_type",type).eq("is_active",true).order("created_at",{ascending:false});if(lookup){await a.client.storage.from(bucket).remove([path]);return fail("기존 Hero Asset을 확인하지 못했어요.",500);}const {error:insert}=await a.client.from("hero_preset_assets").insert({id,hero_preset_id:heroPresetId,asset_type:type,name:file.name.slice(0,200),storage_bucket:bucket,storage_path:path,mime_type:file.type,width,height,file_size:file.size,is_active:true,updated_at:new Date().toISOString()});if(insert){await a.client.storage.from(bucket).remove([path]);return fail("Hero Asset 정보를 저장하지 못했어요.",500);}if(previous?.length){const {error}=await a.client.from("hero_preset_assets").update({is_active:false,updated_at:new Date().toISOString()}).in("id",previous.map(x=>x.id));if(error){await a.client.from("hero_preset_assets").delete().eq("id",id);await a.client.storage.from(bucket).remove([path]);return fail("기존 Hero Asset을 교체하지 못했어요.",500);}}return Response.json({id},{status:201});}
+
+// Deactivate a design background or a preset thumbnail without touching the Hero photo.
+// Stored files remain available for safe rollback.
+export async function DELETE(request){
+ const a=await admin(request);if(a.error)return fail(a.error,a.status);
+ const params=new URL(request.url).searchParams;
+ const heroPresetId=params.get("heroPresetId");
+ const assetType=params.get("assetType")||"hero_background";
+ if(!["hero_background","thumbnail"].includes(assetType))return fail("삭제할 Asset 종류가 올바르지 않아요.",400);
+ if(!uuid.test(heroPresetId||""))return fail("Hero 프리셋 정보가 올바르지 않아요.",400);
+ const bad=await preset(a.client,heroPresetId);if(bad)return bad;
+ const {error}=await a.client.from("hero_preset_assets").update({is_active:false,updated_at:new Date().toISOString()}).eq("hero_preset_id",heroPresetId).eq("asset_type",assetType).eq("is_active",true);
+ if(error)return fail("Hero 이미지를 제거하지 못했어요.",500);
+ return Response.json({ok:true});
+}

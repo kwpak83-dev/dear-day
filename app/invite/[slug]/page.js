@@ -15,7 +15,7 @@ import OptionalInvitationSections from "./optional-invitation-sections";
 import { getInvitationTitle } from "../../../lib/invitation-title";
 import { normalizeNotice } from "../../../lib/invitation-notice";
 import { isPublicPeriodExpired } from "../../../lib/invitation-retention";
-import { getTemplateAssetReferences, resolveTemplateAssetUrls } from "../../../lib/template-config";
+import { getTemplateAssetReferences, resolveTemplateAssetUrls, applySaleTemplateStyles } from "../../../lib/template-config";
 import ExtendedEventInfo from "../../../components/invitation/extended-event-info";
 
 
@@ -59,12 +59,39 @@ export default async function InvitationPage({ params, searchParams }) {
     userBgmUrl = supabase.storage.from("invitation-bgm").getPublicUrl(settings.userBgmUploadPath).data.publicUrl;
   }
   if (event.template_id) {
-    const { data: latestVersion, error: versionError } = await supabase.from("template_versions")
-      .select("id,template_id,status,config").eq("template_id", event.template_id)
-      .order("version", { ascending: false }).limit(1).maybeSingle();
-    if (versionError) console.error("Latest template version query failed:", versionError.code);
-    if (latestVersion) {
-      templateConfig = latestVersion.config;
+    // Pinned events must not silently switch to newer or draft versions.
+    // Only legacy events without a version pin use the previous latest-version fallback.
+    let versionQuery = supabase.from("template_versions")
+      .select("id,template_id,status,config").eq("template_id", event.template_id);
+    if (event.template_version_id) {
+      versionQuery = versionQuery.eq("id", event.template_version_id);
+    } else {
+      versionQuery = versionQuery.order("version", { ascending: false }).limit(1);
+    }
+    const { data: selectedVersion, error: versionError } = await versionQuery.maybeSingle();
+    if (versionError) console.error("Template version query failed:", versionError.code);
+    if (event.template_version_id && !selectedVersion) console.error("Pinned template version unavailable for invitation:", slug);
+    if (selectedVersion) {
+      templateConfig = selectedVersion.config;
+      // Admin visual edits are saved to the draft. Only its presentation fields
+      // override the pinned event; keep HERO, layout and media pinned.
+      const { data: draft, error: draftError } = await supabase.from("template_versions")
+        .select("config").eq("template_id", event.template_id).eq("status", "draft")
+        .order("version", { ascending: false }).limit(1).maybeSingle();
+      if (draftError) console.error("Public draft style lookup failed:", draftError.code);
+      if (draft?.config) {
+        templateConfig = applySaleTemplateStyles(templateConfig, draft.config);
+      } else {
+        const { data: template, error: saleLookupError } = await supabase.from("templates")
+          .select("current_sale_version_id,status").eq("id", event.template_id).maybeSingle();
+        if (saleLookupError) console.error("Public sale template lookup failed:", saleLookupError.code);
+        if (template?.status === "on_sale" && template.current_sale_version_id && template.current_sale_version_id !== selectedVersion.id) {
+          const { data: saleVersion, error: saleVersionError } = await supabase.from("template_versions")
+            .select("config").eq("id", template.current_sale_version_id).eq("template_id", event.template_id).maybeSingle();
+          if (saleVersionError) console.error("Public sale version lookup failed:", saleVersionError.code);
+          if (saleVersion?.config) templateConfig = applySaleTemplateStyles(templateConfig, saleVersion.config);
+        }
+      }
       const references = getTemplateAssetReferences(templateConfig);
       if (references.length) {
         const { data: assets, error: assetError } = await supabase.from("template_assets")
@@ -80,9 +107,10 @@ export default async function InvitationPage({ params, searchParams }) {
     const { data: heroPreset, error: heroError } = await supabase.from("hero_presets").select("id,config").eq("id", event.hero_preset_id).maybeSingle();
     if (heroError) console.error("Hero preset query failed:", heroError.code);
     if (heroPreset) {
-      const { data: heroAssets, error: heroAssetError } = await supabase.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path").eq("hero_preset_id", heroPreset.id).eq("asset_type", "hero_frame").eq("is_active", true).limit(1);
+      const { data: heroAssets, error: heroAssetError } = await supabase.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path").eq("hero_preset_id", heroPreset.id).in("asset_type", ["hero_frame", "hero_background"]).eq("is_active", true);
       if (heroAssetError) console.error("Hero asset query failed:", heroAssetError.code);
-      const frame = heroAssets?.[0] || null;
+      const frame = heroAssets?.find((asset) => asset.asset_type === "hero_frame") || null;
+      const heroBackground = heroAssets?.find((asset) => asset.asset_type === "hero_background") || null;
       const decorIds = new Set([...(heroPreset.config?.decorLayers || []).map((layer) => layer.assetId),...(templateConfig?.decorations || []).map((item) => item.assetId)].filter(Boolean));
       let decorations = [];
       if (decorIds.size) {
@@ -90,8 +118,8 @@ export default async function InvitationPage({ params, searchParams }) {
         if (listed.error) console.error("Hero decoration library query failed:", listed.error.message);
         else decorations = (listed.data || []).map((file) => ({ id: file.name.split(".")[0], storage_bucket: "template-assets", storage_path: `hero-decoration-library/${file.name}` })).filter((asset) => decorIds.has(asset.id));
       }
-      templateConfig = templateConfig ? { ...templateConfig, hero: { ...templateConfig.hero, ...(heroPreset.config || {}), textLayers: [...(heroPreset.config?.textLayers || []), ...(Array.isArray(settings.heroExtraTextLayers) ? settings.heroExtraTextLayers.slice(0, 20) : [])].map((layer) => ({ ...layer, ...(settings.heroLayerOverrides?.[layer.id] || {}), text: typeof settings.heroTextOverrides?.[layer.id] === "string" ? settings.heroTextOverrides[layer.id].slice(0, 200) : layer.text })), frameAssetId: frame?.id || null } } : templateConfig;
-      templateAssets = { ...templateAssets, ...Object.fromEntries(decorations.map((asset) => [asset.id, supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl])), ...(frame ? { [frame.id]: supabase.storage.from(frame.storage_bucket).getPublicUrl(frame.storage_path).data.publicUrl } : {}) };
+      templateConfig = templateConfig ? { ...templateConfig, hero: { ...templateConfig.hero, ...(heroPreset.config || {}), textLayers: [...(heroPreset.config?.textLayers || []), ...(Array.isArray(settings.heroExtraTextLayers) ? settings.heroExtraTextLayers.slice(0, 20) : [])].map((layer) => ({ ...layer, ...(settings.heroLayerOverrides?.[layer.id] || {}), text: typeof settings.heroTextOverrides?.[layer.id] === "string" ? settings.heroTextOverrides[layer.id].slice(0, 200) : layer.text })), frameAssetId: frame?.id || null, backgroundAssetId: heroBackground?.id || null } } : templateConfig;
+      templateAssets = { ...templateAssets, ...Object.fromEntries(decorations.map((asset) => [asset.id, supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl])), ...(frame ? { [frame.id]: supabase.storage.from(frame.storage_bucket).getPublicUrl(frame.storage_path).data.publicUrl } : {}), ...(heroBackground ? { [heroBackground.id]: supabase.storage.from(heroBackground.storage_bucket).getPublicUrl(heroBackground.storage_path).data.publicUrl } : {}) };
     }
   }
   const { data: galleryRows, error: galleryError } = await supabase.from("event_media")

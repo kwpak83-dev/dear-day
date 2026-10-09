@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { normalizeNotice } from "../../../lib/invitation-notice";
 
-export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, preview = false }) {
+export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, preview = false, autoOpen = true }) {
   const notice = normalizeNotice(rawNotice);
   const [open, setOpen] = useState(false);
   const [skipToday, setSkipToday] = useState(false);
@@ -12,7 +12,7 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
   const previewMarkerRef = useRef(null);
   const storageKey = `dearday-notice:${slug}:${notice.version}`;
   useEffect(() => {
-    if (!notice.enabled || !notice.title || !notice.body) return;
+    if (!autoOpen || !notice.enabled || !notice.title || !notice.body) return;
     const releaseHeroIntro = () => document.querySelector(".shared-public-invitation")?.classList.remove("dd-hero-intro-waits-for-notice");
     try {
       const hiddenDate = window.localStorage.getItem(storageKey);
@@ -20,7 +20,7 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
       if (hiddenDate !== today) setOpen(true);
       else releaseHeroIntro();
     } catch { setOpen(true); }
-  }, [notice.enabled, storageKey, preview]);
+  }, [notice.enabled, storageKey, preview, autoOpen]);
   useEffect(() => {
     if (!preview) { setPreviewPortal(null); setPreviewTriggerStyle(undefined); return; }
     const marker = previewMarkerRef.current;

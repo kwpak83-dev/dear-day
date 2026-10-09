@@ -3,7 +3,7 @@ import { getEventConfig } from "../../lib/event-config";
 const clean = (value) => typeof value === "string" ? value.trim() : value == null ? "" : String(value).trim();
 const join = (values, separator = " · ") => values.map(clean).filter(Boolean).join(separator);
 const titledPerson = (title, person) => join(title && person ? [title, person] : [title || person]);
-const heroName = (item, key) => clean(item[`${key}FirstName`]) || clean(item[key]);
+const heroName = (item, key) => clean(item[`${key}FirstName`]) || clean(item[`${key}NameFirstName`]) || clean(item[key]);
 
 function parentRelation(item, parentFields, personField, relation) {
   const person = clean(item[personField]);
@@ -83,6 +83,8 @@ export function getInvitationPresentation(invitation = {}, eventKind) {
     kindLabel: config.label,
     title: clean(event.title),
     heroTitle: clean(heroTitle),
+    heroName: kind === "wedding" ? join([heroName(invitation, "groom"), heroName(invitation, "bride")], " & ") : kind === "first_birthday" || kind === "baby_shower" ? heroName(invitation, "childName") : heroName(invitation, "person1Name"),
+    heroEventTitle: clean(invitation.eventTitle) || clean(event.title),
     heroParent1: clean(invitation.parent1Name),
     heroParent2: clean(invitation.parent2Name),
     detail: clean(event.detail),
