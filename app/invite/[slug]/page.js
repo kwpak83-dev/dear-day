@@ -15,7 +15,7 @@ import OptionalInvitationSections from "./optional-invitation-sections";
 import { getInvitationTitle } from "../../../lib/invitation-title";
 import { normalizeNotice } from "../../../lib/invitation-notice";
 import { isPublicPeriodExpired } from "../../../lib/invitation-retention";
-import { getTemplateAssetReferences, resolveTemplateAssetUrls } from "../../../lib/template-config";
+import { getTemplateAssetReferences, resolveTemplateAssetUrls, applySaleTemplateStyles } from "../../../lib/template-config";
 import ExtendedEventInfo from "../../../components/invitation/extended-event-info";
 
 
@@ -73,6 +73,15 @@ export default async function InvitationPage({ params, searchParams }) {
     if (event.template_version_id && !selectedVersion) console.error("Pinned template version unavailable for invitation:", slug);
     if (selectedVersion) {
       templateConfig = selectedVersion.config;
+      const { data: template, error: saleLookupError } = await supabase.from("templates")
+        .select("current_sale_version_id,status").eq("id", event.template_id).maybeSingle();
+      if (saleLookupError) console.error("Public sale template lookup failed:", saleLookupError.code);
+      if (template?.status === "on_sale" && template.current_sale_version_id && template.current_sale_version_id !== selectedVersion.id) {
+        const { data: saleVersion, error: saleVersionError } = await supabase.from("template_versions")
+          .select("config").eq("id", template.current_sale_version_id).eq("template_id", event.template_id).maybeSingle();
+        if (saleVersionError) console.error("Public sale version lookup failed:", saleVersionError.code);
+        if (saleVersion) templateConfig = applySaleTemplateStyles(templateConfig, saleVersion.config);
+      }
       const references = getTemplateAssetReferences(templateConfig);
       if (references.length) {
         const { data: assets, error: assetError } = await supabase.from("template_assets")
