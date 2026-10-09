@@ -59,12 +59,20 @@ export default async function InvitationPage({ params, searchParams }) {
     userBgmUrl = supabase.storage.from("invitation-bgm").getPublicUrl(settings.userBgmUploadPath).data.publicUrl;
   }
   if (event.template_id) {
-    const { data: latestVersion, error: versionError } = await supabase.from("template_versions")
-      .select("id,template_id,status,config").eq("template_id", event.template_id)
-      .order("version", { ascending: false }).limit(1).maybeSingle();
-    if (versionError) console.error("Latest template version query failed:", versionError.code);
-    if (latestVersion) {
-      templateConfig = latestVersion.config;
+    // Pinned events must not silently switch to newer or draft versions.
+    // Only legacy events without a version pin use the previous latest-version fallback.
+    let versionQuery = supabase.from("template_versions")
+      .select("id,template_id,status,config").eq("template_id", event.template_id);
+    if (event.template_version_id) {
+      versionQuery = versionQuery.eq("id", event.template_version_id);
+    } else {
+      versionQuery = versionQuery.order("version", { ascending: false }).limit(1);
+    }
+    const { data: selectedVersion, error: versionError } = await versionQuery.maybeSingle();
+    if (versionError) console.error("Template version query failed:", versionError.code);
+    if (event.template_version_id && !selectedVersion) console.error("Pinned template version unavailable for invitation:", slug);
+    if (selectedVersion) {
+      templateConfig = selectedVersion.config;
       const references = getTemplateAssetReferences(templateConfig);
       if (references.length) {
         const { data: assets, error: assetError } = await supabase.from("template_assets")
