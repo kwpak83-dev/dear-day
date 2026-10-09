@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { getInvitationTitle } from "../../../lib/invitation-title";
 import { getAllMissingRequiredFields } from "../../../lib/event-config";
 import { calculateRetentionDates } from "../../../lib/invitation-retention";
-import { getTemplateAssetReferences, resolveTemplateAssetUrls } from "../../../lib/template-config";
+import { getTemplateAssetReferences, resolveTemplateAssetUrls, applySaleTemplateStyles } from "../../../lib/template-config";
 
 const slugPattern = /^[a-z0-9-]{4,80}$/;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -171,6 +171,17 @@ export async function GET(request) {
       versionId = latestVersion?.id || null;
     }
     if (versionId) renderData = await getTemplateRenderData(auth.supabase, event.template_id, versionId);
+    if (renderData.templateConfig) {
+      const { data: template, error: saleLookupError } = await auth.supabase.from("templates")
+        .select("current_sale_version_id,status").eq("id", event.template_id).maybeSingle();
+      if (saleLookupError) console.error("Sale template lookup failed:", saleLookupError.code);
+      if (template?.status === "on_sale" && template.current_sale_version_id && template.current_sale_version_id !== versionId) {
+        const { data: saleVersion, error: saleVersionError } = await auth.supabase.from("template_versions")
+          .select("config").eq("id", template.current_sale_version_id).eq("template_id", event.template_id).maybeSingle();
+        if (saleVersionError) console.error("Sale template version lookup failed:", saleVersionError.code);
+        if (saleVersion) renderData.templateConfig = applySaleTemplateStyles(renderData.templateConfig, saleVersion.config);
+      }
+    }
   }
   return json({ event, ...renderData });
 }
