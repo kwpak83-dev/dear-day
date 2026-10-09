@@ -108,7 +108,10 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   }
   if (hero?.photoFadeUp?.enabled) { const introDelay=hero?.intro?.enabled&&hero.intro.text?.trim()?Number(hero.intro.writeDuration||0)+Number(hero.intro.holdDuration||0)+Number(hero.intro.fadeDuration||0):0; heroMediaStyle.animation = `dd-hero-photo-fade-up ${hero.photoFadeUp.duration}s ease-out ${introDelay+Number(hero.photoFadeUp.delay||0)}s both`; }
   const frame = hero?.photoFrame;
-  if (frame && frame.shape !== "default") {
+  // Photo mode always uses the full-width Hero photo and its own crop controls.
+  // Custom frame geometry belongs exclusively to concept-frame mode.
+  const customFrameActive = hero?.mode === "frame" && frame && frame.shape !== "default";
+  if (customFrameActive) {
     heroStyle.aspectRatio = (hero?.aspectRatio || "4:5").replace(":", " / ");
     heroStyle.position = "relative";
     heroStyle.overflow = "hidden";
@@ -139,17 +142,17 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroImageStyle.transform = `scale(${frame.imageZoom ?? 1})`;
     heroImageStyle.transformOrigin = `${frame.imageX ?? 50}% ${frame.imageY ?? 50}%`;
   }
-  if (hero?.aspectRatio && (!frame || frame.shape === "default")) heroMediaStyle.aspectRatio = hero.aspectRatio.replace(":", " / ");
+  if (hero?.aspectRatio && !customFrameActive) heroMediaStyle.aspectRatio = hero.aspectRatio.replace(":", " / ");
   // In the legacy frame mode the photo uses the same sizing/cropping as photo mode.
   // The decorative frame image is an overlay, not the photo container.
-  if (hero?.mode === "frame" && (!frame || frame.shape === "default")) {
+  if (hero?.mode === "frame" && !customFrameActive) {
     heroMediaStyle.width = "100%";
     heroImageStyle.objectFit = "cover";
     heroImageStyle.width = "100%";
     heroImageStyle.height = "100%";
   }
-  if ((!frame || frame.shape === "default") && hero?.positionX !== null && hero?.positionX !== undefined) heroImageStyle.objectPosition = `${hero.positionX}% ${hero?.positionY ?? 50}%`;
-  if ((!frame || frame.shape === "default") && hero && hero.zoom !== null) { heroImageStyle.transform = `scale(${hero.zoom})`; heroImageStyle.transformOrigin = `${hero?.positionX ?? 50}% ${hero?.positionY ?? 50}%`; }
+  if (!customFrameActive && hero?.positionX !== null && hero?.positionX !== undefined) heroImageStyle.objectPosition = `${hero.positionX}% ${hero?.positionY ?? 50}%`;
+  if (!customFrameActive && hero && hero.zoom !== null) { heroImageStyle.transform = `scale(${hero.zoom})`; heroImageStyle.transformOrigin = `${hero?.positionX ?? 50}% ${hero?.positionY ?? 50}%`; }
   if (hero?.nameFontFamily && hero.nameFontFamily !== "inherit") set(rootStyle, "--dd-hero-title-font", getHeroFont(hero.nameFontFamily).family);
   if (hero?.nameFontWeight != null) set(rootStyle, "--dd-hero-title-weight", hero.nameFontWeight);
   if (hero?.nameLineHeight != null) set(rootStyle, "--dd-hero-title-line-height", hero.nameLineHeight);
