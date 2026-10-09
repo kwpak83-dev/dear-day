@@ -123,7 +123,7 @@ export default function HeroPresetsPage(){
   setExpandedLayerId(null);
  };
  const setPhotoFadeUp=(key,value)=>setForm(current=>({...current,config:{...current.config,photoFadeUp:{...defaultConfig.photoFadeUp,...current.config.photoFadeUp,[key]:value}}}));
- const setPhotoFrame=(key,value)=>setForm(current=>({...current,config:{...current.config,photoFrame:{...defaultConfig.photoFrame,...current.config.photoFrame,[key]:value}}}));
+ const setPhotoFrame=(key,value)=>setForm(current=>({...current,config:{...current.config,photoFrame:{...defaultConfig.photoFrame,...current.config.photoFrame,[key]:value,...(["imageX","imageY"].includes(key)?{autoPan:true}:{})}}}));
  const setHeroCenterPanel=(key,value)=>setForm(current=>({...current,config:{...current.config,heroCenterPanel:{...defaultConfig.heroCenterPanel,...current.config.heroCenterPanel,[key]:value}}}));
   const setBackdrop=(key,value)=>setForm(current=>({...current,config:{...current.config,heroBackdrop:{...defaultConfig.heroBackdrop,...current.config.heroBackdrop,[key]:value}}}));
  const setConfig=(key,value)=>setForm((current)=>({...current,config:{...current.config,[key]:value}}));
