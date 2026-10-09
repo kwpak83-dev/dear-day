@@ -184,7 +184,7 @@ function BankSelector({ value, onChange }) {
 }
 
 const USER_SCREEN_EFFECTS = [["green", "초록 나뭇잎"], ["autumn", "가을 낙엽"], ["snow", "눈송이"], ["rose", "장미 꽃잎"], ["lavender", "라벤더 꽃잎"], ["daisy", "데이지 꽃"], ["heart", "하트"], ["color-confetti", "컬러 컨페티"], ["balloon", "파스텔 풍선"], ["bubble", "비눗방울"]];
-const initialInvitation = { eventKind: "wedding", templateId: "", heroPresetId: "", heroTextOverrides: {}, heroLayerOverrides: {}, heroExtraTextLayers: [], heroPhotoFocusX: null, heroPhotoFocusY: null, rsvpEnabled: true, guestbookEnabled: true, eventTitle: "", hostName: "", person1Name: "", person1NameLastName: "", person1NameFirstName: "", person2Name: "", person2NameLastName: "", person2NameFirstName: "", childName: "", childNameLastName: "", childNameFirstName: "", parent1Name: "", parent2Name: "", birthDate: "", dueDate: "", age: "", anniversaryYears: "", organizationName: "", programName: "", details: "", externalLink: "", brandImageUrl: "", coverPhotoUrl: "", kakaoShareImageUrl: "", 
+const initialInvitation = { eventKind: "wedding", templateId: "", heroPresetId: "", heroTextOverrides: {}, heroLayerOverrides: {}, heroExtraTextLayers: [], heroPhotoFocusX: null, heroPhotoFocusY: null, completedTemplateKey: "", rsvpEnabled: true, guestbookEnabled: true, eventTitle: "", hostName: "", person1Name: "", person1NameLastName: "", person1NameFirstName: "", person2Name: "", person2NameLastName: "", person2NameFirstName: "", childName: "", childNameLastName: "", childNameFirstName: "", parent1Name: "", parent2Name: "", birthDate: "", dueDate: "", age: "", anniversaryYears: "", organizationName: "", programName: "", details: "", externalLink: "", brandImageUrl: "", coverPhotoUrl: "", kakaoShareImageUrl: "", 
 parentsIntroEnabled: false, parent1PhotoUrl: "", parent1Intro: "", parent2PhotoUrl: "", parent2Intro: "", timelineEnabled: false, timelineItems: [], parent1Phone: "", parent2Phone: "", groom: "", groomLastName: "", groomFirstName: "", groomPhone: "", groomFatherPhone: "", groomMotherPhone: "", bridePhone: "", brideFatherPhone: "", brideMotherPhone: "",
 groomFatherName: "",
 groomFatherDeceased: false,
@@ -345,7 +345,7 @@ export default function CreateInvitation() {
         try {
           const selected=JSON.parse(window.localStorage.getItem("dear-day-template-start")||"null");
           if (selected?.templateKey===query.get("template")&&selected.heroPresetId&&selected.templateId) {
-            setInvitation(current=>({...current,eventKind:selected.eventKind||"wedding",heroPresetId:selected.heroPresetId,templateId:selected.templateId}));
+            setInvitation(current=>({...current,eventKind:selected.eventKind||"wedding",heroPresetId:selected.heroPresetId,templateId:selected.templateId,completedTemplateKey:selected.templateKey}));
             setPreviewTemplateId(selected.templateId);
             startedFromTemplate=true;
             try {
@@ -753,6 +753,40 @@ export default function CreateInvitation() {
     }
     setPlaceResults([]);
   };
+  // Recover completed-template thumbnails after opening a saved invitation.
+  // Older drafts have no completedTemplateKey, so resolve a unique matching pair.
+  useEffect(() => {
+    const heroId = invitation.heroPresetId;
+    const bodyId = invitation.templateId;
+    if (!heroId || !bodyId) return;
+    if (completedCardImages?.heroPresetId === heroId && completedCardImages?.templateId === bodyId) return;
+    const savedKey = invitation.completedTemplateKey;
+    const reopeningDraft = Boolean(eventSlug || new URLSearchParams(window.location.search).get("resume") === "draft");
+    if (!savedKey && !reopeningDraft) return;
+    let cancelled = false;
+    const restore = async () => {
+      try {
+        let item = null;
+        if (savedKey) {
+          const response = await fetch(`/api/templates/collection/${encodeURIComponent(savedKey)}`);
+          if (response.ok) item = (await response.json()).item;
+        } else {
+          const response = await fetch("/api/templates/collection");
+          if (!response.ok) return;
+          const items = (await response.json()).items || [];
+          const matches = items.filter(row => row.hero_preset_id === heroId && row.body_template_id === bodyId && row.category === invitation.eventKind);
+          if (matches.length === 1) item = matches[0];
+        }
+        if (!cancelled && item?.hero_preset_id === heroId && item?.body_template_id === bodyId) {
+          setCompletedCardImages({heroPresetId:heroId,templateId:bodyId,heroUrl:item.thumbnail_1_url||null,bodyUrl:item.thumbnail_2_url||null});
+        }
+      } catch {
+        // Keep the existing preset thumbnail when the collection cannot be reached.
+      }
+    };
+    restore();
+    return () => { cancelled = true; };
+  }, [invitation.heroPresetId, invitation.templateId, invitation.eventKind, invitation.completedTemplateKey, eventSlug, completedCardImages]);
   const completedCardMatch=completedCardImages?.heroPresetId===invitation.heroPresetId&&completedCardImages?.templateId===invitation.templateId;
   const selectedHero=heroOptions.find((item)=>item.id===invitation.heroPresetId)||null;
   const selectedHeroFrame=selectedHero?.assets?.hero_frame||null;
