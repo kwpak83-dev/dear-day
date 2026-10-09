@@ -73,14 +73,24 @@ export default async function InvitationPage({ params, searchParams }) {
     if (event.template_version_id && !selectedVersion) console.error("Pinned template version unavailable for invitation:", slug);
     if (selectedVersion) {
       templateConfig = selectedVersion.config;
-      const { data: template, error: saleLookupError } = await supabase.from("templates")
-        .select("current_sale_version_id,status").eq("id", event.template_id).maybeSingle();
-      if (saleLookupError) console.error("Public sale template lookup failed:", saleLookupError.code);
-      if (template?.status === "on_sale" && template.current_sale_version_id && template.current_sale_version_id !== selectedVersion.id) {
-        const { data: saleVersion, error: saleVersionError } = await supabase.from("template_versions")
-          .select("config").eq("id", template.current_sale_version_id).eq("template_id", event.template_id).maybeSingle();
-        if (saleVersionError) console.error("Public sale version lookup failed:", saleVersionError.code);
-        if (saleVersion) templateConfig = applySaleTemplateStyles(templateConfig, saleVersion.config);
+      // Admin visual edits are saved to the draft. Only its presentation fields
+      // override the pinned event; keep HERO, layout and media pinned.
+      const { data: draft, error: draftError } = await supabase.from("template_versions")
+        .select("config").eq("template_id", event.template_id).eq("status", "draft")
+        .order("version", { ascending: false }).limit(1).maybeSingle();
+      if (draftError) console.error("Public draft style lookup failed:", draftError.code);
+      if (draft?.config) {
+        templateConfig = applySaleTemplateStyles(templateConfig, draft.config);
+      } else {
+        const { data: template, error: saleLookupError } = await supabase.from("templates")
+          .select("current_sale_version_id,status").eq("id", event.template_id).maybeSingle();
+        if (saleLookupError) console.error("Public sale template lookup failed:", saleLookupError.code);
+        if (template?.status === "on_sale" && template.current_sale_version_id && template.current_sale_version_id !== selectedVersion.id) {
+          const { data: saleVersion, error: saleVersionError } = await supabase.from("template_versions")
+            .select("config").eq("id", template.current_sale_version_id).eq("template_id", event.template_id).maybeSingle();
+          if (saleVersionError) console.error("Public sale version lookup failed:", saleVersionError.code);
+          if (saleVersion?.config) templateConfig = applySaleTemplateStyles(templateConfig, saleVersion.config);
+        }
       }
       const references = getTemplateAssetReferences(templateConfig);
       if (references.length) {
