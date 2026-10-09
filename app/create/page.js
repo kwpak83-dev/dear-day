@@ -1,5 +1,6 @@
 "use client";
 import { HERO_FONTS } from "../../lib/hero-fonts";
+import { matchesCompletedTemplate, findLegacyCompletedTemplate, completedTemplateCardImages, resolveTemplateThumbnail } from "../../lib/completed-template-identity";
 
 import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
@@ -352,7 +353,7 @@ export default function CreateInvitation() {
               const response=await fetch(`/api/templates/collection/${encodeURIComponent(selected.templateKey)}`);
               const result=await response.json().catch(()=>({}));
               if(response.ok&&result.item?.body_template_id===selected.templateId){
-                 setCompletedCardImages({heroPresetId:result.item.hero_preset_id,templateId:result.item.body_template_id,heroUrl:result.item.thumbnail_1_url||null,bodyUrl:result.item.thumbnail_2_url||null});
+                 setCompletedCardImages(completedTemplateCardImages(result.item));
                 setTemplateRender({config:result.templateConfig||null,assets:result.templateAssets||{}});
               }
             } catch {
@@ -776,14 +777,10 @@ export default function CreateInvitation() {
           const items = (await response.json()).items || [];
           // Legacy published invitations may have no template key, and their
           // category may differ from the current completed-template category.
-          const matches = items.filter(row => row.hero_preset_id === heroId && row.body_template_id === bodyId);
-          const sameCategory = matches.filter(row => row.category === invitation.eventKind);
-          const candidates = sameCategory.length ? sameCategory : matches;
-          // Only infer a template when the matching pair is unambiguous.
-          if (candidates.length === 1) item = candidates[0];
+          item = findLegacyCompletedTemplate(items, heroId, bodyId, invitation.eventKind);
         }
-        if (!cancelled && item?.hero_preset_id === heroId && item?.body_template_id === bodyId) {
-          setCompletedCardImages({heroPresetId:heroId,templateId:bodyId,heroUrl:item.thumbnail_1_url||null,bodyUrl:item.thumbnail_2_url||null});
+        if (!cancelled && matchesCompletedTemplate(item, heroId, bodyId)) {
+          setCompletedCardImages(completedTemplateCardImages(item));
         }
       } catch {
         // Keep the existing preset thumbnail when the collection cannot be reached.
@@ -903,7 +900,7 @@ export default function CreateInvitation() {
   const selectTemplate = async (templateId) => {
     const requestId = ++templatePreviewRequest.current;
     templateSelectionChanged.current = true;
-    update("templateId", templateId);
+    setInvitation(current=>({...current,templateId,completedTemplateKey:current.templateId===templateId?current.completedTemplateKey:""}));
     setTemplateNotice("");
     if (DEVELOPMENT_TEMPLATE_IDS.has(templateId)) {
       setTemplateRender({ config: null, assets: {} });
@@ -1094,13 +1091,13 @@ export default function CreateInvitation() {
         </div>
         <div style={{display:editorStep === 1 ? undefined : "none"}}>
         <details className="dd-custom-accordion" open><summary><span><strong>HERO 프레임</strong><small>초대장의 첫 화면 디자인을 선택하세요.</small></span><span className="dd-accordion-chevron" aria-hidden="true">⌄</span></summary><div className="dd-accordion-body">
-        <div className="form-section template-picker"><h2>Hero 프레임</h2>{heroOptions.length?<div className="template-picker-grid show-all">{heroOptions.map((hero,index)=>{const selected=invitation.heroPresetId===hero.id;return <button key={hero.id} type="button" className={`template-choice template-choice-${index+1}${selected?" selected":""}`} aria-pressed={selected} onClick={()=>setInvitation((current)=>({...current,heroPresetId:hero.id,heroTextOverrides:current.heroPresetId===hero.id?current.heroTextOverrides:{},heroLayerOverrides:current.heroPresetId===hero.id?current.heroLayerOverrides:{},heroExtraTextLayers:current.heroPresetId===hero.id?current.heroExtraTextLayers:[]}))}>{(hero.assets?.thumbnail?.url||(completedCardMatch?completedCardImages.heroUrl:null))?<img src={hero.assets?.thumbnail?.url||(completedCardMatch?completedCardImages.heroUrl:null)} alt="" style={{width:"100%",aspectRatio:"4 / 5",objectFit:"cover",borderRadius:10}}/>:<span className="template-choice-preview preview-1" aria-hidden="true"><i/><b>Dear Day</b><em>Hero</em></span>}<strong>{hero.name}</strong><span className="template-choice-status">{selected?"✓ 선택됨":"선택하기"}</span></button>})}</div>:<p className="template-picker-empty">현재 선택 가능한 Hero 프레임이 없어요.</p>}</div>
+        <div className="form-section template-picker"><h2>Hero 프레임</h2>{heroOptions.length?<div className="template-picker-grid show-all">{heroOptions.map((hero,index)=>{const selected=invitation.heroPresetId===hero.id;return <button key={hero.id} type="button" className={`template-choice template-choice-${index+1}${selected?" selected":""}`} aria-pressed={selected} onClick={()=>setInvitation((current)=>({...current,heroPresetId:hero.id,completedTemplateKey:current.heroPresetId===hero.id?current.completedTemplateKey:"",heroTextOverrides:current.heroPresetId===hero.id?current.heroTextOverrides:{},heroLayerOverrides:current.heroPresetId===hero.id?current.heroLayerOverrides:{},heroExtraTextLayers:current.heroPresetId===hero.id?current.heroExtraTextLayers:[]}))}>{resolveTemplateThumbnail(hero.assets?.thumbnail?.url,completedCardImages?.heroUrl,completedCardMatch&&hero.id===invitation.heroPresetId)?<img src={resolveTemplateThumbnail(hero.assets?.thumbnail?.url,completedCardImages?.heroUrl,completedCardMatch&&hero.id===invitation.heroPresetId)} alt="" style={{width:"100%",aspectRatio:"4 / 5",objectFit:"cover",borderRadius:10}}/>:<span className="template-choice-preview preview-1" aria-hidden="true"><i/><b>Dear Day</b><em>Hero</em></span>}<strong>{hero.name}</strong><span className="template-choice-status">{selected?"✓ 선택됨":"선택하기"}</span></button>})}</div>:<p className="template-picker-empty">현재 선택 가능한 Hero 프레임이 없어요.</p>}</div>
         </div></details>
         <details className="dd-custom-accordion"><summary><span><strong>HERO 표시 설정</strong><small>날짜와 장소 등 표시 항목을 조정해요.</small></span><span className="dd-accordion-chevron" aria-hidden="true">⌄</span></summary><div className="dd-accordion-body">
         {selectedHero && <div className="form-section hero-edit-section"><h2>Hero 표시 설정</h2><HeroEditorPreview invitation={previewInvitation} eventKind={invitation.eventKind} templateId={previewTemplateId || invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets} userBgmUrl={invitation.bgmMode === "upload" ? (invitation.userBgmUploadUrl || null) : (selectedBgmTrack?.url || null)} /><p style={{fontSize:12,color:"#8c7468",marginBottom:12}}>이름과 고정 디자인은 템플릿에 맞춰 표시됩니다. 날짜·장소는 원하는 경우에만 표시하세요. 글꼴과 위치는 관리자 디자인을 그대로 사용합니다.</p>{[["schedule","날짜 및 시간 표시"],["venue","행사 장소 표시"]].map(([source,label])=>{const layers=(selectedHero.config?.textLayers||[]).filter(layer=>layer.source===source);return layers.length?<label key={source} style={{display:"flex",alignItems:"center",gap:8,margin:"10px 0"}}><input type="checkbox" checked={layers.some(layer=>invitation.heroLayerOverrides?.[layer.id]?.visible!==false && layer.visible!==false)} onChange={event=>setInvitation(current=>({...current,heroLayerOverrides:{...current.heroLayerOverrides,...Object.fromEntries(layers.map(layer=>[layer.id,{...current.heroLayerOverrides?.[layer.id],visible:event.target.checked}]))}}))}/>{label}</label>:null;})}</div>}
         </div></details>
         <details className="dd-custom-accordion"><summary><span><strong>본문 테마</strong><small>초대장 본문의 스타일을 선택하세요.</small></span><span className="dd-accordion-chevron" aria-hidden="true">⌄</span></summary><div className="dd-accordion-body">
-        <div className="form-section template-picker"><h2>본문 테마 <small>개발용</small></h2>{templateOptions.length ? <><div className={`template-picker-grid${showAllTemplates ? " show-all" : ""}`}>{templateOptions.map((template, index) => { const selected = invitation.templateId === template.id; return <button key={template.id} type="button" className={`template-choice template-choice-${index + 1}${selected ? " selected" : ""}`} aria-pressed={selected} onClick={() => selectTemplate(template.id)}>{(template.thumbnailUrl||(completedCardMatch?completedCardImages.bodyUrl:null))?<img src={template.thumbnailUrl||(completedCardMatch?completedCardImages.bodyUrl:null)} alt="" style={{width:"100%",aspectRatio:"4 / 5",objectFit:"cover",borderRadius:10}}/>:<span className={`template-choice-preview preview-${(index % 3) + 1}`} aria-hidden="true"><i /><b>Dear Day</b><em>Invitation</em></span>}<strong>{template.name}</strong><span className="template-choice-status">{selected ? "✓ 선택됨" : "선택하기"}</span></button>; })}</div>{templateOptions.length > 6 && <button type="button" className="template-picker-more" onClick={() => setShowAllTemplates((current) => !current)}>{showAllTemplates ? "접기" : "더 보기"} <span aria-hidden="true">{showAllTemplates ? "⌃" : "⌄"}</span></button>}</> : <p className="template-picker-empty">템플릿을 불러오는 중이에요.</p>}{templateNotice && <p className="photo-notice" role="status">{templateNotice}</p>}</div>
+        <div className="form-section template-picker"><h2>본문 테마 <small>개발용</small></h2>{templateOptions.length ? <><div className={`template-picker-grid${showAllTemplates ? " show-all" : ""}`}>{templateOptions.map((template, index) => { const selected = invitation.templateId === template.id; return <button key={template.id} type="button" className={`template-choice template-choice-${index + 1}${selected ? " selected" : ""}`} aria-pressed={selected} onClick={() => selectTemplate(template.id)}>{resolveTemplateThumbnail(template.thumbnailUrl,completedCardImages?.bodyUrl,completedCardMatch&&template.id===invitation.templateId)?<img src={resolveTemplateThumbnail(template.thumbnailUrl,completedCardImages?.bodyUrl,completedCardMatch&&template.id===invitation.templateId)} alt="" style={{width:"100%",aspectRatio:"4 / 5",objectFit:"cover",borderRadius:10}}/>:<span className={`template-choice-preview preview-${(index % 3) + 1}`} aria-hidden="true"><i /><b>Dear Day</b><em>Invitation</em></span>}<strong>{template.name}</strong><span className="template-choice-status">{selected ? "✓ 선택됨" : "선택하기"}</span></button>; })}</div>{templateOptions.length > 6 && <button type="button" className="template-picker-more" onClick={() => setShowAllTemplates((current) => !current)}>{showAllTemplates ? "접기" : "더 보기"} <span aria-hidden="true">{showAllTemplates ? "⌃" : "⌄"}</span></button>}</> : <p className="template-picker-empty">템플릿을 불러오는 중이에요.</p>}{templateNotice && <p className="photo-notice" role="status">{templateNotice}</p>}</div>
         </div></details>
         </div>
         <div style={{display:editorStep === 2 ? undefined : "none"}}>
