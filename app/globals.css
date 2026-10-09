@@ -3142,9 +3142,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   .rsvp-edit-actions button,
   .dd-contact-toggle
 ){
-  background:var(--dd-color-button-bg,#b78b72) !important;
-  color:var(--dd-color-button-text,#fff) !important;
-  border-color:var(--dd-color-divider,#e8e2de) !important;
+  background:var(--dd-button-bg,var(--dd-color-button-bg,#b78b72)) !important;
+  color:var(--dd-button-text,var(--dd-color-button-text,#fff)) !important;
+  border-color:var(--dd-button-border-color,var(--dd-color-divider,#e8e2de)) !important;
 }
 
 
