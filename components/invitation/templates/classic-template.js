@@ -52,6 +52,9 @@ function ClassicDateSection({ eventDate, eventTime, title, wedding }) {
 
 export default function ClassicTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, weddingContacts, bgmControl, screenEffect, afterMessage, children }) {
   const { kindLabel, title, detail, note, eventDate, eventTime, heroSchedule, schedule, venue, address, addressDetail, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
+  // Presentation-only line break when an address repeats the venue name after its street number.
+  const addressMatch = address?.match(/^(.+?\s\d+(?:-\d+)?)\s+(.+)$/);
+  const splitVenueAddress = addressMatch && venue && venue.startsWith(addressMatch[2]);
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map((value) => value.trim()).filter(Boolean) : [];
   const hasInformation = Boolean(schedule || venue || address);
@@ -129,8 +132,8 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
       <ClassicHeading eyebrow="PLACE">{wedding ? "오시는 길" : "오시는 길"}</ClassicHeading>
       <div className="classic-information-body">
         {venue && <strong>{venue}</strong>}
-        {address && <p>{address}</p>}
-        {addressDetail && <p className="classic-address-detail">{addressDetail}</p>}
+        {address && <p>{splitVenueAddress ? <>{addressMatch[1]}<br /><span style={{display:"inline-block",paddingLeft:16}}>{venue}</span></> : address}</p>}
+        {addressDetail && <p className="classic-address-detail" style={splitVenueAddress ? {paddingLeft:16} : undefined}>{addressDetail}</p>}
         {placeActions}
       </div>
     </section>}
