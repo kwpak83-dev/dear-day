@@ -253,30 +253,6 @@ export default function CreateInvitation() {
     else setPreviewOpen(false);
   };
 
-  // Refresh visual data when opening the full preview, without replacing user edits.
-  useEffect(() => {
-    if (!previewOpen || !eventSlug) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const supabase = getSupabaseBrowserClient();
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) return;
-        const response = await fetch(`/api/events?slug=${encodeURIComponent(eventSlug)}`, {
-          cache: "no-store", headers: { Authorization: `Bearer ${session.access_token}` }
-        });
-        if (!response.ok) return;
-        const result = await response.json();
-        if (!cancelled && result.event?.template_id === invitation.templateId) {
-          setTemplateRender({ config: result.templateConfig || null, assets: result.templateAssets || {} });
-        }
-      } catch {
-        // Keep the already loaded preview if refreshing is temporarily unavailable.
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [previewOpen, eventSlug, invitation.templateId]);
-
   const [eventStatus, setEventStatus] = useState("draft");
   const [eventReady, setEventReady] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
@@ -302,6 +278,29 @@ export default function CreateInvitation() {
   const [heroOptions, setHeroOptions] = useState([]);
   const [completedCardImages, setCompletedCardImages] = useState(null);
   const [templateRender, setTemplateRender] = useState({ config: null, assets: {} });
+  // Refresh visual data when opening the full preview, without replacing user edits.
+  useEffect(() => {
+    if (!previewOpen || !eventSlug) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const supabase = getSupabaseBrowserClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+        const response = await fetch(`/api/events?slug=${encodeURIComponent(eventSlug)}`, {
+          cache: "no-store", headers: { Authorization: `Bearer ${session.access_token}` }
+        });
+        if (!response.ok) return;
+        const result = await response.json();
+        if (!cancelled && result.event?.template_id === invitation.templateId) {
+          setTemplateRender({ config: result.templateConfig || null, assets: result.templateAssets || {} });
+        }
+      } catch {
+        // Keep the already loaded preview if refreshing is temporarily unavailable.
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [previewOpen, eventSlug, invitation.templateId]);
   const [previewTemplateId, setPreviewTemplateId] = useState("");
   const [templateNotice, setTemplateNotice] = useState("");
   const [showAllTemplates, setShowAllTemplates] = useState(false);
