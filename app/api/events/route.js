@@ -191,6 +191,20 @@ export async function GET(request) {
         }
       }
     }
+    // Resolve assets again after Draft overrides: its background/decorations
+    // may reference assets absent from the pinned version.
+    if (renderData.templateConfig) {
+      const references = getTemplateAssetReferences(renderData.templateConfig);
+      renderData.templateAssets = {};
+      if (references.length) {
+        const { data: assets, error: assetError } = await auth.supabase.from("template_assets")
+          .select("id,template_id,asset_type,storage_bucket,storage_path")
+          .eq("template_id", event.template_id).in("id", references.map((item) => item.id));
+        if (assetError) console.error("Draft template asset lookup failed:", assetError.code);
+        else renderData.templateAssets = resolveTemplateAssetUrls(renderData.templateConfig, assets, event.template_id, (asset) =>
+          auth.supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl);
+      }
+    }
   }
   return json({ event, ...renderData });
 }
