@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 const json = (body, status = 200) => NextResponse.json(body, { status });
 const statuses = new Set(["draft", "on_sale", "stopped", "archived"]);
-const eventKinds = new Set(["wedding","first_birthday","birthday","baby_shower","bridal_shower","anniversary","housewarming","graduation","corporate","party","other"]);
+const eventKinds = new Set(["wedding","first_birthday","birthday","milestone_birthday","gathering","opening","baby_shower","bridal_shower","anniversary","housewarming","graduation","corporate","party","other"]);
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 async function getAdmin(request) {
@@ -31,7 +31,8 @@ async function getAdmin(request) {
 function readFields(body) {
   if (!body || typeof body !== "object" || Array.isArray(body)) return null;
   const { name, template_key: templateKey, description, status, is_visible: isVisible, sort_order: sortOrder } = body;
-  const eventKind = eventKinds.has(body.event_kind) ? body.event_kind : "wedding";
+  if (!eventKinds.has(body.event_kind)) return null;
+  const eventKind = body.event_kind;
   if (typeof name !== "string" || !name.trim() || name.trim().length > 100) return null;
   if (typeof templateKey !== "string" || !/^[a-z0-9][a-z0-9_-]{2,79}$/.test(templateKey.trim())) return null;
   if (typeof description !== "string" || description.length > 2000) return null;
