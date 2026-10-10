@@ -77,6 +77,8 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     set(heroStyle, "--dd-hero-center-panel-width", heroPanel.width, "%");
     set(heroStyle, "--dd-hero-center-panel-height", heroPanel.height ?? 100, "%");
     set(heroStyle, "--dd-hero-center-panel-y", heroPanel.y ?? 50, "%");
+    set(heroStyle, "--dd-hero-center-panel-x", heroPanel.x ?? 50, "%");
+    set(heroStyle, "--dd-hero-center-panel-radius", heroPanel.radius ?? 0, "px");
     heroStyle["--dd-hero-center-panel-color"] = rgba(heroPanel.color, heroPanel.opacity / 100) || "transparent";
   }
   const backdrop = hero?.heroBackdrop;
