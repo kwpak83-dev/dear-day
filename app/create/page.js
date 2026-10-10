@@ -253,6 +253,30 @@ export default function CreateInvitation() {
     else setPreviewOpen(false);
   };
 
+  // Refresh visual data when opening the full preview, without replacing user edits.
+  useEffect(() => {
+    if (!previewOpen || !eventSlug) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const supabase = getSupabaseBrowserClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+        const response = await fetch(`/api/events?slug=${encodeURIComponent(eventSlug)}`, {
+          cache: "no-store", headers: { Authorization: `Bearer ${session.access_token}` }
+        });
+        if (!response.ok) return;
+        const result = await response.json();
+        if (!cancelled && result.event?.template_id === invitation.templateId) {
+          setTemplateRender({ config: result.templateConfig || null, assets: result.templateAssets || {} });
+        }
+      } catch {
+        // Keep the already loaded preview if refreshing is temporarily unavailable.
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [previewOpen, eventSlug, invitation.templateId]);
+
   const [eventStatus, setEventStatus] = useState("draft");
   const [eventReady, setEventReady] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
@@ -350,7 +374,7 @@ export default function CreateInvitation() {
             setPreviewTemplateId(selected.templateId);
             startedFromTemplate=true;
             try {
-              const response=await fetch(`/api/templates/collection/${encodeURIComponent(selected.templateKey)}`);
+              const response=await fetch(`/api/templates/collection/${encodeURIComponent(selected.templateKey)}`, { cache: "no-store" });
               const result=await response.json().catch(()=>({}));
               if(response.ok&&result.item?.body_template_id===selected.templateId){
                  setCompletedCardImages(completedTemplateCardImages(result.item));
@@ -393,7 +417,7 @@ export default function CreateInvitation() {
       const supabase = getSupabaseBrowserClient();
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return setSaveNotice("로그인 후 임시저장을 열 수 있어요.");
-      const response = await fetch(`/api/events?slug=${encodeURIComponent(slug)}`, { headers: { Authorization: `Bearer ${session.access_token}` } });
+      const response = await fetch(`/api/events?slug=${encodeURIComponent(slug)}`, { cache: "no-store", headers: { Authorization: `Bearer ${session.access_token}` } });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.event) return setSaveNotice(result.error || "초대장을 찾지 못했어요.");
       const status = result.event.status || "draft";
@@ -465,7 +489,7 @@ export default function CreateInvitation() {
       // can compose against a real template instead of a null config.
       if (!isExistingEvent && firstTemplateId && !DEVELOPMENT_TEMPLATE_IDS.has(firstTemplateId)) {
         try {
-          const response = await fetch(`/api/events?templateId=${encodeURIComponent(firstTemplateId)}`);
+          const response = await fetch(`/api/events?templateId=${encodeURIComponent(firstTemplateId)}`, { cache: "no-store" });
           const result = await response.json().catch(() => ({}));
           if (response.ok && result.templateId === firstTemplateId) {
             setTemplateRender({ config: result.templateConfig || null, assets: result.templateAssets || {} });
@@ -914,7 +938,7 @@ export default function CreateInvitation() {
     }
     setTemplateNotice("템플릿 디자인을 불러오는 중이에요.");
     try {
-      const response = await fetch(`/api/events?templateId=${encodeURIComponent(templateId)}`);
+      const response = await fetch(`/api/events?templateId=${encodeURIComponent(templateId)}`, { cache: "no-store" });
       const result = await response.json().catch(() => ({}));
       if (requestId !== templatePreviewRequest.current) return;
       if (!response.ok || result.templateId !== templateId) {
