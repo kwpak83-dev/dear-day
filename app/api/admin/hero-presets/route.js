@@ -86,7 +86,7 @@ function validConfig(value){
     &&(layer.x===undefined||decimal(layer.x,0,100))
     &&(layer.y===undefined||decimal(layer.y,0,100))
     &&(layer.align===undefined||["left","center","right"].includes(layer.align))
-    &&(layer.source===undefined||["custom","title","name","event_title","parent1","parent2","schedule","venue"].includes(layer.source))
+    &&(layer.source===undefined||["custom","title","name","full_name","event_title","parent1","parent2","schedule","venue"].includes(layer.source))
     &&(layer.visible===undefined||typeof layer.visible==="boolean")
     &&(layer.stroke===undefined||(layer.stroke&&typeof layer.stroke==="object"&&!Array.isArray(layer.stroke)&&typeof layer.stroke.enabled==="boolean"&&hex(layer.stroke.color)&&decimal(layer.stroke.width,0,6)))
     &&(layer.shadow===undefined||(layer.shadow&&typeof layer.shadow==="object"&&!Array.isArray(layer.shadow)&&typeof layer.shadow.enabled==="boolean"&&hex(layer.shadow.color)&&decimal(layer.shadow.x,-20,20)&&decimal(layer.shadow.y,-20,20)&&decimal(layer.shadow.blur,0,30)&&decimal(layer.shadow.opacity,0,1)))
