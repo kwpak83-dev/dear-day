@@ -23,7 +23,7 @@ import { getInvitationTitle } from "../../lib/invitation-title";
 import { EVENT_KIND_OPTIONS, getConfiguredEventConfig, getAllMissingRequiredFields } from "../../lib/event-config";
 import { getEventContactRoles } from "../../lib/event-contact-roles";
 import { getEventAccountGroups } from "../../lib/event-account-groups";
-import { BANK_OPTIONS } from "../../lib/bank-options";
+import BankSelector from "../../components/bank-selector";
 import DearDayLogo from "../../components/dearday-logo";
 import ExtendedEventInfo from "../../components/invitation/extended-event-info";
 
@@ -80,109 +80,7 @@ function HeroEditorPreview({ invitation, eventKind, templateId, templateConfig, 
     </div>
   </div>;
 }
-function BankSelector({ value, onChange }) {
-  const isPresetBank = BANK_OPTIONS.some((bank) => bank.name === value);
-  const [open, setOpen] = useState(false);
-  const [directMode, setDirectMode] = useState(
-    Boolean(value) && !isPresetBank
-  );
 
-  const selectBank = (bankName) => {
-    onChange(bankName);
-    setDirectMode(false);
-    setOpen(false);
-  };
-
-  return (
-    <div className="bank-selector">
-      <button
-        type="button"
-        className="bank-select-trigger"
-        onClick={() => setOpen(true)}
-      >
-        <span>{value || "은행을 선택하세요"}</span>
-        <span className="bank-select-arrow">선택 ›</span>
-      </button>
-
-      {open && (
-        <div
-          className="bank-sheet-overlay"
-          onClick={() => setOpen(false)}
-        >
-          <div
-            className="bank-sheet"
-            role="dialog"
-            aria-modal="true"
-            aria-label="은행 선택"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="bank-sheet-header">
-              <strong>은행 선택</strong>
-
-              <button
-                type="button"
-                className="bank-sheet-close"
-                onClick={() => setOpen(false)}
-                aria-label="닫기"
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="bank-grid">
-              {BANK_OPTIONS.map((bank) => (
-                <button
-                  key={bank.name}
-                  type="button"
-                  className={`bank-option ${
-                    value === bank.name ? "selected" : ""
-                  }`}
-                  onClick={() => selectBank(bank.name)}
-                >
-                  <img src={bank.logo} alt="" />
-                  <span>{bank.name}</span>
-                </button>
-              ))}
-            </div>
-
-            {directMode ? (
-              <div className="bank-direct-area">
-                <input
-                  type="text"
-                  className="bank-direct-input"
-                  placeholder="은행명을 직접 입력하세요"
-                  value={isPresetBank ? "" : value}
-                  onChange={(e) => onChange(e.target.value)}
-                  autoFocus
-                />
-
-                <button
-                  type="button"
-                  className="bank-direct-confirm"
-                  onClick={() => setOpen(false)}
-                  disabled={!value.trim()}
-                >
-                  확인
-                </button>
-              </div>
-            ) : (
-              <button
-                type="button"
-                className="bank-direct-button"
-                onClick={() => {
-                  onChange("");
-                  setDirectMode(true);
-                }}
-              >
-                직접입력
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
 
 const USER_SCREEN_EFFECTS = [["green", "초록 나뭇잎"], ["autumn", "가을 낙엽"], ["snow", "눈송이"], ["rose", "장미 꽃잎"], ["lavender", "라벤더 꽃잎"], ["daisy", "데이지 꽃"], ["heart", "하트"], ["color-confetti", "컬러 컨페티"], ["balloon", "파스텔 풍선"], ["bubble", "비눗방울"]];
 const initialInvitation = { eventKind: "wedding", templateId: "", heroPresetId: "", heroTextOverrides: {}, heroLayerOverrides: {}, heroExtraTextLayers: [], heroPhotoFocusX: null, heroPhotoFocusY: null, completedTemplateKey: "", rsvpEnabled: true, guestbookEnabled: true, eventTitle: "", hostName: "", person1Name: "", person1NameLastName: "", person1NameFirstName: "", person2Name: "", person2NameLastName: "", person2NameFirstName: "", childName: "", childNameLastName: "", childNameFirstName: "", parent1Name: "", parent2Name: "", birthDate: "", dueDate: "", age: "", anniversaryYears: "", organizationName: "", programName: "", details: "", externalLink: "", brandImageUrl: "", coverPhotoUrl: "", kakaoShareImageUrl: "", 
