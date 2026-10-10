@@ -490,8 +490,14 @@ export default function CreateInvitation() {
       window.alert("발행된 초대장은 행사 유형을 변경할 수 없어요. 같은 행사 유형의 템플릿만 변경할 수 있습니다.");
       return;
     }
+    const selectionKeys = new Set(["eventKind", "templateId", "heroPresetId", "completedTemplateKey", "heroTextOverrides", "heroLayerOverrides", "heroExtraTextLayers", "heroPhotoFocusX", "heroPhotoFocusY"]);
+    const hasEnteredData = Object.keys(initialInvitation).some((key) => {
+      if (selectionKeys.has(key)) return false;
+      return JSON.stringify(invitation[key] ?? initialInvitation[key]) !== JSON.stringify(initialInvitation[key]);
+    });
+    if (hasEnteredData && !window.confirm("행사 유형을 변경하시겠습니까?\n\n기존에 입력한 초대장 정보가 초기화됩니다.\n이 작업은 되돌릴 수 없습니다.")) return;
     ++templatePreviewRequest.current;
-    setInvitation(current => ({ ...current, eventKind: nextEventKind, templateId: "", heroPresetId: "", completedTemplateKey: "", heroTextOverrides: {}, heroLayerOverrides: {}, heroExtraTextLayers: [] }));
+    setInvitation(current => ({ ...current, ...initialInvitation, eventKind: nextEventKind }));
     setTemplateRender({ templateId: "", eventKind: nextEventKind, status: "idle", config: null, assets: {} });
     setTemplateOptions([]);
     setTemplateOptionsStatus("loading");
