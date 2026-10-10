@@ -2626,8 +2626,13 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   transform:translateX(-50%) !important;
   justify-content:center !important;
 }
-/* Sales preview: use the published invitation's shared D-style button sizing.
-   No sales-preview-specific fixed button width. */
+/* Sales preview: remove the legacy 166px mobile button width so the
+   shared D-style cards size to their content, as in the published view. */
+@media (max-width:380px){
+  .invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills > button{
+    width:auto !important;
+  }
+}
 /* Keep sales-preview labels readable at the desktop size on narrow phones. */
 .invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong{
   font-size:12px !important;
