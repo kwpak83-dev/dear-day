@@ -132,6 +132,23 @@ async function getTemplateRenderData(supabase, templateId, versionId) {
   };
 }
 
+async function addSharedBodyDecorationAssets(supabase, renderData) {
+  const ids = new Set(getTemplateAssetReferences(renderData.templateConfig)
+    .filter((reference) => reference.type === "decoration").map((reference) => reference.id));
+  if (!ids.size) return;
+  // Match Public's shared decoration library lookup after the final Draft merge.
+  const bucket = supabase.storage.from("template-assets");
+  const { data: files, error } = await bucket.list("hero-decoration-library", { limit: 1000 });
+  if (error) {
+    console.error("Editor body decoration library query failed:", error.message);
+    return;
+  }
+  for (const file of files || []) {
+    const id = file.name.split(".")[0];
+    if (ids.has(id)) renderData.templateAssets[id] = bucket.getPublicUrl(`hero-decoration-library/${file.name}`).data.publicUrl;
+  }
+}
+
 export async function GET(request) {
   const searchParams = new URL(request.url).searchParams;
   const previewTemplateId = searchParams.get("templateId");
@@ -145,11 +162,31 @@ export async function GET(request) {
       .select("id,is_active,current_sale_version_id").eq("id", previewTemplateId).maybeSingle();
     if (templateError) return json({ error: "템플릿을 불러오지 못했어요." }, 500);
     if (!template?.is_active) return json({ error: "현재 사용할 수 있는 템플릿을 찾지 못했어요." }, 404);
-    const saleVersionId = template.current_sale_version_id;
-    if (!saleVersionId) return json({ error: "판매 중인 템플릿 디자인이 없어요." }, 409);
-    const renderData = await getTemplateRenderData(supabase, template.id, saleVersionId);
+    // Templates marked in use may have only a saved Draft (legacy sale-version
+    // publishing was removed). Keep the sale version as a base when it exists.
+    const { data: draft, error: draftError } = await supabase.from("template_versions")
+      .select("id,config").eq("template_id", template.id).eq("status", "draft")
+      .order("version", { ascending: false }).limit(1).maybeSingle();
+    if (draftError) console.error("Template preview draft lookup failed:", draftError.code);
+    const baseVersionId = template.current_sale_version_id || draft?.id;
+    if (!baseVersionId) return json({ error: "저장된 템플릿 디자인이 없어요." }, 409);
+    const renderData = await getTemplateRenderData(supabase, template.id, baseVersionId);
     if (!renderData.templateConfig) return json({ error: "템플릿 디자인을 불러오지 못했어요." }, 409);
-    return json({ templateId: template.id, templateVersionId: saleVersionId, ...renderData });
+    if (draft?.config) {
+      renderData.templateConfig = applySaleTemplateStyles(renderData.templateConfig, draft.config);
+      const references = getTemplateAssetReferences(renderData.templateConfig);
+      renderData.templateAssets = {};
+      if (references.length) {
+        const { data: assets, error: assetError } = await supabase.from("template_assets")
+          .select("id,template_id,asset_type,storage_bucket,storage_path")
+          .eq("template_id", template.id).in("id", references.map((item) => item.id));
+        if (assetError) console.error("Template preview draft asset lookup failed:", assetError.code);
+        else renderData.templateAssets = resolveTemplateAssetUrls(renderData.templateConfig, assets, template.id, (asset) =>
+          supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl);
+      }
+    }
+    await addSharedBodyDecorationAssets(supabase, renderData);
+    return json({ templateId: template.id, templateVersionId: baseVersionId, ...renderData });
   }
   const auth = await getAuthenticatedClient(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
@@ -191,7 +228,22 @@ export async function GET(request) {
         }
       }
     }
+    // Resolve assets again after Draft overrides: its background/decorations
+    // may reference assets absent from the pinned version.
+    if (renderData.templateConfig) {
+      const references = getTemplateAssetReferences(renderData.templateConfig);
+      renderData.templateAssets = {};
+      if (references.length) {
+        const { data: assets, error: assetError } = await auth.supabase.from("template_assets")
+          .select("id,template_id,asset_type,storage_bucket,storage_path")
+          .eq("template_id", event.template_id).in("id", references.map((item) => item.id));
+        if (assetError) console.error("Draft template asset lookup failed:", assetError.code);
+        else renderData.templateAssets = resolveTemplateAssetUrls(renderData.templateConfig, assets, event.template_id, (asset) =>
+          auth.supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl);
+      }
+    }
   }
+  await addSharedBodyDecorationAssets(auth.supabase, renderData);
   return json({ event, ...renderData });
 }
 
@@ -298,6 +350,16 @@ export async function POST(request) {
     if (shouldPinCurrentVersion) {
       if (templates[0].status !== "on_sale" || !templates[0].is_visible) return json({ error: "현재 사용할 수 없는 본문 테마예요." }, 409);
       templateVersionId = templates[0].current_sale_version_id || null;
+      if (!templateVersionId) {
+        // A template in use can be Draft-only; pin that saved config for
+        // compatibility with existing event/public render paths.
+        const { data: draft, error: draftError } = await supabase.from("template_versions")
+          .select("id").eq("template_id", templateId).eq("status", "draft")
+          .order("version", { ascending: false }).limit(1).maybeSingle();
+        if (draftError) return json({ error: "템플릿 디자인 버전을 확인하지 못했어요." }, 500);
+        if (!draft) return json({ error: "저장된 템플릿 디자인이 없어요." }, 409);
+        templateVersionId = draft.id;
+      }
     }
   } else if (hasTemplateId) {
     templateVersionId = null;

@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { resolveTemplateAssetUrls } from "../../../../../lib/template-config";
+import { applySaleTemplateStyles, resolveTemplateAssetUrls } from "../../../../../lib/template-config";
 const configOf=d=>d?({decorations:d.decorations,background:d.background,hero:d.hero,typography:d.typography,colors:d.colors,buttonStyle:d.buttonStyle,quickMenu:d.quickMenu,sections:d.sections,effects:d.effects,bgm:d.bgm,safeArea:d.safeArea}):null;
 export async function GET(_request,{params}){
  const {key}=await params,url=process.env.NEXT_PUBLIC_SUPABASE_URL,service=process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -11,12 +11,14 @@ export async function GET(_request,{params}){
   s.from("hero_presets").select("id,name,config").eq("id",item.hero_preset_id).maybeSingle(),
   s.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path,is_active").eq("hero_preset_id",item.hero_preset_id).eq("is_active",true),
   s.from("template_versions").select("config,status,version").eq("template_id",item.body_template_id).order("version",{ascending:false}),
-  s.from("template_assets").select("id,template_id,asset_type,storage_bucket,storage_path,is_active").eq("template_id",item.body_template_id).eq("is_active",true),
+  s.from("template_assets").select("id,template_id,asset_type,storage_bucket,storage_path,is_active").eq("template_id",item.body_template_id),
   s.from("completed_template_sample_defaults").select("sample_content").eq("id","default").maybeSingle()
  ]);
- const version=(versions||[])[0],base=configOf(version?.config);
+ const version=(versions||[])[0],draft=(versions||[]).find(v=>v.status==="draft");
+ const base=configOf(version?.config);
+ const visualConfig=draft?.config?applySaleTemplateStyles(base,draft.config):base;
  if(!hero||!base)return Response.json({error:"템플릿 미리보기를 준비하지 못했어요."},{status:409});
- const frame=(heroAssets||[]).find(x=>x.asset_type==="hero_frame"),background=(heroAssets||[]).find(x=>x.asset_type==="hero_background"),config={...base,hero:{...base.hero,...hero.config,frameAssetId:frame?.id||null,backgroundAssetId:background?.id||null}};
+ const frame=(heroAssets||[]).find(x=>x.asset_type==="hero_frame"),background=(heroAssets||[]).find(x=>x.asset_type==="hero_background"),config={...visualConfig,hero:{...base.hero,...hero.config,frameAssetId:frame?.id||null,backgroundAssetId:background?.id||null}};
  const assets=resolveTemplateAssetUrls(config,bodyAssets||[],item.body_template_id,(asset)=>asset?.storage_bucket&&asset?.storage_path?s.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl:null);
  const decorIds=new Set([...(hero.config?.decorLayers||[]).map(layer=>layer?.assetId),...(config?.decorations||[]).map(item=>item?.assetId)].filter(Boolean));
  if(decorIds.size){const listed=await s.storage.from("template-assets").list("hero-decoration-library",{limit:1000});if(!listed.error)for(const file of listed.data||[]){const id=file.name.split(".")[0];if(decorIds.has(id))assets[id]=s.storage.from("template-assets").getPublicUrl(`hero-decoration-library/${file.name}`).data.publicUrl;}}
