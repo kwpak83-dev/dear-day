@@ -149,6 +149,24 @@ export async function GET(request) {
     if (!saleVersionId) return json({ error: "판매 중인 템플릿 디자인이 없어요." }, 409);
     const renderData = await getTemplateRenderData(supabase, template.id, saleVersionId);
     if (!renderData.templateConfig) return json({ error: "템플릿 디자인을 불러오지 못했어요." }, 409);
+    // Preview uses the same latest saved background editor Draft as existing invitations.
+    const { data: draft, error: draftError } = await supabase.from("template_versions")
+      .select("config").eq("template_id", template.id).eq("status", "draft")
+      .order("version", { ascending: false }).limit(1).maybeSingle();
+    if (draftError) console.error("Template preview draft lookup failed:", draftError.code);
+    if (draft?.config) {
+      renderData.templateConfig = applySaleTemplateStyles(renderData.templateConfig, draft.config);
+      const references = getTemplateAssetReferences(renderData.templateConfig);
+      renderData.templateAssets = {};
+      if (references.length) {
+        const { data: assets, error: assetError } = await supabase.from("template_assets")
+          .select("id,template_id,asset_type,storage_bucket,storage_path")
+          .eq("template_id", template.id).in("id", references.map((item) => item.id));
+        if (assetError) console.error("Template preview draft asset lookup failed:", assetError.code);
+        else renderData.templateAssets = resolveTemplateAssetUrls(renderData.templateConfig, assets, template.id, (asset) =>
+          supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl);
+      }
+    }
     return json({ templateId: template.id, templateVersionId: saleVersionId, ...renderData });
   }
   const auth = await getAuthenticatedClient(request);
