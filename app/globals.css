@@ -2626,8 +2626,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   transform:translateX(-50%) !important;
   justify-content:center !important;
 }
-/* Sales preview uses the same button width rules as the published invitation.
-   Keep only its separate bottom offset and positioning above. */
+/* Sales preview: use the published invitation's shared D-style button sizing.
+   No sales-preview-specific fixed button width. */
 /* Keep sales-preview labels readable at the desktop size on narrow phones. */
 .invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong{
   font-size:12px !important;
