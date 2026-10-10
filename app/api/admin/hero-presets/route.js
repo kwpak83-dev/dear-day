@@ -5,7 +5,7 @@ import { HERO_FONTS } from "../../../../lib/hero-fonts";
 
 const json = (body, status = 200) => NextResponse.json(body, { status });
 const statuses = new Set(["draft", "on_sale", "stopped"]);
-const eventKinds = new Set(["wedding","first_birthday","birthday","baby_shower","bridal_shower","anniversary","housewarming","graduation","corporate","party","other"]);
+const eventKinds = new Set(["wedding","first_birthday","birthday","milestone_birthday","gathering","opening","baby_shower","bridal_shower","anniversary","housewarming","graduation","corporate","party","other"]);
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const heroModes = new Set(["photo", "frame", "illustration"]);
 const heroRatios = new Set(["4:5", "1:1", "3:4", "2:3", "9:16", "16:9"]);
@@ -101,7 +101,8 @@ function validConfig(value){
 function fields(body){
   if(!body||typeof body!=="object"||Array.isArray(body)) return null;
   const {name,preset_key,description,status,is_visible,sort_order,config}=body;
-  const event_kind=eventKinds.has(body.event_kind)?body.event_kind:"wedding";
+  if(!eventKinds.has(body.event_kind)) return null;
+  const event_kind=body.event_kind;
   if(typeof name!=="string"||!name.trim()||name.trim().length>100) return null;
   if(typeof preset_key!=="string"||!/^[a-z0-9][a-z0-9_-]{2,79}$/.test(preset_key.trim())) return null;
   if(typeof description!=="string"||description.length>2000||!statuses.has(status)||typeof is_visible!=="boolean"||!Number.isInteger(sort_order)||sort_order < -10000||sort_order > 10000||!validConfig(config)) return null;
