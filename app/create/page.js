@@ -278,6 +278,7 @@ export default function CreateInvitation() {
   const [bgmNotice, setBgmNotice] = useState("");
   const [heroOptions, setHeroOptions] = useState([]);
   const [completedCardImages, setCompletedCardImages] = useState(null);
+  const [collectionThumbnailItems, setCollectionThumbnailItems] = useState([]);
   const [templateRender, setTemplateRender] = useState({ templateId: "", eventKind: "", status: "idle", config: null, assets: {} });
   const [templateRevision, setTemplateRevision] = useState(0);
   const [templateNotice, setTemplateNotice] = useState("");
@@ -496,11 +497,21 @@ export default function CreateInvitation() {
     if (!eventReady) return;
     const controller = new AbortController();
     const loadHeroes = async () => {
-      try { const response=await fetch("/api/hero-presets", { signal: controller.signal }); const result=await response.json().catch(()=>({})); if(!controller.signal.aborted&&response.ok) setHeroOptions((result.presets||[]).filter(hero=>(hero.event_kind||"wedding")===invitation.eventKind)); } catch {}
+      try { const response=await fetch("/api/hero-presets", { signal: controller.signal }); const result=await response.json().catch(()=>({})); if(!controller.signal.aborted&&response.ok) { const heroes=(result.presets||[]).filter(hero=>(hero.event_kind||"wedding")===invitation.eventKind); setHeroOptions(heroes); setInvitation(current=>current.eventKind!==invitation.eventKind||current.heroPresetId||!heroes[0]?current:{...current,heroPresetId:heroes[0].id}); } } catch {}
     };
     loadHeroes();
     return () => controller.abort();
   }, [eventReady, invitation.eventKind]);
+  // Fetch completed-template images once for individual card fallbacks.
+  useEffect(() => {
+    if (!eventReady) return;
+    const controller = new AbortController();
+    fetch("/api/templates/collection", { signal: controller.signal, cache: "no-store" })
+      .then(response => response.ok ? response.json() : { items: [] })
+      .then(result => { if (!controller.signal.aborted) setCollectionThumbnailItems(result.items || []); })
+      .catch(() => {});
+    return () => controller.abort();
+  }, [eventReady]);
   useEffect(() => {
     if (!eventReady) return;
     let cancelled = false;
@@ -575,7 +586,7 @@ export default function CreateInvitation() {
       return;
     }
     ++templatePreviewRequest.current;
-    setInvitation(current => ({ ...current, eventKind: nextEventKind, templateId: "", completedTemplateKey: "" }));
+    setInvitation(current => ({ ...current, eventKind: nextEventKind, templateId: "", heroPresetId: "", completedTemplateKey: "", heroTextOverrides: {}, heroLayerOverrides: {}, heroExtraTextLayers: [] }));
     setTemplateRender({ templateId: "", eventKind: nextEventKind, status: "idle", config: null, assets: {} });
     setTemplateOptions([]);
     setTemplateOptionsStatus("loading");
@@ -822,6 +833,8 @@ export default function CreateInvitation() {
     return () => { cancelled = true; };
   }, [invitation.heroPresetId, invitation.templateId, invitation.eventKind, invitation.completedTemplateKey, eventSlug, completedCardImages]);
   const completedCardMatch=completedCardImages?.heroPresetId===invitation.heroPresetId&&completedCardImages?.templateId===invitation.templateId;
+  const collectionHeroThumbnail = id => collectionThumbnailItems.find(item => item.hero_preset_id === id && item.thumbnail_1_url)?.thumbnail_1_url || "";
+  const collectionBodyThumbnail = id => collectionThumbnailItems.find(item => item.body_template_id === id && item.thumbnail_2_url)?.thumbnail_2_url || "";
   const selectedHero=heroOptions.find((item)=>item.id===invitation.heroPresetId)||null;
   const selectedHeroFrame=selectedHero?.assets?.hero_frame||null;
   const selectedHeroBackground=selectedHero?.assets?.hero_background||null;
@@ -1107,13 +1120,13 @@ export default function CreateInvitation() {
         </div>
         <div style={{display:editorStep === 1 ? undefined : "none"}}>
         <details className="dd-custom-accordion" open><summary><span><strong>HERO 프레임</strong><small>초대장의 첫 화면 디자인을 선택하세요.</small></span><span className="dd-accordion-chevron" aria-hidden="true">⌄</span></summary><div className="dd-accordion-body">
-        <div className="form-section template-picker"><h2>Hero 프레임</h2>{heroOptions.length?<div className="template-picker-grid show-all">{heroOptions.map((hero,index)=>{const selected=invitation.heroPresetId===hero.id;return <button key={hero.id} type="button" className={`template-choice template-choice-${index+1}${selected?" selected":""}`} aria-pressed={selected} onClick={()=>setInvitation((current)=>({...current,heroPresetId:hero.id,completedTemplateKey:current.heroPresetId===hero.id?current.completedTemplateKey:"",heroTextOverrides:current.heroPresetId===hero.id?current.heroTextOverrides:{},heroLayerOverrides:current.heroPresetId===hero.id?current.heroLayerOverrides:{},heroExtraTextLayers:current.heroPresetId===hero.id?current.heroExtraTextLayers:[]}))}>{resolveTemplateThumbnail(hero.assets?.thumbnail?.url,completedCardImages?.heroUrl,completedCardMatch&&hero.id===invitation.heroPresetId)?<img src={resolveTemplateThumbnail(hero.assets?.thumbnail?.url,completedCardImages?.heroUrl,completedCardMatch&&hero.id===invitation.heroPresetId)} alt="" style={{width:"100%",aspectRatio:"4 / 5",objectFit:"cover",borderRadius:10}}/>:<span className="template-choice-preview preview-1" aria-hidden="true"><i/><b>Dear Day</b><em>Hero</em></span>}<strong>{hero.name}</strong><span className="template-choice-status">{selected?"✓ 선택됨":"선택하기"}</span></button>})}</div>:<p className="template-picker-empty">현재 선택 가능한 Hero 프레임이 없어요.</p>}</div>
+        <div className="form-section template-picker"><h2>Hero 프레임</h2>{heroOptions.length?<div className="template-picker-grid show-all">{heroOptions.map((hero,index)=>{const selected=invitation.heroPresetId===hero.id;return <button key={hero.id} type="button" className={`template-choice template-choice-${index+1}${selected?" selected":""}`} aria-pressed={selected} onClick={()=>setInvitation((current)=>({...current,heroPresetId:hero.id,completedTemplateKey:current.heroPresetId===hero.id?current.completedTemplateKey:"",heroTextOverrides:current.heroPresetId===hero.id?current.heroTextOverrides:{},heroLayerOverrides:current.heroPresetId===hero.id?current.heroLayerOverrides:{},heroExtraTextLayers:current.heroPresetId===hero.id?current.heroExtraTextLayers:[]}))}>{resolveTemplateThumbnail(hero.assets?.thumbnail?.url,completedCardMatch&&hero.id===invitation.heroPresetId?completedCardImages?.heroUrl:collectionHeroThumbnail(hero.id),true)?<img src={resolveTemplateThumbnail(hero.assets?.thumbnail?.url,completedCardImages?.heroUrl,completedCardMatch&&hero.id===invitation.heroPresetId)} alt="" style={{width:"100%",aspectRatio:"4 / 5",objectFit:"cover",borderRadius:10}}/>:<span className="template-choice-preview preview-1" aria-hidden="true"><i/><b>Dear Day</b><em>Hero</em></span>}<strong>{hero.name}</strong><span className="template-choice-status">{selected?"✓ 선택됨":"선택하기"}</span></button>})}</div>:<p className="template-picker-empty">현재 선택 가능한 Hero 프레임이 없어요.</p>}</div>
         </div></details>
         <details className="dd-custom-accordion"><summary><span><strong>HERO 표시 설정</strong><small>날짜와 장소 등 표시 항목을 조정해요.</small></span><span className="dd-accordion-chevron" aria-hidden="true">⌄</span></summary><div className="dd-accordion-body">
         {selectedHero && <div className="form-section hero-edit-section"><h2>Hero 표시 설정</h2>{previewReady ? <HeroEditorPreview invitation={previewInvitation} eventKind={invitation.eventKind} templateId={invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets} userBgmUrl={invitation.bgmMode === "upload" ? (invitation.userBgmUploadUrl || null) : (selectedBgmTrack?.url || null)} /> : previewLoading}<p style={{fontSize:12,color:"#8c7468",marginBottom:12}}>이름과 고정 디자인은 템플릿에 맞춰 표시됩니다. 날짜·장소는 원하는 경우에만 표시하세요. 글꼴과 위치는 관리자 디자인을 그대로 사용합니다.</p>{[["schedule","날짜 및 시간 표시"],["venue","행사 장소 표시"]].map(([source,label])=>{const layers=(selectedHero.config?.textLayers||[]).filter(layer=>layer.source===source);return layers.length?<label key={source} style={{display:"flex",alignItems:"center",gap:8,margin:"10px 0"}}><input type="checkbox" checked={layers.some(layer=>invitation.heroLayerOverrides?.[layer.id]?.visible!==false && layer.visible!==false)} onChange={event=>setInvitation(current=>({...current,heroLayerOverrides:{...current.heroLayerOverrides,...Object.fromEntries(layers.map(layer=>[layer.id,{...current.heroLayerOverrides?.[layer.id],visible:event.target.checked}]))}}))}/>{label}</label>:null;})}</div>}
         </div></details>
         <details className="dd-custom-accordion"><summary><span><strong>본문 테마</strong><small>초대장 본문의 스타일을 선택하세요.</small></span><span className="dd-accordion-chevron" aria-hidden="true">⌄</span></summary><div className="dd-accordion-body">
-        <div className="form-section template-picker"><h2>본문 테마 <small>개발용</small></h2>{templateOptions.length ? <><div className={`template-picker-grid${showAllTemplates ? " show-all" : ""}`}>{templateOptions.map((template, index) => { const selected = invitation.templateId === template.id; return <button key={template.id} type="button" className={`template-choice template-choice-${index + 1}${selected ? " selected" : ""}`} aria-pressed={selected} onClick={() => selectTemplate(template.id)}>{resolveTemplateThumbnail(template.thumbnailUrl,completedCardImages?.bodyUrl,completedCardMatch&&template.id===invitation.templateId)?<img src={resolveTemplateThumbnail(template.thumbnailUrl,completedCardImages?.bodyUrl,completedCardMatch&&template.id===invitation.templateId)} alt="" style={{width:"100%",aspectRatio:"4 / 5",objectFit:"cover",borderRadius:10}}/>:<span className={`template-choice-preview preview-${(index % 3) + 1}`} aria-hidden="true"><i /><b>Dear Day</b><em>Invitation</em></span>}<strong>{template.name}</strong><span className="template-choice-status">{selected ? "✓ 선택됨" : "선택하기"}</span></button>; })}</div>{templateOptions.length > 6 && <button type="button" className="template-picker-more" onClick={() => setShowAllTemplates((current) => !current)}>{showAllTemplates ? "접기" : "더 보기"} <span aria-hidden="true">{showAllTemplates ? "⌃" : "⌄"}</span></button>}</> : <p className="template-picker-empty">{templateOptionsStatus === "empty" ? "이 행사 유형에 판매 중인 템플릿이 없어요." : templateOptionsStatus === "error" ? "템플릿 목록을 불러오지 못했어요. 다시 시도해 주세요." : "템플릿을 불러오는 중이에요."}</p>}{templateNotice && <p className="photo-notice" role="status">{templateNotice}</p>}</div>
+        <div className="form-section template-picker"><h2>본문 테마 <small>개발용</small></h2>{templateOptions.length ? <><div className={`template-picker-grid${showAllTemplates ? " show-all" : ""}`}>{templateOptions.map((template, index) => { const selected = invitation.templateId === template.id; return <button key={template.id} type="button" className={`template-choice template-choice-${index + 1}${selected ? " selected" : ""}`} aria-pressed={selected} onClick={() => selectTemplate(template.id)}>{resolveTemplateThumbnail(template.thumbnailUrl,completedCardMatch&&template.id===invitation.templateId?completedCardImages?.bodyUrl:collectionBodyThumbnail(template.id),true)?<img src={resolveTemplateThumbnail(template.thumbnailUrl,completedCardImages?.bodyUrl,completedCardMatch&&template.id===invitation.templateId)} alt="" style={{width:"100%",aspectRatio:"4 / 5",objectFit:"cover",borderRadius:10}}/>:<span className={`template-choice-preview preview-${(index % 3) + 1}`} aria-hidden="true"><i /><b>Dear Day</b><em>Invitation</em></span>}<strong>{template.name}</strong><span className="template-choice-status">{selected ? "✓ 선택됨" : "선택하기"}</span></button>; })}</div>{templateOptions.length > 6 && <button type="button" className="template-picker-more" onClick={() => setShowAllTemplates((current) => !current)}>{showAllTemplates ? "접기" : "더 보기"} <span aria-hidden="true">{showAllTemplates ? "⌃" : "⌄"}</span></button>}</> : <p className="template-picker-empty">{templateOptionsStatus === "empty" ? "이 행사 유형에 판매 중인 템플릿이 없어요." : templateOptionsStatus === "error" ? "템플릿 목록을 불러오지 못했어요. 다시 시도해 주세요." : "템플릿을 불러오는 중이에요."}</p>}{templateNotice && <p className="photo-notice" role="status">{templateNotice}</p>}</div>
         </div></details>
         </div>
         <div style={{display:editorStep === 2 ? undefined : "none"}}>
