@@ -132,6 +132,23 @@ async function getTemplateRenderData(supabase, templateId, versionId) {
   };
 }
 
+async function addSharedBodyDecorationAssets(supabase, renderData) {
+  const ids = new Set(getTemplateAssetReferences(renderData.templateConfig)
+    .filter((reference) => reference.type === "decoration").map((reference) => reference.id));
+  if (!ids.size) return;
+  // Match Public's shared decoration library lookup after the final Draft merge.
+  const bucket = supabase.storage.from("template-assets");
+  const { data: files, error } = await bucket.list("hero-decoration-library", { limit: 1000 });
+  if (error) {
+    console.error("Editor body decoration library query failed:", error.message);
+    return;
+  }
+  for (const file of files || []) {
+    const id = file.name.split(".")[0];
+    if (ids.has(id)) renderData.templateAssets[id] = bucket.getPublicUrl(`hero-decoration-library/${file.name}`).data.publicUrl;
+  }
+}
+
 export async function GET(request) {
   const searchParams = new URL(request.url).searchParams;
   const previewTemplateId = searchParams.get("templateId");
@@ -167,6 +184,7 @@ export async function GET(request) {
           supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl);
       }
     }
+    await addSharedBodyDecorationAssets(supabase, renderData);
     return json({ templateId: template.id, templateVersionId: saleVersionId, ...renderData });
   }
   const auth = await getAuthenticatedClient(request);
@@ -224,6 +242,7 @@ export async function GET(request) {
       }
     }
   }
+  await addSharedBodyDecorationAssets(auth.supabase, renderData);
   return json({ event, ...renderData });
 }
 

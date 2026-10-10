@@ -11,7 +11,7 @@ export async function GET(_request,{params}){
   s.from("hero_presets").select("id,name,config").eq("id",item.hero_preset_id).maybeSingle(),
   s.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path,is_active").eq("hero_preset_id",item.hero_preset_id).eq("is_active",true),
   s.from("template_versions").select("config,status,version").eq("template_id",item.body_template_id).order("version",{ascending:false}),
-  s.from("template_assets").select("id,template_id,asset_type,storage_bucket,storage_path,is_active").eq("template_id",item.body_template_id).eq("is_active",true),
+  s.from("template_assets").select("id,template_id,asset_type,storage_bucket,storage_path,is_active").eq("template_id",item.body_template_id),
   s.from("completed_template_sample_defaults").select("sample_content").eq("id","default").maybeSingle()
  ]);
  const version=(versions||[])[0],draft=(versions||[]).find(v=>v.status==="draft");

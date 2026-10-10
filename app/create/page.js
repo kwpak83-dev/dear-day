@@ -271,37 +271,15 @@ export default function CreateInvitation() {
   const [searching, setSearching] = useState(false);
   const [eventSlug, setEventSlug] = useState("");
   const [templateOptions, setTemplateOptions] = useState([]);
+  const [templateOptionsStatus, setTemplateOptionsStatus] = useState("loading");
   const [eventTypeConfigs, setEventTypeConfigs] = useState([]);
   const [bgmTracks, setBgmTracks] = useState([]);
   const [uploadingBgm, setUploadingBgm] = useState(false);
   const [bgmNotice, setBgmNotice] = useState("");
   const [heroOptions, setHeroOptions] = useState([]);
   const [completedCardImages, setCompletedCardImages] = useState(null);
-  const [templateRender, setTemplateRender] = useState({ config: null, assets: {} });
-  // Refresh visual data when opening the full preview, without replacing user edits.
-  useEffect(() => {
-    if (!previewOpen || !eventSlug) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const supabase = getSupabaseBrowserClient();
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) return;
-        const response = await fetch(`/api/events?slug=${encodeURIComponent(eventSlug)}`, {
-          cache: "no-store", headers: { Authorization: `Bearer ${session.access_token}` }
-        });
-        if (!response.ok) return;
-        const result = await response.json();
-        if (!cancelled && result.event?.template_id === invitation.templateId) {
-          setTemplateRender({ config: result.templateConfig || null, assets: result.templateAssets || {} });
-        }
-      } catch {
-        // Keep the already loaded preview if refreshing is temporarily unavailable.
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [previewOpen, eventSlug, invitation.templateId]);
-  const [previewTemplateId, setPreviewTemplateId] = useState("");
+  const [templateRender, setTemplateRender] = useState({ templateId: "", eventKind: "", status: "idle", config: null, assets: {} });
+  const [templateRevision, setTemplateRevision] = useState(0);
   const [templateNotice, setTemplateNotice] = useState("");
   const [showAllTemplates, setShowAllTemplates] = useState(false);
   const [submitting, setSubmitting] = useState("");
@@ -321,6 +299,66 @@ export default function CreateInvitation() {
   const livePreviewRef = useRef(null);
   const templateSelectionChanged = useRef(false);
   const templatePreviewRequest = useRef(0);
+
+  // All render-data writes go through this effect. Selection, restoration and save
+  // only change its inputs; an obsolete request can never commit another theme.
+  useEffect(() => {
+    const requestId = ++templatePreviewRequest.current;
+    if (!eventReady || !invitation.templateId) return;
+    const { templateId, eventKind, completedTemplateKey, heroPresetId } = invitation;
+    const controller = new AbortController();
+    const isCurrent = () => !controller.signal.aborted && requestId === templatePreviewRequest.current;
+    const fetchJson = async (url, headers) => {
+      const response = await fetch(url, { cache: "no-store", signal: controller.signal, headers });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "템플릿 디자인을 불러오지 못했어요.");
+      return result;
+    };
+    setTemplateRender(current => current.templateId === templateId && current.eventKind === eventKind && current.status === "ready"
+      ? current : { templateId, eventKind, status: "loading", config: null, assets: {} });
+    setTemplateNotice("");
+    (async () => {
+      try {
+        let renderData = null;
+        if (eventSlug) {
+          const client = getSupabaseBrowserClient();
+          const { data: { session } } = client ? await client.auth.getSession() : { data: {} };
+          if (!isCurrent()) return;
+          if (!session) throw new Error("로그인 후 초대장 디자인을 다시 불러와 주세요.");
+          const result = await fetchJson(`/api/events?slug=${encodeURIComponent(eventSlug)}`, { Authorization: `Bearer ${session.access_token}` });
+          // A locally restored/changed template must not use the saved Event's config.
+          if (result.event?.template_id === templateId) renderData = result;
+        }
+        if (!isCurrent()) return;
+        if (!renderData && DEVELOPMENT_TEMPLATE_IDS.has(templateId)) {
+          renderData = { templateConfig: null, templateAssets: {} };
+        }
+        if (!renderData && completedTemplateKey) {
+          const result = await fetchJson(`/api/templates/collection/${encodeURIComponent(completedTemplateKey)}`);
+          if (!matchesCompletedTemplate(result.item, heroPresetId, templateId)) {
+            throw new Error("선택한 완성 템플릿 정보가 일치하지 않아요. 템플릿을 다시 선택해 주세요.");
+          }
+          renderData = result;
+        }
+        if (!isCurrent()) return;
+        if (!renderData) {
+          const result = await fetchJson(`/api/events?templateId=${encodeURIComponent(templateId)}`);
+          if (result.templateId !== templateId) throw new Error("선택한 템플릿 정보를 확인하지 못했어요.");
+          renderData = result;
+        }
+        if (!isCurrent()) return;
+        if (!renderData.templateConfig && !DEVELOPMENT_TEMPLATE_IDS.has(templateId)) {
+          throw new Error("템플릿 디자인을 불러오지 못했어요. 다시 시도해 주세요.");
+        }
+        setTemplateRender({ templateId, eventKind, status: "ready", config: renderData.templateConfig || null, assets: renderData.templateAssets || {} });
+      } catch (error) {
+        if (!isCurrent()) return;
+        setTemplateRender({ templateId, eventKind, status: "error", config: null, assets: {} });
+        setTemplateNotice(error.message || "템플릿 디자인을 불러오지 못했어요.");
+      }
+    })();
+    return () => controller.abort();
+  }, [eventReady, invitation.templateId, invitation.eventKind, invitation.completedTemplateKey, invitation.heroPresetId, eventSlug, previewOpen, templateRevision]);
 
   const focusMap = (point) => {
     const maps = window.naver?.maps;
@@ -370,18 +408,7 @@ export default function CreateInvitation() {
           const selected=JSON.parse(window.localStorage.getItem("dear-day-template-start")||"null");
           if (selected?.templateKey===query.get("template")&&selected.heroPresetId&&selected.templateId) {
             setInvitation(current=>({...current,eventKind:selected.eventKind||"wedding",heroPresetId:selected.heroPresetId,templateId:selected.templateId,completedTemplateKey:selected.templateKey}));
-            setPreviewTemplateId(selected.templateId);
             startedFromTemplate=true;
-            try {
-              const response=await fetch(`/api/templates/collection/${encodeURIComponent(selected.templateKey)}`, { cache: "no-store" });
-              const result=await response.json().catch(()=>({}));
-              if(response.ok&&result.item?.body_template_id===selected.templateId){
-                 setCompletedCardImages(completedTemplateCardImages(result.item));
-                setTemplateRender({config:result.templateConfig||null,assets:result.templateAssets||{}});
-              }
-            } catch {
-              setTemplateNotice("선택한 완성 템플릿 디자인을 불러오지 못했어요.");
-            }
           }
         } catch {}
       }
@@ -402,7 +429,7 @@ export default function CreateInvitation() {
   useEffect(() => () => window.clearTimeout(saveToastTimer.current), []);
   useEffect(() => {
     if (livePreviewRef.current) livePreviewRef.current.scrollTop = 0;
-  }, [invitation.coverPhotoUrl, previewTemplateId, templateRender.config]);
+  }, [invitation.coverPhotoUrl, invitation.templateId, templateRender.config]);
   useEffect(() => {
     if (!previewOpen && !checkoutOpen && !paymentComplete && !publishConfirmOpen && !published) return;
     const previousOverflow = document.body.style.overflow;
@@ -412,12 +439,16 @@ export default function CreateInvitation() {
   useEffect(() => {
     const slug = new URLSearchParams(window.location.search).get("slug");
     if (!slug) return;
+    const controller = new AbortController();
     const loadEvent = async () => {
+      try {
       const supabase = getSupabaseBrowserClient();
       const { data: { session } } = await supabase.auth.getSession();
+      if (controller.signal.aborted) return;
       if (!session) return setSaveNotice("로그인 후 임시저장을 열 수 있어요.");
-      const response = await fetch(`/api/events?slug=${encodeURIComponent(slug)}`, { cache: "no-store", headers: { Authorization: `Bearer ${session.access_token}` } });
+      const response = await fetch(`/api/events?slug=${encodeURIComponent(slug)}`, { cache: "no-store", signal: controller.signal, headers: { Authorization: `Bearer ${session.access_token}` } });
       const result = await response.json().catch(() => ({}));
+      if (controller.signal.aborted) return;
       if (!response.ok || !result.event) return setSaveNotice(result.error || "초대장을 찾지 못했어요.");
       const status = result.event.status || "draft";
       const query = new URLSearchParams(window.location.search);
@@ -431,8 +462,6 @@ export default function CreateInvitation() {
         }
       }
       setInvitation(restoredInvitation);
-      setPreviewTemplateId(restoredInvitation.templateId);
-      setTemplateRender({ config: result.templateConfig || null, assets: result.templateAssets || {} });
       templateSelectionChanged.current = false;
       setEventSlug(result.event.slug);
       setEventStatus(status);
@@ -440,8 +469,12 @@ export default function CreateInvitation() {
       setSaveNotice(status === "paid" ? "결제완료 초대장을 불러왔어요." : status === "published" ? "발행된 초대장을 불러왔어요." : "임시저장을 불러왔어요.");
       if (status === "paid" && query.get("preview") === "final") setPreviewOpen(true);
       if (status === "paid" && query.get("publish") === "ready") setPublishConfirmOpen(true);
+      } catch {
+        if (!controller.signal.aborted) setSaveNotice("초대장을 불러오지 못했어요. 다시 시도해 주세요.");
+      }
     };
     loadEvent();
+    return () => controller.abort();
   }, []);
   useEffect(() => {
     const loadEventTypeConfigs = async () => {
@@ -460,17 +493,26 @@ export default function CreateInvitation() {
     loadBgmTracks();
   }, []);
   useEffect(() => {
+    if (!eventReady) return;
+    const controller = new AbortController();
     const loadHeroes = async () => {
-      try { const response=await fetch("/api/hero-presets"); const result=await response.json().catch(()=>({})); if(response.ok) setHeroOptions((result.presets||[]).filter(hero=>(hero.event_kind||"wedding")===invitation.eventKind)); } catch {}
+      try { const response=await fetch("/api/hero-presets", { signal: controller.signal }); const result=await response.json().catch(()=>({})); if(!controller.signal.aborted&&response.ok) setHeroOptions((result.presets||[]).filter(hero=>(hero.event_kind||"wedding")===invitation.eventKind)); } catch {}
     };
     loadHeroes();
-  }, [invitation.eventKind]);
+    return () => controller.abort();
+  }, [eventReady, invitation.eventKind]);
   useEffect(() => {
+    if (!eventReady) return;
+    let cancelled = false;
+    setTemplateOptions([]);
+    setTemplateOptionsStatus("loading");
     const loadTemplates = async () => {
-      const supabase = getSupabaseBrowserClient();
-      if (!supabase) return setTemplateNotice("템플릿 목록을 불러오지 못했어요.");
-      const { data, error } = await supabase.from("templates").select("id,name,event_kind,status,is_visible,template_assets(id,asset_type,storage_bucket,storage_path,is_active)").eq("status","on_sale").eq("is_visible",true).order("sort_order", { ascending: true });
-      if (error) return setTemplateNotice("템플릿 목록을 불러오지 못했어요.");
+      try {
+        const supabase = getSupabaseBrowserClient();
+        if (!supabase) throw new Error("템플릿 목록을 불러오지 못했어요.");
+        const { data, error } = await supabase.from("templates").select("id,name,event_kind,status,is_visible,template_assets(id,asset_type,storage_bucket,storage_path,is_active)").eq("status","on_sale").eq("is_visible",true).order("sort_order", { ascending: true });
+        if (cancelled) return;
+        if (error) throw error;
       const templates = (data || []).filter(template=>(template.event_kind||"wedding")===invitation.eventKind).map((template) => {
         const thumbnail = template.template_assets?.find((asset) => asset.asset_type === "thumbnail" && asset.is_active);
         const thumbnailUrl = thumbnail?.storage_bucket && thumbnail?.storage_path
@@ -479,28 +521,17 @@ export default function CreateInvitation() {
         return { id: template.id, name: template.name, thumbnailUrl };
       });
       setTemplateOptions(templates);
-      const isExistingEvent = Boolean(new URLSearchParams(window.location.search).get("slug"));
+      setTemplateOptionsStatus(templates.length ? "ready" : "empty");
       const firstTemplateId = templates[0]?.id || "";
-      setPreviewTemplateId((current) => current || firstTemplateId);
-      setInvitation((current) => current.templateId || !firstTemplateId ? current : { ...current, templateId: firstTemplateId });
-      // A brand-new invitation starts with the first body theme already selected.
-      // Load its render config immediately so a Hero chosen before any theme click
-      // can compose against a real template instead of a null config.
-      if (!isExistingEvent && firstTemplateId && !DEVELOPMENT_TEMPLATE_IDS.has(firstTemplateId)) {
-        try {
-          const response = await fetch(`/api/events?templateId=${encodeURIComponent(firstTemplateId)}`, { cache: "no-store" });
-          const result = await response.json().catch(() => ({}));
-          if (response.ok && result.templateId === firstTemplateId) {
-            setTemplateRender({ config: result.templateConfig || null, assets: result.templateAssets || {} });
-            setPreviewTemplateId(firstTemplateId);
-          }
-        } catch {
-          setTemplateNotice("템플릿 디자인을 불러오지 못했어요.");
-        }
+      setInvitation((current) => cancelled || current.eventKind !== invitation.eventKind || current.templateId || !firstTemplateId
+        ? current : { ...current, templateId: firstTemplateId });
+      } catch {
+        if (!cancelled) setTemplateOptionsStatus("error");
       }
     };
     loadTemplates();
-  }, [invitation.eventKind]);
+    return () => { cancelled = true; };
+  }, [eventReady, invitation.eventKind]);
   useEffect(() => {
     if (!mapClientId || !mapContainer) return;
     const scriptId = "naver-map-sdk";
@@ -543,40 +574,13 @@ export default function CreateInvitation() {
       window.alert("발행된 초대장은 행사 유형을 변경할 수 없어요. 같은 행사 유형의 템플릿만 변경할 수 있습니다.");
       return;
     }
-    // Auto-selected defaults (the first body template, preview state, etc.) are not
-    // user-authored data and must not trigger the destructive-change warning.
-    const systemManagedKeys = new Set(["eventKind", "templateId"]);
-    const hasUserData =
-      Object.keys(initialInvitation).some((key) => {
-        if (systemManagedKeys.has(key)) return false;
-        return JSON.stringify(invitation[key] ?? null) !== JSON.stringify(initialInvitation[key] ?? null);
-      }) ||
-      galleryPhotos.length > 0 ||
-      templateSelectionChanged.current;
-
-    if (hasUserData) {
-      const confirmed = window.confirm("행사 유형을 변경하면 현재 작성한 내용과 선택한 템플릿이 모두 초기화됩니다.\n\n초기화 후 변경하시겠습니까?");
-      if (!confirmed) return;
-    }
-
-    setInvitation({ ...initialInvitation, eventKind: nextEventKind });
-    setGalleryPhotos([]);
-    setPreviewTemplateId("");
-    setTemplateRender({ config: null, assets: {} });
-    setPreviewOpen(false);
-    setEditorStep(0);
+    ++templatePreviewRequest.current;
+    setInvitation(current => ({ ...current, eventKind: nextEventKind, templateId: "", completedTemplateKey: "" }));
+    setTemplateRender({ templateId: "", eventKind: nextEventKind, status: "idle", config: null, assets: {} });
+    setTemplateOptions([]);
+    setTemplateOptionsStatus("loading");
     setTemplateNotice("");
-    setFlowNotice("");
-    setSaveNotice("");
-    setPhotoNotice("");
-    setBgmNotice("");
-    setKakaoSharePhotoNotice("");
-    setVenueBuildingAuto(false);
-    setPlaceResults([]);
-    lastMappedAddress.current = "";
     templateSelectionChanged.current = false;
-    window.localStorage.removeItem("dear-day-draft");
-    window.localStorage.removeItem("dear-day-template-start");
   };
   const update = (key, value) => setInvitation((current) => ({ ...current, [key]: value }));
   const uploadBgm = async (event) => {
@@ -823,6 +827,15 @@ export default function CreateInvitation() {
   const selectedHeroBackground=selectedHero?.assets?.hero_background||null;
   const selectedHeroDecorations=selectedHero?.assets?.hero_decorations||[];
   const selectedHeroAssets=Object.fromEntries(selectedHeroDecorations.filter(item=>item?.id&&item?.url).map(item=>[item.id,item.url]));
+  const previewReady = eventReady && templateRender.status === "ready"
+    && templateRender.templateId === invitation.templateId && templateRender.eventKind === invitation.eventKind;
+  const previewLoading = <div className="photo-notice" role="status" style={{ padding: 24 }}>
+    {!invitation.templateId && templateOptionsStatus === "empty" ? "이 행사 유형에 판매 중인 템플릿이 없어요."
+      : !invitation.templateId && templateOptionsStatus === "error" ? "템플릿 목록을 불러오지 못했어요. 다시 시도해 주세요."
+      : templateRender.templateId === invitation.templateId && templateRender.status === "error"
+      ? <>{templateNotice}<button type="button" onClick={() => setTemplateRevision(current => current + 1)}>다시 불러오기</button></>
+      : "템플릿 디자인을 불러오는 중이에요."}
+  </div>;
   const composedTemplateRender=selectedHero?{config:templateRender.config?{...templateRender.config,hero:{...templateRender.config.hero,...selectedHero.config,textLayers:[...(selectedHero.config?.textLayers||[]),...(invitation.heroExtraTextLayers||[])].map((layer)=>({...layer,...(invitation.heroLayerOverrides?.[layer.id]||{}),text:typeof invitation.heroTextOverrides?.[layer.id]==="string"?invitation.heroTextOverrides[layer.id]:layer.text})),frameAssetId:selectedHeroFrame?.id||null,backgroundAssetId:selectedHeroBackground?.id||null}}:templateRender.config,assets:{...templateRender.assets,...selectedHeroAssets,...(selectedHeroFrame?.url?{[selectedHeroFrame.id]:selectedHeroFrame.url}:{}),...(selectedHeroBackground?.url?{[selectedHeroBackground.id]:selectedHeroBackground.url}:{})}}:templateRender;
   // Use the active Hero photo as the editor preview fallback; never persist it into invitation settings.
   const previewInvitation = selectedHero && !invitation.coverPhotoUrl && selectedHero.config?.mode !== "illustration" && selectedHeroFrame?.url
@@ -925,31 +938,11 @@ export default function CreateInvitation() {
     setSaveToastVisible(true);
     saveToastTimer.current = window.setTimeout(() => setSaveToastVisible(false), 3800);
   };
-  const selectTemplate = async (templateId) => {
-    const requestId = ++templatePreviewRequest.current;
+  const selectTemplate = (templateId) => {
     templateSelectionChanged.current = true;
     setInvitation(current=>({...current,templateId,completedTemplateKey:current.templateId===templateId?current.completedTemplateKey:""}));
     setTemplateNotice("");
-    if (DEVELOPMENT_TEMPLATE_IDS.has(templateId)) {
-      setTemplateRender({ config: null, assets: {} });
-      setPreviewTemplateId(templateId);
-      return;
-    }
-    setTemplateNotice("템플릿 디자인을 불러오는 중이에요.");
-    try {
-      const response = await fetch(`/api/events?templateId=${encodeURIComponent(templateId)}`, { cache: "no-store" });
-      const result = await response.json().catch(() => ({}));
-      if (requestId !== templatePreviewRequest.current) return;
-      if (!response.ok || result.templateId !== templateId) {
-        setTemplateNotice(result.error || "템플릿 디자인을 불러오지 못했어요.");
-        return;
-      }
-      setTemplateRender({ config: result.templateConfig || null, assets: result.templateAssets || {} });
-      setPreviewTemplateId(templateId);
-      setTemplateNotice("");
-    } catch {
-      if (requestId === templatePreviewRequest.current) setTemplateNotice("템플릿 디자인을 불러오지 못했어요.");
-    }
+    setTemplateRevision(current => current + 1);
   };
   const saveDraft = async ({ showLoading = true, showSuccessToast = false } = {}) => {
     if (!eventReady) {
@@ -972,12 +965,7 @@ export default function CreateInvitation() {
       if (!response.ok) return setSaveNotice(result.error || "저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
       const savedStatus = result.status || "draft";
       templateSelectionChanged.current = false;
-      const renderResponse = await fetch(`/api/events?slug=${encodeURIComponent(slug)}`, { headers: { Authorization: `Bearer ${session.access_token}` } });
-      const renderResult = await renderResponse.json().catch(() => ({}));
-      if (renderResponse.ok) {
-        setTemplateRender({ config: renderResult.templateConfig || null, assets: renderResult.templateAssets || {} });
-        setPreviewTemplateId(renderResult.event?.template_id || invitation.templateId);
-      }
+      setTemplateRevision(current => current + 1);
       setLoginRequired(false); window.localStorage.setItem("dear-day-event-slug", slug); setEventSlug(slug); setEventStatus(savedStatus);
       if ((savedStatus === "draft" || savedStatus === "suspended") && showSuccessToast) { setSaveNotice(""); showSavedToast(savedStatus === "suspended" ? "변경사항이 저장되었습니다. 재발행은 내 초대장 → 다시 발행하기에서 가능합니다.." : "임시 저장이 완료되었습니다."); }
       else if (savedStatus === "published" && showSuccessToast) { setSaveNotice(""); showSavedToast("수정사항이 공개 초대장에 반영되었습니다."); }
@@ -1122,10 +1110,10 @@ export default function CreateInvitation() {
         <div className="form-section template-picker"><h2>Hero 프레임</h2>{heroOptions.length?<div className="template-picker-grid show-all">{heroOptions.map((hero,index)=>{const selected=invitation.heroPresetId===hero.id;return <button key={hero.id} type="button" className={`template-choice template-choice-${index+1}${selected?" selected":""}`} aria-pressed={selected} onClick={()=>setInvitation((current)=>({...current,heroPresetId:hero.id,completedTemplateKey:current.heroPresetId===hero.id?current.completedTemplateKey:"",heroTextOverrides:current.heroPresetId===hero.id?current.heroTextOverrides:{},heroLayerOverrides:current.heroPresetId===hero.id?current.heroLayerOverrides:{},heroExtraTextLayers:current.heroPresetId===hero.id?current.heroExtraTextLayers:[]}))}>{resolveTemplateThumbnail(hero.assets?.thumbnail?.url,completedCardImages?.heroUrl,completedCardMatch&&hero.id===invitation.heroPresetId)?<img src={resolveTemplateThumbnail(hero.assets?.thumbnail?.url,completedCardImages?.heroUrl,completedCardMatch&&hero.id===invitation.heroPresetId)} alt="" style={{width:"100%",aspectRatio:"4 / 5",objectFit:"cover",borderRadius:10}}/>:<span className="template-choice-preview preview-1" aria-hidden="true"><i/><b>Dear Day</b><em>Hero</em></span>}<strong>{hero.name}</strong><span className="template-choice-status">{selected?"✓ 선택됨":"선택하기"}</span></button>})}</div>:<p className="template-picker-empty">현재 선택 가능한 Hero 프레임이 없어요.</p>}</div>
         </div></details>
         <details className="dd-custom-accordion"><summary><span><strong>HERO 표시 설정</strong><small>날짜와 장소 등 표시 항목을 조정해요.</small></span><span className="dd-accordion-chevron" aria-hidden="true">⌄</span></summary><div className="dd-accordion-body">
-        {selectedHero && <div className="form-section hero-edit-section"><h2>Hero 표시 설정</h2><HeroEditorPreview invitation={previewInvitation} eventKind={invitation.eventKind} templateId={previewTemplateId || invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets} userBgmUrl={invitation.bgmMode === "upload" ? (invitation.userBgmUploadUrl || null) : (selectedBgmTrack?.url || null)} /><p style={{fontSize:12,color:"#8c7468",marginBottom:12}}>이름과 고정 디자인은 템플릿에 맞춰 표시됩니다. 날짜·장소는 원하는 경우에만 표시하세요. 글꼴과 위치는 관리자 디자인을 그대로 사용합니다.</p>{[["schedule","날짜 및 시간 표시"],["venue","행사 장소 표시"]].map(([source,label])=>{const layers=(selectedHero.config?.textLayers||[]).filter(layer=>layer.source===source);return layers.length?<label key={source} style={{display:"flex",alignItems:"center",gap:8,margin:"10px 0"}}><input type="checkbox" checked={layers.some(layer=>invitation.heroLayerOverrides?.[layer.id]?.visible!==false && layer.visible!==false)} onChange={event=>setInvitation(current=>({...current,heroLayerOverrides:{...current.heroLayerOverrides,...Object.fromEntries(layers.map(layer=>[layer.id,{...current.heroLayerOverrides?.[layer.id],visible:event.target.checked}]))}}))}/>{label}</label>:null;})}</div>}
+        {selectedHero && <div className="form-section hero-edit-section"><h2>Hero 표시 설정</h2>{previewReady ? <HeroEditorPreview invitation={previewInvitation} eventKind={invitation.eventKind} templateId={invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets} userBgmUrl={invitation.bgmMode === "upload" ? (invitation.userBgmUploadUrl || null) : (selectedBgmTrack?.url || null)} /> : previewLoading}<p style={{fontSize:12,color:"#8c7468",marginBottom:12}}>이름과 고정 디자인은 템플릿에 맞춰 표시됩니다. 날짜·장소는 원하는 경우에만 표시하세요. 글꼴과 위치는 관리자 디자인을 그대로 사용합니다.</p>{[["schedule","날짜 및 시간 표시"],["venue","행사 장소 표시"]].map(([source,label])=>{const layers=(selectedHero.config?.textLayers||[]).filter(layer=>layer.source===source);return layers.length?<label key={source} style={{display:"flex",alignItems:"center",gap:8,margin:"10px 0"}}><input type="checkbox" checked={layers.some(layer=>invitation.heroLayerOverrides?.[layer.id]?.visible!==false && layer.visible!==false)} onChange={event=>setInvitation(current=>({...current,heroLayerOverrides:{...current.heroLayerOverrides,...Object.fromEntries(layers.map(layer=>[layer.id,{...current.heroLayerOverrides?.[layer.id],visible:event.target.checked}]))}}))}/>{label}</label>:null;})}</div>}
         </div></details>
         <details className="dd-custom-accordion"><summary><span><strong>본문 테마</strong><small>초대장 본문의 스타일을 선택하세요.</small></span><span className="dd-accordion-chevron" aria-hidden="true">⌄</span></summary><div className="dd-accordion-body">
-        <div className="form-section template-picker"><h2>본문 테마 <small>개발용</small></h2>{templateOptions.length ? <><div className={`template-picker-grid${showAllTemplates ? " show-all" : ""}`}>{templateOptions.map((template, index) => { const selected = invitation.templateId === template.id; return <button key={template.id} type="button" className={`template-choice template-choice-${index + 1}${selected ? " selected" : ""}`} aria-pressed={selected} onClick={() => selectTemplate(template.id)}>{resolveTemplateThumbnail(template.thumbnailUrl,completedCardImages?.bodyUrl,completedCardMatch&&template.id===invitation.templateId)?<img src={resolveTemplateThumbnail(template.thumbnailUrl,completedCardImages?.bodyUrl,completedCardMatch&&template.id===invitation.templateId)} alt="" style={{width:"100%",aspectRatio:"4 / 5",objectFit:"cover",borderRadius:10}}/>:<span className={`template-choice-preview preview-${(index % 3) + 1}`} aria-hidden="true"><i /><b>Dear Day</b><em>Invitation</em></span>}<strong>{template.name}</strong><span className="template-choice-status">{selected ? "✓ 선택됨" : "선택하기"}</span></button>; })}</div>{templateOptions.length > 6 && <button type="button" className="template-picker-more" onClick={() => setShowAllTemplates((current) => !current)}>{showAllTemplates ? "접기" : "더 보기"} <span aria-hidden="true">{showAllTemplates ? "⌃" : "⌄"}</span></button>}</> : <p className="template-picker-empty">템플릿을 불러오는 중이에요.</p>}{templateNotice && <p className="photo-notice" role="status">{templateNotice}</p>}</div>
+        <div className="form-section template-picker"><h2>본문 테마 <small>개발용</small></h2>{templateOptions.length ? <><div className={`template-picker-grid${showAllTemplates ? " show-all" : ""}`}>{templateOptions.map((template, index) => { const selected = invitation.templateId === template.id; return <button key={template.id} type="button" className={`template-choice template-choice-${index + 1}${selected ? " selected" : ""}`} aria-pressed={selected} onClick={() => selectTemplate(template.id)}>{resolveTemplateThumbnail(template.thumbnailUrl,completedCardImages?.bodyUrl,completedCardMatch&&template.id===invitation.templateId)?<img src={resolveTemplateThumbnail(template.thumbnailUrl,completedCardImages?.bodyUrl,completedCardMatch&&template.id===invitation.templateId)} alt="" style={{width:"100%",aspectRatio:"4 / 5",objectFit:"cover",borderRadius:10}}/>:<span className={`template-choice-preview preview-${(index % 3) + 1}`} aria-hidden="true"><i /><b>Dear Day</b><em>Invitation</em></span>}<strong>{template.name}</strong><span className="template-choice-status">{selected ? "✓ 선택됨" : "선택하기"}</span></button>; })}</div>{templateOptions.length > 6 && <button type="button" className="template-picker-more" onClick={() => setShowAllTemplates((current) => !current)}>{showAllTemplates ? "접기" : "더 보기"} <span aria-hidden="true">{showAllTemplates ? "⌃" : "⌄"}</span></button>}</> : <p className="template-picker-empty">{templateOptionsStatus === "empty" ? "이 행사 유형에 판매 중인 템플릿이 없어요." : templateOptionsStatus === "error" ? "템플릿 목록을 불러오지 못했어요. 다시 시도해 주세요." : "템플릿을 불러오는 중이에요."}</p>}{templateNotice && <p className="photo-notice" role="status">{templateNotice}</p>}</div>
         </div></details>
         </div>
         <div style={{display:editorStep === 2 ? undefined : "none"}}>
@@ -1177,12 +1165,12 @@ export default function CreateInvitation() {
         </div>
         <div className="dd-editor-sticky-actions"><button type="button" onClick={() => saveDraft({ showSuccessToast: true })} disabled={!eventReady || Boolean(submitting) || uploadingPhoto || galleryBusy}>{eventStatus === "published" ? "수정사항 반영" : "임시저장"}</button><button type="button" className="dd-editor-preview-action" onClick={() => { setFlowNotice(""); setPreviewOpen(true); }}>◉ 미리보기</button><button type="button" className="dd-editor-next-action" onClick={() => { if (editorStep < 5) { setEditorStep(editorStep + 1); window.scrollTo({top:0,behavior:"smooth"}); } else if (eventStatus === "published" && eventSlug) { window.location.href = `/invite/${eventSlug}?from=owner`; } else if (eventStatus === "paid") requestPublish(); else preparePayment(); }}>{editorStep < 5 ? "다음단계 →" : eventStatus === "published" ? "초대장 보기" : eventStatus === "paid" ? "발행하기" : "결제·발행 →"}</button></div>{saveNotice && <p role="status">{saveNotice}</p>}{loginRequired && <button type="button" className="save-button" onClick={continueAfterLogin}>로그인하고 계속하기</button>}
       </section>
-      <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div ref={livePreviewRef} className="preview-content full-invitation-renderer dd-bgm-public-style">{noticeMatrix.state !== "none" && <InvitationNotice notice={noticeMatrix.state === "required" ? { ...invitation.notice, enabled: true } : invitation.notice} slug="editor-live-preview" imageUrl={noticePreviewUrl || null} preview />}<InvitationRenderer invitation={previewInvitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} templateId={previewTemplateId || invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets} userBgmUrl={invitation.bgmMode === "upload" ? (invitation.userBgmUploadUrl || null) : (selectedBgmTrack?.url || null)} placeActions={previewPlaceActions()}><><ParentsIntro invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><GrowthTimeline invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><ExtendedEventInfo invitation={invitation} eventTypeConfig={eventTypeConfig} />{galleryMatrix.state !== "none" && <Gallery photos={galleryPhotos} idPrefix="live-preview-gallery" title={galleryMatrix.label} />}{transportMatrix.state !== "none" && <TransportGuide invitation={invitation} title={transportMatrix.label} required={transportMatrix.state === "required"} />}<AccountCopy invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><OptionalInvitationSections invitation={invitation} eventTypeConfig={eventTypeConfig} previewMode="desktop-live" /><ShareActions className="public-share-copy" path={eventSlug ? `/invite/${eventSlug}` : "#preview"} title={getInvitationTitle(invitation, invitation.eventKind)} previewOnly={eventStatus !== "published" || !eventSlug} /><DearDayBrandFooter /></></InvitationRenderer></div></div></aside>
+      <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div ref={livePreviewRef} className="preview-content full-invitation-renderer dd-bgm-public-style">{previewReady ? <>{noticeMatrix.state !== "none" && <InvitationNotice notice={noticeMatrix.state === "required" ? { ...invitation.notice, enabled: true } : invitation.notice} slug="editor-live-preview" imageUrl={noticePreviewUrl || null} preview />}<InvitationRenderer invitation={previewInvitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} templateId={invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets} userBgmUrl={invitation.bgmMode === "upload" ? (invitation.userBgmUploadUrl || null) : (selectedBgmTrack?.url || null)} placeActions={previewPlaceActions()}><><ParentsIntro invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><GrowthTimeline invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><ExtendedEventInfo invitation={invitation} eventTypeConfig={eventTypeConfig} />{galleryMatrix.state !== "none" && <Gallery photos={galleryPhotos} idPrefix="live-preview-gallery" title={galleryMatrix.label} />}{transportMatrix.state !== "none" && <TransportGuide invitation={invitation} title={transportMatrix.label} required={transportMatrix.state === "required"} />}<AccountCopy invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><OptionalInvitationSections invitation={invitation} eventTypeConfig={eventTypeConfig} previewMode="desktop-live" /><ShareActions className="public-share-copy" path={eventSlug ? `/invite/${eventSlug}` : "#preview"} title={getInvitationTitle(invitation, invitation.eventKind)} previewOnly={eventStatus !== "published" || !eventSlug} /><DearDayBrandFooter /></></InvitationRenderer></> : previewLoading}</div></div></aside>
     </div>
     {previewOpen && <div className="full-preview-overlay" role="dialog" aria-modal="true" aria-label={eventStatus === "draft" ? "초대장 전체 미리보기" : "초대장 최종 미리보기"} onKeyDown={(event) => { if (event.key === "Escape") closePreview(); }}>
       <div className="full-preview-toolbar"><strong>{eventStatus === "draft" ? "DearDay Preview" : "최종 미리보기"}</strong><div><button type="button" className="secondary" onClick={closePreview} autoFocus>계속 수정하기</button>{eventStatus === "draft" && <button type="button" onClick={preparePayment}>발행 준비하기</button>}{eventStatus === "paid" && <button type="button" onClick={requestPublish}>초대장 발행하기</button>}</div></div>
       {flowNotice && <p className="full-preview-notice" role="alert">{flowNotice}</p>}
-      <div className="full-preview-scroll"><div className="full-preview-document full-invitation-renderer dd-bgm-public-style">{noticeMatrix.state !== "none" && <InvitationNotice notice={noticeMatrix.state === "required" ? { ...invitation.notice, enabled: true } : invitation.notice} slug="editor-full-preview" imageUrl={noticePreviewUrl || null} preview />}<InvitationRenderer invitation={previewInvitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} templateId={previewTemplateId || invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets} userBgmUrl={invitation.bgmMode === "upload" ? (invitation.userBgmUploadUrl || null) : (selectedBgmTrack?.url || null)} placeActions={previewPlaceActions()}><><ParentsIntro invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><GrowthTimeline invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><ExtendedEventInfo invitation={invitation} eventTypeConfig={eventTypeConfig} />{galleryMatrix.state !== "none" && <Gallery photos={galleryPhotos} idPrefix="full-preview-gallery" title={galleryMatrix.label} />}{transportMatrix.state !== "none" && <TransportGuide invitation={invitation} title={transportMatrix.label} required={transportMatrix.state === "required"} />}<AccountCopy invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><OptionalInvitationSections invitation={invitation} eventTypeConfig={eventTypeConfig} previewMode="editor-full" /><ShareActions className="public-share-copy" path={eventSlug ? `/invite/${eventSlug}` : "#preview"} title={getInvitationTitle(invitation, invitation.eventKind)} previewOnly={eventStatus !== "published" || !eventSlug} /><DearDayBrandFooter /></></InvitationRenderer></div></div>
+      <div className="full-preview-scroll"><div className="full-preview-document full-invitation-renderer dd-bgm-public-style">{previewReady ? <>{noticeMatrix.state !== "none" && <InvitationNotice notice={noticeMatrix.state === "required" ? { ...invitation.notice, enabled: true } : invitation.notice} slug="editor-full-preview" imageUrl={noticePreviewUrl || null} preview />}<InvitationRenderer invitation={previewInvitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} templateId={invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets} userBgmUrl={invitation.bgmMode === "upload" ? (invitation.userBgmUploadUrl || null) : (selectedBgmTrack?.url || null)} placeActions={previewPlaceActions()}><><ParentsIntro invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><GrowthTimeline invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><ExtendedEventInfo invitation={invitation} eventTypeConfig={eventTypeConfig} />{galleryMatrix.state !== "none" && <Gallery photos={galleryPhotos} idPrefix="full-preview-gallery" title={galleryMatrix.label} />}{transportMatrix.state !== "none" && <TransportGuide invitation={invitation} title={transportMatrix.label} required={transportMatrix.state === "required"} />}<AccountCopy invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><OptionalInvitationSections invitation={invitation} eventTypeConfig={eventTypeConfig} previewMode="editor-full" /><ShareActions className="public-share-copy" path={eventSlug ? `/invite/${eventSlug}` : "#preview"} title={getInvitationTitle(invitation, invitation.eventKind)} previewOnly={eventStatus !== "published" || !eventSlug} /><DearDayBrandFooter /></></InvitationRenderer></> : previewLoading}</div></div>
     </div>}
     {checkoutOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="payment-title"><div className="payment-card"><p className="section-kicker">TEST PAYMENT</p><h2 id="payment-title">발행 준비 안내</h2><dl><div><dt>템플릿</dt><dd>{templateOptions.find((template) => template.id === invitation.templateId)?.name || "선택한 템플릿"}</dd></div><div><dt>행사 종류</dt><dd>{eventConfig.label}</dd></div><div><dt>결제 금액</dt><dd>테스트 결제</dd></div></dl><p className="test-payment-notice"><strong>개발용 테스트 결제입니다.</strong> 실제 결제가 발생하지 않습니다.</p><p>테스트 결제 후에도 초대장은 공개되지 않으며, 최종 확인 후 직접 발행해야 합니다.</p>{flowNotice && <p className="payment-error" role="alert">{flowNotice}</p>}<div className="payment-actions"><button type="button" className="save-button" onClick={() => setCheckoutOpen(false)}>계속 수정하기</button><button type="button" className="publish-button" onClick={runMockPayment}>테스트 결제하기</button></div></div></div>}
     {paymentComplete && <div className="publish-overlay" role="dialog" aria-modal="true" aria-labelledby="payment-complete-title"><div className="publish-card"><div className="publish-heart">✓</div><p className="section-kicker">PAYMENT COMPLETE</p><h2 id="payment-complete-title">결제가 완료되었습니다.</h2><p>아직 초대장은 공개되지 않았습니다.<br />내용을 최종 확인한 후 발행해 주세요.</p><button type="button" className="save-button full" onClick={() => { setPaymentComplete(false); setPreviewOpen(true); }}>최종 미리보기</button><button type="button" className="publish-button full" onClick={requestPublish}>초대장 발행하기</button></div></div>}
