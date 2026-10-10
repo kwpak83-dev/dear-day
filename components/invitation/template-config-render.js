@@ -75,6 +75,8 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     && background?.centerPanel?.enabled === true;
   if (heroPanel?.enabled && !shareBodyPanel) {
     set(heroStyle, "--dd-hero-center-panel-width", heroPanel.width, "%");
+    set(heroStyle, "--dd-hero-center-panel-height", heroPanel.height ?? 100, "%");
+    set(heroStyle, "--dd-hero-center-panel-y", heroPanel.y ?? 50, "%");
     heroStyle["--dd-hero-center-panel-color"] = rgba(heroPanel.color, heroPanel.opacity / 100) || "transparent";
   }
   const backdrop = hero?.heroBackdrop;
