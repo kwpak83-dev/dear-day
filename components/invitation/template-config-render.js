@@ -79,7 +79,18 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     set(heroStyle, "--dd-hero-center-panel-y", heroPanel.y ?? 50, "%");
     set(heroStyle, "--dd-hero-center-panel-x", heroPanel.x ?? 50, "%");
     set(heroStyle, "--dd-hero-center-panel-radius", heroPanel.radius ?? 0, "px");
-    heroStyle["--dd-hero-center-panel-color"] = rgba(heroPanel.color, heroPanel.opacity / 100) || "transparent";
+    const panelColor = rgba(heroPanel.color, heroPanel.opacity / 100) || "transparent";
+    const fadeMode = ["radial", "horizontal", "vertical"].includes(heroPanel.fadeMode) ? heroPanel.fadeMode : "solid";
+    const fadeStrength = Math.max(0, Math.min(100, heroPanel.fadeStrength ?? 70));
+    const fadeEdge = rgba(heroPanel.color, (heroPanel.opacity / 100) * (1 - fadeStrength / 100)) || "transparent";
+    heroStyle["--dd-hero-center-panel-color"] = panelColor;
+    heroStyle["--dd-hero-center-panel-background"] = fadeMode === "radial"
+      ? `radial-gradient(ellipse at center, ${panelColor} 0%, ${panelColor} 25%, ${fadeEdge} 100%)`
+      : fadeMode === "horizontal"
+        ? `linear-gradient(90deg, ${fadeEdge} 0%, ${panelColor} 50%, ${fadeEdge} 100%)`
+        : fadeMode === "vertical"
+          ? `linear-gradient(180deg, ${fadeEdge} 0%, ${panelColor} 50%, ${fadeEdge} 100%)`
+          : panelColor;
   }
   const backdrop = hero?.heroBackdrop;
   if (backdrop && backdrop.mode !== "inherit") {
