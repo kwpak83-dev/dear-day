@@ -162,15 +162,16 @@ export async function GET(request) {
       .select("id,is_active,current_sale_version_id").eq("id", previewTemplateId).maybeSingle();
     if (templateError) return json({ error: "템플릿을 불러오지 못했어요." }, 500);
     if (!template?.is_active) return json({ error: "현재 사용할 수 있는 템플릿을 찾지 못했어요." }, 404);
-    const saleVersionId = template.current_sale_version_id;
-    if (!saleVersionId) return json({ error: "판매 중인 템플릿 디자인이 없어요." }, 409);
-    const renderData = await getTemplateRenderData(supabase, template.id, saleVersionId);
-    if (!renderData.templateConfig) return json({ error: "템플릿 디자인을 불러오지 못했어요." }, 409);
-    // Preview uses the same latest saved background editor Draft as existing invitations.
+    // Templates marked in use may have only a saved Draft (legacy sale-version
+    // publishing was removed). Keep the sale version as a base when it exists.
     const { data: draft, error: draftError } = await supabase.from("template_versions")
-      .select("config").eq("template_id", template.id).eq("status", "draft")
+      .select("id,config").eq("template_id", template.id).eq("status", "draft")
       .order("version", { ascending: false }).limit(1).maybeSingle();
     if (draftError) console.error("Template preview draft lookup failed:", draftError.code);
+    const baseVersionId = template.current_sale_version_id || draft?.id;
+    if (!baseVersionId) return json({ error: "저장된 템플릿 디자인이 없어요." }, 409);
+    const renderData = await getTemplateRenderData(supabase, template.id, baseVersionId);
+    if (!renderData.templateConfig) return json({ error: "템플릿 디자인을 불러오지 못했어요." }, 409);
     if (draft?.config) {
       renderData.templateConfig = applySaleTemplateStyles(renderData.templateConfig, draft.config);
       const references = getTemplateAssetReferences(renderData.templateConfig);
@@ -185,7 +186,7 @@ export async function GET(request) {
       }
     }
     await addSharedBodyDecorationAssets(supabase, renderData);
-    return json({ templateId: template.id, templateVersionId: saleVersionId, ...renderData });
+    return json({ templateId: template.id, templateVersionId: baseVersionId, ...renderData });
   }
   const auth = await getAuthenticatedClient(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
@@ -349,6 +350,16 @@ export async function POST(request) {
     if (shouldPinCurrentVersion) {
       if (templates[0].status !== "on_sale" || !templates[0].is_visible) return json({ error: "현재 사용할 수 없는 본문 테마예요." }, 409);
       templateVersionId = templates[0].current_sale_version_id || null;
+      if (!templateVersionId) {
+        // A template in use can be Draft-only; pin that saved config for
+        // compatibility with existing event/public render paths.
+        const { data: draft, error: draftError } = await supabase.from("template_versions")
+          .select("id").eq("template_id", templateId).eq("status", "draft")
+          .order("version", { ascending: false }).limit(1).maybeSingle();
+        if (draftError) return json({ error: "템플릿 디자인 버전을 확인하지 못했어요." }, 500);
+        if (!draft) return json({ error: "저장된 템플릿 디자인이 없어요." }, 409);
+        templateVersionId = draft.id;
+      }
     }
   } else if (hasTemplateId) {
     templateVersionId = null;
