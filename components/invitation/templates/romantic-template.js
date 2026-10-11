@@ -1,5 +1,5 @@
 import TemplateConfigEffects from "../template-config-effects";
-import { getTemplateConfigRenderProps, TemplateConfigDecorations, TemplateConfigHeroIntro, TemplateConfigHeroLayers } from "../template-config-render";
+import { getTemplateConfigRenderProps, TemplateConfigDecorations, TemplateConfigHeroIntro, TemplateConfigHeroPanelCopy, TemplateConfigHeroLayers } from "../template-config-render";
 
 function SectionHeading({ eyebrow, children }) {
   return <header className="romantic-section-heading"><span aria-hidden="true">♡</span><p>{eyebrow}</p><h3>{children}</h3><i aria-hidden="true" /></header>;
@@ -47,6 +47,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
     </header>}
 
     <section className={`romantic-hero${hasHeroVisual ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
+      <TemplateConfigHeroPanelCopy config={templateConfig} />
       {hasHeroVisual && <figure className="romantic-hero-photo" style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
       <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} presentation={presentation} />
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />

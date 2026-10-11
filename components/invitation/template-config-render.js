@@ -75,7 +75,22 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     && background?.centerPanel?.enabled === true;
   if (heroPanel?.enabled && !shareBodyPanel) {
     set(heroStyle, "--dd-hero-center-panel-width", heroPanel.width, "%");
-    heroStyle["--dd-hero-center-panel-color"] = rgba(heroPanel.color, heroPanel.opacity / 100) || "transparent";
+    set(heroStyle, "--dd-hero-center-panel-height", heroPanel.height ?? 100, "%");
+    set(heroStyle, "--dd-hero-center-panel-y", heroPanel.y ?? 50, "%");
+    set(heroStyle, "--dd-hero-center-panel-x", heroPanel.x ?? 50, "%");
+    set(heroStyle, "--dd-hero-center-panel-radius", heroPanel.radius ?? 0, "px");
+    const panelColor = rgba(heroPanel.color, heroPanel.opacity / 100) || "transparent";
+    const fadeMode = ["radial", "horizontal", "vertical"].includes(heroPanel.fadeMode) ? heroPanel.fadeMode : "solid";
+    const fadeStrength = Math.max(0, Math.min(100, heroPanel.fadeStrength ?? 70));
+    const fadeEdge = rgba(heroPanel.color, (heroPanel.opacity / 100) * (1 - fadeStrength / 100)) || "transparent";
+    heroStyle["--dd-hero-center-panel-color"] = panelColor;
+    heroStyle["--dd-hero-center-panel-background"] = fadeMode === "radial"
+      ? `radial-gradient(ellipse at center, ${panelColor} 0%, ${panelColor} 25%, ${fadeEdge} 100%)`
+      : fadeMode === "horizontal"
+        ? `linear-gradient(90deg, ${fadeEdge} 0%, ${panelColor} 50%, ${fadeEdge} 100%)`
+        : fadeMode === "vertical"
+          ? `linear-gradient(180deg, ${fadeEdge} 0%, ${panelColor} 50%, ${fadeEdge} 100%)`
+          : panelColor;
   }
   const backdrop = hero?.heroBackdrop;
   if (backdrop && backdrop.mode !== "inherit") {
@@ -254,6 +269,28 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), buttonStyleConfigured: Boolean(buttonStyle), backgroundConfigured: Boolean(background), centerPanelConfigured: background?.centerPanel?.enabled === true, decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle, showCoverPhoto, illustrationMode: hero?.mode === "illustration", heroBackgroundConfigured: Boolean(heroBackgroundUrl) };
 }
 
+export function TemplateConfigHeroPanelCopy({ config }) {
+  const panel = config?.hero?.heroCenterPanelCopy;
+  if (!panel?.enabled) return null;
+  const center = rgba(panel.color, panel.opacity / 100) || "transparent";
+  const strength = Math.max(0, Math.min(100, panel.fadeStrength ?? 70));
+  const edge = rgba(panel.color, (panel.opacity / 100) * (1 - strength / 100)) || "transparent";
+  const background = panel.fadeMode === "radial"
+    ? `radial-gradient(ellipse at center, ${center} 0%, ${center} 25%, ${edge} 100%)`
+    : panel.fadeMode === "horizontal"
+      ? `linear-gradient(90deg, ${edge}, ${center} 50%, ${edge})`
+      : panel.fadeMode === "vertical"
+        ? `linear-gradient(180deg, ${edge}, ${center} 50%, ${edge})`
+        : center;
+  return <div aria-hidden="true" className="dd-hero-panel-copy" style={{
+    position:"absolute",pointerEvents:"none",zIndex:0,
+    left:`${panel.x ?? 50}%`,top:`${panel.y ?? 50}%`,
+    transform:"translate(-50%,-50%)",
+    width:`${panel.width ?? 90}%`,height:`${panel.height ?? 100}%`,
+    borderRadius:`${panel.radius ?? 0}px`,background
+  }}/>;
+}
+
 export function TemplateConfigHeroIntro({ config }) {
   const intro = config?.hero?.intro;
   if (!intro?.enabled || !intro.text?.trim()) return null;
@@ -285,7 +322,7 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
       <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />
       <div className="dd-template-hero-text-layers">
         {config.hero.textLayers.filter((layer) => layer.visible !== false && ((layer.source && layer.source !== "custom") || layer.text?.trim())).map((layer) => {
-          const boundText = layer.source === "title" ? (presentation.heroTitle || presentation.title) : layer.source === "name" ? presentation.heroName : layer.source === "full_name" ? presentation.heroFullName : layer.source === "event_title" ? presentation.heroEventTitle : layer.source === "parent1" ? presentation.heroParent1 : layer.source === "parent2" ? presentation.heroParent2 : layer.source === "schedule" ? presentation.heroSchedule : layer.source === "venue" ? presentation.venue : layer.text;
+          const boundText = layer.source === "title" ? (presentation.heroTitle || presentation.title) : layer.source === "name" ? presentation.heroName : layer.source === "full_name" ? presentation.heroFullName : layer.source === "event_title" ? presentation.heroEventTitle : layer.source === "event_subtitle" ? presentation.heroEventSubtitle : layer.source === "parent1" ? presentation.heroParent1 : layer.source === "parent2" ? presentation.heroParent2 : layer.source === "schedule" ? presentation.heroSchedule : layer.source === "venue" ? presentation.venue : layer.source === "venue_detail" ? presentation.addressDetail : layer.text;
           if (!boundText?.trim()) return null;
           const birthdayTitle = presentation.eventKind === "first_birthday"
             ? boundText.match(/^(\S+)(의\s+첫\s*번째\s+생일)$/) : null;

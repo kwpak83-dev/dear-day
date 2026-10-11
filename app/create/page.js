@@ -45,6 +45,13 @@ const BIRTHDAY_MESSAGE_EXAMPLES = [
   { label: "따뜻한 초대", text: "소중한 우리 아이의 생일을 맞아\n작은 파티를 준비했습니다.\n함께 자리해 주셔서 즐거운 시간을 나눠 주세요." },
   { label: "짧고 귀엽게", text: "오늘의 주인공은 바로 나!\n웃음 가득한 생일 파티에 놀러 오세요.\n우리 함께 신나게 즐겨요!" },
 ];
+const MILESTONE_BIRTHDAY_MESSAGE_EXAMPLES = [
+  { label: "정중한 초대", text: "늘 베풀어 주신 사랑과 은혜에 감사드리며,\n소중한 분들을 모시고 뜻깊은 자리를 마련하였습니다.\n바쁘시더라도 참석하시어 기쁨을 함께 나누어 주시면 감사하겠습니다." },
+  { label: "가족의 감사", text: "한평생 가족을 위해 사랑과 정성을 아끼지 않으신\n부모님의 뜻깊은 생신을 맞아 작은 자리를 마련했습니다.\n소중한 걸음으로 함께하시어 따뜻한 축복을 나누어 주세요." },
+  { label: "짧고 품격 있게", text: "소중한 인연과 함께 걸어온 세월에 감사하며\n뜻깊은 생신을 축하하는 자리를 마련했습니다.\n귀한 걸음으로 자리를 빛내 주시면 감사하겠습니다." },
+  { label: "감사와 축복", text: "지나온 세월의 아름다운 순간들을 돌아보며\n감사와 축복을 나누고자 합니다.\n사랑하는 가족과 소중한 분들을 모시고 마련한 자리에\n함께해 주시면 큰 기쁨이겠습니다." },
+  { label: "따뜻한 초대", text: "함께한 시간만큼 깊어진 사랑과 감사의 마음을 담아\n특별한 하루를 준비했습니다.\n편안한 마음으로 오셔서 웃음과 따뜻한 추억을 함께 만들어 주세요." },
+];
 function HeroEditorPreview({ invitation, eventKind, templateId, templateConfig, templateAssets }) {
   const frameRef = useRef(null);
   const contentRef = useRef(null);
@@ -83,7 +90,7 @@ function HeroEditorPreview({ invitation, eventKind, templateId, templateConfig, 
 
 
 const USER_SCREEN_EFFECTS = [["green", "초록 나뭇잎"], ["autumn", "가을 낙엽"], ["snow", "눈송이"], ["rose", "장미 꽃잎"], ["lavender", "라벤더 꽃잎"], ["daisy", "데이지 꽃"], ["heart", "하트"], ["color-confetti", "컬러 컨페티"], ["balloon", "파스텔 풍선"], ["bubble", "비눗방울"]];
-const initialInvitation = { eventKind: "wedding", templateId: "", heroPresetId: "", heroTextOverrides: {}, heroLayerOverrides: {}, heroExtraTextLayers: [], heroPhotoFocusX: null, heroPhotoFocusY: null, completedTemplateKey: "", rsvpEnabled: true, guestbookEnabled: true, eventTitle: "", hostName: "", person1Name: "", person1NameLastName: "", person1NameFirstName: "", person2Name: "", person2NameLastName: "", person2NameFirstName: "", childName: "", childNameLastName: "", childNameFirstName: "", parent1Name: "", parent2Name: "", birthDate: "", dueDate: "", age: "", anniversaryYears: "", organizationName: "", programName: "", details: "", externalLink: "", brandImageUrl: "", coverPhotoUrl: "", kakaoShareImageUrl: "", 
+const initialInvitation = { eventKind: "wedding", templateId: "", heroPresetId: "", heroTextOverrides: {}, heroLayerOverrides: {}, heroExtraTextLayers: [], heroPhotoFocusX: null, heroPhotoFocusY: null, completedTemplateKey: "", rsvpEnabled: true, guestbookEnabled: true, eventTitle: "", eventSubtitle: "", hostName: "", person1Name: "", person1NameLastName: "", person1NameFirstName: "", person2Name: "", person2NameLastName: "", person2NameFirstName: "", childName: "", childNameLastName: "", childNameFirstName: "", parent1Name: "", parent2Name: "", birthDate: "", dueDate: "", age: "", anniversaryYears: "", organizationName: "", programName: "", details: "", externalLink: "", brandImageUrl: "", coverPhotoUrl: "", kakaoShareImageUrl: "", 
 parentsIntroEnabled: false, parent1PhotoUrl: "", parent1Intro: "", parent2PhotoUrl: "", parent2Intro: "", timelineEnabled: false, timelineItems: [], parent1Phone: "", parent2Phone: "", groom: "", groomLastName: "", groomFirstName: "", groomPhone: "", groomFatherPhone: "", groomMotherPhone: "", bridePhone: "", brideFatherPhone: "", brideMotherPhone: "",
 groomFatherName: "",
 groomFatherDeceased: false,
@@ -483,8 +490,14 @@ export default function CreateInvitation() {
       window.alert("발행된 초대장은 행사 유형을 변경할 수 없어요. 같은 행사 유형의 템플릿만 변경할 수 있습니다.");
       return;
     }
+    const selectionKeys = new Set(["eventKind", "templateId", "heroPresetId", "completedTemplateKey", "heroTextOverrides", "heroLayerOverrides", "heroExtraTextLayers", "heroPhotoFocusX", "heroPhotoFocusY"]);
+    const hasEnteredData = Object.keys(initialInvitation).some((key) => {
+      if (selectionKeys.has(key)) return false;
+      return JSON.stringify(invitation[key] ?? initialInvitation[key]) !== JSON.stringify(initialInvitation[key]);
+    });
+    if (hasEnteredData && !window.confirm("행사 유형을 변경하시겠습니까?\n\n기존에 입력한 초대장 정보가 초기화됩니다.\n이 작업은 되돌릴 수 없습니다.")) return;
     ++templatePreviewRequest.current;
-    setInvitation(current => ({ ...current, eventKind: nextEventKind, templateId: "", heroPresetId: "", completedTemplateKey: "", heroTextOverrides: {}, heroLayerOverrides: {}, heroExtraTextLayers: [] }));
+    setInvitation(current => ({ ...current, ...initialInvitation, eventKind: nextEventKind }));
     setTemplateRender({ templateId: "", eventKind: nextEventKind, status: "idle", config: null, assets: {} });
     setTemplateOptions([]);
     setTemplateOptionsStatus("loading");
@@ -799,7 +812,9 @@ export default function CreateInvitation() {
             ? FIRST_BIRTHDAY_MESSAGE_EXAMPLES
             : invitation.eventKind === "birthday"
               ? BIRTHDAY_MESSAGE_EXAMPLES
-              : null
+              : invitation.eventKind === "milestone_birthday"
+                ? MILESTONE_BIRTHDAY_MESSAGE_EXAMPLES
+                : null
         : null;
       return <Field key={field.key} label={field.label}>
         {messageExamples && <select className="message-example-select" defaultValue="" onChange={(e) => {
