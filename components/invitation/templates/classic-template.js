@@ -1,5 +1,5 @@
 import TemplateConfigEffects from "../template-config-effects";
-import { getTemplateConfigRenderProps, TemplateConfigDecorations, TemplateConfigHeroIntro, TemplateConfigHeroLayers } from "../template-config-render";
+import { getTemplateConfigRenderProps, TemplateConfigDecorations, TemplateConfigHeroIntro, TemplateConfigHeroPanelCopy, TemplateConfigHeroLayers } from "../template-config-render";
 
 function ClassicHeading({ eyebrow, children }) {
   return <header className="classic-section-heading"><p>{eyebrow}</p><h3>{children}</h3></header>;
@@ -91,6 +91,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
 
     <section className={`classic-hero${hasHeroVisual ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
       <TemplateConfigHeroIntro config={templateConfig} />
+      <TemplateConfigHeroPanelCopy config={templateConfig} />
       {hasHeroVisual && <figure style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
       <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} presentation={presentation} />
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />
