@@ -123,7 +123,7 @@ export default function HeroPresetsPage(){
   setExpandedLayerId(null);
  };
  const setPhotoFadeUp=(key,value)=>setForm(current=>({...current,config:{...current.config,photoFadeUp:{...defaultConfig.photoFadeUp,...current.config.photoFadeUp,[key]:value}}}));
- const setPhotoFrame=(key,value)=>setForm(current=>{const previous={...defaultConfig.photoFrame,...current.config.photoFrame};const firstPan=["imageX","imageY"].includes(key)&&!(Number.isFinite(previous.panBaseX)&&Number.isFinite(previous.panBaseY));return {...current,config:{...current.config,photoFrame:{...previous,[key]:value,...(firstPan?{autoPan:true,panBaseX:previous.imageX??50,panBaseY:previous.imageY??50}:{})}}};});
+ const setPhotoFrame=(key,value)=>setForm(current=>{const previous={...defaultConfig.photoFrame,...current.config.photoFrame};const isImageFocus=key==="imageX"||key==="imageY";return {...current,config:{...current.config,photoFrame:{...previous,[key]:value,...(isImageFocus?{autoPan:false}: {})}}};});
  const setHeroCenterPanel=(key,value)=>setForm(current=>({...current,config:{...current.config,heroCenterPanel:{...defaultConfig.heroCenterPanel,...current.config.heroCenterPanel,[key]:value}}}));
   const setHeroCenterPanelCopy=(key,value)=>setForm(current=>({...current,config:{...current.config,heroCenterPanelCopy:{...current.config.heroCenterPanelCopy,[key]:value}}}));
  const setBackdrop=(key,value)=>setForm(current=>({...current,config:{...current.config,heroBackdrop:{...defaultConfig.heroBackdrop,...current.config.heroBackdrop,[key]:value}}}));
