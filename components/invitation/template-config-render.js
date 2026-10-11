@@ -269,6 +269,28 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), buttonStyleConfigured: Boolean(buttonStyle), backgroundConfigured: Boolean(background), centerPanelConfigured: background?.centerPanel?.enabled === true, decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle, showCoverPhoto, illustrationMode: hero?.mode === "illustration", heroBackgroundConfigured: Boolean(heroBackgroundUrl) };
 }
 
+export function TemplateConfigHeroPanelCopy({ config }) {
+  const panel = config?.hero?.heroCenterPanelCopy;
+  if (!panel?.enabled) return null;
+  const center = rgba(panel.color, panel.opacity / 100) || "transparent";
+  const strength = Math.max(0, Math.min(100, panel.fadeStrength ?? 70));
+  const edge = rgba(panel.color, (panel.opacity / 100) * (1 - strength / 100)) || "transparent";
+  const background = panel.fadeMode === "radial"
+    ? `radial-gradient(ellipse at center, ${center} 0%, ${center} 25%, ${edge} 100%)`
+    : panel.fadeMode === "horizontal"
+      ? `linear-gradient(90deg, ${edge}, ${center} 50%, ${edge})`
+      : panel.fadeMode === "vertical"
+        ? `linear-gradient(180deg, ${edge}, ${center} 50%, ${edge})`
+        : center;
+  return <div aria-hidden="true" className="dd-hero-panel-copy" style={{
+    position:"absolute",pointerEvents:"none",zIndex:0,
+    left:`${panel.x ?? 50}%`,top:`${panel.y ?? 50}%`,
+    transform:"translate(-50%,-50%)",
+    width:`${panel.width ?? 90}%`,height:`${panel.height ?? 100}%`,
+    borderRadius:`${panel.radius ?? 0}px`,background
+  }}/>;
+}
+
 export function TemplateConfigHeroIntro({ config }) {
   const intro = config?.hero?.intro;
   if (!intro?.enabled || !intro.text?.trim()) return null;
