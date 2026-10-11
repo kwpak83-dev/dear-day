@@ -11,6 +11,7 @@ import InvitationNotice from "../../invite/[slug]/invitation-notice";
 import { resolveTemplateAssetUrls } from "../../../lib/template-config";
 import { EVENT_KIND_OPTIONS } from "../../../lib/event-config";
 import GrowthTimeline from "../../../components/invitation/growth-timeline";
+import ParentsIntro from "../../../components/invitation/parents-intro";
 import Gallery from "../../invite/[slug]/gallery";
 import TransportGuide from "../../../components/invitation/transport-guide";
 import { sampleContentToInvitation } from "../../../lib/completed-template-sample";
@@ -37,6 +38,7 @@ const draftConfig = (draft) => draft ? ({
 function PreviewSections({ invitation, eventTypeConfig, previewMode = "" }) {
   const gallery = (invitation.galleryImages || []).map((url, index) => ({ id: `body-preview-${index}`, url }));
   return <div className="public-invitation-sections">
+    <ParentsIntro invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} />
     <Gallery photos={gallery} idPrefix={`body-${previewMode || "preview"}-gallery`} title={eventTypeConfig?.fields?.gallery?.label || "우리의 순간들"} />
     <TransportGuide invitation={invitation} title={eventTypeConfig?.fields?.transport?.label || "교통·주차"} />
     <AccountCopy invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} />
