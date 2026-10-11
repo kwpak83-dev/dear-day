@@ -58,7 +58,7 @@ export default function InvitationRenderer({ invitation, eventKind, eventTypeCon
   const bgmMode = invitation.bgmMode || "background";
   const bgmUrl = bgmMode === "none" ? null : (bgmMode === "user" || bgmMode === "upload") ? (userBgmUrl || null) : templateBgmUrl;
   const mode = invitation.screenEffectMode || (invitation.petalEffectEnabled === true ? "legacy-blossom" : "none");
-  const allowedOrnaments = new Set(["green", "autumn", "snow", "rose", "lavender", "daisy", "heart", "color-confetti", "balloon", "bubble"]);
+  const allowedOrnaments = new Set(["green", "autumn", "snow", "rose", "lavender", "daisy", "heart", "color-confetti", "balloon", "bubble", "coffee-bean"]);
   const selectedOrnament = allowedOrnaments.has(invitation.userScreenEffectOrnament) ? invitation.userScreenEffectOrnament : "green";
   const templateScreenEffect = normalizedConfig.effects?.screenEffect;
   const defaultUserScreenEffect = { motion: "fall", count: 12, minSize: 18, maxSize: 24, minDuration: 20, maxDuration: 25, sway: 40, rotate: true, opacity: 0.8 };
