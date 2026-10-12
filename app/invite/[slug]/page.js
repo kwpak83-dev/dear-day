@@ -79,7 +79,11 @@ export default async function InvitationPage({ params, searchParams }) {
   const { data: galleryRows, error: galleryError } = galleryResult;
   if (eventTypeConfigError) console.error("Event type config query failed:", eventTypeConfigError.code);
   // Start the HERO decoration listing early; template styles/assets can resolve in parallel.
-  const decorationListPromise = event.hero_preset_id
+  const hasEarlyDecorations = Boolean(
+    heroPresetResult?.data?.config?.decorLayers?.some((layer) => layer.assetId) ||
+    selectedVersionResult?.data?.config?.decorations?.some((item) => item.assetId)
+  );
+  const decorationListPromise = event.hero_preset_id && hasEarlyDecorations
     ? supabase.storage.from("template-assets").list("hero-decoration-library", { limit: 1000 })
     : null;
   let templateConfig = null;
@@ -140,7 +144,7 @@ export default async function InvitationPage({ params, searchParams }) {
       const decorIds = new Set([...(heroPreset.config?.decorLayers || []).map((layer) => layer.assetId),...(templateConfig?.decorations || []).map((item) => item.assetId)].filter(Boolean));
       let decorations = [];
       if (decorIds.size) {
-        const listed = await decorationListPromise;
+        const listed = await (decorationListPromise || supabase.storage.from("template-assets").list("hero-decoration-library", { limit: 1000 }));
         if (listed.error) console.error("Hero decoration library query failed:", listed.error.message);
         else decorations = (listed.data || []).map((file) => ({ id: file.name.split(".")[0], storage_bucket: "template-assets", storage_path: `hero-decoration-library/${file.name}` })).filter((asset) => decorIds.has(asset.id));
       }
