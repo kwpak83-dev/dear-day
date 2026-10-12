@@ -366,6 +366,8 @@ export function TemplateConfigDecorations({ config, assets = {}, slot }) {
       className="dd-template-decoration"
       src={assets[item.assetId]}
       alt=""
+      loading={slot === "hero" ? "eager" : "lazy"}
+      decoding="async"
       style={{
         left: `${item.xPercent}%`, top: `${item.yPercent}%`, width: `${item.widthPercent}%`,
         transform: `rotate(${item.rotationDeg}deg)`, opacity: item.opacity, zIndex: item.zIndex,
