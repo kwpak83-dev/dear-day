@@ -58,5 +58,17 @@ for (const family of families) {
   output.push({ family, slug, files: urls.length });
   console.log(`Downloaded ${family}: ${urls.length} subsets`);
 }
-await fs.writeFile(path.join(destination, "manifest.json"), JSON.stringify(output, null, 2) + "\n");
+// Produce a report for review before switching production font loading.
+const stats = [];
+for (const item of output) {
+  const folder = path.join(destination, item.slug);
+  const entries = await fs.readdir(folder, { withFileTypes: true });
+  let bytes = 0;
+  for (const entry of entries) {
+    if (entry.isFile()) bytes += (await fs.stat(path.join(folder, entry.name))).size;
+  }
+  stats.push({ ...item, bytes });
+}
+await fs.writeFile(path.join(destination, "manifest.json"), JSON.stringify(stats, null, 2) + "\\n");
+console.log("Total font assets:", (stats.reduce((sum, item) => sum + item.bytes, 0) / 1024 / 1024).toFixed(2), "MB");
 console.log(`Saved ${output.length} families to public/fonts. Review sizes and licenses before enabling.`);
