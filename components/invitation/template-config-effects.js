@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 
 const SECTION_SELECTOR = [
   ".romantic-message", ".modern-message", ".classic-message",
@@ -21,7 +21,7 @@ function findScrollRoot(element) {
 export default function TemplateConfigEffects({ mode, trigger = 30 }) {
   const markerRef = useRef(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!mode || mode === "none") return undefined;
     const template = markerRef.current?.closest(".invitation-template");
     const targets = template ? [...template.querySelectorAll(SECTION_SELECTOR)] : [];
