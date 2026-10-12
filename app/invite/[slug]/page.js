@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
+import { preload } from "react-dom";
 import InvitationRenderer from "../../../components/invitation/invitation-renderer";
 import InvitationMap from "../../../components/invitation/invitation-map";
 import TransportGuide from "../../../components/invitation/transport-guide";
@@ -152,6 +153,27 @@ export default async function InvitationPage({ params, searchParams }) {
       templateAssets = { ...templateAssets, ...Object.fromEntries(decorations.map((asset) => [asset.id, supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl])), ...(frame ? { [frame.id]: supabase.storage.from(frame.storage_bucket).getPublicUrl(frame.storage_path).data.publicUrl } : {}), ...(heroBackground ? { [heroBackground.id]: supabase.storage.from(heroBackground.storage_bucket).getPublicUrl(heroBackground.storage_path).data.publicUrl } : {}) };
     }
   }
+
+  // Hint only the above-the-fold images. Keep the existing <img> sources and
+  // Storage lookups unchanged so old decoration IDs continue to resolve.
+  const heroImageUrls = new Set();
+  const coverUrl = settings.coverPhotoUrl || settings.coverPhoto || null;
+  // The cover is resolved by the invitation renderer; only preload when a
+  // fully qualified URL is already present in the saved settings.
+  if (typeof coverUrl === "string" && /^https?:\\/\\//.test(coverUrl)) heroImageUrls.add(coverUrl);
+  for (const layer of templateConfig?.hero?.decorLayers || []) {
+    if (layer.visible === false) continue;
+    const src = templateAssets[layer.assetId];
+    if (src) heroImageUrls.add(src);
+    if (heroImageUrls.size >= 5) break;
+  }
+  for (const item of templateConfig?.decorations || []) {
+    if (item.visible === false || item.slot !== "hero") continue;
+    const src = templateAssets[item.assetId];
+    if (src) heroImageUrls.add(src);
+    if (heroImageUrls.size >= 5) break;
+  }
+  for (const src of heroImageUrls) preload(src, { as: "image", fetchPriority: "high" });
 
   // A missing migration must not take down an existing published invitation.
   if (galleryError) console.error("Gallery query failed:", galleryError.code);
