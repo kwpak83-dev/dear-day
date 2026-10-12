@@ -12,6 +12,9 @@ export default function RsvpEditForm({ slug, token }) {
   const [blocked, setBlocked] = useState(false);
   const [loadError, setLoadError] = useState("");
   const [retryCount, setRetryCount] = useState(0);
+  const [ownerReturn, setOwnerReturn] = useState(false);
+  useEffect(() => { setOwnerReturn(new URLSearchParams(window.location.search).get("from") === "owner"); }, []);
+  const backHref = `/invite/${slug}${ownerReturn ? "?from=owner" : ""}`;
   const update = (key, value) => { setSaved(false); setForm((current) => ({ ...current, [key]: value })); };
   useEffect(() => {
     let active = true;
@@ -44,5 +47,5 @@ export default function RsvpEditForm({ slug, token }) {
     } catch (error) { setNotice(error.message); if (error.status === 403 || error.status === 404 || error.status === 409) setBlocked(true); }
     finally { setSubmitting(false); }
   };
-  return <main className="rsvp-edit-page"><section className="public-rsvp rsvp-edit-card"><a className="rsvp-edit-close" href={`/invite/${slug}`} aria-label="초대장으로 돌아가기" title="닫기">×</a><p className="rsvp-kicker">DEARDAY RSVP</p><h1>참석 여부 수정</h1>{loading ? <p className="rsvp-closed">참석 여부를 불러오고 있어요.</p> : loadError ? <><p className="rsvp-error" role="alert">{loadError}</p>{!blocked && <button className="rsvp-retry-button" type="button" onClick={() => setRetryCount((count) => count + 1)}>다시 시도하기</button>}<a className="rsvp-back-link" href={`/invite/${slug}`}>초대장으로 돌아가기</a></> : <form onSubmit={submit}><RsvpFields form={form} update={update} />{notice && <p className="rsvp-error" role="alert">{notice}</p>}{saved && <p className="rsvp-success" role="status">참석 여부가 수정되었습니다.</p>}<button type="submit" disabled={submitting}>{submitting ? "저장 중..." : "수정 내용 저장하기"}</button><a className="rsvp-back-link" href={`/invite/${slug}`}>초대장으로 돌아가기</a></form>}</section></main>;
+  return <main className="rsvp-edit-page"><section className="public-rsvp rsvp-edit-card"><a className="rsvp-edit-close" href={backHref} aria-label="초대장으로 돌아가기" title="닫기">×</a><p className="rsvp-kicker">DEARDAY RSVP</p><h1>참석 여부 수정</h1>{loading ? <p className="rsvp-closed">참석 여부를 불러오고 있어요.</p> : loadError ? <><p className="rsvp-error" role="alert">{loadError}</p>{!blocked && <button className="rsvp-retry-button" type="button" onClick={() => setRetryCount((count) => count + 1)}>다시 시도하기</button>}<a className="rsvp-back-link" href={backHref}>초대장으로 돌아가기</a></> : <form onSubmit={submit}><RsvpFields form={form} update={update} />{notice && <p className="rsvp-error" role="alert">{notice}</p>}{saved && <p className="rsvp-success" role="status">참석 여부가 수정되었습니다.</p>}<button type="submit" disabled={submitting}>{submitting ? "저장 중..." : "수정 내용 저장하기"}</button><a className="rsvp-back-link" href={backHref}>초대장으로 돌아가기</a></form>}</section></main>;
 }
