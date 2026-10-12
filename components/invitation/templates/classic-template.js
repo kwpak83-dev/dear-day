@@ -1,6 +1,5 @@
 import { invitationFontStylesheets } from "../../../lib/invitation-local-fonts";
 import TemplateConfigEffects from "../template-config-effects";
-import HeroImagesReady from "../hero-images-ready";
 import { getTemplateConfigRenderProps, TemplateConfigDecorations, TemplateConfigHeroIntro, TemplateConfigHeroPanelCopy, TemplateConfigHeroLayers } from "../template-config-render";
 
 function ClassicHeading({ eyebrow, children }) {
@@ -91,8 +90,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
     {screenEffect}
     {(showHeader || showMastheadText) && <header className={`classic-masthead${!showHeader && showMastheadText ? " event-only" : ""}`}>{showHeader && <b>DearDay</b>}{showMastheadText && <span>{mastheadText}</span>}</header>}
 
-    <section className={`classic-hero${hasHeroVisual ? " has-photo" : " no-photo"}${hasHeroVisual && !(templateConfig?.hero?.intro?.enabled && templateConfig.hero.intro.text?.trim()) ? " dd-hero-images-pending" : ""}`} style={renderConfig.heroStyle}>
-      {hasHeroVisual && !(templateConfig?.hero?.intro?.enabled && templateConfig.hero.intro.text?.trim()) && <HeroImagesReady />}
+    <section className={`classic-hero${hasHeroVisual ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
       {invitationFontStylesheets(templateConfig).map((href, index) => <link key={href} rel="stylesheet" href={href} fetchPriority={index === 0 && templateConfig?.hero?.intro?.enabled && templateConfig.hero.intro.text?.trim() ? "high" : undefined} />)}
     <TemplateConfigHeroIntro config={templateConfig} />
       <TemplateConfigHeroPanelCopy config={templateConfig} />
