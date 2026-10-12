@@ -1,5 +1,6 @@
-import { optimizeNewHeroDecoration } from "../../../lib/optimize-hero-decoration";
 "use client";
+import { optimizeNewHeroDecoration } from "../../../lib/optimize-hero-decoration";
+
 
 import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
