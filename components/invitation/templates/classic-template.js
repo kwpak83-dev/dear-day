@@ -1,3 +1,4 @@
+import { invitationFontStylesheets } from "../../../lib/invitation-local-fonts";
 import TemplateConfigEffects from "../template-config-effects";
 import { getTemplateConfigRenderProps, TemplateConfigDecorations, TemplateConfigHeroIntro, TemplateConfigHeroPanelCopy, TemplateConfigHeroLayers } from "../template-config-render";
 
@@ -82,7 +83,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
   const showIllustration = Boolean(renderConfig.illustrationMode && renderConfig.heroBackgroundConfigured);
   const hasHeroVisual = showCoverPhoto || showIllustration;
 
-  return <article className={`invitation-template invitation-template-classic classic-001 dd-event-${eventKind}${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.heroConfigured ? " dd-template-hero-configured" : ""}${renderConfig.typographyConfigured ? " dd-template-typography" : ""}${renderConfig.colorsConfigured ? " dd-template-colors" : ""}${renderConfig.buttonStyleConfigured ? " dd-template-button-style" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}${renderConfig.centerPanelConfigured ? " dd-template-center-panel" : ""}${renderConfig.decorationsConfigured ? " dd-template-decorated" : ""}${renderConfig.sectionClasses}${renderConfig.safeAreaClass}`} style={renderConfig.rootStyle}>
+  return <article className={`invitation-template invitation-template-classic classic-001 dd-event-${eventKind}${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.heroConfigured ? " dd-template-hero-configured" : ""}${renderConfig.typographyConfigured ? " dd-template-typography" : ""}${renderConfig.colorsConfigured ? " dd-template-colors" : ""}${renderConfig.buttonStyleConfigured ? " dd-template-button-style" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}${renderConfig.centerPanelConfigured ? " dd-template-center-panel" : ""}${renderConfig.decorationsConfigured ? " dd-template-decorated" : ""}${renderConfig.sectionClasses}${renderConfig.safeAreaClass}${templateConfig?.effects?.scrollReveal && templateConfig.effects.scrollReveal !== "none" ? ` dd-reveal-initial dd-reveal-${templateConfig.effects.scrollReveal}` : ""}`} style={renderConfig.rootStyle}>
     <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="background" />
     <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} trigger={templateConfig?.effects?.scrollRevealTrigger} />
     {bgmControl}
@@ -90,9 +91,10 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
     {(showHeader || showMastheadText) && <header className={`classic-masthead${!showHeader && showMastheadText ? " event-only" : ""}`}>{showHeader && <b>DearDay</b>}{showMastheadText && <span>{mastheadText}</span>}</header>}
 
     <section className={`classic-hero${hasHeroVisual ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
-      <TemplateConfigHeroIntro config={templateConfig} />
+      {invitationFontStylesheets(templateConfig).map((href, index) => <link key={href} rel="stylesheet" href={href} fetchPriority={index === 0 && templateConfig?.hero?.intro?.enabled && templateConfig.hero.intro.text?.trim() ? "high" : undefined} />)}
+    <TemplateConfigHeroIntro config={templateConfig} />
       <TemplateConfigHeroPanelCopy config={templateConfig} />
-      {hasHeroVisual && <figure style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
+      {hasHeroVisual && <figure style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img fetchPriority="high" loading="eager" decoding="async" style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
       <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} presentation={presentation} />
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />
       <div className="classic-hero-copy" style={renderConfig.heroCopyStyle}>

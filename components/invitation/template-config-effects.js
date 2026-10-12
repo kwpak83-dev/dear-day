@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 
 const SECTION_SELECTOR = [
   ".romantic-message", ".modern-message", ".classic-message",
@@ -21,12 +21,15 @@ function findScrollRoot(element) {
 export default function TemplateConfigEffects({ mode, trigger = 30 }) {
   const markerRef = useRef(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!mode || mode === "none") return undefined;
     const template = markerRef.current?.closest(".invitation-template");
     const targets = template ? [...template.querySelectorAll(SECTION_SELECTOR)] : [];
     if (!template || !targets.length || typeof IntersectionObserver === "undefined" ||
-        window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return undefined;
+        window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      template?.classList.remove("dd-reveal-initial");
+      return undefined;
+    }
 
     targets.forEach((target) => target.classList.add("dd-reveal-target"));
     template.classList.add("dd-reveal-ready", `dd-reveal-${mode}`);
@@ -59,7 +62,7 @@ export default function TemplateConfigEffects({ mode, trigger = 30 }) {
     return () => {
       scrollTarget.removeEventListener("scroll", revealShareAtBottom);
       observer.disconnect();
-      template.classList.remove("dd-reveal-ready", `dd-reveal-${mode}`);
+      template.classList.remove("dd-reveal-ready", "dd-reveal-initial", `dd-reveal-${mode}`);
       targets.forEach((target) => target.classList.remove("dd-reveal-target", "is-revealed"));
     };
   }, [mode, trigger]);

@@ -5,7 +5,8 @@ import { normalizeNotice } from "../../../lib/invitation-notice";
 
 export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, preview = false, autoOpen = true }) {
   const notice = normalizeNotice(rawNotice);
-  const [open, setOpen] = useState(false);
+  // Render the notice in the initial HTML; do not wait for client hydration.
+  const [open, setOpen] = useState(() => !preview && autoOpen && notice.enabled && Boolean(notice.title) && Boolean(notice.body));
   const [skipToday, setSkipToday] = useState(false);
   const [previewPortal, setPreviewPortal] = useState(null);
   const [previewTriggerStyle, setPreviewTriggerStyle] = useState(undefined);
@@ -14,11 +15,12 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
   useEffect(() => {
     if (!autoOpen || !notice.enabled || !notice.title || !notice.body) return;
     const releaseHeroIntro = () => document.querySelector(".shared-public-invitation")?.classList.remove("dd-hero-intro-waits-for-notice");
+    if (window.__ddNoticeClosedEarly === true) { setOpen(false); releaseHeroIntro(); return; }
     try {
       const hiddenDate = window.localStorage.getItem(storageKey);
       const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
       if (hiddenDate !== today) setOpen(true);
-      else releaseHeroIntro();
+      else { setOpen(false); releaseHeroIntro(); }
     } catch { setOpen(true); }
   }, [notice.enabled, storageKey, preview, autoOpen]);
   useEffect(() => {
@@ -69,6 +71,7 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
   return <>
     <span ref={previewMarkerRef} data-dd-notice-preview={preview ? slug : undefined} style={{display:"none"}} />
     {preview ? (previewPortal ? createPortal(trigger, previewPortal) : null) : trigger}
+    {!preview && autoOpen && <script dangerouslySetInnerHTML={{ __html: `(function(){try{var key=${JSON.stringify(storageKey).replace(/</g, "\\u003c")};var today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Seoul",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());if(localStorage.getItem(key)===today){document.head.insertAdjacentHTML("beforeend",'<style id="dd-notice-early-style">.shared-public-invitation .dd-notice-overlay{display:none!important}.shared-public-invitation.dd-hero-intro-waits-for-notice>.full-invitation-renderer{visibility:visible!important}.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-mask,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-text{animation-play-state:running!important}</style>');}document.addEventListener("click",function(e){var root=document.querySelector(".shared-public-invitation");if(!root||window.__ddNoticeClosedEarly===true)return;var overlay=root.querySelector(".dd-notice-overlay");if(!overlay||!overlay.contains(e.target))return;var button=e.target.closest("button");if(!(button&&(button.getAttribute("aria-label")==="공지사항 닫기"||button.textContent.trim()==="닫기"))&&e.target!==overlay)return;if(root.classList.contains("dd-notice-skip-initial"))return;var checkbox=overlay.querySelector("input[type=checkbox]");if(checkbox&&checkbox.checked){try{localStorage.setItem(key,today)}catch(err){}}window.__ddNoticeClosedEarly=true;document.head.insertAdjacentHTML("beforeend",'<style id="dd-notice-early-style">.shared-public-invitation .dd-notice-overlay{display:none!important}.shared-public-invitation.dd-hero-intro-waits-for-notice>.full-invitation-renderer{visibility:visible!important}.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-mask,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-text{animation-play-state:running!important}</style>');},true);}catch(e){}})();` }} />}
     {open && <div className="dd-notice-overlay" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) close(); }}>
       <section className="dd-notice-dialog" role="dialog" aria-modal="true" aria-labelledby="dd-notice-title">
         <div className="dd-notice-top"><span>NOTICE</span><button type="button" aria-label="공지사항 닫기" onClick={close}>×</button></div>

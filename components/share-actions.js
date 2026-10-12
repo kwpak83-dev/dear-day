@@ -2,7 +2,17 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import QRCode from "qrcode";
+
+let qrCodePromise;
+function loadQrCode() {
+  if (!qrCodePromise) {
+    qrCodePromise = import("qrcode").then((module) => module.default || module).catch((error) => {
+      qrCodePromise = null;
+      throw error;
+    });
+  }
+  return qrCodePromise;
+}
 
 const KAKAO_SDK_SRC = "https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js";
 
@@ -47,6 +57,7 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
   const [qrError, setQrError] = useState("");
   const noticeTimer = useRef(null);
   const qrHistoryRef = useRef(null);
+  const qrPendingRef = useRef(false);
 
   useEffect(() => {
     const onPopState = () => {
@@ -132,6 +143,8 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
   };
   const openQr = async () => {
     if (previewOnly) return showNotice("미리보기입니다. 발행 후 QR 코드를 사용할 수 있어요.");
+    if (qrPendingRef.current) return;
+    qrPendingRef.current = true;
     const url = publicUrl();
     if (!qrHistoryRef.current) {
       const token = `dd-invitation-qr-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -142,11 +155,15 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
     setQrUrl(url);
     setQrDataUrl("");
     setQrError("");
+    const requestToken = qrHistoryRef.current;
     try {
+      const QRCode = await loadQrCode();
       const dataUrl = await QRCode.toDataURL(url, { errorCorrectionLevel: "M", width: 320, margin: 4, color: { dark: "#000000", light: "#ffffff" } });
-      setQrDataUrl(dataUrl);
+      if (qrHistoryRef.current === requestToken) setQrDataUrl(dataUrl);
     } catch {
-      setQrError("QR 코드를 만들지 못했습니다. 다시 시도해 주세요.");
+      if (qrHistoryRef.current === requestToken) setQrError("QR 코드를 만들지 못했습니다. 다시 시도해 주세요.");
+    } finally {
+      qrPendingRef.current = false;
     }
   };
   const saveQr = () => {

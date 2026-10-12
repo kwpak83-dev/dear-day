@@ -51,16 +51,28 @@ function loadNaverMaps() {
   return mapsSdkPromise;
 }
 
-export default function InvitationMap({ address, venue = "", onPositionChange, staticView = false }) {
+export default function InvitationMap({ address, venue = "", onPositionChange, staticView = false, deferUntilVisible = false }) {
+  const wrapperRef = useRef(null);
+  const [nearViewport, setNearViewport] = useState(false);
   const canvasRef = useRef(null);
   const [position, setPosition] = useState(null);
   const normalizedAddress = address?.trim() || "";
 
   useEffect(() => {
+    if (!deferUntilVisible || !normalizedAddress || nearViewport) return;
+    if (!("IntersectionObserver" in window)) { setNearViewport(true); return; }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setNearViewport(true); observer.disconnect(); }
+    }, { rootMargin: "300px 0px", threshold: 0 });
+    if (wrapperRef.current) observer.observe(wrapperRef.current);
+    return () => observer.disconnect();
+  }, [deferUntilVisible, normalizedAddress, nearViewport]);
+
+  useEffect(() => {
     let active = true;
     setPosition(null);
     onPositionChange?.(null);
-    if (!normalizedAddress) return () => { active = false; };
+    if (!normalizedAddress || (deferUntilVisible && !nearViewport)) return () => { active = false; };
 
     loadNaverMaps().then((maps) => {
       maps.Service.geocode({ query: normalizedAddress }, (status, response) => {
@@ -77,7 +89,7 @@ export default function InvitationMap({ address, venue = "", onPositionChange, s
     }).catch(() => {});
 
     return () => { active = false; };
-  }, [normalizedAddress, onPositionChange]);
+  }, [normalizedAddress, onPositionChange, deferUntilVisible, nearViewport]);
 
   useEffect(() => {
     if (!position || !canvasRef.current || !window.naver?.maps) return;
@@ -94,7 +106,8 @@ export default function InvitationMap({ address, venue = "", onPositionChange, s
     };
   }, [position, staticView]);
 
-  if (!normalizedAddress || !position) return null;
+  if (!normalizedAddress) return null;
+  if (!position) return deferUntilVisible ? <div ref={wrapperRef} className="invitation-map" aria-label={`${normalizedAddress} 지도`}><div className="invitation-map-canvas" /></div> : null;
 
   const destinationName = venue?.trim() || normalizedAddress;
   const encodedName = encodeURIComponent(destinationName);
@@ -104,7 +117,7 @@ export default function InvitationMap({ address, venue = "", onPositionChange, s
   const kakaoUrl = `https://map.kakao.com/link/to/${encodedName},${latitude},${longitude}`;
   const tmapUrl = `https://www.tmap.co.kr/tmap2/mobile/route.jsp?name=${encodedName}&lon=${longitude}&lat=${latitude}`;
 
-  return <div className="invitation-map" aria-label={`${normalizedAddress} 지도`}>
+  return <div ref={wrapperRef} className="invitation-map" aria-label={`${normalizedAddress} 지도`}>
     <div ref={canvasRef} className="invitation-map-canvas" style={staticView ? { pointerEvents: "none" } : undefined} />
     <nav className="invitation-navigation-links" aria-label="길찾기 앱 선택">
       <a href={naverUrl} target="_blank" rel="noreferrer"><img className="nav-app-icon" src="/map-icons/naver-map.svg" alt="" aria-hidden="true" /><span>네이버지도</span></a>

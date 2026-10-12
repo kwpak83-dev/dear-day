@@ -1,8 +1,8 @@
+import HeroIntro from "./hero-intro";
 import { backgroundPatternStyle } from "../../lib/background-patterns";
 import FittedHeroText from "./fitted-hero-text";
-import { HERO_FONT_STYLESHEET, getHeroFont } from "../../lib/hero-fonts";
+import { getHeroFont } from "../../lib/hero-fonts";
 import { TEMPLATE_FONT_STACKS } from "../../lib/template-config";
-const BODY_FONT_STYLESHEET = "https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Hi+Melody&family=Nanum+Brush+Script&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@400;500;600;700&family=Song+Myung&display=swap";
 
 function rgba(hex, opacity) {
   if (!hex || typeof opacity !== "number") return null;
@@ -295,11 +295,7 @@ export function TemplateConfigHeroPanelCopy({ config }) {
 export function TemplateConfigHeroIntro({ config }) {
   const intro = config?.hero?.intro;
   if (!intro?.enabled || !intro.text?.trim()) return null;
-  const total = intro.writeDuration + intro.holdDuration + intro.fadeDuration;
-  return <div className="dd-hero-intro" style={{ backgroundColor:intro.backgroundColor, "--dd-intro-write":`${intro.writeDuration}s`, "--dd-intro-hold":`${intro.holdDuration}s`, "--dd-intro-fade":`${intro.fadeDuration}s`, "--dd-intro-total":`${total}s` }} aria-hidden="true">
-    <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />
-    <span className="dd-hero-intro-text-wrap" style={{ "--dd-intro-bg":intro.backgroundColor }}><span className="dd-hero-intro-text" style={{ fontFamily:getHeroFont(intro.fontId).family, fontSize:`${intro.fontSize}px`, color:intro.textColor }}>{intro.text}</span><span className="dd-hero-intro-mask" aria-hidden="true" /></span>
-  </div>;
+  return <HeroIntro intro={intro} />;
 }
 
 export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {} }) {
@@ -309,18 +305,13 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
   const overlay = rgba(config?.hero?.overlayColor, config?.hero?.overlayOpacity);
   return <>
     {overlay && <span className="dd-template-hero-overlay" style={{ background: overlay }} aria-hidden="true" />}
-    {config?.hero?.mode === "frame" && (!config?.hero?.photoFrame || config.hero.photoFrame.shape === "default") && frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
+    {config?.hero?.mode === "frame" && (!config?.hero?.photoFrame || config.hero.photoFrame.shape === "default") && frameUrl && <img className="dd-template-hero-frame" src={frameUrl} fetchPriority="high" loading="eager" alt="" aria-hidden="true" />}
     {Array.isArray(config?.hero?.decorLayers) && config.hero.decorLayers.some((layer) => layer.visible !== false && assets[layer.assetId]) && <div className="dd-template-hero-decor-layers" aria-hidden="true" style={{position:"absolute",inset:0,pointerEvents:"none",zIndex:4}}>
-      {config.hero.decorLayers.filter((layer) => layer.visible !== false && assets[layer.assetId]).map((layer) => <img key={layer.id} src={assets[layer.assetId]} alt="" style={{
-        position:"absolute",left:`${Math.min(100,Math.max(0,Number(layer.x??50)))}%`,top:`${Math.min(100,Math.max(0,Number(layer.y??50)))}%`,
-        width:`${Math.min(100,Math.max(1,Number(layer.width??25)))}%`,height:"auto",
-        transform:`translate(-50%, -50%) rotate(${layer.rotation??0}deg)`,opacity:layer.opacity??1,zIndex:layer.zIndex??10
-      }}/>)}
+      {config.hero.decorLayers.filter((layer) => layer.visible !== false && assets[layer.assetId]).map((layer) => <picture key={layer.id} style={{position:"absolute",left:`${Math.min(100,Math.max(0,Number(layer.x??50)))}%`,top:`${Math.min(100,Math.max(0,Number(layer.y??50)))}%`,width:`${Math.min(100,Math.max(1,Number(layer.width??25)))}%`,transform:`translate(-50%, -50%) rotate(${layer.rotation??0}deg)`,opacity:layer.opacity??1,zIndex:layer.zIndex??10}}>{assets[`${layer.assetId}:mobile`] && <source media="(max-width: 767px)" srcSet={assets[`${layer.assetId}:mobile`]}/>}<img src={assets[layer.assetId]} alt="" fetchPriority="high" loading="eager" decoding="async" style={{
+        display:"block",width:"100%",height:"auto",
+      }}/></picture>)}
     </div>}
-    {config?.typography && <link rel="stylesheet" href={BODY_FONT_STYLESHEET} />}
-    {config?.hero?.nameFontFamily && config.hero.nameFontFamily !== "inherit" && <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />}
     {Array.isArray(config?.hero?.textLayers) && config.hero.textLayers.some((layer) => (layer.source && layer.source !== "custom") || layer.text?.trim()) && <>
-      <link rel="stylesheet" href={HERO_FONT_STYLESHEET} />
       <div className="dd-template-hero-text-layers">
         {config.hero.textLayers.filter((layer) => layer.visible !== false && ((layer.source && layer.source !== "custom") || layer.text?.trim())).map((layer) => {
           const boundText = layer.source === "title" ? (presentation.heroTitle || presentation.title) : layer.source === "name" ? presentation.heroName : layer.source === "full_name" ? presentation.heroFullName : layer.source === "event_title" ? presentation.heroEventTitle : layer.source === "event_subtitle" ? presentation.heroEventSubtitle : layer.source === "parent1" ? presentation.heroParent1 : layer.source === "parent2" ? presentation.heroParent2 : layer.source === "schedule" ? presentation.heroSchedule : layer.source === "venue" ? presentation.venue : layer.source === "venue_detail" ? presentation.addressDetail : layer.text;
@@ -365,7 +356,10 @@ export function TemplateConfigDecorations({ config, assets = {}, slot }) {
       key={item.assetId}
       className="dd-template-decoration"
       src={assets[item.assetId]}
+      fetchPriority={slot === "hero" ? "high" : "low"}
       alt=""
+      loading={slot === "hero" ? "eager" : "lazy"}
+      decoding="async"
       style={{
         left: `${item.xPercent}%`, top: `${item.yPercent}%`, width: `${item.widthPercent}%`,
         transform: `rotate(${item.rotationDeg}deg)`, opacity: item.opacity, zIndex: item.zIndex,

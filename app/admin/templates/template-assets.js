@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 import { captureBodyThemeThumbnail } from "../../../lib/capture-element";
+import { optimizeHeroImageWithReport } from "../../../lib/optimize-hero-decoration";
 
 const types = [
   ["thumbnail", "판매 목록 썸네일"], ["long_preview", "긴 판매용 미리보기"],
@@ -28,6 +29,7 @@ const imageSize = (file) => new Promise((resolve, reject) => {
 export default function TemplateAssets({ templateId, onOperation, onPermanentDelete, onBusyChange, deletionBlocked }) {
   const [assets, setAssets] = useState([]);
   const [notice, setNotice] = useState("");
+  const [uploadReports, setUploadReports] = useState({});
   const [deleteError, setDeleteError] = useState("");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -57,8 +59,10 @@ export default function TemplateAssets({ templateId, onOperation, onPermanentDel
       setNotice(audio ? "15MB 이하의 MP3 파일을 선택해 주세요." : "15MB 이하의 JPG, PNG, WebP 이미지를 선택해 주세요."); return;
     }
     setBusy(true); onBusyChange(true); setNotice("");
+    setUploadReports(current => ({ ...current, [type]: "" }));
     try {
       let result;
+      let optimizationReport = null;
       if (audio) {
         const signature = new Uint8Array(await file.slice(0, 3).arrayBuffer());
         const validMp3 = new TextDecoder().decode(signature) === "ID3" ||
@@ -81,9 +85,12 @@ export default function TemplateAssets({ templateId, onOperation, onPermanentDel
         result = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(result.error || "BGM 정보를 저장하지 못했어요.");
       } else {
-        const size = await imageSize(file);
+        const optimization = type === "background" ? await optimizeHeroImageWithReport(file) : { file, report: null };
+        const uploadFile = optimization.file;
+        optimizationReport = optimization.report;
+        const size = await imageSize(uploadFile);
         const form = new FormData();
-        form.set("templateId", templateId); form.set("assetType", type); form.set("file", file);
+        form.set("templateId", templateId); form.set("assetType", type); form.set("file", uploadFile);
         form.set("width", String(size.width)); form.set("height", String(size.height));
         const response = await fetch("/api/admin/templates/assets", { method: "POST", headers: await authorization(), body: form });
         result = await response.json().catch(() => ({}));
@@ -91,8 +98,10 @@ export default function TemplateAssets({ templateId, onOperation, onPermanentDel
       }
       onOperation({ id: result.id, receipt: result.receipt });
       await load();
-      setNotice("Asset을 등록했습니다.");
-    } catch (error) { setNotice(error.message); }
+      const message = optimizationReport ? `배경 저장 완료 · ${optimizationReport.reason} (${optimizationReport.originalKB}KB → ${optimizationReport.resultKB}KB${optimizationReport.candidateKB != null ? `, 변환 시도 ${optimizationReport.candidateKB}KB` : ""}${optimizationReport.originalWidth ? `, 원본 ${optimizationReport.originalWidth}×${optimizationReport.originalHeight} / 출력 ${optimizationReport.outputWidth}×${optimizationReport.outputHeight}` : ""})` : "Asset을 등록했습니다.";
+      setNotice(message);
+      if (type === "background") setUploadReports(current => ({ ...current, background: message }));
+    } catch (error) { setNotice(error.message); if (type === "background") setUploadReports(current => ({ ...current, background: error.message })); }
     finally { setBusy(false); onBusyChange(false); if (inputs.current[type]) inputs.current[type].value = ""; }
   };
   const captureThumbnail = async () => {
@@ -170,6 +179,7 @@ export default function TemplateAssets({ templateId, onOperation, onPermanentDel
         <button type="button" className="save-button" disabled={busy} onClick={() => inputs.current[type]?.click()}>
           {busy ? "처리 중..." : (type === "decoration" || type === "background") ? "+ Asset 추가" : active.length ? "교체 업로드" : "업로드"}
         </button>
+        {type === "background" && uploadReports.background && <p role="status" aria-live="polite" style={{ marginTop: 10, padding: "10px 12px", background: "#f4f8f5", borderRadius: 8, fontSize: 13, overflowWrap: "anywhere" }}>{uploadReports.background}</p>}
       </div>;
     })}
   </section>;

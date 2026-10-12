@@ -2,8 +2,30 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import RsvpForm from "./rsvp-form";
-import Guestbook from "./guestbook";
+const formPromises = {};
+function loadForm(kind) {
+  if (!formPromises[kind]) {
+    formPromises[kind] = (kind === "rsvp" ? import("./rsvp-form") : import("./guestbook"))
+      .then(module => module.default).catch(error => { delete formPromises[kind]; throw error; });
+  }
+  return formPromises[kind];
+}
+
+export function LazyInvitationForm({ kind, ...props }) {
+  const [Form, setForm] = useState(null);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    let active = true;
+    setFailed(false);
+    loadForm(kind).then(Component => { if (active) setForm(() => Component); })
+      .catch(() => { if (active) setFailed(true); });
+    return () => { active = false; };
+  }, [kind, attempt]);
+  if (Form) return <Form {...props} />;
+  if (failed) return <div role="alert">폼을 불러오지 못했어요. <button type="button" onClick={() => setAttempt(value => value + 1)}>다시 시도</button></div>;
+  return <p role="status">불러오는 중이에요.</p>;
+}
 
 function BottomSheet({ title, onClose, children, portalTarget = null, preview = false, layerStyle }) {
   useEffect(() => {
@@ -303,10 +325,10 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><QuickMenuIcon kind="guestbook" /><span className="invitation-quick-copy"><strong>{guestbookLabel}</strong><small>축하 메시지 남겨주세요~!</small></span></button>}
     </nav>)}
     {sheet === "rsvp" && rsvpEnabled && <BottomSheet title={rsvpLabel} onClose={closeSheet} portalTarget={usesPreviewPortal ? (isDesktopLivePreview ? previewSheetPortal : desktopLivePortal) : null} preview={usesPreviewPortal} layerStyle={isDesktopLivePreview ? previewSheetStyle : undefined}>
-      <RsvpForm slug={slug} startsAt={startsAt} preview={Boolean(previewMode)} title={rsvpLabel} />
+      <LazyInvitationForm key="rsvp" kind="rsvp" slug={slug} startsAt={startsAt} preview={Boolean(previewMode)} title={rsvpLabel} />
     </BottomSheet>}
     {sheet === "guestbook" && guestbookEnabled && <BottomSheet title={guestbookLabel} onClose={closeSheet} portalTarget={usesPreviewPortal ? (isDesktopLivePreview ? previewSheetPortal : desktopLivePortal) : null} preview={usesPreviewPortal} layerStyle={isDesktopLivePreview ? previewSheetStyle : undefined}>
-      <Guestbook slug={slug} preview={Boolean(previewMode)} title={guestbookLabel} />
+      <LazyInvitationForm key="guestbook" kind="guestbook" slug={slug} preview={Boolean(previewMode)} title={guestbookLabel} />
     </BottomSheet>}
   </>;
 }

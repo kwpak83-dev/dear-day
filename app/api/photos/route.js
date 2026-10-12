@@ -15,7 +15,8 @@ export async function POST(request) {
     const supabase = createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
     const { data: { user }, error } = await supabase.auth.getUser(token);
     if (error || !user) return fail("다시 로그인한 후 사진을 첨부해 주세요.", 401);
-    if (request.headers.get("content-type") !== "image/jpeg") return fail("JPG 사진만 업로드할 수 있어요.", 415);
+    const mime = request.headers.get("content-type");
+    if (!["image/jpeg", "image/webp"].includes(mime)) return fail("JPG 또는 WebP 사진만 업로드할 수 있어요.", 415);
     if (Number(request.headers.get("content-length")) > maxBytes) return fail("사진 용량이 너무 커요.", 413);
     const reader = request.body?.getReader();
     if (!reader) return fail("사진을 선택해 주세요.", 400);
@@ -29,7 +30,9 @@ export async function POST(request) {
       chunks.push(Buffer.from(value));
     }
     const bytes = Buffer.concat(chunks);
-    if (bytes.length < 4 || bytes[0] !== 0xff || bytes[1] !== 0xd8 || bytes[2] !== 0xff) return fail("올바른 사진 파일을 선택해 주세요.", 400);
+    const validJpeg = bytes.length >= 4 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+    const validWebp = bytes.length >= 12 && bytes.toString("ascii", 0, 4) === "RIFF" && bytes.toString("ascii", 8, 12) === "WEBP";
+    if ((mime === "image/jpeg" && !validJpeg) || (mime === "image/webp" && !validWebp)) return fail("올바른 사진 파일을 선택해 주세요.", 400);
     // Only this authenticated server route writes objects; no public write policy.
     const { data: existingBucket } = await supabase.storage.getBucket(bucket);
     if (!existingBucket) {
@@ -39,9 +42,9 @@ export async function POST(request) {
         if (!racedBucket) return fail("사진 저장 공간을 준비하지 못했어요. 잠시 후 다시 시도해 주세요.", 503);
       }
     }
-    const path = `${user.id}/${randomUUID()}.jpg`;
-    const { error: uploadError } = await supabase.storage.from(bucket).upload(path, bytes, { contentType: "image/jpeg", upsert: false });
-    if (uploadError) return fail("사진 업로드에 실패했어요. 다시 시도해 주세요.", 500);
+    const path = `${user.id}/${randomUUID()}.${mime === "image/webp" ? "webp" : "jpg"}`;
+    const { error: uploadError } = await supabase.storage.from(bucket).upload(path, bytes, { contentType: mime, upsert: false });
+    if (uploadError) return fail(mime === "image/webp" ? "WEBP_UPLOAD_FAILED" : "사진 업로드에 실패했어요. 다시 시도해 주세요.", 500);
     const { data } = supabase.storage.from(bucket).getPublicUrl(path);
     return Response.json({ url: data.publicUrl });
   } catch {
