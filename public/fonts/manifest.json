@@ -1,0 +1,218 @@
+[
+  {
+    "family": "Noto Serif KR",
+    "slug": "notoserifkr",
+    "files": 124,
+    "bytes": 6609582
+  },
+  {
+    "family": "Nanum Myeongjo",
+    "slug": "nanummyeongjo",
+    "files": 276,
+    "bytes": 6161752
+  },
+  {
+    "family": "Gowun Batang",
+    "slug": "gowunbatang",
+    "files": 190,
+    "bytes": 3180959
+  },
+  {
+    "family": "Gowun Dodum",
+    "slug": "gowundodum",
+    "files": 95,
+    "bytes": 1391656
+  },
+  {
+    "family": "Noto Sans KR",
+    "slug": "notosanskr",
+    "files": 124,
+    "bytes": 3858360
+  },
+  {
+    "family": "Playfair Display",
+    "slug": "playfairdisplay",
+    "files": 4,
+    "bytes": 100101
+  },
+  {
+    "family": "Cormorant Garamond",
+    "slug": "cormorantgaramond",
+    "files": 5,
+    "bytes": 138683
+  },
+  {
+    "family": "Great Vibes",
+    "slug": "greatvibes",
+    "files": 6,
+    "bytes": 180269
+  },
+  {
+    "family": "Allura",
+    "slug": "allura",
+    "files": 3,
+    "bytes": 60394
+  },
+  {
+    "family": "Alex Brush",
+    "slug": "alexbrush",
+    "files": 3,
+    "bytes": 76002
+  },
+  {
+    "family": "Parisienne",
+    "slug": "parisienne",
+    "files": 2,
+    "bytes": 42051
+  },
+  {
+    "family": "Dancing Script",
+    "slug": "dancingscript",
+    "files": 3,
+    "bytes": 82207
+  },
+  {
+    "family": "Hahmlet",
+    "slug": "hahmlet",
+    "files": 92,
+    "bytes": 2060617
+  },
+  {
+    "family": "Song Myung",
+    "slug": "songmyung",
+    "files": 89,
+    "bytes": 861074
+  },
+  {
+    "family": "Nanum Pen Script",
+    "slug": "nanumpenscript",
+    "files": 93,
+    "bytes": 1784629
+  },
+  {
+    "family": "Nanum Brush Script",
+    "slug": "nanumbrushscript",
+    "files": 93,
+    "bytes": 2080233
+  },
+  {
+    "family": "Gaegu",
+    "slug": "gaegu",
+    "files": 178,
+    "bytes": 2183644
+  },
+  {
+    "family": "Hi Melody",
+    "slug": "himelody",
+    "files": 93,
+    "bytes": 2035460
+  },
+  {
+    "family": "IBM Plex Sans KR",
+    "slug": "ibmplexsanskr",
+    "files": 376,
+    "bytes": 4850376
+  },
+  {
+    "family": "Cinzel",
+    "slug": "cinzel",
+    "files": 2,
+    "bytes": 47907
+  },
+  {
+    "family": "Bodoni Moda",
+    "slug": "bodonimoda",
+    "files": 4,
+    "bytes": 94376
+  },
+  {
+    "family": "DM Serif Display",
+    "slug": "dmserifdisplay",
+    "files": 2,
+    "bytes": 40959
+  },
+  {
+    "family": "Libre Baskerville",
+    "slug": "librebaskerville",
+    "files": 2,
+    "bytes": 75506
+  },
+  {
+    "family": "Sacramento",
+    "slug": "sacramento",
+    "files": 2,
+    "bytes": 43277
+  },
+  {
+    "family": "Tangerine",
+    "slug": "tangerine",
+    "files": 2,
+    "bytes": 53216
+  },
+  {
+    "family": "Pinyon Script",
+    "slug": "pinyonscript",
+    "files": 3,
+    "bytes": 91447
+  },
+  {
+    "family": "Italianno",
+    "slug": "italianno",
+    "files": 3,
+    "bytes": 70061
+  },
+  {
+    "family": "Montserrat",
+    "slug": "montserrat",
+    "files": 5,
+    "bytes": 182984
+  },
+  {
+    "family": "Raleway",
+    "slug": "raleway",
+    "files": 5,
+    "bytes": 155173
+  },
+  {
+    "family": "Jost",
+    "slug": "jost",
+    "files": 3,
+    "bytes": 62264
+  },
+  {
+    "family": "Gamja Flower",
+    "slug": "gamjaflower",
+    "files": 93,
+    "bytes": 2187878
+  },
+  {
+    "family": "Poor Story",
+    "slug": "poorstory",
+    "files": 92,
+    "bytes": 992291
+  },
+  {
+    "family": "Single Day",
+    "slug": "singleday",
+    "files": 89,
+    "bytes": 952845
+  },
+  {
+    "family": "Kirang Haerang",
+    "slug": "kiranghaerang",
+    "files": 93,
+    "bytes": 2189457
+  },
+  {
+    "family": "Yeon Sung",
+    "slug": "yeonsung",
+    "files": 93,
+    "bytes": 1230996
+  },
+  {
+    "family": "Nanum Gothic",
+    "slug": "nanumgothic",
+    "files": 276,
+    "bytes": 4562101
+  }
+]
