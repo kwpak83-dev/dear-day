@@ -38,7 +38,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
 
   return <article className={`invitation-template invitation-template-romantic romantic-001 dd-event-${eventKind}${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.heroConfigured ? " dd-template-hero-configured" : ""}${renderConfig.typographyConfigured ? " dd-template-typography" : ""}${renderConfig.colorsConfigured ? " dd-template-colors" : ""}${renderConfig.buttonStyleConfigured ? " dd-template-button-style" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}${renderConfig.centerPanelConfigured ? " dd-template-center-panel" : ""}${renderConfig.decorationsConfigured ? " dd-template-decorated" : ""}${renderConfig.sectionClasses}${renderConfig.safeAreaClass}`} style={renderConfig.rootStyle}>
     <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="background" />
-    {invitationFontStylesheets(templateConfig).map((href) => <link key={href} rel="stylesheet" href={href} />)}
+    {invitationFontStylesheets(templateConfig).map((href, index) => <link key={href} rel="stylesheet" href={href} fetchPriority={index === 0 && templateConfig?.hero?.intro?.enabled && templateConfig.hero.intro.text?.trim() ? "high" : undefined} />)}
     <TemplateConfigHeroIntro config={templateConfig} />
     <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} trigger={templateConfig?.effects?.scrollRevealTrigger} />
     {bgmControl}
