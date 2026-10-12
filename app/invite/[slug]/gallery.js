@@ -71,7 +71,7 @@ export default function Gallery({ photos, idPrefix = "public-gallery", title = "
     <div className="public-gallery-slider">
       <div className="public-gallery-main" onTouchStart={event => beginSwipe(event, "main")} onTouchEnd={finishSwipe} onTouchCancel={() => { swipeStart.current = null; }}>
         <div className="public-gallery-track" style={{ transform: `translate3d(-${current * 100}%,0,0)` }}>
-          {photos.map((photo,index)=><div role="button" tabIndex={0} className="public-gallery-slide" key={photo.id} aria-label={`${index + 1}번 사진 전체보기`} onClick={event => showPhoto(index,event)} onKeyDown={event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();showPhoto(index,event);}}}><img src={photo.url} alt={`초대장의 소중한 순간 ${index + 1}`} decoding="async" width="800" height="900" draggable={false}/></div>)}
+          {photos.map((photo,index)=><div role="button" tabIndex={0} className="public-gallery-slide" key={photo.id} aria-label={`${index + 1}번 사진 전체보기`} onClick={event => showPhoto(index,event)} onKeyDown={event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();showPhoto(index,event);}}}><img src={photo.url} alt={`초대장의 소중한 순간 ${index + 1}`} loading="lazy" decoding="async" width="800" height="900" draggable={false}/></div>)}
         </div>
       </div>
       <span className="public-gallery-count" aria-live="polite">{current + 1} / {photos.length}</span>

@@ -44,11 +44,26 @@ export default async function InvitationPage({ params, searchParams }) {
     eventKind: event.kind || settings.eventKind || "wedding",
     templateId: event.template_id || settings.templateId || "",
   };
-  const { data: eventTypeConfig, error: eventTypeConfigError } = await supabase.from("event_type_configs")
-    .select("kind,label,fields")
-    .eq("kind", invitation.eventKind)
-    .maybeSingle();
+  // These independent queries can run together while template/HERO resolution continues.
+  const [eventTypeResult, galleryResult] = await Promise.all([
+    supabase.from("event_type_configs")
+      .select("kind,label,fields")
+      .eq("kind", invitation.eventKind)
+      .maybeSingle(),
+    supabase.from("event_media")
+      .select("id,storage_path").eq("event_id", event.id).eq("gallery_state", "ready").order("sort_order").order("id").limit(20),
+  ]);
+  const { data: eventTypeConfig, error: eventTypeConfigError } = eventTypeResult;
+  const { data: galleryRows, error: galleryError } = galleryResult;
   if (eventTypeConfigError) console.error("Event type config query failed:", eventTypeConfigError.code);
+  // Start independent HERO lookups now; consume their results after template styling
+  // so the existing template/HERO merge order stays unchanged.
+  const heroPresetPromise = event.hero_preset_id
+    ? supabase.from("hero_presets").select("id,config").eq("id", event.hero_preset_id).maybeSingle()
+    : null;
+  const heroAssetsPromise = event.hero_preset_id
+    ? supabase.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path").eq("hero_preset_id", event.hero_preset_id).in("asset_type", ["hero_frame", "hero_background"]).eq("is_active", true)
+    : null;
   let templateConfig = null;
   let templateAssets = {};
   let userBgmUrl = null;
@@ -104,10 +119,10 @@ export default async function InvitationPage({ params, searchParams }) {
     }
   }
   if (event.hero_preset_id) {
-    const { data: heroPreset, error: heroError } = await supabase.from("hero_presets").select("id,config").eq("id", event.hero_preset_id).maybeSingle();
+    const { data: heroPreset, error: heroError } = await heroPresetPromise;
     if (heroError) console.error("Hero preset query failed:", heroError.code);
     if (heroPreset) {
-      const { data: heroAssets, error: heroAssetError } = await supabase.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path").eq("hero_preset_id", heroPreset.id).in("asset_type", ["hero_frame", "hero_background"]).eq("is_active", true);
+      const { data: heroAssets, error: heroAssetError } = await heroAssetsPromise;
       if (heroAssetError) console.error("Hero asset query failed:", heroAssetError.code);
       const frame = heroAssets?.find((asset) => asset.asset_type === "hero_frame") || null;
       const heroBackground = heroAssets?.find((asset) => asset.asset_type === "hero_background") || null;
@@ -122,8 +137,7 @@ export default async function InvitationPage({ params, searchParams }) {
       templateAssets = { ...templateAssets, ...Object.fromEntries(decorations.map((asset) => [asset.id, supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl])), ...(frame ? { [frame.id]: supabase.storage.from(frame.storage_bucket).getPublicUrl(frame.storage_path).data.publicUrl } : {}), ...(heroBackground ? { [heroBackground.id]: supabase.storage.from(heroBackground.storage_bucket).getPublicUrl(heroBackground.storage_path).data.publicUrl } : {}) };
     }
   }
-  const { data: galleryRows, error: galleryError } = await supabase.from("event_media")
-    .select("id,storage_path").eq("event_id", event.id).eq("gallery_state", "ready").order("sort_order").order("id").limit(20);
+
   // A missing migration must not take down an existing published invitation.
   if (galleryError) console.error("Gallery query failed:", galleryError.code);
   const galleryPhotos = (galleryRows || []).map(row => ({ id: row.id, url: supabase.storage.from("invitation-photos").getPublicUrl(row.storage_path).data.publicUrl }));

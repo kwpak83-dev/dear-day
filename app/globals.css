@@ -3185,3 +3185,76 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Optional Hero-only central reading surface, behind the photo and text. */
 .dd-template-hero-configured .classic-hero::before,.dd-template-hero-configured .romantic-hero::before,.dd-template-hero-configured .modern-hero::before{content:"";position:absolute;top:var(--dd-hero-center-panel-y,50%);left:var(--dd-hero-center-panel-x,50%);transform:translate(-50%,-50%);height:var(--dd-hero-center-panel-height,100%);width:var(--dd-hero-center-panel-width,0%);border-radius:var(--dd-hero-center-panel-radius,0px);background:var(--dd-hero-center-panel-background,var(--dd-hero-center-panel-color,transparent));pointer-events:none;z-index:0}
 .dd-template-hero-configured .classic-hero>figure,.dd-template-hero-configured .romantic-hero>figure,.dd-template-hero-configured .modern-hero>figure{z-index:1}
+
+/* DearDay RSVP and deletion dialogs keep the site form palette. */
+.invitation-bottom-sheet-layer .invitation-bottom-sheet:has(.public-rsvp),
+.public-rsvp:has(.rsvp-edit-actions),
+.guestbook-delete-backdrop>div{background:#f8fbff;color:#172b51}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet:has(.public-rsvp)>header{border-color:#d7e5fa}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet:has(.public-rsvp)>header h2,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .public-rsvp h2,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .public-rsvp :is(.rsvp-intro,label>span,legend),
+.guestbook-delete-backdrop>div h3{color:#172b51}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .public-rsvp :is(.rsvp-kicker,.rsvp-edit-guide,.rsvp-copy-notice){color:#637895}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .public-rsvp{
+  padding:24px clamp(18px,6vw,24px);color:#172b51;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .public-rsvp :is(input:not([type=radio]),select,textarea),
+.guestbook-delete-backdrop>div input{
+  box-sizing:border-box;width:100%;min-width:0;padding:11px 12px;
+  border:1px solid #d7e5fa;border-radius:9px;background:#fff;color:#172b51;
+  font:400 13px/1.4 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .rsvp-status-options span{border-color:#d7e5fa;color:#172b51}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .rsvp-status-options input:checked+span{
+  border-color:#1e3a8a;background:#eaf2ff;color:#172b51;
+}
+.public-rsvp .rsvp-success{padding:18px;border:1px solid #d7e5fa;background:#f2f7ff;color:#172b51}
+.public-rsvp .rsvp-edit-guide{margin:18px 0;color:#637895}
+:is(.invitation-template.dd-template-button-style,body) section.public-rsvp .rsvp-edit-actions{gap:10px}
+.guestbook-delete-backdrop>div{padding:24px;font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+.guestbook-delete-backdrop>div h3{line-height:1.5;letter-spacing:0}
+.guestbook-delete-backdrop>div>footer{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
+  margin:18px 0 0;padding:0;border:0;background:transparent;color:#172b51;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet .invitation-bottom-sheet-content .public-rsvp form>button,
+:is(.invitation-template.dd-template-button-style,body) section.public-rsvp .rsvp-edit-actions :is(a,button),
+:is(.invitation-template.dd-template-button-style,body) .guestbook-delete-backdrop>div>footer>button{
+  display:flex;align-items:center;justify-content:center;box-sizing:border-box;
+  width:100%;max-width:100%;min-width:0;height:auto;min-height:44px;padding:11px 12px;
+  border:1px solid #bfd3f4;border-radius:9px;
+  font:700 13px/1.4 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  letter-spacing:0;text-align:center;text-decoration:none;white-space:normal;
+}
+/* Template action colors use !important; these scoped form actions override them. */
+.invitation-bottom-sheet-layer .invitation-bottom-sheet .invitation-bottom-sheet-content .public-rsvp form>button,
+:is(.invitation-template.dd-template-button-style,body) section.public-rsvp .rsvp-edit-actions a,
+:is(.invitation-template.dd-template-button-style,body) .guestbook-delete-backdrop>div>footer>button:last-child{
+  background:#1e3a8a!important;color:#fff!important;border-color:#1e3a8a!important;
+}
+:is(.invitation-template.dd-template-button-style,body) section.public-rsvp .rsvp-edit-actions button,
+:is(.invitation-template.dd-template-button-style,body) .guestbook-delete-backdrop>div>footer>button:first-child{
+  background:#fff!important;color:#172b51!important;border-color:#bfd3f4!important;
+}
+
+/* Standalone RSVP edit link page: use Dear Day editor blues, not legacy coral. */
+.rsvp-edit-page{background:#f2f7ff;color:#172b51}
+.rsvp-edit-page .rsvp-edit-card{background:#fff;border:1px solid #dfeafb;box-shadow:0 18px 45px rgba(25,65,125,.12)}
+.rsvp-edit-page .rsvp-edit-card :is(h1,h2,.rsvp-intro,label>span,legend){color:#172b51}
+.rsvp-edit-page .rsvp-edit-card :is(.rsvp-kicker,.rsvp-count,.rsvp-copy-notice,.rsvp-back-link){color:#637895}
+.rsvp-edit-page .rsvp-edit-card :is(input:not([type=radio]),select,textarea){border-color:#d7e5fa;background:#fff;color:#172b51}
+.rsvp-edit-page .rsvp-edit-card .rsvp-status-options span{border-color:#d7e5fa;background:#fff;color:#172b51}
+.rsvp-edit-page .rsvp-edit-card .rsvp-status-options input:checked+span{border-color:#1e3a8a;background:#eaf2ff;color:#1e3a8a}
+.rsvp-edit-page .rsvp-edit-card form>button{background:#1e3a8a!important;border-color:#1e3a8a!important;color:#fff!important}
+.rsvp-edit-page .rsvp-edit-card .rsvp-success{background:#f2f7ff;border-color:#d7e5fa;color:#172b51}
+
+/* Standalone RSVP edit page close control. */
+.rsvp-edit-page .rsvp-edit-card{position:relative}
+.rsvp-edit-page .rsvp-edit-close{position:absolute;top:10px;right:10px;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:#172b51;font:400 27px/1 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;text-decoration:none;z-index:1}
+.rsvp-edit-page .rsvp-edit-close:hover,.rsvp-edit-page .rsvp-edit-close:focus-visible{background:#eaf2ff}
+.rsvp-edit-page .rsvp-edit-close:focus-visible{outline:2px solid #1e3a8a;outline-offset:2px}
+
+/* RSVP edit load error: retry without showing an empty editable form. */
+.rsvp-edit-page .rsvp-retry-button{display:flex;align-items:center;justify-content:center;width:100%;min-height:44px;margin:18px 0 4px;padding:11px 12px;border:1px solid #1e3a8a;border-radius:9px;background:#1e3a8a;color:#fff;font:700 13px/1.4 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;cursor:pointer}
+.rsvp-edit-page .rsvp-retry-button:hover{background:#23469b}
