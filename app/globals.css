@@ -781,6 +781,11 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* Template Config C6-4: section reveal and content safe area */
 .dd-template-effects-marker{display:none}
+/* SSR-safe initial reveal state: hide only reveal sections before hydration. */
+.dd-reveal-initial.dd-reveal-fade :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.public-rsvp,.guestbook-section):not(.is-revealed),
+.dd-reveal-initial.dd-reveal-fade-up :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.public-rsvp,.guestbook-section):not(.is-revealed){opacity:0}
+.dd-reveal-initial.dd-reveal-fade-up :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.public-rsvp,.guestbook-section):not(.is-revealed){transform:translateY(18px)}
+@media(prefers-reduced-motion:reduce){.dd-reveal-initial :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.public-rsvp,.guestbook-section){opacity:1!important;transform:none!important}}
 .dd-reveal-ready .dd-reveal-target{transition:opacity var(--dd-reveal-duration,.55s) ease,transform var(--dd-reveal-duration,.55s) ease}
 .dd-reveal-ready.dd-reveal-fade .dd-reveal-target:not(.is-revealed),
 .dd-reveal-ready.dd-reveal-fade-up .dd-reveal-target:not(.is-revealed){opacity:0}
