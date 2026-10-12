@@ -1,5 +1,6 @@
 import { invitationFontStylesheets } from "../../../lib/invitation-local-fonts";
 import TemplateConfigEffects from "../template-config-effects";
+import HeroImagesReady from "../hero-images-ready";
 import { getTemplateConfigRenderProps, TemplateConfigDecorations, TemplateConfigHeroIntro, TemplateConfigHeroPanelCopy, TemplateConfigHeroLayers } from "../template-config-render";
 
 function SectionHeading({ eyebrow, children }) {
@@ -48,7 +49,8 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
       <span aria-hidden="true">· ♡ ·</span>
     </header>}
 
-    <section className={`romantic-hero${hasHeroVisual ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
+    <section className={`romantic-hero${hasHeroVisual ? " has-photo" : " no-photo"}${hasHeroVisual && !(templateConfig?.hero?.intro?.enabled && templateConfig.hero.intro.text?.trim()) ? " dd-hero-images-pending" : ""}`} style={renderConfig.heroStyle}>
+      {hasHeroVisual && !(templateConfig?.hero?.intro?.enabled && templateConfig.hero.intro.text?.trim()) && <HeroImagesReady />}
       <TemplateConfigHeroPanelCopy config={templateConfig} />
       {hasHeroVisual && <figure className="romantic-hero-photo" style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img fetchPriority="high" loading="eager" decoding="async" style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
       <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} presentation={presentation} />
