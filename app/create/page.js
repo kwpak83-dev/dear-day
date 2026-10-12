@@ -17,7 +17,7 @@ import OptionalInvitationSections from "../invite/[slug]/optional-invitation-sec
 import InvitationNotice from "../invite/[slug]/invitation-notice";
 
 import GalleryEditor from "./gallery-editor";
-import { preparePhoto, prepareKakaoSharePhoto } from "../../lib/prepare-photo";
+import { preparePhoto, prepareHeroPhoto, prepareKakaoSharePhoto } from "../../lib/prepare-photo";
 import { normalizeNotice } from "../../lib/invitation-notice";
 import { getInvitationTitle } from "../../lib/invitation-title";
 import { EVENT_KIND_OPTIONS, getConfiguredEventConfig, getAllMissingRequiredFields } from "../../lib/event-config";
@@ -546,11 +546,18 @@ export default function CreateInvitation() {
       if (!supabase) throw new Error("사진 저장 서비스를 준비하지 못했어요.");
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("로그인 후 사진을 첨부할 수 있어요.");
-      // The public HERO is above the fold; optimize only its photo more aggressively.
-      const photo = await preparePhoto(file, { maxSide: 1400, quality: 0.78 });
+      // WebP is optional: existing Supabase buckets may allow JPEG only.
+      const prepared = await prepareHeroPhoto(file);
+      const send = async (photo, mime) => {
+        const response = await fetch("/api/photos", { method: "POST", headers: { "Content-Type": mime, Authorization: "Bearer " + session.access_token }, body: photo });
+        const result = await response.json().catch(() => ({}));
+        return { response, result };
+      };
       setPhotoNotice("사진을 업로드하고 있어요.");
-      const response = await fetch("/api/photos", { method: "POST", headers: { "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
-      const result = await response.json().catch(() => ({}));
+      let { response, result } = await send(prepared.photo, prepared.format === "webp" ? "image/webp" : "image/jpeg");
+      if (!response.ok && prepared.format === "webp" && result.error === "WEBP_UPLOAD_FAILED") {
+        ({ response, result } = await send(prepared.jpeg, "image/jpeg"));
+      }
       if (!response.ok || !result.url) throw new Error(result.error || "사진 업로드에 실패했어요.");
       update("coverPhotoUrl", result.url);
       setPhotoNotice("사진을 첨부했어요. 임시 저장 또는 발행으로 반영해 주세요.");
