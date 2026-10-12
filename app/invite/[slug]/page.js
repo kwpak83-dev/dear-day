@@ -182,8 +182,10 @@ export default async function InvitationPage({ params, searchParams }) {
   if (typeof coverUrl === "string" && (coverUrl.startsWith("https://") || coverUrl.startsWith("http://"))) heroImageUrls.add(coverUrl);
   for (const layer of templateConfig?.hero?.decorLayers || []) {
     if (layer.visible === false) continue;
-    const src = templateAssets[`${layer.assetId}:mobile`] || templateAssets[layer.assetId];
-    if (src) heroImageUrls.add(src);
+    const src = templateAssets[layer.assetId];
+    const mobileSrc = templateAssets[`${layer.assetId}:mobile`];
+    if (mobileSrc) { preload(mobileSrc, { as: "image", fetchPriority: "high", media: "(max-width: 767px)" }); if (src) preload(src, { as: "image", fetchPriority: "high", media: "(min-width: 768px)" }); }
+    else if (src) heroImageUrls.add(src);
     if (heroImageUrls.size >= 5) break;
   }
   for (const item of templateConfig?.decorations || []) {
