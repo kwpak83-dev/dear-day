@@ -168,7 +168,8 @@ export default async function InvitationPage({ params, searchParams }) {
         else decorations = [...decorations, ...(listed.data || []).map((file) => ({ id: file.name.split(".")[0], storage_bucket: "template-assets", storage_path: `hero-decoration-library/${file.name}` })).filter((asset) => missingIds.has(asset.id))];
       }
       templateConfig = templateConfig ? { ...templateConfig, hero: { ...templateConfig.hero, ...(heroPreset.config || {}), textLayers: [...(heroPreset.config?.textLayers || []), ...(Array.isArray(settings.heroExtraTextLayers) ? settings.heroExtraTextLayers.slice(0, 20) : [])].map((layer) => ({ ...layer, ...(settings.heroLayerOverrides?.[layer.id] || {}), text: typeof settings.heroTextOverrides?.[layer.id] === "string" ? settings.heroTextOverrides[layer.id].slice(0, 200) : layer.text })), frameAssetId: frame?.id || null, backgroundAssetId: heroBackground?.id || null } } : templateConfig;
-      templateAssets = { ...templateAssets, ...Object.fromEntries(decorations.map((asset) => [asset.id, supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl])), ...(frame ? { [frame.id]: supabase.storage.from(frame.storage_bucket).getPublicUrl(frame.storage_path).data.publicUrl } : {}), ...(heroBackground ? { [heroBackground.id]: supabase.storage.from(heroBackground.storage_bucket).getPublicUrl(heroBackground.storage_path).data.publicUrl } : {}) };
+      const mobileDecorations = layers.flatMap((layer) => { const path = layer?.mobileAssetPath; const id = layer?.assetId; return typeof id === "string" && /^[0-9a-f-]{36}$/i.test(id) && path === `hero-decoration-library/${id}-mobile.webp` ? [[`${id}:mobile`, supabase.storage.from("template-assets").getPublicUrl(path).data.publicUrl]] : []; });
+      templateAssets = { ...templateAssets, ...Object.fromEntries(decorations.map((asset) => [asset.id, supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl])), ...Object.fromEntries(mobileDecorations), ...(frame ? { [frame.id]: supabase.storage.from(frame.storage_bucket).getPublicUrl(frame.storage_path).data.publicUrl } : {}), ...(heroBackground ? { [heroBackground.id]: supabase.storage.from(heroBackground.storage_bucket).getPublicUrl(heroBackground.storage_path).data.publicUrl } : {}) };
     }
   }
 
@@ -181,7 +182,7 @@ export default async function InvitationPage({ params, searchParams }) {
   if (typeof coverUrl === "string" && (coverUrl.startsWith("https://") || coverUrl.startsWith("http://"))) heroImageUrls.add(coverUrl);
   for (const layer of templateConfig?.hero?.decorLayers || []) {
     if (layer.visible === false) continue;
-    const src = templateAssets[layer.assetId];
+    const src = templateAssets[`${layer.assetId}:mobile`] || templateAssets[layer.assetId];
     if (src) heroImageUrls.add(src);
     if (heroImageUrls.size >= 5) break;
   }
