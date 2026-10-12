@@ -3189,41 +3189,41 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* DearDay RSVP and deletion dialogs keep the site form palette. */
 .invitation-bottom-sheet-layer .invitation-bottom-sheet:has(.public-rsvp),
 .public-rsvp:has(.rsvp-edit-actions),
-.guestbook-delete-backdrop>div{background:var(--cream);color:var(--deep)}
-.invitation-bottom-sheet-layer .invitation-bottom-sheet:has(.public-rsvp)>header{border-color:var(--line)}
+.guestbook-delete-backdrop>div{background:#f8fbff;color:#172b51}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet:has(.public-rsvp)>header{border-color:#d7e5fa}
 .invitation-bottom-sheet-layer .invitation-bottom-sheet:has(.public-rsvp)>header h2,
 .invitation-bottom-sheet-layer .invitation-bottom-sheet-content .public-rsvp h2,
 .invitation-bottom-sheet-layer .invitation-bottom-sheet-content .public-rsvp :is(.rsvp-intro,label>span,legend),
-.guestbook-delete-backdrop>div h3{color:var(--deep)}
-.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .public-rsvp :is(.rsvp-kicker,.rsvp-edit-guide,.rsvp-copy-notice){color:var(--muted)}
+.guestbook-delete-backdrop>div h3{color:#172b51}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .public-rsvp :is(.rsvp-kicker,.rsvp-edit-guide,.rsvp-copy-notice){color:#637895}
 .invitation-bottom-sheet-layer .invitation-bottom-sheet-content .public-rsvp{
-  padding:24px clamp(18px,6vw,24px);color:var(--deep);
+  padding:24px clamp(18px,6vw,24px);color:#172b51;
 }
 .invitation-bottom-sheet-layer .invitation-bottom-sheet-content .public-rsvp :is(input:not([type=radio]),select,textarea),
 .guestbook-delete-backdrop>div input{
   box-sizing:border-box;width:100%;min-width:0;padding:11px 12px;
-  border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--deep);
+  border:1px solid #d7e5fa;border-radius:9px;background:#fff;color:#172b51;
   font:400 13px/1.4 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
 }
-.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .rsvp-status-options span{border-color:var(--line);color:var(--deep)}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .rsvp-status-options span{border-color:#d7e5fa;color:#172b51}
 .invitation-bottom-sheet-layer .invitation-bottom-sheet-content .rsvp-status-options input:checked+span{
-  border-color:var(--coral);background:var(--ivory);color:var(--deep);
+  border-color:#1e3a8a;background:#eaf2ff;color:#172b51;
 }
-.public-rsvp .rsvp-success{padding:18px;border:1px solid var(--line);background:var(--ivory);color:var(--deep)}
-.public-rsvp .rsvp-edit-guide{margin:18px 0;color:var(--muted)}
+.public-rsvp .rsvp-success{padding:18px;border:1px solid #d7e5fa;background:#f2f7ff;color:#172b51}
+.public-rsvp .rsvp-edit-guide{margin:18px 0;color:#637895}
 :is(.invitation-template.dd-template-button-style,body) section.public-rsvp .rsvp-edit-actions{gap:10px}
 .guestbook-delete-backdrop>div{padding:24px;font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
 .guestbook-delete-backdrop>div h3{line-height:1.5;letter-spacing:0}
 .guestbook-delete-backdrop>div>footer{
   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
-  margin:18px 0 0;padding:0;border:0;background:transparent;color:var(--deep);
+  margin:18px 0 0;padding:0;border:0;background:transparent;color:#172b51;
 }
 .invitation-bottom-sheet-layer .invitation-bottom-sheet .invitation-bottom-sheet-content .public-rsvp form>button,
 :is(.invitation-template.dd-template-button-style,body) section.public-rsvp .rsvp-edit-actions :is(a,button),
 :is(.invitation-template.dd-template-button-style,body) .guestbook-delete-backdrop>div>footer>button{
   display:flex;align-items:center;justify-content:center;box-sizing:border-box;
   width:100%;max-width:100%;min-width:0;height:auto;min-height:44px;padding:11px 12px;
-  border:1px solid var(--peach);border-radius:9px;
+  border:1px solid #bfd3f4;border-radius:9px;
   font:700 13px/1.4 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   letter-spacing:0;text-align:center;text-decoration:none;white-space:normal;
 }
@@ -3231,9 +3231,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .invitation-bottom-sheet-layer .invitation-bottom-sheet .invitation-bottom-sheet-content .public-rsvp form>button,
 :is(.invitation-template.dd-template-button-style,body) section.public-rsvp .rsvp-edit-actions a,
 :is(.invitation-template.dd-template-button-style,body) .guestbook-delete-backdrop>div>footer>button:last-child{
-  background:var(--coral)!important;color:#fff!important;border-color:var(--coral)!important;
+  background:#1e3a8a!important;color:#fff!important;border-color:#1e3a8a!important;
 }
 :is(.invitation-template.dd-template-button-style,body) section.public-rsvp .rsvp-edit-actions button,
 :is(.invitation-template.dd-template-button-style,body) .guestbook-delete-backdrop>div>footer>button:first-child{
-  background:#fff!important;color:var(--deep)!important;border-color:var(--peach)!important;
+  background:#fff!important;color:#172b51!important;border-color:#bfd3f4!important;
 }
