@@ -44,8 +44,20 @@ export default async function InvitationPage({ params, searchParams }) {
     eventKind: event.kind || settings.eventKind || "wedding",
     templateId: event.template_id || settings.templateId || "",
   };
+  // The selected template version depends only on the event, so fetch it alongside other metadata.
+  let versionQuery = null;
+  if (event.template_id) {
+    versionQuery = supabase.from("template_versions")
+      .select("id,template_id,status,config").eq("template_id", event.template_id);
+    if (event.template_version_id) {
+      versionQuery = versionQuery.eq("id", event.template_version_id);
+    } else {
+      versionQuery = versionQuery.order("version", { ascending: false }).limit(1);
+    }
+    versionQuery = versionQuery.maybeSingle();
+  }
   // Promise.all consumes the query builders, starting these independent requests together.
-  const [eventTypeResult, galleryResult, heroPresetResult, heroAssetsResult, bgmTrackResult] = await Promise.all([
+  const [eventTypeResult, galleryResult, heroPresetResult, heroAssetsResult, bgmTrackResult, selectedVersionResult] = await Promise.all([
     supabase.from("event_type_configs")
       .select("kind,label,fields")
       .eq("kind", invitation.eventKind)
@@ -61,6 +73,7 @@ export default async function InvitationPage({ params, searchParams }) {
     settings.bgmMode === "user" && settings.userBgmTrackId
       ? supabase.from("bgm_tracks").select("storage_bucket,storage_path,is_active").eq("id", settings.userBgmTrackId).eq("is_active", true).maybeSingle()
       : null,
+    versionQuery,
   ]);
   const { data: eventTypeConfig, error: eventTypeConfigError } = eventTypeResult;
   const { data: galleryRows, error: galleryError } = galleryResult;
@@ -77,14 +90,7 @@ export default async function InvitationPage({ params, searchParams }) {
   if (event.template_id) {
     // Pinned events must not silently switch to newer or draft versions.
     // Only legacy events without a version pin use the previous latest-version fallback.
-    let versionQuery = supabase.from("template_versions")
-      .select("id,template_id,status,config").eq("template_id", event.template_id);
-    if (event.template_version_id) {
-      versionQuery = versionQuery.eq("id", event.template_version_id);
-    } else {
-      versionQuery = versionQuery.order("version", { ascending: false }).limit(1);
-    }
-    const { data: selectedVersion, error: versionError } = await versionQuery.maybeSingle();
+    const { data: selectedVersion, error: versionError } = selectedVersionResult;
     if (versionError) console.error("Template version query failed:", versionError.code);
     if (event.template_version_id && !selectedVersion) console.error("Pinned template version unavailable for invitation:", slug);
     if (selectedVersion) {
