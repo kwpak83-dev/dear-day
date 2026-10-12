@@ -69,6 +69,6 @@ for (const item of output) {
   }
   stats.push({ ...item, bytes });
 }
-await fs.writeFile(path.join(destination, "manifest.json"), JSON.stringify(stats, null, 2) + "\\n");
+await fs.writeFile(path.join(destination, "manifest.json"), JSON.stringify(stats, null, 2) + "\n");
 console.log("Total font assets:", (stats.reduce((sum, item) => sum + item.bytes, 0) / 1024 / 1024).toFixed(2), "MB");
 console.log(`Saved ${output.length} families to public/fonts. Review sizes and licenses before enabling.`);
