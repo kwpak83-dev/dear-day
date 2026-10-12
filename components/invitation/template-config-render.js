@@ -3,7 +3,6 @@ import FittedHeroText from "./fitted-hero-text";
 import { getHeroFont } from "../../lib/hero-fonts";
 import { invitationFontStylesheets } from "../../lib/invitation-local-fonts";
 import { TEMPLATE_FONT_STACKS } from "../../lib/template-config";
-const BODY_FONT_STYLESHEET = "https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Hi+Melody&family=Nanum+Brush+Script&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Myeongjo:wght@400;700;800&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@400;500;600;700&family=Song+Myung&display=swap";
 
 function rgba(hex, opacity) {
   if (!hex || typeof opacity !== "number") return null;
