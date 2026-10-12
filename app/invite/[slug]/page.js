@@ -44,10 +44,17 @@ export default async function InvitationPage({ params, searchParams }) {
     eventKind: event.kind || settings.eventKind || "wedding",
     templateId: event.template_id || settings.templateId || "",
   };
-  const { data: eventTypeConfig, error: eventTypeConfigError } = await supabase.from("event_type_configs")
-    .select("kind,label,fields")
-    .eq("kind", invitation.eventKind)
-    .maybeSingle();
+  // These independent queries can run together while template/HERO resolution continues.
+  const [eventTypeResult, galleryResult] = await Promise.all([
+    supabase.from("event_type_configs")
+      .select("kind,label,fields")
+      .eq("kind", invitation.eventKind)
+      .maybeSingle(),
+    supabase.from("event_media")
+      .select("id,storage_path").eq("event_id", event.id).eq("gallery_state", "ready").order("sort_order").order("id").limit(20),
+  ]);
+  const { data: eventTypeConfig, error: eventTypeConfigError } = eventTypeResult;
+  const { data: galleryRows, error: galleryError } = galleryResult;
   if (eventTypeConfigError) console.error("Event type config query failed:", eventTypeConfigError.code);
   let templateConfig = null;
   let templateAssets = {};
@@ -122,8 +129,7 @@ export default async function InvitationPage({ params, searchParams }) {
       templateAssets = { ...templateAssets, ...Object.fromEntries(decorations.map((asset) => [asset.id, supabase.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl])), ...(frame ? { [frame.id]: supabase.storage.from(frame.storage_bucket).getPublicUrl(frame.storage_path).data.publicUrl } : {}), ...(heroBackground ? { [heroBackground.id]: supabase.storage.from(heroBackground.storage_bucket).getPublicUrl(heroBackground.storage_path).data.publicUrl } : {}) };
     }
   }
-  const { data: galleryRows, error: galleryError } = await supabase.from("event_media")
-    .select("id,storage_path").eq("event_id", event.id).eq("gallery_state", "ready").order("sort_order").order("id").limit(20);
+
   // A missing migration must not take down an existing published invitation.
   if (galleryError) console.error("Gallery query failed:", galleryError.code);
   const galleryPhotos = (galleryRows || []).map(row => ({ id: row.id, url: supabase.storage.from("invitation-photos").getPublicUrl(row.storage_path).data.publicUrl }));
