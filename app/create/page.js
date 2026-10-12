@@ -555,12 +555,16 @@ export default function CreateInvitation() {
       };
       setPhotoNotice("사진을 업로드하고 있어요.");
       let { response, result } = await send(prepared.photo, prepared.format === "webp" ? "image/webp" : "image/jpeg");
+      let fallback = false;
       if (!response.ok && prepared.format === "webp" && result.error === "WEBP_UPLOAD_FAILED") {
+        fallback = true;
         ({ response, result } = await send(prepared.jpeg, "image/jpeg"));
       }
       if (!response.ok || !result.url) throw new Error(result.error || "사진 업로드에 실패했어요.");
       update("coverPhotoUrl", result.url);
-      setPhotoNotice("사진을 첨부했어요. 임시 저장 또는 발행으로 반영해 주세요.");
+      const kb = (bytes) => bytes == null ? "측정 불가" : `${Math.round(bytes / 1024)}KB`;
+      const finalFormat = fallback ? "JPEG (WebP 저장 실패 후 재시도)" : prepared.format.toUpperCase();
+      setPhotoNotice(`사진 첨부 완료 · JPEG ${kb(prepared.jpeg.size)} / WebP ${kb(prepared.webpSize)} · 최종 ${finalFormat} ${kb(fallback ? prepared.jpeg.size : prepared.photo.size)} · ${prepared.reason}. 임시 저장 또는 발행으로 반영해 주세요.`);
     } catch (error) {
       setPhotoNotice(error.message || "사진을 읽지 못했어요. 다른 사진으로 다시 시도해 주세요.");
     } finally {
