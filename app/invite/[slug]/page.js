@@ -160,7 +160,7 @@ export default async function InvitationPage({ params, searchParams }) {
   const coverUrl = settings.coverPhotoUrl || settings.coverPhoto || null;
   // The cover is resolved by the invitation renderer; only preload when a
   // fully qualified URL is already present in the saved settings.
-  if (typeof coverUrl === "string" && /^https?:\\/\\//.test(coverUrl)) heroImageUrls.add(coverUrl);
+  if (typeof coverUrl === "string" && (coverUrl.startsWith("https://") || coverUrl.startsWith("http://"))) heroImageUrls.add(coverUrl);
   for (const layer of templateConfig?.hero?.decorLayers || []) {
     if (layer.visible === false) continue;
     const src = templateAssets[layer.assetId];
