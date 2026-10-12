@@ -305,9 +305,9 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
   const overlay = rgba(config?.hero?.overlayColor, config?.hero?.overlayOpacity);
   return <>
     {overlay && <span className="dd-template-hero-overlay" style={{ background: overlay }} aria-hidden="true" />}
-    {config?.hero?.mode === "frame" && (!config?.hero?.photoFrame || config.hero.photoFrame.shape === "default") && frameUrl && <img className="dd-template-hero-frame" src={frameUrl} alt="" aria-hidden="true" />}
+    {config?.hero?.mode === "frame" && (!config?.hero?.photoFrame || config.hero.photoFrame.shape === "default") && frameUrl && <img className="dd-template-hero-frame" src={frameUrl} fetchPriority="high" loading="eager" alt="" aria-hidden="true" />}
     {Array.isArray(config?.hero?.decorLayers) && config.hero.decorLayers.some((layer) => layer.visible !== false && assets[layer.assetId]) && <div className="dd-template-hero-decor-layers" aria-hidden="true" style={{position:"absolute",inset:0,pointerEvents:"none",zIndex:4}}>
-      {config.hero.decorLayers.filter((layer) => layer.visible !== false && assets[layer.assetId]).map((layer) => <img key={layer.id} src={assets[layer.assetId]} alt="" fetchPriority="low" decoding="async" style={{
+      {config.hero.decorLayers.filter((layer) => layer.visible !== false && assets[layer.assetId]).map((layer) => <img key={layer.id} src={assets[layer.assetId]} alt="" fetchPriority="high" loading="eager" decoding="async" style={{
         position:"absolute",left:`${Math.min(100,Math.max(0,Number(layer.x??50)))}%`,top:`${Math.min(100,Math.max(0,Number(layer.y??50)))}%`,
         width:`${Math.min(100,Math.max(1,Number(layer.width??25)))}%`,height:"auto",
         transform:`translate(-50%, -50%) rotate(${layer.rotation??0}deg)`,opacity:layer.opacity??1,zIndex:layer.zIndex??10
@@ -358,7 +358,7 @@ export function TemplateConfigDecorations({ config, assets = {}, slot }) {
       key={item.assetId}
       className="dd-template-decoration"
       src={assets[item.assetId]}
-      fetchPriority="low"
+      fetchPriority={slot === "hero" ? "high" : "low"}
       alt=""
       loading={slot === "hero" ? "eager" : "lazy"}
       decoding="async"
