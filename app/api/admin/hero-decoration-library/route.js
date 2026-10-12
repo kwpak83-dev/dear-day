@@ -19,7 +19,34 @@ async function admin(request){
 function validImage(bytes,mime){if(mime==="image/jpeg")return bytes.length>3&&bytes[0]===255&&bytes[1]===216&&bytes[2]===255;if(mime==="image/png")return bytes.length>8&&Buffer.from(bytes.subarray(0,8)).equals(Buffer.from([137,80,78,71,13,10,26,10]));return mime==="image/webp"&&bytes.length>12&&Buffer.from(bytes.subarray(0,4)).toString()==="RIFF"&&Buffer.from(bytes.subarray(8,12)).toString()==="WEBP";}
 function item(client,file){const id=file.name.split(".")[0];return {id,name:file.metadata?.originalName||file.name,storage_path:`${folder}/${file.name}`,url:client.storage.from(bucket).getPublicUrl(`${folder}/${file.name}`).data.publicUrl,created_at:file.created_at||null};}
 export async function GET(request){const a=await admin(request);if(a.error)return fail(a.error,a.status);const {data,error}=await a.client.storage.from(bucket).list(folder,{limit:1000,sortBy:{column:"created_at",order:"desc"}});if(error)return fail("장식 라이브러리를 불러오지 못했어요.",500);return Response.json({assets:(data||[]).filter(x=>/^[0-9a-f-]{36}\.(jpg|png|webp)$/i.test(x.name)).map(x=>item(a.client,x))},{headers:{"Cache-Control":"no-store"}});}
-export async function POST(request){const a=await admin(request);if(a.error)return fail(a.error,a.status);const form=await request.formData().catch(()=>null),file=form?.get("file");if(!(file instanceof File)||!extensions[file.type]||!file.size||file.size>maxBytes)return fail("15MB 이하의 JPG, PNG, WebP 이미지를 선택해 주세요.",400);const bytes=new Uint8Array(await file.arrayBuffer());if(!validImage(bytes,file.type))return fail("올바른 이미지 파일을 선택해 주세요.",400);const id=randomUUID(),name=`${id}.${extensions[file.type]}`,path=`${folder}/${name}`;const {error}=await a.client.storage.from(bucket).upload(path,bytes,{contentType:file.type,upsert:false,metadata:{originalName:file.name.slice(0,200)}});if(error)return fail("장식 라이브러리에 이미지를 저장하지 못했어요.",500);return Response.json({id,name:file.name.slice(0,200),url:a.client.storage.from(bucket).getPublicUrl(path).data.publicUrl},{status:201});}
+export async function POST(request){
+ const a=await admin(request);if(a.error)return fail(a.error,a.status);
+ const form=await request.formData().catch(()=>null),file=form?.get("file"),mobile=form?.get("mobile");
+ if(!(file instanceof File)||!extensions[file.type]||!file.size||file.size>maxBytes)return fail("15MB 이하의 JPG, PNG, WebP 이미지를 선택해 주세요.",400);
+ const bytes=new Uint8Array(await file.arrayBuffer());
+ if(!validImage(bytes,file.type))return fail("올바른 이미지 파일을 선택해 주세요.",400);
+ let mobileBytes=null;
+ if(mobile!=null){
+  if(!(mobile instanceof File)||mobile.type!=="image/webp"||!mobile.size||mobile.size>maxBytes)return fail("모바일 장식은 15MB 이하 WebP여야 합니다.",400);
+  mobileBytes=new Uint8Array(await mobile.arrayBuffer());
+  if(!validImage(mobileBytes,"image/webp"))return fail("모바일 장식 파일 형식이 올바르지 않습니다.",400);
+ }
+ const id=randomUUID(),name=`${id}.${extensions[file.type]}`,path=`${folder}/${name}`;
+ const storage=a.client.storage.from(bucket);
+ const {error}=await storage.upload(path,bytes,{contentType:file.type,upsert:false,metadata:{originalName:file.name.slice(0,200)}});
+ if(error)return fail("장식 라이브러리에 이미지를 저장하지 못했어요.",500);
+ let mobileUrl=null;
+ if(mobileBytes){
+  const mobilePath=`${folder}/${id}-mobile.webp`;
+  const {error:mobileError}=await storage.upload(mobilePath,mobileBytes,{contentType:"image/webp",upsert:false});
+  if(mobileError){
+   await storage.remove([path]);
+   return fail("모바일 경량본 저장에 실패하여 업로드를 취소했습니다.",500);
+  }
+  mobileUrl=storage.getPublicUrl(mobilePath).data.publicUrl;
+ }
+ return Response.json({id,name:file.name.slice(0,200),url:storage.getPublicUrl(path).data.publicUrl,mobileUrl},{status:201});
+}
 
 export async function DELETE(request){
  const a=await admin(request);if(a.error)return fail(a.error,a.status);
@@ -32,6 +59,6 @@ export async function DELETE(request){
  const {data:files,error:listError}=await a.client.storage.from(bucket).list(folder,{limit:1000});
  if(listError)return fail("장식 파일을 확인하지 못했어요.",500);
  const file=(files||[]).find(x=>x.name.startsWith(`${id}.`));if(!file)return fail("장식 파일을 찾지 못했어요.",404);
- const {error:removeError}=await a.client.storage.from(bucket).remove([`${folder}/${file.name}`]);if(removeError)return fail("장식 파일을 삭제하지 못했어요.",500);
+ const {error:removeError}=await a.client.storage.from(bucket).remove([`${folder}/${file.name}`,`${folder}/${id}-mobile.webp`]);if(removeError)return fail("장식 파일을 삭제하지 못했어요.",500);
  return Response.json({id});
 }
