@@ -176,7 +176,24 @@ export default function HeroPresetsPage(){
   }catch(error){setDecorCompare({error:error?.message||"압축 비교 실패"});}
   finally{setDecorCompareBusy(false);}
  };
- const uploadDecorationToLibrary=async(file)=>{if(!file||assetBusy)return;setAssetBusy("decor_library");setNotice("");setAssetUploadReports(current=>({...current,decor_library:""}));try{const optimization=await optimizeHeroImageWithReport(file,{quality:0.78});const optimizedFile=optimization.file;const data=new FormData();data.append("file",optimizedFile);const response=await fetch("/api/admin/hero-decoration-library",{method:"POST",headers:await auth(),body:data});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||"장식을 라이브러리에 저장하지 못했어요.");await loadDecorationLibrary();const report=optimization.report;const uploadMessage=`장식 라이브러리 저장 완료 · ${report.reason} (${report.originalKB}KB → ${report.resultKB}KB${report.originalWidth?`, 원본 ${report.originalWidth}×${report.originalHeight} / 출력 ${report.outputWidth}×${report.outputHeight}`:""})`;setNotice(uploadMessage);setAssetUploadReports(current=>({...current,decor_library:uploadMessage}));}catch(e){setNotice(e.message);}finally{setAssetBusy("");}};
+ const createMobileDecoration=async(file)=>{
+  if(!file||!["image/png","image/webp","image/jpeg"].includes(file.type))return null;
+  const url=URL.createObjectURL(file);
+  try{
+   const image=new Image();image.src=url;await image.decode();
+   const scale=Math.min(1,800/Math.max(image.naturalWidth,image.naturalHeight));
+   const canvas=document.createElement("canvas");
+   canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));
+   canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
+   const ctx=canvas.getContext("2d",{alpha:true});
+   if(!ctx)return null;
+   ctx.drawImage(image,0,0,canvas.width,canvas.height);
+   const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",0.78));
+   if(!blob||blob.type!=="image/webp"||blob.size>=file.size*0.9)return null;
+   return new File([blob],file.name.replace(/\.[^.]+$/,"")+"-mobile.webp",{type:"image/webp"});
+  }catch{return null;}finally{URL.revokeObjectURL(url);}
+ };
+ const uploadDecorationToLibrary=async(file)=>{if(!file||assetBusy)return;setAssetBusy("decor_library");setNotice("");setAssetUploadReports(current=>({...current,decor_library:""}));try{const optimization=await optimizeHeroImageWithReport(file,{quality:0.78});const optimizedFile=optimization.file;const mobileFile=await createMobileDecoration(optimizedFile);const data=new FormData();data.append("file",optimizedFile);if(mobileFile)data.append("mobile",mobileFile);const response=await fetch("/api/admin/hero-decoration-library",{method:"POST",headers:await auth(),body:data});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||"장식을 라이브러리에 저장하지 못했어요.");await loadDecorationLibrary();const report=optimization.report;const uploadMessage=`장식 라이브러리 저장 완료 · ${report.reason} (${report.originalKB}KB → ${report.resultKB}KB${report.originalWidth?`, 원본 ${report.originalWidth}×${report.originalHeight} / 출력 ${report.outputWidth}×${report.outputHeight}`:""})${result.mobileUrl&&mobileFile?` · 모바일 경량본 ${Math.round(mobileFile.size/1024)}KB 함께 저장`:" · 모바일 경량본 미생성"}`;setNotice(uploadMessage);setAssetUploadReports(current=>({...current,decor_library:uploadMessage}));}catch(e){setNotice(e.message);}finally{setAssetBusy("");}};
  const deleteDecorationFromLibrary=async(asset)=>{if(!asset?.id||assetBusy)return;if(!window.confirm("이 장식을 라이브러리에서 완전히 삭제할까요?\n사용 중인 Hero가 있으면 삭제되지 않습니다."))return;setAssetBusy(`decor_delete_${asset.id}`);setNotice("");try{const response=await fetch(`/api/admin/hero-decoration-library?id=${encodeURIComponent(asset.id)}`,{method:"DELETE",headers:await auth()});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||"장식을 삭제하지 못했어요.");await loadDecorationLibrary();setNotice("장식 라이브러리에서 삭제했습니다.");}catch(e){setNotice(e.message);}finally{setAssetBusy("");}};
  const updateDecorLayer=(id,key,value)=>setForm(current=>({...current,config:{...current.config,decorLayers:(current.config.decorLayers||[]).map(layer=>layer.id===id?{...layer,[key]:value}:layer)}}));
  const nudgeDecorLayer=(id,event)=>{if(!["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"].includes(event.key))return;event.preventDefault();const amount=event.shiftKey?5:1;setForm(current=>({...current,config:{...current.config,decorLayers:(current.config.decorLayers||[]).map(layer=>{if(layer.id!==id)return layer;const x=Number(layer.x??50);const y=Number(layer.y??50);if(event.key==="ArrowLeft")return {...layer,x:Math.max(0,x-amount)};if(event.key==="ArrowRight")return {...layer,x:Math.min(100,x+amount)};if(event.key==="ArrowUp")return {...layer,y:Math.max(0,y-amount)};return {...layer,y:Math.min(100,y+amount)};})}}));};
