@@ -56,6 +56,14 @@ export default async function InvitationPage({ params, searchParams }) {
   const { data: eventTypeConfig, error: eventTypeConfigError } = eventTypeResult;
   const { data: galleryRows, error: galleryError } = galleryResult;
   if (eventTypeConfigError) console.error("Event type config query failed:", eventTypeConfigError.code);
+  // Start independent HERO lookups now; consume their results after template styling
+  // so the existing template/HERO merge order stays unchanged.
+  const heroPresetPromise = event.hero_preset_id
+    ? supabase.from("hero_presets").select("id,config").eq("id", event.hero_preset_id).maybeSingle()
+    : null;
+  const heroAssetsPromise = event.hero_preset_id
+    ? supabase.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path").eq("hero_preset_id", event.hero_preset_id).in("asset_type", ["hero_frame", "hero_background"]).eq("is_active", true)
+    : null;
   let templateConfig = null;
   let templateAssets = {};
   let userBgmUrl = null;
@@ -111,10 +119,10 @@ export default async function InvitationPage({ params, searchParams }) {
     }
   }
   if (event.hero_preset_id) {
-    const { data: heroPreset, error: heroError } = await supabase.from("hero_presets").select("id,config").eq("id", event.hero_preset_id).maybeSingle();
+    const { data: heroPreset, error: heroError } = await heroPresetPromise;
     if (heroError) console.error("Hero preset query failed:", heroError.code);
     if (heroPreset) {
-      const { data: heroAssets, error: heroAssetError } = await supabase.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path").eq("hero_preset_id", heroPreset.id).in("asset_type", ["hero_frame", "hero_background"]).eq("is_active", true);
+      const { data: heroAssets, error: heroAssetError } = await heroAssetsPromise;
       if (heroAssetError) console.error("Hero asset query failed:", heroAssetError.code);
       const frame = heroAssets?.find((asset) => asset.asset_type === "hero_frame") || null;
       const heroBackground = heroAssets?.find((asset) => asset.asset_type === "hero_background") || null;
