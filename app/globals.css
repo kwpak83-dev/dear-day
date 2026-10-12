@@ -3269,9 +3269,3 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* RSVP edit load error: retry without showing an empty editable form. */
 .rsvp-edit-page .rsvp-retry-button{display:flex;align-items:center;justify-content:center;width:100%;min-height:44px;margin:18px 0 4px;padding:11px 12px;border:1px solid #1e3a8a;border-radius:9px;background:#1e3a8a;color:#fff;font:700 13px/1.4 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;cursor:pointer}
 .rsvp-edit-page .rsvp-retry-button:hover{background:#23469b}
-
-/* No-intro HERO: reveal the main photo and visible decorations together.
-   The readiness controller releases this within 2.4s even on slow/broken images. */
-.dd-hero-images-pending :is(figure img, .dd-template-hero-frame, .dd-template-hero-decor-layers img, .dd-template-decoration-layer-hero img) {
-  opacity: 0 !important;
-}
