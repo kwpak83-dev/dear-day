@@ -15,6 +15,7 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
   useEffect(() => {
     if (!autoOpen || !notice.enabled || !notice.title || !notice.body) return;
     const releaseHeroIntro = () => document.querySelector(".shared-public-invitation")?.classList.remove("dd-hero-intro-waits-for-notice");
+    if (document.querySelector(".shared-public-invitation")?.dataset.noticeClosedEarly === "true") { setOpen(false); return; }
     try {
       const hiddenDate = window.localStorage.getItem(storageKey);
       const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
@@ -70,7 +71,7 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
   return <>
     <span ref={previewMarkerRef} data-dd-notice-preview={preview ? slug : undefined} style={{display:"none"}} />
     {preview ? (previewPortal ? createPortal(trigger, previewPortal) : null) : trigger}
-    {!preview && autoOpen && <script dangerouslySetInnerHTML={{ __html: `(function(){try{var key=${JSON.stringify(storageKey).replace(/</g, "\\u003c")};var today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Seoul",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());if(localStorage.getItem(key)===today){document.querySelector(".shared-public-invitation")?.classList.add("dd-notice-skip-initial");document.querySelector(".shared-public-invitation")?.classList.remove("dd-hero-intro-waits-for-notice");}}catch(e){}})();` }} />}
+    {!preview && autoOpen && <script dangerouslySetInnerHTML={{ __html: `(function(){try{var key=${JSON.stringify(storageKey).replace(/</g, "\\u003c")};var today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Seoul",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());if(localStorage.getItem(key)===today){document.querySelector(".shared-public-invitation")?.classList.add("dd-notice-skip-initial");document.querySelector(".shared-public-invitation")?.classList.remove("dd-hero-intro-waits-for-notice");}document.addEventListener("click",function(e){var root=document.querySelector(".shared-public-invitation");if(!root||root.dataset.noticeClosedEarly==="true")return;var overlay=root.querySelector(".dd-notice-overlay");if(!overlay||!overlay.contains(e.target))return;var button=e.target.closest("button");if(!(button&&(button.getAttribute("aria-label")==="공지사항 닫기"||button.textContent.trim()==="닫기"))&&e.target!==overlay)return;if(root.classList.contains("dd-notice-skip-initial"))return;var checkbox=overlay.querySelector("input[type=checkbox]");if(checkbox&&checkbox.checked){try{localStorage.setItem(key,today)}catch(err){}}root.dataset.noticeClosedEarly="true";root.classList.add("dd-notice-closed-early");root.classList.remove("dd-hero-intro-waits-for-notice");},true);}catch(e){}})();` }} />}
     {open && <div className="dd-notice-overlay" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) close(); }}>
       <section className="dd-notice-dialog" role="dialog" aria-modal="true" aria-labelledby="dd-notice-title">
         <div className="dd-notice-top"><span>NOTICE</span><button type="button" aria-label="공지사항 닫기" onClick={close}>×</button></div>
