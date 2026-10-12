@@ -1,7 +1,6 @@
 import { backgroundPatternStyle } from "../../lib/background-patterns";
 import FittedHeroText from "./fitted-hero-text";
 import { getHeroFont } from "../../lib/hero-fonts";
-import { invitationFontStylesheets } from "../../lib/invitation-local-fonts";
 import { TEMPLATE_FONT_STACKS } from "../../lib/template-config";
 
 function rgba(hex, opacity) {
@@ -316,7 +315,6 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
         transform:`translate(-50%, -50%) rotate(${layer.rotation??0}deg)`,opacity:layer.opacity??1,zIndex:layer.zIndex??10
       }}/>)}
     </div>}
-    {invitationFontStylesheets(config).map((href) => <link key={href} rel="stylesheet" href={href} />)}
     {Array.isArray(config?.hero?.textLayers) && config.hero.textLayers.some((layer) => (layer.source && layer.source !== "custom") || layer.text?.trim()) && <>
       <div className="dd-template-hero-text-layers">
         {config.hero.textLayers.filter((layer) => layer.visible !== false && ((layer.source && layer.source !== "custom") || layer.text?.trim())).map((layer) => {
