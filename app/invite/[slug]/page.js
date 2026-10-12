@@ -44,31 +44,32 @@ export default async function InvitationPage({ params, searchParams }) {
     eventKind: event.kind || settings.eventKind || "wedding",
     templateId: event.template_id || settings.templateId || "",
   };
-  // These independent queries can run together while template/HERO resolution continues.
-  const [eventTypeResult, galleryResult] = await Promise.all([
+  // Promise.all consumes the query builders, starting these independent requests together.
+  const [eventTypeResult, galleryResult, heroPresetResult, heroAssetsResult, bgmTrackResult] = await Promise.all([
     supabase.from("event_type_configs")
       .select("kind,label,fields")
       .eq("kind", invitation.eventKind)
       .maybeSingle(),
     supabase.from("event_media")
       .select("id,storage_path").eq("event_id", event.id).eq("gallery_state", "ready").order("sort_order").order("id").limit(20),
+    event.hero_preset_id
+      ? supabase.from("hero_presets").select("id,config").eq("id", event.hero_preset_id).maybeSingle()
+      : null,
+    event.hero_preset_id
+      ? supabase.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path").eq("hero_preset_id", event.hero_preset_id).in("asset_type", ["hero_frame", "hero_background"]).eq("is_active", true)
+      : null,
+    settings.bgmMode === "user" && settings.userBgmTrackId
+      ? supabase.from("bgm_tracks").select("storage_bucket,storage_path,is_active").eq("id", settings.userBgmTrackId).eq("is_active", true).maybeSingle()
+      : null,
   ]);
   const { data: eventTypeConfig, error: eventTypeConfigError } = eventTypeResult;
   const { data: galleryRows, error: galleryError } = galleryResult;
   if (eventTypeConfigError) console.error("Event type config query failed:", eventTypeConfigError.code);
-  // Start independent HERO lookups now; consume their results after template styling
-  // so the existing template/HERO merge order stays unchanged.
-  const heroPresetPromise = event.hero_preset_id
-    ? supabase.from("hero_presets").select("id,config").eq("id", event.hero_preset_id).maybeSingle()
-    : null;
-  const heroAssetsPromise = event.hero_preset_id
-    ? supabase.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path").eq("hero_preset_id", event.hero_preset_id).in("asset_type", ["hero_frame", "hero_background"]).eq("is_active", true)
-    : null;
   let templateConfig = null;
   let templateAssets = {};
   let userBgmUrl = null;
   if (settings.bgmMode === "user" && settings.userBgmTrackId) {
-    const { data: track } = await supabase.from("bgm_tracks").select("storage_bucket,storage_path,is_active").eq("id", settings.userBgmTrackId).eq("is_active", true).maybeSingle();
+    const { data: track } = bgmTrackResult;
     if (track?.storage_bucket && track?.storage_path) userBgmUrl = supabase.storage.from(track.storage_bucket).getPublicUrl(track.storage_path).data.publicUrl;
   } else if (settings.bgmMode === "upload" && settings.userBgmUploadPath) {
     userBgmUrl = supabase.storage.from("invitation-bgm").getPublicUrl(settings.userBgmUploadPath).data.publicUrl;
@@ -119,10 +120,10 @@ export default async function InvitationPage({ params, searchParams }) {
     }
   }
   if (event.hero_preset_id) {
-    const { data: heroPreset, error: heroError } = await heroPresetPromise;
+    const { data: heroPreset, error: heroError } = heroPresetResult;
     if (heroError) console.error("Hero preset query failed:", heroError.code);
     if (heroPreset) {
-      const { data: heroAssets, error: heroAssetError } = await heroAssetsPromise;
+      const { data: heroAssets, error: heroAssetError } = heroAssetsResult;
       if (heroAssetError) console.error("Hero asset query failed:", heroAssetError.code);
       const frame = heroAssets?.find((asset) => asset.asset_type === "hero_frame") || null;
       const heroBackground = heroAssets?.find((asset) => asset.asset_type === "hero_background") || null;
