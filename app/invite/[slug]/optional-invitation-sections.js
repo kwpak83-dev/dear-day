@@ -1,8 +1,6 @@
 "use client";
 
-import RsvpForm from "./rsvp-form";
-import Guestbook from "./guestbook";
-import InvitationQuickMenu from "./invitation-quick-menu";
+import InvitationQuickMenu, { LazyInvitationForm } from "./invitation-quick-menu";
 
 export default function OptionalInvitationSections({ invitation, eventTypeConfig, slug = "", startsAt, preview = false, previewMode = "" }) {
   const fields = eventTypeConfig?.fields || {};
@@ -17,7 +15,7 @@ export default function OptionalInvitationSections({ invitation, eventTypeConfig
   const guestbookLabel = String(fields.guestbook?.label || "방명록").trim() || "방명록";
   if (!preview) return <InvitationQuickMenu invitation={effectiveInvitation} slug={slug} startsAt={startsAt} previewMode={previewMode} rsvpLabel={rsvpLabel} guestbookLabel={guestbookLabel} />;
   return <>
-    {effectiveInvitation.rsvpEnabled === true && <RsvpForm slug={slug} startsAt={startsAt} preview title={rsvpLabel} />}
-    {effectiveInvitation.guestbookEnabled !== false && <Guestbook slug={slug} preview title={guestbookLabel} />}
+    {effectiveInvitation.rsvpEnabled === true && <LazyInvitationForm kind="rsvp" slug={slug} startsAt={startsAt} preview title={rsvpLabel} />}
+    {effectiveInvitation.guestbookEnabled !== false && <LazyInvitationForm kind="guestbook" slug={slug} preview title={guestbookLabel} />}
   </>;
 }
