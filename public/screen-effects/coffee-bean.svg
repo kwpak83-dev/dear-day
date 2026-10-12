@@ -1,14 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" aria-hidden="true">
   <defs>
-    <linearGradient id="bean" x1="10" y1="10" x2="54" y2="55" gradientUnits="userSpaceOnUse">
+    <linearGradient id="bean" x1="12" y1="7" x2="52" y2="57" gradientUnits="userSpaceOnUse">
       <stop stop-color="#865035"/>
       <stop offset=".48" stop-color="#633820"/>
       <stop offset="1" stop-color="#3D2117"/>
     </linearGradient>
   </defs>
-  <!-- Compact, rounded silhouette remains recognizable at small animation sizes. -->
-  <path d="M32 6C17.3 6 7 17.5 7 32s10.3 26 25 26 25-11.5 25-26S46.7 6 32 6Z" fill="url(#bean)"/>
-  <path d="M29.5 9C18.5 10.1 10 20 10 32c0 10.2 5.7 18.9 14.3 22.2-3.9-6.7-3.5-13.1 1.8-20.1 5.8-7.5 7.6-14.5 3.4-25.1Z" fill="#A06A45" opacity=".38"/>
-  <path d="M37.7 9.8c6.9 7.5 5.8 14.2-1.4 22.3-7.8 8.3-9.7 15.4-5.4 21.5" stroke="#29150F" stroke-width="6.5" stroke-linecap="round"/>
-  <path d="M39.8 10.4c5.4 7.4 3.5 13.9-3.2 21.7-7.5 7.8-9.2 14.7-5.3 20.3" stroke="#C18A61" stroke-width="1.8" stroke-linecap="round" opacity=".85"/>
+  <!-- Elongated, gently tilted roasted coffee bean, recognizable at animation sizes. -->
+  <g transform="rotate(22 32 32)">
+    <path d="M32 3C20 3 12.5 15.8 12.5 32S20 61 32 61 51.5 48.2 51.5 32 44 3 32 3Z" fill="url(#bean)"/>
+    <path d="M29 6C20 10 16 20.2 16 32c0 10.5 3.6 19.7 10 24-3.2-8.3-2.8-15.8 2-23.8C33 23.8 34 15.5 29 6Z" fill="#A06A45" opacity=".38"/>
+    <path d="M36 8C44 17 40 25 32 33S22 48 29 56" stroke="#29150F" stroke-width="6" stroke-linecap="round"/>
+    <path d="M38 9C44 18 39 26 34 34S25 48 31 55" stroke="#C18A61" stroke-width="1.7" stroke-linecap="round" opacity=".85"/>
+  </g>
 </svg>
