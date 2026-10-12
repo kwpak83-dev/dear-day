@@ -9,12 +9,15 @@ const statuses = new Set(["attending", "not_attending"]);
 const requestsByIp = new Map();
 
 function json(body, status = 200) { return NextResponse.json(body, { status }); }
-function isRateLimited(request) {
-  const key = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
+function isRateLimited(request, action = "write") {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
+  const key = `${action}:${ip}`;
   const now = Date.now();
   const recent = (requestsByIp.get(key) || []).filter((time) => now - time < 60_000);
-  recent.push(now); requestsByIp.set(key, recent);
-  return recent.length > 5;
+  recent.push(now);
+  requestsByIp.set(key, recent);
+  // Reading an existing RSVP should not exhaust the submission/update quota.
+  return recent.length > (action === "read" ? 30 : 5);
 }
 function getClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -76,7 +79,7 @@ export async function POST(request) {
 }
 
 export async function GET(request) {
-  if (isRateLimited(request)) return json({ error: "요청이 너무 많아요. 잠시 후 다시 시도해 주세요." }, 429);
+  if (isRateLimited(request, "read")) return json({ error: "요청이 너무 많아요. 잠시 후 다시 시도해 주세요." }, 429);
   const query = new URL(request.url).searchParams;
   const slug = query.get("slug")?.trim() || "";
   const token = query.get("token")?.trim() || "";
