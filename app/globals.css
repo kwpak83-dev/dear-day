@@ -2536,6 +2536,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .invitation-template{position:relative}
 .classic-hero>.dd-hero-intro{position:absolute;inset:0;z-index:80;width:100%;height:100%;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:none;animation:dd-hero-intro-exit var(--dd-intro-fade) ease calc(var(--dd-intro-write) + var(--dd-intro-hold)) forwards}
 .dd-hero-intro-text-wrap{position:relative;display:inline-block;max-width:88%}.dd-hero-intro-text{display:block;width:max-content;max-width:none;white-space:nowrap;clip-path:inset(-1em calc(100% + 1em) -1em -1em);animation:dd-hero-intro-text-reveal var(--dd-intro-write) ease-out forwards}.dd-hero-intro-mask{position:absolute;inset:-.15em -.32em;background:var(--dd-intro-bg,#f8f4ef);transform-origin:right center;animation:dd-hero-intro-write var(--dd-intro-write) ease-out forwards;pointer-events:none}
+/* Keep the invitation (including its HERO intro) out of sight until the notice is dismissed or skipped. The content still renders and loads normally. */
+.shared-public-invitation.dd-hero-intro-waits-for-notice > .full-invitation-renderer{visibility:hidden}
 .shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-mask,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-text{animation-play-state:paused}
 @keyframes dd-hero-intro-text-reveal{from{clip-path:inset(-1em calc(100% + 1em) -1em -1em)}to{clip-path:inset(-1em -1em -1em -1em)}}
 @keyframes dd-hero-intro-write{from{transform:scaleX(1)}to{transform:scaleX(0)}}
