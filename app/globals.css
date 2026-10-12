@@ -3248,3 +3248,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .rsvp-edit-page .rsvp-edit-card .rsvp-status-options input:checked+span{border-color:#1e3a8a;background:#eaf2ff;color:#1e3a8a}
 .rsvp-edit-page .rsvp-edit-card form>button{background:#1e3a8a!important;border-color:#1e3a8a!important;color:#fff!important}
 .rsvp-edit-page .rsvp-edit-card .rsvp-success{background:#f2f7ff;border-color:#d7e5fa;color:#172b51}
+
+/* Standalone RSVP edit page close control. */
+.rsvp-edit-page .rsvp-edit-card{position:relative}
+.rsvp-edit-page .rsvp-edit-close{position:absolute;top:10px;right:10px;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:#172b51;font:400 27px/1 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;text-decoration:none;z-index:1}
+.rsvp-edit-page .rsvp-edit-close:hover,.rsvp-edit-page .rsvp-edit-close:focus-visible{background:#eaf2ff}
+.rsvp-edit-page .rsvp-edit-close:focus-visible{outline:2px solid #1e3a8a;outline-offset:2px}
