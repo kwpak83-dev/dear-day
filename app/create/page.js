@@ -546,7 +546,8 @@ export default function CreateInvitation() {
       if (!supabase) throw new Error("사진 저장 서비스를 준비하지 못했어요.");
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("로그인 후 사진을 첨부할 수 있어요.");
-      const photo = await preparePhoto(file);
+      // The public HERO is above the fold; optimize only its photo more aggressively.
+      const photo = await preparePhoto(file, { maxSide: 1400, quality: 0.78 });
       setPhotoNotice("사진을 업로드하고 있어요.");
       const response = await fetch("/api/photos", { method: "POST", headers: { "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
       const result = await response.json().catch(() => ({}));
