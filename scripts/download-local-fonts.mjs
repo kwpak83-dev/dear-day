@@ -26,7 +26,7 @@ for (const family of families) {
   const slug = family.toLowerCase().replace(/[^a-z0-9]/g, "");
   const cssUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family).replace(/%20/g, "+")}&display=swap`;
   const css = await (await fetchRequired(cssUrl)).text();
-  const urls = [...new Set([...css.matchAll(/url\\((https:\/\/fonts\\.gstatic\\.com\/[^)]+)\\)/g)].map(m => m[1]))];
+  const urls = [...new Set([...css.matchAll(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+)\)/g)].map(m => m[1]))];
   if (!urls.length) throw new Error(`No font URLs: ${family}`);
   const folder = path.join(destination, slug);
   await fs.mkdir(folder, { recursive: true });
