@@ -12,11 +12,12 @@ import InvitationNotice from "../../invite/[slug]/invitation-notice";
 import { sampleContentToInvitation, completedTemplateCategoryToEventKind } from "../../../lib/completed-template-sample";
 import OptionalInvitationSections from "../../invite/[slug]/optional-invitation-sections";
 import Gallery from "../../invite/[slug]/gallery";
+import PublishedInvitationLoading from "../../invite/[slug]/loading";
 function Tail({invitation,eventTypeConfig}){const gallery=(invitation.galleryImages||[]).map((url,i)=>({id:`sales-preview-${i}`,url}));return <div className="public-invitation-sections"><Gallery photos={gallery} idPrefix="sales-template-gallery" title={eventTypeConfig?.fields?.gallery?.label||"우리의 순간들"} /><TransportGuide invitation={invitation} title={eventTypeConfig?.fields?.transport?.label||"교통·주차"} /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig}/><OptionalInvitationSections invitation={invitation} eventTypeConfig={eventTypeConfig} previewMode="sales-preview"/><DearDayBrandFooter/></div>}
 export default function TemplatePreviewPage({params}){
  const [state,setState]=useState({loading:true,error:"",data:null,eventTypeConfigs:[]});
  useEffect(()=>{let alive=true;(async()=>{try{const p=await params;const [r,typesR]=await Promise.all([fetch(`/api/templates/collection/${encodeURIComponent(p.key)}`),fetch("/api/event-types",{cache:"no-store"})]);const [j,typesJ]=await Promise.all([r.json(),typesR.json()]);if(!r.ok)throw new Error(j.error);if(alive)setState({loading:false,error:"",data:j,eventTypeConfigs:Array.isArray(typesJ.types)?typesJ.types:[]});}catch(e){if(alive)setState({loading:false,error:e.message,data:null,eventTypeConfigs:[]});}})();return()=>{alive=false;};},[params]);
- if(state.loading)return <main style={{padding:40,textAlign:"center"}}>미리보기를 준비하는 중이에요.</main>;
+ if(state.loading)return <PublishedInvitationLoading />;
  if(state.error)return <main style={{padding:40,textAlign:"center"}}>{state.error}</main>;
  const {item,templateConfig,templateAssets}=state.data,eventKind=completedTemplateCategoryToEventKind(item.category),eventTypeConfig=state.eventTypeConfigs.find(x=>x.kind===eventKind)||null;
  const invitation=sampleContentToInvitation(item.sample_content,item.category,{coverPhotoUrl:templateAssets?.heroPhotoUrl||item.sample_content?.hero_image_url||"",templateId:item.body_template_id,heroPresetId:item.hero_preset_id});
