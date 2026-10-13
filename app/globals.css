@@ -860,6 +860,9 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .invitation-bottom-sheet>header h2{margin:0;font:400 20px/1.4 Georgia,"Batang",serif}.invitation-bottom-sheet>header button{border:0;background:transparent;color:#80695f;padding:2px 5px;font-size:26px;line-height:1;cursor:pointer}
 .invitation-bottom-sheet-content{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:env(safe-area-inset-bottom)}
 .invitation-bottom-sheet-content>.public-rsvp,.invitation-bottom-sheet-content>.guestbook-section{margin:0;border:0;background:#fffaf7}
+/* Modal forms are not scroll-reveal sections: never hide their contents. */
+.invitation-bottom-sheet-content>.public-rsvp,.invitation-bottom-sheet-content>.guestbook-section{opacity:1!important;transform:none!important;visibility:visible!important}
+
 .invitation-bottom-sheet .guestbook-delete-backdrop{z-index:10}
 @keyframes dd-quick-menu-in{from{opacity:0;transform:translate(50%,18px)}to{opacity:1;transform:translate(50%,0)}}
 @keyframes dd-sheet-up{from{transform:translateY(100%)}to{transform:translateY(0)}}
