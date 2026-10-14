@@ -3470,3 +3470,14 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  .dd-collection-page .dd-collection-card-info>div span{text-align:left}
 }
 @media(max-width:360px){.dd-collection-page .dd-collection-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.dd-collection-page .dd-collection-card-info{padding:9px}.dd-collection-page .dd-collection-card-info>strong{font-size:12px}}
+
+/* A palette: invitation state and deletion confirmation modals. */
+.my-page .delete-invitation-modal{width:min(calc(100vw - 32px),390px);padding:29px 24px;border:1px solid #d7e5f6;border-radius:18px;background:#fff;box-shadow:0 24px 65px rgba(23,43,81,.22)}
+.my-page .delete-invitation-modal h2{color:#172b51;font-size:clamp(18px,4.4vw,21px);line-height:1.45;letter-spacing:-.035em;word-break:keep-all}
+.my-page .delete-invitation-modal p{margin:12px 0 23px;color:#637895;font-size:13px;line-height:1.65;word-break:keep-all}
+.my-page .delete-invitation-modal>div{gap:9px}
+.my-page .delete-invitation-modal button{min-height:43px;padding:10px 8px;border-radius:10px;background:#e7f0ff;color:#1e3a8a;font-size:13px;font-weight:700}
+.my-page .delete-invitation-modal button.danger{background:#e76f68;color:#fff}
+.my-page .delete-invitation-modal button.restore-action{background:#1e3a8a;color:#fff}
+.my-page .delete-invitation-modal button:disabled{opacity:.55;cursor:default}
+@media(max-width:360px){.my-page .delete-invitation-modal{padding:26px 18px}.my-page .delete-invitation-modal h2{font-size:18px}}
