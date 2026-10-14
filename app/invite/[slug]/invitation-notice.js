@@ -3,10 +3,10 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { normalizeNotice } from "../../../lib/invitation-notice";
 
-export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, preview = false, autoOpen = true }) {
+export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, preview = false, autoOpen = true, onClose }) {
   const notice = normalizeNotice(rawNotice);
   // Render the notice in the initial HTML; do not wait for client hydration.
-  const [open, setOpen] = useState(() => !preview && autoOpen && notice.enabled && Boolean(notice.title) && Boolean(notice.body));
+  const [open, setOpen] = useState(() => autoOpen && notice.enabled && Boolean(notice.title) && Boolean(notice.body));
   const [skipToday, setSkipToday] = useState(false);
   const [previewPortal, setPreviewPortal] = useState(null);
   const [previewTriggerStyle, setPreviewTriggerStyle] = useState(undefined);
@@ -64,6 +64,7 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
       } catch {}
     }
     setOpen(false);
+    onClose?.();
     document.getElementById("dd-notice-early-style")?.remove();
     setSkipToday(false);
     document.querySelector(".shared-public-invitation")?.classList.remove("dd-hero-intro-waits-for-notice");
