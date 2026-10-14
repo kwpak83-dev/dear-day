@@ -22,7 +22,7 @@ const placementFor = (assetId, saved) => {
   return base;
 };
 const heroDisplayDefaults = { eyebrow: true, eventLabel: true, title: true, relations: true, detail: true, note: true, schedule: true, venue: true };
-const backgroundDefaults = { mode: "custom", color: "#ffffff", assetId: null, overlayColor: "#000000", overlayOpacity: 0, centerPanel: { enabled: false, width: 85, color: "#fffcf7", opacity: 100 }, custom: { mode: "solid", endColor: "#f3e8df", angle: 135, pattern: "dots", patternColor: "#bca08d", patternSize: 20, patternOpacity: .25 } };
+const backgroundDefaults = { mode: "custom", color: "#ffffff", assetId: null, overlayColor: "#000000", overlayOpacity: 0, centerPanel: { enabled: false, width: 85, color: "#fffcf7", opacity: 100, paperEnabled: false, paperStrength: 30, paperSize: "normal" }, custom: { mode: "solid", paperStrength: 30, paperSize: "normal", endColor: "#f3e8df", angle: 135, pattern: "dots", patternColor: "#bca08d", patternSize: 20, patternOpacity: .25 } };
 const heroDefaults = { mode: "photo", aspectRatio: "4:5", positionX: 50, positionY: 50, textYPercent: 50, scheduleFontSize: 11, zoom: 1, backgroundAssetId: null, frameAssetId: null, overlayColor: "#000000", overlayOpacity: 0, headerVisible: true, mastheadVisible: true, mastheadText: "", display: heroDisplayDefaults };
 const typographyDefaults = {
   heroTitle: { fontFamily: "serif", fontSize: 32, fontWeight: 400, lineHeight: 1.3, letterSpacing: 0, textAlign: "center" },
@@ -346,13 +346,18 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
               <NumberControl label="Overlay 투명도" value={background.overlayOpacity} min={0} max={1} step={0.05} onChange={(overlayOpacity) => setBackground(current => ({ ...current, overlayOpacity }))} />
             </div> : <div style={{ display: "grid", gap: 12 }}>
               <label style={field}>직접 제작 유형<select style={input} value={background.custom.mode} onChange={event => setBackground(current => ({ ...current, custom: { ...current.custom, mode: event.target.value } }))}>
-                <option value="solid">단색</option><option value="gradient">그라데이션</option><option value="pattern">무늬</option>
+                <option value="solid">단색</option><option value="gradient">그라데이션</option><option value="pattern">무늬</option><option value="paper">수제 종이 질감</option>
               </select></label>
               <ColorControl label="기본 배경색" value={background.color} onChange={(color) => setBackground(current => ({ ...current, color }))} />
               {background.custom.mode === "gradient" && <>
                 <ColorControl label="종료 색상" value={background.custom.endColor} onChange={endColor => setBackground(current => ({ ...current, custom: { ...current.custom, endColor } }))} />
                 <NumberControl label="방향 (도)" value={background.custom.angle} min={0} max={360} onChange={angle => setBackground(current => ({ ...current, custom: { ...current.custom, angle } }))} />
               </>}
+              {background.custom.mode === "paper" && <fieldset style={{border:"1px solid #eadfd8",borderRadius:10,padding:12,display:"grid",gap:10}}><legend>수제 종이 질감</legend>
+                <NumberControl label="질감 강도 (%)" value={background.custom.paperStrength ?? 30} min={0} max={100} onChange={paperStrength => setBackground(current => ({...current,custom:{...current.custom,paperStrength}}))}/>
+                <label style={field}>질감 크기<select style={input} value={background.custom.paperSize || "normal"} onChange={event => setBackground(current => ({...current,custom:{...current.custom,paperSize:event.target.value}}))}><option value="fine">미세</option><option value="normal">보통</option><option value="coarse">굵게</option></select></label>
+                <p style={guideNote}>기본 배경색 위에 종이결만 더합니다. 중앙 본문 배경의 질감은 아래에서 별도로 설정할 수 있어요.</p>
+              </fieldset>}
               {background.custom.mode === "pattern" && <>
                 <label style={field}>무늬 종류<select style={input} value={background.custom.pattern} onChange={event => setBackground(current => ({ ...current, custom: { ...current.custom, pattern: event.target.value } }))}>
                   {BACKGROUND_PATTERN_GROUPS.map(([group, entries]) => <optgroup key={group} label={group}>{entries.map(([value,label]) => <option key={value} value={value}>{label}</option>)}</optgroup>)}
@@ -363,7 +368,15 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
               </>}
               <p style={guideNote}>이미지 Asset은 삭제되지 않으며, 직접 제작 모드에서는 이미지가 겹쳐 표시되지 않습니다.</p>
             </div>}
-            <fieldset style={{border:"1px solid #eadfd8",borderRadius:10,padding:12,display:"grid",gap:10}}><legend>중앙 본문 배경</legend><label><input type="checkbox" checked={background.centerPanel?.enabled===true} onChange={event=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,enabled:event.target.checked}}))}/> 중앙 본문 배경 사용</label>{background.centerPanel?.enabled&&<><label style={field}>중앙 본문 너비: {background.centerPanel.width}%<input type="range" min={65} max={100} step={1} value={background.centerPanel.width} onChange={event=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,width:Number(event.target.value)}}))}/></label><ColorControl label="중앙 본문 배경색" value={background.centerPanel.color} onChange={color=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,color}}))}/><label style={field}>불투명도: {background.centerPanel.opacity}%<input type="range" min={0} max={100} step={1} value={background.centerPanel.opacity} onChange={event=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,opacity:Number(event.target.value)}}))}/></label></>}<p style={guideNote}>기존 배경 위에 중앙 색상 레이어를 표시합니다. OFF면 기존 디자인을 유지합니다.</p></fieldset>
+            <fieldset style={{border:"1px solid #eadfd8",borderRadius:10,padding:12,display:"grid",gap:10}}><legend>중앙 본문 배경</legend><label><input type="checkbox" checked={background.centerPanel?.enabled===true} onChange={event=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,enabled:event.target.checked}}))}/> 중앙 본문 배경 사용</label>{background.centerPanel?.enabled&&<><label style={field}>중앙 본문 너비: {background.centerPanel.width}%<input type="range" min={65} max={100} step={1} value={background.centerPanel.width} onChange={event=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,width:Number(event.target.value)}}))}/></label><ColorControl label="중앙 본문 배경색" value={background.centerPanel.color} onChange={color=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,color}}))}/><label style={field}>불투명도: {background.centerPanel.opacity}%<input type="range" min={0} max={100} step={1} value={background.centerPanel.opacity} onChange={event=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,opacity:Number(event.target.value)}}))}/></label></>}{background.centerPanel?.enabled === true && <div style={{display:"grid",gap:10,padding:"10px 12px",border:"1px solid #eadfd8",borderRadius:10}}>
+              <strong>중앙 본문 종이 질감</strong>
+              <label><input type="checkbox" checked={background.centerPanel.paperEnabled === true} onChange={event => setBackground(current => ({...current,centerPanel:{...current.centerPanel,paperEnabled:event.target.checked}}))}/> 중앙 본문에 종이 질감 적용</label>
+              {background.centerPanel.paperEnabled === true && <>
+                <NumberControl label="질감 강도 (%)" value={background.centerPanel.paperStrength ?? 30} min={0} max={100} onChange={paperStrength => setBackground(current => ({...current,centerPanel:{...current.centerPanel,paperStrength}}))}/>
+                <label style={field}>질감 크기<select style={input} value={background.centerPanel.paperSize || "normal"} onChange={event => setBackground(current => ({...current,centerPanel:{...current.centerPanel,paperSize:event.target.value}}))}><option value="fine">미세</option><option value="normal">보통</option><option value="coarse">굵게</option></select></label>
+              </>}
+              <p style={guideNote}>중앙 본문 색상·너비·불투명도는 그대로 유지됩니다. 질감은 중앙 영역에만 추가돼요.</p>
+            </div>}<p style={guideNote}>기존 배경 위에 중앙 색상 레이어를 표시합니다. OFF면 기존 디자인을 유지합니다.</p></fieldset>
           </fieldset>
           <p style={guideNote}>Hero 디자인은 <a href="/admin/hero-presets">Hero 프레임 관리</a>에서 별도로 편집합니다. 기존 본문 테마의 Hero 설정 데이터는 유지됩니다.</p>
           <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Background 저장"}</button>
