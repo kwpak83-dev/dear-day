@@ -3335,7 +3335,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 }
 
 /* DearDay premium classic A: member pages and public template collection only. */
-.my-page.member-page,.dd-collection-page{--dd-premium-ink:#172b51;--dd-premium-blue:#1e3a8a;--dd-premium-muted:#637895;--dd-premium-line:#dfeafb;--dd-premium-paper:#f5f8fd;color:var(--dd-premium-ink);background:radial-gradient(ellipse at 90% 8%,rgba(205,224,252,.52),transparent 34%),linear-gradient(160deg,#f8fbff,#f2f7ff 68%,#f7faff)}
+.my-page.member-page,.dd-collection-page{--dd-premium-ink:#172b51;--dd-premium-blue:#1e3a8a;--dd-premium-muted:#637895;--dd-premium-line:#dfeafb;--dd-premium-paper:#f5f8fd;color:var(--dd-premium-ink);background:linear-gradient(to bottom,#e7f0ff 0,#e7f0ff 175px,#f0f5fc 355px,#f0f5fc 100%)}
 .my-page .my-content,.my-page .guest-management-content{position:relative;padding-top:48px}
 .my-page .my-content:before,.my-page .guest-management-content:before,.dd-collection-heading:before{content:"";position:absolute;right:2px;top:32px;width:108px;height:125px;pointer-events:none;opacity:.5;background:radial-gradient(ellipse at 65% 24%,#d9e8fc 0 8%,transparent 9%),radial-gradient(ellipse at 42% 45%,#c9dffa 0 10%,transparent 11%),radial-gradient(ellipse at 78% 67%,#d9e8fc 0 9%,transparent 10%);transform:rotate(-20deg)}
 .my-page :is(.my-content,.guest-management-content)>.section-kicker,.dd-collection-heading .section-kicker{color:#315be8;font-size:10px;font-weight:800;letter-spacing:.2em}
@@ -3376,3 +3376,17 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 @media(max-width:600px){.my-page .my-content,.my-page .guest-management-content{padding-top:35px}.my-page .my-content:before,.my-page .guest-management-content:before,.dd-collection-heading:before{width:75px;height:95px}.my-page .invitation-card{padding:17px}.my-page .guest-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.dd-collection-page{padding:16px 14px 56px}.dd-collection-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.dd-collection-card-info{padding:12px}.dd-collection-card-info>strong{font-size:14px}.dd-collection-card-info>div{flex-wrap:wrap;gap:6px}.dd-collection-card-info>div span{font-size:11px}}
 @media(max-width:360px){.dd-collection-grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.dd-collection-card{transition:none}}
+
+/* A2: clear yet soft separation between blue heading, canvas, and white cards. */
+.my-page.member-page .member-page-layout{background:transparent}
+.my-page.member-page .member-page-content{background:transparent}
+.my-page.member-page .member-navigation{background:transparent}
+.my-page.member-page .invitation-card,
+.my-page.member-page .guest-summary article,
+.my-page.member-page .guest-rsvp-list>article,
+.my-page.member-page .guestbook-management-list article,
+.dd-collection-page .dd-collection-card{
+  border-color:#d7e5f6;
+  box-shadow:0 9px 24px rgba(23,43,81,.09),0 1px 3px rgba(23,43,81,.035);
+}
+.dd-collection-page .dd-collection-heading{isolation:isolate}
