@@ -3426,3 +3426,15 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   .dd-collection-card-info>div{align-items:flex-start;flex-direction:column;gap:5px}
   .dd-collection-card-info>div span{text-align:left}
 }
+
+/* DearDay premium classic A4: empty states only; existing loading animation untouched. */
+.dd-empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;margin:24px 0;padding:38px 20px;background:#fff;border:1px solid #d7e5f6;border-radius:18px;box-shadow:0 9px 28px rgba(23,43,81,.055)}
+.dd-empty-icon{display:grid;place-items:center;width:60px;height:60px;border-radius:50%;background:#e7f0ff;color:#1e3a8a;font-size:29px;line-height:1}
+.dd-empty-state h2,.dd-empty-state h3{margin:4px 0 0;color:#172b51;font-size:18px;font-weight:700;line-height:1.5}
+.dd-empty-state p{margin:0;color:#637895;font-size:13px;line-height:1.7}
+.dd-empty-cta{display:inline-flex;align-items:center;justify-content:center;margin-top:9px;min-height:42px;padding:10px 19px;background:#1e3a8a;border:0;border-radius:10px;color:#fff!important;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer}
+.dd-empty-cta:hover{background:#172b51}
+.dd-empty-state-small{margin:15px 0;padding:27px 16px;box-shadow:none}
+.dd-empty-state-small .dd-empty-icon{width:46px;height:46px;font-size:23px}
+.dd-empty-state-small h3{font-size:15px}
+@media(max-width:600px){.dd-empty-state{padding:30px 16px}.dd-empty-state-small{padding:24px 12px}}
