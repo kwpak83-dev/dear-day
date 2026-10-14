@@ -3274,3 +3274,39 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* RSVP edit load error: retry without showing an empty editable form. */
 .rsvp-edit-page .rsvp-retry-button{display:flex;align-items:center;justify-content:center;width:100%;min-height:44px;margin:18px 0 4px;padding:11px 12px;border:1px solid #1e3a8a;border-radius:9px;background:#1e3a8a;color:#fff;font:700 13px/1.4 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;cursor:pointer}
 .rsvp-edit-page .rsvp-retry-button:hover{background:#23469b}
+
+/* Quick-menu guestbook: match the existing RSVP bottom-sheet blue palette. */
+.invitation-bottom-sheet-layer .invitation-bottom-sheet:has(> .invitation-bottom-sheet-content > .guestbook-section){
+  background:#f8fbff;color:#172b51;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet:has(> .invitation-bottom-sheet-content > .guestbook-section)>header{
+  border-bottom-color:#d7e5fa;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet:has(> .invitation-bottom-sheet-content > .guestbook-section)>header h2,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet:has(> .invitation-bottom-sheet-content > .guestbook-section)>header button,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section>h2,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .guestbook-form label>span{
+  color:#172b51;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section{
+  background:#f8fbff;color:#172b51;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .guestbook-section .section-kicker,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .guestbook-section :is(.guestbook-notice,.guestbook-list time){
+  color:#637895;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .guestbook-form :is(input,textarea){
+  border-color:#d7e5fa;background:#fff;color:#172b51;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .guestbook-form :is(input,textarea):focus{
+  border-color:#1e3a8a;outline-color:#1e3a8a;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .guestbook-list article{
+  border-color:#d7e5fa;background:#fff;color:#172b51;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .guestbook-list :is(header strong,article>p,article>button){
+  color:#172b51;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content .guestbook-form>button:not(:disabled){
+  background:#1e3a8a!important;border-color:#1e3a8a!important;color:#fff!important;
+}
