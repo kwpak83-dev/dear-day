@@ -109,7 +109,7 @@ export default function MyInvitations() {
       <p className="section-kicker">MY INVITATIONS</p><h1>내 초대장</h1>
       <p className="my-intro">임시저장한 초대장을 이어서 편집하거나,<br />발행한 초대장을 확인하세요.</p>
       {actionNotice && <p className="my-action-notice" role="status" aria-live="polite">{actionNotice}</p>}
-      {notice && <div className="my-notice"><p>{notice}</p>{loginRequired && <a className="my-login-button" href="/?login=required&returnUrl=%2Fmy-invitations">다시 로그인하기</a>}</div>}
+      {notice && (notice === "저장한 초대장이 아직 없어요." && !loginRequired ? <div className="dd-empty-state"><span className="dd-empty-icon" aria-hidden="true">✉</span><h2>아직 등록된 초대장이 없어요</h2><p>특별한 날을 위한 첫 초대장을 만들어 보세요.</p><a href="/create" className="dd-empty-cta">새 초대장 만들기</a></div> : <div className="my-notice"><p>{notice}</p>{loginRequired && <a className="my-login-button" href="/?login=required&returnUrl=%2Fmy-invitations">다시 로그인하기</a>}</div>)}
       <div className="invitation-list">{events.map((event) => <article className="invitation-card" key={event.slug}>
         <span className={`status ${event.status}`}>{STATUS_LABELS[event.status] || event.status}</span>
         <h2>{getInvitationTitle(event.settings, event.kind)}</h2>
