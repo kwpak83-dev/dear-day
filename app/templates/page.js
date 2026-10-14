@@ -10,7 +10,7 @@ export default function TemplateCollectionPage(){
   <a href="/" className="landing-brand" style={{display:"inline-flex",textDecoration:"none"}}><DearDayLogo /></a>
   <div className="dd-collection-heading"><p className="section-kicker">TEMPLATE COLLECTION</p><h1>템플릿 컬렉션</h1><p style={{color:"#6f6a67"}}>표지와 본문 분위기를 함께 보고 마음에 드는 디자인을 골라보세요.</p></div>
   <div className="dd-collection-categories">{categories.map(([v,n])=><button key={v} type="button" onClick={()=>setCategory(v)} className={category===v?"active":""}>{n}</button>)}</div>
-  {loading?<p>템플릿을 불러오는 중이에요.</p>:items.length===0?<p>현재 공개된 템플릿이 없어요.</p>:<div className="dd-collection-grid">{items.map(x=><article className="dd-collection-card" key={x.id}>
+  {loading?<p>템플릿을 불러오는 중이에요.</p>:items.length===0?<div className="dd-empty-state"><span className="dd-empty-icon" aria-hidden="true">✉</span><h2>현재 공개된 템플릿이 없어요</h2><p>다른 카테고리에서 마음에 드는 디자인을 찾아보세요.</p><button type="button" className="dd-empty-cta" onClick={()=>setCategory("")}>전체 템플릿 보기</button></div>:<div className="dd-collection-grid">{items.map(x=><article className="dd-collection-card" key={x.id}>
    <a href={`/templates/${encodeURIComponent(x.template_key)}`} style={{display:"block",color:"inherit",textDecoration:"none"}}>
     <div className="dd-collection-thumbnails">
      {[x.thumbnail_1_url,x.thumbnail_2_url].map((src,i)=>src?<img key={i} src={src} alt={`${x.name} 대표 이미지 ${i+1}`} style={{width:"100%",height:"100%",objectFit:"cover",minWidth:0}}/>:<div key={i} style={{display:"grid",placeItems:"center",background:"#f7f4f2",color:"#aaa",fontSize:12}}>IMAGE {i+1}</div>)}
