@@ -3438,3 +3438,35 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-empty-state-small .dd-empty-icon{width:46px;height:46px;font-size:23px}
 .dd-empty-state-small h3{font-size:15px}
 @media(max-width:600px){.dd-empty-state{padding:30px 16px}.dd-empty-state-small{padding:24px 12px}}
+
+/* A reference alignment: guest management + template collection only.
+   My invitations and the existing cat loading UI are intentionally untouched. */
+.my-page.member-page .guest-management-content .guest-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.my-page.member-page .guest-management-content .guest-summary article{position:relative;min-height:90px;padding:15px 16px 13px 52px;border-radius:13px;box-shadow:0 4px 12px rgba(23,43,81,.035)}
+.my-page.member-page .guest-management-content .guest-summary article::before{position:absolute;top:15px;left:14px;display:grid;place-items:center;width:29px;height:29px;border-radius:9px;background:#e7f0ff;color:#1e3a8a;font-size:15px;content:"◉"}
+.my-page.member-page .guest-management-content .guest-summary article:nth-child(2)::before{content:"✓";background:#e9f7ed;color:#388351}
+.my-page.member-page .guest-management-content .guest-summary article:nth-child(3)::before{content:"×";background:#fff0ef;color:#bc6d68}
+.my-page.member-page .guest-management-content .guest-summary article:nth-child(4)::before{content:"♧";background:#eaf1ff;color:#4b77c1}
+.my-page.member-page .guest-management-content .guest-summary strong{margin-top:5px;font-size:clamp(19px,3.2vw,25px);line-height:1.2}
+.my-page.member-page .guest-management-content .guest-summary span{font-size:11px;line-height:1.35}
+.my-page.member-page .guest-management-content .guest-rsvp-list>article{padding:17px;border-radius:14px}
+.my-page.member-page .guest-management-content .guest-rsvp-list article>header{padding-bottom:10px;border-bottom:1px solid #edf2fa}
+.my-page.member-page .guest-management-content .guest-rsvp-list dl{margin-top:12px}
+.dd-collection-page .dd-collection-categories{gap:7px;margin-bottom:19px}
+.dd-collection-page .dd-collection-categories button{padding:8px 13px;font-size:12px}
+.dd-collection-page .dd-collection-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.dd-collection-page .dd-collection-thumbnails{aspect-ratio:1/1.1;gap:3px}
+.dd-collection-page .dd-collection-card{border-radius:15px}
+.dd-collection-page .dd-collection-card-info>div{align-items:center;flex-direction:row;flex-wrap:wrap;justify-content:space-between;gap:6px}
+.dd-collection-page .dd-collection-card-info>div span{text-align:right}
+@media(max-width:600px){
+ .my-page.member-page .guest-management-content .guest-summary article{min-height:88px;padding:13px 10px 12px 43px}
+ .my-page.member-page .guest-management-content .guest-summary article::before{top:13px;left:10px;width:25px;height:25px;font-size:13px}
+ .my-page.member-page .guest-management-content .guest-summary strong{font-size:21px}
+ .dd-collection-page .dd-collection-grid{gap:10px}
+ .dd-collection-page .dd-collection-thumbnails{aspect-ratio:1/1.2}
+ .dd-collection-page .dd-collection-card-info{padding:11px}
+ .dd-collection-page .dd-collection-card-info>div{align-items:flex-start;flex-direction:column}
+ .dd-collection-page .dd-collection-card-info>div span{text-align:left}
+}
+@media(max-width:360px){.dd-collection-page .dd-collection-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.dd-collection-page .dd-collection-card-info{padding:9px}.dd-collection-page .dd-collection-card-info>strong{font-size:12px}}
