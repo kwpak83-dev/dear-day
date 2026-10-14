@@ -123,7 +123,7 @@ export default function MyInvitations() {
         <h2 id="publication-state-title">{publicationTarget.status === "published" ? "이 초대장의 발행을 중지할까요?" : "이 초대장을 다시 발행할까요?"}</h2>
         <p>{publicationTarget.status === "published" ? <>발행을 중지하면 하객이 초대장을 볼 수 없습니다.<br />초대장 내용과 RSVP, 방명록 등의 데이터는 삭제되지 않으며 나중에 다시 발행할 수 있습니다.</> : <>기존 초대장 주소가 다시 활성화됩니다.<br />초대장 내용과 RSVP, 방명록은 그대로 유지됩니다.</>}</p>
         {publicationError && <p className="delete-invitation-error" role="alert">{publicationError}</p>}
-        <div><button type="button" onClick={() => setPublicationTarget(null)} disabled={Boolean(changingSlug)}>취소</button><button type="button" className="danger" onClick={changePublication} disabled={Boolean(changingSlug)}>{changingSlug ? "처리 중..." : publicationTarget.status === "published" ? "발행 중지" : "다시 발행하기"}</button></div>
+        <div><button type="button" onClick={() => setPublicationTarget(null)} disabled={Boolean(changingSlug)}>취소</button><button type="button" className={publicationTarget.status === "published" ? "danger" : "restore-action"} onClick={changePublication} disabled={Boolean(changingSlug)}>{changingSlug ? "처리 중..." : publicationTarget.status === "published" ? "발행 중지" : "다시 발행하기"}</button></div>
       </div>
     </div>}
     {deleteTarget && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="delete-invitation-title">
