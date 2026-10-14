@@ -11,7 +11,7 @@ const heroModes = new Set(["photo", "frame", "illustration"]);
 const heroRatios = new Set(["4:5", "1:1", "3:4", "2:3", "9:16", "16:9"]);
 const heroDisplayKeys = ["eyebrow","eventLabel","title","relations","detail","note","schedule","venue"];
 const defaultDisplay = Object.fromEntries(heroDisplayKeys.map((key) => [key, true]));
-const defaultConfig = { mode:"photo", aspectRatio:"4:5", positionX:50, positionY:50, textYPercent:50, scheduleFontSize:11, nameFontSize:21, nameFontFamily:"inherit", nameFontWeight:400, nameLineHeight:1.5, nameLetterSpacing:0, nameTextAlign:"center", nameColor:"#ffffff", separatorFontSize:16, separatorColor:"#d8b985", zoom:1, overlayColor:"#000000", overlayOpacity:0, headerVisible:true, mastheadVisible:true, mastheadText:"", display:defaultDisplay };
+const defaultConfig = { mode:"photo", aspectRatio:"4:5", positionX:50, positionY:50, textYPercent:50, scheduleFontSize:11, nameFontSize:21, nameFontFamily:"inherit", nameFontWeight:400, nameLineHeight:1.5, nameLetterSpacing:0, nameTextAlign:"center", nameColor:"#ffffff", separatorFontSize:16, separatorColor:"#d8b985", zoom:1, photoGrayscale:0, overlayColor:"#000000", overlayOpacity:0, headerVisible:true, mastheadVisible:true, mastheadText:"", display:defaultDisplay };
 
 async function getAdmin(request) {
   const url=process.env.NEXT_PUBLIC_SUPABASE_URL, publishableKey=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, serviceRoleKey=process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -33,7 +33,7 @@ const fontIds=new Set(HERO_FONTS.map((font)=>font.id));
 const validFadeUp=(value)=>value&&typeof value==="object"&&!Array.isArray(value)&&Object.keys(value).every(key=>["enabled","duration","delay"].includes(key))&&typeof value.enabled==="boolean"&&[0.4,0.6,0.8,1,1.5,2].includes(value.duration)&&[0,0.2,0.3,0.5,0.8,1,1.5,2].includes(value.delay);
 function validConfig(value){
   if(!value||typeof value!=="object"||Array.isArray(value)) return false;
-  const allowed=["mode","aspectRatio","positionX","positionY","textYPercent","scheduleFontSize","nameFontSize","nameFontFamily","nameFontWeight","nameLineHeight","nameLetterSpacing","nameTextAlign","nameColor","separatorFontSize","separatorColor","zoom","overlayColor","overlayOpacity","headerVisible","mastheadVisible","mastheadText","display","textLayers","decorLayers","heroBackdrop","heroCenterPanel","heroCenterPanelCopy","photoFrame","photoFadeUp","intro"];
+  const allowed=["mode","aspectRatio","positionX","positionY","textYPercent","scheduleFontSize","nameFontSize","nameFontFamily","nameFontWeight","nameLineHeight","nameLetterSpacing","nameTextAlign","nameColor","separatorFontSize","separatorColor","zoom","photoGrayscale","overlayColor","overlayOpacity","headerVisible","mastheadVisible","mastheadText","display","textLayers","decorLayers","heroBackdrop","heroCenterPanel","heroCenterPanelCopy","photoFrame","photoFadeUp","intro"];
   if(Object.keys(value).some((key)=>!allowed.includes(key))) return false;
   const baseValid=heroModes.has(value.mode)&&heroRatios.has(value.aspectRatio)
     &&decimal(value.positionX,0,100)&&decimal(value.positionY,0,100)
@@ -49,6 +49,7 @@ function validConfig(value){
     &&(value.separatorFontSize===undefined||Number.isInteger(value.separatorFontSize)&&decimal(value.separatorFontSize,8,72))
     &&(value.separatorColor===undefined||hex(value.separatorColor))
     &&decimal(value.zoom,.5,2)
+    &&(value.photoGrayscale===undefined||decimal(value.photoGrayscale,0,100))
     &&hex(value.overlayColor)&&decimal(value.overlayOpacity,0,1)
     &&typeof value.headerVisible==="boolean"&&typeof value.mastheadVisible==="boolean"
     &&typeof value.mastheadText==="string"&&value.mastheadText.length<=60
