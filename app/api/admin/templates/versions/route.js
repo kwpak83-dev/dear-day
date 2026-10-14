@@ -311,10 +311,12 @@ function validBackground(value) {
   if (legacy) return true;
   const custom = value.custom;
   const panel = value.centerPanel;
-  if (panel !== undefined && (!hasOnlyKeys(panel, ["enabled","width","color","opacity"]) || typeof panel.enabled !== "boolean" || !Number.isInteger(panel.width) || !decimal(panel.width,65,100) || !hexColor(panel.color) || !Number.isInteger(panel.opacity) || !decimal(panel.opacity,0,100))) return false;
+  if (panel !== undefined && (!hasOnlyKeys(panel, ["enabled","width","color","opacity","paperEnabled","paperStrength","paperSize"]) || typeof panel.enabled !== "boolean" || !Number.isInteger(panel.width) || !decimal(panel.width,65,100) || !hexColor(panel.color) || !Number.isInteger(panel.opacity) || !decimal(panel.opacity,0,100) || (panel.paperEnabled !== undefined && typeof panel.paperEnabled !== "boolean") || (panel.paperStrength !== undefined && (!Number.isInteger(panel.paperStrength) || !decimal(panel.paperStrength,0,100))) || (panel.paperSize !== undefined && !["fine","normal","coarse"].includes(panel.paperSize)))) return false;
   return ["image", "custom"].includes(value.mode) &&
-    hasOnlyKeys(custom, ["mode", "endColor", "angle", "pattern", "patternColor", "patternSize", "patternOpacity"]) &&
-    ["solid", "gradient", "pattern"].includes(custom.mode) &&
+    hasOnlyKeys(custom, ["mode", "endColor", "angle", "pattern", "patternColor", "patternSize", "patternOpacity", "paperStrength", "paperSize"]) &&
+    ["solid", "gradient", "pattern", "paper"].includes(custom.mode) &&
+    (custom.paperStrength === undefined || (Number.isInteger(custom.paperStrength) && decimal(custom.paperStrength,0,100))) &&
+    (custom.paperSize === undefined || ["fine","normal","coarse"].includes(custom.paperSize)) &&
     hexColor(custom.endColor) && decimal(custom.angle, 0, 360) &&
     BACKGROUND_PATTERN_KEYS.includes(custom.pattern) &&
     hexColor(custom.patternColor) && Number.isInteger(custom.patternSize) &&
