@@ -3390,3 +3390,39 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   box-shadow:0 9px 24px rgba(23,43,81,.09),0 1px 3px rgba(23,43,81,.035);
 }
 .dd-collection-page .dd-collection-heading{isolation:isolate}
+
+/* DearDay premium classic A3: mobile rhythm, card actions, and gallery alignment. */
+.my-page .invitation-card>h2{margin-top:11px;margin-bottom:8px}
+.my-page .invitation-card>p{margin:5px 0;overflow-wrap:anywhere}
+.my-page .invitation-card>div{align-items:center;row-gap:9px}
+.my-page .invitation-card>div>a:not(.invitation-card-share),
+.my-page .invitation-card>div>button{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:40px;padding:9px 12px;box-sizing:border-box;
+  line-height:1.25;text-align:center;text-decoration:none;
+}
+.my-page .guest-summary strong{font-weight:800;letter-spacing:-.035em}
+.my-page .guest-list-heading{align-items:center;gap:12px}
+.my-page .guest-list-actions button{min-height:40px;border-radius:10px;background:#1e3a8a;color:#fff}
+.my-page .guest-list-actions>span{color:#637895}
+.my-page .guest-filters button{min-height:40px;padding:8px 13px}
+.dd-collection-card{display:flex;flex-direction:column;min-width:0}
+.dd-collection-card>a{display:flex!important;flex-direction:column;flex:1;min-width:0}
+.dd-collection-card-info{display:flex;flex-direction:column;flex:1;min-width:0}
+.dd-collection-card-info>strong{line-height:1.4;overflow-wrap:anywhere}
+.dd-collection-card-info>p{margin-bottom:12px!important}
+.dd-collection-card-info>div{margin-top:auto!important;padding-top:10px;border-top:1px solid #edf2fa;gap:8px}
+.dd-collection-card-info>div span{text-align:right}
+@media(max-width:600px){
+  .my-page .invitation-list{gap:13px;margin-top:24px}
+  .my-page .invitation-card>div{gap:7px}
+  .my-page .invitation-card>div>a:not(.invitation-card-share),
+  .my-page .invitation-card>div>button{min-height:40px;padding:9px 10px;font-size:12px}
+  .my-page .guest-list-heading{align-items:stretch;flex-direction:column;gap:10px;margin-top:23px}
+  .my-page .guest-filters{align-self:flex-start}
+  .my-page .guest-list-actions{justify-content:space-between;width:100%}
+  .my-page .guest-list-actions button{min-width:128px}
+  .dd-collection-card-info{padding:12px}
+  .dd-collection-card-info>div{align-items:flex-start;flex-direction:column;gap:5px}
+  .dd-collection-card-info>div span{text-align:left}
+}
