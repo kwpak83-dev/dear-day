@@ -1,6 +1,6 @@
 import HeroIntro from "./hero-intro";
 import { backgroundPatternStyle } from "../../lib/background-patterns";
-import { paperTextureImage, paperTextureSize } from "../../lib/paper-texture";
+import { paperTextureImage, paperTextureOpacity, paperTextureSize } from "../../lib/paper-texture";
 import FittedHeroText from "./fitted-hero-text";
 import { getHeroFont } from "../../lib/hero-fonts";
 import { TEMPLATE_FONT_STACKS } from "../../lib/template-config";
@@ -41,6 +41,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     if (panel.paperEnabled === true) {
       rootStyle["--dd-center-panel-texture"] = paperTextureImage(panel.paperStrength);
       rootStyle["--dd-center-panel-texture-size"] = paperTextureSize(panel.paperSize);
+      rootStyle["--dd-center-panel-texture-opacity"] = paperTextureOpacity(panel.paperStrength);
     }
   }
   if (background) {
@@ -58,8 +59,13 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     } else if (mode === "custom") {
       if (custom.mode === "paper") {
         const texture = paperTextureImage(custom.paperStrength);
-        if (texture !== "none") layers.push(texture);
-        rootStyle.backgroundSize = paperTextureSize(custom.paperSize);
+        if (texture !== "none") {
+          const amount = paperTextureOpacity(custom.paperStrength);
+          const base = rgba(background.color || "#ffffff", 1 - amount);
+          layers.push(`linear-gradient(${base}, ${base})`, texture);
+          rootStyle.backgroundBlendMode = "normal, multiply";
+        }
+        rootStyle.backgroundSize = `auto, ${paperTextureSize(custom.paperSize)}`;
         rootStyle.backgroundRepeat = "repeat";
       } else if (custom.mode === "gradient") {
         layers.push(`linear-gradient(${custom.angle ?? 135}deg, ${background.color || "#ffffff"}, ${custom.endColor || "#f3e8df"})`);
