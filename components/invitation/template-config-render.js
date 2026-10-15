@@ -42,6 +42,10 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
       rootStyle["--dd-center-panel-texture"] = paperTextureImage(panel.paperStrength);
       rootStyle["--dd-center-panel-texture-size"] = paperTextureSize(panel.paperSize);
       rootStyle["--dd-center-panel-texture-opacity"] = paperTextureOpacity(panel.paperStrength);
+      rootStyle["--dd-center-panel-paper-opacity-factor"] = (panel.paperOpacity ?? 42) / 100;
+      rootStyle["--dd-center-panel-paper-brightness"] = (panel.paperBrightness ?? 115) / 100;
+      rootStyle["--dd-center-panel-paper-contrast"] = (panel.paperContrast ?? 85) / 100;
+      rootStyle["--dd-center-panel-paper-blend"] = ["soft-light","overlay","multiply"].includes(panel.paperBlend) ? panel.paperBlend : "soft-light";
     }
   }
   if (background) {
