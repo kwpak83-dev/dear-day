@@ -3481,3 +3481,10 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .my-page .delete-invitation-modal button.restore-action{background:#1e3a8a;color:#fff}
 .my-page .delete-invitation-modal button:disabled{opacity:.55;cursor:default}
 @media(max-width:360px){.my-page .delete-invitation-modal{padding:26px 18px}.my-page .delete-invitation-modal h2{font-size:18px}}
+
+/* Center paper texture stacking fix: paint the selected panel first, texture second,
+   and real content last. No changes to hero or outer backgrounds. */
+.invitation-template.dd-template-center-panel{position:relative;isolation:isolate}
+.invitation-template.dd-template-center-panel::before{z-index:0}
+.invitation-template.dd-template-center-panel::after{z-index:1}
+.invitation-template.dd-template-center-panel > :not(.dd-template-screen-effect):not(.dd-template-bgm){position:relative;z-index:2}
