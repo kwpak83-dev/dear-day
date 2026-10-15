@@ -50,17 +50,6 @@ export async function DELETE(request) {
     if(!user) return fail("다시 로그인해 주세요.",401);
     const {path}=await request.json().catch(()=>({}));
     if(typeof path!=="string" || !path.startsWith(user.id+"/") || !path.endsWith(".mp3")) return fail("삭제할 음악을 확인하지 못했어요.",400);
-    // Do not remove a track still referenced by any of the owner's invitations.
-    // Check both stored paths and public URLs (including legacy settings shapes).
-    const publicUrl=supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
-    const {data:events,error:lookupError}=await supabase.from("events")
-      .select("settings").eq("owner_id",user.id);
-    if(lookupError) return fail("음악 사용 여부를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.",503);
-    const inUse=(events||[]).some((event)=>{
-      const settings=JSON.stringify(event.settings||{});
-      return settings.includes(path)||settings.includes(publicUrl);
-    });
-    if(inUse) return fail("다른 초대장에서 사용 중인 음악이에요. 초대장에서 음악을 변경한 뒤 삭제해 주세요.",409);
     const {error}=await supabase.storage.from(bucket).remove([path]);
     if(error) return fail("음악 삭제에 실패했어요.",500);
     return Response.json({ok:true});
