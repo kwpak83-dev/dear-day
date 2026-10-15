@@ -13,8 +13,16 @@ function isRateLimited(request, action = "write") {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
   const key = `${action}:${ip}`;
   const now = Date.now();
+  // Bound memory growth in long-lived server instances.
+  if (requestsByIp.size >= 5000) {
+    for (const [storedKey, times] of requestsByIp) {
+      if (!times.length || now - times[times.length - 1] >= 60_000) requestsByIp.delete(storedKey);
+    }
+    if (requestsByIp.size >= 5000 && !requestsByIp.has(key)) requestsByIp.delete(requestsByIp.keys().next().value);
+  }
   const recent = (requestsByIp.get(key) || []).filter((time) => now - time < 60_000);
-  recent.push(now);
+  // No need to retain more timestamps after a client exceeds the quota.
+  if (recent.length <= 30) recent.push(now);
   requestsByIp.set(key, recent);
   // Reading an existing RSVP should not exhaust the submission/update quota.
   return recent.length > (action === "read" ? 30 : 5);
