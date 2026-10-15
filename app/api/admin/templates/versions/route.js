@@ -311,7 +311,12 @@ function validBackground(value) {
   if (legacy) return true;
   const custom = value.custom;
   const panel = value.centerPanel;
-  if (panel !== undefined && (!hasOnlyKeys(panel, ["enabled","width","color","opacity","paperEnabled","paperStrength","paperSize"]) || typeof panel.enabled !== "boolean" || !Number.isInteger(panel.width) || !decimal(panel.width,65,100) || !hexColor(panel.color) || !Number.isInteger(panel.opacity) || !decimal(panel.opacity,0,100) || (panel.paperEnabled !== undefined && typeof panel.paperEnabled !== "boolean") || (panel.paperStrength !== undefined && (!Number.isInteger(panel.paperStrength) || !decimal(panel.paperStrength,0,100))) || (panel.paperSize !== undefined && !["fine","normal","coarse"].includes(panel.paperSize)))) return false;
+  const panelBase = isRecord(panel) ? Object.fromEntries(Object.entries(panel).filter(([key]) => !["paperOpacity","paperBrightness","paperContrast","paperBlend"].includes(key))) : panel;
+  if (panel !== undefined && (!hasOnlyKeys(panelBase, ["enabled","width","color","opacity","paperEnabled","paperStrength","paperSize"]) || typeof panel.enabled !== "boolean" || !Number.isInteger(panel.width) || !decimal(panel.width,65,100) || !hexColor(panel.color) || !Number.isInteger(panel.opacity) || !decimal(panel.opacity,0,100) || (panel.paperEnabled !== undefined && typeof panel.paperEnabled !== "boolean") || (panel.paperStrength !== undefined && (!Number.isInteger(panel.paperStrength) || !decimal(panel.paperStrength,0,100))) || (panel.paperSize !== undefined && !["fine","normal","coarse"].includes(panel.paperSize)))) return false;
+  if (panel && ((panel.paperOpacity !== undefined && !decimal(panel.paperOpacity,0,100)) ||
+      (panel.paperBrightness !== undefined && !decimal(panel.paperBrightness,50,150)) ||
+      (panel.paperContrast !== undefined && !decimal(panel.paperContrast,50,200)) ||
+      (panel.paperBlend !== undefined && !["soft-light","overlay","multiply"].includes(panel.paperBlend)))) return false;
   return ["image", "custom"].includes(value.mode) &&
     hasOnlyKeys(custom, ["mode", "endColor", "angle", "pattern", "patternColor", "patternSize", "patternOpacity", "paperStrength", "paperSize"]) &&
     ["solid", "gradient", "pattern", "paper"].includes(custom.mode) &&
