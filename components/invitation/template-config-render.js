@@ -206,6 +206,32 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     const grayscaleFilter = `grayscale(${hero.photoGrayscale}%)`;
     heroImageStyle.filter = [heroImageStyle.filter, grayscaleFilter].filter(Boolean).join(" ");
   }
+  // Apply photographic effects to the image only; never filter the frame, copy or backdrop.
+  if (hero?.mode === "frame" && hero?.photoEffects) {
+    const fx = hero.photoEffects;
+    const clampFx = (v,min,max,fallback) => Number.isFinite(Number(v)) ? Math.min(max,Math.max(min,Number(v))) : fallback;
+    const filters = [
+      `brightness(${clampFx(fx.brightness,50,150,100)}%)`,
+      `contrast(${clampFx(fx.contrast,50,150,100)}%)`,
+      `saturate(${clampFx(fx.saturation,0,200,100)}%)`,
+      `sepia(${clampFx(fx.warmth,0,100,0)/300})`
+    ];
+    heroImageStyle.filter = [heroImageStyle.filter,...filters].filter(Boolean).join(" ");
+    const fade = clampFx(fx.fadeStrength,0,100,40)/100;
+    const vignette = clampFx(fx.vignette,0,100,0)/100;
+    const mode = ["radial","horizontal","vertical"].includes(fx.fadeMode) ? fx.fadeMode : "none";
+    const edge = mode==="none" ? 0 : fade*.43;
+    const vEdge = vignette*.5;
+    if (edge>0 || vEdge>0) {
+      const endAlpha = Math.max(0,1-Math.max(edge,vEdge));
+      const inner = 80-Math.max(edge,vEdge)*95;
+      const mask = mode==="horizontal" ? `linear-gradient(to right,rgba(0,0,0,${endAlpha}),#000 ${Math.max(5,edge*100)}%,#000 ${100-Math.max(5,edge*100)}%,rgba(0,0,0,${endAlpha}))`
+        : mode==="vertical" ? `linear-gradient(to bottom,rgba(0,0,0,${endAlpha}),#000 ${Math.max(5,edge*100)}%,#000 ${100-Math.max(5,edge*100)}%,rgba(0,0,0,${endAlpha}))`
+        : `radial-gradient(ellipse at center,#000 ${Math.max(28,inner)}%,rgba(0,0,0,${endAlpha}) 100%)`;
+      heroImageStyle.maskImage = mask;
+      heroImageStyle.WebkitMaskImage = mask;
+    }
+  }
   if (hero?.nameFontFamily && hero.nameFontFamily !== "inherit") set(rootStyle, "--dd-hero-title-font", getHeroFont(hero.nameFontFamily).family);
   if (hero?.nameFontWeight != null) set(rootStyle, "--dd-hero-title-weight", hero.nameFontWeight);
   if (hero?.nameLineHeight != null) set(rootStyle, "--dd-hero-title-line-height", hero.nameLineHeight);
