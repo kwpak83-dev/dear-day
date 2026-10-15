@@ -46,6 +46,9 @@ export async function GET(request) {
   const profileValue = (value, maxLength) => typeof value === "string" && value.trim().length <= maxLength ? value.trim() || null : null;
   const naverProfile = profile.response;
   const profileEmail = profileValue(naverProfile.email, 254);
+  // Naver provides mobile as 010-1234-5678; store a normalized value only when valid.
+  const mobileDigits = typeof naverProfile.mobile === "string" ? naverProfile.mobile.replace(/[^\d]/g, "") : "";
+  const mobile = /^01[016789]\d{7,8}$/.test(mobileDigits) ? mobileDigits : null;
   const metadata = {
     provider: "naver",
     provider_id: naverId,
@@ -53,6 +56,8 @@ export async function GET(request) {
     nickname: profileValue(naverProfile.nickname, 100),
     email: profileEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profileEmail) ? profileEmail : null,
   };
+  // Do not clear an existing mobile number when Naver omits the optional field.
+  if (mobile) metadata.mobile = mobile;
   const { error: createError } = await supabase.auth.admin.createUser({ email, email_confirm: true, user_metadata: metadata });
 
   if (createError) {
