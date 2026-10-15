@@ -33,7 +33,7 @@ const fontIds=new Set(HERO_FONTS.map((font)=>font.id));
 const validFadeUp=(value)=>value&&typeof value==="object"&&!Array.isArray(value)&&Object.keys(value).every(key=>["enabled","duration","delay"].includes(key))&&typeof value.enabled==="boolean"&&[0.4,0.6,0.8,1,1.5,2].includes(value.duration)&&[0,0.2,0.3,0.5,0.8,1,1.5,2].includes(value.delay);
 function validConfig(value){
   if(!value||typeof value!=="object"||Array.isArray(value)) return false;
-  const allowed=["mode","aspectRatio","positionX","positionY","textYPercent","scheduleFontSize","nameFontSize","nameFontFamily","nameFontWeight","nameLineHeight","nameLetterSpacing","nameTextAlign","nameColor","separatorFontSize","separatorColor","zoom","photoGrayscale","overlayColor","overlayOpacity","headerVisible","mastheadVisible","mastheadText","display","textLayers","decorLayers","heroBackdrop","heroCenterPanel","heroCenterPanelCopy","photoFrame","photoFadeUp","intro"];
+  const allowed=["mode","aspectRatio","positionX","positionY","textYPercent","scheduleFontSize","nameFontSize","nameFontFamily","nameFontWeight","nameLineHeight","nameLetterSpacing","nameTextAlign","nameColor","separatorFontSize","separatorColor","zoom","photoGrayscale","overlayColor","overlayOpacity","headerVisible","mastheadVisible","mastheadText","display","textLayers","decorLayers","heroBackdrop","heroCenterPanel","heroCenterPanelCopy","photoFrame","photoFadeUp","photoEffects","intro"];
   if(Object.keys(value).some((key)=>!allowed.includes(key))) return false;
   const baseValid=heroModes.has(value.mode)&&heroRatios.has(value.aspectRatio)
     &&decimal(value.positionX,0,100)&&decimal(value.positionY,0,100)
@@ -75,6 +75,16 @@ function validConfig(value){
   }
   if(value.heroBackdrop!==undefined){const b=value.heroBackdrop;if(!b||typeof b!=="object"||Array.isArray(b)||Object.keys(b).some(k=>!["mode","color","endColor","angle","pattern","patternColor","patternSize","patternOpacity"].includes(k))||!["inherit","solid","gradient","pattern"].includes(b.mode)||!hex(b.color)||!hex(b.endColor)||!decimal(b.angle,0,360)||!["dots","grid","diagonal","stripes","cross","checker","diamonds","waves","horizontal","confetti"].includes(b.pattern)||!hex(b.patternColor)||!Number.isInteger(b.patternSize)||!decimal(b.patternSize,8,80)||!decimal(b.patternOpacity,0,1))return false;}
   if(value.photoFadeUp!==undefined&&!validFadeUp(value.photoFadeUp))return false;
+  if(value.photoEffects!==undefined){
+    const fx=value.photoEffects;
+    const keys=["fadeMode","fadeStrength","brightness","contrast","saturation","warmth","vignette"];
+    if(!fx||typeof fx!=="object"||Array.isArray(fx)||Object.keys(fx).some(k=>!keys.includes(k))
+      ||!["none","radial","horizontal","vertical"].includes(fx.fadeMode)
+      ||!decimal(fx.fadeStrength,0,100)||!decimal(fx.brightness,50,150)
+      ||!decimal(fx.contrast,50,150)||!decimal(fx.saturation,0,200)
+      ||!decimal(fx.warmth,0,100)||!decimal(fx.vignette,0,100))return false;
+  }
+
   if(value.intro!==undefined){const i=value.intro;if(!i||typeof i!=="object"||Array.isArray(i)||Object.keys(i).some(k=>!["enabled","text","fontId","fontSize","textColor","backgroundColor","writeDuration","holdDuration","fadeDuration"].includes(k))||typeof i.enabled!=="boolean"||typeof i.text!=="string"||i.text.length>80||!fontIds.has(i.fontId)||!Number.isInteger(i.fontSize)||!decimal(i.fontSize,16,72)||!hex(i.textColor)||!hex(i.backgroundColor)||![0.8,1.2,1.8,2.5,3].includes(i.writeDuration)||![0.3,0.5,0.8,1,1.5,2].includes(i.holdDuration)||![0.3,0.5,0.6,0.8,1].includes(i.fadeDuration))return false;}
   if(value.decorLayers!==undefined){
     if(!Array.isArray(value.decorLayers)||value.decorLayers.length>24)return false;
