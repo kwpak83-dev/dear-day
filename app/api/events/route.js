@@ -423,6 +423,14 @@ export async function DELETE(request) {
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     user.id
   );
+  // Notice images live under an event-specific folder and may no longer be in settings.
+  // Collect them before deleting the event so they are not stranded.
+  const noticePrefix = `${user.id}/notice/${event.id}`;
+  const { data: noticeFiles, error: noticeError } = await supabase.storage.from(photoBucket).list(noticePrefix, { limit: 1000 });
+  if (noticeError) return json({ error: "공지 사진 목록을 확인하지 못했어요. 다시 시도해 주세요." }, 503);
+  for (const file of noticeFiles || []) {
+    if (file.name && file.id) owned.photos.add(`${noticePrefix}/${file.name}`);
+  }
   const { data: media, error: mediaError } = await supabase.from("event_media")
     .select("storage_path").eq("event_id", event.id);
   if (mediaError) return json({ error: "초대장 파일 정보를 확인하지 못했어요." }, 500);
@@ -442,11 +450,20 @@ export async function DELETE(request) {
   // DB children (RSVP, guestbook, media, etc.) are removed by FK cascade.
   // Storage has no FK cascade, so remove captured objects only when no remaining invitation references them.
   let cleanupPending = false;
+  const failedPhotoPaths = [];
   for (const path of owned.photos) {
     try {
-      if (!await removeIfUnreferenced(supabase, photoBucket, path, user.id)) cleanupPending = true;
+      if (!await removeIfUnreferenced(supabase, photoBucket, path, user.id)) { cleanupPending = true; failedPhotoPaths.push(path); }
       else await supabase.from("gallery_storage_cleanup").delete().eq("storage_path", path).eq("owner_id", user.id);
-    } catch { cleanupPending = true; }
+    } catch { cleanupPending = true; failedPhotoPaths.push(path); }
+  }
+  // Gallery paths can be retried by the existing scheduled cleanup worker.
+  // Non-gallery failures remain explicitly reported rather than silently treated as success.
+  for (const path of failedPhotoPaths) {
+    if (!path.startsWith(`${user.id}/gallery/${event.id}/`)) continue;
+    const { error: queueError } = await supabase.from("gallery_storage_cleanup")
+      .upsert({ storage_path: path, owner_id: user.id }, { onConflict: "storage_path" });
+    if (queueError) cleanupPending = true;
   }
   for (const path of owned.bgm) {
     try {
