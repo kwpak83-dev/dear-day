@@ -22,7 +22,7 @@ const placementFor = (assetId, saved) => {
   return base;
 };
 const heroDisplayDefaults = { eyebrow: true, eventLabel: true, title: true, relations: true, detail: true, note: true, schedule: true, venue: true };
-const backgroundDefaults = { mode: "custom", color: "#ffffff", assetId: null, overlayColor: "#000000", overlayOpacity: 0, centerPanel: { enabled: false, width: 85, color: "#fffcf7", opacity: 100, paperEnabled: false, paperStrength: 30, paperSize: "normal" }, custom: { mode: "solid", paperStrength: 30, paperSize: "normal", endColor: "#f3e8df", angle: 135, pattern: "dots", patternColor: "#bca08d", patternSize: 20, patternOpacity: .25 } };
+const backgroundDefaults = { mode: "custom", color: "#ffffff", assetId: null, overlayColor: "#000000", overlayOpacity: 0, centerPanel: { enabled: false, width: 85, color: "#fffcf7", opacity: 100, paperEnabled: false, paperStrength: 30, paperSize: "normal", paperOpacity: 42, paperBrightness: 115, paperContrast: 85, paperBlend: "soft-light" }, custom: { mode: "solid", paperStrength: 30, paperSize: "normal", endColor: "#f3e8df", angle: 135, pattern: "dots", patternColor: "#bca08d", patternSize: 20, patternOpacity: .25 } };
 const heroDefaults = { mode: "photo", aspectRatio: "4:5", positionX: 50, positionY: 50, textYPercent: 50, scheduleFontSize: 11, zoom: 1, backgroundAssetId: null, frameAssetId: null, overlayColor: "#000000", overlayOpacity: 0, headerVisible: true, mastheadVisible: true, mastheadText: "", display: heroDisplayDefaults };
 const typographyDefaults = {
   heroTitle: { fontFamily: "serif", fontSize: 32, fontWeight: 400, lineHeight: 1.3, letterSpacing: 0, textAlign: "center" },
@@ -375,6 +375,13 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
                 <NumberControl label="질감 강도 (%)" value={background.centerPanel.paperStrength ?? 30} min={0} max={100} onChange={paperStrength => setBackground(current => ({...current,centerPanel:{...current.centerPanel,paperStrength}}))}/>
                 <label style={field}>질감 크기<select style={input} value={background.centerPanel.paperSize || "normal"} onChange={event => setBackground(current => ({...current,centerPanel:{...current.centerPanel,paperSize:event.target.value}}))}><option value="fine">미세</option><option value="normal">보통</option><option value="coarse">굵게</option></select></label>
               </>}
+              {background.centerPanel.paperEnabled === true && <details style={{border:"1px solid #d7e5f6",borderRadius:8,padding:10}}><summary style={{cursor:"pointer",fontWeight:700}}>종이 질감 상세 조정</summary><div style={{display:"grid",gap:10,marginTop:12}}>
+                <NumberControl label="질감 불투명도 배율 (%)" value={background.centerPanel.paperOpacity ?? 42} min={0} max={100} onChange={paperOpacity=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,paperOpacity}}))}/>
+                <NumberControl label="밝기 (%)" value={background.centerPanel.paperBrightness ?? 115} min={50} max={150} onChange={paperBrightness=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,paperBrightness}}))}/>
+                <NumberControl label="대비 (%)" value={background.centerPanel.paperContrast ?? 85} min={50} max={200} onChange={paperContrast=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,paperContrast}}))}/>
+                <label style={field}>혼합 방식<select style={input} value={background.centerPanel.paperBlend || "soft-light"} onChange={event=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,paperBlend:event.target.value}}))}><option value="soft-light">Soft Light (부드럽게)</option><option value="overlay">Overlay (선명하게)</option><option value="multiply">Multiply (진하게·어두워질 수 있음)</option></select></label>
+                <button type="button" onClick={()=>setBackground(current=>({...current,centerPanel:{...current.centerPanel,paperOpacity:85,paperBrightness:100,paperContrast:140,paperBlend:"soft-light"}}))}>추천값으로 초기화</button>
+              </div></details>}
               <p style={guideNote}>중앙 본문 색상·너비·불투명도는 그대로 유지됩니다. 질감은 중앙 영역에만 추가돼요.</p>
             </div>}<p style={guideNote}>기존 배경 위에 중앙 색상 레이어를 표시합니다. OFF면 기존 디자인을 유지합니다.</p></fieldset>
           </fieldset>
