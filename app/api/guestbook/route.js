@@ -15,8 +15,16 @@ function getClient() {
 function isRateLimited(request) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
   const now = Date.now();
+  // Bound memory growth in long-lived server instances.
+  if (requestsByIp.size >= 5000) {
+    for (const [storedIp, times] of requestsByIp) {
+      if (!times.length || now - times[times.length - 1] >= 60_000) requestsByIp.delete(storedIp);
+    }
+    if (requestsByIp.size >= 5000 && !requestsByIp.has(ip)) requestsByIp.delete(requestsByIp.keys().next().value);
+  }
   const recent = (requestsByIp.get(ip) || []).filter((time) => now - time < 60_000);
-  recent.push(now); requestsByIp.set(ip, recent);
+  if (recent.length <= 8) recent.push(now);
+  requestsByIp.set(ip, recent);
   return recent.length > 8;
 }
 function hashPassword(password) {
