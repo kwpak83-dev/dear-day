@@ -342,9 +342,12 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
           if (!boundText?.trim()) return null;
           const birthdayTitle = presentation.eventKind === "first_birthday"
             ? boundText.match(/^(\S+)(의\s+첫\s*번째\s+생일)$/) : null;
-          const renderedText = birthdayTitle
-            ? <><span style={{ marginInlineEnd: designLength(4) }}>{birthdayTitle[1]}</span>{birthdayTitle[2]}</>
-            : boundText;
+          const fullNameSuffix = layer.source === "full_name" && presentation.eventKind === "milestone_birthday" ? boundText.match(/^(.*?)(\s*님의)(.*)$/s) : null;
+          const renderedText = fullNameSuffix
+            ? <><span>{fullNameSuffix[1]}</span><span style={layer.suffixFontSize != null ? { fontSize: designLength(Math.min(100, Math.max(8, Number(layer.suffixFontSize)))) } : undefined}>{fullNameSuffix[2]}</span>{fullNameSuffix[3]}</>
+            : birthdayTitle
+              ? <><span style={{ marginInlineEnd: designLength(4) }}>{birthdayTitle[1]}</span>{birthdayTitle[2]}</>
+              : boundText;
           const x = Math.min(100, Math.max(0, Number(layer.x ?? 50)));
           const y = Math.min(100, Math.max(0, Number(layer.y ?? 50)));
           
