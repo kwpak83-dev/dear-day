@@ -1737,7 +1737,9 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .invitation-template.dd-template-center-panel{position:relative;isolation:isolate}
 .invitation-template.dd-template-center-panel::before{content:"";position:absolute;inset:0 auto 0 50%;translate:-50% 0;width:var(--dd-center-panel-width,85%);background-color:var(--dd-center-panel-color,transparent);background-image:var(--dd-center-panel-texture,none);background-size:var(--dd-center-panel-texture-size,180px 180px);background-repeat:repeat;pointer-events:none;z-index:-1}
 .invitation-template.dd-template-center-panel::before{background-image:none}
-.invitation-template.dd-template-center-panel::after{content:"";position:absolute;inset:0 auto 0 50%;translate:-50% 0;width:var(--dd-center-panel-width,85%);background-image:var(--dd-center-panel-texture,none);background-size:var(--dd-center-panel-texture-size,380px 260px);background-repeat:repeat;opacity:var(--dd-center-panel-texture-opacity,0);filter:brightness(.75) contrast(2);mix-blend-mode:multiply;pointer-events:none;z-index:0}
+/* Center the near-white source around neutral gray before user adjustments:
+   source luminance mean 242/255, standard deviation 1.79/255. */
+.invitation-template.dd-template-center-panel::after{content:"";position:absolute;inset:0 auto 0 50%;translate:-50% 0;width:var(--dd-center-panel-width,85%);background-image:var(--dd-center-panel-texture,none);background-size:var(--dd-center-panel-texture-size,380px 260px);background-repeat:repeat;opacity:calc(var(--dd-center-panel-texture-opacity,0) * var(--dd-center-panel-paper-opacity-factor,.42));filter:grayscale(1) brightness(.527) contrast(16) brightness(var(--dd-center-panel-paper-brightness,1.15)) contrast(var(--dd-center-panel-paper-contrast,.85));mix-blend-mode:var(--dd-center-panel-paper-blend,soft-light);pointer-events:none;z-index:0}
 .invitation-template.dd-template-center-panel > :not(.dd-template-screen-effect):not(.dd-template-bgm){position:relative;z-index:1}
 
 
@@ -3481,3 +3483,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .my-page .delete-invitation-modal button.restore-action{background:#1e3a8a;color:#fff}
 .my-page .delete-invitation-modal button:disabled{opacity:.55;cursor:default}
 @media(max-width:360px){.my-page .delete-invitation-modal{padding:26px 18px}.my-page .delete-invitation-modal h2{font-size:18px}}
+
+/* Center paper texture stacking fix: paint the selected panel first, texture second,
+   and real content last. No changes to hero or outer backgrounds. */
+.invitation-template.dd-template-center-panel{position:relative;isolation:isolate}
+/* Keep texture in the isolated background stack, never over gallery or account content. */
+.invitation-template.dd-template-center-panel::before{z-index:-2}
+.invitation-template.dd-template-center-panel::after{z-index:-1}
+.invitation-template.dd-template-center-panel > :not(.dd-template-screen-effect):not(.dd-template-bgm){position:relative;z-index:1}
