@@ -3487,6 +3487,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Center paper texture stacking fix: paint the selected panel first, texture second,
    and real content last. No changes to hero or outer backgrounds. */
 .invitation-template.dd-template-center-panel{position:relative;isolation:isolate}
-.invitation-template.dd-template-center-panel::before{z-index:0}
-.invitation-template.dd-template-center-panel::after{z-index:1}
-.invitation-template.dd-template-center-panel > :not(.dd-template-screen-effect):not(.dd-template-bgm){position:relative;z-index:2}
+/* Keep texture in the isolated background stack, never over gallery or account content. */
+.invitation-template.dd-template-center-panel::before{z-index:-2}
+.invitation-template.dd-template-center-panel::after{z-index:-1}
+.invitation-template.dd-template-center-panel > :not(.dd-template-screen-effect):not(.dd-template-bgm){position:relative;z-index:1}
