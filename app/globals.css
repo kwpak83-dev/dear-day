@@ -3522,7 +3522,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   font-size:11px!important;font-weight:700!important;line-height:1.1!important;white-space:nowrap;
 }
 .invitation-navigation-links .nav-app-label small{
-  font-size:9px!important;font-weight:400!important;line-height:1.1!important;
+  font-size:8px!important;font-weight:400!important;line-height:1.1!important;
   color:#918680;white-space:nowrap;
 }
 .invitation-navigation-links a .nav-app-chevron{
@@ -3533,6 +3533,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   .invitation-navigation-links a{gap:3px;padding:0 2px}
   .invitation-navigation-links .nav-app-icon{width:16px;height:16px;flex-basis:16px}
   .invitation-navigation-links .nav-app-label strong{font-size:10px!important}
-  .invitation-navigation-links .nav-app-label small{font-size:9px!important}
+  .invitation-navigation-links .nav-app-label small{font-size:8px!important}
   .invitation-navigation-links a .nav-app-chevron{font-size:12px!important}
 }
