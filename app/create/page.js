@@ -796,10 +796,6 @@ export default function CreateInvitation() {
   const brandImageMatrix = matrixField("brand_image", "로고·대표이미지");
   const parentsIntroMatrix = matrixField("parents_intro", "부모 소개");
   const timelineMatrix = matrixField("timeline", "성장 기록");
-  // Empty eventKinds means a common track, available to all invitation types.
-  const visibleBgmTracks = bgmTracks.filter((track) =>
-    !track.eventKinds?.length || track.eventKinds.includes(invitation.eventKind)
-  );
   // Preserve an existing selection even if an administrator changes its categories.
   const selectedBgmTrack = bgmTracks.find((track) => track.id === invitation.userBgmTrackId) || null;
   const visibleBgmTracks = bgmTracks.filter((track) => track.isActive !== false && (!track.eventKinds?.length || track.eventKinds.includes(invitation.eventKind)));
