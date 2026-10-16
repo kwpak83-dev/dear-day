@@ -5,12 +5,19 @@ export async function GET() {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return Response.json({ tracks: [] });
   const supabase = createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
-  const { data, error } = await supabase.from("bgm_tracks")
-    .select("id,title,composer,storage_bucket,storage_path,license_name,source_url,sort_order")
+  const columns = "id,title,composer,storage_bucket,storage_path,license_name,source_url,sort_order";
+  let { data, error } = await supabase.from("bgm_tracks")
+    .select(columns + ",event_kinds")
     .eq("is_active", true).order("sort_order").order("created_at");
+  // Until the event_kinds migration is applied, keep the existing catalog working.
+  if (error?.code === "42703" || error?.code === "PGRST204") {
+    ({ data, error } = await supabase.from("bgm_tracks")
+      .select(columns).eq("is_active", true).order("sort_order").order("created_at"));
+  }
   if (error) return Response.json({ tracks: [] });
   return Response.json({ tracks: (data || []).map((track) => ({
     id: track.id,
+    eventKinds: Array.isArray(track.event_kinds) ? track.event_kinds : [],
     title: track.title,
     composer: track.composer || "",
     licenseName: track.license_name,
