@@ -802,7 +802,7 @@ export default function CreateInvitation() {
   );
   // Preserve an existing selection even if an administrator changes its categories.
   const selectedBgmTrack = bgmTracks.find((track) => track.id === invitation.userBgmTrackId) || null;
-  const visibleBgmTracks = bgmTracks.filter((track) => !track.eventKinds?.length || track.eventKinds.includes(invitation.eventKind));
+  const visibleBgmTracks = bgmTracks.filter((track) => track.isActive !== false && (!track.eventKinds?.length || track.eventKinds.includes(invitation.eventKind)));
   const renderConfigField = (field) => {
     if (field.type === "splitName") {
       const lastKey = `${field.key}LastName`;
