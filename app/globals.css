@@ -3491,3 +3491,49 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .invitation-template.dd-template-center-panel::before{z-index:-2}
 .invitation-template.dd-template-center-panel::after{z-index:-1}
 .invitation-template.dd-template-center-panel > :not(.dd-template-screen-effect):not(.dd-template-bgm){position:relative;z-index:1}
+
+
+/* Invitation map app actions — compact card layout */
+.invitation-navigation-links{
+  display:flex;align-items:stretch;justify-content:center;gap:7px;
+  margin:0;padding:12px 8px 14px;border:0;background:transparent;
+}
+.invitation-navigation-links a{
+  display:flex;align-items:center;justify-content:flex-start;gap:6px;
+  flex:0 1 auto;box-sizing:border-box;min-width:0;height:52px;min-height:52px;padding:0 9px;
+  border:1px solid rgba(110,92,80,.12);border-radius:13px;
+  background:#fff;box-shadow:0 3px 12px rgba(56,40,31,.09);
+  color:#40342f;text-decoration:none;white-space:normal;
+  transition:transform .15s ease,box-shadow .15s ease;
+}
+.invitation-navigation-links a+a{border-left:1px solid rgba(110,92,80,.12)}
+.invitation-navigation-links a:active{transform:scale(.98)}
+.invitation-navigation-links a:focus-visible{outline:2px solid #9c7e6f;outline-offset:2px}
+.invitation-navigation-links .nav-app-icon{
+  width:22px;height:22px;flex:0 0 22px;object-fit:contain;border-radius:5px;
+}
+.invitation-navigation-links .nav-app-label{
+  display:flex;flex:0 1 auto;min-width:0;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;
+  font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif!important;
+  letter-spacing:-.3px!important;line-height:1.1!important;
+}
+.invitation-navigation-links .nav-app-label strong{
+  font-size:10px!important;font-weight:700!important;line-height:1.15!important;
+  white-space:nowrap;
+}
+.invitation-navigation-links .nav-app-label small{
+  font-size:8px!important;font-weight:400!important;line-height:1.1!important;
+  color:#918680;white-space:nowrap;
+}
+.invitation-navigation-links .nav-app-chevron{
+  flex:0 0 auto;font-size:16px!important;line-height:1!important;
+  font-weight:400!important;color:#8d817b;
+}
+@media(max-width:360px){
+  .invitation-navigation-links{gap:5px;padding-left:5px;padding-right:5px}
+  .invitation-navigation-links a{gap:4px;height:52px;min-height:52px;padding:0 5px}
+  .invitation-navigation-links .nav-app-icon{width:19px;height:19px;flex-basis:19px}
+  .invitation-navigation-links .nav-app-label strong{font-size:9px!important}
+  .invitation-navigation-links .nav-app-label small{font-size:7px!important}
+  .invitation-navigation-links .nav-app-chevron{font-size:13px!important}
+}

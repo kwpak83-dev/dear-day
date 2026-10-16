@@ -120,9 +120,9 @@ export default function InvitationMap({ address, venue = "", onPositionChange, s
   return <div ref={wrapperRef} className="invitation-map" aria-label={`${normalizedAddress} 지도`}>
     <div ref={canvasRef} className="invitation-map-canvas" style={staticView ? { pointerEvents: "none" } : undefined} />
     <nav className="invitation-navigation-links" aria-label="길찾기 앱 선택">
-      <a href={naverUrl} target="_blank" rel="noreferrer"><img className="nav-app-icon" src="/map-icons/naver-map.svg" alt="" aria-hidden="true" /><span>네이버지도</span></a>
-      <a href={kakaoUrl} target="_blank" rel="noreferrer"><img className="nav-app-icon" src="/map-icons/kakao-map.svg" alt="" aria-hidden="true" /><span>카카오맵</span></a>
-      <a href={tmapUrl} target="_blank" rel="noreferrer"><img className="nav-app-icon" src="/map-icons/tmap.svg" alt="" aria-hidden="true" /><span>티맵</span></a>
+      <a href={naverUrl} target="_blank" rel="noreferrer" aria-label="네이버지도에서 길찾기"><img className="nav-app-icon" src="/map-icons/naver-map.svg" alt="" aria-hidden="true" /><span className="nav-app-label"><strong>네이버지도</strong><small>지도에서 보기</small></span><span className="nav-app-chevron" aria-hidden="true">›</span></a>
+      <a href={kakaoUrl} target="_blank" rel="noreferrer" aria-label="카카오맵에서 길찾기"><img className="nav-app-icon" src="/map-icons/kakao-map.svg" alt="" aria-hidden="true" /><span className="nav-app-label"><strong>카카오맵</strong><small>길찾기</small></span><span className="nav-app-chevron" aria-hidden="true">›</span></a>
+      <a href={tmapUrl} target="_blank" rel="noreferrer" aria-label="티맵에서 길찾기"><img className="nav-app-icon" src="/map-icons/tmap.svg" alt="" aria-hidden="true" /><span className="nav-app-label"><strong>티맵</strong><small>길찾기</small></span><span className="nav-app-chevron" aria-hidden="true">›</span></a>
     </nav>
   </div>;
 }
