@@ -58,8 +58,9 @@ export async function POST(request) {
   if (uploadError) return json({ error: "MP3 업로드에 실패했어요." }, 500);
   const { error } = await auth.server.from("bgm_tracks").insert({ ...values, storage_bucket: bucket, storage_path: path });
   if (error) {
-    await auth.server.storage.from(bucket).remove([path]);
-    return json({ error: "음악 등록에 실패했어요. DB 변경 SQL 적용 여부를 확인해 주세요." }, 500);
+    const { error: cleanupError } = await auth.server.storage.from(bucket).remove([path]);
+    console.error("[admin/bgm] DB insert failed", { code: error.code, message: error.message, details: error.details, hint: error.hint, cleanupFailed: Boolean(cleanupError) });
+    return json({ error: `음악 등록 DB 오류 (${error.code || "unknown"}): ${error.message || "원인 미확인"}` }, 500);
   }
   return json({ ok: true }, 201);
 }
