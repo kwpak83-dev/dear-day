@@ -86,11 +86,17 @@ export async function DELETE(request) {
     .contains("settings", { userBgmTrackId: input.id });
   if (usageError) return json({ error: "사용 중 여부를 확인할 수 없어 삭제를 중단했어요." }, 503);
   if (count > 0) return json({ error: `이 음악을 사용하는 초대장이 ${count}개 있어요. 삭제 대신 숨기기를 이용해 주세요.` }, 409);
-  // Legacy files can also be used by templates; only catalog-owned uploads may be physically removed.
-  if (track.storage_bucket !== bucket || !/^bgm-catalog\/[0-9a-f-]{36}\.mp3$/.test(track.storage_path)) {
-    return json({ error: "기존 공용 파일은 다른 템플릿에서도 사용할 수 있어 완전 삭제를 제한했어요. 숨기기를 이용해 주세요." }, 409);
-  }
-  const { error: storageError } = await auth.server.storage.from(bucket).remove([track.storage_path]);
+  // Existing catalog entries may also be removed, but never delete shared template assets.
+  const { count: templateUses, error: templateError } = await auth.server.from("template_assets")
+    .select("id", { count: "exact", head: true })
+    .eq("storage_bucket", track.storage_bucket).eq("storage_path", track.storage_path);
+  if (templateError) return json({ error: "템플릿 파일 사용 여부를 확인하지 못해 삭제를 중단했어요." }, 503);
+  if (templateUses > 0) return json({ error: "템플릿에서 사용 중인 파일입니다. 완전 삭제 대신 숨기기를 이용해 주세요." }, 409);
+  const { count: catalogUses, error: catalogError } = await auth.server.from("bgm_tracks")
+    .select("id", { count: "exact", head: true })
+    .eq("storage_bucket", track.storage_bucket).eq("storage_path", track.storage_path).neq("id", track.id);
+  if (catalogError || catalogUses > 0) return json({ error: "다른 음악 등록 정보에서 공유 중인 파일이라 삭제할 수 없어요." }, 409);
+  const { error: storageError } = await auth.server.storage.from(track.storage_bucket).remove([track.storage_path]);
   if (storageError) return json({ error: "Storage 파일 삭제에 실패했어요. 다시 시도해 주세요." }, 503);
   const { error: deleteError } = await auth.server.from("bgm_tracks").delete().eq("id", input.id);
   if (deleteError) return json({ error: "파일은 삭제됐지만 목록 정리에 실패했어요. 관리자에게 확인이 필요합니다." }, 500);
