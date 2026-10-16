@@ -160,10 +160,10 @@ export default function HeroPresetsPage(){
  const linkedDisplayChecked=(key)=>{
   if(isBirthdayParents(key)){const parents=(form.config.textLayers||[]).filter(layer=>layer.displayBinding==="detail"&&["parent1","parent2"].includes(layer.source));return parents.length>0?parents.some(layer=>layer.visible!==false):form.config.display.detail!==false;}
   const layer=linkedDisplayLayer(form.config,key);
-  return linkedDisplaySources[key]&&layer?layer.visible!==false:form.config.display[key]!==false;
+  return (linkedDisplaySources[key]||key==="note")&&layer?layer.visible!==false:form.config.display[key]!==false;
  };
  const toggleHeroDisplay=(key,checked)=>{
-  const sources=isBirthdayParents(key)?["parent1","parent2"]:[linkedDisplaySources[key]].filter(Boolean);
+  const sources=isBirthdayParents(key)?["parent1","parent2"]:key==="note"?["note"]:[linkedDisplaySources[key]].filter(Boolean);
   if(!sources.length){setConfig("display",{...form.config.display,[key]:checked});return;}
   const matching=(layer)=>layer.displayBinding===key||(sources.includes(layer.source)&&!layer.displayBinding)||(key==="title"&&layer.source==="event_title"&&!layer.displayBinding);
   if(!checked){
@@ -179,7 +179,7 @@ export default function HeroPresetsPage(){
    const next=[...(previous.textLayers||[])];
    for(const source of sources){
     const index=next.findIndex(layer=>(layer.displayBinding===key&&layer.source===source)||(!layer.displayBinding&&layer.source===source)||(key==="title"&&layer.source==="event_title"&&!layer.displayBinding));
-    const reference=source==="parent1"?previewPresentation.heroParent1:source==="parent2"?previewPresentation.heroParent2:previewReferenceText(key);
+    const reference=source==="parent1"?previewPresentation.heroParent1:source==="parent2"?previewPresentation.heroParent2:source==="note"?previewPresentation.note:previewReferenceText(key);
     if(index>=0){next[index]={...next[index],displayBinding:key,visible:true,...(!next[index].text?{text:reference}:{})};firstId??=next[index].id;}
     else{const id=`text-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;next.push({id,source,text:reference,displayBinding:key,heroDisplayAutoCreated:true,visible:true,fontId:"noto-serif-kr",fontSize:key==="title"?30:18,color:"#ffffff",x:50,y:key==="title"?50:key==="schedule"?93:source==="parent1"?90:source==="parent2"?95:92,align:"center"});firstId??=id;}
    }
@@ -263,7 +263,7 @@ export default function HeroPresetsPage(){
  const activeFrame=assets.find((item)=>item.asset_type==="hero_frame"&&item.is_active)||null;
  const activeBackground=assets.find((item)=>item.asset_type==="hero_background"&&item.is_active)||null;
  const decorationAssets=decorationLibrary;
- const liveBoundSources=new Set((form.config.textLayers||[]).map((layer)=>layer.source).filter((source)=>["title","name","full_name","event_title","event_subtitle","venue_detail","parent1","parent2","schedule","venue"].includes(source)));
+ const liveBoundSources=new Set((form.config.textLayers||[]).map((layer)=>layer.source).filter((source)=>["title","name","full_name","event_title","event_subtitle","venue_detail","parent1","parent2","note","schedule","venue"].includes(source)));
  const liveTextLayers=form.config.textLayers||[];
  const liveDisplay={...form.config.display,...Object.fromEntries([...liveBoundSources].map((source)=>[source==="event_title"?"title":source,false]))};
  const liveConfig={hero:{...form.config,display:liveDisplay,textLayers:liveTextLayers,frameAssetId:activeFrame?.id||null,backgroundAssetId:activeBackground?.id||null}};
