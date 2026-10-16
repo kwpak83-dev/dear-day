@@ -1055,13 +1055,15 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   }
 }
 
-/* Keep the BGM control above invitation content in admin Draft previews so it remains clickable. */
+/* Keep the BGM control above invitation content in admin and collection previews. */
 .admin-draft-preview-device .dd-template-bgm,
-.admin-draft-full-preview-device .dd-template-bgm{
+.admin-draft-full-preview-device .dd-template-bgm,
+.dd-template-preview-canvas .dd-template-bgm{
   z-index:40 !important;
 }
 .admin-draft-preview-device .dd-template-bgm-toggle,
-.admin-draft-full-preview-device .dd-template-bgm-toggle{
+.admin-draft-full-preview-device .dd-template-bgm-toggle,
+.dd-template-preview-canvas .dd-template-bgm-toggle{
   position:relative;
   z-index:1;
   pointer-events:auto;
