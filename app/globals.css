@@ -3536,3 +3536,18 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   .invitation-navigation-links .nav-app-label small{font-size:8px!important}
   .invitation-navigation-links a .nav-app-chevron{font-size:12px!important}
 }
+
+
+/* Editor full-preview zoom controls; never applied to published invitations. */
+.full-preview-toolbar .dd-preview-zoom{display:flex;align-items:center;justify-content:center;gap:3px;flex-wrap:nowrap}
+.full-preview-toolbar .dd-preview-zoom button{padding:5px 7px;min-height:30px;background:#f1e1d8;color:#765449;font-size:12px}
+.full-preview-toolbar .dd-preview-zoom button:disabled{opacity:.45;cursor:default}
+.full-preview-toolbar .dd-preview-zoom input{box-sizing:border-box;width:43px;min-width:0;height:30px;padding:3px;border:1px solid #ddc9bd;border-radius:6px;background:white;color:#765449;text-align:center;font-size:12px}
+.full-preview-toolbar .dd-preview-zoom input::-webkit-inner-spin-button,.full-preview-toolbar .dd-preview-zoom input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.full-preview-toolbar .dd-preview-zoom input{-moz-appearance:textfield;appearance:textfield}
+.full-preview-toolbar .dd-preview-zoom span{color:#765449;font-size:11px}
+.full-preview-scroll.dd-preview-zoom-scroll{overflow-x:auto}
+@media(max-width:760px){
+  .full-preview-toolbar{flex-wrap:wrap}
+  .full-preview-toolbar .dd-preview-zoom{order:3;flex:1 0 100%}
+}
