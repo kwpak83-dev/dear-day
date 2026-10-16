@@ -3495,12 +3495,12 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Invitation map app actions — compact card layout */
 .invitation-navigation-links{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;
+  display:flex;align-items:stretch;justify-content:center;gap:7px;
   margin:0;padding:12px 8px 14px;border:0;background:transparent;
 }
 .invitation-navigation-links a{
   display:flex;align-items:center;justify-content:flex-start;gap:6px;
-  min-width:0;min-height:54px;padding:8px 7px;
+  flex:0 1 auto;min-width:0;min-height:54px;padding:8px 9px;
   border:1px solid rgba(110,92,80,.12);border-radius:13px;
   background:#fff;box-shadow:0 3px 12px rgba(56,40,31,.09);
   color:#40342f;text-decoration:none;white-space:normal;
@@ -3513,7 +3513,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   width:22px;height:22px;flex:0 0 22px;object-fit:contain;border-radius:5px;
 }
 .invitation-navigation-links .nav-app-label{
-  display:flex;flex:1 1 auto;min-width:0;flex-direction:column;align-items:flex-start;gap:4px;
+  display:flex;flex:0 1 auto;min-width:0;flex-direction:column;align-items:flex-start;gap:4px;
   font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif!important;
   letter-spacing:-.3px!important;line-height:1.1!important;
 }
