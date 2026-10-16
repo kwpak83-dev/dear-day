@@ -3538,16 +3538,14 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 }
 
 
-/* Editor full-preview zoom controls; never applied to published invitations. */
-.full-preview-toolbar .dd-preview-zoom{display:flex;align-items:center;justify-content:center;gap:3px;flex-wrap:nowrap}
-.full-preview-toolbar .dd-preview-zoom button{padding:5px 7px;min-height:30px;background:#f1e1d8;color:#765449;font-size:12px}
-.full-preview-toolbar .dd-preview-zoom button:disabled{opacity:.45;cursor:default}
-.full-preview-toolbar .dd-preview-zoom input{box-sizing:border-box;width:43px;min-width:0;height:30px;padding:3px;border:1px solid #ddc9bd;border-radius:6px;background:white;color:#765449;text-align:center;font-size:12px}
-.full-preview-toolbar .dd-preview-zoom input::-webkit-inner-spin-button,.full-preview-toolbar .dd-preview-zoom input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
-.full-preview-toolbar .dd-preview-zoom input{-moz-appearance:textfield;appearance:textfield}
-.full-preview-toolbar .dd-preview-zoom span{color:#765449;font-size:11px}
-.full-preview-scroll.dd-preview-zoom-scroll{overflow-x:auto}
-@media(max-width:760px){
-  .full-preview-toolbar{flex-wrap:wrap}
-  .full-preview-toolbar .dd-preview-zoom{order:3;flex:1 0 100%}
-}
+/* Template collection preview zoom: controls and a scalable 390px canvas. */
+.dd-template-preview-header{max-width:430px;margin:0 auto 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.dd-template-preview-zoom{display:flex;align-items:center;justify-content:center;gap:4px;flex:1 0 100%}
+.dd-template-preview-zoom button{border:1px solid #ded4cf;border-radius:7px;background:#fff;color:#654f47;min-height:32px;padding:5px 9px;font-size:12px;font-weight:700;cursor:pointer}
+.dd-template-preview-zoom button:disabled{opacity:.4;cursor:default}
+.dd-template-preview-zoom input{box-sizing:border-box;width:48px;height:32px;border:1px solid #ded4cf;border-radius:7px;background:#fff;color:#654f47;text-align:center;font-size:12px}
+.dd-template-preview-zoom input::-webkit-inner-spin-button,.dd-template-preview-zoom input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.dd-template-preview-zoom input{-moz-appearance:textfield;appearance:textfield}
+.dd-template-preview-zoom span{color:#654f47;font-size:12px}
+.dd-template-preview-stage{width:100%;overflow-x:auto;overflow-y:visible}
+.dd-template-preview-canvas{width:390px;margin:0 auto;max-width:none;background:#fff;box-shadow:0 12px 35px rgba(0,0,0,.08)}
