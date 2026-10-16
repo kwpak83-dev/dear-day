@@ -185,7 +185,7 @@ export default function HeroPresetsPage(){
     if(index>=0){next[index]={...next[index],displayBinding:key,visible:true,...(!next[index].text?{text:reference}:{})};firstId??=next[index].id;}
     else{const id=`text-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;next.push({id,source,text:reference,displayBinding:key,heroDisplayAutoCreated:true,visible:true,fontId:"noto-serif-kr",fontSize:key==="title"?30:18,color:"#ffffff",x:50,y:key==="title"?50:key==="schedule"?93:source==="parent1"?90:source==="parent2"?95:key==="milestone_event"?30:key==="milestone_person"?50:key==="milestone_host"?75:92,align:"center"});firstId??=id;}
    }
-   return {...current,config:{...previous,display:{...previous.display,[key]:false},textLayers:next}};
+   return {...current,config:{...previous,display:{...previous.display,...(form.event_kind==="milestone_birthday"?{title:false,detail:false}:{}),[key]:false},textLayers:next}};
   });
   if(firstId)setExpandedLayerId(firstId);
  };
