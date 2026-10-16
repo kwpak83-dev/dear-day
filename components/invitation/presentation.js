@@ -86,6 +86,7 @@ export function getInvitationPresentation(invitation = {}, eventKind) {
     heroName: kind === "wedding" ? join([heroName(invitation, "groom"), heroName(invitation, "bride")], " & ") : kind === "first_birthday" || kind === "baby_shower" ? heroName(invitation, "childName") : heroName(invitation, "person1Name"),
     heroFullName: kind === "milestone_birthday" ? (clean(invitation.person1NameLastName) + clean(invitation.person1NameFirstName) || clean(invitation.person1Name)) : "",
     heroEventTitle: clean(invitation.eventTitle) || clean(event.title),
+    heroHostName: clean(invitation.hostName),
     heroEventSubtitle: clean(invitation.eventSubtitle),
     heroParent1: clean(invitation.parent1Name),
     heroParent2: clean(invitation.parent2Name),
