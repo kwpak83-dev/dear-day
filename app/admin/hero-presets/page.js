@@ -134,7 +134,7 @@ export default function HeroPresetsPage(){
  const setConfig=(key,value)=>setForm((current)=>({...current,config:{...current.config,[key]:value}}));
  // Only fields with a direct, existing data source can be managed as text layers.
  // Legacy display-only fields keep their original checkbox behavior.
- const linkedDisplaySources={title:"event_title",schedule:"schedule",venue:"venue"};
+ const linkedDisplaySources={title:"title",schedule:"schedule",venue:"venue"};
  const linkedDisplayLayer=(config,key)=>(config.textLayers||[]).find(layer=>layer.displayBinding===key);
  const toggleHeroDisplay=(key,checked)=>{
   const source=linkedDisplaySources[key];
@@ -143,10 +143,10 @@ export default function HeroPresetsPage(){
   const config=form.config;
   const layers=[...(config.textLayers||[])];
   const index=layers.findIndex(layer=>layer.displayBinding===key);
-  const sourceIndex=index>=0?index:layers.findIndex(layer=>layer.source===source||(key==="title"&&layer.source==="title"));
+  const sourceIndex=index>=0?index:layers.findIndex(layer=>layer.source===source||(key==="title"&&layer.source==="event_title"));
   if(!checked){
    // Preserve existing layer styles while hiding both the legacy field and bound layer.
-   setForm(current=>({...current,config:{...current.config,display:{...current.config.display,[key]:false},textLayers:(current.config.textLayers||[]).map(layer=>(layer.displayBinding===key||(!linkedDisplayLayer(current.config,key)&&(layer.source===source||(key==="title"&&layer.source==="title"))))?{...layer,visible:false,displayBinding:key}:layer)}}));
+   setForm(current=>({...current,config:{...current.config,display:{...current.config.display,[key]:false},textLayers:(current.config.textLayers||[]).map(layer=>(layer.displayBinding===key||(!linkedDisplayLayer(current.config,key)&&(layer.source===source||(key==="title"&&layer.source==="event_title"))))?{...layer,visible:false,displayBinding:key}:layer)}}));
    return;
   }
   if(sourceIndex<0&&layers.length>=12){setNotice("텍스트 레이어는 최대 12개입니다. 기존 레이어를 정리한 뒤 다시 시도해 주세요.");return;}
@@ -155,7 +155,7 @@ export default function HeroPresetsPage(){
    const previous=current.config;
    const next=[...(previous.textLayers||[])];
    const found=next.findIndex(layer=>layer.displayBinding===key);
-   const bySource=found>=0?found:next.findIndex(layer=>layer.source===source||(key==="title"&&layer.source==="title"));
+   const bySource=found>=0?found:next.findIndex(layer=>layer.source===source||(key==="title"&&layer.source==="event_title"));
    if(bySource>=0)next[bySource]={...next[bySource],displayBinding:key,visible:true};
    else next.push({id,source,text:"",displayBinding:key,visible:true,fontId:"noto-serif-kr",fontSize:key==="title"?30:18,color:"#ffffff",x:50,y:key==="title"?50:key==="schedule"?85:92,align:"center"});
    // The old fixed-position field must stay off whenever a bound layer is used.
@@ -246,7 +246,16 @@ export default function HeroPresetsPage(){
  const animationSettings=JSON.stringify({intro:form.config.intro||null,photo:form.config.photoFadeUp||null,text:(form.config.textLayers||[]).map(layer=>[layer.id,layer.fadeUp||null])});
  useEffect(()=>{setAnimationReplay(current=>current+1);},[animationSettings,editing]);
  const liveAssets={...(activeFrame?.url?{[activeFrame.id]:activeFrame.url}:{}),...(activeBackground?.url?{[activeBackground.id]:activeBackground.url}:{}),...Object.fromEntries(decorationAssets.filter(item=>item.url).map(item=>[item.id,item.url]))};
- const liveInvitation={eventKind:"wedding",groom:"경원",bride:"보람",parent1Name:"아빠 김민준",parent2Name:"엄마 박서연",groomFatherName:"박영채",groomMotherName:"김이순",brideFatherName:"이규수",brideMotherName:"김덕임",date:"2026-10-17",time:"12:30",venue:"디어데이 웨딩홀",venueAddress:"서울특별시 중구 세종대로 110",message:"소중한 분들을 모시고 새로운 시작을 함께하려 합니다.",coverPhotoUrl:activeFrame?.url||"/templates/modern-001/preview.png"};
+ const previewKind=form.event_kind||"wedding";
+ const previewSamples={
+  wedding:{groom:"경원",bride:"보람",eventTitle:"경원 & 보람",venue:"디어데이 웨딩홀"},
+  first_birthday:{childName:"하윤",parent1Name:"김민준",parent2Name:"박서연",eventTitle:"하윤이의 첫돌",venue:"디어데이 파티룸"},
+  birthday:{person1Name:"하윤",eventTitle:"하윤이의 생일",venue:"디어데이 파티룸"},
+  milestone_birthday:{person1Name:"김민준",eventTitle:"김민준 칠순잔치",venue:"디어데이 연회장"},
+  gathering:{eventTitle:"가을 모임",hostName:"김민준",venue:"디어데이 라운지"},
+  opening:{eventTitle:"Dearday Coffee",hostName:"디어데이",venue:"디어데이 커피"},
+ };
+ const liveInvitation={eventKind:previewKind,date:"2026-10-30",time:"14:00",venueAddress:"서울특별시 중구 세종대로 110",message:"소중한 분들을 새로운 시작에 초대합니다.",coverPhotoUrl:activeFrame?.url||"/templates/modern-001/preview.png",...(previewSamples[previewKind]||{eventTitle:"디어데이 행사",venue:"디어데이 행사장"})};
  const save=async(e)=>{e.preventDefault();if(saving)return;setSaving(true);setNotice("");try{const response=await fetch("/api/admin/hero-presets",{method:editing==="new"?"POST":"PATCH",headers:{...(await auth()),"Content-Type":"application/json"},body:JSON.stringify({...form,preset_key:form.preset_key.trim(),...(editing!=="new"?{id:editing}:{})})});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||"저장하지 못했어요.");if(editing==="new"){await load();setEditing(null);setNotice("Hero 프리셋을 저장했습니다.");return;}if(!result.preset)throw new Error("저장된 Hero 프리셋을 확인하지 못했어요.");setState(current=>({loading:false,error:"",presets:current.presets.map(item=>item.id===result.preset.id?result.preset:item)}));setEditing(null);setNotice("Hero 프리셋을 저장했습니다.");}catch(e){setNotice(e.message);}finally{setSaving(false);}};
  return <main className="dd-admin-theme-page dd-admin-hero-page" style={{maxWidth:980,margin:"0 auto",padding:"32px 16px 64px"}}><p className="section-kicker">ADMIN · HERO PRESETS</p><h1>Hero 프레임 관리</h1><p>Hero는 사진·프레임·텍스트·클립아트 장식을 관리합니다. 본문 영역 장식은 기존 템플릿 관리에서 계속 관리합니다.</p><AdminDesignNav current="hero"/>
  {state.loading?<p>불러오는 중이에요.</p>:state.error?<p className="payment-error">{state.error}</p>:<>
