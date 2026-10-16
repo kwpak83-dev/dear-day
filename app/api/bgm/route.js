@@ -5,7 +5,7 @@ export async function GET() {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return Response.json({ tracks: [] });
   const supabase = createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
-  const columns = "id,title,composer,storage_bucket,storage_path,license_name,source_url,sort_order";
+  const columns = "id,title,composer,storage_bucket,storage_path,license_name,source_url,sort_order,event_kinds";
   let { data, error } = await supabase.from("bgm_tracks")
     .select(columns + ",event_kinds")
     .eq("is_active", true).order("sort_order").order("created_at");
@@ -20,6 +20,7 @@ export async function GET() {
     eventKinds: Array.isArray(track.event_kinds) ? track.event_kinds : [],
     title: track.title,
     composer: track.composer || "",
+    eventKinds: track.event_kinds || [],
     licenseName: track.license_name,
     sourceUrl: track.source_url || "",
     url: supabase.storage.from(track.storage_bucket).getPublicUrl(track.storage_path).data.publicUrl,
