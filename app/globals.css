@@ -1138,7 +1138,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-contact-actions{display:flex;align-items:center;justify-content:center;gap:22px}
 .dd-contact-actions a{display:inline-grid;place-items:center;min-width:28px;min-height:28px;font-size:23px;color:inherit;text-decoration:none}
 .dd-contact-toggle{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:15px auto 8px;padding:9px;border:0;background:transparent;color:inherit;font-size:12px;cursor:pointer}
-.dd-contact-parents{padding-top:8px;border-top:1px solid var(--dd-color-divider,#e8e2de)}
+.dd-contact-parents{padding-top:8px;border-top:0}
 .dd-contact-parents>div>strong{display:block;margin:7px 0 10px;font-size:12px;font-weight:500}
 
 /* Keep the actual Hero visible while adjusting text on a phone. */
