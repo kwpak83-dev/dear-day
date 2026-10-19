@@ -101,7 +101,7 @@ function validConfig(value){
   if(!Array.isArray(value.textLayers)||value.textLayers.length>12)return false;
 
   return value.textLayers.every((layer)=>layer&&typeof layer==="object"&&!Array.isArray(layer)
-    &&Object.keys(layer).every((key)=>["id","text","fontId","fontSize","fontWeight","color","x","y","align","stroke","shadow","opacity","letterSpacing","lineHeight","rotation","gradient","source","visible","fadeUp"].includes(key))
+    &&Object.keys(layer).every((key)=>["id","text","fontId","fontSize","fontWeight","color","x","y","align","stroke","shadow","opacity","letterSpacing","lineHeight","rotation","gradient","source","displayBinding","heroDisplayAutoCreated","visible","fadeUp"].includes(key))
     &&typeof layer.id==="string"&&/^[a-zA-Z0-9_-]{1,80}$/.test(layer.id)
     &&typeof layer.text==="string"&&layer.text.length<=200
     &&typeof layer.fontId==="string"&&fontIds.has(layer.fontId)
@@ -111,7 +111,9 @@ function validConfig(value){
     &&(layer.x===undefined||decimal(layer.x,0,100))
     &&(layer.y===undefined||decimal(layer.y,0,100))
     &&(layer.align===undefined||["left","center","right"].includes(layer.align))
-    &&(layer.source===undefined||["custom","title","name","full_name","event_title","event_subtitle","venue_detail","parent1","parent2","schedule","venue"].includes(layer.source))
+    &&(layer.source===undefined||["custom","title","name","full_name","event_title","event_subtitle","venue_detail","parent1","parent2","host","note","schedule","venue"].includes(layer.source))
+    &&(layer.displayBinding===undefined||["title","detail","note","schedule","venue","milestone_event","milestone_person","milestone_host"].includes(layer.displayBinding))
+    &&(layer.heroDisplayAutoCreated===undefined||typeof layer.heroDisplayAutoCreated==="boolean")
     &&(layer.visible===undefined||typeof layer.visible==="boolean")
     &&(layer.stroke===undefined||(layer.stroke&&typeof layer.stroke==="object"&&!Array.isArray(layer.stroke)&&typeof layer.stroke.enabled==="boolean"&&hex(layer.stroke.color)&&decimal(layer.stroke.width,0,6)))
     &&(layer.shadow===undefined||(layer.shadow&&typeof layer.shadow==="object"&&!Array.isArray(layer.shadow)&&typeof layer.shadow.enabled==="boolean"&&hex(layer.shadow.color)&&decimal(layer.shadow.x,-20,20)&&decimal(layer.shadow.y,-20,20)&&decimal(layer.shadow.blur,0,30)&&decimal(layer.shadow.opacity,0,1)))
