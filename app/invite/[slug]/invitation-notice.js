@@ -20,7 +20,7 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
       const hiddenDate = window.localStorage.getItem(storageKey);
       const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
       if (hiddenDate !== today) setOpen(true);
-      else { setOpen(false); releaseHeroIntro(); }
+      else { setOpen(false); releaseHeroIntro(); if (preview) onClose?.(); }
     } catch { setOpen(true); }
   }, [notice.enabled, storageKey, preview, autoOpen]);
   useEffect(() => {
