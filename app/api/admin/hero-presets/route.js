@@ -10,7 +10,7 @@ const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 const heroModes = new Set(["photo", "frame", "illustration"]);
 const heroRatios = new Set(["4:5", "1:1", "3:4", "2:3", "9:16", "16:9"]);
 const heroDisplayKeys = ["eyebrow","eventLabel","title","relations","detail","note","schedule","venue"];
-const optionalHeroDisplayKeys = ["milestone_event","milestone_person","milestone_host"];
+const optionalHeroDisplayKeys = ["milestone_event","milestone_person","milestone_host","venue_detail"];
 const defaultDisplay = Object.fromEntries(heroDisplayKeys.map((key) => [key, true]));
 const defaultConfig = { mode:"photo", aspectRatio:"4:5", positionX:50, positionY:50, textYPercent:50, scheduleFontSize:11, nameFontSize:21, nameFontFamily:"inherit", nameFontWeight:400, nameLineHeight:1.5, nameLetterSpacing:0, nameTextAlign:"center", nameColor:"#ffffff", separatorFontSize:16, separatorColor:"#d8b985", zoom:1, photoGrayscale:0, overlayColor:"#000000", overlayOpacity:0, headerVisible:true, mastheadVisible:true, mastheadText:"", display:defaultDisplay };
 
@@ -113,7 +113,7 @@ function validConfig(value){
     &&(layer.y===undefined||decimal(layer.y,0,100))
     &&(layer.align===undefined||["left","center","right"].includes(layer.align))
     &&(layer.source===undefined||["custom","title","name","full_name","event_title","event_subtitle","venue_detail","parent1","parent2","host","note","schedule","venue"].includes(layer.source))
-    &&(layer.displayBinding===undefined||["title","detail","note","schedule","venue","milestone_event","milestone_person","milestone_host"].includes(layer.displayBinding))
+    &&(layer.displayBinding===undefined||["title","detail","note","schedule","venue","milestone_event","milestone_person","milestone_host","venue_detail"].includes(layer.displayBinding))
     &&(layer.heroDisplayAutoCreated===undefined||typeof layer.heroDisplayAutoCreated==="boolean")
     &&(layer.visible===undefined||typeof layer.visible==="boolean")
     &&(layer.stroke===undefined||(layer.stroke&&typeof layer.stroke==="object"&&!Array.isArray(layer.stroke)&&typeof layer.stroke.enabled==="boolean"&&hex(layer.stroke.color)&&decimal(layer.stroke.width,0,6)))
