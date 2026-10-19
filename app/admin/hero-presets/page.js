@@ -12,7 +12,7 @@ import { EVENT_KIND_OPTIONS } from "../../../lib/event-config";
 import { sampleContentToInvitation } from "../../../lib/completed-template-sample";
 import { getInvitationPresentation } from "../../../components/invitation/presentation";
 
-const displayLabels=[["eyebrow","상단 초대 문구"],["eventLabel","행사 문구"],["title","행사 제목 / 이름"],["relations","관계 정보"],["detail","상세 정보"],["milestone_event","잔치 제목"],["milestone_person","주인공 이름"],["milestone_host","주최자 이름"],["note","추가 문구"],["schedule","날짜 / 시간"],["venue","장소"]];
+const displayLabels=[["eyebrow","상단 초대 문구"],["eventLabel","행사 문구"],["title","행사 제목 / 이름"],["relations","관계 정보"],["detail","상세 정보"],["milestone_event","잔치 제목"],["milestone_person","주인공 이름"],["milestone_host","주최자 이름"],["note","추가 문구"],["schedule","날짜 / 시간"],["venue","장소"],["venue_detail","상세 장소"]];
 const defaultDisplay=Object.fromEntries(displayLabels.map(([key])=>[key,true]));
 const heroPreviewSampleText=(kind,key)=>{
  const titles={wedding:"경원 & 보람",first_birthday:"하윤",birthday:"하윤이의 생일",milestone_birthday:"김민준 칠순잔치",gathering:"가을 모임",opening:"Dearday Coffee"};
@@ -26,7 +26,7 @@ const heroPreviewSampleText=(kind,key)=>{
 // UI-only filtering: preserve all saved display flags for existing templates.
 const visibleHeroDisplayKeys=(kind)=>{
  const keys=kind==="milestone_birthday"?["milestone_event","milestone_person","milestone_host","schedule","venue"]:["title","schedule","venue"];
- if(kind==="wedding")keys.push("relations");
+ if(kind==="wedding")keys.push("relations","venue_detail");
  if(["first_birthday","birthday","gathering","opening","baby_shower","anniversary","housewarming","graduation","corporate","party","other"].includes(kind))keys.push("detail");
  if(["first_birthday","baby_shower","anniversary"].includes(kind))keys.push("note");
  return keys;
@@ -154,7 +154,7 @@ export default function HeroPresetsPage(){
   const setHeroCenterPanelCopy=(key,value)=>setForm(current=>({...current,config:{...current.config,heroCenterPanelCopy:{...current.config.heroCenterPanelCopy,[key]:value}}}));
  const setBackdrop=(key,value)=>setForm(current=>({...current,config:{...current.config,heroBackdrop:{...defaultConfig.heroBackdrop,...current.config.heroBackdrop,[key]:value}}}));
  const setConfig=(key,value)=>setForm((current)=>({...current,config:{...current.config,[key]:value}}));
- const linkedDisplaySources={title:"title",schedule:"schedule",venue:"venue",milestone_event:"event_title",milestone_person:"full_name",milestone_host:"host"};
+ const linkedDisplaySources={title:"title",schedule:"schedule",venue:"venue",venue_detail:"venue_detail",milestone_event:"event_title",milestone_person:"full_name",milestone_host:"host"};
  const isMilestoneKey=(key)=>["milestone_event","milestone_person","milestone_host"].includes(key);
  const isBirthdayParents=(key)=>key==="detail"&&form.event_kind==="first_birthday";
  const linkedDisplayLayer=(config,key)=>(config.textLayers||[]).find(layer=>layer.displayBinding===key);
@@ -278,7 +278,7 @@ export default function HeroPresetsPage(){
  const previewSampleContent={...(sharedPreviewSamples[previewKind]||{}),...(selectedPreviewTemplate?.sample_content||{})};
  const liveInvitation=sampleContentToInvitation(previewSampleContent,previewKind,{coverPhotoUrl:activeFrame?.url||previewSampleContent.hero_image_url||""});
  const previewPresentation=getInvitationPresentation(liveInvitation,previewKind);
- const previewReferenceText=(key)=>key==="title"?previewPresentation.heroTitle:key==="schedule"?previewPresentation.heroSchedule:key==="venue"?liveInvitation.venue||"":"";
+ const previewReferenceText=(key)=>key==="title"?previewPresentation.heroTitle:key==="schedule"?previewPresentation.heroSchedule:key==="venue"?liveInvitation.venue||"":key==="venue_detail"?previewPresentation.addressDetail||"": "";
 
  const save=async(e)=>{e.preventDefault();if(saving)return;setSaving(true);setNotice("");try{const response=await fetch("/api/admin/hero-presets",{method:editing==="new"?"POST":"PATCH",headers:{...(await auth()),"Content-Type":"application/json"},body:JSON.stringify({...form,preset_key:form.preset_key.trim(),...(editing!=="new"?{id:editing}:{})})});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||"저장하지 못했어요.");if(editing==="new"){await load();setEditing(null);setNotice("Hero 프리셋을 저장했습니다.");return;}if(!result.preset)throw new Error("저장된 Hero 프리셋을 확인하지 못했어요.");setState(current=>({loading:false,error:"",presets:current.presets.map(item=>item.id===result.preset.id?result.preset:item)}));setEditing(null);setNotice("Hero 프리셋을 저장했습니다.");}catch(e){setNotice(e.message);}finally{setSaving(false);}};
  return <main className="dd-admin-theme-page dd-admin-hero-page" style={{maxWidth:980,margin:"0 auto",padding:"32px 16px 64px"}}><p className="section-kicker">ADMIN · HERO PRESETS</p><h1>Hero 프레임 관리</h1><p>Hero는 사진·프레임·텍스트·클립아트 장식을 관리합니다. 본문 영역 장식은 기존 템플릿 관리에서 계속 관리합니다.</p><AdminDesignNav current="hero"/>
