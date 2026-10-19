@@ -2554,6 +2554,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Returning visitors who hid today\u0027s notice should never see the server-rendered overlay flash. */
 .shared-public-invitation.dd-notice-skip-initial .dd-notice-overlay{display:none}
 .shared-public-invitation.dd-notice-closed-early .dd-notice-overlay{display:none}
+/* Measurement and animated glyphs must inherit the configured intro font,
+   rather than the public invitation's general 13px span rule. */
+.dd-hero-intro .dd-hero-intro-measure,.dd-hero-intro .dd-hero-intro-lines,.dd-hero-intro .dd-hero-intro-line{font:inherit;letter-spacing:inherit;color:inherit}
 .shared-public-invitation.dd-hero-intro-waits-for-notice > .full-invitation-renderer{visibility:hidden}
 .shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-mask,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-text,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-line{animation-play-state:paused}
 @keyframes dd-hero-intro-text-reveal{from{clip-path:inset(-1em calc(100% + 1em) -1em -1em)}to{clip-path:inset(-1em -1em -1em -1em)}}
