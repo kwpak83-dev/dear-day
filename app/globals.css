@@ -3552,5 +3552,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-template-preview-zoom input::-webkit-inner-spin-button,.dd-template-preview-zoom input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .dd-template-preview-zoom input{-moz-appearance:textfield;appearance:textfield}
 .dd-template-preview-zoom span{color:#654f47;font-size:12px}
-.dd-template-preview-stage{width:100%;overflow-x:auto;overflow-y:visible}
+/* Keep the document as the sticky effects' vertical scroll container.
+   Horizontal auto would also compute overflow-y to auto without a height limit. */
+.dd-template-preview-stage{width:100%;overflow:visible}
 .dd-template-preview-canvas{width:390px;margin:0 auto;max-width:none;background:#fff;box-shadow:0 12px 35px rgba(0,0,0,.08)}
