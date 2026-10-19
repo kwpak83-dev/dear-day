@@ -1138,7 +1138,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-contact-actions{display:flex;align-items:center;justify-content:center;gap:22px}
 .dd-contact-actions a{display:inline-grid;place-items:center;min-width:28px;min-height:28px;font-size:23px;color:inherit;text-decoration:none}
 .dd-contact-toggle{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:15px auto 8px;padding:9px;border:0;background:transparent;color:inherit;font-size:12px;cursor:pointer}
-.dd-contact-parents{padding-top:8px;border-top:1px solid var(--dd-color-divider,#e8e2de)}
+.dd-contact-parents{padding-top:8px;border-top:0}
 .dd-contact-parents>div>strong{display:block;margin:7px 0 10px;font-size:12px;font-weight:500}
 
 /* Keep the actual Hero visible while adjusting text on a phone. */
@@ -2549,12 +2549,17 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Hero entrance intro */
 .invitation-template{position:relative}
 .classic-hero>.dd-hero-intro{position:absolute;inset:0;z-index:80;width:100%;height:100%;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:none;animation:dd-hero-intro-exit var(--dd-intro-fade) ease calc(var(--dd-intro-write) + var(--dd-intro-hold)) forwards}
-.dd-hero-intro:not(.dd-hero-intro-ready){animation-play-state:paused;visibility:hidden}.dd-hero-intro-text-wrap{position:relative;display:block;width:max-content;max-width:88%;min-width:0;text-align:center;line-height:1.35}.dd-hero-intro-measure{display:block;white-space:normal;overflow-wrap:anywhere;word-break:keep-all;visibility:hidden}.dd-hero-intro-lines{position:absolute;inset:0;display:block;text-align:center}.dd-hero-intro-line{display:block;white-space:pre;clip-path:inset(-.25em calc(100% + 1em) -.25em -.25em);animation:dd-hero-intro-text-reveal var(--dd-intro-line-duration) linear var(--dd-intro-line-delay) both}.dd-hero-intro-mask{display:none}
+.dd-hero-intro:not(.dd-hero-intro-ready){animation-play-state:paused;visibility:hidden}.dd-hero-intro-text-wrap{position:relative;display:block;width:88%;max-width:390px;min-width:0;text-align:center;line-height:1.35}.dd-hero-intro-measure{display:block;width:100%;white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;visibility:hidden}.dd-hero-intro-lines{position:absolute;inset:0;display:block;text-align:center}.dd-hero-intro-line{display:block;white-space:pre;clip-path:inset(-.25em calc(100% + 1em) -.25em -.25em);animation:dd-hero-intro-text-reveal var(--dd-intro-line-duration) linear var(--dd-intro-line-delay) both}.dd-hero-intro-mask{display:none}
 /* Keep the invitation (including its HERO intro) out of sight until the notice is dismissed or skipped. The content still renders and loads normally. */
 /* Returning visitors who hid today\u0027s notice should never see the server-rendered overlay flash. */
 .shared-public-invitation.dd-notice-skip-initial .dd-notice-overlay{display:none}
 .shared-public-invitation.dd-notice-closed-early .dd-notice-overlay{display:none}
+/* Measurement and animated glyphs must inherit the configured intro font,
+   rather than the public invitation's general 13px span rule. */
+.dd-hero-intro .dd-hero-intro-measure,.dd-hero-intro .dd-hero-intro-lines,.dd-hero-intro .dd-hero-intro-line{font:inherit;letter-spacing:inherit;color:inherit}
 .shared-public-invitation.dd-hero-intro-waits-for-notice > .full-invitation-renderer{visibility:hidden}
+/* Editor previews pause the entire intro timeline until their own notice is dismissed. */
+.dd-editor-intro-waits-for-notice .dd-hero-intro,.dd-editor-intro-waits-for-notice .dd-hero-intro-line{animation-play-state:paused!important}
 .shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-mask,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-text,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-line{animation-play-state:paused}
 @keyframes dd-hero-intro-text-reveal{from{clip-path:inset(-1em calc(100% + 1em) -1em -1em)}to{clip-path:inset(-1em -1em -1em -1em)}}
 @keyframes dd-hero-intro-write{from{transform:scaleX(1)}to{transform:scaleX(0)}}
@@ -3549,5 +3554,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-template-preview-zoom input::-webkit-inner-spin-button,.dd-template-preview-zoom input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .dd-template-preview-zoom input{-moz-appearance:textfield;appearance:textfield}
 .dd-template-preview-zoom span{color:#654f47;font-size:12px}
-.dd-template-preview-stage{width:100%;overflow-x:auto;overflow-y:visible}
+/* Keep the document as the sticky effects' vertical scroll container.
+   Horizontal auto would also compute overflow-y to auto without a height limit. */
+.dd-template-preview-stage{width:100%;overflow:visible}
 .dd-template-preview-canvas{width:390px;margin:0 auto;max-width:none;background:#fff;box-shadow:0 12px 35px rgba(0,0,0,.08)}

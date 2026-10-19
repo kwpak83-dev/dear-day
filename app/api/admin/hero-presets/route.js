@@ -10,6 +10,7 @@ const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 const heroModes = new Set(["photo", "frame", "illustration"]);
 const heroRatios = new Set(["4:5", "1:1", "3:4", "2:3", "9:16", "16:9"]);
 const heroDisplayKeys = ["eyebrow","eventLabel","title","relations","detail","note","schedule","venue"];
+const optionalHeroDisplayKeys = ["milestone_event","milestone_person","milestone_host","venue_detail"];
 const defaultDisplay = Object.fromEntries(heroDisplayKeys.map((key) => [key, true]));
 const defaultConfig = { mode:"photo", aspectRatio:"4:5", positionX:50, positionY:50, textYPercent:50, scheduleFontSize:11, nameFontSize:21, nameFontFamily:"inherit", nameFontWeight:400, nameLineHeight:1.5, nameLetterSpacing:0, nameTextAlign:"center", nameColor:"#ffffff", separatorFontSize:16, separatorColor:"#d8b985", zoom:1, photoGrayscale:0, overlayColor:"#000000", overlayOpacity:0, headerVisible:true, mastheadVisible:true, mastheadText:"", display:defaultDisplay };
 
@@ -54,8 +55,8 @@ function validConfig(value){
     &&typeof value.headerVisible==="boolean"&&typeof value.mastheadVisible==="boolean"
     &&typeof value.mastheadText==="string"&&value.mastheadText.length<=60
     &&value.display&&typeof value.display==="object"&&!Array.isArray(value.display)
-    &&Object.keys(value.display).length===heroDisplayKeys.length
-    &&heroDisplayKeys.every((key)=>typeof value.display[key]==="boolean");
+    &&heroDisplayKeys.every((key)=>typeof value.display[key]==="boolean")
+    &&Object.keys(value.display).every((key)=>[...heroDisplayKeys,...optionalHeroDisplayKeys].includes(key)&&typeof value.display[key]==="boolean");
   if(!baseValid)return false;
   if(value.photoFrame!==undefined){const f=value.photoFrame;if(!f||typeof f!=="object"||Array.isArray(f)||Object.keys(f).some(k=>!["shape","width","height","x","y","borderColor","borderWidth","shadow","shadowBlur","rotation","imageX","imageY","imageZoom","autoPan","panBaseX","panBaseY","borderStyle"].includes(k))||!["default","rectangle","rounded","oval","circle","arch"].includes(f.shape)||!Number.isInteger(f.width)||!decimal(f.width,40,100)||!Number.isInteger(f.height)||!decimal(f.height,40,100)||!decimal(f.x,0,100)||!decimal(f.y,0,100)||!hex(f.borderColor)||!Number.isInteger(f.borderWidth)||!decimal(f.borderWidth,0,12)||typeof f.shadow!=="boolean"||!Number.isInteger(f.shadowBlur)||!decimal(f.shadowBlur,0,40)||(f.rotation!==undefined&&!decimal(f.rotation,-45,45))||(f.imageX!==undefined&&!decimal(f.imageX,0,100))||(f.imageY!==undefined&&!decimal(f.imageY,0,100))||(f.imageZoom!==undefined&&!decimal(f.imageZoom,1,3))||(f.autoPan!==undefined&&typeof f.autoPan!=="boolean")||(f.panBaseX!==undefined&&f.panBaseX!==null&&!decimal(f.panBaseX,0,100))||(f.panBaseY!==undefined&&f.panBaseY!==null&&!decimal(f.panBaseY,0,100))||(f.borderStyle!==undefined&&!["solid","double","dashed","dotted"].includes(f.borderStyle)))return false;}
   if(value.heroCenterPanel!==undefined){const p=value.heroCenterPanel;if(!p||typeof p!=="object"||Array.isArray(p)||Object.keys(p).some(k=>!["enabled","inheritBody","width","height","x","y","radius","fadeMode","fadeStrength","color","opacity"].includes(k))||typeof p.enabled!=="boolean"||typeof p.inheritBody!=="boolean"||!Number.isInteger(p.width)||!decimal(p.width,1,100)||(p.height!==undefined&&(!Number.isInteger(p.height)||!decimal(p.height,1,100)))||(p.x!==undefined&&(!Number.isInteger(p.x)||!decimal(p.x,0,100)))||(p.y!==undefined&&(!Number.isInteger(p.y)||!decimal(p.y,0,100)))||(p.radius!==undefined&&(!Number.isInteger(p.radius)||!decimal(p.radius,0,100)))||(p.fadeMode!==undefined&&!["solid","radial","horizontal","vertical"].includes(p.fadeMode))||(p.fadeStrength!==undefined&&(!Number.isInteger(p.fadeStrength)||!decimal(p.fadeStrength,0,100)))||!hex(p.color)||!Number.isInteger(p.opacity)||!decimal(p.opacity,0,100))return false;}
@@ -101,7 +102,7 @@ function validConfig(value){
   if(!Array.isArray(value.textLayers)||value.textLayers.length>12)return false;
 
   return value.textLayers.every((layer)=>layer&&typeof layer==="object"&&!Array.isArray(layer)
-    &&Object.keys(layer).every((key)=>["id","text","fontId","fontSize","fontWeight","color","x","y","align","stroke","shadow","opacity","letterSpacing","lineHeight","rotation","gradient","source","visible","fadeUp"].includes(key))
+    &&Object.keys(layer).every((key)=>["id","text","fontId","fontSize","fontWeight","color","x","y","align","stroke","shadow","opacity","letterSpacing","lineHeight","rotation","gradient","source","displayBinding","heroDisplayAutoCreated","visible","fadeUp"].includes(key))
     &&typeof layer.id==="string"&&/^[a-zA-Z0-9_-]{1,80}$/.test(layer.id)
     &&typeof layer.text==="string"&&layer.text.length<=200
     &&typeof layer.fontId==="string"&&fontIds.has(layer.fontId)
@@ -111,7 +112,9 @@ function validConfig(value){
     &&(layer.x===undefined||decimal(layer.x,0,100))
     &&(layer.y===undefined||decimal(layer.y,0,100))
     &&(layer.align===undefined||["left","center","right"].includes(layer.align))
-    &&(layer.source===undefined||["custom","title","name","full_name","event_title","event_subtitle","venue_detail","parent1","parent2","schedule","venue"].includes(layer.source))
+    &&(layer.source===undefined||["custom","title","name","full_name","event_title","event_subtitle","venue_detail","parent1","parent2","host","note","schedule","venue"].includes(layer.source))
+    &&(layer.displayBinding===undefined||["title","detail","note","schedule","venue","milestone_event","milestone_person","milestone_host","venue_detail"].includes(layer.displayBinding))
+    &&(layer.heroDisplayAutoCreated===undefined||typeof layer.heroDisplayAutoCreated==="boolean")
     &&(layer.visible===undefined||typeof layer.visible==="boolean")
     &&(layer.stroke===undefined||(layer.stroke&&typeof layer.stroke==="object"&&!Array.isArray(layer.stroke)&&typeof layer.stroke.enabled==="boolean"&&hex(layer.stroke.color)&&decimal(layer.stroke.width,0,6)))
     &&(layer.shadow===undefined||(layer.shadow&&typeof layer.shadow==="object"&&!Array.isArray(layer.shadow)&&typeof layer.shadow.enabled==="boolean"&&hex(layer.shadow.color)&&decimal(layer.shadow.x,-20,20)&&decimal(layer.shadow.y,-20,20)&&decimal(layer.shadow.blur,0,30)&&decimal(layer.shadow.opacity,0,1)))
