@@ -2476,6 +2476,15 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   transition:background .2s ease,outline-color .2s ease;
 }
 .dd-required-field-missing input,
+
+/* RSVP label is shorter: reduce only the leading action pill in both editor previews. */
+.create-page .preview-phone > .invitation-quick-menu--desktop-live.invitation-quick-menu--minimal.invitation-quick-menu--pills > button:first-child,
+.create-page .full-preview-document > .invitation-quick-menu--editor-full.invitation-quick-menu--minimal.invitation-quick-menu--pills > button:first-child {
+  flex:0 0 132px !important;
+  width:132px !important;
+  max-width:132px !important;
+}
+
 .dd-required-field-missing select,
 .dd-required-field-missing textarea{
   border-color:#315be8 !important;
@@ -3564,3 +3573,29 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
    Horizontal auto would also compute overflow-y to auto without a height limit. */
 .dd-template-preview-stage{width:100%;overflow:visible}
 .dd-template-preview-canvas{width:390px;margin:0 auto;max-width:none;background:#fff;box-shadow:0 12px 35px rgba(0,0,0,.08)}
+
+/* Editor preview quick actions: compact, centered, and isolated from published invitations. */
+.create-page .preview-phone > .invitation-quick-menu--desktop-live.invitation-quick-menu--minimal.invitation-quick-menu--pills,
+.create-page .full-preview-document > .invitation-quick-menu--editor-full.invitation-quick-menu--minimal.invitation-quick-menu--pills {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
+  width:max-content !important;
+  max-width:calc(100% - 16px) !important;
+  padding:6px 4px !important;
+  left:50% !important;
+  right:auto !important;
+  transform:translateX(-50%) !important;
+}
+.create-page .preview-phone > .invitation-quick-menu--desktop-live.invitation-quick-menu--minimal.invitation-quick-menu--pills > button,
+.create-page .full-preview-document > .invitation-quick-menu--editor-full.invitation-quick-menu--minimal.invitation-quick-menu--pills > button {
+  flex:0 0 148px !important;
+  width:148px !important;
+  max-width:148px !important;
+  height:54px !important;
+  min-height:54px !important;
+  padding:6px 9px !important;
+  grid-template-columns:22px minmax(0,1fr) !important;
+  column-gap:7px !important;
+}
