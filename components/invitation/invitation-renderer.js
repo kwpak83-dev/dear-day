@@ -47,7 +47,7 @@ export default function InvitationRenderer({ invitation, eventKind, eventTypeCon
         ...photoFrame,
         imageX: hasFocusX ? focusX : photoFrame.imageX,
         imageY: hasFocusY ? focusY : photoFrame.imageY,
-        imageZoom: hasPhotoZoom ? photoZoom : photoFrame.imageZoom,
+        imageZoom: hasPhotoZoom ? (Number(photoFrame.imageZoom) > 0 ? Number(photoFrame.imageZoom) : 1) * photoZoom : photoFrame.imageZoom,
       },
     };
   } else if (!photoFrame && normalizedConfig?.hero && (hasFocusX || hasFocusY)) {
