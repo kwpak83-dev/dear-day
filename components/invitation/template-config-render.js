@@ -331,7 +331,7 @@ export function TemplateConfigHeroPanelCopy({ config, presentation = {} }) {
       if (!String(text || "").trim()) return [];
       const matching = layers.filter(layer => sources.includes(layer.source));
       return matching.length
-        ? matching.filter(layer => layer.visible !== false && config?.hero?.display?.[fallbackKey] !== false)
+        ? matching.filter(layer => layer.visible !== false)
         : config?.hero?.display?.[fallbackKey] !== false ? [null] : [];
     };
     const scheduleLayers = panel.autoFitSchedule !== false ? visibleLayers(["schedule"], "schedule", presentation.heroSchedule) : [];
