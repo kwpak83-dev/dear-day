@@ -49,7 +49,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
     </header>}
 
     <section className={`modern-hero${hasHeroVisual ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
-      <TemplateConfigHeroPanelCopy config={templateConfig} />
+      <TemplateConfigHeroPanelCopy config={templateConfig} presentation={presentation} />
       {hasHeroVisual && <figure style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img fetchPriority="high" loading="eager" decoding="async" style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
       <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} presentation={presentation} />
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />

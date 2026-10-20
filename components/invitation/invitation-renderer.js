@@ -36,15 +36,18 @@ export default function InvitationRenderer({ invitation, eventKind, eventTypeCon
   const photoFrame = normalizedConfig?.hero?.photoFrame;
   const focusX = Number(invitation?.heroPhotoFocusX);
   const focusY = Number(invitation?.heroPhotoFocusY);
+  const photoZoom = Number(invitation?.heroPhotoZoom);
+  const hasPhotoZoom = invitation?.heroPhotoZoom != null && Number.isFinite(photoZoom) && photoZoom >= 1 && photoZoom <= 2;
   const hasFocusX = invitation?.heroPhotoFocusX != null && Number.isFinite(focusX) && focusX >= 0 && focusX <= 100;
   const hasFocusY = invitation?.heroPhotoFocusY != null && Number.isFinite(focusY) && focusY >= 0 && focusY <= 100;
-  if (photoFrame && (hasFocusX || hasFocusY)) {
+  if (photoFrame && (hasFocusX || hasFocusY || hasPhotoZoom)) {
     normalizedConfig.hero = {
       ...normalizedConfig.hero,
       photoFrame: {
         ...photoFrame,
         imageX: hasFocusX ? focusX : photoFrame.imageX,
         imageY: hasFocusY ? focusY : photoFrame.imageY,
+        imageZoom: hasPhotoZoom ? (Number(photoFrame.imageZoom) > 0 ? Number(photoFrame.imageZoom) : 1) * photoZoom : photoFrame.imageZoom,
       },
     };
   } else if (!photoFrame && normalizedConfig?.hero && (hasFocusX || hasFocusY)) {

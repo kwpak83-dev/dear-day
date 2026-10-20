@@ -320,9 +320,31 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), buttonStyleConfigured: Boolean(buttonStyle), backgroundConfigured: Boolean(background), centerPanelConfigured: background?.centerPanel?.enabled === true, decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle, showCoverPhoto, illustrationMode: hero?.mode === "illustration", heroBackgroundConfigured: Boolean(heroBackgroundUrl) };
 }
 
-export function TemplateConfigHeroPanelCopy({ config }) {
+export function TemplateConfigHeroPanelCopy({ config, presentation = {} }) {
   const panel = config?.hero?.heroCenterPanelCopy;
   if (!panel?.enabled) return null;
+  let adjustedHeight = panel.height ?? 100;
+  let adjustedY = panel.y ?? 50;
+  if (panel.autoFitToDisplay === true) {
+    const layers = config?.hero?.textLayers || [];
+    const visibleLayers = (sources, fallbackKey, text) => {
+      if (!String(text || "").trim()) return [];
+      const matching = layers.filter(layer => sources.includes(layer.source));
+      return matching.length
+        ? matching.filter(layer => layer.visible !== false)
+        : config?.hero?.display?.[fallbackKey] !== false ? [null] : [];
+    };
+    const scheduleLayers = panel.autoFitSchedule !== false ? visibleLayers(["schedule"], "schedule", presentation.heroSchedule) : [];
+    const venueLayers = panel.autoFitVenue !== false ? visibleLayers(["venue", "venue_detail"], "venue", presentation.venue || presentation.addressDetail) : [];
+    const active = Number(scheduleLayers.length > 0) + Number(venueLayers.length > 0);
+    if (active === 0) return null;
+    if (active === 1) {
+      adjustedHeight = Math.max(1, adjustedHeight * 0.45);
+      const selectedLayers = scheduleLayers.length ? scheduleLayers : venueLayers;
+      const positions = selectedLayers.filter(Boolean).map(layer => Number(layer.y)).filter(Number.isFinite);
+      if (positions.length) adjustedY = Math.max(0, Math.min(100, positions.reduce((sum, y) => sum + y, 0) / positions.length));
+    }
+  }
   const center = rgba(panel.color, panel.opacity / 100) || "transparent";
   const strength = Math.max(0, Math.min(100, panel.fadeStrength ?? 70));
   const edge = rgba(panel.color, (panel.opacity / 100) * (1 - strength / 100)) || "transparent";
@@ -335,9 +357,9 @@ export function TemplateConfigHeroPanelCopy({ config }) {
         : center;
   return <div aria-hidden="true" className="dd-hero-panel-copy" style={{
     position:"absolute",pointerEvents:"none",zIndex:0,
-    left:`${panel.x ?? 50}%`,top:`${panel.y ?? 50}%`,
+    left:`${panel.x ?? 50}%`,top:`${adjustedY}%`,
     transform:"translate(-50%,-50%)",
-    width:`${panel.width ?? 90}%`,height:`${panel.height ?? 100}%`,
+    width:`${panel.width ?? 90}%`,height:`${adjustedHeight}%`,
     borderRadius:`${panel.radius ?? 0}px`,background
   }}/>;
 }

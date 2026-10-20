@@ -63,7 +63,7 @@ function validConfig(value){
   if(value.heroCenterPanelCopy!==undefined&&value.heroCenterPanelCopy!==null){
     const p=value.heroCenterPanelCopy;
     if(!p||typeof p!=="object"||Array.isArray(p)
-      ||Object.keys(p).some(k=>!["enabled","width","height","x","y","radius","fadeMode","fadeStrength","color","opacity"].includes(k))
+      ||Object.keys(p).some(k=>!["enabled","width","height","x","y","radius","fadeMode","fadeStrength","color","opacity","autoFitToDisplay","autoFitSchedule","autoFitVenue"].includes(k))
       ||p.enabled!==true
       ||!Number.isInteger(p.width)||!decimal(p.width,1,100)
       ||!Number.isInteger(p.height)||!decimal(p.height,1,100)
@@ -72,7 +72,7 @@ function validConfig(value){
       ||!Number.isInteger(p.radius)||!decimal(p.radius,0,100)
       ||!["solid","radial","horizontal","vertical"].includes(p.fadeMode)
       ||!Number.isInteger(p.fadeStrength)||!decimal(p.fadeStrength,0,100)
-      ||!hex(p.color)||!Number.isInteger(p.opacity)||!decimal(p.opacity,0,100))return false;
+      ||!hex(p.color)||!Number.isInteger(p.opacity)||!decimal(p.opacity,0,100)||(p.autoFitToDisplay!==undefined&&typeof p.autoFitToDisplay!=="boolean")||(p.autoFitSchedule!==undefined&&typeof p.autoFitSchedule!=="boolean")||(p.autoFitVenue!==undefined&&typeof p.autoFitVenue!=="boolean"))return false;
   }
   if(value.heroBackdrop!==undefined){const b=value.heroBackdrop;if(!b||typeof b!=="object"||Array.isArray(b)||Object.keys(b).some(k=>!["mode","color","endColor","angle","pattern","patternColor","patternSize","patternOpacity"].includes(k))||!["inherit","solid","gradient","pattern"].includes(b.mode)||!hex(b.color)||!hex(b.endColor)||!decimal(b.angle,0,360)||!["dots","grid","diagonal","stripes","cross","checker","diamonds","waves","horizontal","confetti"].includes(b.pattern)||!hex(b.patternColor)||!Number.isInteger(b.patternSize)||!decimal(b.patternSize,8,80)||!decimal(b.patternOpacity,0,1))return false;}
   if(value.photoFadeUp!==undefined&&!validFadeUp(value.photoFadeUp))return false;
