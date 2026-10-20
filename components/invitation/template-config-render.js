@@ -320,9 +320,22 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), buttonStyleConfigured: Boolean(buttonStyle), backgroundConfigured: Boolean(background), centerPanelConfigured: background?.centerPanel?.enabled === true, decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle, showCoverPhoto, illustrationMode: hero?.mode === "illustration", heroBackgroundConfigured: Boolean(heroBackgroundUrl) };
 }
 
-export function TemplateConfigHeroPanelCopy({ config }) {
+export function TemplateConfigHeroPanelCopy({ config, presentation = {} }) {
   const panel = config?.hero?.heroCenterPanelCopy;
   if (!panel?.enabled) return null;
+  let adjustedHeight = panel.height ?? 100;
+  if (panel.autoFitToDisplay === true) {
+    const layers = config?.hero?.textLayers || [];
+    const visibleSource = (sources, fallbackKey, text) => {
+      const matching = layers.filter(layer => sources.includes(layer.source));
+      return Boolean(String(text || "").trim()) && (matching.length ? matching.some(layer => layer.visible !== false) : config?.hero?.display?.[fallbackKey] !== false);
+    };
+    const scheduleVisible = panel.autoFitSchedule !== false && visibleSource(["schedule"], "schedule", presentation.heroSchedule);
+    const venueVisible = panel.autoFitVenue !== false && visibleSource(["venue", "venue_detail"], "venue", presentation.venue || presentation.addressDetail);
+    const active = Number(scheduleVisible) + Number(venueVisible);
+    if (active === 0) return null;
+    if (active === 1) adjustedHeight = Math.max(1, adjustedHeight * 0.65);
+  }
   const center = rgba(panel.color, panel.opacity / 100) || "transparent";
   const strength = Math.max(0, Math.min(100, panel.fadeStrength ?? 70));
   const edge = rgba(panel.color, (panel.opacity / 100) * (1 - strength / 100)) || "transparent";
@@ -337,7 +350,7 @@ export function TemplateConfigHeroPanelCopy({ config }) {
     position:"absolute",pointerEvents:"none",zIndex:0,
     left:`${panel.x ?? 50}%`,top:`${panel.y ?? 50}%`,
     transform:"translate(-50%,-50%)",
-    width:`${panel.width ?? 90}%`,height:`${panel.height ?? 100}%`,
+    width:`${panel.width ?? 90}%`,height:`${adjustedHeight}%`,
     borderRadius:`${panel.radius ?? 0}px`,background
   }}/>;
 }
