@@ -2546,6 +2546,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .public-account-card .public-account-bank>span{flex:0 1 auto;min-width:0;}
 
 
+/* Collection preview: do not flash the HERO frame while the intro measures its text after notice dismissal. */
+.dd-template-preview-await-intro:not(:has(.dd-hero-intro-ready)) .classic-hero{visibility:hidden}
 /* Hero entrance intro */
 .invitation-template{position:relative}
 .classic-hero>.dd-hero-intro{position:absolute;inset:0;z-index:80;width:100%;height:100%;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:none;animation:dd-hero-intro-exit var(--dd-intro-fade) ease calc(var(--dd-intro-write) + var(--dd-intro-hold)) forwards}
