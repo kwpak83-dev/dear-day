@@ -324,17 +324,26 @@ export function TemplateConfigHeroPanelCopy({ config, presentation = {} }) {
   const panel = config?.hero?.heroCenterPanelCopy;
   if (!panel?.enabled) return null;
   let adjustedHeight = panel.height ?? 100;
+  let adjustedY = panel.y ?? 50;
   if (panel.autoFitToDisplay === true) {
     const layers = config?.hero?.textLayers || [];
-    const visibleSource = (sources, fallbackKey, text) => {
+    const visibleLayers = (sources, fallbackKey, text) => {
+      if (!String(text || "").trim()) return [];
       const matching = layers.filter(layer => sources.includes(layer.source));
-      return Boolean(String(text || "").trim()) && (matching.length ? matching.some(layer => layer.visible !== false) : config?.hero?.display?.[fallbackKey] !== false);
+      return matching.length
+        ? matching.filter(layer => layer.visible !== false && config?.hero?.display?.[fallbackKey] !== false)
+        : config?.hero?.display?.[fallbackKey] !== false ? [null] : [];
     };
-    const scheduleVisible = panel.autoFitSchedule !== false && visibleSource(["schedule"], "schedule", presentation.heroSchedule);
-    const venueVisible = panel.autoFitVenue !== false && visibleSource(["venue", "venue_detail"], "venue", presentation.venue || presentation.addressDetail);
-    const active = Number(scheduleVisible) + Number(venueVisible);
+    const scheduleLayers = panel.autoFitSchedule !== false ? visibleLayers(["schedule"], "schedule", presentation.heroSchedule) : [];
+    const venueLayers = panel.autoFitVenue !== false ? visibleLayers(["venue", "venue_detail"], "venue", presentation.venue || presentation.addressDetail) : [];
+    const active = Number(scheduleLayers.length > 0) + Number(venueLayers.length > 0);
     if (active === 0) return null;
-    if (active === 1) adjustedHeight = Math.max(1, adjustedHeight * 0.45);
+    if (active === 1) {
+      adjustedHeight = Math.max(1, adjustedHeight * 0.45);
+      const selectedLayers = scheduleLayers.length ? scheduleLayers : venueLayers;
+      const positions = selectedLayers.filter(Boolean).map(layer => Number(layer.y)).filter(Number.isFinite);
+      if (positions.length) adjustedY = Math.max(0, Math.min(100, positions.reduce((sum, y) => sum + y, 0) / positions.length));
+    }
   }
   const center = rgba(panel.color, panel.opacity / 100) || "transparent";
   const strength = Math.max(0, Math.min(100, panel.fadeStrength ?? 70));
@@ -348,7 +357,7 @@ export function TemplateConfigHeroPanelCopy({ config, presentation = {} }) {
         : center;
   return <div aria-hidden="true" className="dd-hero-panel-copy" style={{
     position:"absolute",pointerEvents:"none",zIndex:0,
-    left:`${panel.x ?? 50}%`,top:`${panel.y ?? 50}%`,
+    left:`${panel.x ?? 50}%`,top:`${adjustedY}%`,
     transform:"translate(-50%,-50%)",
     width:`${panel.width ?? 90}%`,height:`${adjustedHeight}%`,
     borderRadius:`${panel.radius ?? 0}px`,background
