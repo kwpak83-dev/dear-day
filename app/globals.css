@@ -3564,3 +3564,28 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
    Horizontal auto would also compute overflow-y to auto without a height limit. */
 .dd-template-preview-stage{width:100%;overflow:visible}
 .dd-template-preview-canvas{width:390px;margin:0 auto;max-width:none;background:#fff;box-shadow:0 12px 35px rgba(0,0,0,.08)}
+
+/* Editor previews use the same compact D-style quick actions as published invitations.
+   Size them against the preview canvas, not the outer browser viewport. */
+.create-page .preview-phone > .invitation-quick-menu--desktop-live.invitation-quick-menu--minimal.invitation-quick-menu--pills {
+  left:50% !important;
+  right:auto !important;
+  width:max-content !important;
+  max-width:calc(100% - 16px) !important;
+  transform:translateX(-50%) !important;
+}
+.create-page .preview-phone > .invitation-quick-menu--desktop-live.invitation-quick-menu--minimal.invitation-quick-menu--pills > button {
+  width:166px !important;
+  max-width:calc((390px - 40px) / 2) !important;
+}
+.create-page .full-preview-document > .invitation-quick-menu--editor-full.invitation-quick-menu--minimal.invitation-quick-menu--pills {
+  left:50% !important;
+  right:auto !important;
+  width:max-content !important;
+  max-width:calc(100% - 16px) !important;
+  transform:translateX(-50%) !important;
+}
+.create-page .full-preview-document > .invitation-quick-menu--editor-full.invitation-quick-menu--minimal.invitation-quick-menu--pills > button {
+  width:166px !important;
+  max-width:calc(50vw - 18px) !important;
+}
