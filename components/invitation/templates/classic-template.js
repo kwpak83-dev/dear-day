@@ -93,7 +93,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
     <section className={`classic-hero${hasHeroVisual ? " has-photo" : " no-photo"}`} style={renderConfig.heroStyle}>
       {invitationFontStylesheets(templateConfig).map((href, index) => <link key={href} rel="stylesheet" href={href} fetchPriority={index === 0 && templateConfig?.hero?.intro?.enabled && templateConfig.hero.intro.text?.trim() ? "high" : undefined} />)}
     <TemplateConfigHeroIntro config={templateConfig} />
-      <TemplateConfigHeroPanelCopy config={templateConfig} />
+      <TemplateConfigHeroPanelCopy config={templateConfig} presentation={presentation} />
       {hasHeroVisual && <figure style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img fetchPriority="high" loading="eager" decoding="async" style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
       <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} presentation={presentation} />
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />
