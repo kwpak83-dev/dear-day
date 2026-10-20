@@ -334,7 +334,7 @@ export function TemplateConfigHeroPanelCopy({ config, presentation = {} }) {
     const venueVisible = panel.autoFitVenue !== false && visibleSource(["venue", "venue_detail"], "venue", presentation.venue || presentation.addressDetail);
     const active = Number(scheduleVisible) + Number(venueVisible);
     if (active === 0) return null;
-    if (active === 1) adjustedHeight = Math.max(1, adjustedHeight * 0.65);
+    if (active === 1) adjustedHeight = Math.max(1, adjustedHeight * 0.45);
   }
   const center = rgba(panel.color, panel.opacity / 100) || "transparent";
   const strength = Math.max(0, Math.min(100, panel.fadeStrength ?? 70));
