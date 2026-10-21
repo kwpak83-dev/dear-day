@@ -330,13 +330,13 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><QuickMenuIcon kind="guestbook" /><span className="invitation-quick-copy"><strong>{guestbookLabel}</strong><small>축하 메시지 남겨주세요~!</small></span></button>}
 
-      {program.enabled && <button className="invitation-quick-program" type="button" onClick={() => openSheet("program")} title={program.title} aria-label={program.title}><QuickMenuIcon kind="program" /><span className="invitation-quick-copy"><strong>{program.title}</strong><small>순서를 확인해 주세요</small></span></button>}
+      {program.enabled && <button className="invitation-quick-program" type="button" onClick={() => openSheet("program")} title={program.title} aria-label={program.title}><QuickMenuIcon kind="program" /><span className="invitation-quick-copy"><strong>식순 안내</strong><small>순서를 확인해 주세요</small></span></button>}
     </nav>, desktopLivePortal) : <nav className={`invitation-quick-menu invitation-quick-menu--minimal invitation-quick-menu--pills${program.enabled ? " invitation-quick-menu--program" : ""}${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} data-program-menu={program.enabled ? "" : undefined} style={program.enabled ? { ...desktopLiveStyle, "--dd-quick-menu-count": menuCount, "--dd-program-menu-width": `${menuCount * 166 + 16}px` } : desktopLiveStyle} aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => openSheet("rsvp")}><QuickMenuIcon kind="rsvp" /><span className="invitation-quick-copy"><strong>{rsvpLabel}</strong><small>함께 해주세요~!</small></span></button>}
       
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><QuickMenuIcon kind="guestbook" /><span className="invitation-quick-copy"><strong>{guestbookLabel}</strong><small>축하 메시지 남겨주세요~!</small></span></button>}
 
-      {program.enabled && <button className="invitation-quick-program" type="button" onClick={() => openSheet("program")} title={program.title} aria-label={program.title}><QuickMenuIcon kind="program" /><span className="invitation-quick-copy"><strong>{program.title}</strong><small>순서를 확인해 주세요</small></span></button>}
+      {program.enabled && <button className="invitation-quick-program" type="button" onClick={() => openSheet("program")} title={program.title} aria-label={program.title}><QuickMenuIcon kind="program" /><span className="invitation-quick-copy"><strong>식순 안내</strong><small>순서를 확인해 주세요</small></span></button>}
     </nav>)}
     {sheet === "program" && program.enabled && <BottomSheet title={program.title} className="invitation-bottom-sheet--program" onClose={closeSheet} portalTarget={usesPreviewPortal ? (isDesktopLivePreview ? previewSheetPortal : desktopLivePortal) : null} preview={usesPreviewPortal} layerStyle={{ ...desktopLiveStyle, ...(isDesktopLivePreview ? previewSheetStyle : {}) }}>
       <InvitationProgram program={invitation.program} eventKind={invitation.eventKind} />
