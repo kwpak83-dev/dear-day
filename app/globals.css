@@ -3599,3 +3599,32 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   grid-template-columns:22px minmax(0,1fr) !important;
   column-gap:7px !important;
 }
+
+/* Invitation message: prevent manual drag-resizing without changing text or scroll behavior. */
+.create-page .dd-invitation-message-textarea {resize:none;}
+
+/* Growth timeline add action matches the current sky-blue editor controls. */
+.create-page .dd-growth-timeline-add {
+  background:#eaf4ff !important;
+  border:1px solid #bfd9ff !important;
+  color:#244f9e !important;
+  box-shadow:none !important;
+}
+.create-page .dd-growth-timeline-add:hover {background:#dcecff !important;}
+
+/* Public invitation only: improve quick-menu text legibility without affecting editor previews. */
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills > button {
+  min-height:52px !important;
+  padding-top:5px !important;
+  padding-bottom:5px !important;
+}
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong {
+  font-size:13px !important;
+}
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small {
+  font-size:10px !important;
+}
+@media(max-width:380px){
+  .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong {font-size:12px !important;}
+  .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small {font-size:9px !important;}
+}
