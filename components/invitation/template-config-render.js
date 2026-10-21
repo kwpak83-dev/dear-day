@@ -202,6 +202,12 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   }
   if (!customFrameActive && hero?.positionX !== null && hero?.positionX !== undefined) heroImageStyle.objectPosition = `${hero.positionX}% ${hero?.positionY ?? 50}%`;
   if (!customFrameActive && hero && hero.zoom !== null) { heroImageStyle.transform = `scale(${hero.zoom})`; heroImageStyle.transformOrigin = `${hero?.positionX ?? 50}% ${hero?.positionY ?? 50}%`; }
+  // Opt-in only: preserve legacy cover rendering for every existing invitation.
+  if (hero?.userPhotoFit === "contain" && (hero.mode === "photo" || hero.mode === "frame")) {
+    heroImageStyle.objectFit = "contain";
+    heroImageStyle.objectPosition = `${hero.mode === "frame" ? (frame?.imageX ?? 50) : (hero.positionX ?? 50)}% ${hero.mode === "frame" ? (frame?.imageY ?? 50) : (hero.positionY ?? 50)}%`;
+    heroMediaStyle.backgroundColor = heroMediaStyle.backgroundColor || heroStyle.backgroundColor || "#f7f1ec";
+  }
   if (hero?.photoGrayscale > 0) {
     const grayscaleFilter = `grayscale(${hero.photoGrayscale}%)`;
     heroImageStyle.filter = [heroImageStyle.filter, grayscaleFilter].filter(Boolean).join(" ");
