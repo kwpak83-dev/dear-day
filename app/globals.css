@@ -2823,6 +2823,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   .landing-v2 .landing-hero-benefits>div{grid-template-columns:34px minmax(0,1fr)!important;column-gap:4px!important;padding-left:6px!important;padding-right:6px!important}
   .landing-v2 .landing-hero-benefits>div>.dd-benefit-emoji{width:34px!important;height:34px!important}
   .landing-v2 .landing-hero-benefits>div>strong{white-space:nowrap!important;letter-spacing:-.04em!important}
+  .landing-v2 .landing-hero-benefits>.landing-benefit-program>strong{white-space:normal!important;word-break:keep-all;overflow-wrap:anywhere}
 }
 
 /* DearDay hero: airy gradient + ribbon background, without large floral overlays. */
@@ -3664,3 +3665,57 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong {font-size:13px !important;}
   .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small {font-size:9px !important;}
 }
+
+/* Only menus with a program action use the flexible one-to-three-column layout. */
+:is(.create-page,.shared-public-invitation,body) .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program[data-program-menu] {
+  display:grid !important;
+  grid-auto-flow:row !important;
+  grid-template-columns:repeat(var(--dd-quick-menu-count),minmax(0,1fr)) !important;
+  width:calc(100% - 16px) !important;
+  max-width:min(524px,var(--dd-program-menu-width)) !important;
+  box-sizing:border-box;
+  gap:6px !important;
+}
+:is(.create-page,.shared-public-invitation,body) .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program[data-program-menu] > button {
+  flex:1 1 0 !important;
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  grid-template-columns:minmax(0,1fr) !important;
+  justify-items:center !important;
+  gap:3px !important;
+  height:auto !important;
+  min-height:62px !important;
+  padding:6px !important;
+}
+.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program > button svg,
+.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy {
+  grid-column:1 !important;
+}
+.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy {
+  width:100% !important;
+  max-width:100% !important;
+  overflow:hidden !important;
+  text-align:center !important;
+}
+.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy strong {
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+  overflow-wrap:anywhere;
+  white-space:normal !important;
+  font-size:var(--dd-quick-menu-font-size,11px) !important;
+}
+.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy small {display:none !important}
+.invitation-bottom-sheet--program {font-family:var(--dd-program-font,inherit);color:var(--dd-program-text,inherit)}
+.invitation-bottom-sheet-layer--preview .invitation-bottom-sheet--program {max-height:90%}
+.invitation-bottom-sheet--program > header h2 {min-width:0;overflow-wrap:anywhere;font-family:inherit;color:inherit}
+.invitation-bottom-sheet--program > header button {flex-shrink:0}
+.invitation-program {padding:8px 20px 24px;font-family:inherit;color:inherit}
+.invitation-program-list {list-style:none;padding:0;margin:0}
+.invitation-program-list > li {display:grid;grid-template-columns:4.5em minmax(0,1fr);gap:12px;align-items:start;padding:16px 0;border-bottom:1px solid var(--dd-invite-action-divider,currentColor);font-size:14px;line-height:1.65}
+.invitation-program-list > li:last-child {border-bottom:0}
+.invitation-program-marker {color:var(--dd-invite-action-accent,currentColor);font-variant-numeric:tabular-nums}
+.invitation-program-title {min-width:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.invitation-program--plain .invitation-program-list > li {grid-template-columns:minmax(0,1fr)}

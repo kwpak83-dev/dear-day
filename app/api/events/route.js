@@ -1,3 +1,4 @@
+import { normalizeProgram, validateProgram } from "../../../lib/invitation-program";
 import { prepareNoticeForSave } from "../../../lib/invitation-notice";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
@@ -302,6 +303,8 @@ export async function POST(request) {
   if ((invitation.date !== undefined && typeof invitation.date !== "string") || (invitation.time !== undefined && typeof invitation.time !== "string")) return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
   if (invitation.notice?.enabled && (!invitation.notice?.title?.trim() || !invitation.notice?.body?.trim())) return json({ error: "공지사항을 켜려면 제목과 내용을 입력해 주세요." }, 400);
   if (invitation.notice?.imagePath && (typeof invitation.notice.imagePath !== "string" || !/^[0-9a-f-]{36}\/notice\/[0-9a-f-]{36}\/[0-9a-f-]{36}\.jpg$/.test(invitation.notice.imagePath) || !invitation.notice.imagePath.startsWith(user.id + "/notice/"))) return json({ error: "공지 이미지 경로가 올바르지 않아요." }, 400);
+  const programError = validateProgram(invitation.program);
+  if (programError) return json({ error: programError }, 400);
   const eventKind = invitation.eventKind || "wedding";
   if (!eventKinds.has(eventKind)) return json({ error: "지원하지 않는 행사 종류예요." }, 400);
   if (publish) {
@@ -378,7 +381,7 @@ export async function POST(request) {
     ...(hasHeroPresetId ? { hero_preset_id: heroPresetId } : {}),
     title: getInvitationTitle(invitation, eventKind),
     starts_at: startsAt,
-    settings: { ...preserveCardShareMetadata(invitation, existing?.settings), notice: prepareNoticeForSave(invitation.notice, existing?.settings?.notice) },
+    settings: { ...preserveCardShareMetadata(invitation, existing?.settings), program: normalizeProgram(invitation.program === undefined ? existing?.settings?.program : invitation.program), notice: prepareNoticeForSave(invitation.notice, existing?.settings?.notice) },
   };
 
   if (publish && !existing) return json({ error: "초대장을 먼저 임시 저장해 주세요." }, 409);
