@@ -208,8 +208,8 @@ export default async function InvitationPage({ params, searchParams }) {
   const publicNotice = matrixFields.notice?.state === "none" ? normalizeNotice(null) : normalizeNotice(effectiveNotice);
   const waitForNoticeBeforeHeroIntro = publicNotice.enabled && Boolean(publicNotice.title) && Boolean(publicNotice.body);
   const existingShareFallback = (templateConfig?.hero?.mode === "illustration" ? (templateAssets?.[templateConfig?.hero?.backgroundAssetId] || templateAssets?.[templateConfig?.hero?.frameAssetId]) : null) || invitation.coverPhotoUrl || templateAssets?.[templateConfig?.hero?.frameAssetId] || invitation.heroImageUrl || invitation.hero_image_url || galleryPhotos[0]?.url || "";
-  const shareImage = selectCardShareImage(settings, templateConfig, { origin: new URL(url).origin, ownerId: event.owner_id, eventId: event.id }, existingShareFallback);
   const shareFingerprint = isCardHero(templateConfig) ? cardShareFingerprint({ event, templateConfig, eventTypeConfig }) : "";
+  const shareImage = selectCardShareImage(settings, templateConfig, { origin: new URL(url).origin, ownerId: event.owner_id, eventId: event.id }, existingShareFallback, shareFingerprint);
 
   return <main className={`public-invitation shared-public-invitation${waitForNoticeBeforeHeroIntro ? " dd-hero-intro-waits-for-notice" : ""}`}>
     {ownerView && <nav className="owner-return-nav" aria-label="DearDay 관리 화면으로 돌아가기"><a href="/my-invitations">내 초대장</a><a href="/">DearDay 홈</a></nav>}
