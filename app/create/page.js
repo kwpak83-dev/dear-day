@@ -516,6 +516,11 @@ export default function CreateInvitation() {
     templateSelectionChanged.current = false;
   };
   const update = (key, value) => setInvitation((current) => ({ ...current, [key]: value }));
+  const updateProgram = value => setInvitation(current => {
+    const program = normalizeProgram(value);
+    return JSON.stringify(normalizeProgram(current.program)) === JSON.stringify(program)
+      ? current : { ...current, program };
+  });
   const uploadBgm = async (event) => {
     const file = event.target.files?.[0];
     event.target.value = "";
@@ -1069,7 +1074,7 @@ export default function CreateInvitation() {
   };
   const previewPlaceActions = () => invitation.venueAddress ? <><div className="public-address-copy"><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button><span role="status" aria-live="polite">{addressCopied ? "주소가 복사되었습니다." : ""}</span></div><InvitationMap address={invitation.venueAddress} /></> : null;
 
-  return <main className="create-page">
+  return <main className={`create-page${editorStep === 4 ? " dd-program-step" : ""}`}>
     <header className="create-header"><a className="brand" href="/" aria-label="DearDay 홈"><DearDayLogo /></a><div className="create-user"><span>{provider}로 시작했어요</span><a href="/my-invitations">내 초대장</a><a href="/">나가기</a></div></header>
     <div className="create-layout">
       <section className="editor-panel">
@@ -1121,7 +1126,7 @@ export default function CreateInvitation() {
           <div className="dd-share-card"><div className="dd-share-card-heading"><div><h2>화면 효과 설정</h2><p>초대장에 표시할 움직이는 장식을 선택해요.</p></div></div><div className="form-section"><Field label="효과 선택"><select value={invitation.screenEffectMode || (invitation.petalEffectEnabled === true ? "legacy-blossom" : "none")} onChange={event => update("screenEffectMode", event.target.value)}><option value="none">사용 안 함</option><option value="background">배경 템플릿 효과</option><option value="user">사용자 효과 선택</option>{!invitation.screenEffectMode && invitation.petalEffectEnabled === true && <option value="legacy-blossom">기존 벚꽃 효과 유지</option>}</select></Field>{invitation.screenEffectMode === "user" && <Field label="장식 종류"><select value={USER_SCREEN_EFFECTS.some(([id]) => id === invitation.userScreenEffectOrnament) ? invitation.userScreenEffectOrnament : "green"} onChange={event => update("userScreenEffectOrnament", event.target.value)}>{USER_SCREEN_EFFECTS.map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></Field>}<p className="dd-share-help">{invitation.screenEffectMode === "background" ? "관리자가 배경 템플릿에 지정한 Screen Effect 설정을 그대로 사용합니다." : invitation.screenEffectMode === "user" ? "장식 종류만 선택하고 움직임·개수·크기·속도·투명도 등은 선택한 템플릿의 Screen Effect 설정을 그대로 사용합니다." : !invitation.screenEffectMode && invitation.petalEffectEnabled === true ? "기존에 저장한 벚꽃 효과를 유지합니다." : "화면 효과를 표시하지 않습니다."}</p></div></div>
         </div>
         <div className="dd-share-settings" style={{display:editorStep === 4 ? undefined : "none"}}>
-          <ProgramEditor value={invitation.program} eventKind={invitation.eventKind} onChange={program => update("program", program)} />
+          <ProgramEditor value={invitation.program} eventKind={invitation.eventKind} onChange={updateProgram} />
           {noticeMatrix.state !== "none" && <div className="dd-share-card"><div className="dd-share-card-heading"><div><h2>{noticeMatrix.label}</h2><p>초대장 접속 시 중요한 안내를 보여줘요.</p></div><label className="dd-share-switch"><input type="checkbox" checked={noticeMatrix.state === "required" || invitation.notice?.enabled === true} disabled={noticeMatrix.state === "required"} onChange={event => updateNotice("enabled", event.target.checked)} aria-label={noticeMatrix.label + " 사용"} /><span className="dd-share-switch-track" aria-hidden="true" /></label></div>
             {(noticeMatrix.state === "required" || invitation.notice?.enabled === true) && <>
               <div className="form-section"><Field label="공지 제목"><input maxLength={80} placeholder="하객 안내사항" value={invitation.notice?.title || ""} onChange={event => updateNotice("title", event.target.value)} /></Field><Field label="공지 내용"><textarea rows={5} maxLength={3000} placeholder="셔틀버스 및 주차 안내 등을 입력하세요." value={invitation.notice?.body || ""} onChange={event => updateNotice("body", event.target.value)} /></Field><Field label="이미지 1장 (선택)"><div className="dd-notice-image-editor">{invitation.notice?.imagePath ? <p className="dd-notice-image-state">현재 이미지가 첨부되어 있습니다.</p> : <p className="dd-notice-image-state">첨부된 이미지가 없습니다.</p>}{noticePreviewUrl && <div className="dd-notice-image-preview"><img src={noticePreviewUrl} alt="새 공지 이미지 미리보기" /><small>새로 선택한 이미지 미리보기</small></div>}<label className="dd-notice-file-button">{invitation.notice?.imagePath ? "이미지 변경" : "이미지 선택"}<input type="file" accept="image/jpeg,image/png,image/webp" disabled={!eventSlug || noticeUploadBusy} onChange={uploadNoticePhoto} /></label>{invitation.notice?.imagePath && <button type="button" className="dd-notice-image-delete" onClick={() => { updateNotice("imagePath", ""); setNoticePreviewUrl(""); setNoticeUploadMessage("첨부 이미지를 삭제했어요. 수정사항 반영을 눌러 주세요."); }}>첨부 이미지 삭제</button>}</div></Field>{!eventSlug && <p>이미지를 올리려면 초대장을 먼저 임시저장해 주세요.</p>}{noticeUploadMessage && <p role="status">{noticeUploadMessage}</p>}</div>
