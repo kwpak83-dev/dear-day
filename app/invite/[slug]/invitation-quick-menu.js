@@ -162,7 +162,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     // restart the desktop LIVE PREVIEW quick-menu journey from the top.
     scroller.scrollTop = 0;
     desktopLiveScrolledRef.current = false;
-    setVisible(previewMode === "admin-live" || previewMode === "admin-full" || isEditorFullPreview);
+    setVisible(previewMode === "admin-live" || previewMode === "admin-full");
 
     const positionPreviewSheet = () => {
       const viewportRect = scroller.getBoundingClientRect();
