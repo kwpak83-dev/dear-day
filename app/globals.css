@@ -3708,17 +3708,26 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   font-size:var(--dd-quick-menu-font-size,11px) !important;
 }
 .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy small {display:none !important}
-.invitation-bottom-sheet--program {font-family:var(--dd-program-font,inherit);color:var(--dd-program-text,inherit)}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet--program {background:#fffaf5;font-family:var(--dd-program-font,Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif);color:var(--dd-program-text,#50372c)}
 .invitation-bottom-sheet-layer--preview .invitation-bottom-sheet--program {max-height:90%}
-.invitation-bottom-sheet--program > header h2 {min-width:0;overflow-wrap:anywhere;font-family:inherit;color:inherit}
-.invitation-bottom-sheet--program > header button {flex-shrink:0}
-.invitation-program {padding:8px 20px 24px;font-family:inherit;color:inherit}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet--program > .invitation-bottom-sheet-handle {flex-shrink:0;background:var(--dd-invite-action-divider,#eaded7)}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet--program > header {display:grid;grid-template-columns:32px minmax(0,1fr) 32px;gap:10px;flex-shrink:0;padding:18px 24px 22px;border-bottom:0}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet--program > header h2 {grid-column:2;grid-row:1;min-width:0;margin:0;word-break:keep-all;overflow-wrap:anywhere;font-family:inherit;font-size:21px;font-weight:500;line-height:1.5;letter-spacing:.04em;color:inherit;text-align:center}
+.invitation-bottom-sheet--program > header h2::after {content:"";display:block;width:40px;height:1px;margin:12px auto 0;background:var(--dd-invite-action-accent,#ef786c);opacity:.45}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet--program > header button {grid-column:3;grid-row:1;align-self:start;flex-shrink:0;color:var(--dd-invite-action-accent,#b87565)}
+.invitation-program {padding:8px 24px 32px;font-family:inherit;color:inherit}
 .invitation-program-list {list-style:none;padding:0;margin:0}
-.invitation-program-list > li {display:grid;grid-template-columns:4.5em minmax(0,1fr);gap:12px;align-items:start;padding:16px 0;border-bottom:1px solid var(--dd-invite-action-divider,currentColor);font-size:14px;line-height:1.65}
-.invitation-program-list > li:last-child {border-bottom:0}
-.invitation-program-marker {color:var(--dd-invite-action-accent,currentColor);font-variant-numeric:tabular-nums}
-.invitation-program-title {min-width:0;white-space:pre-wrap;overflow-wrap:anywhere}
-.invitation-program--plain .invitation-program-list > li {grid-template-columns:minmax(0,1fr)}
+.invitation-program-list > li {display:grid;grid-template-columns:3.7em 16px minmax(0,1fr);column-gap:12px;align-items:start;padding:0 0 28px;border:0;font-size:15px;line-height:1.7}
+.invitation-program-list > li:last-child {padding-bottom:0}
+.invitation-program-marker {grid-column:1;grid-row:1;padding-top:2px;color:var(--dd-invite-action-accent,#b87565);font-size:13px;font-variant-numeric:tabular-nums;letter-spacing:.04em;white-space:nowrap}
+.invitation-program-node {position:relative;grid-column:2;grid-row:1;align-self:stretch;min-height:1.7em}
+.invitation-program-node::before {content:"";position:absolute;z-index:1;top:8px;left:50%;width:8px;height:8px;border-radius:50%;background:var(--dd-invite-action-accent,#ef786c);transform:translateX(-50%);box-shadow:0 0 0 4px color-mix(in srgb,var(--dd-invite-action-accent,#ef786c) 10%,transparent)}
+.invitation-program-node::after {content:"";position:absolute;top:16px;bottom:-36px;left:50%;width:1px;background:var(--dd-invite-action-divider,#eaded7);transform:translateX(-50%)}
+.invitation-program-list > li:last-child .invitation-program-node::after {display:none}
+.invitation-program-title {grid-column:3;grid-row:1;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;font-weight:400;letter-spacing:.015em}
+.invitation-program--plain .invitation-program-list > li {grid-template-columns:16px minmax(0,1fr)}
+.invitation-program--plain .invitation-program-node {grid-column:1}
+.invitation-program--plain .invitation-program-title {grid-column:2}
 
 /* Program editor controls stay inside their own column, independent of preview width. */
 .create-page .dd-program-editor {box-sizing:border-box;min-width:0;width:100%;container-type:inline-size}
