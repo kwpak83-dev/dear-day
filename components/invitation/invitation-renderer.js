@@ -50,11 +50,12 @@ export default function InvitationRenderer({ invitation, eventKind, eventTypeCon
         imageZoom: hasPhotoZoom ? (Number(photoFrame.imageZoom) > 0 ? Number(photoFrame.imageZoom) : 1) * photoZoom : photoFrame.imageZoom,
       },
     };
-  } else if (!photoFrame && normalizedConfig?.hero && (hasFocusX || hasFocusY)) {
+  } else if (normalizedConfig?.hero?.mode === "photo" && (hasFocusX || hasFocusY || hasPhotoZoom)) {
     normalizedConfig.hero = {
       ...normalizedConfig.hero,
       positionX: hasFocusX ? focusX : normalizedConfig.hero.positionX,
       positionY: hasFocusY ? focusY : normalizedConfig.hero.positionY,
+      zoom: hasPhotoZoom ? (Number(normalizedConfig.hero.zoom) > 0 ? Number(normalizedConfig.hero.zoom) : 1) * photoZoom : normalizedConfig.hero.zoom,
     };
   }
   const templateBgmUrl = normalizedConfig.bgm?.mode === "asset" ? templateAssets?.[normalizedConfig.bgm.assetId] : null;
