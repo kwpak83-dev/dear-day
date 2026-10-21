@@ -3763,3 +3763,47 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .invitation-program-ending{display:flex;align-items:center;justify-content:center;gap:12px;margin:30px auto 0;color:var(--dd-invite-action-accent,#b87565);font-size:12px;line-height:1;opacity:.6}
 .invitation-program-ending::before,.invitation-program-ending::after{content:"";width:26px;height:1px;background:currentColor;opacity:.35}
 @media(max-width:360px){.invitation-bottom-sheet--program .invitation-program{padding-left:20px;padding-right:20px}.invitation-bottom-sheet--program .invitation-program-list > li{column-gap:9px}}
+
+
+/* Program sheet finishing adjustments */
+.invitation-bottom-sheet--program .invitation-program-title{font-size:15px;font-weight:500}
+.invitation-bottom-sheet--program .invitation-program-marker{font-size:13px;font-weight:600;opacity:1}
+.invitation-bottom-sheet--program .invitation-program-ending{margin-top:18px}
+.invitation-bottom-sheet--program .invitation-program{padding-bottom:max(24px,env(safe-area-inset-bottom))}
+
+/* Three balanced quick actions only when the program feature is active. */
+:is(.create-page,.shared-public-invitation,body) .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program[data-program-menu]{
+  gap:8px!important;
+  padding:8px!important;
+}
+:is(.create-page,.shared-public-invitation,body) .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program[data-program-menu]>button{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:6px!important;
+  min-height:70px!important;
+  padding:9px 4px!important;
+  border-radius:14px!important;
+  box-sizing:border-box!important;
+}
+.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program>button>svg{
+  display:block;
+  width:19px!important;
+  height:19px!important;
+  flex-shrink:0;
+  opacity:.9;
+}
+.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy strong{
+  display:block!important;
+  font-size:12px!important;
+  line-height:1.35!important;
+  font-weight:600!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+@media(max-width:360px){
+  :is(.create-page,.shared-public-invitation,body) .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program[data-program-menu]{gap:5px!important;padding:6px!important}
+  .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy strong{font-size:11px!important}
+}
