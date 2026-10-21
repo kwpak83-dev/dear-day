@@ -34,28 +34,30 @@ export default function InvitationRenderer({ invitation, eventKind, eventTypeCon
   const normalizedConfig = normalizeTemplateConfig(templateConfig);
   // User-specific photo focus overrides the rendered crop, never the shared Hero preset.
   const photoFrame = normalizedConfig?.hero?.photoFrame;
+  const showEntirePhoto = invitation?.heroPhotoFit === "contain" && ["photo", "frame"].includes(normalizedConfig?.hero?.mode);
+  if (showEntirePhoto) normalizedConfig.hero = { ...normalizedConfig.hero, userPhotoFit: "contain" };
   const focusX = Number(invitation?.heroPhotoFocusX);
   const focusY = Number(invitation?.heroPhotoFocusY);
   const photoZoom = Number(invitation?.heroPhotoZoom);
   const hasPhotoZoom = invitation?.heroPhotoZoom != null && Number.isFinite(photoZoom) && photoZoom >= 0.7 && photoZoom <= 2;
   const hasFocusX = invitation?.heroPhotoFocusX != null && Number.isFinite(focusX) && focusX >= 0 && focusX <= 100;
   const hasFocusY = invitation?.heroPhotoFocusY != null && Number.isFinite(focusY) && focusY >= 0 && focusY <= 100;
-  if (normalizedConfig?.hero?.mode === "frame" && photoFrame && (hasFocusX || hasFocusY || hasPhotoZoom)) {
+  if (normalizedConfig?.hero?.mode === "frame" && photoFrame && (hasFocusX || hasFocusY || hasPhotoZoom || showEntirePhoto)) {
     normalizedConfig.hero = {
       ...normalizedConfig.hero,
       photoFrame: {
         ...photoFrame,
         imageX: hasFocusX ? focusX : photoFrame.imageX,
         imageY: hasFocusY ? focusY : photoFrame.imageY,
-        imageZoom: hasPhotoZoom ? (Number(photoFrame.imageZoom) > 0 ? Number(photoFrame.imageZoom) : 1) * photoZoom : photoFrame.imageZoom,
+        imageZoom: showEntirePhoto ? (hasPhotoZoom ? photoZoom : 1) : hasPhotoZoom ? (Number(photoFrame.imageZoom) > 0 ? Number(photoFrame.imageZoom) : 1) * photoZoom : photoFrame.imageZoom,
       },
     };
-  } else if (normalizedConfig?.hero?.mode === "photo" && (hasFocusX || hasFocusY || hasPhotoZoom)) {
+  } else if (normalizedConfig?.hero?.mode === "photo" && (hasFocusX || hasFocusY || hasPhotoZoom || showEntirePhoto)) {
     normalizedConfig.hero = {
       ...normalizedConfig.hero,
       positionX: hasFocusX ? focusX : normalizedConfig.hero.positionX,
       positionY: hasFocusY ? focusY : normalizedConfig.hero.positionY,
-      zoom: hasPhotoZoom ? (Number(normalizedConfig.hero.zoom) > 0 ? Number(normalizedConfig.hero.zoom) : 1) * photoZoom : normalizedConfig.hero.zoom,
+      zoom: showEntirePhoto ? (hasPhotoZoom ? photoZoom : 1) : hasPhotoZoom ? (Number(normalizedConfig.hero.zoom) > 0 ? Number(normalizedConfig.hero.zoom) : 1) * photoZoom : normalizedConfig.hero.zoom,
     };
   }
   const templateBgmUrl = normalizedConfig.bgm?.mode === "asset" ? templateAssets?.[normalizedConfig.bgm.assetId] : null;
