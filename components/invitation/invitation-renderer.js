@@ -37,7 +37,7 @@ export default function InvitationRenderer({ invitation, eventKind, eventTypeCon
   const focusX = Number(invitation?.heroPhotoFocusX);
   const focusY = Number(invitation?.heroPhotoFocusY);
   const photoZoom = Number(invitation?.heroPhotoZoom);
-  const hasPhotoZoom = invitation?.heroPhotoZoom != null && Number.isFinite(photoZoom) && photoZoom >= 1 && photoZoom <= 2;
+  const hasPhotoZoom = invitation?.heroPhotoZoom != null && Number.isFinite(photoZoom) && photoZoom >= 0.7 && photoZoom <= 2;
   const hasFocusX = invitation?.heroPhotoFocusX != null && Number.isFinite(focusX) && focusX >= 0 && focusX <= 100;
   const hasFocusY = invitation?.heroPhotoFocusY != null && Number.isFinite(focusY) && focusY >= 0 && focusY <= 100;
   if (photoFrame && (hasFocusX || hasFocusY || hasPhotoZoom)) {
