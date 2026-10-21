@@ -3628,3 +3628,37 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong {font-size:12px !important;}
   .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small {font-size:9px !important;}
 }
+
+/* Published invitation quick actions: equal pill widths and identical centered icon/text placement. */
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills {
+  gap:8px !important;
+  padding:6px 5px !important;
+}
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills > button {
+  flex:0 1 154px !important;
+  width:154px !important;
+  max-width:calc((100vw - 34px) / 2) !important;
+  height:52px !important;
+  min-height:52px !important;
+  padding:5px 7px !important;
+  grid-template-columns:22px minmax(0,1fr) !important;
+  column-gap:7px !important;
+  justify-content:center !important;
+  justify-items:start !important;
+}
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy {
+  width:100% !important;
+  text-align:left !important;
+}
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong {
+  font-size:14px !important;
+  line-height:1.2 !important;
+}
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small {
+  font-size:10px !important;
+  line-height:1.2 !important;
+}
+@media(max-width:380px){
+  .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong {font-size:13px !important;}
+  .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small {font-size:9px !important;}
+}
