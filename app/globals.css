@@ -3746,3 +3746,20 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 @media (min-width:761px) and (max-width:800px) {
   .create-page.dd-program-step .create-layout {grid-template-columns:minmax(0,1fr)}
 }
+
+
+/* DearDay program sheet: refined timeline decoration and typography. */
+.invitation-bottom-sheet-layer .invitation-bottom-sheet--program > header{padding-top:13px;padding-bottom:12px}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet--program > header h2{font-size:20px;letter-spacing:.055em}
+.invitation-bottom-sheet--program > header h2::after{width:34px;margin-top:10px;opacity:.55}
+.invitation-bottom-sheet--program .invitation-program{padding:2px 26px max(40px,env(safe-area-inset-bottom))}
+.invitation-program-kicker{margin:0 0 27px;color:var(--dd-invite-action-accent,#b87565);font-family:Georgia,"Times New Roman",serif;font-size:10px;font-weight:400;letter-spacing:.23em;line-height:1.5;text-align:center;opacity:.82}
+.invitation-bottom-sheet--program .invitation-program-list > li{column-gap:12px;padding-bottom:30px;line-height:1.65}
+.invitation-bottom-sheet--program .invitation-program-list > li:last-child{padding-bottom:0}
+.invitation-bottom-sheet--program .invitation-program-marker{padding-top:1px;font-size:12px;font-weight:500;opacity:.88}
+.invitation-bottom-sheet--program .invitation-program-title{color:var(--dd-program-text,#50372c);font-size:14px;font-weight:500;line-height:1.65}
+.invitation-bottom-sheet--program .invitation-program-node::before{width:7px;height:7px;box-shadow:0 0 0 4px color-mix(in srgb,var(--dd-invite-action-accent,#ef786c) 12%,transparent)}
+.invitation-bottom-sheet--program .invitation-program-node::after{background:color-mix(in srgb,var(--dd-invite-action-accent,#b87565) 25%,transparent)}
+.invitation-program-ending{display:flex;align-items:center;justify-content:center;gap:12px;margin:30px auto 0;color:var(--dd-invite-action-accent,#b87565);font-size:12px;line-height:1;opacity:.6}
+.invitation-program-ending::before,.invitation-program-ending::after{content:"";width:26px;height:1px;background:currentColor;opacity:.35}
+@media(max-width:360px){.invitation-bottom-sheet--program .invitation-program{padding-left:20px;padding-right:20px}.invitation-bottom-sheet--program .invitation-program-list > li{column-gap:9px}}
