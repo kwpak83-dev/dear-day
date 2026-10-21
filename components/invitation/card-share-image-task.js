@@ -16,7 +16,7 @@ export default function CardShareImageTask({ job }) {
     let frame;
     let abortListener;
     const timeout = setTimeout(() => controller.abort(), 90000);
-    setBusy(true); setFailed(false); setStatus("");
+    setBusy(true); setFailed(false); setStatus("카카오 공유 이미지 생성 여부 확인 중…");
     const update = message => { if (!controller.signal.aborted) setStatus(message); };
     const work = async () => {
       const supabase = getSupabaseBrowserClient();
@@ -43,7 +43,7 @@ export default function CardShareImageTask({ job }) {
     });
     Promise.race([work(), aborted]).then(result => {
       if (requestRef.current !== controller || controller.signal.aborted) return;
-      setStatus(result.state === "saved" ? "카드형 카카오 공유 이미지를 저장했어요." : result.state === "unchanged" ? "기존 카드형 공유 이미지를 유지했어요." : "");
+      setStatus(result.state === "saved" ? "카드형 카카오 공유 이미지를 저장했어요." : result.state === "unchanged" ? "기존 카드형 공유 이미지를 유지했어요." : result.state === "not-card" ? "자동 공유 이미지 생성이 건너뛰어졌어요. 저장된 HERO 설정이 카드형(illustration)으로 판별되지 않았습니다." : "공유 이미지 처리 결과를 확인하지 못했어요.");
     }).catch(error => {
       if (requestRef.current !== controller) return;
       setFailed(true);
