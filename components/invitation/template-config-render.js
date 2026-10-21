@@ -143,7 +143,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroStyle.backgroundImage = "none";
     heroStyle["--dd-hero-center-panel-width"] = "0%";
   }
-  if (hero?.photoFadeUp?.enabled) { const introDelay=hero?.intro?.enabled&&hero.intro.text?.trim()?Number(hero.intro.writeDuration||0)+Number(hero.intro.holdDuration||0):0; heroMediaStyle.animation = `dd-hero-photo-fade-up ${hero.photoFadeUp.duration}s ease-out ${introDelay+Number(hero.photoFadeUp.delay||0)}s both`; }
+  if (hero?.photoFadeUp?.enabled && !(hero?.intro?.enabled && hero.intro.text?.trim())) { heroMediaStyle.animation = `dd-hero-photo-fade-up ${hero.photoFadeUp.duration}s ease-out ${Number(hero.photoFadeUp.delay||0)}s both`; }
   const frame = hero?.photoFrame;
   // Photo mode always uses the full-width Hero photo and its own crop controls.
   // Custom frame geometry belongs exclusively to concept-frame mode.
