@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { getProgramPresentation } from "../../../lib/invitation-program";
+import InvitationProgram from "../../../components/invitation/invitation-program";
 const formPromises = {};
 function loadForm(kind) {
   if (!formPromises[kind]) {
@@ -27,7 +29,7 @@ export function LazyInvitationForm({ kind, ...props }) {
   return <p role="status">불러오는 중이에요.</p>;
 }
 
-function BottomSheet({ title, onClose, children, portalTarget = null, preview = false, layerStyle }) {
+function BottomSheet({ title, onClose, children, portalTarget = null, preview = false, layerStyle, className = "" }) {
   useEffect(() => {
     // Preview sheets are visually constrained to the preview viewport, so they
     // must not lock the surrounding admin/editor page. Published invitations
@@ -44,7 +46,7 @@ function BottomSheet({ title, onClose, children, portalTarget = null, preview = 
 
   const sheet = <div className={`invitation-bottom-sheet-layer${preview ? " invitation-bottom-sheet-layer--preview" : ""}`} style={layerStyle}>
     <button className="invitation-bottom-sheet-backdrop" type="button" aria-label="닫기" onClick={onClose} />
-    <section className="invitation-bottom-sheet" role="dialog" aria-modal="true" aria-label={title}>
+    <section className={`invitation-bottom-sheet${className ? ` ${className}` : ""}`} role="dialog" aria-modal="true" aria-label={title}>
       <i className="invitation-bottom-sheet-handle" aria-hidden="true" />
       <header><h2>{title}</h2><button type="button" onClick={onClose} aria-label={title + " 닫기"}>×</button></header>
       <div className="invitation-bottom-sheet-content">{children}</div>
@@ -54,6 +56,7 @@ function BottomSheet({ title, onClose, children, portalTarget = null, preview = 
 }
 
 function QuickMenuIcon({ kind }) {
+  if (kind === "program") return <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M8 5h12M8 12h12M8 19h12M3 5h1M3 12h1M3 19h1" /></svg>;
   return kind === "rsvp"
     ? <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="7.5" r="3.5" /><path d="M5 20v-2a7 7 0 0 1 14 0v2" /></svg>
     : <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 5 4 4M4 20l4.5-1 11-11a2.1 2.1 0 0 0-3-3l-11 11L4 20Z" /></svg>;
@@ -107,6 +110,9 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
 
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
+  const program = getProgramPresentation(invitation.program, invitation.eventKind);
+  const menuEnabled = rsvpEnabled || guestbookEnabled || program.enabled;
+  const menuCount = Number(rsvpEnabled) + Number(guestbookEnabled) + Number(program.enabled);
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
   const isEditorFullPreview = previewMode === "editor-full";
   const isSalesPreview = previewMode === "sales-preview";
@@ -127,6 +133,8 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     {
       const computed = getComputedStyle(templateRoot);
       setDesktopLiveStyle({
+        "--dd-program-font": computed.getPropertyValue("--dd-body-font").trim() || computed.fontFamily,
+        "--dd-program-text": computed.getPropertyValue("--dd-color-text").trim() || computed.color,
         "--dd-invite-action-bg": computed.getPropertyValue("--dd-invite-action-bg"),
         "--dd-invite-action-text": computed.getPropertyValue("--dd-invite-action-text"),
         "--dd-invite-action-accent": computed.getPropertyValue("--dd-color-accent").trim() || computed.getPropertyValue("--dd-invite-action-accent"),
@@ -190,7 +198,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       window.removeEventListener("resize", positionPreviewSheet);
       resizeObserver.disconnect();
     };
-  }, [isDesktopLivePreview, isEditorFullPreview, isSalesPreview, previewMode, invitation.templateId]);
+  }, [isDesktopLivePreview, isEditorFullPreview, isSalesPreview, previewMode, invitation.templateId, menuEnabled]);
 
   useEffect(() => {
     if (!visible || !isDesktopLivePreview) return;
@@ -198,6 +206,8 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     if (!templateRoot) return;
     const computed = getComputedStyle(templateRoot);
     const nextStyle = {
+      "--dd-program-font": computed.getPropertyValue("--dd-body-font").trim() || computed.fontFamily,
+      "--dd-program-text": computed.getPropertyValue("--dd-color-text").trim() || computed.color,
       "--dd-invite-action-bg": computed.getPropertyValue("--dd-invite-action-bg"),
       "--dd-invite-action-text": computed.getPropertyValue("--dd-invite-action-text"),
       "--dd-invite-action-accent": computed.getPropertyValue("--dd-invite-action-accent"),
@@ -228,7 +238,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   });
 
   useEffect(() => {
-    if (visible || previewMode === "admin-live" || previewMode === "admin-full") return;
+    if (!menuEnabled || visible || previewMode === "admin-live" || previewMode === "admin-full") return;
 
     const menuRoot = markerRef.current?.closest(".invitation-template");
     const scrollRoot = (previewMode === "admin-live" || previewMode === "admin-full")
@@ -284,7 +294,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     }, { threshold: 0.1 });
     observer.observe(trigger);
     return () => observer.disconnect();
-  }, [visible, isDesktopLivePreview, isSalesPreview, previewMode]);
+  }, [visible, isDesktopLivePreview, isSalesPreview, previewMode, menuEnabled]);
 
   const goToLocation = () => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -311,19 +321,26 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       }
     : undefined;
 
-  if (!rsvpEnabled && !guestbookEnabled) return null;
+  if (!menuEnabled) return null;
 
   return <>
     <span ref={markerRef} className="invitation-quick-menu-trigger" aria-hidden="true" />
-    {visible && (usesPreviewPortal && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu invitation-quick-menu--minimal invitation-quick-menu--pills${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}${isEditorFullPreview ? " invitation-quick-menu--editor-full" : ""}${isSalesPreview ? " invitation-quick-menu--sales-preview" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
+    {visible && (usesPreviewPortal && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu invitation-quick-menu--minimal invitation-quick-menu--pills${program.enabled ? " invitation-quick-menu--program" : ""}${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}${isEditorFullPreview ? " invitation-quick-menu--editor-full" : ""}${isSalesPreview ? " invitation-quick-menu--sales-preview" : ""}`} data-program-menu={program.enabled ? "" : undefined} style={program.enabled ? { ...desktopLiveStyle, "--dd-quick-menu-count": menuCount, "--dd-program-menu-width": `${menuCount * 166 + 16}px` } : desktopLiveStyle} aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => openSheet("rsvp")}><QuickMenuIcon kind="rsvp" /><span className="invitation-quick-copy"><strong>{rsvpLabel}</strong><small>함께 해주세요~!</small></span></button>}
       
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><QuickMenuIcon kind="guestbook" /><span className="invitation-quick-copy"><strong>{guestbookLabel}</strong><small>축하 메시지 남겨주세요~!</small></span></button>}
-    </nav>, desktopLivePortal) : <nav className={`invitation-quick-menu invitation-quick-menu--minimal invitation-quick-menu--pills${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} style={desktopLiveStyle} aria-label="초대장 빠른 메뉴">
+
+      {program.enabled && <button className="invitation-quick-program" type="button" onClick={() => openSheet("program")} title={program.title} aria-label={program.title}><QuickMenuIcon kind="program" /><span className="invitation-quick-copy"><strong>식순 안내</strong><small>순서를 확인해 주세요</small></span></button>}
+    </nav>, desktopLivePortal) : <nav className={`invitation-quick-menu invitation-quick-menu--minimal invitation-quick-menu--pills${program.enabled ? " invitation-quick-menu--program" : ""}${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} data-program-menu={program.enabled ? "" : undefined} style={program.enabled ? { ...desktopLiveStyle, "--dd-quick-menu-count": menuCount, "--dd-program-menu-width": `${menuCount * 166 + 16}px` } : desktopLiveStyle} aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => openSheet("rsvp")}><QuickMenuIcon kind="rsvp" /><span className="invitation-quick-copy"><strong>{rsvpLabel}</strong><small>함께 해주세요~!</small></span></button>}
       
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><QuickMenuIcon kind="guestbook" /><span className="invitation-quick-copy"><strong>{guestbookLabel}</strong><small>축하 메시지 남겨주세요~!</small></span></button>}
+
+      {program.enabled && <button className="invitation-quick-program" type="button" onClick={() => openSheet("program")} title={program.title} aria-label={program.title}><QuickMenuIcon kind="program" /><span className="invitation-quick-copy"><strong>식순 안내</strong><small>순서를 확인해 주세요</small></span></button>}
     </nav>)}
+    {sheet === "program" && program.enabled && <BottomSheet title={program.title} className="invitation-bottom-sheet--program" onClose={closeSheet} portalTarget={usesPreviewPortal ? (isDesktopLivePreview ? previewSheetPortal : desktopLivePortal) : null} preview={usesPreviewPortal} layerStyle={{ ...desktopLiveStyle, ...(isDesktopLivePreview ? previewSheetStyle : {}) }}>
+      <InvitationProgram program={invitation.program} eventKind={invitation.eventKind} />
+    </BottomSheet>}
     {sheet === "rsvp" && rsvpEnabled && <BottomSheet title={rsvpLabel} onClose={closeSheet} portalTarget={usesPreviewPortal ? (isDesktopLivePreview ? previewSheetPortal : desktopLivePortal) : null} preview={usesPreviewPortal} layerStyle={isDesktopLivePreview ? previewSheetStyle : undefined}>
       <LazyInvitationForm key="rsvp" kind="rsvp" slug={slug} startsAt={startsAt} preview={Boolean(previewMode)} title={rsvpLabel} />
     </BottomSheet>}

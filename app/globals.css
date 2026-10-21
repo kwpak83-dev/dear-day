@@ -2823,6 +2823,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   .landing-v2 .landing-hero-benefits>div{grid-template-columns:34px minmax(0,1fr)!important;column-gap:4px!important;padding-left:6px!important;padding-right:6px!important}
   .landing-v2 .landing-hero-benefits>div>.dd-benefit-emoji{width:34px!important;height:34px!important}
   .landing-v2 .landing-hero-benefits>div>strong{white-space:nowrap!important;letter-spacing:-.04em!important}
+  .landing-v2 .landing-hero-benefits>.landing-benefit-program>strong{white-space:normal!important;word-break:keep-all;overflow-wrap:anywhere}
 }
 
 /* DearDay hero: airy gradient + ribbon background, without large floral overlays. */
@@ -3663,4 +3664,146 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 @media(max-width:380px){
   .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong {font-size:13px !important;}
   .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small {font-size:9px !important;}
+}
+
+/* Only menus with a program action use the flexible one-to-three-column layout. */
+:is(.create-page,.shared-public-invitation,body) .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program[data-program-menu] {
+  display:grid !important;
+  grid-auto-flow:row !important;
+  grid-template-columns:repeat(var(--dd-quick-menu-count),minmax(0,1fr)) !important;
+  width:calc(100% - 16px) !important;
+  max-width:min(524px,var(--dd-program-menu-width)) !important;
+  box-sizing:border-box;
+  gap:6px !important;
+}
+:is(.create-page,.shared-public-invitation,body) .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program[data-program-menu] > button {
+  flex:1 1 0 !important;
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  grid-template-columns:minmax(0,1fr) !important;
+  justify-items:center !important;
+  gap:3px !important;
+  height:auto !important;
+  min-height:62px !important;
+  padding:6px !important;
+}
+.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program > button svg,
+.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy {
+  grid-column:1 !important;
+}
+.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy {
+  width:100% !important;
+  max-width:100% !important;
+  overflow:hidden !important;
+  text-align:center !important;
+}
+.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy strong {
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+  overflow-wrap:anywhere;
+  white-space:normal !important;
+  font-size:var(--dd-quick-menu-font-size,11px) !important;
+}
+.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy small {display:none !important}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet--program {background:#fffaf5;font-family:var(--dd-program-font,Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif);color:var(--dd-program-text,#50372c)}
+.invitation-bottom-sheet-layer--preview .invitation-bottom-sheet--program {max-height:90%}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet--program > .invitation-bottom-sheet-handle {flex-shrink:0;background:var(--dd-invite-action-divider,#eaded7)}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet--program > header {display:grid;grid-template-columns:32px minmax(0,1fr) 32px;gap:10px;flex-shrink:0;padding:18px 24px 22px;border-bottom:0}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet--program > header h2 {grid-column:2;grid-row:1;min-width:0;margin:0;word-break:keep-all;overflow-wrap:anywhere;font-family:inherit;font-size:21px;font-weight:500;line-height:1.5;letter-spacing:.04em;color:inherit;text-align:center}
+.invitation-bottom-sheet--program > header h2::after {content:"";display:block;width:40px;height:1px;margin:12px auto 0;background:var(--dd-invite-action-accent,#ef786c);opacity:.45}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet--program > header button {grid-column:3;grid-row:1;align-self:start;flex-shrink:0;color:var(--dd-invite-action-accent,#b87565)}
+.invitation-program {padding:8px 24px 32px;font-family:inherit;color:inherit}
+.invitation-program-list {list-style:none;padding:0;margin:0}
+.invitation-program-list > li {display:grid;grid-template-columns:3.7em 16px minmax(0,1fr);column-gap:12px;align-items:start;padding:0 0 28px;border:0;font-size:15px;line-height:1.7}
+.invitation-program-list > li:last-child {padding-bottom:0}
+.invitation-program-marker {grid-column:1;grid-row:1;padding-top:2px;color:var(--dd-invite-action-accent,#b87565);font-size:13px;font-variant-numeric:tabular-nums;letter-spacing:.04em;white-space:nowrap}
+.invitation-program-node {position:relative;grid-column:2;grid-row:1;align-self:stretch;min-height:1.7em}
+.invitation-program-node::before {content:"";position:absolute;z-index:1;top:8px;left:50%;width:8px;height:8px;border-radius:50%;background:var(--dd-invite-action-accent,#ef786c);transform:translateX(-50%);box-shadow:0 0 0 4px color-mix(in srgb,var(--dd-invite-action-accent,#ef786c) 10%,transparent)}
+.invitation-program-node::after {content:"";position:absolute;top:16px;bottom:-36px;left:50%;width:1px;background:var(--dd-invite-action-divider,#eaded7);transform:translateX(-50%)}
+.invitation-program-list > li:last-child .invitation-program-node::after {display:none}
+.invitation-program-title {grid-column:3;grid-row:1;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;font-weight:400;letter-spacing:.015em}
+.invitation-program--plain .invitation-program-list > li {grid-template-columns:16px minmax(0,1fr)}
+.invitation-program--plain .invitation-program-node {grid-column:1}
+.invitation-program--plain .invitation-program-title {grid-column:2}
+
+/* Program editor controls stay inside their own column, independent of preview width. */
+.create-page .dd-program-editor {box-sizing:border-box;min-width:0;width:100%;container-type:inline-size}
+.create-page .dd-program-editor-fields {display:grid;gap:16px;min-width:0}
+.create-page .dd-program-editor-fields > p {margin:0}
+.create-page .dd-program-editor .form-field {min-width:0;margin:0}
+.create-page .dd-program-editor .form-field > span {display:block;overflow-wrap:anywhere}
+.create-page .dd-program-editor :is(input:not([type="checkbox"]),select) {box-sizing:border-box;min-width:0;width:100%;max-width:100%}
+.create-page .dd-program-editor-item {display:grid;gap:12px;min-width:0}
+.create-page .dd-program-editor-item-fields {display:grid;grid-template-columns:minmax(0,1fr);gap:12px;min-width:0}
+.create-page .dd-program-editor-actions {display:flex;flex-wrap:wrap;gap:8px;min-width:0}
+.create-page .dd-program-editor-actions > button {min-width:0;max-width:100%;white-space:normal}
+@container (min-width:440px) {
+  .create-page .dd-program-editor-item-fields--time {grid-template-columns:minmax(0,1fr) minmax(120px,150px)}
+}
+@media (min-width:761px) and (max-width:800px) {
+  .create-page.dd-program-step .create-layout {grid-template-columns:minmax(0,1fr)}
+}
+
+
+/* DearDay program sheet: refined timeline decoration and typography. */
+.invitation-bottom-sheet-layer .invitation-bottom-sheet--program > header{padding-top:13px;padding-bottom:12px}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet--program > header h2{font-size:20px;letter-spacing:.055em}
+.invitation-bottom-sheet--program > header h2::after{width:34px;margin-top:10px;opacity:.55}
+.invitation-bottom-sheet--program .invitation-program{padding:2px 26px max(40px,env(safe-area-inset-bottom))}
+.invitation-program-kicker{margin:0 0 27px;color:var(--dd-invite-action-accent,#b87565);font-family:Georgia,"Times New Roman",serif;font-size:10px;font-weight:400;letter-spacing:.23em;line-height:1.5;text-align:center;opacity:.82}
+.invitation-bottom-sheet--program .invitation-program-list > li{column-gap:12px;padding-bottom:30px;line-height:1.65}
+.invitation-bottom-sheet--program .invitation-program-list > li:last-child{padding-bottom:0}
+.invitation-bottom-sheet--program .invitation-program-marker{padding-top:1px;font-size:12px;font-weight:500;opacity:.88}
+.invitation-bottom-sheet--program .invitation-program-title{color:var(--dd-program-text,#50372c);font-size:14px;font-weight:500;line-height:1.65}
+.invitation-bottom-sheet--program .invitation-program-node::before{width:7px;height:7px;box-shadow:0 0 0 4px color-mix(in srgb,var(--dd-invite-action-accent,#ef786c) 12%,transparent)}
+.invitation-bottom-sheet--program .invitation-program-node::after{background:color-mix(in srgb,var(--dd-invite-action-accent,#b87565) 25%,transparent)}
+.invitation-program-ending{display:flex;align-items:center;justify-content:center;gap:12px;margin:30px auto 0;color:var(--dd-invite-action-accent,#b87565);font-size:12px;line-height:1;opacity:.6}
+.invitation-program-ending::before,.invitation-program-ending::after{content:"";width:26px;height:1px;background:currentColor;opacity:.35}
+@media(max-width:360px){.invitation-bottom-sheet--program .invitation-program{padding-left:20px;padding-right:20px}.invitation-bottom-sheet--program .invitation-program-list > li{column-gap:9px}}
+
+
+/* Program sheet finishing adjustments */
+.invitation-bottom-sheet--program .invitation-program-title{font-size:15px;font-weight:500}
+.invitation-bottom-sheet--program .invitation-program-marker{font-size:13px;font-weight:600;opacity:1}
+.invitation-bottom-sheet--program .invitation-program-ending{margin-top:18px}
+.invitation-bottom-sheet--program .invitation-program{padding-bottom:max(24px,env(safe-area-inset-bottom))}
+
+/* Three balanced quick actions only when the program feature is active. */
+:is(.create-page,.shared-public-invitation,body) .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program[data-program-menu]{
+  gap:8px!important;
+  padding:8px!important;
+}
+:is(.create-page,.shared-public-invitation,body) .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program[data-program-menu]>button{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:6px!important;
+  min-height:70px!important;
+  padding:9px 4px!important;
+  border-radius:14px!important;
+  box-sizing:border-box!important;
+}
+.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program>button>svg{
+  display:block;
+  width:19px!important;
+  height:19px!important;
+  flex-shrink:0;
+  opacity:.9;
+}
+.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy strong{
+  display:block!important;
+  font-size:12px!important;
+  line-height:1.35!important;
+  font-weight:600!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+@media(max-width:360px){
+  :is(.create-page,.shared-public-invitation,body) .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program[data-program-menu]{gap:5px!important;padding:6px!important}
+  .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy strong{font-size:11px!important}
 }
