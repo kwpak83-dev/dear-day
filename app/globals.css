@@ -2564,7 +2564,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Hero entrance intro */
 .invitation-template{position:relative}
 .classic-hero>.dd-hero-intro{position:absolute;inset:0;z-index:80;width:100%;height:100%;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:none;animation:dd-hero-intro-exit var(--dd-intro-fade) ease calc(var(--dd-intro-write) + var(--dd-intro-hold)) forwards}
-.dd-hero-intro:not(.dd-hero-intro-ready){animation-play-state:paused;visibility:hidden}.dd-hero-intro-text-wrap{position:relative;display:block;width:88%;max-width:390px;min-width:0;text-align:center;line-height:1.35}.dd-hero-intro-measure{display:block;width:100%;white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;visibility:hidden}.dd-hero-intro-lines{position:absolute;inset:0;display:block;text-align:center}.dd-hero-intro-line{display:block;white-space:pre;clip-path:inset(-.25em calc(100% + 1em) -.25em -.25em);animation:dd-hero-intro-text-reveal var(--dd-intro-line-duration) linear var(--dd-intro-line-delay) both}.dd-hero-intro-mask{display:none}
+.dd-hero-intro:not(.dd-hero-intro-ready){animation-play-state:paused;visibility:visible}.dd-hero-intro-text-wrap{position:relative;display:block;width:88%;max-width:390px;min-width:0;text-align:center;line-height:1.35}.dd-hero-intro-measure{display:block;width:100%;white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;visibility:hidden}.dd-hero-intro-lines{position:absolute;inset:0;display:block;text-align:center}.dd-hero-intro-line{display:block;white-space:pre;clip-path:inset(-.25em calc(100% + 1em) -.25em -.25em);animation:dd-hero-intro-text-reveal var(--dd-intro-line-duration) linear var(--dd-intro-line-delay) both}.dd-hero-intro-mask{display:none}
 /* Keep the invitation (including its HERO intro) out of sight until the notice is dismissed or skipped. The content still renders and loads normally. */
 /* Returning visitors who hid today\u0027s notice should never see the server-rendered overlay flash. */
 .shared-public-invitation.dd-notice-skip-initial .dd-notice-overlay{display:none}
@@ -2575,6 +2575,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .shared-public-invitation.dd-hero-intro-waits-for-notice > .full-invitation-renderer{visibility:hidden}
 /* Editor previews pause the entire intro timeline until their own notice is dismissed. */
 .dd-editor-intro-waits-for-notice .dd-hero-intro,.dd-editor-intro-waits-for-notice .dd-hero-intro-line{animation-play-state:paused!important}
+/* Keep the HERO photo entrance paused along with the intro while a notice is open. */
+.dd-editor-intro-waits-for-notice .classic-hero > figure[style*="dd-hero-photo-fade-up"],.shared-public-invitation.dd-hero-intro-waits-for-notice .classic-hero > figure[style*="dd-hero-photo-fade-up"]{animation-play-state:paused!important}
 .shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-mask,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-text,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-line{animation-play-state:paused}
 @keyframes dd-hero-intro-text-reveal{from{clip-path:inset(-1em calc(100% + 1em) -1em -1em)}to{clip-path:inset(-1em -1em -1em -1em)}}
 @keyframes dd-hero-intro-write{from{transform:scaleX(1)}to{transform:scaleX(0)}}
@@ -3598,4 +3600,67 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   padding:6px 9px !important;
   grid-template-columns:22px minmax(0,1fr) !important;
   column-gap:7px !important;
+}
+
+/* Invitation message: prevent manual drag-resizing without changing text or scroll behavior. */
+.create-page .dd-invitation-message-textarea {resize:none;}
+
+/* Growth timeline add action matches the current sky-blue editor controls. */
+.create-page .dd-growth-timeline-add {
+  background:#eaf4ff !important;
+  border:1px solid #bfd9ff !important;
+  color:#244f9e !important;
+  box-shadow:none !important;
+}
+.create-page .dd-growth-timeline-add:hover {background:#dcecff !important;}
+
+/* Public invitation only: improve quick-menu text legibility without affecting editor previews. */
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills > button {
+  min-height:52px !important;
+  padding-top:5px !important;
+  padding-bottom:5px !important;
+}
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong {
+  font-size:13px !important;
+}
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small {
+  font-size:10px !important;
+}
+@media(max-width:380px){
+  .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong {font-size:12px !important;}
+  .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small {font-size:9px !important;}
+}
+
+/* Published invitation quick actions: equal pill widths and identical centered icon/text placement. */
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills {
+  gap:8px !important;
+  padding:6px 5px !important;
+}
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills > button {
+  flex:0 1 154px !important;
+  width:154px !important;
+  max-width:calc((100vw - 34px) / 2) !important;
+  height:52px !important;
+  min-height:52px !important;
+  padding:5px 7px !important;
+  grid-template-columns:22px minmax(0,1fr) !important;
+  column-gap:7px !important;
+  justify-content:center !important;
+  justify-items:start !important;
+}
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy {
+  width:100% !important;
+  text-align:left !important;
+}
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong {
+  font-size:14px !important;
+  line-height:1.2 !important;
+}
+.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small {
+  font-size:10px !important;
+  line-height:1.2 !important;
+}
+@media(max-width:380px){
+  .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong {font-size:13px !important;}
+  .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small {font-size:9px !important;}
 }
