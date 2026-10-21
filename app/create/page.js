@@ -7,6 +7,7 @@ import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import InvitationRenderer, { TEMPLATE_IDS } from "../../components/invitation/invitation-renderer";
 import InvitationMap from "../../components/invitation/invitation-map";
 import ShareActions from "../../components/share-actions";
+import CardShareImageTask from "../../components/invitation/card-share-image-task";
 import TransportGuide from "../../components/invitation/transport-guide";
 import DearDayBrandFooter from "../../components/invitation/dearday-brand-footer";
 import GrowthTimeline from "../../components/invitation/growth-timeline";
@@ -139,6 +140,7 @@ export default function CreateInvitation() {
   const [invitation, setInvitation] = useState(initialInvitation);
   const [provider, setProvider] = useState("");
   const [published, setPublished] = useState(false);
+  const [cardShareJob, setCardShareJob] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [liveNoticeDismissed, setLiveNoticeDismissed] = useState(false);
   const [fullNoticeDismissed, setFullNoticeDismissed] = useState(false);
@@ -895,6 +897,7 @@ export default function CreateInvitation() {
       return;
     }
     if (galleryBusy || photoBusy.current || (showLoading && submitting)) return;
+    setCardShareJob(null);
     if (showSuccessToast) { window.clearTimeout(saveToastTimer.current); setSaveToastVisible(false); }
     if (showLoading) setSubmitting("draft");
     try {
@@ -909,6 +912,7 @@ export default function CreateInvitation() {
       const result = await response.json().catch(() => ({}));
       if (!response.ok) return setSaveNotice(result.error || "저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
       const savedStatus = result.status || "draft";
+      if (savedStatus === "published" && showSuccessToast && result.revision) setCardShareJob({ slug, revision: result.revision });
       templateSelectionChanged.current = false;
       setTemplateRevision(current => current + 1);
       setLoginRequired(false); window.localStorage.setItem("dear-day-event-slug", slug); setEventSlug(slug); setEventStatus(savedStatus);
@@ -1029,6 +1033,7 @@ export default function CreateInvitation() {
       const result = await response.json().catch(() => ({}));
       if (!response.ok) return setFlowNotice(result.missingFields?.length ? `${result.error} (${result.missingFields.join(", ")})` : result.error || "발행에 실패했어요.");
       setEventStatus("published");
+      if (result.revision) setCardShareJob({ slug, revision: result.revision });
       setPublishConfirmOpen(false);
       setPublished(true);
     } finally {
@@ -1126,7 +1131,7 @@ export default function CreateInvitation() {
           <div className="dd-final-card"><span className="dd-final-eyebrow">PAYMENT & PUBLISH</span><h2>{eventStatus === "published" ? "초대장 발행 완료" : eventStatus === "paid" ? "결제가 완료되었어요" : "결제 및 발행"}</h2><div className="dd-final-flow"><span className={eventStatus === "paid" || eventStatus === "published" ? "done" : "current"}>01 · 결제</span><span className={eventStatus === "published" ? "done" : eventStatus === "paid" ? "current" : ""}>02 · 직접 발행</span><span className={eventStatus === "published" ? "done" : ""}>03 · 링크 공유</span></div><p>{eventStatus === "published" ? "발행된 초대장을 확인하고 링크를 공유해 주세요." : eventStatus === "paid" ? "아직 초대장은 공개되지 않았습니다. 최종 확인 후 직접 발행해 주세요." : "현재는 개발용 테스트 결제입니다. 테스트 결제 후에도 직접 발행하기 전까지 초대장은 공개되지 않습니다."}</p>{eventStatus === "published" && eventSlug ? <a className="dd-final-primary" href={`/invite/${eventSlug}?from=owner`}>발행된 초대장 보기 →</a> : <button type="button" className="dd-final-primary" disabled={Boolean(submitting) || uploadingPhoto || galleryBusy} onClick={eventStatus === "paid" ? requestPublish : preparePayment}>{eventStatus === "paid" ? "초대장 발행하기 →" : "발행 준비 및 테스트 결제 →"}</button>}</div>
           <p className="dd-final-help">결제와 발행은 별개 단계입니다. 발행 버튼을 눌러야 초대장 링크가 활성화됩니다.</p>
         </div>
-        <div className="dd-editor-sticky-actions"><button type="button" onClick={() => saveDraft({ showSuccessToast: true })} disabled={!eventReady || Boolean(submitting) || uploadingPhoto || galleryBusy}>{eventStatus === "published" ? "수정사항 반영" : "임시저장"}</button><button type="button" className="dd-editor-preview-action" onClick={() => { setFlowNotice(""); setFullNoticeDismissed(false); setPreviewOpen(true); }}>◉ 미리보기</button><button type="button" className="dd-editor-next-action" disabled={stepSaving || Boolean(submitting) || galleryBusy || uploadingPhoto} onClick={() => { if (editorStep < 5) { void moveEditorStep(editorStep + 1); } else if (eventStatus === "published" && eventSlug) { window.location.href = `/invite/${eventSlug}?from=owner`; } else if (eventStatus === "paid") requestPublish(); else preparePayment(); }}>{stepSaving ? "자동 저장 중…" : editorStep < 5 ? "다음단계 →" : eventStatus === "published" ? "초대장 보기" : eventStatus === "paid" ? "발행하기" : "결제·발행 →"}</button></div>{saveNotice && <p role="status">{saveNotice}</p>}{loginRequired && <button type="button" className="save-button" onClick={continueAfterLogin}>로그인하고 계속하기</button>}
+        <div className="dd-editor-sticky-actions"><button type="button" onClick={() => saveDraft({ showSuccessToast: true })} disabled={!eventReady || Boolean(submitting) || uploadingPhoto || galleryBusy}>{eventStatus === "published" ? "수정사항 반영" : "임시저장"}</button><button type="button" className="dd-editor-preview-action" onClick={() => { setFlowNotice(""); setFullNoticeDismissed(false); setPreviewOpen(true); }}>◉ 미리보기</button><button type="button" className="dd-editor-next-action" disabled={stepSaving || Boolean(submitting) || galleryBusy || uploadingPhoto} onClick={() => { if (editorStep < 5) { void moveEditorStep(editorStep + 1); } else if (eventStatus === "published" && eventSlug) { window.location.href = `/invite/${eventSlug}?from=owner`; } else if (eventStatus === "paid") requestPublish(); else preparePayment(); }}>{stepSaving ? "자동 저장 중…" : editorStep < 5 ? "다음단계 →" : eventStatus === "published" ? "초대장 보기" : eventStatus === "paid" ? "발행하기" : "결제·발행 →"}</button></div><CardShareImageTask job={cardShareJob} />{saveNotice && <p role="status">{saveNotice}</p>}{loginRequired && <button type="button" className="save-button" onClick={continueAfterLogin}>로그인하고 계속하기</button>}
       </section>
       <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div ref={livePreviewRef} className={`preview-content full-invitation-renderer dd-bgm-public-style${noticeMatrix.state !== "none" && (noticeMatrix.state === "required" || invitation.notice?.enabled) && invitation.notice?.title && invitation.notice?.body && !liveNoticeDismissed ? " dd-editor-intro-waits-for-notice" : ""}`}>{previewReady ? <>{noticeMatrix.state !== "none" && <InvitationNotice notice={noticeMatrix.state === "required" ? { ...invitation.notice, enabled: true } : invitation.notice} slug="editor-live-preview" imageUrl={noticePreviewUrl || null} preview onClose={() => setLiveNoticeDismissed(true)} />}<InvitationRenderer invitation={previewInvitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} templateId={invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets} userBgmUrl={invitation.bgmMode === "upload" ? (invitation.userBgmUploadUrl || null) : (selectedBgmTrack?.url || null)} placeActions={previewPlaceActions()}><><ParentsIntro invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><GrowthTimeline invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><ExtendedEventInfo invitation={invitation} eventTypeConfig={eventTypeConfig} />{galleryMatrix.state !== "none" && <Gallery photos={galleryPhotos} idPrefix="live-preview-gallery" title={galleryMatrix.label} />}{transportMatrix.state !== "none" && <TransportGuide invitation={invitation} title={transportMatrix.label} required={transportMatrix.state === "required"} />}<AccountCopy invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><OptionalInvitationSections invitation={invitation} eventTypeConfig={eventTypeConfig} previewMode="desktop-live" /><ShareActions className="public-share-copy" path={eventSlug ? `/invite/${eventSlug}` : "#preview"} title={getInvitationTitle(invitation, invitation.eventKind)} previewOnly={eventStatus !== "published" || !eventSlug} /><DearDayBrandFooter /></></InvitationRenderer></> : previewLoading}</div></div></aside>
     </div>

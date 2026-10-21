@@ -48,7 +48,7 @@ export async function writeToClipboard(value) {
   if (!copied) throw new Error("Clipboard unavailable");
 }
 
-export default function ShareActions({ path, title = "DearDay 초대장", text, imageUrl = "", className = "", showPath = false, previewOnly = false }) {
+export default function ShareActions({ path, title = "DearDay 초대장", text, imageUrl = "", imageWidth = 800, imageHeight = 600, className = "", showPath = false, previewOnly = false }) {
   const [notice, setNotice] = useState("");
   const [copied, setCopied] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
@@ -125,8 +125,8 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
       };
       if (imageUrl) {
         content.imageUrl = new URL(imageUrl, window.location.origin).toString();
-        content.imageWidth = 800;
-        content.imageHeight = 600;
+        content.imageWidth = imageWidth;
+        content.imageHeight = imageHeight;
       }
       Kakao.Share.sendDefault({
         objectType: "feed",

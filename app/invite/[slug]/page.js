@@ -18,6 +18,8 @@ import { normalizeNotice } from "../../../lib/invitation-notice";
 import { isPublicPeriodExpired } from "../../../lib/invitation-retention";
 import { getTemplateAssetReferences, resolveTemplateAssetUrls, applySaleTemplateStyles } from "../../../lib/template-config";
 import ExtendedEventInfo from "../../../components/invitation/extended-event-info";
+import { cardShareFingerprint } from "../../../lib/card-share-context";
+import { selectCardShareImage, isCardHero } from "../../../lib/card-share-image";
 
 
 
@@ -28,7 +30,7 @@ export default async function InvitationPage({ params, searchParams }) {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !serviceRoleKey) notFound();
   const supabase = createClient(url, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
-  const { data: events } = await supabase.from("events").select("id,status,kind,template_id,template_version_id,hero_preset_id,starts_at,service_expires_at,grace_ends_at,settings").eq("slug", slug).in("status", ["published", "suspended"]).limit(1);
+  const { data: events } = await supabase.from("events").select("id,owner_id,updated_at,status,kind,template_id,template_version_id,hero_preset_id,starts_at,service_expires_at,grace_ends_at,settings").eq("slug", slug).in("status", ["published", "suspended"]).limit(1);
   const event = events?.[0];
   if (!event) notFound();
   if (event.status === "suspended") return <main className="public-invitation suspended-invitation">
@@ -204,12 +206,15 @@ export default async function InvitationPage({ params, searchParams }) {
   const effectiveNotice = matrixFields.notice?.state === "required" ? { ...(settings.notice || {}), enabled: true } : settings.notice;
   const publicNotice = matrixFields.notice?.state === "none" ? normalizeNotice(null) : normalizeNotice(effectiveNotice);
   const waitForNoticeBeforeHeroIntro = publicNotice.enabled && Boolean(publicNotice.title) && Boolean(publicNotice.body);
+  const existingShareFallback = (templateConfig?.hero?.mode === "illustration" ? (templateAssets?.[templateConfig?.hero?.backgroundAssetId] || templateAssets?.[templateConfig?.hero?.frameAssetId]) : null) || invitation.coverPhotoUrl || templateAssets?.[templateConfig?.hero?.frameAssetId] || invitation.heroImageUrl || invitation.hero_image_url || galleryPhotos[0]?.url || "";
+  const shareImage = selectCardShareImage(settings, templateConfig, { origin: new URL(url).origin, ownerId: event.owner_id, eventId: event.id }, existingShareFallback);
+  const shareFingerprint = isCardHero(templateConfig) ? cardShareFingerprint({ event, templateConfig, eventTypeConfig }) : "";
 
   return <main className={`public-invitation shared-public-invitation${waitForNoticeBeforeHeroIntro ? " dd-hero-intro-waits-for-notice" : ""}`}>
     {ownerView && <nav className="owner-return-nav" aria-label="DearDay 관리 화면으로 돌아가기"><a href="/my-invitations">내 초대장</a><a href="/">DearDay 홈</a></nav>}
     {matrixFields.notice?.state !== "none" && <InvitationNotice notice={effectiveNotice} slug={slug} imageUrl={settings.notice?.imagePath ? supabase.storage.from("invitation-photos").getPublicUrl(settings.notice.imagePath).data.publicUrl : null} />}
-    <div className="full-invitation-renderer dd-bgm-public-style"><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} templateId={invitation.templateId} templateConfig={templateConfig} templateAssets={templateAssets} userBgmUrl={userBgmUrl} placeActions={<><AddressCopy invitation={invitation} /><InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView deferUntilVisible /></>}>
-      <div className="public-invitation-sections"><ParentsIntro invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><GrowthTimeline invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><ExtendedEventInfo invitation={invitation} eventTypeConfig={eventTypeConfig} />{matrixFields.gallery?.state !== "none" && <Gallery photos={galleryPhotos} title={matrixFields.gallery?.label || "우리의 순간들"} />}{matrixFields.transport?.state !== "none" && <TransportGuide invitation={invitation} title={matrixFields.transport?.label || "교통 안내"} required={matrixFields.transport?.state === "required"} />}<AccountCopy invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><OptionalInvitationSections invitation={invitation} eventTypeConfig={eventTypeConfig} slug={slug} startsAt={event.starts_at} /><LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} imageUrl={invitation.kakaoShareImageUrl || (templateConfig?.hero?.mode === "illustration" ? (templateAssets?.[templateConfig?.hero?.backgroundAssetId] || templateAssets?.[templateConfig?.hero?.frameAssetId]) : null) || invitation.coverPhotoUrl || templateAssets?.[templateConfig?.hero?.frameAssetId] || invitation.heroImageUrl || invitation.hero_image_url || galleryPhotos[0]?.url || ""} /><DearDayBrandFooter /></div>
+    <div className="full-invitation-renderer dd-bgm-public-style" data-card-share-fingerprint={shareFingerprint} data-card-share-revision={event.updated_at} data-card-share-mode={templateConfig?.hero?.mode || ""}><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} templateId={invitation.templateId} templateConfig={templateConfig} templateAssets={templateAssets} userBgmUrl={userBgmUrl} placeActions={<><AddressCopy invitation={invitation} /><InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView deferUntilVisible /></>}>
+      <div className="public-invitation-sections"><ParentsIntro invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><GrowthTimeline invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><ExtendedEventInfo invitation={invitation} eventTypeConfig={eventTypeConfig} />{matrixFields.gallery?.state !== "none" && <Gallery photos={galleryPhotos} title={matrixFields.gallery?.label || "우리의 순간들"} />}{matrixFields.transport?.state !== "none" && <TransportGuide invitation={invitation} title={matrixFields.transport?.label || "교통 안내"} required={matrixFields.transport?.state === "required"} />}<AccountCopy invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><OptionalInvitationSections invitation={invitation} eventTypeConfig={eventTypeConfig} slug={slug} startsAt={event.starts_at} /><LinkCopy path={`/invite/${slug}`} title={getInvitationTitle(invitation, invitation.eventKind)} imageWidth={shareImage.imageWidth} imageHeight={shareImage.imageHeight} imageUrl={shareImage.imageUrl} /><DearDayBrandFooter /></div>
     </InvitationRenderer></div>
 </main>;
 }

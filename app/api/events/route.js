@@ -5,6 +5,7 @@ import { getInvitationTitle } from "../../../lib/invitation-title";
 import { getAllMissingRequiredFields } from "../../../lib/event-config";
 import { calculateRetentionDates } from "../../../lib/invitation-retention";
 import { getTemplateAssetReferences, resolveTemplateAssetUrls, applySaleTemplateStyles } from "../../../lib/template-config";
+import { preserveCardShareMetadata } from "../../../lib/card-share-image";
 
 const slugPattern = /^[a-z0-9-]{4,80}$/;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -321,7 +322,7 @@ export async function POST(request) {
     if (Number.isNaN(new Date(startsAt).getTime())) return json({ error: "예식 날짜 또는 시간을 확인해 주세요." }, 400);
   }
 
-  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id,status,kind,settings,template_id,template_version_id,hero_preset_id,paid_at,published_at,service_started_at,service_expires_at").eq("slug", slug).limit(1);
+  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id,status,kind,settings,template_id,template_version_id,hero_preset_id,paid_at,published_at,service_started_at,service_expires_at,updated_at").eq("slug", slug).limit(1);
   if (lookupError) return json({ error: "기존 초대장을 확인하지 못했어요." }, 500);
   const existing = matches?.[0];
   if (existing && existing.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 수정할 수 없어요." }, 403);
@@ -377,7 +378,7 @@ export async function POST(request) {
     ...(hasHeroPresetId ? { hero_preset_id: heroPresetId } : {}),
     title: getInvitationTitle(invitation, eventKind),
     starts_at: startsAt,
-    settings: { ...invitation, notice: prepareNoticeForSave(invitation.notice, existing?.settings?.notice) },
+    settings: { ...preserveCardShareMetadata(invitation, existing?.settings), notice: prepareNoticeForSave(invitation.notice, existing?.settings?.notice) },
   };
 
   if (publish && !existing) return json({ error: "초대장을 먼저 임시 저장해 주세요." }, 409);
@@ -389,19 +390,19 @@ export async function POST(request) {
     ? { ...event, status: "published", published_at: firstPublishedAt, service_started_at: existing.service_started_at || firstPublishedAt }
     : event;
   const saveQuery = existing
-    ? supabase.from("events").update(publishedEvent).eq("slug", slug).eq("owner_id", user.id)
+    ? supabase.from("events").update(publishedEvent).eq("slug", slug).eq("owner_id", user.id).eq("updated_at", existing.updated_at)
     : supabase.from("events").insert({ ...event, owner_id: user.id, status: "draft", slug });
   const { data: saved, error: saveError } = publish && existing.status === "paid"
-    ? await saveQuery.eq("status", "paid").select("status").maybeSingle()
-    : await saveQuery.select("status").maybeSingle();
+    ? await saveQuery.eq("status", "paid").select("status,updated_at").maybeSingle()
+    : await saveQuery.select("status,updated_at").maybeSingle();
 
   if (saveError) return json({ error: "초대장을 저장하지 못했어요." }, 500);
   if (!saved && publish) {
-    const { data: current } = await supabase.from("events").select("status,published_at,service_started_at").eq("slug", slug).eq("owner_id", user.id).maybeSingle();
-    if (current?.status === "published") return json({ slug, status: current.status, publishedAt: current.published_at, serviceStartedAt: current.service_started_at });
+    const { data: current } = await supabase.from("events").select("status,published_at,service_started_at,updated_at").eq("slug", slug).eq("owner_id", user.id).maybeSingle();
+    if (current?.status === "published") return json({ slug, status: current.status, revision: current.updated_at, publishedAt: current.published_at, serviceStartedAt: current.service_started_at });
   }
   if (!saved) return json({ error: "초대장 상태가 변경되었어요. 새로고침 후 다시 시도해 주세요." }, 409);
-  return json({ slug, status: saved.status });
+  return json({ slug, status: saved.status, revision: saved.updated_at });
 }
 export async function DELETE(request) {
   const auth = await getAuthenticatedClient(request);
