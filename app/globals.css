@@ -3904,3 +3904,46 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .dd-program-share-card .dd-program-add-button{display:block;width:100%;background:#24418e;color:#fff;border-color:#24418e}
 .create-page .dd-program-share-card .dd-program-add-button:hover{background:#3158b4;border-color:#3158b4}
 .create-page .dd-program-share-card .dd-program-add-button:disabled{opacity:.5;cursor:not-allowed}
+
+
+/* Shared modern quick actions: same card layout for 1, 2 or 3 enabled actions. */
+.invitation-quick-menu.invitation-quick-menu--modern{
+  display:flex!important;align-items:stretch!important;justify-content:center!important;
+  gap:8px!important;padding:8px!important;box-sizing:border-box!important;
+  width:min(100%,420px)!important;max-width:100%!important;
+}
+.invitation-quick-menu.invitation-quick-menu--modern>button{
+  display:flex!important;flex:1 1 0!important;min-width:0!important;max-width:none!important;
+  height:auto!important;min-height:92px!important;padding:10px 5px!important;
+  flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  gap:5px!important;border-radius:15px!important;
+  background:#fff!important;color:#243657!important;border:1px solid #dfe7f2!important;
+  box-shadow:0 3px 11px rgba(32,55,100,.08)!important;
+}
+.invitation-quick-menu.invitation-quick-menu--modern .dd-quick-icon-bubble{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 0 36px!important;width:36px!important;height:36px!important;border-radius:50%!important;
+  background:#edf2fc!important;color:#536faf!important;
+}
+.invitation-quick-menu.invitation-quick-menu--modern .dd-quick-icon-bubble svg{
+  width:20px!important;height:20px!important;display:block!important;
+}
+.invitation-quick-menu.invitation-quick-menu--modern .invitation-quick-copy{
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  justify-content:center!important;gap:2px!important;min-width:0!important;width:100%!important;
+  text-align:center!important;line-height:1.25!important;
+}
+.invitation-quick-menu.invitation-quick-menu--modern .invitation-quick-copy strong{
+  font-size:12px!important;font-weight:700!important;white-space:nowrap!important;color:#243657!important;
+}
+.invitation-quick-menu.invitation-quick-menu--modern .invitation-quick-copy small{
+  display:block!important;font-size:10px!important;font-weight:400!important;
+  color:#8a94a5!important;white-space:nowrap!important;
+}
+@media(max-width:350px){
+ .invitation-quick-menu.invitation-quick-menu--modern{gap:5px!important;padding:6px!important}
+ .invitation-quick-menu.invitation-quick-menu--modern>button{padding:8px 2px!important;min-height:86px!important}
+ .invitation-quick-menu.invitation-quick-menu--modern .dd-quick-icon-bubble{width:32px!important;height:32px!important;flex-basis:32px!important}
+ .invitation-quick-menu.invitation-quick-menu--modern .invitation-quick-copy strong{font-size:11px!important}
+ .invitation-quick-menu.invitation-quick-menu--modern .invitation-quick-copy small{font-size:9px!important}
+}
