@@ -3807,3 +3807,20 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   :is(.create-page,.shared-public-invitation,body) .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program[data-program-menu]{gap:5px!important;padding:6px!important}
   .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy strong{font-size:11px!important}
 }
+
+
+/* Homepage hero copy: keep headlines inside their columns on desktop. */
+@media (min-width:801px){
+ .landing-v2 .landing-hero-layout{min-width:0}
+ .landing-v2 .hero-copy-v2{min-width:0;padding-left:clamp(14px,2.3vw,36px)}
+ .landing-v2 .hero-copy-v2 .hero-handwriting{font-size:clamp(27px,3vw,46px);max-width:100%;overflow-wrap:normal}
+ .landing-v2 .hero-copy-v2 h1{font-size:clamp(29px,3.2vw,49px);max-width:100%;word-break:keep-all;overflow-wrap:break-word}
+ .landing-v2 .hero-copy-v2>span{max-width:100%;word-break:keep-all}
+ .landing-v2 .landing-hero-benefits>div{min-width:0}
+ .landing-v2 .landing-hero-benefits>div>strong,
+ .landing-v2 .landing-hero-benefits>div>small{white-space:normal!important;overflow-wrap:break-word;word-break:keep-all;text-align:center}
+}
+@media (min-width:801px) and (max-width:1100px){
+ .landing-v2 .hero-copy-v2 .hero-handwriting{font-size:clamp(25px,3.1vw,35px)}
+ .landing-v2 .hero-copy-v2 h1{font-size:clamp(28px,3.5vw,39px)}
+}
