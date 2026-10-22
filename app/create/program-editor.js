@@ -22,8 +22,8 @@ export default function ProgramEditor({ value, eventKind, onChange }) {
       <label className="dd-transport-guide-toggle"><input type="checkbox" checked={program.enabled} onChange={event => commit(toggleProgram(program, event.target.checked, eventKind))} /> 식순·일정 사용</label>
       {program.enabled && <>
         <label className="form-field"><span>제목</span><input value={program.title} maxLength={PROGRAM_LIMITS.title} placeholder={PROGRAM_DEFAULTS[eventKind]?.title || "행사 일정"} onChange={event => patch({ title: event.target.value })} /></label>
-        <label className="form-field"><span>표시 방식</span><select value={program.displayMode} onChange={event => patch({ displayMode: event.target.value })}><option value="number">순서형</option><option value="time">시간형</option><option value="plain">제목형</option></select></label>
-        <p>최대 {PROGRAM_LIMITS.items}개까지 등록할 수 있어요. 사용을 꺼도 입력 내용은 유지됩니다.</p>
+        <label className="dd-transport-guide-toggle"><input type="checkbox" checked={program.displayMode === "time"} onChange={event => patch({ displayMode: event.target.checked ? "time" : "number" })} /> 시간 입력 사용</label>
+        <p>최대 {PROGRAM_LIMITS.items}개까지 등록할 수 있어요. 시간 입력을 꺼도 기존 시간과 식순 내용은 유지됩니다.</p>
         {program.items.map((item, index) => <div key={item.id} className="dd-program-editor-item">
           <div className={`dd-program-editor-item-fields${program.displayMode === "time" ? " dd-program-editor-item-fields--time" : ""}`}>
             <label className="form-field"><span>항목 {index + 1} 제목</span><input value={item.title} maxLength={PROGRAM_LIMITS.itemTitle} onChange={event => updateItem(item.id, { title: event.target.value })} /></label>
