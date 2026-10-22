@@ -6,7 +6,7 @@ import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 const FIELD_ORDER=[
  ["event_title","행사명/제목"],["event_subtitle","행사 부제목·슬로건"],["subject","주인공"],["host","주최자/담당자"],["schedule","일시"],["venue","장소"],["message","초대글/안내"],
  ["contacts","연락처"],["gallery","갤러리"],["accounts","계좌"],["transport","교통/주차"],["notice","공지사항"],["details","행사 세부안내"],["external_link","외부링크"],["brand_image","로고/대표이미지"],
- ["rsvp","RSVP"],["guestbook","방명록"],["parents_intro","부모소개"],["timeline","성장기록"]
+ ["program","식순·일정"],["rsvp","RSVP"],["guestbook","방명록"],["parents_intro","부모소개"],["timeline","성장기록"]
 ];
 const STATES=[["required","필수"],["optional","선택"],["none","없음"]];
 const DETAIL={contacts:{key:"roles",title:"연락 대상"},accounts:{key:"groups",title:"계좌 그룹"}};
@@ -42,7 +42,7 @@ export default function EventTypesAdmin(){
     <label style={{fontWeight:400}}><input type="checkbox" checked={t.is_visible} onChange={e=>patch(t.kind,x=>({...x,is_visible:e.target.checked}))}/> 노출</label>
    </th>)}</tr></thead><tbody>
     {FIELD_ORDER.map(([key,base])=><tr key={key}><th style={{padding:10,textAlign:"left",borderTop:"1px solid #edf2fa",position:"sticky",left:0,background:"#fff"}}>{base}</th>
-     {types.map(t=>{const f=t.fields?.[key]||{state:"none",label:base};return <td key={t.kind} style={{padding:8,borderTop:"1px solid #edf2fa"}}>
+     {types.map(t=>{const f=t.fields?.[key]||{state:key==="program"?"optional":"none",label:base};return <td key={t.kind} style={{padding:8,borderTop:"1px solid #edf2fa"}}>
       <select value={f.state} onChange={e=>patch(t.kind,x=>({...x,fields:{...x.fields,[key]:{...f,state:e.target.value}}}))} style={{width:"100%",marginBottom:5}}>{STATES.map(([v,l])=><option key={v} value={v}>{l}</option>)}</select>
       <input value={f.label||""} disabled={f.state==="none"} title="이 유형에서 사용자에게 보일 항목명" onChange={e=>patch(t.kind,x=>({...x,fields:{...x.fields,[key]:{...f,label:e.target.value}}}))} style={{width:"100%",boxSizing:"border-box"}}/>
       {DETAIL[key]&&f.state!=="none"&&<div style={{marginTop:8,paddingTop:8,borderTop:"1px dashed #dfeafb"}}><small>{DETAIL[key].title}</small>{detailItems(key,f).map((item,index)=>{const items=detailItems(key,f);return <div key={item.key+"-"+index} style={{display:"grid",gridTemplateColumns:"72px 1fr 28px",gap:4,marginTop:5}}><input value={item.key} onChange={e=>{const next=[...items];next[index]={...item,key:e.target.value.toLowerCase().replace(/[^a-z0-9_]/g,"")};setDetail(t.kind,key,next);}}/><input value={item.label} onChange={e=>{const next=[...items];next[index]={...item,label:e.target.value};setDetail(t.kind,key,next);}}/><button type="button" onClick={()=>setDetail(t.kind,key,items.filter((_,i)=>i!==index))}>×</button></div>})}<button type="button" style={{marginTop:6}} onClick={()=>{const items=detailItems(key,f);setDetail(t.kind,key,[...items,{key:"item"+(items.length+1),label:"새 항목"}]);}}>+ 항목</button></div>}

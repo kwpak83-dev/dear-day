@@ -1,7 +1,8 @@
+import { normalizeProgram, validateProgram } from "../../../../lib/invitation-program";
 import { randomUUID } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
-import { completedTemplateCategoryToEventKind, getMissingCompletedSampleFields } from "../../../../lib/completed-template-sample";
+import { completedTemplateCategoryToEventKind, getMissingCompletedSampleFields, mergeCompletedTemplateSamples } from "../../../../lib/completed-template-sample";
 
 const json=(body,status=200)=>NextResponse.json(body,{status});
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -24,7 +25,7 @@ async function getAdmin(request){
 const cleanSampleContent=(value)=>{
   const s=value&&typeof value==="object"&&!Array.isArray(value)?value:{},text=(key,max=500)=>String(s[key]||"").slice(0,max);
   return {
-    hero_image_url:text("hero_image_url",2000),child_name:text("child_name",80),child_last_name:text("child_last_name",80),child_first_name:text("child_first_name",80),birth_date:text("birth_date",40),parent1_name:text("parent1_name",80),parent2_name:text("parent2_name",80),
+    ...(s.program === undefined ? {} : {program:normalizeProgram(s.program)}),hero_image_url:text("hero_image_url",2000),child_name:text("child_name",80),child_last_name:text("child_last_name",80),child_first_name:text("child_first_name",80),birth_date:text("birth_date",40),parent1_name:text("parent1_name",80),parent2_name:text("parent2_name",80),
     parents_intro_enabled:s.parents_intro_enabled===true,parent1_photo_url:text("parent1_photo_url",2000),parent1_intro:text("parent1_intro",160),parent2_photo_url:text("parent2_photo_url",2000),parent2_intro:text("parent2_intro",160),parent1_phone:text("parent1_phone",80),parent2_phone:text("parent2_phone",80),person1_phone:text("person1_phone",80),host_phone:text("host_phone",80),host_name:text("host_name",80),person1_name:text("person1_name",80),event_title:text("event_title",160),event_subtitle:text("event_subtitle",160),manager_phone:text("manager_phone",80),manager_name:text("manager_name",80),host1_phone:text("host1_phone",80),host1_name:text("host1_name",80),host2_phone:text("host2_phone",80),host2_name:text("host2_name",80),
     groom_name:text("groom_name",80),groom_last_name:text("groom_last_name",80),groom_first_name:text("groom_first_name",80),bride_name:text("bride_name",80),bride_last_name:text("bride_last_name",80),bride_first_name:text("bride_first_name",80),groom_phone:text("groom_phone",80),bride_phone:text("bride_phone",80),
     groom_father_name:text("groom_father_name",80),groom_mother_name:text("groom_mother_name",80),bride_father_name:text("bride_father_name",80),bride_mother_name:text("bride_mother_name",80),groom_father_phone:text("groom_father_phone",80),groom_mother_phone:text("groom_mother_phone",80),bride_father_phone:text("bride_father_phone",80),bride_mother_phone:text("bride_mother_phone",80),
@@ -63,10 +64,16 @@ export async function GET(request){
 }
 export async function POST(request){
   const a=await getAdmin(request); if(a.error)return json({error:a.error},a.status);
-  const b=await request.json().catch(()=>null); const f=fields(b); if(!f)return json({error:fieldError(b)},400);
+  const b=await request.json().catch(()=>null); const programError=validateProgram(b?.sample_content?.program);if(programError)return json({error:programError},400);const f=fields(b); if(!f)return json({error:fieldError(b)},400);
   const {data:matrix,error:matrixError}=await a.client.from("event_type_configs").select("fields").eq("kind",completedTemplateCategoryToEventKind(f.category)).maybeSingle();
   if(matrixError)return json({error:"행사 유형 설정을 확인하지 못했어요."},500);
-  const missing=getMissingCompletedSampleFields(f.sample_content,matrix?.fields);
+  let validationSample=f.sample_content;
+  if(matrix?.fields?.program?.state==="required"&&f.sample_content.program===undefined){
+    const {data:common,error:commonError}=await a.client.from("completed_template_sample_defaults").select("sample_content").eq("id",completedTemplateCategoryToEventKind(f.category)).maybeSingle();
+    if(commonError)return json({error:"공통 샘플을 확인하지 못했어요."},500);
+    validationSample=mergeCompletedTemplateSamples(common?.sample_content,f.sample_content);
+  }
+  const missing=getMissingCompletedSampleFields(validationSample,matrix?.fields);
   if(missing.length)return json({error:`필수 샘플 항목을 입력해 주세요: ${missing.join(", ")}`},400);
   const {updated_at,...insert}=f;
   const {error}=await a.client.from("completed_templates").insert({id:randomUUID(),...insert});
@@ -77,10 +84,22 @@ export async function POST(request){
 export async function PATCH(request){
   const a=await getAdmin(request); if(a.error)return json({error:a.error},a.status);
   const b=await request.json().catch(()=>null); if(!uuid.test(b?.id||""))return json({error:"완성 템플릿을 확인해 주세요."},400);
+  const programError=validateProgram(b?.sample_content?.program);if(programError)return json({error:programError},400);
   const f=fields(b); if(!f)return json({error:fieldError(b)},400);
+  if(b?.sample_content?.program===undefined){
+    const {data:existing,error:existingError}=await a.client.from("completed_templates").select("sample_content").eq("id",b.id).maybeSingle();
+    if(existingError)return json({error:"기존 샘플을 확인하지 못했어요."},500);
+    if(existing?.sample_content?.program!==undefined)f.sample_content.program=normalizeProgram(existing.sample_content.program);
+  }
   const {data:matrix,error:matrixError}=await a.client.from("event_type_configs").select("fields").eq("kind",completedTemplateCategoryToEventKind(f.category)).maybeSingle();
   if(matrixError)return json({error:"행사 유형 설정을 확인하지 못했어요."},500);
-  const missing=getMissingCompletedSampleFields(f.sample_content,matrix?.fields);
+  let validationSample=f.sample_content;
+  if(matrix?.fields?.program?.state==="required"&&f.sample_content.program===undefined){
+    const {data:common,error:commonError}=await a.client.from("completed_template_sample_defaults").select("sample_content").eq("id",completedTemplateCategoryToEventKind(f.category)).maybeSingle();
+    if(commonError)return json({error:"공통 샘플을 확인하지 못했어요."},500);
+    validationSample=mergeCompletedTemplateSamples(common?.sample_content,f.sample_content);
+  }
+  const missing=getMissingCompletedSampleFields(validationSample,matrix?.fields);
   if(missing.length)return json({error:`필수 샘플 항목을 입력해 주세요: ${missing.join(", ")}`},400);
   const {error}=await a.client.from("completed_templates").update(f).eq("id",b.id);
   if(error)return json({error:"완성 템플릿을 수정하지 못했어요."},500);
