@@ -84,7 +84,7 @@ export default function Home() {
         </div>
         <div className="landing-hero-benefits">
           <div><span className="dd-benefit-emoji" aria-hidden="true">📝</span><strong>쉽고 빠른 제작</strong><small>최소 입력으로 완성</small></div>
-          <div className="landing-benefit-program"><span className="dd-benefit-emoji" aria-hidden="true">📋</span><strong>초대장 하나에 행사 순서까지!</strong><small>식순·행사 일정도 함께 안내</small></div>
+          <div className="landing-benefit-program"><span className="dd-benefit-emoji" aria-hidden="true">📋</span><strong>초대장에 식순·일정까지</strong><small>행사 순서까지 간편하게 안내</small></div>
           <div><span className="dd-benefit-emoji" aria-hidden="true">✏️</span><strong>발행 후에도 수정</strong><small>실수해도 언제든 변경</small></div>
           <div><span className="dd-benefit-emoji" aria-hidden="true">👥</span><strong>참석·방명록 관리</strong><small>응답 현황 실시간 확인</small></div>
         </div>

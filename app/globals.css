@@ -838,19 +838,41 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .admin-draft-full-preview-device{width:min(390px,100%);margin:0 auto;background:#fffaf5;box-shadow:0 10px 28px rgba(70,43,35,.14);transform:translateX(20px)}
 
 .invitation-quick-menu-trigger{display:block;width:1px;height:1px;pointer-events:none}
-.invitation-quick-menu{position:fixed;z-index:70;right:50%;bottom:max(12px,env(safe-area-inset-bottom));display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);width:min(calc(100% - 24px),516px);padding:7px;border:1px solid rgba(218,201,191,.85);border-radius:17px;background:rgba(255,252,249,.94);box-shadow:0 10px 30px rgba(57,39,32,.18);backdrop-filter:blur(10px);transform:translateX(50%);animation:dd-quick-menu-in .22s ease-out}
-.invitation-quick-menu button{display:grid;min-width:0;gap:3px;place-items:center;border:0;background:transparent;color:#674f45;padding:6px 4px;font:var(--dd-quick-menu-font-size,11px)/1.25 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;cursor:pointer}
-.invitation-quick-menu button+button{border-left:1px solid rgba(218,201,191,.7)}
-.invitation-quick-menu b{font:400 var(--dd-quick-menu-icon-size,18px)/1 Georgia,"Times New Roman",serif}
-.invitation-quick-rsvp b::before{content:var(--dd-quick-menu-rsvp-icon,"✓")}
-.invitation-quick-location b::before{content:var(--dd-quick-menu-location-icon,"⌖")}
-.invitation-quick-guestbook b::before{content:var(--dd-quick-menu-guestbook-icon,"♡")}
-.invitation-quick-menu b{width:var(--dd-quick-menu-icon-size,18px);height:var(--dd-quick-menu-icon-size,18px);background-position:center;background-repeat:no-repeat;background-size:contain}
-.invitation-quick-rsvp b{background-image:var(--dd-quick-menu-rsvp-icon-image,none)}
-.invitation-quick-location b{background-image:var(--dd-quick-menu-location-icon-image,none)}
-.invitation-quick-guestbook b{background-image:var(--dd-quick-menu-guestbook-icon-image,none)}
-.invitation-quick-rsvp b[style],.invitation-quick-location b[style],.invitation-quick-guestbook b[style]{font-size:0}
-.invitation-quick-menu span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Shared compact quick actions. Preview variants only change positioning. */
+
+.invitation-quick-menu{position:fixed;z-index:70;left:50%;right:auto;bottom:max(12px,env(safe-area-inset-bottom));display:flex;flex-direction:row;align-items:center;justify-content:center;gap:6px;width:max-content;max-width:calc(100% - 16px);box-sizing:border-box;margin:0;padding:0;border:0;border-radius:999px;background:transparent;box-shadow:none;transform:translateX(-50%);animation:dd-quick-menu-in .22s ease-out}
+
+.invitation-quick-menu > button{display:inline-flex;flex:0 0 auto;flex-direction:row;align-items:center;justify-content:center;gap:5px;width:94px;min-width:94px;max-width:94px;height:42px;min-height:42px;box-sizing:border-box;margin:0;padding:0 10px;border:1px solid #dfe7f2;border-radius:999px;background:#fff;color:#243657;font:700 11px/1.4 var(--dd-quick-menu-font,Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif);cursor:pointer;box-shadow:0 3px 10px rgba(36,54,87,.06)}
+
+.invitation-quick-menu > button > .dd-quick-icon-bubble{display:flex;flex:0 0 16px;align-items:center;justify-content:center;width:16px;height:16px;margin:0;padding:0;background:transparent;color:#536faf}
+
+.invitation-quick-menu .dd-quick-icon-bubble svg{display:block;width:16px;height:16px}
+
+.invitation-quick-menu > button > .invitation-quick-copy{display:block;min-width:0;margin:0;padding:0;text-align:center}
+
+.invitation-quick-menu .invitation-quick-copy strong{display:block;font:inherit;white-space:nowrap;color:inherit}
+
+.invitation-quick-menu .invitation-quick-copy small{display:none}
+
+.invitation-quick-menu > button:focus-visible{outline:2px solid #536faf;outline-offset:3px}
+
+@keyframes dd-quick-menu-in{from{opacity:0;transform:translate(-50%,18px)}to{opacity:1;transform:translate(-50%,0)}}
+
+@media(max-width:380px){.invitation-quick-menu{bottom:max(8px,env(safe-area-inset-bottom))}}
+
+@media(prefers-reduced-motion:reduce){.invitation-quick-menu{animation:none}}
+
+@media(min-width:901px){
+ .preview-phone > .invitation-quick-menu--desktop-live{position:absolute;bottom:8px;z-index:80}
+ .admin-draft-preview-device > .invitation-quick-menu--desktop-live{position:sticky;left:auto;right:auto;bottom:8px;margin:-76px auto 8px;transform:none;z-index:80;animation:none}
+}
+
+.admin-draft-full-preview-device > .invitation-quick-menu--desktop-live{position:sticky;left:auto;right:auto;bottom:8px;margin:-76px auto 8px;transform:none;z-index:80;animation:none}
+
+.full-preview-document > .invitation-quick-menu--editor-full{z-index:80}
+
+.invitation-quick-menu--sales-preview{bottom:max(82px,calc(70px + env(safe-area-inset-bottom)));z-index:80}
 .dd-section-hidden-rsvp .invitation-quick-rsvp,.dd-section-hidden-location .invitation-quick-location,.dd-section-hidden-guestbook .invitation-quick-guestbook{display:none}
 .invitation-bottom-sheet-layer{position:fixed;z-index:110;inset:0;display:flex;align-items:flex-end;justify-content:center}
 .invitation-bottom-sheet-backdrop{position:absolute;z-index:0;inset:0;width:100%;height:100%;border:0;background:rgba(38,29,25,.42);backdrop-filter:blur(2px);cursor:pointer}
@@ -864,19 +886,14 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .invitation-bottom-sheet-content>.public-rsvp,.invitation-bottom-sheet-content>.guestbook-section{opacity:1!important;transform:none!important;visibility:visible!important}
 
 .invitation-bottom-sheet .guestbook-delete-backdrop{z-index:10}
-@keyframes dd-quick-menu-in{from{opacity:0;transform:translate(50%,18px)}to{opacity:1;transform:translate(50%,0)}}
 @keyframes dd-sheet-up{from{transform:translateY(100%)}to{transform:translateY(0)}}
-@media(max-width:380px){.invitation-quick-menu{width:calc(100% - 16px);bottom:max(8px,env(safe-area-inset-bottom))}.invitation-quick-menu button{font-size:var(--dd-quick-menu-font-size,10px)}.invitation-bottom-sheet{border-radius:18px 18px 0 0}}
-@media(prefers-reduced-motion:reduce){.invitation-quick-menu,.invitation-bottom-sheet{animation:none}}
+@media(max-width:380px){.invitation-bottom-sheet{border-radius:18px 18px 0 0}}
+@media(prefers-reduced-motion:reduce){.invitation-bottom-sheet{animation:none}}
 /* Public invitation Quick Menu and Bottom Sheet inherit the active template palette. */
 .classic-001{--dd-invite-action-bg:transparent;--dd-invite-action-text:var(--classic-gold);--dd-invite-action-accent:var(--classic-gold);--dd-invite-action-divider:var(--classic-line);--dd-invite-action-radius:999px}
 .modern-001{--dd-invite-action-bg:transparent;--dd-invite-action-text:var(--modern-ink);--dd-invite-action-accent:var(--modern-ink);--dd-invite-action-divider:var(--modern-line);--dd-invite-action-radius:0}
 .romantic-001{--dd-invite-action-bg:var(--romantic-rose);--dd-invite-action-text:#fff;--dd-invite-action-accent:var(--romantic-gold);--dd-invite-action-divider:var(--romantic-gold);--dd-invite-action-radius:9px}
 .dd-template-colors{--dd-invite-action-bg:var(--dd-color-button-bg);--dd-invite-action-text:var(--dd-color-button-text);--dd-invite-action-accent:var(--dd-color-accent);--dd-invite-action-divider:var(--dd-color-divider)}
-.invitation-quick-menu{border-color:var(--dd-invite-action-divider,rgba(218,201,191,.85))}
-.invitation-quick-menu button{border-radius:var(--dd-invite-action-radius,0);background:var(--dd-invite-action-bg,transparent);color:var(--dd-invite-action-text,#674f45)}
-.invitation-quick-menu button+button{border-left-color:var(--dd-invite-action-divider,rgba(218,201,191,.7))}
-.invitation-quick-menu b{color:var(--dd-invite-action-accent,currentColor)}
 .invitation-bottom-sheet-handle{background:var(--dd-invite-action-accent,#d8c8c0)}
 .invitation-bottom-sheet>header{border-bottom-color:var(--dd-invite-action-divider,#eaded7)}
 .invitation-bottom-sheet>header button,.dd-template-colors .invitation-bottom-sheet>header button{background:transparent;color:var(--dd-invite-action-accent,#80695f)}
@@ -996,19 +1013,6 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 .message-example-select{width:100%;margin-bottom:8px;padding:0 14px;height:44px;border:1px solid #eadbd3;border-radius:10px;background:#fff;color:#4c4541;font:inherit}
 
-/* Keep the editor's fixed quick menu visually inside the desktop phone preview. */
-@media (min-width: 901px){
-  .preview-phone > .invitation-quick-menu--desktop-live{
-    position:absolute;
-    left:8px;
-    right:8px;
-    bottom:8px;
-    width:auto;
-    transform:none;
-    z-index:80;
-  }
-}
-
 @media (min-width:901px){
   .preview-phone > .invitation-bottom-sheet-layer--preview{
     position:absolute;
@@ -1034,16 +1038,6 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 }
 
 @media (min-width:901px){
-  .admin-draft-preview-device > .invitation-quick-menu--desktop-live{
-    position:sticky;
-    left:8px;
-    right:8px;
-    bottom:8px;
-    width:calc(100% - 16px);
-    margin:-76px 8px 8px;
-    transform:none;
-    z-index:80;
-  }
   .admin-draft-preview-device > .invitation-bottom-sheet-layer--preview{
     position:sticky;
     left:0;
@@ -1104,26 +1098,16 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* Optional shared button appearance: existing actions and click handlers are unchanged. */
 .dd-template-button-style[style*="--dd-button-bg"] :is(.public-address-copy button,.public-account-card button,:is(.public-share-copy.share-actions,.public-share-copy .share-actions)>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){background:var(--dd-button-bg);color:var(--dd-button-text)}
-.invitation-quick-menu{background:var(--dd-quick-menu-bg,rgba(255,252,249,.94));border-color:var(--dd-quick-menu-border,rgba(218,201,191,.85));border-radius:var(--dd-quick-menu-radius,17px)}
-.invitation-quick-menu button{color:var(--dd-quick-menu-text,#674f45)}
-.invitation-quick-menu button+button{border-left-color:var(--dd-quick-menu-border,rgba(218,201,191,.7))}
 
 /* Keep action appearance in sync with the selected reusable button palette. */
 .dd-template-button-style :is(.public-address-copy button,.public-account-card button,:is(.public-share-copy.share-actions,.public-share-copy .share-actions)>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){background:var(--dd-button-bg,var(--dd-color-button-bg,#b78b72));color:var(--dd-button-text,var(--dd-color-button-text,#fff))}
-.invitation-quick-menu:has(> button){background:var(--dd-quick-menu-bg,rgba(255,252,249,.94))}
-.invitation-quick-menu button{color:var(--dd-quick-menu-text,#674f45)}
 
 /* Button width is relative to the available action area, including compact copy actions. */
 .dd-template-button-style :is(.public-address-copy button,.public-account-card button,:is(.public-share-copy.share-actions,.public-share-copy .share-actions)>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){max-width:100%;width:var(--dd-button-width,100%);min-width:0}
 .dd-template-button-style .public-account-card button{flex:0 1 auto}
 
-/* Shared quick-menu styling belongs to the three action buttons, not the tray. */
-.invitation-quick-menu button{background:var(--dd-quick-menu-item-bg,var(--dd-invite-action-bg,transparent));color:var(--dd-quick-menu-item-text,var(--dd-invite-action-text,#674f45));border-radius:var(--dd-quick-menu-item-radius,var(--dd-invite-action-radius,0));border-style:solid;border-width:var(--dd-quick-menu-item-border-width,0);border-color:var(--dd-quick-menu-item-border,transparent)}
-.invitation-quick-menu button+button{border-left-width:var(--dd-quick-menu-item-border-width,0);border-left-color:var(--dd-quick-menu-item-border,var(--dd-invite-action-divider,rgba(218,201,191,.7)))}
-
 /* Keep the draft full-preview quick menu inside its phone-sized device. */
 .admin-draft-full-preview-device{position:relative;padding-bottom:84px}
-.admin-draft-full-preview-device > .invitation-quick-menu--desktop-live{position:sticky;left:8px;right:8px;bottom:8px;width:calc(100% - 16px);max-width:none;margin:-76px 8px 8px;transform:none;z-index:80}
 .admin-draft-full-preview-device > .invitation-bottom-sheet-layer--preview{position:sticky;left:0;bottom:0;width:100%;height:min(680px,80vh);z-index:95;overflow:hidden}
 
 /* Compact DearDay footer and shared button typography. */
@@ -1133,7 +1117,6 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dearday-compact-action{display:inline-flex;align-items:center;justify-content:center;gap:9px;color:#806b62;font-size:11px;text-decoration:none}
 .dearday-compact-arrow{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#b88b82;color:white;font-size:15px}
 .dd-template-button-style :is(.public-address-copy button,.public-account-card button,:is(.public-share-copy.share-actions,.public-share-copy .share-actions)>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){font-family:var(--dd-button-font,Arial,sans-serif)}
-.invitation-quick-menu button{font-family:var(--dd-quick-menu-font,Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif)}
 
 /* Wedding contact actions beneath the invitation message. */
 .dd-wedding-contacts{box-sizing:border-box;width:100%;min-width:0;padding:22px 16px;margin:0 auto;text-align:center;color:var(--dd-color-text,#684d43);font-family:var(--dd-body-font-family,inherit)}
@@ -1153,20 +1136,13 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .hero-editor-live-preview-frame>.invitation-template>:not(.classic-hero):not(.modern-hero):not(.romantic-hero){display:none!important}
 .hero-editor-live-preview-frame .classic-hero,.hero-editor-live-preview-frame .modern-hero,.hero-editor-live-preview-frame .romantic-hero{min-height:0!important;margin:0!important}
 @media(min-width:901px){.hero-editor-live-preview{position:relative;top:auto}}
-
-/* Explicit font shorthand for quick-menu items (including portaled previews). */
-.invitation-quick-menu button{font:var(--dd-quick-menu-font-size,11px)/1.25 var(--dd-quick-menu-font,Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif)}
 .hero-edit-section .hero-text-reset-actions{display:flex;gap:8px;flex-wrap:wrap}
 .hero-edit-section .hero-text-reset-actions button,.hero-edit-section .hero-add-text-button,.hero-edit-section .hero-reset-all-button{border:1px solid #d7bdb0;border-radius:9px;background:#fffaf7;color:#705348;padding:10px 14px;font-size:12px;font-weight:600}
 .hero-edit-section .hero-add-text-button{background:#f6e8df;border-color:#cda99b}
 .hero-edit-section .hero-reset-all-button{background:#fff5f3;border-color:#d5a19c;color:#a34c48}
 
-/* Sync only text size and button height; keep three equal columns and icon size independent. */
-.invitation-quick-menu button{min-height:var(--dd-quick-menu-button-height,0px)}
-
 /* Explicit button weight; synchronized quick-menu inherits the same value. */
 .dd-template-button-style :is(.public-address-copy button,.public-account-card button,:is(.public-share-copy.share-actions,.public-share-copy .share-actions)>button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){font-weight:var(--dd-button-font-weight,400)}
-.invitation-quick-menu button{font-weight:var(--dd-quick-menu-font-weight,400)}
 
 /* Center shared action labels regardless of configured width and height.
    Excludes the Quick Menu, which intentionally has separate icon/text rows. */
@@ -1221,47 +1197,13 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   background:var(--dd-button-bg,var(--dd-color-button-bg,#b78b72));
   color:var(--dd-button-text,var(--dd-color-button-text,#fff));
 }
-.dd-template-background .invitation-quick-menu {
-  background:var(--dd-quick-menu-bg,var(--dd-template-quick-bg,#fffaf5));
-}
-.dd-template-background .invitation-quick-menu button {
-  background:var(--dd-quick-menu-item-bg,var(--dd-button-bg,var(--dd-color-button-bg,#b78b72)));
-  color:var(--dd-quick-menu-item-text,var(--dd-button-text,var(--dd-color-button-text,#fff)));
-}
 
 /* Match the selected template's artwork on the fixed quick-menu tray,
    including editor previews where the menu is portaled outside the template. */
-.dd-template-background .invitation-quick-menu,
-.invitation-quick-menu--desktop-live[style*="--dd-template-quick-image"] {
-  background-color:var(--dd-template-quick-bg,#fffaf5);
-  background-image:var(--dd-template-quick-image,none);
-  background-size:100% auto;
-  background-position:center;
-  background-repeat:repeat-y;
-}
 
 /* Editor full preview: scope the fixed tray to the invitation width and reserve
    scrolling space so the share actions and footer are not obscured. */
 .full-preview-scroll{padding-bottom:110px}
-.full-preview-document > .invitation-quick-menu--editor-full{
-  position:fixed;
-  left:50%;
-  right:auto;
-  bottom:max(12px,env(safe-area-inset-bottom));
-  width:min(calc(100% - 24px),516px);
-  transform:translateX(-50%);
-  z-index:80;
-}
-.full-preview-document > .invitation-quick-menu--editor-full button{
-  background:var(--dd-quick-menu-item-bg,var(--dd-button-bg,var(--dd-invite-action-bg,transparent)));
-  color:var(--dd-quick-menu-item-text,var(--dd-button-text,var(--dd-invite-action-text,#674f45)));
-}
-.full-preview-document > .invitation-quick-menu--editor-full{
-  background-color:var(--dd-template-quick-bg,#fffaf5);
-  background-image:var(--dd-template-quick-image,none);
-  background-size:100% auto;
-  background-position:center;
-}
 
 /* User editor: show a realistic 390px mobile viewport instead of compressing
    account-copy labels and quick-menu text into the old 286px mock phone. */
@@ -1275,10 +1217,6 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
   flex-shrink:0;
   white-space:nowrap;
   overflow-wrap:normal;
-  word-break:keep-all;
-}
-.preview-phone > .invitation-quick-menu--desktop-live button span{
-  white-space:nowrap;
   word-break:keep-all;
 }
 
@@ -1315,19 +1253,6 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .preview-content .public-share-copy .share-actions-notice{
   display:none;
 }
-.preview-phone > .invitation-quick-menu--desktop-live button{
-  font-size:12px;
-  min-width:0;
-  padding:8px 5px;
-}
-.preview-phone > .invitation-quick-menu--desktop-live button span{
-  display:block;
-  max-width:100%;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  word-break:keep-all;
-}
 
 /* Account copy is a flex child inside the template button-style wrapper.
    Override its configured 100% width and normal wrapping only in live preview. */
@@ -1352,7 +1277,6 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-button-style .public-share-copy.share-actions>button{width:auto;max-width:100%;min-width:max-content;flex:0 1 auto;padding-inline:11px;white-space:nowrap;word-break:keep-all;overflow-wrap:normal}
 /* The published quick menu is fixed but remains inside the template DOM.
    Keep the synchronized button palette independent from its artwork tray. */
-.dd-template-button-style .invitation-quick-menu button{background:var(--dd-quick-menu-item-bg,var(--dd-button-bg,var(--dd-invite-action-bg,transparent)));color:var(--dd-quick-menu-item-text,var(--dd-button-text,var(--dd-invite-action-text,#674f45)));border-radius:var(--dd-quick-menu-item-radius,var(--dd-button-radius,0px));border-color:var(--dd-quick-menu-item-border,var(--dd-button-border-color,transparent));border-width:var(--dd-quick-menu-item-border-width,var(--dd-button-border-width,0px))}
 
 /* Keep the published invitation's address-copy action centered on narrow phones. */
 @media (max-width: 767px) {
@@ -1366,48 +1290,6 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 
 /* Published invitation A/L: separate round icon targets with labels beneath.
    Only published pages receive this class; inherited template colors remain intact. */
-.invitation-quick-menu--a-large {
-  display:grid;
-  grid-auto-flow:column;
-  grid-auto-columns:minmax(0,1fr);
-  gap:9px;
-  padding:10px 12px;
-}
-.invitation-quick-menu--a-large > button {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  min-width:0;
-  min-height:88px;
-  padding:4px 2px;
-  background:transparent !important;
-  border:0 !important;
-  border-radius:0 !important;
-  box-shadow:none !important;
-  color:var(--dd-quick-menu-item-text,var(--dd-quick-menu-text,#674f45));
-}
-.invitation-quick-menu--a-large > button + button {border-left:0 !important}
-.invitation-quick-menu--a-large > button b {
-  display:grid;
-  place-items:center;
-  box-sizing:border-box;
-  width:60px;
-  height:60px;
-  flex:none;
-  padding:0;
-  border:var(--dd-quick-menu-item-border-width,1px) solid var(--dd-quick-menu-item-border,var(--dd-quick-menu-border,#e6a0a8));
-  border-radius:50%;
-  background-color:var(--dd-quick-menu-item-bg,var(--dd-invite-action-bg,#fffaf7));
-  background-size:23px 23px;
-  color:var(--dd-quick-menu-item-text,var(--dd-quick-menu-text,#674f45));
-}
-.invitation-quick-menu--a-large > button span {
-  line-height:1.35;
-  white-space:nowrap;
-  text-align:center;
-}
 .shared-public-invitation {padding-bottom:calc(165px + env(safe-area-inset-bottom))}
 
 
@@ -1527,60 +1409,6 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .create-page .dd-editor-final .dd-final-help{font-size:12px;color:#897e79;line-height:1.6;margin:1px 4px 10px}
 @media(max-width:800px){.create-page .dd-final-card{padding:19px 16px}.create-page .dd-final-flow span{font-size:10px}}
 
-/* User-approved text-only capsule quick menu (B): shared in public and previews. */
-.invitation-quick-menu--minimal {
-  display:flex;
-  align-items:center;
-  gap:0;
-  padding:5px 12px;
-  min-height:52px;
-  border-radius:999px !important;
-  background:var(--dd-quick-menu-bg,var(--dd-template-quick-bg,#fffaf5));
-  overflow:hidden;
-}
-.invitation-quick-menu--minimal > button {
-  display:flex;
-  flex:1 1 0;
-  align-items:center;
-  justify-content:center;
-  min-width:0;
-  min-height:38px;
-  height:auto;
-  margin:0;
-  padding:7px 5px !important;
-  border:0 !important;
-  border-radius:0 !important;
-  box-shadow:none !important;
-  background:transparent !important;
-  color:var(--dd-quick-menu-item-text,var(--dd-quick-menu-text,#674f45)) !important;
-  font-family:var(--dd-quick-menu-font,Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif);
-  font-size:clamp(10px,2.8vw,12px) !important;
-  font-weight:var(--dd-quick-menu-font-weight,400);
-  line-height:1.3;
-}
-.invitation-quick-menu--minimal > button + button {
-  border-left:1px solid var(--dd-quick-menu-border,var(--dd-invite-action-divider,#ddd0c8)) !important;
-}
-.invitation-quick-menu--minimal > button span {
-  display:block;
-  min-width:0;
-  max-width:100%;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  word-break:keep-all;
-}
-.invitation-quick-menu--minimal > button:focus-visible {outline:2px solid currentColor;outline-offset:-3px;border-radius:8px !important}
-
-/* B-style quick menu: readable dark labels independent of inherited button palette. */
-.invitation-quick-menu--minimal > button,
-.dd-template-background .invitation-quick-menu--minimal > button,
-.full-preview-document > .invitation-quick-menu--minimal > button {
-  color:#222 !important;
-  -webkit-text-fill-color:#222 !important;
-}
-.invitation-quick-menu--minimal > button span {color:#222 !important;-webkit-text-fill-color:#222 !important;opacity:1 !important}
-
 /* Six editor stages stay on one compact row, including narrow mobile screens. */
 .create-page .dd-editor-steps{grid-template-columns:repeat(6,minmax(0,1fr));gap:1px;padding:10px 4px}
 .create-page .dd-editor-steps button{gap:4px;padding:2px 0}
@@ -1657,69 +1485,6 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .public-share-copy.dd-public-share-pills>.dd-share-qr{background:#fff !important;color:#111 !important;border-color:#111 !important}
 .public-share-copy.dd-public-share-pills>button svg{display:block !important;width:14px !important;height:14px !important;flex:0 0 14px !important}
 .public-share-copy.dd-public-share-pills>.share-actions-notice{grid-column:1/-1 !important;display:block;min-height:0}
-
-/* Approved compact white quick-action pills: public invitation and previews only. */
-.invitation-quick-menu--minimal.invitation-quick-menu--pills {
-  display:flex !important;align-items:center !important;justify-content:center !important;
-  gap:10px !important;width:max-content !important;max-width:calc(100% - 16px) !important;
-  min-height:0 !important;padding:7px 10px !important;border-radius:999px !important;
-  background:transparent !important;border:0 !important;box-shadow:none !important;
-  overflow:visible !important;
-}
-.invitation-quick-menu--minimal.invitation-quick-menu--pills > button,
-.dd-template-button-style .invitation-quick-menu--minimal.invitation-quick-menu--pills > button,
-.dd-template-background .invitation-quick-menu--minimal.invitation-quick-menu--pills > button {
-  display:inline-flex !important;flex:0 0 auto !important;align-items:center !important;
-  justify-content:center !important;gap:6px !important;width:auto !important;min-width:0 !important;
-  min-height:36px !important;height:36px !important;padding:0 13px !important;
-  border:1px solid #e5e5e5 !important;border-radius:999px !important;
-  background:#fff !important;color:#222 !important;-webkit-text-fill-color:#222 !important;
-  box-shadow:0 2px 5px rgba(0,0,0,.07) !important;
-  font:500 12px/1.2 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif !important;
-  white-space:nowrap !important;box-sizing:border-box !important;
-}
-.invitation-quick-menu--minimal.invitation-quick-menu--pills > button + button {border-left:1px solid #e5e5e5 !important}
-.invitation-quick-menu--minimal.invitation-quick-menu--pills > button svg {display:block !important;flex:0 0 16px !important;width:16px !important;height:16px !important;color:#222 !important;stroke:#222 !important}
-.invitation-quick-menu--minimal.invitation-quick-menu--pills > button span {display:block !important;overflow:visible !important;max-width:none !important;white-space:nowrap !important;color:#222 !important;-webkit-text-fill-color:#222 !important}
-.invitation-quick-menu--minimal.invitation-quick-menu--pills > button:focus-visible {outline:2px solid #222 !important;outline-offset:2px !important;border-radius:999px !important}
-@media(max-width:360px){.invitation-quick-menu--minimal.invitation-quick-menu--pills{gap:6px !important;padding:5px !important}.invitation-quick-menu--minimal.invitation-quick-menu--pills > button{padding:0 9px !important;font-size:11px !important}}
-
-/* D-style quick actions: compact descriptive cards, preserving existing actions and template palette accents. */
-.invitation-quick-menu--minimal.invitation-quick-menu--pills{gap:8px !important;padding:7px 8px !important;border-radius:16px !important}
-.invitation-quick-menu--minimal.invitation-quick-menu--pills > button,
-.dd-template-button-style .invitation-quick-menu--minimal.invitation-quick-menu--pills > button,
-.dd-template-background .invitation-quick-menu--minimal.invitation-quick-menu--pills > button{
-  display:grid !important;grid-template-columns:26px minmax(0,1fr) !important;grid-template-rows:auto !important;
-  align-items:center !important;justify-items:start !important;column-gap:9px !important;
-  width:auto !important;max-width:calc(50vw - 18px) !important;min-height:58px !important;height:58px !important;
-  padding:7px 14px !important;border:1px solid #e7e0dc !important;border-radius:999px !important;
-  background:#fff !important;color:#222 !important;-webkit-text-fill-color:#222 !important;
-  box-shadow:0 2px 7px rgba(0,0,0,.07) !important;text-align:left !important;
-}
-.invitation-quick-menu--minimal.invitation-quick-menu--pills > button + button{border-left:1px solid #e7e0dc !important}
-.invitation-quick-menu--minimal.invitation-quick-menu--pills > button svg{
-  grid-column:1 !important;width:22px !important;height:22px !important;flex:none !important;
-  color:var(--dd-invite-action-accent,var(--dd-quick-menu-item-text,#9b6f5a)) !important;
-  stroke:currentColor !important;stroke-width:2 !important;opacity:1 !important;
-}
-.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy{
-  grid-column:2 !important;display:grid !important;gap:2px !important;min-width:0 !important;
-  overflow:visible !important;white-space:normal !important;text-align:left !important;
-}
-.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong{
-  display:block;font:600 12px/1.25 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#222;
-  white-space:nowrap;
-}
-.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small{
-  display:block;width:100%;margin:0 !important;padding:0 !important;text-align:left !important;font:400 9px/1.25 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#8a817c !important;
-  white-space:nowrap;
-}
-@media(max-width:380px){
-  .invitation-quick-menu--minimal.invitation-quick-menu--pills{gap:6px !important;padding:6px !important}
-  .invitation-quick-menu--minimal.invitation-quick-menu--pills > button{width:166px !important;max-width:calc(50vw - 12px) !important;padding:6px 8px !important;column-gap:6px !important}
-  .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong{font-size:11px}
-  .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small{font-size:8px}
-}
 
 /* Keep Korean words together in invitation messages; preserve authored newlines and template typography. */
 :is(.romantic-message,.modern-message,.classic-message) blockquote{word-break:keep-all;overflow-wrap:break-word;white-space:pre-line}
@@ -2410,9 +2175,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .shared-public-invitation{
   background-color:#fffaf7;
 }
-.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills{
-  background:transparent !important;
-}
 
 
 /* Live preview viewport: neutralize the legacy peach canvas visible below the invitation footer.
@@ -2424,10 +2186,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* User editor Live Preview: keep the portaled quick-menu tray/footer reserve on DearDay ivory,
    instead of inheriting the invitation template's peach quick-menu background. */
-.create-page .preview-phone > .invitation-quick-menu--desktop-live.invitation-quick-menu--minimal{
-  background:#fffaf7 !important;
-  background-image:none !important;
-}
 
 
 /* User editor Live Preview: let the invitation end at its real content height.
@@ -2475,11 +2233,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   background:rgba(219,234,254,.55);
   transition:background .2s ease,outline-color .2s ease;
 }
-.dd-required-field-missing input,
-
-/* RSVP label is shorter: reduce only the leading action pill in both editor previews. */
-.create-page .preview-phone > .invitation-quick-menu--desktop-live.invitation-quick-menu--minimal.invitation-quick-menu--pills > button:first-child,
-.create-page .full-preview-document > .invitation-quick-menu--editor-full.invitation-quick-menu--minimal.invitation-quick-menu--pills > button:first-child {
+.dd-required-field-missing input {
   flex:0 0 132px !important;
   width:132px !important;
   max-width:132px !important;
@@ -2489,24 +2243,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-required-field-missing textarea{
   border-color:#315be8 !important;
   box-shadow:0 0 0 3px rgba(49,91,232,.12);
-}
-
-
-/* Compact public footer actions: preserve one-line labels while exposing more template artwork. */
-.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills,
-.full-preview-document > .invitation-quick-menu--minimal.invitation-quick-menu--pills,
-.preview-phone > .invitation-quick-menu--minimal.invitation-quick-menu--pills {
-  left:50% !important;right:auto !important;transform:translateX(-50%) !important;
-  margin-left:0 !important;margin-right:0 !important;
-}
-
-/* Admin background/template editor preview: center the compact sticky quick-menu by auto margins. */
-@media (min-width:901px){
-  .admin-draft-preview-device > .invitation-quick-menu--desktop-live.invitation-quick-menu--minimal.invitation-quick-menu--pills{
-    left:auto !important;right:auto !important;width:max-content !important;
-    max-width:calc(100% - 16px) !important;margin:-76px auto 8px !important;
-    transform:none !important;
-  }
 }
 
 
@@ -2650,47 +2386,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   background-color:transparent!important;
   color:inherit!important;
 }
-
-
-/* Sales template preview: keep the invitation quick actions above the fixed purchase CTA. */
-.invitation-quick-menu--sales-preview{
-  bottom:max(82px,calc(70px + env(safe-area-inset-bottom))) !important;
-  z-index:80 !important;
-}
-/* Sales preview only: keep the two D-style actions compact and centered on mobile. */
-.invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills{
-  left:50% !important;
-  right:auto !important;
-  width:max-content !important;
-  max-width:calc(100vw - 24px) !important;
-  margin-left:0 !important;
-  margin-right:0 !important;
-  transform:translateX(-50%) !important;
-  justify-content:center !important;
-}
 /* Sales preview: remove the legacy 166px mobile button width so the
    shared D-style cards size to their content, as in the published view. */
-@media (max-width:380px){
-  .invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills > button{
-    width:auto !important;
-  }
-}
-/* Keep sales-preview labels readable at the desktop size on narrow phones. */
-.invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong{
-  font-size:12px !important;
-}
-.invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small{
-  font-size:9px !important;
-}
-/* Fit the secondary label within the pill rather than spilling over its edge. */
-.invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy{
-  max-width:100% !important;
-  overflow:hidden !important;
-}
-.invitation-quick-menu--sales-preview.invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small{
-  overflow:hidden !important;
-  text-overflow:ellipsis !important;
-}
 
 .kakao-share-photo-editor{margin-top:22px;padding-top:20px;border-top:1px solid #eadfd8}.kakao-share-photo-editor h3{margin:0 0 6px;font-size:14px}.kakao-share-photo-editor h3 small{color:#8f776c;font-size:11px;font-weight:400}.kakao-share-photo-editor>p{font-size:12px;color:#8f776c;line-height:1.7}.kakao-share-photo-editor .photo-selection img{aspect-ratio:2/1;height:auto;object-fit:cover}
 
@@ -3577,32 +3274,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-template-preview-stage{width:100%;overflow:visible}
 .dd-template-preview-canvas{width:390px;margin:0 auto;max-width:none;background:#fff;box-shadow:0 12px 35px rgba(0,0,0,.08)}
 
-/* Editor preview quick actions: compact, centered, and isolated from published invitations. */
-.create-page .preview-phone > .invitation-quick-menu--desktop-live.invitation-quick-menu--minimal.invitation-quick-menu--pills,
-.create-page .full-preview-document > .invitation-quick-menu--editor-full.invitation-quick-menu--minimal.invitation-quick-menu--pills {
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  gap:8px !important;
-  width:max-content !important;
-  max-width:calc(100% - 16px) !important;
-  padding:6px 4px !important;
-  left:50% !important;
-  right:auto !important;
-  transform:translateX(-50%) !important;
-}
-.create-page .preview-phone > .invitation-quick-menu--desktop-live.invitation-quick-menu--minimal.invitation-quick-menu--pills > button,
-.create-page .full-preview-document > .invitation-quick-menu--editor-full.invitation-quick-menu--minimal.invitation-quick-menu--pills > button {
-  flex:0 0 148px !important;
-  width:148px !important;
-  max-width:148px !important;
-  height:54px !important;
-  min-height:54px !important;
-  padding:6px 9px !important;
-  grid-template-columns:22px minmax(0,1fr) !important;
-  column-gap:7px !important;
-}
-
 /* Invitation message: prevent manual drag-resizing without changing text or scroll behavior. */
 .create-page .dd-invitation-message-textarea {resize:none;}
 
@@ -3614,100 +3285,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   box-shadow:none !important;
 }
 .create-page .dd-growth-timeline-add:hover {background:#dcecff !important;}
-
-/* Public invitation only: improve quick-menu text legibility without affecting editor previews. */
-.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills > button {
-  min-height:52px !important;
-  padding-top:5px !important;
-  padding-bottom:5px !important;
-}
-.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong {
-  font-size:13px !important;
-}
-.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small {
-  font-size:10px !important;
-}
-@media(max-width:380px){
-  .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong {font-size:12px !important;}
-  .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small {font-size:9px !important;}
-}
-
-/* Published invitation quick actions: equal pill widths and identical centered icon/text placement. */
-.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills {
-  gap:8px !important;
-  padding:6px 5px !important;
-}
-.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills > button {
-  flex:0 1 154px !important;
-  width:154px !important;
-  max-width:calc((100vw - 34px) / 2) !important;
-  height:52px !important;
-  min-height:52px !important;
-  padding:5px 7px !important;
-  grid-template-columns:22px minmax(0,1fr) !important;
-  column-gap:7px !important;
-  justify-content:center !important;
-  justify-items:start !important;
-}
-.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy {
-  width:100% !important;
-  text-align:left !important;
-}
-.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong {
-  font-size:14px !important;
-  line-height:1.2 !important;
-}
-.shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small {
-  font-size:10px !important;
-  line-height:1.2 !important;
-}
-@media(max-width:380px){
-  .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy strong {font-size:13px !important;}
-  .shared-public-invitation > .invitation-quick-menu--minimal.invitation-quick-menu--pills .invitation-quick-copy small {font-size:9px !important;}
-}
-
-/* Only menus with a program action use the flexible one-to-three-column layout. */
-:is(.create-page,.shared-public-invitation,body) .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program[data-program-menu] {
-  display:grid !important;
-  grid-auto-flow:row !important;
-  grid-template-columns:repeat(var(--dd-quick-menu-count),minmax(0,1fr)) !important;
-  width:calc(100% - 16px) !important;
-  max-width:min(524px,var(--dd-program-menu-width)) !important;
-  box-sizing:border-box;
-  gap:6px !important;
-}
-:is(.create-page,.shared-public-invitation,body) .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program[data-program-menu] > button {
-  flex:1 1 0 !important;
-  width:100% !important;
-  min-width:0 !important;
-  max-width:100% !important;
-  grid-template-columns:minmax(0,1fr) !important;
-  justify-items:center !important;
-  gap:3px !important;
-  height:auto !important;
-  min-height:62px !important;
-  padding:6px !important;
-}
-.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program > button svg,
-.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy {
-  grid-column:1 !important;
-}
-.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy {
-  width:100% !important;
-  max-width:100% !important;
-  overflow:hidden !important;
-  text-align:center !important;
-}
-.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy strong {
-  display:-webkit-box;
-  -webkit-box-orient:vertical;
-  -webkit-line-clamp:2;
-  overflow:hidden;
-  overflow-wrap:anywhere;
-  white-space:normal !important;
-  font-size:var(--dd-quick-menu-font-size,11px) !important;
-}
-.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy small {display:none !important}
 .invitation-bottom-sheet-layer .invitation-bottom-sheet--program {background:#fffaf5;font-family:var(--dd-program-font,Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif);color:var(--dd-program-text,#50372c)}
 .invitation-bottom-sheet-layer--preview .invitation-bottom-sheet--program {max-height:90%}
 .invitation-bottom-sheet-layer .invitation-bottom-sheet--program > .invitation-bottom-sheet-handle {flex-shrink:0;background:var(--dd-invite-action-divider,#eaded7)}
@@ -3771,39 +3348,119 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .invitation-bottom-sheet--program .invitation-program-ending{margin-top:18px}
 .invitation-bottom-sheet--program .invitation-program{padding-bottom:max(24px,env(safe-area-inset-bottom))}
 
-/* Three balanced quick actions only when the program feature is active. */
-:is(.create-page,.shared-public-invitation,body) .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program[data-program-menu]{
-  gap:8px!important;
-  padding:8px!important;
+
+/* Homepage hero copy: keep headlines inside their columns on desktop. */
+@media (min-width:801px){
+ .landing-v2 .landing-hero-layout{min-width:0}
+ .landing-v2 .hero-copy-v2{min-width:0;padding-left:clamp(14px,2.3vw,36px)}
+ .landing-v2 .hero-copy-v2 .hero-handwriting{font-size:clamp(27px,3vw,46px);max-width:100%;overflow-wrap:normal}
+ .landing-v2 .hero-copy-v2 h1{font-size:clamp(29px,3.2vw,49px);max-width:100%;word-break:keep-all;overflow-wrap:break-word}
+ .landing-v2 .hero-copy-v2>span{max-width:100%;word-break:keep-all}
+ .landing-v2 .landing-hero-benefits>div{min-width:0}
+ .landing-v2 .landing-hero-benefits>div>strong,
+ .landing-v2 .landing-hero-benefits>div>small{white-space:normal!important;overflow-wrap:break-word;word-break:keep-all;text-align:center}
 }
-:is(.create-page,.shared-public-invitation,body) .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program[data-program-menu]>button{
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:center!important;
-  justify-content:center!important;
-  gap:6px!important;
-  min-height:70px!important;
-  padding:9px 4px!important;
-  border-radius:14px!important;
-  box-sizing:border-box!important;
+@media (min-width:801px) and (max-width:1100px){
+ .landing-v2 .hero-copy-v2 .hero-handwriting{font-size:clamp(25px,3.1vw,35px)}
+ .landing-v2 .hero-copy-v2 h1{font-size:clamp(28px,3.5vw,39px)}
 }
-.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program>button>svg{
-  display:block;
-  width:19px!important;
-  height:19px!important;
-  flex-shrink:0;
-  opacity:.9;
+
+
+/* DearDay shared program: modern numbered card timeline (all six event kinds). */
+.invitation-bottom-sheet--program .invitation-program{
+  --dd-program-accent:var(--dd-invite-action-accent,#b87565);
+  padding:4px 18px max(26px,env(safe-area-inset-bottom));
 }
-.invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy strong{
-  display:block!important;
-  font-size:12px!important;
-  line-height:1.35!important;
-  font-weight:600!important;
-  white-space:nowrap!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
+.invitation-bottom-sheet--program .invitation-program-list{display:grid;gap:10px}
+.invitation-bottom-sheet--program .invitation-program-list>li,
+.invitation-bottom-sheet--program .invitation-program--plain .invitation-program-list>li{
+  position:relative;display:grid;grid-template-columns:36px minmax(0,1fr);
+  align-items:stretch;gap:10px;min-width:0;padding:0;
 }
+.invitation-bottom-sheet--program .invitation-program-list>li:not(:last-child)::before{
+  content:"";position:absolute;z-index:0;top:32px;bottom:-15px;left:17px;
+  border-left:2px dashed color-mix(in srgb,var(--dd-program-accent) 32%,transparent);
+}
+.invitation-bottom-sheet--program .invitation-program-step{
+  position:relative;z-index:1;grid-column:1;grid-row:1;
+  display:grid;place-items:center;align-self:center;width:34px;height:34px;
+  border-radius:50%;box-sizing:border-box;
+  border:1px solid color-mix(in srgb,var(--dd-program-accent) 25%,white);
+  background:color-mix(in srgb,var(--dd-program-accent) 15%,white);
+  color:color-mix(in srgb,var(--dd-program-accent) 80%,#253347);
+  box-shadow:0 0 0 4px var(--dd-program-surface,#fbf7f3);
+  font-size:11px;font-weight:700;letter-spacing:.01em;font-variant-numeric:tabular-nums;
+}
+.invitation-bottom-sheet--program .invitation-program-card{
+  grid-column:2;grid-row:1;display:flex;align-items:center;gap:11px;
+  min-width:0;min-height:61px;box-sizing:border-box;padding:12px 14px;
+  border:1px solid color-mix(in srgb,var(--dd-program-accent) 13%,#e9e9e9);
+  border-radius:14px;
+  background:color-mix(in srgb,var(--dd-program-accent) 7%,white);
+  box-shadow:0 3px 12px rgba(28,30,40,.035);
+}
+.invitation-bottom-sheet--program .invitation-program-time{
+  flex:0 0 47px;white-space:nowrap;font-size:12px;font-weight:700;
+  color:var(--dd-program-accent);font-variant-numeric:tabular-nums;
+}
+.invitation-bottom-sheet--program .invitation-program-time::after{
+  content:"";display:none;
+}
+.invitation-bottom-sheet--program .invitation-program-card:has(.invitation-program-time) .invitation-program-title{
+  padding-left:12px;border-left:1px solid color-mix(in srgb,var(--dd-program-accent) 20%,transparent);
+}
+.invitation-bottom-sheet--program .invitation-program-card .invitation-program-title{
+  display:block;grid-column:auto;grid-row:auto;flex:1;min-width:0;
+  color:var(--dd-program-text,#50372c);font-size:14px;font-weight:500;
+  line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;
+}
+.invitation-bottom-sheet--program .invitation-program-ending{margin-top:19px}
 @media(max-width:360px){
-  :is(.create-page,.shared-public-invitation,body) .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program[data-program-menu]{gap:5px!important;padding:6px!important}
-  .invitation-quick-menu.invitation-quick-menu--minimal.invitation-quick-menu--pills.invitation-quick-menu--program .invitation-quick-copy strong{font-size:11px!important}
+ .invitation-bottom-sheet--program .invitation-program{padding-left:12px;padding-right:12px}
+ .invitation-bottom-sheet--program .invitation-program-list>li,
+ .invitation-bottom-sheet--program .invitation-program--plain .invitation-program-list>li{grid-template-columns:32px minmax(0,1fr);gap:8px}
+ .invitation-bottom-sheet--program .invitation-program-step{width:30px;height:30px}
+ .invitation-bottom-sheet--program .invitation-program-list>li:not(:last-child)::before{left:15px}
+ .invitation-bottom-sheet--program .invitation-program-card{padding:10px;gap:7px}
+ .invitation-bottom-sheet--program .invitation-program-time{flex-basis:42px;font-size:11px}
+ .invitation-bottom-sheet--program .invitation-program-card:has(.invitation-program-time) .invitation-program-title{padding-left:8px}
 }
+
+
+/* Program editor: match optional-feature cards and DearDay blue controls. */
+.create-page .dd-program-share-card .dd-program-editor{width:100%;min-width:0;margin-top:16px}
+.create-page .dd-program-share-card .dd-program-editor-fields{gap:16px}
+.create-page .dd-program-share-card .dd-program-editor-item{padding:0 0 14px;border-bottom:1px solid #e7edf9}
+.create-page .dd-program-share-card .dd-program-delete-button,
+.create-page .dd-program-share-card .dd-program-add-button{
+  border:1px solid #c8d8fb;border-radius:10px;background:#eef4ff;color:#203d87;
+  font-size:13px;font-weight:600;line-height:1.3;min-height:40px;padding:10px 16px;
+  transition:background .15s,border-color .15s;
+}
+.create-page .dd-program-share-card .dd-program-delete-button:hover,
+.create-page .dd-program-share-card .dd-program-add-button:hover{background:#e0eaff;border-color:#9db8f6}
+.create-page .dd-program-share-card .dd-program-delete-button:focus-visible,
+.create-page .dd-program-share-card .dd-program-add-button:focus-visible{outline:2px solid #315be8;outline-offset:2px}
+.create-page .dd-program-share-card .dd-program-add-button{display:block;width:100%;background:#24418e;color:#fff;border-color:#24418e}
+.create-page .dd-program-share-card .dd-program-add-button:hover{background:#3158b4;border-color:#3158b4}
+.create-page .dd-program-share-card .dd-program-add-button:disabled{opacity:.5;cursor:not-allowed}
+
+
+/* Switch-look disclosure controls: these only expand/collapse editor fields. */
+.dd-expand-switch-card > summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.dd-expand-switch-card > summary::-webkit-details-marker{display:none}
+.dd-expand-switch-card > summary::marker{content:""}
+.dd-expand-switch-card > summary .dd-expand-switch-track{
+  position:relative;display:block;flex:0 0 42px;width:42px;height:24px;
+  border-radius:999px;background:#cbd3df;transition:background .15s ease;
+}
+.dd-expand-switch-card > summary .dd-expand-switch-track::after{
+  content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;
+  border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15);
+  transition:transform .15s ease;
+}
+.dd-expand-switch-card[open] > summary .dd-expand-switch-track{background:#536faf}
+.dd-expand-switch-card[open] > summary .dd-expand-switch-track::after{transform:translateX(18px)}
+.dd-expand-switch-card > summary:focus-visible{outline:2px solid #536faf;outline-offset:3px}
+.dd-share-card.dd-expand-switch-card > summary.dd-share-card-heading{margin-bottom:0}
+.dd-share-card.dd-expand-switch-card[open] > summary.dd-share-card-heading{margin-bottom:12px}
