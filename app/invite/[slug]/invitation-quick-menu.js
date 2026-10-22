@@ -111,7 +111,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
   const program = getProgramPresentation(invitation.program, invitation.eventKind);
-  const programButtonLabel = ({ wedding: "식순 안내", first_birthday: "돌잔치 순서", birthday: "파티 일정", milestone_birthday: "잔치 순서", gathering: "행사 일정", opening: "오픈 일정" })[invitation.eventKind] || "일정 안내";
+  const programButtonLabel = ({ wedding: "식순 안내", first_birthday: "잔치 순서", birthday: "파티 일정", milestone_birthday: "잔치 순서", gathering: "행사 일정", opening: "오픈 일정" })[invitation.eventKind] || "일정 안내";
   const menuEnabled = rsvpEnabled || guestbookEnabled || program.enabled;
   const menuCount = Number(rsvpEnabled) + Number(guestbookEnabled) + Number(program.enabled);
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
