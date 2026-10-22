@@ -111,6 +111,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const rsvpEnabled = invitation.rsvpEnabled === true;
   const guestbookEnabled = invitation.guestbookEnabled !== false;
   const program = getProgramPresentation(invitation.program, invitation.eventKind);
+  const programButtonLabel = ({ wedding: "식순 안내", first_birthday: "돌잔치 순서", birthday: "파티 일정", milestone_birthday: "잔치 순서", gathering: "행사 일정", opening: "오픈 일정" })[invitation.eventKind] || "일정 안내";
   const menuEnabled = rsvpEnabled || guestbookEnabled || program.enabled;
   const menuCount = Number(rsvpEnabled) + Number(guestbookEnabled) + Number(program.enabled);
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
@@ -330,13 +331,13 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><span className="dd-quick-icon-bubble"><QuickMenuIcon kind="guestbook" /></span><span className="invitation-quick-copy"><strong>{guestbookLabel}</strong></span></button>}
 
-      {program.enabled && <button className="invitation-quick-program" type="button" onClick={() => openSheet("program")} title={program.title} aria-label={program.title}><span className="dd-quick-icon-bubble"><QuickMenuIcon kind="program" /></span><span className="invitation-quick-copy"><strong>식순 안내</strong></span></button>}
+      {program.enabled && <button className="invitation-quick-program" type="button" onClick={() => openSheet("program")} title={program.title} aria-label={program.title}><span className="dd-quick-icon-bubble"><QuickMenuIcon kind="program" /></span><span className="invitation-quick-copy"><strong>{programButtonLabel}</strong></span></button>}
     </nav>, desktopLivePortal) : <nav className={`invitation-quick-menu invitation-quick-menu--minimal invitation-quick-menu--pills invitation-quick-menu--modern${program.enabled ? " invitation-quick-menu--program" : ""}${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} data-program-menu={program.enabled ? "" : undefined} style={program.enabled ? { ...desktopLiveStyle, "--dd-quick-menu-count": menuCount, "--dd-program-menu-width": `${menuCount * 166 + 16}px` } : desktopLiveStyle} aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => openSheet("rsvp")}><span className="dd-quick-icon-bubble"><QuickMenuIcon kind="rsvp" /></span><span className="invitation-quick-copy"><strong>{rsvpLabel}</strong></span></button>}
       
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><span className="dd-quick-icon-bubble"><QuickMenuIcon kind="guestbook" /></span><span className="invitation-quick-copy"><strong>{guestbookLabel}</strong></span></button>}
 
-      {program.enabled && <button className="invitation-quick-program" type="button" onClick={() => openSheet("program")} title={program.title} aria-label={program.title}><span className="dd-quick-icon-bubble"><QuickMenuIcon kind="program" /></span><span className="invitation-quick-copy"><strong>식순 안내</strong></span></button>}
+      {program.enabled && <button className="invitation-quick-program" type="button" onClick={() => openSheet("program")} title={program.title} aria-label={program.title}><span className="dd-quick-icon-bubble"><QuickMenuIcon kind="program" /></span><span className="invitation-quick-copy"><strong>{programButtonLabel}</strong></span></button>}
     </nav>)}
     {sheet === "program" && program.enabled && <BottomSheet title={program.title} className="invitation-bottom-sheet--program" onClose={closeSheet} portalTarget={usesPreviewPortal ? (isDesktopLivePreview ? previewSheetPortal : desktopLivePortal) : null} preview={usesPreviewPortal} layerStyle={{ ...desktopLiveStyle, ...(isDesktopLivePreview ? previewSheetStyle : {}) }}>
       <InvitationProgram program={invitation.program} eventKind={invitation.eventKind} />
