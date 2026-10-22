@@ -3824,3 +3824,64 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  .landing-v2 .hero-copy-v2 .hero-handwriting{font-size:clamp(25px,3.1vw,35px)}
  .landing-v2 .hero-copy-v2 h1{font-size:clamp(28px,3.5vw,39px)}
 }
+
+
+/* DearDay shared program: modern numbered card timeline (all six event kinds). */
+.invitation-bottom-sheet--program .invitation-program{
+  --dd-program-accent:var(--dd-invite-action-accent,#b87565);
+  padding:4px 18px max(26px,env(safe-area-inset-bottom));
+}
+.invitation-bottom-sheet--program .invitation-program-list{display:grid;gap:10px}
+.invitation-bottom-sheet--program .invitation-program-list>li,
+.invitation-bottom-sheet--program .invitation-program--plain .invitation-program-list>li{
+  position:relative;display:grid;grid-template-columns:36px minmax(0,1fr);
+  align-items:stretch;gap:10px;min-width:0;padding:0;
+}
+.invitation-bottom-sheet--program .invitation-program-list>li:not(:last-child)::before{
+  content:"";position:absolute;z-index:0;top:32px;bottom:-15px;left:17px;
+  border-left:2px dashed color-mix(in srgb,var(--dd-program-accent) 32%,transparent);
+}
+.invitation-bottom-sheet--program .invitation-program-step{
+  position:relative;z-index:1;grid-column:1;grid-row:1;
+  display:grid;place-items:center;align-self:center;width:34px;height:34px;
+  border-radius:50%;box-sizing:border-box;
+  border:1px solid color-mix(in srgb,var(--dd-program-accent) 25%,white);
+  background:color-mix(in srgb,var(--dd-program-accent) 15%,white);
+  color:color-mix(in srgb,var(--dd-program-accent) 80%,#253347);
+  box-shadow:0 0 0 4px var(--dd-program-surface,#fbf7f3);
+  font-size:11px;font-weight:700;letter-spacing:.01em;font-variant-numeric:tabular-nums;
+}
+.invitation-bottom-sheet--program .invitation-program-card{
+  grid-column:2;grid-row:1;display:flex;align-items:center;gap:11px;
+  min-width:0;min-height:61px;box-sizing:border-box;padding:12px 14px;
+  border:1px solid color-mix(in srgb,var(--dd-program-accent) 13%,#e9e9e9);
+  border-radius:14px;
+  background:color-mix(in srgb,var(--dd-program-accent) 7%,white);
+  box-shadow:0 3px 12px rgba(28,30,40,.035);
+}
+.invitation-bottom-sheet--program .invitation-program-time{
+  flex:0 0 47px;white-space:nowrap;font-size:12px;font-weight:700;
+  color:var(--dd-program-accent);font-variant-numeric:tabular-nums;
+}
+.invitation-bottom-sheet--program .invitation-program-time::after{
+  content:"";display:none;
+}
+.invitation-bottom-sheet--program .invitation-program-card:has(.invitation-program-time) .invitation-program-title{
+  padding-left:12px;border-left:1px solid color-mix(in srgb,var(--dd-program-accent) 20%,transparent);
+}
+.invitation-bottom-sheet--program .invitation-program-card .invitation-program-title{
+  display:block;grid-column:auto;grid-row:auto;flex:1;min-width:0;
+  color:var(--dd-program-text,#50372c);font-size:14px;font-weight:500;
+  line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;
+}
+.invitation-bottom-sheet--program .invitation-program-ending{margin-top:19px}
+@media(max-width:360px){
+ .invitation-bottom-sheet--program .invitation-program{padding-left:12px;padding-right:12px}
+ .invitation-bottom-sheet--program .invitation-program-list>li,
+ .invitation-bottom-sheet--program .invitation-program--plain .invitation-program-list>li{grid-template-columns:32px minmax(0,1fr);gap:8px}
+ .invitation-bottom-sheet--program .invitation-program-step{width:30px;height:30px}
+ .invitation-bottom-sheet--program .invitation-program-list>li:not(:last-child)::before{left:15px}
+ .invitation-bottom-sheet--program .invitation-program-card{padding:10px;gap:7px}
+ .invitation-bottom-sheet--program .invitation-program-time{flex-basis:42px;font-size:11px}
+ .invitation-bottom-sheet--program .invitation-program-card:has(.invitation-program-time) .invitation-program-title{padding-left:8px}
+}
