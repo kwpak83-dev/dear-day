@@ -3911,8 +3911,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .preview-phone > .invitation-quick-menu--desktop-live.invitation-quick-menu--modern,
 .create-page .full-preview-document > .invitation-quick-menu--editor-full.invitation-quick-menu--modern{
   display:flex!important;flex-direction:row!important;align-items:stretch!important;
-  justify-content:center!important;gap:6px!important;
-  width:calc(100% - 12px)!important;max-width:404px!important;
+  justify-content:center!important;gap:5px!important;
+  width:max-content!important;max-width:calc(100% - 12px)!important;
   box-sizing:border-box!important;padding:5px!important;
   left:50%!important;right:auto!important;transform:translateX(-50%)!important;
 }
@@ -3923,9 +3923,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   display:grid!important;grid-template-columns:24px max-content!important;
   grid-template-rows:1fr!important;align-items:center!important;justify-content:center!important;
   column-gap:5px!important;row-gap:0!important;
-  flex:1 1 0!important;width:0!important;max-width:none!important;min-width:0!important;
-  height:46px!important;min-height:46px!important;max-height:46px!important;
-  padding:5px 3px!important;box-sizing:border-box!important;
+  flex:0 0 auto!important;width:auto!important;max-width:none!important;min-width:0!important;
+  height:44px!important;min-height:44px!important;max-height:44px!important;
+  padding:5px 9px!important;box-sizing:border-box!important;
   border:1px solid #dfe7f2!important;border-radius:12px!important;
   background:#fff!important;color:#243657!important;
   box-shadow:0 2px 8px rgba(32,55,100,.07)!important;
@@ -3954,7 +3954,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  .invitation-quick-menu.invitation-quick-menu--modern{gap:4px!important;padding:4px!important}
  .invitation-quick-menu.invitation-quick-menu--modern > button{
    grid-template-columns:21px max-content!important;column-gap:3px!important;
-   padding:4px 2px!important;
+   padding:4px 5px!important;
  }
  .invitation-quick-menu.invitation-quick-menu--modern > button > .dd-quick-icon-bubble{
    width:21px!important;height:21px!important;min-width:21px!important;min-height:21px!important;
