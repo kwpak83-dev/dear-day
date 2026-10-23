@@ -4,6 +4,7 @@ import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 import { getConsentReturnPath } from "../../../lib/consent";
 import { LegalContent } from "../../../components/legal-content";
 import styles from "./consent.module.css";
+import DearDayLogo from "../../../components/dearday-logo";
 
 export default function ConsentPage() {
   const [terms, setTerms] = useState(false);
@@ -51,11 +52,10 @@ export default function ConsentPage() {
   };
   return <main className={styles.page}>
     <div className={styles.wrap}>
-      <a href="/" className={styles.brand}>DearDay<span className={styles.heart}>♡</span></a>
+      <a href="/" className={styles.brand}><DearDayLogo /></a>
       <p className={styles.tagline}>소중한 순간을, 더 특별하게</p>
       <div className={styles.hero}>
         <span className={styles.eyebrow} />
-        <span className={styles.flower} aria-hidden="true">✿</span>
         <h1>특별한 날을 위한<br />따뜻한 초대장, <span className={styles.accent}>디어데이</span></h1>
         <p>소중한 사람들과 함께하는<br />특별한 순간을 더 아름답게 전해보세요.</p>
       </div>
