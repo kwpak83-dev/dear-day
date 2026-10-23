@@ -45,7 +45,7 @@ export default function ConsentPage() {
       <p>디어데이 이용을 위해 아래 필수 약관을 확인하고 동의해 주세요.</p>
       <label style={{ display: "block", margin: "24px 0 16px" }}><input type="checkbox" checked={terms} onChange={e => setTerms(e.target.checked)} /> [필수] <a href="/terms" target="_blank" rel="noopener noreferrer">서비스 이용약관 보기</a></label>
       <label style={{ display: "block", marginBottom: 24 }}><input type="checkbox" checked={privacy} onChange={e => setPrivacy(e.target.checked)} /> [필수] <a href="/privacy" target="_blank" rel="noopener noreferrer">개인정보 수집·이용 안내 및 처리방침 보기</a></label>
-      <button type="button" disabled={!terms || !privacy || !session || busy || Boolean(notice)} onClick={submit} style={{ width: "100%", padding: 15, background: "#543d32", color: "white", border: 0, borderRadius: 10, opacity: !terms || !privacy || !session || busy || Boolean(notice) ? .5 : 1 }}>{busy ? "저장 중..." : "동의하고 시작하기"}</button>
+      <button type="button" disabled={!terms || !privacy || !session || busy} onClick={submit} style={{ width: "100%", padding: 15, background: "#543d32", color: "white", border: 0, borderRadius: 10, opacity: !terms || !privacy || !session || busy ? .5 : 1 }}>{busy ? "저장 중..." : "동의하고 시작하기"}</button>
       {notice && <p role="alert" style={{ color: "#ae3434" }}>{notice}</p>}
     </section>
   </main>;
