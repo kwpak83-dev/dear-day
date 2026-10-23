@@ -1,3 +1,4 @@
+import { LegalContent } from "../../components/legal-content";
 export const metadata = { title: "이용약관 | DearDay" };
 export default function TermsPage() {
   return <main style={{ maxWidth: 760, margin: "0 auto", padding: "48px 22px", lineHeight: 1.85 }}>
@@ -5,14 +6,6 @@ export default function TermsPage() {
       <a href="/signup/consent" style={{ display: "inline-flex", alignItems: "center", minHeight: 44, padding: "0 14px", border: "1px solid #d7c8bd", borderRadius: 9, color: "#533d34", textDecoration: "none", fontSize: 15 }}>← 약관 동의로 돌아가기</a>
     </div>
     <a href="/">DearDay</a><h1>서비스 이용약관</h1>
-    <p><strong>알파테스트용 약관 초안입니다. 정식 서비스 적용 전 사업자 정보 및 세부 운영정책을 확정해야 합니다.</strong></p>
-    <h2>제1조 목적</h2><p>본 약관은 DearDay 모바일 초대장 제작·발행 서비스의 이용조건과 이용자 및 운영자의 권리·의무를 정합니다.</p>
-    <h2>제2조 서비스</h2><p>이용자는 템플릿을 선택하여 초대장을 제작·저장·발행하고, 제공되는 기능으로 링크 공유, 참석 여부 확인 및 방명록을 이용할 수 있습니다. 일부 기능은 알파테스트 중 변경될 수 있습니다.</p>
-    <h2>제3조 회원 및 계정</h2><p>네이버 로그인을 통해 회원 인증을 진행합니다. 이용자는 본인의 계정을 안전하게 관리하고 타인의 권리를 침해하는 콘텐츠를 등록하지 않아야 합니다.</p>
-    <h2>제4조 이용자 콘텐츠</h2><p>이용자는 등록하는 사진, 음악, 문구 등 콘텐츠에 필요한 권리를 보유해야 합니다. 초대장 공개 링크를 공유하면 해당 링크를 아는 사람이 공개 콘텐츠를 볼 수 있습니다.</p>
-    <h2>제5조 테스트 및 유료화</h2><p>현재 테스트 결제는 실제 대금이 청구되지 않습니다. 정식 유료 판매 시 가격, 결제, 취소·환불 조건은 별도 확정·고지합니다.</p>
-    <h2>제6조 이용기간</h2><p>초대장 이용기간, 보관·삭제 일정은 서비스 화면에 안내되는 정책을 따릅니다. 정식 운영 전 구체적인 기간을 확정하여 안내합니다.</p>
-    <h2>제7조 문의</h2><p>운영자 상호·사업자 정보·연락처는 정식 운영 전에 기재합니다.</p>
-    <p>초안 버전: 2026-10-23-alpha</p>
+    <LegalContent type="terms" />
   </main>;
 }
