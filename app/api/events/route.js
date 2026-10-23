@@ -1,3 +1,4 @@
+import { TERMS_VERSION, PRIVACY_VERSION } from "../../../lib/consent";
 import { normalizeProgram, validateProgram } from "../../../lib/invitation-program";
 import { prepareNoticeForSave } from "../../../lib/invitation-notice";
 import { createClient } from "@supabase/supabase-js";
@@ -104,6 +105,15 @@ async function getAuthenticatedClient(request) {
   const { data: { user }, error: authError } = await supabase.auth.getUser(token);
   if (authError || !user) return { error: "로그인이 만료되었어요. 다시 로그인해 주세요.", status: 401 };
   return { supabase, user };
+}
+
+async function requireConsent(auth) {
+  const { data, error } = await auth.supabase.from("user_consents")
+    .select("terms_version,privacy_version").eq("user_id", auth.user.id).maybeSingle();
+  if (error) return { error: "약관 동의 기록을 확인하지 못했어요.", status: 503 };
+  if (data?.terms_version !== TERMS_VERSION || data?.privacy_version !== PRIVACY_VERSION)
+    return { error: "서비스 이용을 위해 약관 동의가 필요해요.", status: 403, consentRequired: true };
+  return null;
 }
 
 async function getEventTypeConfig(supabase, eventKind) {
@@ -252,6 +262,8 @@ export async function GET(request) {
 export async function POST(request) {
   const auth = await getAuthenticatedClient(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
+  const consentError = await requireConsent(auth);
+  if (consentError) return json({ error: consentError.error, consentRequired: Boolean(consentError.consentRequired) }, consentError.status);
   const { supabase, user } = auth;
 
   const body = await request.json().catch(() => null);
@@ -410,6 +422,8 @@ export async function POST(request) {
 export async function DELETE(request) {
   const auth = await getAuthenticatedClient(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
+  const consentError = await requireConsent(auth);
+  if (consentError) return json({ error: consentError.error, consentRequired: Boolean(consentError.consentRequired) }, consentError.status);
   const slug = new URL(request.url).searchParams.get("slug");
   if (!slugPattern.test(slug || "")) return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
 
