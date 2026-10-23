@@ -1,6 +1,9 @@
 export const metadata = { title: "이용약관 | DearDay" };
 export default function TermsPage() {
   return <main style={{ maxWidth: 760, margin: "0 auto", padding: "48px 22px", lineHeight: 1.85 }}>
+    <div style={{ position: "sticky", top: 0, zIndex: 10, background: "#fffaf5", padding: "12px 0", margin: "-12px 0 18px" }}>
+      <a href="/signup/consent" style={{ display: "inline-flex", alignItems: "center", minHeight: 44, padding: "0 14px", border: "1px solid #d7c8bd", borderRadius: 9, color: "#533d34", textDecoration: "none", fontSize: 15 }}>← 약관 동의로 돌아가기</a>
+    </div>
     <a href="/">DearDay</a><h1>서비스 이용약관</h1>
     <p><strong>알파테스트용 약관 초안입니다. 정식 서비스 적용 전 사업자 정보 및 세부 운영정책을 확정해야 합니다.</strong></p>
     <h2>제1조 목적</h2><p>본 약관은 DearDay 모바일 초대장 제작·발행 서비스의 이용조건과 이용자 및 운영자의 권리·의무를 정합니다.</p>
