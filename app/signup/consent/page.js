@@ -65,19 +65,15 @@ export default function ConsentPage() {
         <p className={styles.intro}>디어데이 이용을 위해 아래 필수 약관을 확인하고 동의해 주세요.</p>
         <div className={styles.option}>
           <input id="terms-agree" aria-label="서비스 이용약관 동의" className={styles.check} type="checkbox" checked={terms} onChange={e => setTerms(e.target.checked)} />
-          <span className={styles.iconCircle} aria-hidden="true">▤</span>
           <div className={styles.optionText}>
-            <label htmlFor="terms-agree" className={styles.optionTitle}><span className={styles.required}>필수</span> 서비스 이용약관</label>
-            <span className={styles.description}>디어데이 서비스 이용에 대한 안내입니다.</span>
+            <label htmlFor="terms-agree" className={styles.optionTitle}>[필수] 서비스 이용약관 보기</label>
           </div>
           <button type="button" aria-label="서비스 이용약관 자세히 보기" className={styles.view} onClick={() => setOpenLegal("terms")}>›</button>
         </div>
         <div className={styles.option}>
           <input id="privacy-agree" aria-label="개인정보 수집·이용 동의" className={styles.check} type="checkbox" checked={privacy} onChange={e => setPrivacy(e.target.checked)} />
-          <span className={styles.iconCircle} aria-hidden="true">♧</span>
           <div className={styles.optionText}>
-            <label htmlFor="privacy-agree" className={styles.optionTitle}><span className={styles.required}>필수</span> 개인정보 수집·이용 및 처리방침</label>
-            <span className={styles.description}>서비스 제공을 위한 개인정보 처리 안내입니다.</span>
+            <label htmlFor="privacy-agree" className={styles.optionTitle}>[필수] 개인정보 수집·이용 안내 및 처리방침 보기</label>
           </div>
           <button type="button" aria-label="개인정보 처리방침 자세히 보기" className={styles.view} onClick={() => setOpenLegal("privacy")}>›</button>
         </div>
