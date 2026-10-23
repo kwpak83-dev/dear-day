@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 import { getConsentReturnPath } from "../../../lib/consent";
 import { LegalContent } from "../../../components/legal-content";
+import styles from "./consent.module.css";
 
 export default function ConsentPage() {
   const [terms, setTerms] = useState(false);
@@ -48,16 +49,44 @@ export default function ConsentPage() {
       window.location.replace(returnPath);
     } catch (error) { setNotice(error.message); setBusy(false); }
   };
-  return <main style={{ minHeight: "100vh", background: "#faf7f4", display: "grid", placeItems: "center", padding: 24 }}>
-    <section style={{ width: "100%", maxWidth: 440, background: "#fff", padding: 28, borderRadius: 18, boxShadow: "0 6px 28px #352a1c10" }}>
-      <a href="/" style={{ color: "#533d34" }}>DearDay</a>
-      <h1 style={{ fontSize: 25, marginTop: 24 }}>서비스 이용 동의</h1>
-      <p>디어데이 이용을 위해 아래 필수 약관을 확인하고 동의해 주세요.</p>
-      <label style={{ display: "block", margin: "24px 0 16px" }}><input type="checkbox" checked={terms} onChange={e => setTerms(e.target.checked)} /> [필수] <button type="button" onClick={() => setOpenLegal("terms")} style={{ border: 0, padding: 0, background: "none", color: "#533d34", textDecoration: "underline", font: "inherit", cursor: "pointer" }}>서비스 이용약관 보기</button></label>
-      <label style={{ display: "block", marginBottom: 24 }}><input type="checkbox" checked={privacy} onChange={e => setPrivacy(e.target.checked)} /> [필수] <button type="button" onClick={() => setOpenLegal("privacy")} style={{ border: 0, padding: 0, background: "none", color: "#533d34", textDecoration: "underline", font: "inherit", cursor: "pointer" }}>개인정보 수집·이용 안내 및 처리방침 보기</button></label>
-      <button type="button" disabled={!terms || !privacy || !session || busy} onClick={submit} style={{ width: "100%", padding: 15, background: "#543d32", color: "white", border: 0, borderRadius: 10, opacity: !terms || !privacy || !session || busy ? .5 : 1 }}>{busy ? "저장 중..." : "동의하고 시작하기"}</button>
-      {notice && <p role="alert" style={{ color: "#ae3434" }}>{notice}</p>}
-    </section>
+  return <main className={styles.page}>
+    <div className={styles.wrap}>
+      <a href="/" className={styles.brand}>DearDay<span className={styles.heart}>♡</span></a>
+      <p className={styles.tagline}>소중한 순간을, 더 특별하게</p>
+      <div className={styles.hero}>
+        <span className={styles.eyebrow} />
+        <span className={styles.flower} aria-hidden="true">✿</span>
+        <h1>특별한 날을 위한<br />따뜻한 초대장, <span className={styles.accent}>디어데이</span></h1>
+        <p>소중한 사람들과 함께하는<br />특별한 순간을 더 아름답게 전해보세요.</p>
+      </div>
+      <section className={styles.card}>
+        <span className={styles.smallBrand}>DearDay</span>
+        <h2>서비스 이용 동의</h2>
+        <p className={styles.intro}>디어데이 이용을 위해 아래 필수 약관을 확인하고 동의해 주세요.</p>
+        <div className={styles.option}>
+          <input id="terms-agree" aria-label="서비스 이용약관 동의" className={styles.check} type="checkbox" checked={terms} onChange={e => setTerms(e.target.checked)} />
+          <span className={styles.iconCircle} aria-hidden="true">▤</span>
+          <div className={styles.optionText}>
+            <label htmlFor="terms-agree" className={styles.optionTitle}><span className={styles.required}>필수</span> 서비스 이용약관</label>
+            <span className={styles.description}>디어데이 서비스 이용에 대한 안내입니다.</span>
+          </div>
+          <button type="button" aria-label="서비스 이용약관 자세히 보기" className={styles.view} onClick={() => setOpenLegal("terms")}>›</button>
+        </div>
+        <div className={styles.option}>
+          <input id="privacy-agree" aria-label="개인정보 수집·이용 동의" className={styles.check} type="checkbox" checked={privacy} onChange={e => setPrivacy(e.target.checked)} />
+          <span className={styles.iconCircle} aria-hidden="true">♧</span>
+          <div className={styles.optionText}>
+            <label htmlFor="privacy-agree" className={styles.optionTitle}><span className={styles.required}>필수</span> 개인정보 수집·이용 및 처리방침</label>
+            <span className={styles.description}>서비스 제공을 위한 개인정보 처리 안내입니다.</span>
+          </div>
+          <button type="button" aria-label="개인정보 처리방침 자세히 보기" className={styles.view} onClick={() => setOpenLegal("privacy")}>›</button>
+        </div>
+        <button type="button" className={styles.submit} disabled={!terms || !privacy || !session || busy} onClick={submit}>{busy ? "저장 중..." : "동의하고 시작하기  →"}</button>
+        <p className={styles.info}>ⓘ 필수 약관에 모두 동의해야 디어데이 서비스를 이용할 수 있습니다. 약관 내용은 언제든 다시 확인할 수 있습니다.</p>
+        {notice && <p role="alert" className={styles.error}>{notice}</p>}
+      </section>
+      <p className={styles.footer}>마음을 담은 모바일 초대장 <span>·</span> DearDay</p>
+    </div>
     {openLegal && <div role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setOpenLegal(null); }} style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(30,22,18,.55)", display: "flex", alignItems: "center", justifyContent: "center", padding: 12 }}>
       <section role="dialog" aria-modal="true" aria-labelledby="legal-modal-title" style={{ width: "100%", maxWidth: 650, maxHeight: "90dvh", display: "flex", flexDirection: "column", background: "#fffaf5", borderRadius: 14, overflow: "hidden", boxShadow: "0 12px 40px #0003" }}>
         <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderBottom: "1px solid #e6dcd4", flexShrink: 0 }}>
