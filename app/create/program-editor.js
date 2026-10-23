@@ -16,7 +16,7 @@ export default function ProgramEditor({ value, eventKind, onChange }) {
         <p>최대 {PROGRAM_LIMITS.items}개까지 등록할 수 있어요. 시간 입력을 꺼도 기존 시간과 식순 내용은 유지됩니다.</p>
         {program.items.map((item, index) => <div key={item.id} className="dd-program-editor-item">
           <div className={`dd-program-editor-item-fields${program.displayMode === "time" ? " dd-program-editor-item-fields--time" : ""}`}>
-            <label className="form-field"><span>항목 {index + 1} 제목</span><input value={item.title} maxLength={PROGRAM_LIMITS.itemTitle} onChange={event => updateItem(item.id, { title: event.target.value })} /></label>
+            <label className="form-field"><span>항목 {index + 1} 제목</span><textarea rows={2} value={item.title} maxLength={PROGRAM_LIMITS.itemTitle} onChange={event => updateItem(item.id, { title: event.target.value })} /></label>
             {program.displayMode === "time" && <label className="form-field"><span>항목 {index + 1} 시간</span><input type="time" value={item.time} onChange={event => updateItem(item.id, { time: event.target.value })} /></label>}
           </div>
           <div className="dd-program-editor-actions"><button type="button" className="dd-program-delete-button" aria-label={`항목 ${index + 1} 삭제`} onClick={() => patch({ items: program.items.filter(row => row.id !== item.id) })}>삭제</button></div>
