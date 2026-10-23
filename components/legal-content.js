@@ -90,8 +90,8 @@ const PRIVACY = [
 export function LegalContent({ type }) {
   const sections = type === "terms" ? TERMS : PRIVACY;
   return <div style={{ lineHeight: 1.85, color: "#533d34", overflowWrap: "anywhere" }}>
-    <p><strong>정식 출시 전 검증용 정책 초안입니다.</strong> 확정된 운영 정책을 반영했으나 사업자 정보·개인정보 처리 위탁·국외 이전 등 확인이 필요한 사항이 남아 있습니다. 법령 및 판매채널 정책이 우선합니다.</p>
+    
     {sections.map(([heading, content]) => <section key={heading} style={{ marginTop: 22 }}><h2>{heading}</h2><p>{content}</p></section>)}
-    <p style={{ marginTop: 24, fontSize: 12 }}>정책 초안: 2026-10-23 · 정식 시행 전 법률·운영정보 검증 필요</p>
+    
   </div>;
 }
