@@ -21,7 +21,10 @@ export async function GET(request) {
   if (ctx.error) return reply({ error: ctx.error }, ctx.status);
   const { data, error } = await ctx.client.from("user_consents")
     .select("terms_version,privacy_version").eq("user_id", ctx.user.id).maybeSingle();
-  if (error) return reply({ error: "약관 동의 기록을 확인하지 못했습니다." }, 503);
+  if (error) {
+    console.error("[consent] Supabase lookup failed", { code: error.code || "unknown", status: 503 });
+    return reply({ error: "약관 동의 기록을 확인하지 못했습니다.", code: error.code || "unknown" }, 503);
+  }
   return reply({ agreed: data?.terms_version === TERMS_VERSION && data?.privacy_version === PRIVACY_VERSION });
 }
 
