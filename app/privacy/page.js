@@ -1,6 +1,9 @@
 export const metadata = { title: "개인정보 처리방침 | DearDay" };
 export default function PrivacyPage() {
   return <main style={{ maxWidth: 760, margin: "0 auto", padding: "48px 22px", lineHeight: 1.85 }}>
+    <div style={{ position: "sticky", top: 0, zIndex: 10, background: "#fffaf5", padding: "12px 0", margin: "-12px 0 18px" }}>
+      <a href="/signup/consent" style={{ display: "inline-flex", alignItems: "center", minHeight: 44, padding: "0 14px", border: "1px solid #d7c8bd", borderRadius: 9, color: "#533d34", textDecoration: "none", fontSize: 15 }}>← 약관 동의로 돌아가기</a>
+    </div>
     <a href="/">DearDay</a><h1>개인정보 수집·이용 안내 및 처리방침</h1>
     <p><strong>알파테스트용 초안입니다. 실제 수집 항목·보유기간·수탁사·운영자 연락처를 확인한 후 정식 적용해야 합니다.</strong></p>
     <h2>1. 회원 인증</h2><p>네이버 로그인으로 회원 식별에 필요한 네이버 고유 식별정보를 처리합니다. 네이버가 제공하고 이용자가 동의한 범위에서 이름, 별명, 이메일, 휴대전화번호가 전달될 수 있습니다.</p>
