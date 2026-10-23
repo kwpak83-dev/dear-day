@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 import { getConsentReturnPath } from "../../../lib/consent";
+import { LegalContent } from "../../../components/legal-content";
 
 export default function ConsentPage() {
   const [terms, setTerms] = useState(false);
@@ -9,6 +10,7 @@ export default function ConsentPage() {
   const [session, setSession] = useState(null);
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
+  const [openLegal, setOpenLegal] = useState(null);
   const returnPath = typeof window === "undefined" ? "/my-invitations" : getConsentReturnPath(new URLSearchParams(window.location.search).get("returnUrl"));
   useEffect(() => {
     let active = true;
@@ -28,6 +30,14 @@ export default function ConsentPage() {
     run();
     return () => { active = false; };
   }, [returnPath]);
+  useEffect(() => {
+    if (!openLegal) return;
+    const onKeyDown = (event) => { if (event.key === "Escape") setOpenLegal(null); };
+    const oldOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+    return () => { document.body.style.overflow = oldOverflow; window.removeEventListener("keydown", onKeyDown); };
+  }, [openLegal]);
   const submit = async () => {
     if (!terms || !privacy || !session || busy) return;
     setBusy(true); setNotice("");
@@ -43,10 +53,19 @@ export default function ConsentPage() {
       <a href="/" style={{ color: "#533d34" }}>DearDay</a>
       <h1 style={{ fontSize: 25, marginTop: 24 }}>서비스 이용 동의</h1>
       <p>디어데이 이용을 위해 아래 필수 약관을 확인하고 동의해 주세요.</p>
-      <label style={{ display: "block", margin: "24px 0 16px" }}><input type="checkbox" checked={terms} onChange={e => setTerms(e.target.checked)} /> [필수] <a href="/terms" target="_blank" rel="noopener noreferrer">서비스 이용약관 보기</a></label>
-      <label style={{ display: "block", marginBottom: 24 }}><input type="checkbox" checked={privacy} onChange={e => setPrivacy(e.target.checked)} /> [필수] <a href="/privacy" target="_blank" rel="noopener noreferrer">개인정보 수집·이용 안내 및 처리방침 보기</a></label>
+      <label style={{ display: "block", margin: "24px 0 16px" }}><input type="checkbox" checked={terms} onChange={e => setTerms(e.target.checked)} /> [필수] <button type="button" onClick={() => setOpenLegal("terms")} style={{ border: 0, padding: 0, background: "none", color: "#533d34", textDecoration: "underline", font: "inherit", cursor: "pointer" }}>서비스 이용약관 보기</button></label>
+      <label style={{ display: "block", marginBottom: 24 }}><input type="checkbox" checked={privacy} onChange={e => setPrivacy(e.target.checked)} /> [필수] <button type="button" onClick={() => setOpenLegal("privacy")} style={{ border: 0, padding: 0, background: "none", color: "#533d34", textDecoration: "underline", font: "inherit", cursor: "pointer" }}>개인정보 수집·이용 안내 및 처리방침 보기</button></label>
       <button type="button" disabled={!terms || !privacy || !session || busy} onClick={submit} style={{ width: "100%", padding: 15, background: "#543d32", color: "white", border: 0, borderRadius: 10, opacity: !terms || !privacy || !session || busy ? .5 : 1 }}>{busy ? "저장 중..." : "동의하고 시작하기"}</button>
       {notice && <p role="alert" style={{ color: "#ae3434" }}>{notice}</p>}
     </section>
+    {openLegal && <div role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setOpenLegal(null); }} style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(30,22,18,.55)", display: "flex", alignItems: "center", justifyContent: "center", padding: 12 }}>
+      <section role="dialog" aria-modal="true" aria-labelledby="legal-modal-title" style={{ width: "100%", maxWidth: 650, maxHeight: "90dvh", display: "flex", flexDirection: "column", background: "#fffaf5", borderRadius: 14, overflow: "hidden", boxShadow: "0 12px 40px #0003" }}>
+        <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderBottom: "1px solid #e6dcd4", flexShrink: 0 }}>
+          <h2 id="legal-modal-title" style={{ fontSize: 18, margin: 0 }}>{openLegal === "terms" ? "서비스 이용약관" : "개인정보 수집·이용 안내 및 처리방침"}</h2>
+          <button type="button" aria-label="약관 닫기" onClick={() => setOpenLegal(null)} style={{ border: 0, background: "none", color: "#533d34", fontSize: 28, minWidth: 44, minHeight: 44, cursor: "pointer" }}>×</button>
+        </header>
+        <div tabIndex={0} style={{ overflowY: "auto", overscrollBehavior: "contain", padding: "16px 20px 28px" }}><LegalContent type={openLegal} /></div>
+      </section>
+    </div>}
   </main>;
 }
