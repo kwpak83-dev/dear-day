@@ -3312,7 +3312,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .dd-program-editor-fields > p {margin:0}
 .create-page .dd-program-editor .form-field {min-width:0;margin:0}
 .create-page .dd-program-editor .form-field > span {display:block;overflow-wrap:anywhere}
-.create-page .dd-program-editor :is(input:not([type="checkbox"]),select) {box-sizing:border-box;min-width:0;width:100%;max-width:100%}
+.create-page .dd-program-editor :is(input:not([type="checkbox"]),select,textarea) {box-sizing:border-box;min-width:0;width:100%;max-width:100%}
 .create-page .dd-program-editor-item {display:grid;gap:12px;min-width:0}
 .create-page .dd-program-editor-item-fields {display:grid;grid-template-columns:minmax(0,1fr);gap:12px;min-width:0}
 .create-page .dd-program-editor-actions {display:flex;flex-wrap:wrap;gap:8px;min-width:0}
