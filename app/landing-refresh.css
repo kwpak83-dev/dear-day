@@ -1848,3 +1848,15 @@
   width:min(100%,330px)!important;
  }
 }
+
+
+/* Dedicated desktop background: never stretch the portrait mobile asset. */
+@media (min-width:801px){
+ .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
+  background-color:#f8f4ed!important;
+  background-image:url("/landing/dearday-hero-background-pc.png")!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+ }
+}
