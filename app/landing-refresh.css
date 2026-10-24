@@ -2,7 +2,7 @@
 .landing-v2{background:#fff;color:#282624}
 .landing-v2 .landing-header{position:relative;z-index:20;background:#fff;color:#292725}
 .landing-v2 .landing-nav a,.landing-v2 .landing-nav button{color:#343230}
-.landing-v2 .landing-hero.dd-cinematic-hero{position:relative;isolation:isolate;display:flex;align-items:center;min-height:min(800px,calc(100svh - 74px));background:#35453d url("/landing/hero-mobile.png") center center/cover no-repeat;overflow:hidden}
+.landing-v2 .landing-hero.dd-cinematic-hero{position:relative;isolation:isolate;display:flex;align-items:center;min-height:min(800px,calc(100svh - 74px));background:#faf7f1;overflow:hidden}
 .dd-cinematic-hero .dd-hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
 .dd-cinematic-hero .dd-hero-shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(0,0,0,.56) 0%,rgba(0,0,0,.34) 47%,rgba(0,0,0,.24) 100%)}
 .dd-cinematic-hero .dd-hero-content{width:min(1200px,calc(100% - 80px));position:relative;padding:90px 0 110px;color:#fff}
