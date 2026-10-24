@@ -508,3 +508,34 @@
    font-size:clamp(29px,8.6vw,34px)!important;
  }
 }
+
+
+/* Temporary A/B hero previews. Remove switch once a final design is chosen. */
+.landing-v2 .dd-cinematic-hero .dd-hero-preview-switch{position:absolute;top:16px;right:20px;z-index:5;display:flex;gap:3px;padding:4px;border:1px solid rgba(255,255,255,.42);border-radius:99px;background:rgba(18,22,20,.4);backdrop-filter:blur(10px)}
+.landing-v2 .dd-hero-preview-switch button{border:0;border-radius:99px;background:transparent;color:#fff;padding:7px 11px;font:500 11px Arial,sans-serif;cursor:pointer}
+.landing-v2 .dd-hero-preview-switch button.active{background:#fff;color:#272727}
+.landing-v2 .dd-hero-variant-a .dd-hero-content{border-left:1px solid rgba(255,255,255,.55);padding-left:27px!important}
+.landing-v2 .dd-hero-variant-a .dd-hero-content h1{font-family:Georgia,"Times New Roman",serif!important;font-weight:400!important;font-size:clamp(48px,5.8vw,88px)!important;line-height:1.04!important;letter-spacing:-.055em!important;white-space:normal!important}
+.landing-v2 .dd-hero-variant-a .dd-hero-description{letter-spacing:0!important}
+.landing-v2 .dd-hero-variant-b .dd-hero-content{align-items:center!important;justify-content:center!important;text-align:center!important;padding-top:60px!important;padding-bottom:110px!important}
+.landing-v2 .dd-hero-variant-b .dd-hero-content h1{font-family:Georgia,"Times New Roman",serif!important;font-weight:400!important;font-size:clamp(45px,5.5vw,83px)!important;line-height:1.14!important;letter-spacing:-.045em!important;white-space:normal!important}
+.landing-v2 .dd-hero-variant-b .dd-hero-content h1::after{content:"";display:block;width:64px;height:1px;margin:25px auto 0;background:rgba(255,255,255,.8)}
+.landing-v2 .dd-hero-variant-b .dd-hero-description{margin:22px auto 0!important;letter-spacing:.015em!important}
+.landing-v2 .dd-hero-variant-b .dd-hero-buttons{justify-content:center!important;margin-top:38px!important}
+.landing-v2 .dd-hero-variant-b .dd-hero-shade{background:rgba(0,0,0,.43)!important}
+@media(max-width:800px){
+ .landing-v2 .dd-cinematic-hero .dd-hero-preview-switch{top:13px;right:12px;padding:3px}
+ .landing-v2 .dd-hero-preview-switch button{font-size:9px;padding:6px 9px}
+ .landing-v2 .dd-hero-variant-a .dd-hero-content{width:calc(100% - 94px)!important;max-width:330px!important;margin-left:47px!important;margin-right:auto!important;padding:clamp(108px,17svh,155px) 0 87px 18px!important;border-left:1px solid rgba(255,255,255,.7);box-sizing:border-box!important}
+ .landing-v2 .dd-hero-variant-a .dd-hero-content h1{font-size:clamp(36px,10vw,46px)!important;line-height:1.07!important;letter-spacing:-.06em!important;white-space:normal!important}
+ .landing-v2 .dd-hero-variant-a .dd-hero-eyebrow{font-size:9px!important;letter-spacing:.13em!important;white-space:nowrap!important}
+ .landing-v2 .dd-hero-variant-a .dd-hero-description{font-size:12px!important;margin-top:22px!important;line-height:1.75!important}
+ .landing-v2 .dd-hero-variant-a .dd-hero-buttons{margin-top:auto!important}
+ .landing-v2 .dd-hero-variant-b .dd-hero-content{width:calc(100% - 48px)!important;max-width:370px!important;margin:0 auto!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;padding:70px 0 115px!important}
+ .landing-v2 .dd-hero-variant-b .dd-hero-content h1{font-size:clamp(35px,9.5vw,46px)!important;line-height:1.15!important;white-space:normal!important;letter-spacing:-.06em!important}
+ .landing-v2 .dd-hero-variant-b .dd-hero-content h1::after{margin:24px auto 0!important;width:50px}
+ .landing-v2 .dd-hero-variant-b .dd-hero-description{font-size:12px!important;margin:22px auto 0!important}
+ .landing-v2 .dd-hero-variant-b .dd-hero-buttons{margin-top:34px!important;padding-top:0!important;max-width:250px!important;align-items:center!important}
+ .landing-v2 .dd-hero-variant-b .dd-hero-button{width:100%!important}
+ .landing-v2 .dd-hero-variant-b .dd-hero-shade{background:rgba(0,0,0,.40)!important}
+}
