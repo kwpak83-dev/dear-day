@@ -128,10 +128,22 @@ export default function Home() {
               </div>
             </div>
             <div className="dd-feature-copy">
-              <span className="dd-feature-number">{number} <span>/ 10</span></span>
-              <p className="dd-feature-eyebrow">{eyebrow}</p>
+              <div className="dd-feature-labels"><span className="dd-feature-number">{number} <span>/ 10</span></span><span className="dd-feature-eyebrow">{eyebrow}</span></div>
               <h3>{title}</h3>
               <p>{description}</p>
+              <ul className="dd-feature-checks">
+                {(kind === "theme" ? ["표지와 본문이 연결되는 테마형 디자인", "처음부터 끝까지 통일된 분위기"] :
+                  kind === "mix" ? ["표지와 본문을 자유롭게 조합", "사진과 문구를 내 취향대로"] :
+                  kind === "program" ? ["행사 유형에 맞춘 식순 안내", "초대장 안에서 순서 확인"] :
+                  kind === "occasions" ? ["6가지 행사 유형별 디자인", "상황에 맞는 초대장 제작"] :
+                  kind === "rsvp" ? ["참석 여부와 인원 확인", "방명록으로 축하 메시지 공유"] :
+                  kind === "intro" ? ["원하는 인트로 문구 설정", "첫 화면부터 나만의 분위기"] :
+                  kind === "preview" ? ["발행 전 완성형 초대장 미리보기", "마음에 들 때 발행"] :
+                  kind === "edit" ? ["행사 시작 전까지 내용 수정", "사진과 디자인 변경 가능"] :
+                  kind === "styles" ? ["추가 디자인 비용 없이 변경", "다양한 스타일 비교"] :
+                  ["꼭 필요한 핵심 기능", "쉽고 편리한 초대장 관리"]).map((benefit) => <li key={benefit}><span aria-hidden="true">✓</span>{benefit}</li>)}
+              </ul>
+              <span className="dd-feature-pill">{kind === "theme" ? "표지·본문 세트 디자인" : kind === "mix" ? "나만의 스타일로 특별하게" : kind === "program" ? "초대장 하나로 행사 안내까지" : kind === "occasions" ? "다양한 특별한 날에" : kind === "rsvp" ? "참석 확인부터 축하 메시지까지" : kind === "intro" ? "초대의 첫 순간부터 특별하게" : kind === "preview" ? "발행 전 무료로 제작" : kind === "edit" ? "실수해도 편리하게 수정" : kind === "styles" ? "디자인 변경 부담 없이" : "꼭 필요한 기능만 담아"}</span>
             </div>
           </article>
         ))}
