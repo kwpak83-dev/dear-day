@@ -10,6 +10,7 @@ const steps = [["01", "▧", "템플릿 선택", "마음에 드는 디자인을 
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [heroVariant, setHeroVariant] = useState("a");
   const [authOpen, setAuthOpen] = useState(false);
   const [authMessage, setAuthMessage] = useState("");
   const [authLoading, setAuthLoading] = useState("");
@@ -35,6 +36,17 @@ export default function Home() {
     }
   }, []);
 
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("hero") === "b") setHeroVariant("b");
+  }, []);
+  const switchHero = (variant) => {
+    setHeroVariant(variant);
+    const url = new URL(window.location.href);
+    if (variant === "b") url.searchParams.set("hero", "b");
+    else url.searchParams.delete("hero");
+    window.history.replaceState(null, "", url.pathname + url.search + url.hash);
+  };
+
   const openLogin = (returnPath = DEFAULT_AUTH_RETURN_PATH) => { setAuthReturnPath(getSafeAuthReturnPath(returnPath)); setAuthOpen(true); };
   const start = () => { if (!authReady) return; if (user) return window.location.assign("/create"); openLogin("/create"); };
   const chooseLogin = () => {
@@ -55,14 +67,18 @@ export default function Home() {
       {menuOpen && <div className="landing-mobile-nav"><button onClick={() => { setMenuOpen(false); start(); }}>초대장 만들기</button><a href="/templates" onClick={() => setMenuOpen(false)}>템플릿</a><a href="#how" onClick={() => setMenuOpen(false)}>이용안내</a><a href="#story" onClick={() => setMenuOpen(false)}>고객센터</a>{user ? <><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <button onClick={() => openLogin()}>로그인</button>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>}
     </header>
 
-    <section className="landing-hero dd-cinematic-hero" id="top">
+    <section className={`landing-hero dd-cinematic-hero dd-hero-variant-${heroVariant}`} id="top">
       <video className="dd-hero-video" autoPlay muted loop playsInline preload="metadata" poster="/landing/hero-mobile.png" aria-hidden="true">
         <source src="/landing/dearday-seaside-hero.mp4" type="video/mp4" />
       </video>
       <div className="dd-hero-shade" aria-hidden="true" />
+      <div className="dd-hero-preview-switch" role="group" aria-label="HERO 디자인 비교">
+        <button type="button" className={heroVariant === "a" ? "active" : ""} aria-pressed={heroVariant === "a"} onClick={() => switchHero("a")}>A · Editorial</button>
+        <button type="button" className={heroVariant === "b" ? "active" : ""} aria-pressed={heroVariant === "b"} onClick={() => switchHero("b")}>B · Cinema</button>
+      </div>
       <div className="landing-shell dd-hero-content">
         <p className="dd-hero-eyebrow">DEARDAY · MOBILE INVITATION</p>
-        <h1>Good People<br />Good Moment</h1>
+        {heroVariant === "a" ? <h1>Good<br />People,<br />Good Moment.</h1> : <h1>Good People<br />Good Moment.</h1>}
         <p className="dd-hero-description">마음을 전하는 특별한 초대장</p>
         <div className="dd-hero-buttons">
           <a className="dd-hero-button dd-hero-button-primary" href="/templates">무료 시안 만들기 <span aria-hidden="true">↗</span></a>
