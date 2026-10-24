@@ -251,3 +251,17 @@
  bottom:10px!important;
  right:10px!important;
 }
+
+
+/* Small, non-interactive cover/body labels in the top-left of each image. */
+.dd-showcase-page .dd-showcase-preview-hero,
+.dd-showcase-page .dd-showcase-preview-body{position:relative!important}
+.dd-showcase-page .dd-showcase-section-label{
+ position:absolute;z-index:2;top:8px;left:8px;
+ display:inline-flex;align-items:center;justify-content:center;
+ padding:4px 7px;border-radius:5px;
+ background:rgba(255,255,255,.88);color:#383838;
+ font-size:10px;font-weight:500;line-height:1.25;
+ letter-spacing:-.025em;white-space:nowrap;
+ pointer-events:none;box-shadow:0 1px 4px rgba(0,0,0,.07);
+}
