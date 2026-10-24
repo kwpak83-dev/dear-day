@@ -1860,3 +1860,31 @@
   background-repeat:no-repeat!important;
  }
 }
+
+
+/* Mobile hero editorial accent: a single thicker grey rule aligned with
+   the left edge of the CTA column, without altering the desktop layout. */
+@media(max-width:800px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-content{
+  position:relative!important;
+  isolation:isolate;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-content::before{
+  content:""!important;
+  position:absolute!important;
+  display:block!important;
+  left:calc(50% - 130px)!important;
+  top:14px!important;
+  height:clamp(112px,30vw,145px)!important;
+  width:2px!important;
+  border-radius:2px!important;
+  background:#929292!important;
+  opacity:.88!important;
+  pointer-events:none!important;
+ }
+}
+@media(max-width:300px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-content::before{
+  left:7px!important;
+ }
+}
