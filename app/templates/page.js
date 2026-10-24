@@ -100,9 +100,9 @@ export default function TemplateCollectionPage(){
    <div className="dd-showcase-selected" aria-live="polite">
     <p className="dd-showcase-counter">{active+1} / {items.length}</p>
     <h2>{selected?.name}</h2>
-
+    {selected?.description&&<p className="dd-showcase-description">{selected.description}</p>}
     <div className="dd-showcase-actions"><a href={previewUrl} className="dd-showcase-secondary">샘플 보기 <span aria-hidden="true">◎</span></a><button type="button" onClick={makeSelected} className="dd-showcase-primary">이 디자인으로 만들기 <span aria-hidden="true">↗</span></button></div>
-
+    <p className="dd-showcase-hint">디자인을 좌우로 넘겨보세요</p>
    </div>
   </>}
  </main>;
