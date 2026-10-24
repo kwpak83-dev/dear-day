@@ -1574,3 +1574,45 @@
   transform:rotate(2.3deg)!important;
  }
 }
+
+
+/* Compact reference-style stacked CTA buttons (mobile HERO C only). */
+@media(max-width:800px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-buttons{
+  width:46%!important;
+  max-width:172px!important;
+  min-width:126px!important;
+  margin:0 auto!important;
+  padding:0 0 10px!important;
+  gap:6px!important;
+  align-self:center!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-button{
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-height:30px!important;
+  height:30px!important;
+  padding:5px 9px!important;
+  border-radius:7px!important;
+  font-size:10px!important;
+  font-weight:650!important;
+  letter-spacing:0!important;
+  white-space:nowrap!important;
+  gap:4px!important;
+  box-shadow:0 2px 7px rgba(0,0,0,.10)!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-button-primary{
+  background:#303030!important;
+  border:1px solid #303030!important;
+  color:#fff!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-button-outline{
+  background:#fff!important;
+  border:1px solid #ececec!important;
+  color:#222!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-button svg{
+  width:11px!important;
+  height:11px!important;
+ }
+}
