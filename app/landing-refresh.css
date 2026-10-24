@@ -847,3 +847,12 @@
    height:13px!important;
  }
 }
+
+
+/* Stronger outline for Design Gallery CTA — clear contrast on white. */
+.landing-v2 .dd-hero-variant-c .dd-hero-button-outline{
+  background:#FFFFFF!important;
+  border:1.5px solid #777777!important;
+  color:#252525!important;
+  box-shadow:0 2px 7px rgba(0,0,0,.10)!important;
+}
