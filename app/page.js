@@ -10,6 +10,7 @@ const steps = [["01", "▧", "템플릿 선택", "마음에 드는 디자인을 
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [detailCategory, setDetailCategory] = useState("전체");
   const heroButtonsRef = useRef(null);
   const [showQuickButtons, setShowQuickButtons] = useState(false);
   const [heroVariant, setHeroVariant] = useState("c");
@@ -177,9 +178,46 @@ export default function Home() {
         ))}
       </div>
     </section>
-    <section className="how-v2" id="how"><div className="landing-shell"><p className="landing-kicker">HOW IT WORKS</p><h2>3단계로, 쉽고 빠르게</h2><p className="landing-subtitle">누구나 몇 분 만에, 나만의 초대장이 완성됩니다.</p><div className="how-v2-grid">{steps.map(([number, icon, title, description]) => <article key={number}><span className="step-number">{number}</span><div>{icon}</div><section><h3>{title}</h3><p>{description}</p></section></article>)}</div></div></section>
-
-    <section className="envelope-cta" id="story"><div className="landing-shell"><p>MAKE<br />SPECIAL MOMENTS<br />TOGETHER</p><div><h2>모든 특별한 날,<br /><b>Dear Day</b>가 함께합니다.</h2><span>부담은 가볍게, 마음은 충분히.</span></div><button className="landing-primary" onClick={() => window.location.assign("/templates")}>지금, 초대장 만들기 <b>→</b></button></div></section>
+    <section className="dd-detail-section" id="how">
+      <div className="landing-shell">
+        <header className="dd-detail-heading">
+          <p className="dd-section-eyebrow">MORE TO EXPLORE</p>
+          <h2>작은 기능까지, 세심하게.</h2>
+          <p>초대하는 순간을 더 편리하게 만들어주는 DearDay의 다양한 기능을 살펴보세요.</p>
+        </header>
+        <div className="dd-detail-tabs" role="group" aria-label="기능 카테고리">
+          {["전체", "편의기능", "디자인·구성", "공유·설정"].map((category) => (
+            <button type="button" key={category} className={detailCategory === category ? "active" : ""} aria-pressed={detailCategory === category} onClick={() => setDetailCategory(category)}>{category}</button>
+          ))}
+        </div>
+        <div className="dd-detail-grid">
+          {[
+            ["디자인·구성", "오프닝 애니메이션", "초대장을 여는 첫 순간부터 특별하게 연출해요.", ["첫 화면을 위한 인트로 연출", "나만의 인트로 문구 설정"], "✦"],
+            ["디자인·구성", "메인 배너", "사진과 문구로 초대장의 첫인상을 완성해요.", ["다양한 HERO 디자인", "사진과 문구 맞춤 편집"], "▣"],
+            ["디자인·구성", "사진 갤러리", "소중한 장면을 초대장 안에 보기 좋게 담아보세요.", ["여러 장의 사진 등록", "사진 순서 및 구성 편집"], "▧"],
+            ["디자인·구성", "표지·본문 테마", "표지와 본문이 조화롭게 이어지는 디자인을 만나보세요.", ["테마형 본문 디자인", "표지와 본문 스타일 조합"], "◈"],
+            ["디자인·구성", "식순·행사순서", "별도 안내문 없이 행사 흐름을 초대장 안에 담아요.", ["결혼식·돌잔치·모임 등 활용", "순서별 내용 안내"], "☷"],
+            ["편의기능", "참석 여부 확인", "초대받은 분들의 참석 응답을 간편하게 모아보세요.", ["참석 여부 및 인원 확인", "응답 목록 관리"], "✓"],
+            ["편의기능", "축하 방명록", "멀리서도 마음을 전할 수 있는 메시지 공간이에요.", ["축하 메시지 남기기", "방명록 비밀번호 설정"], "♡"],
+            ["편의기능", "발행 후 수정", "변경된 일정이나 문구도 행사 시작 전까지 수정할 수 있어요.", ["내용 및 사진 수정", "디자인 변경"], "✎"],
+            ["공유·설정", "카카오톡 공유", "완성한 초대장을 소중한 분들께 간편하게 전해보세요.", ["카카오톡으로 초대장 공유", "초대장 링크 복사"], "↗"],
+            ["공유·설정", "QR 코드", "링크 대신 QR 코드로도 초대장을 안내할 수 있어요.", ["QR 코드 확인", "온·오프라인 초대에 활용"], "▦"],
+            ["공유·설정", "오시는 길", "행사 장소와 위치 정보를 초대장 안에서 안내해요.", ["지도 및 위치 안내", "방문에 필요한 장소 정보"], "⌖"],
+            ["공유·설정", "배경음악", "특별한 날의 분위기에 어울리는 음악을 더해보세요.", ["초대장 배경음악", "재생 ON/OFF"], "♫"]
+          ].filter(([category]) => detailCategory === "전체" || detailCategory === category).map(([category, title, description, highlights, symbol]) => (
+            <article className="dd-detail-card" key={title}>
+              <div className="dd-detail-card-top">
+                <span className="dd-detail-icon" aria-hidden="true">{symbol}</span>
+                <div><span className="dd-detail-category">{category}</span><h3>{title}</h3></div>
+              </div>
+              <p className="dd-detail-description">{description}</p>
+              <ul>{highlights.map((item) => <li key={item}>{item}</li>)}</ul>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+    <div id="story" className="dd-detail-end-anchor" aria-hidden="true" />
     {notice && <p className="landing-notice" role="status">{notice}</p>}
     {authOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="간편 로그인"><div className="login-modal"><button className="modal-close" onClick={() => setAuthOpen(false)} aria-label="닫기">×</button><p className="section-kicker">WELCOME TO DEAR DAY</p><h2>3분 만에 시작하는<br /><em>우리의 청첩장</em></h2><p>간편 로그인 후 언제든 수정할 수 있어요.</p><button className="social-login naver" disabled={Boolean(authLoading)} onClick={chooseLogin}>N <span>{authLoading === "naver" ? "네이버로 연결 중..." : "네이버로 계속하기"}</span></button>{authMessage && <p role="status">{authMessage}</p>}<small>네이버 로그인 후 디어데이 약관 동의 절차가 진행됩니다.</small></div></div>}
   </main>;
