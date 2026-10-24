@@ -341,3 +341,51 @@
  stroke:currentColor!important;stroke-width:2.2!important;
  opacity:1!important;
 }
+
+
+/* Collection header matches landing: fixed left menu, mathematically centered wordmark. */
+.dd-showcase-page .dd-showcase-header{
+ position:relative!important;z-index:20!important;
+ display:flex!important;align-items:center!important;
+ justify-content:space-between!important;
+}
+.dd-showcase-page .dd-showcase-brand{
+ position:absolute!important;left:50%!important;top:50%!important;
+ transform:translate(-50%,-50%)!important;
+ z-index:2!important;white-space:nowrap!important;
+}
+.dd-showcase-page .dd-showcase-menu-toggle{
+ position:relative;z-index:4;
+ width:36px;height:36px;flex:0 0 36px;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+ border:0;background:transparent;color:#252525;cursor:pointer;padding:7px;
+}
+.dd-showcase-page .dd-showcase-menu-toggle span{
+ display:block;width:20px;height:1.6px;border-radius:1px;background:currentColor;
+}
+.dd-showcase-page .dd-showcase-home{
+ position:relative;z-index:3;margin-left:auto;
+ white-space:nowrap;font-size:12px!important;
+}
+.dd-showcase-page .dd-showcase-menu-backdrop{
+ position:fixed;inset:0;z-index:3;background:transparent;border:0;cursor:default;
+}
+.dd-showcase-page .dd-showcase-menu-panel{
+ position:absolute;left:12px;top:calc(100% - 1px);z-index:5;
+ width:min(260px,calc(100vw - 24px));padding:8px;
+ display:flex;flex-direction:column;gap:2px;
+ background:#fff;border:1px solid #e8e5e1;border-radius:10px;
+ box-shadow:0 12px 30px rgba(0,0,0,.12);
+}
+.dd-showcase-page .dd-showcase-menu-panel a{
+ display:block;padding:12px 14px;border-radius:6px;
+ font-size:13px;text-decoration:none;color:#292929;
+}
+.dd-showcase-page .dd-showcase-menu-panel a:hover,
+.dd-showcase-page .dd-showcase-menu-panel a:focus-visible{background:#f4f3f1}
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-header{padding:6px 12px!important}
+ .dd-showcase-page .dd-showcase-menu-toggle{width:30px;height:34px;flex-basis:30px;padding:5px}
+ .dd-showcase-page .dd-showcase-menu-toggle span{width:18px}
+ .dd-showcase-page .dd-showcase-home{font-size:10px!important}
+}
