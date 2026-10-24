@@ -87,7 +87,10 @@ export default function TemplateCollectionPage(){
     <div className="dd-showcase-track" ref={trackRef} onScroll={syncActive} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onPointerLeave={pointerUp} onClickCapture={preventDragClick}>
      {items.map((x,i)=><article className={`dd-showcase-slide ${active===i?"is-active":""}`} key={x.id} aria-label={`${x.name} 템플릿 ${i+1}/${items.length}`}>
       <a href={`/templates/${encodeURIComponent(x.template_key)}`} className="dd-showcase-poster" draggable={false} aria-label={`${x.name} 샘플 보기`}>
-       {x.thumbnail_1_url?<img src={x.thumbnail_1_url} alt={`${x.name} 템플릿`} draggable={false} loading={Math.abs(i-active)<=1?"eager":"lazy"}/>:<span className="dd-showcase-no-image">DearDay</span>}
+       <div className="dd-showcase-preview-composite">
+        <div className="dd-showcase-preview-hero">{x.thumbnail_1_url?<img src={x.thumbnail_1_url} alt={`${x.name} 표지 디자인`} draggable={false} loading={Math.abs(i-active)<=1?"eager":"lazy"}/>:<span className="dd-showcase-no-image">DearDay</span>}</div>
+        <div className="dd-showcase-preview-body">{x.thumbnail_2_url?<img src={x.thumbnail_2_url} alt={`${x.name} 본문 디자인`} draggable={false} loading="lazy"/>:<div className="dd-showcase-preview-body-fallback"><span>DEARDAY INVITATION</span><strong>{x.name}</strong><small>소중한 순간을 위한 초대장</small></div>}</div>
+       </div>
        <span className="dd-showcase-eye" aria-hidden="true">◎</span>
       </a>
      </article>)}
