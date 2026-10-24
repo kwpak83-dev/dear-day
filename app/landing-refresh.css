@@ -1692,14 +1692,14 @@
  .landing-v2 .dd-hero-variant-c .dd-hero-button-outline{color:#333!important}
 }
 
-/* Oct 24 approved typography: Playfair Display 30/26, compact two-line rhythm. */
+/* Oct 24 approved typography: Playfair Display 33/29, compact two-line rhythm. */
 @media(max-width:800px){
  .landing-v2 .dd-hero-variant-c .dd-hero-content h1{
   font-family:"Playfair Display",Georgia,serif!important;
-  font-size:30px!important;
+  font-size:33px!important;
   font-weight:700!important;
   font-style:normal!important;
-  line-height:1.02!important;
+  line-height:.98!important;
   letter-spacing:-.035em!important;
   color:#171717!important;
   text-align:center!important;
@@ -1708,10 +1708,10 @@
  .landing-v2 .dd-hero-variant-c .dd-hero-content h1 em{
   font-family:"Playfair Display",Georgia,serif!important;
   display:inline-block!important;
-  font-size:26px!important;
+  font-size:29px!important;
   font-weight:400!important;
   font-style:italic!important;
-  line-height:1.02!important;
+  line-height:.98!important;
   letter-spacing:-.035em!important;
   color:#858585!important;
  }
