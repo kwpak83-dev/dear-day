@@ -101,3 +101,56 @@
   border-radius:7px!important;
  }
 }
+
+
+/* Two-page spread preview, inspired by the supplied birthday template example.
+   Keep all headings and descriptions; change the viewer only. */
+.dd-showcase-preview-composite{
+ display:grid!important;
+ grid-template-columns:1fr 1fr!important;
+ grid-template-rows:minmax(0,1fr)!important;
+ gap:0!important;
+}
+.dd-showcase-preview-hero,.dd-showcase-preview-body{
+ flex:none!important;
+ width:100%!important;
+ height:100%!important;
+ min-width:0!important;
+ min-height:0!important;
+ overflow:hidden!important;
+}
+.dd-showcase-preview-hero>img,.dd-showcase-preview-body>img{
+ width:100%!important;
+ height:100%!important;
+ object-fit:fill!important;
+ object-position:center!important;
+ background:transparent!important;
+}
+.dd-showcase-preview-body:before{
+ left:0!important;right:auto!important;top:0!important;
+ height:100%!important;width:1px!important;
+}
+@media(max-width:700px){
+ .dd-showcase-slide{flex-basis:83%!important}
+ .dd-showcase-track{
+  scroll-padding-inline:8.5%!important;
+  padding-left:8.5%!important;
+  padding-right:8.5%!important;
+ }
+ .dd-showcase-poster{
+  height:clamp(310px,calc(100svh - 325px),570px)!important;
+ }
+ .dd-showcase-preview-hero,.dd-showcase-preview-body{
+  flex:none!important;
+ }
+ .dd-showcase-description{
+  display:block!important;
+  font-size:11px!important;
+  margin:4px auto 0!important;
+ }
+ .dd-showcase-hint{
+  display:block!important;
+  font-size:10px!important;
+  margin:7px 0 0!important;
+ }
+}
