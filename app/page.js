@@ -94,24 +94,47 @@ export default function Home() {
       </div>
       <span className="dd-hero-scroll" aria-hidden="true">SCROLL DOWN <span className="dd-scroll-chevrons"><span /><span /></span></span>
     </section>
-    <section className="dd-intro-benefits" id="benefits">
+    <section className="dd-features" id="benefits">
       <div className="landing-shell">
-        <p className="dd-section-eyebrow">MADE FOR YOUR MOMENTS</p>
-        <h2>초대의 시작부터 행사 당일까지,<br />디어데이 하나로.</h2>
-        <div className="dd-intro-grid">
-          <article><span>01</span><h3>무료 시안 먼저</h3><p>결제 전에 원하는 초대장을 직접 만들고 미리 확인하세요.</p></article>
-          <article><span>02</span><h3>발행 후에도 수정</h3><p>행사 시작 전까지 사진과 문구, 디자인을 자유롭게 바꿀 수 있어요.</p></article>
-          <article><span>03</span><h3>참석과 방명록 관리</h3><p>참석 응답과 축하 메시지를 한곳에서 확인하세요.</p></article>
-        </div>
-      </div>
-    </section>
-    <section className="dd-program-highlight">
-      <div className="landing-shell dd-program-layout">
-        <div><p className="dd-section-eyebrow">MORE THAN AN INVITATION</p><h2>초대장을 넘어,<br />행사 안내까지.</h2><p>결혼식, 돌잔치, 생일, 모임과 개업까지.<br />식순과 행사 순서를 초대장에 함께 담아보세요.</p><a href="/templates" className="dd-text-link">디자인 둘러보기 ↗</a></div>
-        <div className="dd-program-preview" aria-label="행사 순서 예시">
-          <p>THE ORDER OF THE DAY</p><h3>우리의 특별한 하루</h3>
-          <ol><li><span>01</span>손님 맞이</li><li><span>02</span>행사 시작</li><li><span>03</span>축하와 인사</li><li><span>04</span>기념 촬영</li></ol>
-        </div>
+        <header className="dd-features-heading">
+          <p className="dd-section-eyebrow">THE DEARDAY EXPERIENCE</p>
+          <h2>초대하는 순간부터,<br />특별하게.</h2>
+          <p>소중한 날을 더 아름답고 편리하게 만드는 DearDay의 핵심 기능을 만나보세요.</p>
+        </header>
+        {[
+          ["01", "THEMED DESIGN", "표지부터 본문까지, 하나의 디자인으로.", "배경색만 바꾸는 대신 표지와 본문이 자연스럽게 이어지는 테마형 디자인으로 완성도를 높였어요.", "theme"],
+          ["02", "MIX & MATCH", "좋아하는 디자인만 골라, 나답게.", "표지와 본문을 취향에 맞게 조합하고, 사진과 문구를 직접 꾸며 나만의 초대장을 만들어보세요.", "mix"],
+          ["03", "EVENT PROGRAM", "초대장 하나로, 행사 안내까지.", "별도의 식순지 없이 결혼식과 돌잔치, 각종 모임과 행사의 순서를 초대장 안에서 안내할 수 있어요.", "program"],
+          ["04", "ALL OCCASIONS", "특별한 날이라면, 어떤 순간이든.", "결혼식부터 돌잔치, 생일, 환갑·칠순·팔순, 모임·행사, 개업까지 상황에 맞는 초대장을 준비했어요.", "occasions"],
+          ["05", "RSVP & GUESTBOOK", "참석 확인부터 축하 메시지까지, 한눈에.", "참석 여부와 인원을 확인하고 소중한 사람들이 남긴 축하 메시지를 한곳에서 관리하세요.", "rsvp"],
+          ["06", "PERSONAL INTRO", "초대의 첫 순간부터, 특별하게.", "초대장을 여는 순간의 인트로 문구도 원하는 분위기와 이야기로 자유롭게 꾸며보세요.", "intro"],
+          ["07", "FREE PREVIEW", "결제는 나중에, 완성은 먼저.", "먼저 사진과 문구, 디자인을 넣어 완성된 초대장을 미리 확인하고 마음에 들 때 발행하세요.", "preview"],
+          ["08", "EASY EDITING", "발행한 뒤에도, 수정은 자유롭게.", "날짜나 장소를 잘못 입력해도 걱정하지 마세요. 행사 시작 전까지 내용과 디자인을 수정할 수 있어요.", "edit"],
+          ["09", "DESIGN FREEDOM", "디자인을 바꿀 때마다, 결제하지 마세요.", "디자인 선택을 서두를 필요 없어요. 초대장 발행 전후로 다양한 스타일을 추가 디자인 비용 없이 변경해보세요.", "styles"],
+          ["10", "MADE WITH PURPOSE", "꼭 필요한 기능만, 더 편리하게.", "다양한 초대장의 사용 경험을 살펴보며 복잡함은 줄이고 초대에 필요한 기능을 담기 위해 고민했어요.", "purpose"]
+        ].map(([number, eyebrow, title, description, kind]) => (
+          <article className={`dd-feature dd-feature-${kind}`} key={number}>
+            <div className="dd-feature-visual" aria-label={`${title} 기능 시연 화면 자리`}>
+              <div className="dd-feature-demo">
+                <div className="dd-feature-demo-top"><span>DearDay</span><span>✦</span></div>
+                <div className="dd-feature-demo-content">
+                  <span className="dd-feature-demo-kicker">{eyebrow}</span>
+                  {kind === "program" ? <div className="dd-feature-program"><strong>오늘의 행사 순서</strong><span>01 · 손님 맞이</span><span>02 · 행사 시작</span><span>03 · 축하와 인사</span><span>04 · 기념 촬영</span></div> :
+                    kind === "rsvp" ? <div className="dd-feature-program"><strong>참석 여부 확인</strong><span>○ 참석할게요</span><span>○ 참석이 어려워요</span><span>축하 메시지를 남겨주세요 ♡</span></div> :
+                    kind === "occasions" ? <div className="dd-feature-occasion-grid"><span>결혼식</span><span>돌잔치</span><span>생일</span><span>환갑·칠순·팔순</span><span>모임·행사</span><span>개업·오픈</span></div> :
+                    <div className="dd-feature-demo-paper"><span>YOUR SPECIAL DAY</span><strong>{kind === "intro" ? "Welcome to our day" : kind === "mix" ? "Your style, your story" : kind === "edit" ? "Make it yours" : "Good People, Good Moment."}</strong><i /><small>DEARDAY · MOBILE INVITATION</small></div>}
+                </div>
+                <div className="dd-feature-demo-bottom">미리보기 · 영상 교체 예정</div>
+              </div>
+            </div>
+            <div className="dd-feature-copy">
+              <span className="dd-feature-number">{number} <span>/ 10</span></span>
+              <p className="dd-feature-eyebrow">{eyebrow}</p>
+              <h3>{title}</h3>
+              <p>{description}</p>
+            </div>
+          </article>
+        ))}
       </div>
     </section>
     <section className="how-v2" id="how"><div className="landing-shell"><p className="landing-kicker">HOW IT WORKS</p><h2>3단계로, 쉽고 빠르게</h2><p className="landing-subtitle">누구나 몇 분 만에, 나만의 초대장이 완성됩니다.</p><div className="how-v2-grid">{steps.map(([number, icon, title, description]) => <article key={number}><span className="step-number">{number}</span><div>{icon}</div><section><h3>{title}</h3><p>{description}</p></section></article>)}</div></div></section>
