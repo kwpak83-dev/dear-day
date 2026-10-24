@@ -85,7 +85,7 @@ export default function Home() {
         {heroVariant === "a" ? <h1>Good<br />People,<br />Good Moment.</h1> : heroVariant === "b" ? <h1>Good People<br />Good Moment.</h1> : <h1>Good People,<br /><em>Good Moment.</em></h1>}
         <p className="dd-hero-description">마음을 전하는 특별한 초대장</p>
         <div className="dd-hero-buttons">
-          <a className="dd-hero-button dd-hero-button-primary" href="/templates">무료 시안 만들기 <span aria-hidden="true">↗</span></a>
+          <a className="dd-hero-button dd-hero-button-primary" href="/templates">무료 시안 만들기 <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M12 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-6"/><path d="M16 4h4v4"/><path d="m10 14 10-10"/></svg></a>
           <a className="dd-hero-button dd-hero-button-outline" href="/templates">디자인 둘러보기 <span aria-hidden="true">→</span></a>
         </div>
       </div>
