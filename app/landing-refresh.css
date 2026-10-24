@@ -1720,3 +1720,94 @@
   text-align:center!important;
  }
 }
+
+
+/* Desktop-only editorial hero: portrait Polaroid, restrained typography and CTAs.
+   Keep the approved mobile composition unchanged. */
+@media(min-width:801px){
+ .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  align-items:center!important;
+  justify-items:center!important;
+  column-gap:clamp(30px,5vw,100px)!important;
+  padding:clamp(30px,4vw,60px) max(5vw,calc((100vw - 1320px)/2))!important;
+  height:auto!important;
+  min-height:clamp(620px,calc(100svh - 100px),820px)!important;
+  overflow:hidden!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-media{
+  grid-column:1!important;grid-row:1!important;
+  position:relative!important;
+  justify-self:center!important;align-self:center!important;
+  width:min(100%,440px)!important;
+  height:auto!important;
+  aspect-ratio:4/5!important;
+  min-height:0!important;max-height:590px!important;
+  margin:0!important;
+  padding:0!important;
+  transform:rotate(7deg)!important;
+  transform-origin:center center!important;
+  border:1px solid #e9e5df!important;
+  background:#fff!important;
+  box-shadow:0 10px 24px rgba(0,0,0,.12),0 22px 45px rgba(0,0,0,.10)!important;
+  border-radius:0!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-video{
+  position:absolute!important;
+  inset:auto!important;
+  top:4%!important;left:4%!important;
+  width:92%!important;height:81%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-content{
+  grid-column:2!important;grid-row:1!important;
+  width:100%!important;max-width:560px!important;
+  height:auto!important;min-height:0!important;
+  align-self:center!important;justify-self:center!important;
+  margin:0!important;padding:20px 0!important;
+  display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:center!important;
+  text-align:center!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-eyebrow{
+  margin:0 0 22px!important;text-align:center!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-content h1{
+  font-family:"Playfair Display",Georgia,serif!important;
+  font-size:52px!important;font-weight:700!important;
+  line-height:1.01!important;letter-spacing:-.035em!important;
+  text-align:center!important;white-space:nowrap!important;
+  color:#171717!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-content h1 em{
+  font-family:"Playfair Display",Georgia,serif!important;
+  font-size:47px!important;font-weight:400!important;
+  line-height:1.01!important;letter-spacing:-.035em!important;
+  font-style:italic!important;color:#858585!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-description{
+  margin:30px 0 34px!important;
+  font-size:16px!important;line-height:1.6!important;
+  text-align:center!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-buttons{
+  width:min(100%,330px)!important;max-width:330px!important;
+  min-width:0!important;margin:0 auto!important;
+  display:flex!important;flex-direction:column!important;
+  align-items:stretch!important;gap:12px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-button{
+  box-sizing:border-box!important;
+  width:100%!important;min-width:0!important;
+  height:51px!important;min-height:51px!important;
+  padding:10px 16px!important;border-radius:9px!important;
+  font-size:15px!important;letter-spacing:0!important;
+ }
+}
+@media(min-width:801px) and (max-width:1100px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-content h1{font-size:clamp(32px,4.6vw,48px)!important}
+ .landing-v2 .dd-hero-variant-c .dd-hero-content h1 em{font-size:clamp(30px,4.2vw,43px)!important}
+ .landing-v2 .dd-hero-variant-c .dd-hero-media{width:min(100%,380px)!important}
+}
