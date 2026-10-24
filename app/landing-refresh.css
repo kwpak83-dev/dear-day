@@ -1811,3 +1811,40 @@
  .landing-v2 .dd-hero-variant-c .dd-hero-content h1 em{font-size:clamp(30px,4.2vw,43px)!important}
  .landing-v2 .dd-hero-variant-c .dd-hero-media{width:min(100%,380px)!important}
 }
+
+
+/* Desktop stationery atmosphere: use the existing real background asset,
+   while keeping the live Polaroid/video and all text clickable and crisp. */
+@media(min-width:801px){
+ .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
+  position:relative!important;
+  isolation:isolate!important;
+  background-color:#f8f4ed!important;
+  background-image:url("/landing/dearday-hero-background.png")!important;
+  background-size:100% 100%!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+ }
+ /* A soft paper-toned wash makes stretched mobile stationery artwork
+    subtler on wide monitors, matching the approved desktop mood board. */
+ .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c::before{
+  content:""!important;display:block!important;
+  position:absolute!important;inset:0!important;
+  pointer-events:none!important;z-index:0!important;
+  background:linear-gradient(90deg,rgba(250,247,242,.10) 0%,rgba(250,247,242,.20) 35%,rgba(250,247,242,.18) 70%,rgba(250,247,242,.04) 100%)!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-media,
+ .landing-v2 .dd-hero-variant-c .dd-hero-content{
+  position:relative!important;z-index:2!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-media{
+  width:min(100%,420px)!important;
+  transform:rotate(7deg)!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-content{
+  max-width:540px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-buttons{
+  width:min(100%,330px)!important;
+ }
+}
