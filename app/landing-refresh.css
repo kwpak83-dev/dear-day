@@ -387,3 +387,54 @@
  }
  .landing-v2 .dd-cinematic-hero .dd-hero-content h1{font-size:clamp(29px,8.1vw,35px)!important}
 }
+
+
+/* DearDay hero fine-tuning: airy Korean lettering, outlined secondary CTA, double down chevrons. */
+.landing-v2 .dd-cinematic-hero .dd-hero-content h1{
+  letter-spacing:.005em!important;
+}
+.landing-v2 .dd-cinematic-hero .dd-hero-description{
+  letter-spacing:.025em!important;
+}
+.landing-v2 .dd-cinematic-hero .dd-hero-button-outline{
+  border:1px solid rgba(255,255,255,.88)!important;
+  border-radius:999px!important;
+  background:rgba(0,0,0,.09)!important;
+  color:#fff!important;
+}
+.landing-v2 .dd-cinematic-hero .dd-hero-scroll .dd-scroll-chevrons{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  gap:1px!important;
+  margin-top:8px!important;
+  transform:none!important;
+}
+.landing-v2 .dd-cinematic-hero .dd-scroll-chevrons span{
+  display:block;
+  width:11px;
+  height:11px;
+  border-right:1.5px solid rgba(255,255,255,.92);
+  border-bottom:1.5px solid rgba(255,255,255,.92);
+  transform:rotate(45deg);
+}
+@media(max-width:800px){
+ .landing-v2 .dd-cinematic-hero .dd-hero-content h1{
+   letter-spacing:.012em!important;
+   line-height:1.36!important;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-description{
+   letter-spacing:.035em!important;
+   line-height:1.85!important;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-button-outline{
+   width:100%!important;
+   min-height:50px!important;
+   border:1px solid rgba(255,255,255,.9)!important;
+   border-radius:999px!important;
+   background:rgba(0,0,0,.12)!important;
+   font-size:13px!important;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-buttons{gap:10px!important}
+ .landing-v2 .dd-cinematic-hero .dd-hero-scroll{bottom:21px!important}
+}
