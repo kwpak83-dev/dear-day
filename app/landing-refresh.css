@@ -1529,3 +1529,37 @@
 @media(prefers-reduced-motion:reduce){
  .landing-v2 .dd-hero-variant-c .dd-paper-scene{animation:none!important}
 }
+
+
+/* Uploaded stationery artwork replaces CSS-generated papers and leaf shadows.
+   Background stays behind the live seaside video and interactive content. */
+.landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
+ background-color:#faf7f1!important;
+ background-image:url("/landing/dearday-hero-background.png")!important;
+ background-repeat:no-repeat!important;
+ background-position:center center!important;
+ background-size:cover!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-paper-scene{
+ display:none!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-media{
+ z-index:2!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-content{
+ z-index:2!important;
+ background:transparent!important;
+ background-image:none!important;
+}
+@media(max-width:800px){
+ .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
+  background-color:#faf7f1!important;
+  background-image:url("/landing/dearday-hero-background.png")!important;
+  background-position:center top!important;
+  background-size:100% 100%!important;
+  background-repeat:no-repeat!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-paper-scene{
+  display:none!important;
+ }
+}
