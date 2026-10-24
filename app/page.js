@@ -69,6 +69,7 @@ export default function Home() {
     </header>
 
     <section className={`landing-hero dd-cinematic-hero dd-hero-variant-${heroVariant}`} id="top">
+      <div className="dd-paper-scene" aria-hidden="true"><span className="dd-paper-sheet dd-paper-sheet-left" /><span className="dd-paper-sheet dd-paper-sheet-right" /><span className="dd-leaf-shadow dd-leaf-shadow-top" /><span className="dd-leaf-shadow dd-leaf-shadow-bottom" /></div>
       <div className="dd-hero-media">
       <video className="dd-hero-video" autoPlay muted loop playsInline preload="metadata" poster="/landing/hero-mobile.png" aria-hidden="true">
         <source src="/landing/dearday-seaside-hero.mp4" type="video/mp4" />
