@@ -243,3 +243,11 @@
  .dd-showcase-hint-part>span{font-size:11px}
  .dd-showcase-hint-divider{margin:0 1px}
 }
+
+
+/* Position preview eye at the bottom-right corner of the entire template card. */
+.dd-showcase-page .dd-showcase-poster>.dd-showcase-eye{
+ top:auto!important;
+ bottom:10px!important;
+ right:10px!important;
+}
