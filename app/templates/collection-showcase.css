@@ -275,3 +275,26 @@
  line-height:1!important;
  border-radius:4px!important;
 }
+
+
+/* Category tabs: wrap from 모임·행사 onto a second row aligned under 결혼식. */
+.dd-showcase-page .dd-showcase-categories{
+ display:grid!important;
+ grid-template-columns:repeat(4,max-content)!important;
+ justify-content:center!important;
+ align-content:start!important;
+ gap:7px 7px!important;
+ overflow-x:visible!important;
+}
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-categories{
+  justify-content:start!important;
+  padding-left:12px!important;
+  padding-right:12px!important;
+  gap:6px!important;
+ }
+ .dd-showcase-page .dd-showcase-categories button{
+  padding:7px 9px!important;
+  font-size:clamp(10px,2.7vw,12px)!important;
+ }
+}
