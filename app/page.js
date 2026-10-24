@@ -52,7 +52,7 @@ export default function Home() {
       <nav className="landing-nav"><button onClick={start}>초대장 만들기</button><a href="/templates">템플릿</a><a href="#how">이용안내</a><a href="#story">고객센터</a></nav>
       <div className="landing-actions">{user ? <><span>{providerLabel}</span><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={() => window.location.assign("/templates")}>지금, 초대장 만들기 →</button></div>
       <div className="landing-mobile-actions"><button aria-label="검색" onClick={comingSoon}>⌕</button><button className="landing-menu" aria-label="메뉴 열기" onClick={() => setMenuOpen(!menuOpen)}>☰</button></div>
-      {menuOpen && <div className="landing-mobile-nav"><button onClick={() => { setMenuOpen(false); start(); }}>초대장 만들기</button><a href="#templates" onClick={() => setMenuOpen(false)}>템플릿</a><a href="#how" onClick={() => setMenuOpen(false)}>이용안내</a><a href="#story" onClick={() => setMenuOpen(false)}>고객센터</a>{user ? <><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <button onClick={() => openLogin()}>로그인</button>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>}
+      {menuOpen && <div className="landing-mobile-nav"><button onClick={() => { setMenuOpen(false); start(); }}>초대장 만들기</button><a href="/templates" onClick={() => setMenuOpen(false)}>템플릿</a><a href="#how" onClick={() => setMenuOpen(false)}>이용안내</a><a href="#story" onClick={() => setMenuOpen(false)}>고객센터</a>{user ? <><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <button onClick={() => openLogin()}>로그인</button>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>}
     </header>
 
     <section className="landing-hero dd-cinematic-hero" id="top">
@@ -62,14 +62,14 @@ export default function Home() {
       <div className="dd-hero-shade" aria-hidden="true" />
       <div className="landing-shell dd-hero-content">
         <p className="dd-hero-eyebrow">DEARDAY · MOBILE INVITATION</p>
-        <h1>소중한 날을,<br />더 특별하게.</h1>
-        <p className="dd-hero-description">우리의 모든 특별한 순간을 위한 모바일 초대장</p>
+        <h1>특별한 날의 시작,<br />DearDay.</h1>
+        <p className="dd-hero-description">소중한 순간을 전하는 가장 아름다운 방법</p>
         <div className="dd-hero-buttons">
           <a className="dd-hero-button dd-hero-button-primary" href="/templates">무료 시안 만들기 <span aria-hidden="true">↗</span></a>
           <a className="dd-hero-button dd-hero-button-outline" href="/templates">디자인 둘러보기</a>
         </div>
       </div>
-      <span className="dd-hero-scroll" aria-hidden="true">SCROLL TO EXPLORE ↓</span>
+      <span className="dd-hero-scroll" aria-hidden="true">SCROLL DOWN ↓</span>
     </section>
     <section className="dd-intro-benefits" id="benefits">
       <div className="landing-shell">
