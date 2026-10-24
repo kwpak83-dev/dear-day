@@ -1357,3 +1357,175 @@
   margin:0 auto!important;
  }
 }
+
+
+/* DearDay paper-and-shadow HERO: decorative stationery, no flowers.
+   Existing seaside video, wording, and links remain functional. */
+.landing-v2 .dd-hero-variant-c{
+ position:relative!important;
+ isolation:isolate!important;
+ background:#faf9f6!important;
+ background-image:none!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-paper-scene{
+ position:absolute;
+ inset:0;
+ z-index:0;
+ overflow:hidden;
+ pointer-events:none;
+}
+.landing-v2 .dd-hero-variant-c .dd-paper-sheet{
+ position:absolute;
+ display:block;
+ width:38%;
+ height:58%;
+ background:#fffefa;
+ border:1px solid rgba(90,85,78,.09);
+ box-shadow:0 8px 25px rgba(43,39,33,.085);
+}
+.landing-v2 .dd-hero-variant-c .dd-paper-sheet-left{
+ top:12%;left:-12%;transform:rotate(-13deg);
+}
+.landing-v2 .dd-hero-variant-c .dd-paper-sheet-right{
+ top:20%;right:-13%;transform:rotate(11deg);
+}
+.landing-v2 .dd-hero-variant-c .dd-leaf-shadow{
+ position:absolute;
+ display:block;
+ width:180px;height:210px;
+ opacity:.19;
+ filter:blur(7px);
+ background:
+ radial-gradient(ellipse 16px 38px at 23% 15%,rgba(53,57,48,.45) 30%,transparent 75%),
+ radial-gradient(ellipse 20px 41px at 50% 32%,rgba(53,57,48,.5) 28%,transparent 75%),
+ radial-gradient(ellipse 16px 35px at 75% 49%,rgba(53,57,48,.48) 30%,transparent 75%),
+ radial-gradient(ellipse 17px 40px at 28% 65%,rgba(53,57,48,.42) 30%,transparent 75%),
+ radial-gradient(ellipse 18px 36px at 64% 84%,rgba(53,57,48,.45) 30%,transparent 75%);
+}
+.landing-v2 .dd-hero-variant-c .dd-leaf-shadow-top{
+ top:0;right:-36px;transform:rotate(31deg);
+}
+.landing-v2 .dd-hero-variant-c .dd-leaf-shadow-bottom{
+ bottom:0;left:-64px;transform:rotate(-26deg);
+ opacity:.12;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-media{
+ z-index:2!important;
+ background:#fff!important;
+ border:1px solid #e9e6e1!important;
+ box-shadow:0 4px 10px rgba(0,0,0,.09),0 16px 32px rgba(0,0,0,.15)!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-content{
+ z-index:2!important;
+ background:transparent!important;
+ background-image:none!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-eyebrow{
+ color:#96918b!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-content h1{color:#191919!important}
+.landing-v2 .dd-hero-variant-c .dd-hero-content h1 em{color:#888!important}
+.landing-v2 .dd-hero-variant-c .dd-hero-description{color:#777!important}
+.landing-v2 .dd-hero-variant-c .dd-hero-buttons{position:relative;z-index:2}
+@media(max-width:800px){
+ .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
+  background:#faf9f6!important;
+  background-image:none!important;
+  padding:30px 14px 45px!important;
+  overflow:hidden!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  gap:0!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-paper-sheet{
+  width:52%!important;height:43%!important;
+  background:#fffefa!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-paper-sheet-left{
+  top:5%!important;left:-28%!important;transform:rotate(-14deg)!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-paper-sheet-right{
+  top:11%!important;right:-31%!important;transform:rotate(13deg)!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-leaf-shadow-top{
+  top:-28px!important;right:-46px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-leaf-shadow-bottom{
+  bottom:3%!important;left:-83px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-media{
+  width:80%!important;
+  max-width:360px!important;
+  height:clamp(280px,50svh,490px)!important;
+  flex:0 0 auto!important;
+  margin:8px auto 0!important;
+  transform:rotate(-2.3deg)!important;
+  background:#fff!important;
+  border:1px solid #e8e5df!important;
+  border-radius:0!important;
+  overflow:hidden!important;
+  box-shadow:0 5px 12px rgba(0,0,0,.1),0 16px 30px rgba(0,0,0,.15)!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-video{
+  top:13px!important;left:13px!important;
+  width:calc(100% - 26px)!important;
+  height:calc(100% - 49px)!important;
+  object-fit:cover!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-content{
+  flex:0 0 auto!important;
+  width:100%!important;
+  max-width:100%!important;
+  margin:0 auto!important;
+  padding:30px 0 10px!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+  text-align:center!important;
+  align-items:center!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-content h1,
+ .landing-v2 .dd-hero-variant-c .dd-hero-content h1 em{
+  font-size:clamp(34px,10vw,47px)!important;
+  line-height:1.06!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-eyebrow{
+  margin-bottom:13px!important;
+  font-size:9px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-description{
+  margin:16px 0 24px!important;
+  font-size:12px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-buttons{
+  width:74%!important;
+  max-width:260px!important;
+  min-width:0!important;
+  gap:8px!important;
+  padding-bottom:10px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-button{
+  min-height:39px!important;
+  font-size:12px!important;
+  letter-spacing:.04em!important;
+  border-radius:24px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-button-primary{
+  background:#242424!important;
+  color:#fff!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-button-outline{
+  background:rgba(255,255,255,.78)!important;
+  color:#333!important;
+  border:1px solid #999!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .landing-v2 .dd-hero-variant-c .dd-paper-scene{animation:none!important}
+}
