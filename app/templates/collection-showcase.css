@@ -161,7 +161,7 @@
 .dd-showcase-preview-scroll{
  width:100%!important;height:100%!important;overflow-y:auto!important;overflow-x:hidden!important;
  overscroll-behavior-y:contain;scrollbar-width:thin;scrollbar-color:#d4d0c9 transparent;
- touch-action:pan-y!important;-webkit-overflow-scrolling:touch;
+ touch-action:pan-x pan-y!important;-webkit-overflow-scrolling:touch;
 }
 .dd-showcase-preview-composite{
  display:flex!important;flex-direction:column!important;
