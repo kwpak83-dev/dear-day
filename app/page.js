@@ -74,6 +74,7 @@ export default function Home() {
         <source src="/landing/dearday-seaside-hero.mp4" type="video/mp4" />
       </video>
       <div className="dd-hero-shade" aria-hidden="true" />
+      <span className="dd-polaroid-caption" aria-hidden="true">Special Day ♡</span>
       </div>
       <div className="dd-hero-preview-switch" role="group" aria-label="HERO 디자인 비교">
         <button type="button" className={heroVariant === "a" ? "active" : ""} aria-pressed={heroVariant === "a"} onClick={() => switchHero("a")}>A · Editorial</button>
@@ -82,8 +83,8 @@ export default function Home() {
       </div>
       <div className="landing-shell dd-hero-content">
         <p className="dd-hero-eyebrow">DEARDAY · MOBILE INVITATION</p>
-        {heroVariant === "a" ? <h1>Good<br />People,<br />Good Moment.</h1> : heroVariant === "b" ? <h1>Good People<br />Good Moment.</h1> : <h1>Good People,<br /><em>Good Moment.</em></h1>}
-        <p className="dd-hero-description">마음을 전하는 특별한 초대장</p>
+        {heroVariant === "a" ? <h1>Good<br />People,<br />Good Moment.</h1> : heroVariant === "b" ? <h1>Good People<br />Good Moment.</h1> : <h1>Your Day,<br /><em>Your Story.</em></h1>}
+        <p className="dd-hero-description">{heroVariant === "c" ? "당신의 날, 당신만의 이야기" : "마음을 전하는 특별한 초대장"}</p>
         <div className="dd-hero-buttons">
           <a className="dd-hero-button dd-hero-button-primary" href="/templates">무료 시안 만들기 <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M12 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-6"/><path d="M16 4h4v4"/><path d="m10 14 10-10"/></svg></a>
           <a className="dd-hero-button dd-hero-button-outline" href="/templates">디자인 둘러보기 <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></a>
