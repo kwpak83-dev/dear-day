@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Gowun+Dodum&family=Montserrat:wght@500&display=swap");
 /* DearDay landing refresh: isolated styles for cinematic homepage. */
 .landing-v2{background:#fff;color:#282624}
 .landing-v2 .landing-header{position:relative;z-index:20;background:#fff;color:#292725}
@@ -1626,4 +1627,67 @@
   transform:rotate(12.3deg)!important;
   transform-origin:center center!important;
  }
+}
+
+
+/* Approved mobile HERO typography and rhythm (Oct 24 reference). */
+@media(max-width:800px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-content{
+  padding-top:24px!important;
+  padding-bottom:12px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-eyebrow{
+  font-family:"Montserrat",sans-serif!important;
+  font-size:9px!important;
+  font-weight:500!important;
+  color:#8c8c8c!important;
+  letter-spacing:.12em!important;
+  margin:0 0 12px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-content h1{
+  font-family:"Cormorant Garamond",Georgia,serif!important;
+  font-size:35px!important;
+  font-weight:600!important;
+  line-height:.94!important;
+  letter-spacing:-.025em!important;
+  color:#171717!important;
+  margin:0!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-content h1 em{
+  font-family:"Cormorant Garamond",Georgia,serif!important;
+  font-size:37px!important;
+  font-weight:400!important;
+  font-style:italic!important;
+  line-height:.94!important;
+  letter-spacing:-.025em!important;
+  color:#777!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-description{
+  font-family:"Gowun Dodum","Malgun Gothic",sans-serif!important;
+  font-size:12px!important;
+  font-weight:400!important;
+  line-height:1.5!important;
+  letter-spacing:0!important;
+  color:#666!important;
+  margin:20px 0 20px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-buttons{
+  width:56%!important;
+  max-width:192px!important;
+  min-width:155px!important;
+  gap:8px!important;
+  padding-bottom:8px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-button{
+  height:34px!important;
+  min-height:34px!important;
+  font-family:"Gowun Dodum","Pretendard",sans-serif!important;
+  font-size:13px!important;
+  font-weight:600!important;
+  letter-spacing:0!important;
+  border-radius:6px!important;
+  padding:5px 9px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-button-primary{color:#fff!important}
+ .landing-v2 .dd-hero-variant-c .dd-hero-button-outline{color:#333!important}
 }
