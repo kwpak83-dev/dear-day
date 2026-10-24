@@ -265,3 +265,13 @@
  letter-spacing:-.025em;white-space:nowrap;
  pointer-events:none;box-shadow:0 1px 4px rgba(0,0,0,.07);
 }
+
+
+/* Refine cover/body badges: 1px smaller, softer gray, minimal height. */
+.dd-showcase-page .dd-showcase-section-label{
+ font-size:9px!important;
+ color:#777!important;
+ padding:2px 6px!important;
+ line-height:1!important;
+ border-radius:4px!important;
+}
