@@ -805,3 +805,45 @@
     font-size:10px!important;
   }
 }
+
+
+/* Approved C hero CTA refinement: larger readable type, wider buttons and eye icon. */
+.landing-v2 .dd-hero-variant-c .dd-hero-buttons{
+  width:min(100%,260px)!important;
+  max-width:260px!important;
+  gap:9px!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-button{
+  min-height:42px!important;
+  padding:10px 17px!important;
+  font-size:14px!important;
+  font-weight:600!important;
+  letter-spacing:.035em!important;
+  gap:9px!important;
+  border-radius:10px!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-button svg{
+  width:15px!important;
+  height:15px!important;
+  flex-shrink:0!important;
+}
+@media(max-width:800px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-buttons{
+   width:190px!important;
+   max-width:calc(100% - 24px)!important;
+   gap:8px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-button{
+   min-height:38px!important;
+   padding:9px 13px!important;
+   font-size:12px!important;
+   font-weight:600!important;
+   letter-spacing:.04em!important;
+   border-radius:9px!important;
+   gap:7px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-button svg{
+   width:13px!important;
+   height:13px!important;
+ }
+}
