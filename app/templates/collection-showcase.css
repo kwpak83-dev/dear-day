@@ -67,3 +67,37 @@
 .dd-showcase-preview-body-fallback span{font-size:8px;letter-spacing:.16em;color:#999}
 .dd-showcase-preview-body-fallback strong{font-family:Georgia,serif;font-size:clamp(14px,1.5vw,19px);font-weight:500;color:#35302c}
 .dd-showcase-preview-body-fallback small{font-size:10px;color:#888}
+
+
+/* Mobile compact full-viewport collection: more room for HERO + body. */
+@media(max-width:700px){
+ .dd-collection-page.dd-showcase-page{padding-bottom:12px!important;min-height:100svh}
+ .dd-showcase-intro{padding:13px 12px 10px!important}
+ .dd-showcase-kicker{font-size:8px!important;margin-bottom:6px!important}
+ .dd-showcase-intro h1{font-size:21px!important;line-height:1.22!important;margin-bottom:5px!important}
+ .dd-showcase-intro>p:last-child{font-size:10px!important}
+ .dd-showcase-categories{margin-bottom:3px!important;padding:2px 12px 7px!important}
+ .dd-showcase-categories button{padding:7px 12px!important}
+ .dd-showcase-track{padding-top:5px!important;padding-bottom:8px!important}
+ .dd-showcase-poster{
+  height:clamp(315px,calc(100svh - 260px),620px)!important;
+  aspect-ratio:auto!important;
+ }
+ .dd-showcase-preview-hero{flex:0 0 61%!important}
+ .dd-showcase-preview-body{flex:1 1 39%!important}
+ .dd-showcase-preview-hero>img,.dd-showcase-preview-body>img{
+  object-fit:contain!important;
+  background:#fff;
+ }
+ .dd-showcase-selected{padding:0 12px 8px!important}
+ .dd-showcase-counter{font-size:9px!important;margin:0 0 3px!important}
+ .dd-showcase-selected h2{font-size:11px!important;font-weight:500!important;line-height:1.2!important}
+ .dd-showcase-description,.dd-showcase-hint{display:none!important}
+ .dd-showcase-actions{margin:8px auto 0!important;gap:7px!important}
+ .dd-showcase-actions a,.dd-showcase-actions button{
+  min-width:0!important;
+  padding:9px 12px!important;
+  font-size:11px!important;
+  border-radius:7px!important;
+ }
+}
