@@ -1128,3 +1128,98 @@
   display:none!important;
  }
 }
+
+
+/* C HERO final: clean single-layer Polaroid, matching approved white/black/gray mockup.
+   The frame is ONE white rectangle; video stays inside its inset, no caption/overlays. */
+.landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
+ background:#fff!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-media{
+ position:relative!important;
+ isolation:isolate!important;
+ display:block!important;
+ background:#fff!important;
+ background-image:none!important;
+ border:0!important;
+ border-radius:0!important;
+ outline:0!important;
+ overflow:hidden!important;
+ transform:rotate(-1.1deg)!important;
+ box-shadow:0 8px 22px rgba(0,0,0,.14)!important;
+ padding:0!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-media::before,
+.landing-v2 .dd-hero-variant-c .dd-hero-media::after{content:none!important;display:none!important}
+.landing-v2 .dd-hero-variant-c .dd-hero-shade,
+.landing-v2 .dd-hero-variant-c .dd-polaroid-caption{display:none!important}
+.landing-v2 .dd-hero-variant-c .dd-hero-video{
+ position:absolute!important;
+ top:16px!important;left:16px!important;
+ right:auto!important;bottom:auto!important;
+ inset:auto!important;
+ width:calc(100% - 32px)!important;
+ height:calc(100% - 48px)!important;
+ max-width:none!important;
+ display:block!important;
+ object-fit:cover!important;
+ object-position:center!important;
+ border:0!important;
+ border-radius:0!important;
+ transform:none!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-content{
+ background:#fff!important;
+ box-shadow:none!important;
+ border:0!important;
+}
+@media(max-width:800px){
+ .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
+  display:flex!important;
+  flex-direction:column!important;
+  height:auto!important;
+  max-height:none!important;
+  min-height:0!important;
+  overflow:visible!important;
+  padding:24px 16px 38px!important;
+  gap:0!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-media{
+  flex:0 0 auto!important;
+  width:calc(100% - 18px)!important;
+  height:clamp(315px,54svh,570px)!important;
+  margin:7px auto 0!important;
+  transform:rotate(-1.1deg)!important;
+  box-shadow:0 9px 23px rgba(0,0,0,.14)!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-video{
+  top:14px!important;left:14px!important;
+  width:calc(100% - 28px)!important;
+  height:calc(100% - 43px)!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-content{
+  flex:0 0 auto!important;
+  width:100%!important;
+  height:auto!important;
+  margin:0!important;
+  padding:28px 0 8px!important;
+  background:#fff!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-eyebrow{
+  margin-bottom:12px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-content h1,
+ .landing-v2 .dd-hero-variant-c .dd-hero-content h1 em{
+  font-size:clamp(39px,11vw,50px)!important;
+  line-height:1.03!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-description{
+  margin:16px 0 25px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-buttons{
+  width:85%!important;
+  max-width:340px!important;
+  padding:0 0 4px!important;
+  gap:8px!important;
+ }
+}
