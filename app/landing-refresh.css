@@ -1862,29 +1862,46 @@
 }
 
 
-/* Mobile hero editorial accent: a single thicker grey rule aligned with
-   the left edge of the CTA column, without altering the desktop layout. */
-@media(max-width:800px){
- .landing-v2 .dd-hero-variant-c .dd-hero-content{
-  position:relative!important;
-  isolation:isolate;
- }
- .landing-v2 .dd-hero-variant-c .dd-hero-content::before{
-  content:""!important;
-  position:absolute!important;
-  display:block!important;
-  left:calc(50% - 130px)!important;
-  top:14px!important;
-  height:clamp(112px,30vw,145px)!important;
-  width:2px!important;
-  border-radius:2px!important;
-  background:#929292!important;
-  opacity:.88!important;
-  pointer-events:none!important;
- }
+
+/* Text-only editorial rule: ends at the Korean subtitle, before the CTAs. */
+@media(min-width:801px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group{display:contents!important}
 }
-@media(max-width:300px){
+@media(max-width:800px){
  .landing-v2 .dd-hero-variant-c .dd-hero-content::before{
-  left:7px!important;
+  content:none!important;display:none!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group{
+  box-sizing:border-box!important;
+  width:min(260px,100%)!important;
+  max-width:260px!important;
+  align-self:center!important;
+  position:relative!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  text-align:left!important;
+  border-left:3px solid #858585!important;
+  padding:0 0 0 12px!important;
+  margin:0 auto 12px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group .dd-hero-eyebrow,
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group h1,
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group .dd-hero-description{
+  text-align:left!important;
+  align-self:flex-start!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group .dd-hero-eyebrow{
+  margin:0 0 7px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group h1{
+  margin:0!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group .dd-hero-description{
+  margin:12px 0 0!important;
+  white-space:nowrap!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-buttons{
+  align-self:center!important;
  }
 }
