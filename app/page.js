@@ -69,7 +69,7 @@ export default function Home() {
           <a className="dd-hero-button dd-hero-button-outline" href="/templates">디자인 둘러보기 <span aria-hidden="true">→</span></a>
         </div>
       </div>
-      <span className="dd-hero-scroll" aria-hidden="true">SCROLL DOWN <span className="dd-scroll-chevrons" aria-hidden="true">⌄<br />⌄</span></span>
+      <span className="dd-hero-scroll" aria-hidden="true">SCROLL DOWN <span className="dd-scroll-chevrons"><span /><span /></span></span>
     </section>
     <section className="dd-intro-benefits" id="benefits">
       <div className="landing-shell">
