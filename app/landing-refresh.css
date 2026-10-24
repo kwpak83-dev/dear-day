@@ -184,3 +184,50 @@
  .landing-v2 .dd-cinematic-hero .dd-hero-content{width:65%!important;padding-top:clamp(85px,15svh,125px)!important}
  .landing-v2 .dd-cinematic-hero .dd-hero-content h1{font-size:30px!important}
 }
+
+
+/* Reference alignment pass: mobile vertical rhythm and typographic proportions. */
+@media(max-width:800px){
+ .landing-v2 .dd-cinematic-hero .dd-hero-content{
+   width:calc(100% - 120px)!important;
+   max-width:290px!important;
+   min-width:0!important;
+   padding-top:clamp(130px,21svh,185px)!important;
+   padding-bottom:100px!important;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-eyebrow{
+   font-size:10px!important;letter-spacing:.19em!important;
+   margin-bottom:20px!important;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-content h1{
+   font-family:Georgia,"Noto Serif KR","Nanum Myeongjo","Batang",serif!important;
+   font-size:clamp(30px,8.8vw,38px)!important;
+   font-weight:400!important;line-height:1.18!important;
+   letter-spacing:-.06em!important;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-description{
+   font-size:13px!important;line-height:1.85!important;
+   margin-top:28px!important;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-buttons{
+   margin-top:31px!important;gap:10px!important;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-button{
+   min-height:46px!important;font-size:12px!important;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-scroll{
+   bottom:43px!important;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-shade{
+   background:linear-gradient(90deg,rgba(0,0,0,.52) 0%,rgba(0,0,0,.36) 60%,rgba(0,0,0,.20) 100%)!important;
+ }
+}
+@media(max-width:370px){
+ .landing-v2 .dd-cinematic-hero .dd-hero-content{
+   width:calc(100% - 112px)!important;
+   padding-top:clamp(122px,20svh,162px)!important;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-content h1{
+   font-size:clamp(29px,8.5vw,34px)!important;
+ }
+}
