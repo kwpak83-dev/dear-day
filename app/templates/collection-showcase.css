@@ -298,3 +298,30 @@
   font-size:clamp(10px,2.7vw,12px)!important;
  }
 }
+
+
+/* Two category rows need extra vertical room: keep actions and hint visible. */
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-poster{
+  height:clamp(255px,calc(100svh - 335px),570px)!important;
+ }
+ .dd-showcase-page .dd-showcase-track{
+  padding-top:3px!important;
+  padding-bottom:4px!important;
+ }
+ .dd-showcase-page .dd-showcase-selected{
+  padding-bottom:7px!important;
+ }
+ .dd-showcase-page .dd-showcase-actions{
+  margin-top:6px!important;
+ }
+ .dd-showcase-page .dd-showcase-hint-pill{
+  margin-top:5px!important;
+  padding-top:5px!important;
+  padding-bottom:5px!important;
+ }
+ .dd-showcase-page .dd-showcase-categories{
+  margin-bottom:0!important;
+  padding-bottom:4px!important;
+ }
+}
