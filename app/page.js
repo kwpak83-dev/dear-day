@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../lib/supabase/browser";
 import { DEFAULT_AUTH_RETURN_PATH, getSafeAuthReturnPath } from "../lib/auth-return-url";
 import DearDayLogo from "../components/dearday-logo";
@@ -10,6 +10,8 @@ const steps = [["01", "▧", "템플릿 선택", "마음에 드는 디자인을 
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const heroButtonsRef = useRef(null);
+  const [showQuickButtons, setShowQuickButtons] = useState(false);
   const [heroVariant, setHeroVariant] = useState("c");
   const [authOpen, setAuthOpen] = useState(false);
   const [authMessage, setAuthMessage] = useState("");
@@ -40,6 +42,28 @@ export default function Home() {
     const variant = new URLSearchParams(window.location.search).get("hero");
     if (variant === "a" || variant === "b") setHeroVariant(variant);
   }, []);
+  useEffect(() => {
+    const buttons = heroButtonsRef.current;
+    if (!buttons) return;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const rect = buttons.getBoundingClientRect();
+      setShowQuickButtons(rect.bottom < 0);
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
   const switchHero = (variant) => {
     setHeroVariant(variant);
     const url = new URL(window.location.href);
@@ -87,13 +111,17 @@ export default function Home() {
         {heroVariant === "a" ? <h1>Good<br />People,<br />Good Moment.</h1> : heroVariant === "b" ? <h1>Good People<br />Good Moment.</h1> : <h1>Good People,<br /><em>Good Moment.</em></h1>}
         <p className="dd-hero-description">{"마음을 전하는 특별한 초대장"}</p>
         </div>
-        <div className="dd-hero-buttons">
+        <div className="dd-hero-buttons" ref={heroButtonsRef}>
           <a className="dd-hero-button dd-hero-button-primary" href="/templates">무료 시안 만들기 <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M12 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-6"/><path d="M16 4h4v4"/><path d="m10 14 10-10"/></svg></a>
           <a className="dd-hero-button dd-hero-button-outline" href="/templates">디자인 둘러보기 <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></a>
         </div>
       </div>
       <span className="dd-hero-scroll" aria-hidden="true">SCROLL DOWN <span className="dd-scroll-chevrons"><span /><span /></span></span>
     </section>
+    <nav className={`dd-floating-quick ${showQuickButtons ? "is-visible" : ""}`} aria-label="빠른 초대장 메뉴" aria-hidden={!showQuickButtons}>
+      <a href="/templates" tabIndex={showQuickButtons ? 0 : -1} className="dd-floating-quick-secondary">디자인 둘러보기 <span aria-hidden="true">◎</span></a>
+      <a href="/templates" tabIndex={showQuickButtons ? 0 : -1} className="dd-floating-quick-primary">무료 시안 만들기 <span aria-hidden="true">↗</span></a>
+    </nav>
     <section className="dd-features" id="benefits">
       <div className="landing-shell">
         <header className="dd-features-heading">
