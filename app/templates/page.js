@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import DearDayLogo from "../../components/dearday-logo";
 import "./collection-showcase.css";
+import { completedTemplateCategoryToEventKind } from "../../lib/completed-template-sample";
 
 const categories=[["wedding","결혼식"],["first-birthday","돌잔치"],["birthday","생일"],["milestone_birthday","환갑·칠순·팔순"],["gathering","모임·행사"],["opening","개업·오픈"],["","전체"]];
 export default function TemplateCollectionPage(){
@@ -73,6 +74,7 @@ export default function TemplateCollectionPage(){
  };
  const pointerUp=()=>{dragRef.current=null;};
  const preventDragClick=e=>{if(dragRef.current?.moved)e.preventDefault();};
+ const makeSelected=()=>{const item=items[active];if(!item)return;window.localStorage.setItem("dear-day-template-start",JSON.stringify({completedTemplateId:item.id,templateKey:item.template_key,eventKind:completedTemplateCategoryToEventKind(item.category),heroPresetId:item.hero_preset_id,templateId:item.body_template_id}));window.location.assign("/create?template="+encodeURIComponent(item.template_key));};
  const selected=items[active];
  const previewUrl=selected?`/templates/${encodeURIComponent(selected.template_key)}`:"/templates";
  return <main className="dd-collection-page dd-showcase-page">
@@ -96,7 +98,7 @@ export default function TemplateCollectionPage(){
     <p className="dd-showcase-counter">{active+1} / {items.length}</p>
     <h2>{selected?.name}</h2>
     {selected?.description&&<p className="dd-showcase-description">{selected.description}</p>}
-    <div className="dd-showcase-actions"><a href={previewUrl} className="dd-showcase-secondary">샘플 보기 <span aria-hidden="true">◎</span></a><a href={previewUrl} className="dd-showcase-primary">이 디자인으로 만들기 <span aria-hidden="true">↗</span></a></div>
+    <div className="dd-showcase-actions"><a href={previewUrl} className="dd-showcase-secondary">샘플 보기 <span aria-hidden="true">◎</span></a><button type="button" onClick={makeSelected} className="dd-showcase-primary">이 디자인으로 만들기 <span aria-hidden="true">↗</span></button></div>
     <p className="dd-showcase-hint">디자인을 좌우로 넘겨보세요</p>
    </div>
   </>}
