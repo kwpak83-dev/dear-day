@@ -218,3 +218,28 @@
  }
  .dd-showcase-page .dd-showcase-actions{margin-top:9px!important}
 }
+
+
+/* Compact single-line guidance pill under template actions. */
+.dd-showcase-page .dd-showcase-hint-pill{
+ display:flex!important;align-items:center;justify-content:center;
+ gap:5px;max-width:max-content;width:fit-content;
+ margin:11px auto 0!important;padding:8px 11px;
+ border-radius:999px;background:#efedeb;color:#555;
+ font-size:10px;line-height:1.2;letter-spacing:-.035em;
+ white-space:nowrap;flex-wrap:nowrap;
+}
+.dd-showcase-hint-part{display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+.dd-showcase-hint-part>span{font-size:12px;color:#666;line-height:1}
+.dd-showcase-hint-divider{color:#b0aca7;margin:0 2px}
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-hint-pill{
+  display:flex!important;font-size:clamp(8px,2.5vw,10px)!important;
+  letter-spacing:-.06em!important;gap:3px!important;
+  padding:7px 8px!important;margin:9px auto 0!important;
+  max-width:calc(100vw - 24px)!important;
+ }
+ .dd-showcase-hint-part{gap:2px}
+ .dd-showcase-hint-part>span{font-size:11px}
+ .dd-showcase-hint-divider{margin:0 1px}
+}
