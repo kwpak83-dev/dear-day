@@ -1,17 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "../lib/supabase/browser";
 import { DEFAULT_AUTH_RETURN_PATH, getSafeAuthReturnPath } from "../lib/auth-return-url";
 import DearDayLogo from "../components/dearday-logo";
+import "./landing-refresh.css";
 
-const invitationTypes = [["Wedding", "결혼식", "꽃다발", "wedding"], ["1st Birthday", "돌잔치", "첫돌", "first"], ["Birthday", "생일", "케이크", "birthday"], ["Gathering", "모임 / 동창회", "건배", "gathering"], ["Party", "파티", "파티", "party"], ["Custom", "직접 만들기", "✉", "custom"]];
 const steps = [["01", "▧", "템플릿 선택", "마음에 드는 디자인을 골라주세요."], ["02", "✎", "내용 입력", "날짜, 장소, 사진 등 간단히 입력하세요."], ["03", "➤", "완성하고 공유", "카카오톡, 링크로 바로 공유하세요."]];
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [featuredTemplates, setFeaturedTemplates] = useState([]);
-  const featuredTrackRef = useRef(null);
   const [authOpen, setAuthOpen] = useState(false);
   const [authMessage, setAuthMessage] = useState("");
   const [authLoading, setAuthLoading] = useState("");
@@ -19,10 +17,6 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
   const [authReturnPath, setAuthReturnPath] = useState(DEFAULT_AUTH_RETURN_PATH);
-
-  useEffect(() => {
-    fetch("/api/templates/collection?featured=1").then(r => r.ok ? r.json() : { items: [] }).then(j => setFeaturedTemplates(j.items || [])).catch(() => setFeaturedTemplates([]));
-  }, []);
 
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();
@@ -55,52 +49,45 @@ export default function Home() {
   return <main className="landing-v2">
     <header className="landing-header">
       <a className="landing-brand" href="#top" aria-label="DearDay 홈"><DearDayLogo /></a>
-      <nav className="landing-nav"><button onClick={start}>초대장 만들기</button><a href="#templates">템플릿</a><a href="#how">이용안내</a><a href="#story">고객센터</a></nav>
+      <nav className="landing-nav"><button onClick={start}>초대장 만들기</button><a href="/templates">템플릿</a><a href="#how">이용안내</a><a href="#story">고객센터</a></nav>
       <div className="landing-actions">{user ? <><span>{providerLabel}</span><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={() => window.location.assign("/templates")}>지금, 초대장 만들기 →</button></div>
       <div className="landing-mobile-actions"><button aria-label="검색" onClick={comingSoon}>⌕</button><button className="landing-menu" aria-label="메뉴 열기" onClick={() => setMenuOpen(!menuOpen)}>☰</button></div>
       {menuOpen && <div className="landing-mobile-nav"><button onClick={() => { setMenuOpen(false); start(); }}>초대장 만들기</button><a href="#templates" onClick={() => setMenuOpen(false)}>템플릿</a><a href="#how" onClick={() => setMenuOpen(false)}>이용안내</a><a href="#story" onClick={() => setMenuOpen(false)}>고객센터</a>{user ? <><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <button onClick={() => openLogin()}>로그인</button>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>}
     </header>
 
-    <section className="landing-hero" id="top">
-      <div className="landing-shell landing-hero-layout">
-        <div className="hero-copy-v2">
-          <p className="hero-handwriting">Good People<br />Good Moment</p>
-          <h1>특별한 날을<br />쉽고, 멋지게</h1>
-          <span>누구나 쉽게 만드는<br />모바일 초대장 DearDay</span>
-          <button className="landing-primary" onClick={() => window.location.assign("/templates")}>지금, 초대장 만들기 <b>→</b></button>
+    <section className="landing-hero dd-cinematic-hero" id="top">
+      <video className="dd-hero-video" autoPlay muted loop playsInline preload="metadata" poster="/landing/hero-mobile.png" aria-hidden="true">
+        <source src="/landing/dearday-seaside-hero.mp4" type="video/mp4" />
+      </video>
+      <div className="dd-hero-shade" aria-hidden="true" />
+      <div className="landing-shell dd-hero-content">
+        <p className="dd-hero-eyebrow">DEARDAY · MOBILE INVITATION</p>
+        <h1>소중한 날을,<br />더 특별하게.</h1>
+        <p className="dd-hero-description">우리의 모든 특별한 순간을 위한 모바일 초대장</p>
+        <div className="dd-hero-buttons">
+          <a className="dd-hero-button dd-hero-button-primary" href="/templates">무료 시안 만들기 <span aria-hidden="true">↗</span></a>
+          <a className="dd-hero-button dd-hero-button-outline" href="/templates">디자인 둘러보기</a>
         </div>
-        <div className="landing-hero-art" aria-hidden="true">
-          <img className="landing-hero-phone-image" src="/landing/hero-phone.png" alt="" />
-          <img className="landing-hero-mobile-image" src="/landing/hero-mobile.png" alt="" />
-        </div>
-        <div className="landing-hero-benefits">
-          <div><span className="dd-benefit-emoji" aria-hidden="true">📝</span><strong>쉽고 빠른 제작</strong><small>최소 입력으로 완성</small></div>
-          <div className="landing-benefit-program"><span className="dd-benefit-emoji" aria-hidden="true">📋</span><strong>초대장에<br />식순·일정까지</strong><small>행사 순서까지 간단히 안내</small></div>
-          <div><span className="dd-benefit-emoji" aria-hidden="true">✏️</span><strong>발행 후에도 수정</strong><small>실수해도 언제든 변경</small></div>
-          <div><span className="dd-benefit-emoji" aria-hidden="true">👥</span><strong>참석·방명록 관리</strong><small>응답 현황 실시간 확인</small></div>
+      </div>
+      <span className="dd-hero-scroll" aria-hidden="true">SCROLL TO EXPLORE ↓</span>
+    </section>
+    <section className="dd-intro-benefits" id="benefits">
+      <div className="landing-shell">
+        <p className="dd-section-eyebrow">MADE FOR YOUR MOMENTS</p>
+        <h2>초대의 시작부터 행사 당일까지,<br />디어데이 하나로.</h2>
+        <div className="dd-intro-grid">
+          <article><span>01</span><h3>무료 시안 먼저</h3><p>결제 전에 원하는 초대장을 직접 만들고 미리 확인하세요.</p></article>
+          <article><span>02</span><h3>발행 후에도 수정</h3><p>행사 시작 전까지 사진과 문구, 디자인을 자유롭게 바꿀 수 있어요.</p></article>
+          <article><span>03</span><h3>참석과 방명록 관리</h3><p>참석 응답과 축하 메시지를 한곳에서 확인하세요.</p></article>
         </div>
       </div>
     </section>
-    <section className="moment-section dd-category-section" id="templates"><div className="landing-shell"><div className="dd-category-heading"><h2>어떤 초대장을 만드시나요?</h2><button onClick={start}>전체보기 →</button></div><div className="dd-category-grid"><button className="dd-category-card dd-category-1" key="0" onClick={() => window.location.assign("/templates?category=wedding")}><span className="dd-category-art"><img src="/landing/categories/category-wedding.png" alt="" loading="lazy" /></span><span className="dd-category-label"><strong>결혼식</strong><i aria-hidden="true">›</i></span></button><button className="dd-category-card dd-category-2" key="1" onClick={() => window.location.assign("/templates?category=first-birthday")}><span className="dd-category-art"><img src="/landing/categories/category-first-birthday.png" alt="" loading="lazy" /></span><span className="dd-category-label"><strong>돌잔치</strong><i aria-hidden="true">›</i></span></button><button className="dd-category-card dd-category-3" key="2" onClick={() => window.location.assign("/templates?category=birthday")}><span className="dd-category-art"><img src="/landing/categories/category-birthday.png" alt="" loading="lazy" /></span><span className="dd-category-label"><strong>생일</strong><i aria-hidden="true">›</i></span></button><button className="dd-category-card dd-category-4" key="3" onClick={() => window.location.assign("/templates?category=milestone_birthday")}><span className="dd-category-art"><img src="/event-categories/milestone-birthday.png" alt="" loading="lazy" /></span><span className="dd-category-label"><strong>환갑·칠순·팔순</strong><i aria-hidden="true">›</i></span></button><button className="dd-category-card dd-category-5" key="4" onClick={() => window.location.assign("/templates?category=gathering")}><span className="dd-category-art"><img src="/landing/categories/category-gathering.png" alt="" loading="lazy" /></span><span className="dd-category-label"><strong>모임·행사</strong><i aria-hidden="true">›</i></span></button><button className="dd-category-card dd-category-6" key="5" onClick={() => window.location.assign("/templates?category=opening")}><span className="dd-category-art"><img src="/event-categories/opening.png" alt="" loading="lazy" /></span><span className="dd-category-label"><strong>개업·오픈</strong><i aria-hidden="true">›</i></span></button></div></div></section>
-    <section className="dd-home03" aria-label="DearDay 서비스 소개 및 인기 템플릿">
-      <div className="landing-shell">
-        <div className="dd-home03-features">
-          <div className="dd-home03-feature"><span className="dd-home03-emoji" aria-hidden="true">💗</span><div><strong>정말 쉬운 초대장 제작</strong><small>복잡한 설정 없이 필요한 정보만 입력하면 멋진 초대장이 완성돼요.</small></div></div>
-          <div className="dd-home03-feature"><span className="dd-home03-emoji" aria-hidden="true">📅</span><div><strong>별도의 식순지·행사 안내문 없이</strong><small>결혼식부터 돌잔치, 생일, 각종 행사까지 진행 순서를 모바일 초대장 하나로 간편하게 안내하세요.</small></div></div>
-          <div className="dd-home03-feature"><span className="dd-home03-emoji" aria-hidden="true">👥</span><div><strong>참석여부·방명록 한눈에</strong><small>참석 응답과 방명록 현황을 실시간으로 확인하고 관리할 수 있어요.</small></div></div>
-          <div className="dd-home03-feature"><span className="dd-home03-emoji" aria-hidden="true">⚙️</span><div><strong>발행 후에도 자유롭게 수정</strong><small>날짜·장소·사진도 발행 후 언제든 수정할 수 있어요.</small></div></div>
-          <div className="dd-home03-feature"><span className="dd-home03-emoji" aria-hidden="true">🔄</span><div><strong>가격 고민 없이, 디자인은 마음껏</strong><small>모든 템플릿은 하나의 가격. 발행 전·후 언제든 마음에 드는 디자인으로 자유롭게 변경하세요.</small></div></div>
-        </div>
-        <div className="dd-home03-heading"><h2>인기 템플릿 미리보기</h2><button type="button" onClick={start}>전체보기 →</button></div>
-        <div className="dd-home03-carousel">
-          <button className="dd-home03-arrow" type="button" aria-label="이전 템플릿" onClick={() => featuredTrackRef.current?.scrollBy({left:-320,behavior:"smooth"})}>‹</button>
-          <div className="dd-home03-track" ref={featuredTrackRef}>
-            {featuredTemplates.map(template => <button type="button" className="dd-home03-template" key={template.id} onClick={() => window.location.assign(`/templates/${encodeURIComponent(template.template_key)}`)}>
-              <span className="dd-home03-template-images">{[template.thumbnail_1_url,template.thumbnail_2_url].map((src,i)=>src?<img key={i} src={src} alt={`${template.name} 대표 이미지 ${i+1}`} loading="lazy" />:<span key={i} className="dd-home03-template-placeholder">IMAGE {i+1}</span>)}</span>
-              <strong>{template.name}</strong>
-            </button>)}
-          </div>
-          <button className="dd-home03-arrow" type="button" aria-label="다음 템플릿" onClick={() => featuredTrackRef.current?.scrollBy({left:320,behavior:"smooth"})}>›</button>
+    <section className="dd-program-highlight">
+      <div className="landing-shell dd-program-layout">
+        <div><p className="dd-section-eyebrow">MORE THAN AN INVITATION</p><h2>초대장을 넘어,<br />행사 안내까지.</h2><p>결혼식, 돌잔치, 생일, 모임과 개업까지.<br />식순과 행사 순서를 초대장에 함께 담아보세요.</p><a href="/templates" className="dd-text-link">디자인 둘러보기 ↗</a></div>
+        <div className="dd-program-preview" aria-label="행사 순서 예시">
+          <p>THE ORDER OF THE DAY</p><h3>우리의 특별한 하루</h3>
+          <ol><li><span>01</span>손님 맞이</li><li><span>02</span>행사 시작</li><li><span>03</span>축하와 인사</li><li><span>04</span>기념 촬영</li></ol>
         </div>
       </div>
     </section>
