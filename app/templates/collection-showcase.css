@@ -54,3 +54,16 @@
 @media(prefers-reduced-motion:reduce){.dd-showcase-slide{transition:none}.dd-showcase-track{scroll-behavior:auto}}
 
 .dd-showcase-actions button{cursor:pointer;font-family:inherit}
+
+
+/* Showcase complete invitation mood: top HERO 65%, lower body preview 35%. */
+.dd-showcase-preview-composite{width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;background:#fff}
+.dd-showcase-preview-hero{position:relative;flex:0 0 65%;min-height:0;overflow:hidden;background:#f3f0ec}
+.dd-showcase-preview-body{position:relative;flex:1 1 35%;min-height:0;overflow:hidden;background:#fff}
+.dd-showcase-preview-hero>img,.dd-showcase-preview-body>img{display:block;width:100%;height:100%;object-fit:cover;object-position:center top;pointer-events:none}
+.dd-showcase-preview-body>img{object-position:center top}
+.dd-showcase-preview-body:before{content:"";position:absolute;z-index:1;left:0;right:0;top:0;height:1px;background:rgba(30,30,30,.06)}
+.dd-showcase-preview-body-fallback{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:9px;padding:12px 10px;background:#fdfbf8;text-align:center;color:#555}
+.dd-showcase-preview-body-fallback span{font-size:8px;letter-spacing:.16em;color:#999}
+.dd-showcase-preview-body-fallback strong{font-family:Georgia,serif;font-size:clamp(14px,1.5vw,19px);font-weight:500;color:#35302c}
+.dd-showcase-preview-body-fallback small{font-size:10px;color:#888}
