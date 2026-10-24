@@ -760,3 +760,48 @@
     line-height:1.12!important;
   }
 }
+
+
+/* Reference-inspired compact CTA: charcoal + soft white, clean Korean UI lettering. */
+.landing-v2 .dd-hero-variant-c .dd-hero-button{
+  font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif!important;
+  font-weight:600!important;
+  letter-spacing:-.035em!important;
+  text-decoration:none!important;
+  border-radius:8px!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-button-primary{
+  background:#373737!important;
+  border:1px solid #373737!important;
+  color:#FFFFFF!important;
+  box-shadow:0 3px 8px rgba(0,0,0,.14)!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-button-outline{
+  background:#FFFFFF!important;
+  border:1px solid #EAEAEA!important;
+  color:#252525!important;
+  box-shadow:0 2px 7px rgba(0,0,0,.09)!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-button span{
+  font-family:Arial,sans-serif!important;
+  font-weight:500!important;
+}
+@media(max-width:800px){
+  .landing-v2 .dd-hero-variant-c .dd-hero-buttons{
+    width:125px!important;
+    max-width:125px!important;
+    gap:5px!important;
+  }
+  .landing-v2 .dd-hero-variant-c .dd-hero-button{
+    min-height:29px!important;
+    padding:6px 8px!important;
+    font-size:10px!important;
+    line-height:1.2!important;
+    font-weight:600!important;
+    border-radius:7px!important;
+    white-space:nowrap!important;
+  }
+  .landing-v2 .dd-hero-variant-c .dd-hero-button span{
+    font-size:10px!important;
+  }
+}
