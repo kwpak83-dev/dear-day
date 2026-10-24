@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Gowun+Dodum&family=Montserrat:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Gowun+Dodum&family=Montserrat:wght@500&display=swap");
 /* DearDay landing refresh: isolated styles for cinematic homepage. */
 .landing-v2{background:#fff;color:#282624}
 .landing-v2 .landing-header{position:relative;z-index:20;background:#fff;color:#292725}
@@ -1690,4 +1690,33 @@
  }
  .landing-v2 .dd-hero-variant-c .dd-hero-button-primary{color:#fff!important}
  .landing-v2 .dd-hero-variant-c .dd-hero-button-outline{color:#333!important}
+}
+
+/* Oct 24 approved typography: Playfair Display 30/26, compact two-line rhythm. */
+@media(max-width:800px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-content h1{
+  font-family:"Playfair Display",Georgia,serif!important;
+  font-size:30px!important;
+  font-weight:700!important;
+  font-style:normal!important;
+  line-height:1.02!important;
+  letter-spacing:-.035em!important;
+  color:#171717!important;
+  text-align:center!important;
+  margin:0!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-content h1 em{
+  font-family:"Playfair Display",Georgia,serif!important;
+  display:inline-block!important;
+  font-size:26px!important;
+  font-weight:400!important;
+  font-style:italic!important;
+  line-height:1.02!important;
+  letter-spacing:-.035em!important;
+  color:#858585!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-description{
+  margin-top:18px!important;
+  text-align:center!important;
+ }
 }
