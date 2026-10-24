@@ -1924,3 +1924,11 @@
   margin-top:0!important;
  }
 }
+
+
+/* Mobile: add space below the Polaroid before the editorial copy block. */
+@media(max-width:800px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group{
+  margin-top:18px!important;
+ }
+}
