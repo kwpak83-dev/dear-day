@@ -1932,3 +1932,52 @@
   margin-top:18px!important;
  }
 }
+
+
+/* DearDay feature storytelling: reusable video-ready editorial sections. */
+.landing-v2 .dd-features{background:#fff;color:#242424;padding:96px 0 100px}
+.landing-v2 .dd-features .landing-shell{max-width:1180px;margin:0 auto;padding:0 30px}
+.landing-v2 .dd-features-heading{text-align:center;margin:0 auto 78px;max-width:720px}
+.landing-v2 .dd-features-heading .dd-section-eyebrow{font-size:11px;letter-spacing:.22em;color:#888}
+.landing-v2 .dd-features-heading h2{font-family:inherit;font-size:clamp(30px,3.4vw,46px);font-weight:600;line-height:1.4;letter-spacing:-.05em;margin:18px 0}
+.landing-v2 .dd-features-heading>p:last-child{font-size:15px;line-height:1.8;color:#777;word-break:keep-all}
+.landing-v2 .dd-feature{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:center;gap:clamp(40px,7vw,110px);margin:0 0 105px}
+.landing-v2 .dd-feature:nth-of-type(even) .dd-feature-visual{order:2}
+.landing-v2 .dd-feature:nth-of-type(even) .dd-feature-copy{order:1}
+.landing-v2 .dd-feature-visual{background:#f6f4f1;border-radius:20px;min-height:450px;display:flex;align-items:center;justify-content:center;padding:36px;overflow:hidden}
+.landing-v2 .dd-feature-demo{width:min(100%,265px);min-height:395px;border:1px solid #e7e2da;border-radius:14px;background:#fff;box-shadow:0 15px 38px rgba(45,37,28,.11);display:flex;flex-direction:column;overflow:hidden}
+.landing-v2 .dd-feature-demo-top{display:flex;justify-content:space-between;padding:15px 20px;border-bottom:1px solid #eee9e2;font-family:Georgia,serif;font-size:18px}
+.landing-v2 .dd-feature-demo-content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:22px 20px;text-align:center;gap:20px}
+.landing-v2 .dd-feature-demo-kicker{font-size:9px;letter-spacing:.2em;color:#98938d}
+.landing-v2 .dd-feature-demo-paper{background:#f5efe9;min-height:225px;width:100%;padding:28px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;border:1px solid #eee4d9}
+.landing-v2 .dd-feature-demo-paper>span{font-size:10px;letter-spacing:.14em;color:#92877b}
+.landing-v2 .dd-feature-demo-paper strong{font-family:Georgia,serif;font-size:25px;font-weight:400;line-height:1.35;color:#51473e}
+.landing-v2 .dd-feature-demo-paper i{height:1px;width:55px;background:#b6a99b}
+.landing-v2 .dd-feature-demo-paper small{font-size:8px;letter-spacing:.1em;color:#a99c8e}
+.landing-v2 .dd-feature-demo-bottom{padding:13px 10px;text-align:center;font-size:10px;color:#999;border-top:1px solid #eee9e2}
+.landing-v2 .dd-feature-program{display:flex;flex-direction:column;gap:12px;width:100%;background:#f9f7f4;padding:25px 18px;text-align:left;font-size:12px;color:#6e655e}
+.landing-v2 .dd-feature-program strong{font-size:17px;color:#292929;margin-bottom:6px}
+.landing-v2 .dd-feature-occasion-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%}
+.landing-v2 .dd-feature-occasion-grid span{padding:17px 5px;background:#f5f1ec;border-radius:8px;font-size:11px}
+.landing-v2 .dd-feature-copy{max-width:460px}
+.landing-v2 .dd-feature-number{font-size:16px;color:#a89c91;font-family:Georgia,serif}
+.landing-v2 .dd-feature-number span{font-size:11px;color:#c5bdb5}
+.landing-v2 .dd-feature-eyebrow{font-size:11px;color:#aaa;letter-spacing:.16em;margin:25px 0 13px}
+.landing-v2 .dd-feature-copy h3{font-size:clamp(25px,2.7vw,37px);line-height:1.4;letter-spacing:-.05em;font-weight:600;word-break:keep-all;margin:0 0 20px}
+.landing-v2 .dd-feature-copy>p:last-child{font-size:16px;line-height:1.9;color:#777;word-break:keep-all;margin:0}
+@media(max-width:800px){
+ .landing-v2 .dd-features{padding:62px 0 76px}
+ .landing-v2 .dd-features .landing-shell{padding:0 22px}
+ .landing-v2 .dd-features-heading{margin-bottom:42px}
+ .landing-v2 .dd-features-heading h2{font-size:29px;margin:13px 0}
+ .landing-v2 .dd-features-heading>p:last-child{font-size:13px}
+ .landing-v2 .dd-feature{display:flex;flex-direction:column;align-items:stretch;gap:25px;margin-bottom:65px}
+ .landing-v2 .dd-feature:nth-of-type(even) .dd-feature-visual,.landing-v2 .dd-feature:nth-of-type(even) .dd-feature-copy{order:initial}
+ .landing-v2 .dd-feature-visual{min-height:340px;padding:24px 16px;border-radius:14px}
+ .landing-v2 .dd-feature-demo{width:min(100%,235px);min-height:330px}
+ .landing-v2 .dd-feature-demo-paper{min-height:175px}
+ .landing-v2 .dd-feature-copy{max-width:none}
+ .landing-v2 .dd-feature-eyebrow{margin:13px 0 8px;font-size:10px}
+ .landing-v2 .dd-feature-copy h3{font-size:23px;margin:0 0 12px}
+ .landing-v2 .dd-feature-copy>p:last-child{font-size:14px;line-height:1.85}
+}
