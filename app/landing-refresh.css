@@ -128,3 +128,59 @@
  .landing-v2 .dd-cinematic-hero .dd-hero-content{padding-top:clamp(125px,21svh,190px)!important}
  .landing-v2 .dd-cinematic-hero .dd-hero-content h1{font-size:29px!important}
 }
+
+
+/* Reference-inspired mobile layout: narrow editorial column and stacked CTAs. */
+@media(max-width:800px){
+ .landing-v2 .landing-header{height:56px!important;min-height:56px!important;display:flex!important;align-items:center!important;justify-content:center!important;position:relative!important;padding:0 12px!important}
+ .landing-v2 .landing-header .landing-brand{position:absolute!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;margin:0!important;display:flex!important;align-items:center!important;justify-content:center!important;max-width:160px!important}
+ .landing-v2 .landing-header .landing-mobile-actions{position:absolute!important;left:12px!important;top:50%!important;transform:translateY(-50%)!important;display:flex!important;align-items:center!important}
+ .landing-v2 .landing-header .landing-mobile-actions button[aria-label="검색"]{display:none!important}
+ .landing-v2 .landing-header .landing-menu{font-size:0!important;width:28px!important;height:28px!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;border:0!important;background:transparent!important}
+ .landing-v2 .landing-header .landing-menu::after{content:"☰";font-family:Arial,sans-serif;font-size:25px;font-weight:300;line-height:1;color:#222}
+ .landing-v2 .landing-hero.dd-cinematic-hero{height:calc(100svh - 56px)!important;min-height:530px!important;max-height:none!important}
+ .landing-v2 .dd-cinematic-hero .dd-hero-content{
+  width:64%!important;max-width:290px!important;margin:0 auto!important;
+  height:100%!important;min-height:0!important;align-self:stretch!important;
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  padding:clamp(90px,16svh,145px) 0 98px!important;box-sizing:border-box!important;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-eyebrow{
+  font-family:Arial,sans-serif!important;font-size:10px!important;letter-spacing:.21em!important;
+  font-weight:400!important;margin:0 0 16px!important;white-space:nowrap;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-content h1{
+  font-family:Georgia,"Noto Serif KR","Nanum Myeongjo","Batang",serif!important;
+  font-size:clamp(29px,8.3vw,36px)!important;font-weight:400!important;
+  line-height:1.15!important;letter-spacing:-.055em!important;margin:0!important;
+  word-break:keep-all!important;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-description{
+  font-family:"Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif!important;
+  font-size:13px!important;font-weight:400!important;line-height:1.8!important;
+  letter-spacing:-.025em!important;margin:26px 0 0!important;max-width:100%!important;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-buttons{
+  display:flex!important;flex-direction:column!important;gap:9px!important;
+  width:100%!important;margin-top:26px!important;padding:0!important;flex-shrink:0!important;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-button{
+  display:flex!important;flex:none!important;width:100%!important;min-width:0!important;
+  min-height:45px!important;padding:11px 16px!important;border-radius:999px!important;
+  font-size:12px!important;font-weight:400!important;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-button-primary{color:#35302c!important}
+ .landing-v2 .dd-cinematic-hero .dd-hero-button-outline{background:rgba(0,0,0,.08)!important;border:1px solid rgba(255,255,255,.75)!important}
+ .landing-v2 .dd-cinematic-hero .dd-hero-scroll{
+  left:50%!important;bottom:54px!important;transform:translateX(-50%)!important;
+  font-size:10px!important;font-weight:400!important;letter-spacing:.09em!important;
+  text-align:center!important;white-space:nowrap!important;
+ }
+ .landing-v2 .dd-cinematic-hero .dd-hero-shade{
+  background:linear-gradient(90deg,rgba(0,0,0,.43),rgba(0,0,0,.29))!important;
+ }
+}
+@media(max-width:370px){
+ .landing-v2 .dd-cinematic-hero .dd-hero-content{width:65%!important;padding-top:clamp(85px,15svh,125px)!important}
+ .landing-v2 .dd-cinematic-hero .dd-hero-content h1{font-size:30px!important}
+}
