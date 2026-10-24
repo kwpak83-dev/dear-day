@@ -1040,3 +1040,91 @@
   bottom:12px!important;
  }
 }
+
+
+/* Refined Polaroid C HERO — align proportions with approved visual mockup. */
+.landing-v2 .dd-hero-variant-c .dd-polaroid-caption{display:none!important}
+.landing-v2 .dd-hero-variant-c .dd-hero-media{
+ padding:20px 20px 35px!important;
+ box-shadow:0 12px 30px rgba(0,0,0,.15)!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-video{
+ inset:20px 20px 35px!important;
+ width:calc(100% - 40px)!important;
+ height:calc(100% - 55px)!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-content h1,
+.landing-v2 .dd-hero-variant-c .dd-hero-content h1 em{
+ font-weight:400!important;
+ line-height:1.03!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-button{
+ font-size:15px!important;
+ min-height:51px!important;
+}
+@media(max-width:800px){
+ .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
+  background:#fff!important;
+  padding:24px 14px 44px!important;
+  gap:0!important;
+  overflow:visible!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-media{
+  width:calc(100% - 14px)!important;
+  height:clamp(320px,54svh,570px)!important;
+  margin:8px auto 0!important;
+  padding:15px 15px 25px!important;
+  transform:rotate(-1.2deg)!important;
+  box-shadow:0 11px 25px rgba(0,0,0,.16)!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-video{
+  inset:15px 15px 25px!important;
+  width:calc(100% - 30px)!important;
+  height:calc(100% - 40px)!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-content{
+  width:100%!important;
+  padding:27px 0 0!important;
+  background:#fff!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-eyebrow{
+  margin:0 0 13px!important;
+  color:#888!important;
+  font-size:10px!important;
+  letter-spacing:2px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-content h1,
+ .landing-v2 .dd-hero-variant-c .dd-hero-content h1 em{
+  font-size:clamp(40px,11.5vw,52px)!important;
+  line-height:1.02!important;
+  letter-spacing:-.06em!important;
+  font-weight:400!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-description{
+  margin:15px 0 25px!important;
+  font-size:13px!important;
+  color:#777!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-buttons{
+  width:85%!important;
+  max-width:340px!important;
+  gap:7px!important;
+  padding-bottom:4px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-button{
+  min-height:47px!important;
+  font-size:14px!important;
+  font-weight:650!important;
+  letter-spacing:.12em!important;
+  padding:11px 12px!important;
+  border-radius:8px!important;
+  justify-content:center!important;
+  box-sizing:border-box!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-button-outline{
+  border:1.5px solid #444!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-scroll{
+  display:none!important;
+ }
+}
