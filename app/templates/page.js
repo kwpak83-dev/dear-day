@@ -79,7 +79,7 @@ export default function TemplateCollectionPage(){
  const previewUrl=selected?`/templates/${encodeURIComponent(selected.template_key)}`:"/templates";
  return <main className="dd-collection-page dd-showcase-page">
   <header className="dd-showcase-header"><a href="/" aria-label="DearDay 메인으로" className="dd-showcase-brand"><DearDayLogo /></a><a href="/" className="dd-showcase-home">홈으로 ↗</a></header>
-  <section className="dd-showcase-intro"><p className="dd-showcase-kicker">DEARDAY · TEMPLATE COLLECTION</p><h1>당신의 순간에 어울리는 디자인</h1><p>마음에 드는 초대장을 골라, 나만의 이야기로 완성해 보세요.</p></section>
+  <section className="dd-showcase-intro"><h1 className="dd-showcase-kicker">DEARDAY · TEMPLATE COLLECTION</h1></section>
   <nav className="dd-showcase-categories" aria-label="초대장 유형">{categories.map(([v,n])=><button type="button" key={v} className={category===v?"active":""} aria-pressed={category===v} onClick={()=>selectCategory(v)}>{n}</button>)}</nav>
   {loading?<div className="dd-showcase-message" role="status">디자인을 불러오는 중이에요.</div>:items.length===0?<div className="dd-showcase-message"><strong>현재 공개된 템플릿이 없어요.</strong><p>다른 카테고리를 선택해 보세요.</p><button onClick={()=>selectCategory("")}>전체 템플릿 보기</button></div>:<>
    <div className="dd-showcase-stage">
@@ -102,7 +102,6 @@ export default function TemplateCollectionPage(){
    <div className="dd-showcase-selected" aria-live="polite">
     <p className="dd-showcase-counter">{active+1} / {items.length}</p>
     <h2>{selected?.name}</h2>
-    {selected?.description&&<p className="dd-showcase-description">{selected.description}</p>}
     <div className="dd-showcase-actions"><a href={previewUrl} className="dd-showcase-secondary">샘플 보기 <span aria-hidden="true">◎</span></a><button type="button" onClick={makeSelected} className="dd-showcase-primary">이 디자인으로 만들기 <span aria-hidden="true">↗</span></button></div>
     <p className="dd-showcase-hint">카드 안을 아래로 스크롤하면 HERO와 본문 전체를 확인할 수 있어요 · 좌우로 넘겨 다른 디자인 보기</p>
    </div>
