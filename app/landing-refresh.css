@@ -713,3 +713,50 @@
     color:#858585!important;
   }
 }
+
+
+/* Approved C hero palette and typography — 2026-10-24 */
+.landing-v2 .dd-hero-variant-c,
+.landing-v2 .dd-hero-variant-c .dd-hero-content{
+  background:#FFFFFF!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-content h1{
+  color:#171717!important;
+  font-size:36px!important;
+  font-weight:400!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-content h1 em{
+  color:#777777!important;
+  font-size:36px!important;
+  font-style:italic!important;
+  font-weight:400!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-eyebrow{
+  color:#888888!important;
+  font-size:10px!important;
+  letter-spacing:1.5px!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-description{
+  color:#777777!important;
+  font-size:12px!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-button-primary{
+  background:#191919!important;
+  border-color:#191919!important;
+  color:#FFFFFF!important;
+}
+.landing-v2 .dd-hero-variant-c .dd-hero-button-outline{
+  background:#F3F3F3!important;
+  border-color:#F3F3F3!important;
+  color:#333333!important;
+}
+@media(max-width:800px){
+  .landing-v2 .dd-hero-variant-c{
+    background:#FFFFFF!important;
+  }
+  .landing-v2 .dd-hero-variant-c .dd-hero-content h1,
+  .landing-v2 .dd-hero-variant-c .dd-hero-content h1 em{
+    font-size:36px!important;
+    line-height:1.12!important;
+  }
+}
