@@ -4,6 +4,8 @@ import DearDayLogo from "../../components/dearday-logo";
 import "./collection-showcase.css";
 import { completedTemplateCategoryToEventKind } from "../../lib/completed-template-sample";
 
+const EyeIcon=()=> <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>;
+const ExternalLinkIcon=()=> <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M13 5h6v6"/><path d="m19 5-9 9"/><path d="M19 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>;
 const categories=[["wedding","결혼식"],["first-birthday","돌잔치"],["birthday","생일"],["milestone_birthday","환갑·칠순·팔순"],["gathering","모임·행사"],["opening","개업·오픈"],["","전체"]];
 export default function TemplateCollectionPage(){
  const [items,setItems]=useState([]);
@@ -93,7 +95,7 @@ export default function TemplateCollectionPage(){
          <div className="dd-showcase-preview-body">{x.thumbnail_2_url?<img src={x.thumbnail_2_url} alt={`${x.name} 본문 디자인`} draggable={false} loading="lazy"/>:<div className="dd-showcase-preview-body-fallback"><span>DEARDAY INVITATION</span><strong>{x.name}</strong><small>소중한 순간을 위한 초대장</small></div>}</div>
         </div>
        </div>
-       <a href={`/templates/${encodeURIComponent(x.template_key)}`} className="dd-showcase-eye" aria-label={`${x.name} 전체 샘플 보기`}>◎</a>
+       <a href={`/templates/${encodeURIComponent(x.template_key)}`} className="dd-showcase-eye" aria-label={`${x.name} 전체 샘플 보기`}><EyeIcon/></a>
       </div>
      </article>)}
     </div>
@@ -102,7 +104,7 @@ export default function TemplateCollectionPage(){
    <div className="dd-showcase-selected" aria-live="polite">
     <p className="dd-showcase-counter">{active+1} / {items.length}</p>
     <h2>{selected?.name}</h2>
-    <div className="dd-showcase-actions"><a href={previewUrl} className="dd-showcase-secondary">샘플 보기 <span aria-hidden="true">◎</span></a><button type="button" onClick={makeSelected} className="dd-showcase-primary">이 디자인으로 만들기 <span aria-hidden="true">↗</span></button></div>
+    <div className="dd-showcase-actions"><a href={previewUrl} className="dd-showcase-secondary">샘플 보기 <EyeIcon/></a><button type="button" onClick={makeSelected} className="dd-showcase-primary">이 디자인으로 만들기 <ExternalLinkIcon/></button></div>
     <div className="dd-showcase-hint dd-showcase-hint-pill" aria-label="위아래로 전체 디자인 확인, 좌우로 다른 템플릿 보기"><span className="dd-showcase-hint-part"><span aria-hidden="true">↕</span> 위아래로 전체 디자인 확인</span><span className="dd-showcase-hint-divider" aria-hidden="true">│</span><span className="dd-showcase-hint-part"><span aria-hidden="true">↔</span> 좌우로 다른 템플릿 보기</span></div>
    </div>
   </>}
