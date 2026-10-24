@@ -74,7 +74,6 @@ export default function Home() {
         <source src="/landing/dearday-seaside-hero.mp4" type="video/mp4" />
       </video>
       <div className="dd-hero-shade" aria-hidden="true" />
-      <span className="dd-polaroid-caption" aria-hidden="true">Special Day ♡</span>
       </div>
       <div className="dd-hero-preview-switch" role="group" aria-label="HERO 디자인 비교">
         <button type="button" className={heroVariant === "a" ? "active" : ""} aria-pressed={heroVariant === "a"} onClick={() => switchHero("a")}>A · Editorial</button>
