@@ -325,3 +325,19 @@
   padding-bottom:4px!important;
  }
 }
+
+
+/* Improve preview eye contrast against bright invitation imagery. */
+.dd-showcase-page .dd-showcase-poster>.dd-showcase-eye{
+ width:30px!important;height:30px!important;
+ background:rgba(255,255,255,.97)!important;
+ color:#292929!important;
+ border:1px solid rgba(40,40,40,.24)!important;
+ box-shadow:0 2px 7px rgba(0,0,0,.17)!important;
+ opacity:1!important;
+}
+.dd-showcase-page .dd-showcase-poster>.dd-showcase-eye svg{
+ width:17px!important;height:17px!important;
+ stroke:currentColor!important;stroke-width:2.2!important;
+ opacity:1!important;
+}
