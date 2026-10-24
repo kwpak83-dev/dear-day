@@ -1913,3 +1913,14 @@
   margin-bottom:24px!important;
  }
 }
+
+
+/* Stronger mobile-only separation: move both CTAs down together. */
+@media(max-width:800px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group{
+  margin-bottom:40px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-buttons{
+  margin-top:0!important;
+ }
+}
