@@ -62,7 +62,7 @@ export default function Home() {
       <div className="dd-hero-shade" aria-hidden="true" />
       <div className="landing-shell dd-hero-content">
         <p className="dd-hero-eyebrow">DEARDAY · MOBILE INVITATION</p>
-        <h1>소중한 순간을<br />아름답게.</h1>
+        <h1>Good People<br />Good Moment</h1>
         <p className="dd-hero-description">마음을 전하는 특별한 초대장</p>
         <div className="dd-hero-buttons">
           <a className="dd-hero-button dd-hero-button-primary" href="/templates">무료 시안 만들기 <span aria-hidden="true">↗</span></a>
