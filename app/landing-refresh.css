@@ -856,3 +856,27 @@
   color:#252525!important;
   box-shadow:0 2px 7px rgba(0,0,0,.10)!important;
 }
+
+
+/* C hero CTAs: wider tracking and balanced button fill (reference preview). */
+.landing-v2 .dd-hero-variant-c .dd-hero-button{
+  letter-spacing:.12em!important;
+  font-weight:650!important;
+}
+@media(max-width:800px){
+  .landing-v2 .dd-hero-variant-c .dd-hero-buttons{
+    width:220px!important;
+    max-width:calc(100% - 24px)!important;
+  }
+  .landing-v2 .dd-hero-variant-c .dd-hero-button{
+    min-height:42px!important;
+    padding:10px 14px!important;
+    font-size:13px!important;
+    letter-spacing:.12em!important;
+    gap:9px!important;
+  }
+  .landing-v2 .dd-hero-variant-c .dd-hero-button svg{
+    width:14px!important;
+    height:14px!important;
+  }
+}
