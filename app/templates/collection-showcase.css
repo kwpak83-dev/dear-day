@@ -30,7 +30,7 @@
 .dd-showcase-selected h2{font-size:21px;font-weight:600;color:#292929;margin:0}
 .dd-showcase-description{font-size:13px;color:#777;margin:10px auto;max-width:460px}
 .dd-showcase-actions{display:flex;justify-content:center;gap:9px;margin:19px auto 0}
-.dd-showcase-actions a{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-width:145px;padding:12px 18px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none}
+.dd-showcase-actions a,.dd-showcase-actions button{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-width:145px;padding:12px 18px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none}
 .dd-showcase-secondary{background:#fff;border:1px solid #d4d1ce;color:#333}
 .dd-showcase-primary{background:#292929;border:1px solid #292929;color:#fff}
 .dd-showcase-hint{color:#999;font-size:11px;margin-top:14px}
@@ -52,3 +52,5 @@
  .dd-showcase-actions a{min-width:125px;font-size:12px;padding:11px 12px}
 }
 @media(prefers-reduced-motion:reduce){.dd-showcase-slide{transition:none}.dd-showcase-track{scroll-behavior:auto}}
+
+.dd-showcase-actions button{cursor:pointer;font-family:inherit}
