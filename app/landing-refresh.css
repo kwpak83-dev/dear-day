@@ -1563,3 +1563,14 @@
   display:none!important;
  }
 }
+
+
+/* Mobile: reduce the LIVE video Polaroid by 10%, not the background artwork. */
+@media(max-width:800px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-media{
+  width:72%!important; /* previous 80% x 0.9 */
+  max-width:324px!important; /* previous 360px x 0.9 */
+  height:clamp(252px,45svh,441px)!important; /* previous 280px/50svh/490px x 0.9 */
+  transform:rotate(2.3deg)!important;
+ }
+}
