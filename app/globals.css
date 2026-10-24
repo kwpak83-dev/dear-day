@@ -3464,3 +3464,26 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-expand-switch-card > summary:focus-visible{outline:2px solid #536faf;outline-offset:3px}
 .dd-share-card.dd-expand-switch-card > summary.dd-share-card-heading{margin-bottom:0}
 .dd-share-card.dd-expand-switch-card[open] > summary.dd-share-card-heading{margin-bottom:12px}
+
+
+/* DearDay monochrome wordmark: replaces old blue emblem and tagline everywhere. */
+.dearday-logo.dearday-logo--wordmark{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ gap:0!important;flex:0 0 auto!important;
+ width:clamp(126px,12vw,168px)!important;height:44px!important;
+ line-height:0!important;color:#171717!important;
+}
+.dearday-logo--wordmark .dearday-logo-wordmark-image{
+ display:block!important;position:static!important;
+ width:100%!important;height:100%!important;max-width:100%!important;
+ object-fit:contain!important;object-position:center!important;
+ margin:0!important;padding:0!important;border:0!important;
+ filter:none!important;opacity:1!important;
+}
+.dearday-logo--wordmark.dearday-logo--compact{
+ width:128px!important;height:38px!important;
+}
+@media(max-width:700px){
+ .dearday-logo.dearday-logo--wordmark{width:136px!important;height:38px!important}
+ .dearday-logo--wordmark.dearday-logo--compact{width:118px!important;height:34px!important}
+}

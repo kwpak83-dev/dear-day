@@ -1,0 +1,391 @@
+/* DearDay template collection — premium responsive carousel, isolated from legacy blue grid. */
+.dd-collection-page.dd-showcase-page{box-sizing:border-box;min-height:100vh;padding:0 0 72px!important;background:#faf9f7!important;color:#242424!important;overflow:hidden}
+.dd-showcase-page *{box-sizing:border-box}
+.dd-showcase-header{height:66px;padding:10px clamp(18px,4vw,65px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e9e7e4;background:#fff}
+.dd-showcase-brand{display:inline-flex;align-items:center;text-decoration:none}
+.dd-showcase-home{font-size:12px;text-decoration:none;color:#666}
+.dd-showcase-intro{text-align:center;padding:45px 18px 24px}
+.dd-showcase-kicker{font-size:10px;letter-spacing:.2em;color:#888;margin:0 0 14px;font-weight:600}
+.dd-showcase-intro h1{font-family:Georgia,"Noto Serif KR",serif;color:#232323;font-size:clamp(26px,3.1vw,43px);font-weight:500;line-height:1.3;letter-spacing:-.05em;margin:0 0 12px}
+.dd-showcase-intro>p:last-child{font-size:13px;color:#777;margin:0}
+.dd-showcase-categories{display:flex!important;flex-wrap:nowrap!important;justify-content:center;gap:9px;margin:0 auto 25px;padding:5px 18px 13px;overflow-x:auto;max-width:100%;scrollbar-width:none}
+.dd-showcase-categories::-webkit-scrollbar{display:none}
+.dd-showcase-categories button{flex:none;border:1px solid #dedbd6;border-radius:999px;background:#fff;color:#555;padding:10px 18px;font-size:13px;font-weight:500;white-space:nowrap;cursor:pointer}
+.dd-showcase-categories button.active{background:#252525;color:#fff;border-color:#252525}
+.dd-showcase-stage{position:relative;max-width:1800px;margin:0 auto}
+.dd-showcase-track{display:flex;gap:clamp(12px,1.8vw,28px);overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;scroll-padding-inline:calc((100% - min(24vw,340px))/2);padding:12px calc((100% - min(24vw,340px))/2) 24px;align-items:center;touch-action:pan-x pan-y;cursor:grab}
+.dd-showcase-track:active{cursor:grabbing}
+.dd-showcase-track::-webkit-scrollbar{display:none}
+.dd-showcase-slide{flex:0 0 min(24vw,340px);scroll-snap-align:center;transition:transform .28s ease,opacity .28s ease;transform:scale(.87);opacity:.65}
+.dd-showcase-slide.is-active{transform:scale(1);opacity:1}
+.dd-showcase-poster{display:block;position:relative;aspect-ratio:3/4.7;border-radius:13px;overflow:hidden;background:#f1ede8;box-shadow:0 10px 30px rgba(0,0,0,.10);text-decoration:none;user-select:none;-webkit-user-drag:none}
+.dd-showcase-poster img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.dd-showcase-no-image{height:100%;display:grid;place-items:center;font:italic 25px Georgia,serif;color:#a8a09b}
+.dd-showcase-eye{position:absolute;right:12px;top:12px;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#ffffffd9;color:#333;font-size:24px}
+.dd-showcase-arrow{position:absolute;top:45%;z-index:3;width:42px;height:42px;border:1px solid #e5e1dc;border-radius:50%;background:#ffffffeb;color:#333;font-size:30px;line-height:1;cursor:pointer;box-shadow:0 4px 16px #0001}
+.dd-showcase-arrow.prev{left:15px}.dd-showcase-arrow.next{right:15px}
+.dd-showcase-arrow:disabled{opacity:.25;cursor:default}
+.dd-showcase-selected{text-align:center;padding:2px 16px 30px}
+.dd-showcase-counter{font-size:11px;letter-spacing:.12em;color:#999;margin:0 0 10px}
+.dd-showcase-selected h2{font-size:21px;font-weight:600;color:#292929;margin:0}
+.dd-showcase-description{font-size:13px;color:#777;margin:10px auto;max-width:460px}
+.dd-showcase-actions{display:flex;justify-content:center;gap:9px;margin:19px auto 0}
+.dd-showcase-actions a,.dd-showcase-actions button{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-width:145px;padding:12px 18px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none}
+.dd-showcase-secondary{background:#fff;border:1px solid #d4d1ce;color:#333}
+.dd-showcase-primary{background:#292929;border:1px solid #292929;color:#fff}
+.dd-showcase-hint{color:#999;font-size:11px;margin-top:14px}
+.dd-showcase-message{min-height:300px;text-align:center;padding:90px 20px;color:#666}
+.dd-showcase-message button{border:1px solid #ddd;background:white;border-radius:8px;padding:10px 16px}
+@media(max-width:700px){
+ .dd-showcase-header{height:52px;padding:6px 16px}
+ .dd-showcase-intro{padding:27px 12px 18px}
+ .dd-showcase-intro h1{font-size:25px}
+ .dd-showcase-intro>p:last-child{font-size:12px}
+ .dd-showcase-categories{justify-content:flex-start;margin-bottom:11px;padding:3px 14px 11px;gap:7px}
+ .dd-showcase-categories button{font-size:12px;padding:8px 13px}
+ .dd-showcase-track{gap:13px;scroll-padding-inline:12.5%;padding:12px 12.5% 22px}
+ .dd-showcase-slide{flex-basis:75%;transform:scale(.9)}
+ .dd-showcase-slide.is-active{transform:scale(1)}
+ .dd-showcase-poster{aspect-ratio:3/4.5;border-radius:10px}
+ .dd-showcase-arrow{display:none}
+ .dd-showcase-selected h2{font-size:18px}
+ .dd-showcase-actions a{min-width:125px;font-size:12px;padding:11px 12px}
+}
+@media(prefers-reduced-motion:reduce){.dd-showcase-slide{transition:none}.dd-showcase-track{scroll-behavior:auto}}
+
+.dd-showcase-actions button{cursor:pointer;font-family:inherit}
+
+
+/* Showcase complete invitation mood: top HERO 65%, lower body preview 35%. */
+.dd-showcase-preview-composite{width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;background:#fff}
+.dd-showcase-preview-hero{position:relative;flex:0 0 65%;min-height:0;overflow:hidden;background:#f3f0ec}
+.dd-showcase-preview-body{position:relative;flex:1 1 35%;min-height:0;overflow:hidden;background:#fff}
+.dd-showcase-preview-hero>img,.dd-showcase-preview-body>img{display:block;width:100%;height:100%;object-fit:cover;object-position:center top;pointer-events:none}
+.dd-showcase-preview-body>img{object-position:center top}
+.dd-showcase-preview-body:before{content:"";position:absolute;z-index:1;left:0;right:0;top:0;height:1px;background:rgba(30,30,30,.06)}
+.dd-showcase-preview-body-fallback{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:9px;padding:12px 10px;background:#fdfbf8;text-align:center;color:#555}
+.dd-showcase-preview-body-fallback span{font-size:8px;letter-spacing:.16em;color:#999}
+.dd-showcase-preview-body-fallback strong{font-family:Georgia,serif;font-size:clamp(14px,1.5vw,19px);font-weight:500;color:#35302c}
+.dd-showcase-preview-body-fallback small{font-size:10px;color:#888}
+
+
+/* Mobile compact full-viewport collection: more room for HERO + body. */
+@media(max-width:700px){
+ .dd-collection-page.dd-showcase-page{padding-bottom:12px!important;min-height:100svh}
+ .dd-showcase-intro{padding:13px 12px 10px!important}
+ .dd-showcase-kicker{font-size:8px!important;margin-bottom:6px!important}
+ .dd-showcase-intro h1{font-size:21px!important;line-height:1.22!important;margin-bottom:5px!important}
+ .dd-showcase-intro>p:last-child{font-size:10px!important}
+ .dd-showcase-categories{margin-bottom:3px!important;padding:2px 12px 7px!important}
+ .dd-showcase-categories button{padding:7px 12px!important}
+ .dd-showcase-track{padding-top:5px!important;padding-bottom:8px!important}
+ .dd-showcase-poster{
+  height:clamp(315px,calc(100svh - 260px),620px)!important;
+  aspect-ratio:auto!important;
+ }
+ .dd-showcase-preview-hero{flex:0 0 61%!important}
+ .dd-showcase-preview-body{flex:1 1 39%!important}
+ .dd-showcase-preview-hero>img,.dd-showcase-preview-body>img{
+  object-fit:contain!important;
+  background:#fff;
+ }
+ .dd-showcase-selected{padding:0 12px 8px!important}
+ .dd-showcase-counter{font-size:9px!important;margin:0 0 3px!important}
+ .dd-showcase-selected h2{font-size:11px!important;font-weight:500!important;line-height:1.2!important}
+ .dd-showcase-description,.dd-showcase-hint{display:none!important}
+ .dd-showcase-actions{margin:8px auto 0!important;gap:7px!important}
+ .dd-showcase-actions a,.dd-showcase-actions button{
+  min-width:0!important;
+  padding:9px 12px!important;
+  font-size:11px!important;
+  border-radius:7px!important;
+ }
+}
+
+
+/* Two-page spread preview, inspired by the supplied birthday template example.
+   Keep all headings and descriptions; change the viewer only. */
+.dd-showcase-preview-composite{
+ display:grid!important;
+ grid-template-columns:1fr 1fr!important;
+ grid-template-rows:minmax(0,1fr)!important;
+ gap:0!important;
+}
+.dd-showcase-preview-hero,.dd-showcase-preview-body{
+ flex:none!important;
+ width:100%!important;
+ height:100%!important;
+ min-width:0!important;
+ min-height:0!important;
+ overflow:hidden!important;
+}
+.dd-showcase-preview-hero>img,.dd-showcase-preview-body>img{
+ width:100%!important;
+ height:100%!important;
+ object-fit:fill!important;
+ object-position:center!important;
+ background:transparent!important;
+}
+.dd-showcase-preview-body:before{
+ left:0!important;right:auto!important;top:0!important;
+ height:100%!important;width:1px!important;
+}
+@media(max-width:700px){
+ .dd-showcase-slide{flex-basis:83%!important}
+ .dd-showcase-track{
+  scroll-padding-inline:8.5%!important;
+  padding-left:8.5%!important;
+  padding-right:8.5%!important;
+ }
+ .dd-showcase-poster{
+  height:clamp(310px,calc(100svh - 325px),570px)!important;
+ }
+ .dd-showcase-preview-hero,.dd-showcase-preview-body{
+  flex:none!important;
+ }
+ .dd-showcase-description{
+  display:block!important;
+  font-size:11px!important;
+  margin:4px auto 0!important;
+ }
+ .dd-showcase-hint{
+  display:block!important;
+  font-size:10px!important;
+  margin:7px 0 0!important;
+ }
+}
+
+
+/* Full-ratio, vertically scrollable invitation preview. No cropping/stretching. */
+.dd-showcase-poster{position:relative!important}
+.dd-showcase-preview-scroll{
+ width:100%!important;height:100%!important;overflow-y:auto!important;overflow-x:hidden!important;
+ overscroll-behavior-y:contain;scrollbar-width:thin;scrollbar-color:#d4d0c9 transparent;
+ touch-action:pan-x pan-y!important;-webkit-overflow-scrolling:touch;
+}
+.dd-showcase-preview-composite{
+ display:flex!important;flex-direction:column!important;
+ width:100%!important;height:auto!important;min-height:100%!important;
+ gap:0!important;grid-template-columns:none!important;grid-template-rows:none!important;
+ overflow:visible!important;background:#fff!important;
+}
+.dd-showcase-preview-hero,.dd-showcase-preview-body{
+ display:block!important;position:relative!important;flex:none!important;
+ width:100%!important;height:auto!important;min-height:0!important;
+ overflow:visible!important;
+}
+.dd-showcase-preview-hero>img,.dd-showcase-preview-body>img{
+ display:block!important;width:100%!important;height:auto!important;
+ max-width:100%!important;object-fit:contain!important;
+ object-position:center top!important;pointer-events:none!important;
+}
+.dd-showcase-preview-body:before{display:none!important}
+.dd-showcase-eye{
+ z-index:4!important;text-decoration:none!important;
+ display:grid!important;place-items:center!important;
+}
+.dd-showcase-hint{display:block!important}
+@media(max-width:700px){
+ .dd-showcase-preview-hero,.dd-showcase-preview-body{flex:none!important;height:auto!important}
+ .dd-showcase-preview-hero>img,.dd-showcase-preview-body>img{height:auto!important;object-fit:contain!important}
+ .dd-showcase-hint{display:block!important;font-size:10px!important;line-height:1.5!important;margin:8px auto 0!important;max-width:300px}
+}
+
+
+/* Collection heading: single prominent English label; retain card/title/actions. */
+.dd-showcase-page .dd-showcase-intro{padding:27px 16px 19px!important}
+.dd-showcase-page .dd-showcase-intro .dd-showcase-kicker{
+ display:block!important;margin:0!important;
+ font-family:Georgia,"Times New Roman",serif!important;
+ font-size:clamp(14px,1.7vw,21px)!important;
+ font-weight:500!important;letter-spacing:.14em!important;
+ line-height:1.35!important;color:#333!important;
+}
+.dd-showcase-page .dd-showcase-selected .dd-showcase-description{display:none!important}
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-intro{padding:15px 12px 13px!important}
+ .dd-showcase-page .dd-showcase-intro .dd-showcase-kicker{
+  font-size:clamp(12px,3.5vw,16px)!important;
+  letter-spacing:.10em!important;
+ }
+ .dd-showcase-page .dd-showcase-categories{margin-bottom:5px!important}
+ .dd-showcase-page .dd-showcase-poster{
+  height:clamp(340px,calc(100svh - 275px),640px)!important;
+ }
+ .dd-showcase-page .dd-showcase-selected h2{
+  font-size:12px!important;
+  margin:2px 0 0!important;
+ }
+ .dd-showcase-page .dd-showcase-actions{margin-top:9px!important}
+}
+
+
+/* Compact single-line guidance pill under template actions. */
+.dd-showcase-page .dd-showcase-hint-pill{
+ display:flex!important;align-items:center;justify-content:center;
+ gap:5px;max-width:max-content;width:fit-content;
+ margin:11px auto 0!important;padding:8px 11px;
+ border-radius:999px;background:#efedeb;color:#555;
+ font-size:10px;line-height:1.2;letter-spacing:-.035em;
+ white-space:nowrap;flex-wrap:nowrap;
+}
+.dd-showcase-hint-part{display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+.dd-showcase-hint-part>span{font-size:12px;color:#666;line-height:1}
+.dd-showcase-hint-divider{color:#b0aca7;margin:0 2px}
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-hint-pill{
+  display:flex!important;font-size:clamp(8px,2.5vw,10px)!important;
+  letter-spacing:-.06em!important;gap:3px!important;
+  padding:7px 8px!important;margin:9px auto 0!important;
+  max-width:calc(100vw - 24px)!important;
+ }
+ .dd-showcase-hint-part{gap:2px}
+ .dd-showcase-hint-part>span{font-size:11px}
+ .dd-showcase-hint-divider{margin:0 1px}
+}
+
+
+/* Position preview eye at the bottom-right corner of the entire template card. */
+.dd-showcase-page .dd-showcase-poster>.dd-showcase-eye{
+ top:auto!important;
+ bottom:10px!important;
+ right:10px!important;
+}
+
+
+/* Small, non-interactive cover/body labels in the top-left of each image. */
+.dd-showcase-page .dd-showcase-preview-hero,
+.dd-showcase-page .dd-showcase-preview-body{position:relative!important}
+.dd-showcase-page .dd-showcase-section-label{
+ position:absolute;z-index:2;top:8px;left:8px;
+ display:inline-flex;align-items:center;justify-content:center;
+ padding:4px 7px;border-radius:5px;
+ background:rgba(255,255,255,.88);color:#383838;
+ font-size:10px;font-weight:500;line-height:1.25;
+ letter-spacing:-.025em;white-space:nowrap;
+ pointer-events:none;box-shadow:0 1px 4px rgba(0,0,0,.07);
+}
+
+
+/* Refine cover/body badges: 1px smaller, softer gray, minimal height. */
+.dd-showcase-page .dd-showcase-section-label{
+ font-size:9px!important;
+ color:#777!important;
+ padding:2px 6px!important;
+ line-height:1!important;
+ border-radius:4px!important;
+}
+
+
+/* Category tabs: wrap from 모임·행사 onto a second row aligned under 결혼식. */
+.dd-showcase-page .dd-showcase-categories{
+ display:grid!important;
+ grid-template-columns:repeat(4,max-content)!important;
+ justify-content:center!important;
+ align-content:start!important;
+ gap:7px 7px!important;
+ overflow-x:visible!important;
+}
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-categories{
+  justify-content:start!important;
+  padding-left:12px!important;
+  padding-right:12px!important;
+  gap:6px!important;
+ }
+ .dd-showcase-page .dd-showcase-categories button{
+  padding:7px 9px!important;
+  font-size:clamp(10px,2.7vw,12px)!important;
+ }
+}
+
+
+/* Two category rows need extra vertical room: keep actions and hint visible. */
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-poster{
+  height:clamp(255px,calc(100svh - 335px),570px)!important;
+ }
+ .dd-showcase-page .dd-showcase-track{
+  padding-top:3px!important;
+  padding-bottom:4px!important;
+ }
+ .dd-showcase-page .dd-showcase-selected{
+  padding-bottom:7px!important;
+ }
+ .dd-showcase-page .dd-showcase-actions{
+  margin-top:6px!important;
+ }
+ .dd-showcase-page .dd-showcase-hint-pill{
+  margin-top:5px!important;
+  padding-top:5px!important;
+  padding-bottom:5px!important;
+ }
+ .dd-showcase-page .dd-showcase-categories{
+  margin-bottom:0!important;
+  padding-bottom:4px!important;
+ }
+}
+
+
+/* Improve preview eye contrast against bright invitation imagery. */
+.dd-showcase-page .dd-showcase-poster>.dd-showcase-eye{
+ width:30px!important;height:30px!important;
+ background:rgba(255,255,255,.97)!important;
+ color:#292929!important;
+ border:1px solid rgba(40,40,40,.24)!important;
+ box-shadow:0 2px 7px rgba(0,0,0,.17)!important;
+ opacity:1!important;
+}
+.dd-showcase-page .dd-showcase-poster>.dd-showcase-eye svg{
+ width:17px!important;height:17px!important;
+ stroke:currentColor!important;stroke-width:2.2!important;
+ opacity:1!important;
+}
+
+
+/* Collection header matches landing: fixed left menu, mathematically centered wordmark. */
+.dd-showcase-page .dd-showcase-header{
+ position:relative!important;z-index:20!important;
+ display:flex!important;align-items:center!important;
+ justify-content:space-between!important;
+}
+.dd-showcase-page .dd-showcase-brand{
+ position:absolute!important;left:50%!important;top:50%!important;
+ transform:translate(-50%,-50%)!important;
+ z-index:2!important;white-space:nowrap!important;
+}
+.dd-showcase-page .dd-showcase-menu-toggle{
+ position:relative;z-index:4;
+ width:36px;height:36px;flex:0 0 36px;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+ border:0;background:transparent;color:#252525;cursor:pointer;padding:7px;
+}
+.dd-showcase-page .dd-showcase-menu-toggle span{
+ display:block;width:20px;height:1.6px;border-radius:1px;background:currentColor;
+}
+.dd-showcase-page .dd-showcase-home{
+ position:relative;z-index:3;margin-left:auto;
+ white-space:nowrap;font-size:12px!important;
+}
+.dd-showcase-page .dd-showcase-menu-backdrop{
+ position:fixed;inset:0;z-index:3;background:transparent;border:0;cursor:default;
+}
+.dd-showcase-page .dd-showcase-menu-panel{
+ position:absolute;left:12px;top:calc(100% - 1px);z-index:5;
+ width:min(260px,calc(100vw - 24px));padding:8px;
+ display:flex;flex-direction:column;gap:2px;
+ background:#fff;border:1px solid #e8e5e1;border-radius:10px;
+ box-shadow:0 12px 30px rgba(0,0,0,.12);
+}
+.dd-showcase-page .dd-showcase-menu-panel a{
+ display:block;padding:12px 14px;border-radius:6px;
+ font-size:13px;text-decoration:none;color:#292929;
+}
+.dd-showcase-page .dd-showcase-menu-panel a:hover,
+.dd-showcase-page .dd-showcase-menu-panel a:focus-visible{background:#f4f3f1}
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-header{padding:6px 12px!important}
+ .dd-showcase-page .dd-showcase-menu-toggle{width:30px;height:34px;flex-basis:30px;padding:5px}
+ .dd-showcase-page .dd-showcase-menu-toggle span{width:18px}
+ .dd-showcase-page .dd-showcase-home{font-size:10px!important}
+}
