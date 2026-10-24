@@ -1905,3 +1905,11 @@
   align-self:center!important;
  }
 }
+
+
+/* Give the mobile CTA stack breathing room below the editorial subtitle. */
+@media(max-width:800px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group{
+  margin-bottom:24px!important;
+ }
+}
