@@ -86,13 +86,15 @@ export default function TemplateCollectionPage(){
     <button className="dd-showcase-arrow prev" type="button" aria-label="이전 템플릿" disabled={active===0} onClick={()=>goTo(active-1)}>‹</button>
     <div className="dd-showcase-track" ref={trackRef} onScroll={syncActive} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} onPointerLeave={pointerUp} onClickCapture={preventDragClick}>
      {items.map((x,i)=><article className={`dd-showcase-slide ${active===i?"is-active":""}`} key={x.id} aria-label={`${x.name} 템플릿 ${i+1}/${items.length}`}>
-      <a href={`/templates/${encodeURIComponent(x.template_key)}`} className="dd-showcase-poster" draggable={false} aria-label={`${x.name} 샘플 보기`}>
-       <div className="dd-showcase-preview-composite">
-        <div className="dd-showcase-preview-hero">{x.thumbnail_1_url?<img src={x.thumbnail_1_url} alt={`${x.name} 표지 디자인`} draggable={false} loading={Math.abs(i-active)<=1?"eager":"lazy"}/>:<span className="dd-showcase-no-image">DearDay</span>}</div>
-        <div className="dd-showcase-preview-body">{x.thumbnail_2_url?<img src={x.thumbnail_2_url} alt={`${x.name} 본문 디자인`} draggable={false} loading="lazy"/>:<div className="dd-showcase-preview-body-fallback"><span>DEARDAY INVITATION</span><strong>{x.name}</strong><small>소중한 순간을 위한 초대장</small></div>}</div>
+      <div className="dd-showcase-poster">
+       <div className="dd-showcase-preview-scroll" tabIndex={0} aria-label={`${x.name} HERO와 본문 디자인. 아래로 스크롤해 전체 디자인을 확인하세요.`}>
+        <div className="dd-showcase-preview-composite">
+         <div className="dd-showcase-preview-hero">{x.thumbnail_1_url?<img src={x.thumbnail_1_url} alt={`${x.name} HERO 디자인`} draggable={false} loading={Math.abs(i-active)<=1?"eager":"lazy"}/>:<span className="dd-showcase-no-image">DearDay</span>}</div>
+         <div className="dd-showcase-preview-body">{x.thumbnail_2_url?<img src={x.thumbnail_2_url} alt={`${x.name} 본문 디자인`} draggable={false} loading="lazy"/>:<div className="dd-showcase-preview-body-fallback"><span>DEARDAY INVITATION</span><strong>{x.name}</strong><small>소중한 순간을 위한 초대장</small></div>}</div>
+        </div>
        </div>
-       <span className="dd-showcase-eye" aria-hidden="true">◎</span>
-      </a>
+       <a href={`/templates/${encodeURIComponent(x.template_key)}`} className="dd-showcase-eye" aria-label={`${x.name} 전체 샘플 보기`}>◎</a>
+      </div>
      </article>)}
     </div>
     <button className="dd-showcase-arrow next" type="button" aria-label="다음 템플릿" disabled={active===items.length-1} onClick={()=>goTo(active+1)}>›</button>
@@ -102,7 +104,7 @@ export default function TemplateCollectionPage(){
     <h2>{selected?.name}</h2>
     {selected?.description&&<p className="dd-showcase-description">{selected.description}</p>}
     <div className="dd-showcase-actions"><a href={previewUrl} className="dd-showcase-secondary">샘플 보기 <span aria-hidden="true">◎</span></a><button type="button" onClick={makeSelected} className="dd-showcase-primary">이 디자인으로 만들기 <span aria-hidden="true">↗</span></button></div>
-    <p className="dd-showcase-hint">디자인을 좌우로 넘겨보세요</p>
+    <p className="dd-showcase-hint">카드 안을 아래로 스크롤하면 HERO와 본문 전체를 확인할 수 있어요 · 좌우로 넘겨 다른 디자인 보기</p>
    </div>
   </>}
  </main>;
