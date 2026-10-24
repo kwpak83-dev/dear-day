@@ -190,3 +190,31 @@
  .dd-showcase-preview-hero>img,.dd-showcase-preview-body>img{height:auto!important;object-fit:contain!important}
  .dd-showcase-hint{display:block!important;font-size:10px!important;line-height:1.5!important;margin:8px auto 0!important;max-width:300px}
 }
+
+
+/* Collection heading: single prominent English label; retain card/title/actions. */
+.dd-showcase-page .dd-showcase-intro{padding:27px 16px 19px!important}
+.dd-showcase-page .dd-showcase-intro .dd-showcase-kicker{
+ display:block!important;margin:0!important;
+ font-family:Georgia,"Times New Roman",serif!important;
+ font-size:clamp(14px,1.7vw,21px)!important;
+ font-weight:500!important;letter-spacing:.14em!important;
+ line-height:1.35!important;color:#333!important;
+}
+.dd-showcase-page .dd-showcase-selected .dd-showcase-description{display:none!important}
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-intro{padding:15px 12px 13px!important}
+ .dd-showcase-page .dd-showcase-intro .dd-showcase-kicker{
+  font-size:clamp(12px,3.5vw,16px)!important;
+  letter-spacing:.10em!important;
+ }
+ .dd-showcase-page .dd-showcase-categories{margin-bottom:5px!important}
+ .dd-showcase-page .dd-showcase-poster{
+  height:clamp(340px,calc(100svh - 275px),640px)!important;
+ }
+ .dd-showcase-page .dd-showcase-selected h2{
+  font-size:12px!important;
+  margin:2px 0 0!important;
+ }
+ .dd-showcase-page .dd-showcase-actions{margin-top:9px!important}
+}
