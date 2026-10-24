@@ -1007,3 +1007,36 @@
   width:15px!important;height:15px!important;
  }
 }
+
+
+/* Fix: mobile Polaroid hero must grow with its content, not clip the second CTA. */
+@media(max-width:800px){
+ .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:visible!important;
+  padding-bottom:52px!important;
+  align-items:stretch!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-content{
+  flex:0 0 auto!important;
+  overflow:visible!important;
+  padding-bottom:18px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-buttons{
+  display:flex!important;
+  flex-direction:column!important;
+  flex-shrink:0!important;
+  height:auto!important;
+  overflow:visible!important;
+  padding-bottom:4px!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-button{
+  flex-shrink:0!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-scroll{
+  position:absolute!important;
+  bottom:12px!important;
+ }
+}
