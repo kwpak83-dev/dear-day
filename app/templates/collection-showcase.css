@@ -411,3 +411,37 @@
   margin-top:6px!important;
  }
 }
+
+
+/* Mobile first-screen fit: reclaim space above the preview without shrinking the photo. */
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-intro{
+  padding-top:10px!important;
+  padding-bottom:7px!important;
+ }
+ .dd-showcase-page .dd-showcase-intro .dd-showcase-kicker{
+  font-size:clamp(10px,calc(3.5vw - 2px),14px)!important;
+  line-height:1.2!important;
+  margin-bottom:3px!important;
+ }
+ .dd-showcase-page .dd-showcase-categories{
+  column-gap:4px!important;
+  row-gap:3px!important;
+  padding-top:0!important;
+  padding-bottom:1px!important;
+  margin-bottom:0!important;
+ }
+ .dd-showcase-page .dd-showcase-categories button{
+  padding:5px 9px!important;
+  line-height:1.2!important;
+ }
+ .dd-showcase-page .dd-showcase-track{
+  padding-top:2px!important;
+ }
+ .dd-showcase-page .dd-showcase-actions{
+  margin-top:6px!important;
+ }
+ .dd-showcase-page .dd-showcase-hint-pill{
+  margin-top:3px!important;
+ }
+}
