@@ -834,7 +834,7 @@ export default function CreateInvitation() {
     }
     if (field.type === "time") {
       const rawTime = String(invitation[field.key] || "");
-      const matched = /^(\\d{1,2}):(\\d{2})/.exec(rawTime);
+      const matched = /^(\d{1,2}):(\d{2})/.exec(rawTime);
       const hour = matched ? matched[1].padStart(2, "0") : "";
       const minute = matched ? matched[2] : "";
       const hours = Array.from({length: 24}, (_, h) => ({
