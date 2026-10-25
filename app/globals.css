@@ -3584,3 +3584,16 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .dd-preview-float { left:16px; background:#fff; color:#333; border:1px solid #dedede; }
 .create-page .dd-preview-close-float { right:16px; background:#333; color:#fff; border:1px solid #333; }
 @media (max-width:600px) { .create-page .create-user { gap:12px; } .create-page .create-user a, .create-page .create-user .dd-header-save { font-size:12px; } }
+
+/* DearDay editor header: reference-inspired compact alignment and typography. */
+.create-page .create-header { padding-left:12px; padding-right:14px; }
+.create-page .create-header .brand { margin-left:0; }
+.create-page .create-user { gap:12px; }
+.create-page .create-user a { color:#292929; font-family:Pretendard, sans-serif; font-size:12px; font-weight:500; text-decoration:none; text-underline-offset:initial; white-space:nowrap; }
+.create-page .create-user a:hover { text-decoration:none; color:#555; }
+.create-page .create-user .dd-header-save { color:#dc7885; font-size:12px; font-weight:500; white-space:nowrap; }
+@media (max-width:600px) {
+  .create-page .create-header { height:48px; padding-left:10px; padding-right:12px; }
+  .create-page .create-user { gap:10px; }
+  .create-page .create-user a, .create-page .create-user .dd-header-save { font-size:11px; }
+}
