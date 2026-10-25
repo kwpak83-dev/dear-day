@@ -1,9 +1,35 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { getSafeAuthReturnPath } from "../../../../../lib/auth-return-url";
+import { TERMS_VERSION, PRIVACY_VERSION } from "../../../../../lib/consent";
 
 const NAVER_TOKEN_URL = "https://nid.naver.com/oauth2.0/token";
 const NAVER_PROFILE_URL = "https://openapi.naver.com/v1/nid/me";
+const NAVER_AGREEMENT_URL = "https://openapi.naver.com/v1/nid/agreement";
+const REQUIRED_TERMS = ["dearday_terms", "dearday_privacy"];
+
+async function getNaverConsentDates(accessToken, clientId) {
+  try {
+    const response = await fetch(NAVER_AGREEMENT_URL, {
+      headers: { Authorization: "Bearer " + accessToken }, cache: "no-store",
+    });
+    if (!response.ok) throw new Error("agreement-http-" + response.status);
+    const data = await response.json();
+    if (data?.result !== "success" || !Array.isArray(data.agreementInfos)) throw new Error("agreement-response");
+    const dates = {};
+    for (const entry of data.agreementInfos) {
+      if (entry?.clientId !== clientId || !REQUIRED_TERMS.includes(entry?.termCode)) continue;
+      const date = new Date(entry.agreeDate);
+      if (Number.isNaN(date.getTime())) continue;
+      dates[entry.termCode] = date.toISOString();
+    }
+    return REQUIRED_TERMS.every((tag) => dates[tag]) ? dates : null;
+  } catch (error) {
+    console.warn("[naver] Service agreement verification unavailable", error instanceof Error ? error.message : "unknown");
+    return null;
+  }
+}
+
 
 function failure(request, reason) {
   console.error("Naver login failed:", reason);
@@ -34,6 +60,8 @@ export async function GET(request) {
   if (!tokenResponse.ok) return failure(request, "token-" + tokenResponse.status);
   const token = await tokenResponse.json();
   if (!token.access_token) return failure(request, "missing-token");
+
+  const verifiedConsentDates = await getNaverConsentDates(token.access_token, clientId);
 
   const profileResponse = await fetch(NAVER_PROFILE_URL, { cache: "no-store", headers: { Authorization: "Bearer " + token.access_token } });
   if (!profileResponse.ok) return failure(request, "profile-" + profileResponse.status);
@@ -71,6 +99,19 @@ export async function GET(request) {
     user_metadata: { ...linkData.user.user_metadata, ...metadata },
   });
   if (updateError) return failure(request, "profile-sync");
+
+  // Record consent only after the provider confirms both required service terms.
+  // If verification or persistence fails, the existing consent gate remains in place.
+  if (verifiedConsentDates) {
+    const { error: consentError } = await supabase.from("user_consents").upsert({
+      user_id: linkData.user.id,
+      terms_version: TERMS_VERSION,
+      privacy_version: PRIVACY_VERSION,
+      terms_agreed_at: verifiedConsentDates.dearday_terms,
+      privacy_agreed_at: verifiedConsentDates.dearday_privacy,
+    }, { onConflict: "user_id" });
+    if (consentError) console.error("[naver] Consent persistence failed", consentError.code || "unknown");
+  }
 
   const response = NextResponse.redirect(linkData.properties.action_link);
   response.cookies.set("dear-day-naver-state", "", { maxAge: 0, path: "/" });
