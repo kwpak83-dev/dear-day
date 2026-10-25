@@ -986,12 +986,6 @@ export default function CreateInvitation() {
     stepSaveLock.current = true;
     setStepSaving(true);
     try {
-      const snapshot = JSON.stringify(invitation);
-      if (snapshot !== lastStepSavedSnapshot.current || templateSelectionChanged.current) {
-        const saved = await saveDraft({ showLoading: false, allowLocalSuccess: true });
-        if (!saved) { setSaveNotice(current => current || "자동 저장에 실패했어요. 다시 시도해 주세요."); return; }
-        lastStepSavedSnapshot.current = snapshot;
-      }
       setEditorStep(nextStep);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
