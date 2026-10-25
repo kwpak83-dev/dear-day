@@ -3479,8 +3479,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  width:128px!important;height:38px!important;
 }
 @media(max-width:700px){
- .dearday-logo.dearday-logo--wordmark{width:136px!important;height:38px!important}
- .dearday-logo--wordmark.dearday-logo--compact{width:118px!important;height:34px!important}
+ .dearday-logo.dearday-logo--wordmark{width:156px!important;height:38px!important}
+ .dearday-logo--wordmark.dearday-logo--compact{width:136px!important;height:34px!important}
 }
 
 /* DearDay UI refresh: softer charcoal primary actions (editor and member pages only). */
