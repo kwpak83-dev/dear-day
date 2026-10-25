@@ -3425,19 +3425,19 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Program editor: match optional-feature cards and DearDay blue controls. */
 .create-page .dd-program-share-card .dd-program-editor{width:100%;min-width:0;margin-top:16px}
 .create-page .dd-program-share-card .dd-program-editor-fields{gap:16px}
-.create-page .dd-program-share-card .dd-program-editor-item{padding:0 0 14px;border-bottom:1px solid #e7edf9}
+.create-page .dd-program-share-card .dd-program-editor-item{padding:0 0 14px;border-bottom:1px solid #e9e9e9}
 .create-page .dd-program-share-card .dd-program-delete-button,
 .create-page .dd-program-share-card .dd-program-add-button{
-  border:1px solid #c8d8fb;border-radius:10px;background:#eef4ff;color:#203d87;
+  border:1px solid #d7d7d7;border-radius:10px;background:#f5f5f5;color:#555555;
   font-size:13px;font-weight:600;line-height:1.3;min-height:40px;padding:10px 16px;
   transition:background .15s,border-color .15s;
 }
 .create-page .dd-program-share-card .dd-program-delete-button:hover,
-.create-page .dd-program-share-card .dd-program-add-button:hover{background:#e0eaff;border-color:#9db8f6}
+.create-page .dd-program-share-card .dd-program-add-button:hover{background:#ebebeb;border-color:#c7c7c7}
 .create-page .dd-program-share-card .dd-program-delete-button:focus-visible,
-.create-page .dd-program-share-card .dd-program-add-button:focus-visible{outline:2px solid #315be8;outline-offset:2px}
-.create-page .dd-program-share-card .dd-program-add-button{display:block;width:100%;background:#24418e;color:#fff;border-color:#24418e}
-.create-page .dd-program-share-card .dd-program-add-button:hover{background:#3158b4;border-color:#3158b4}
+.create-page .dd-program-share-card .dd-program-add-button:focus-visible{outline:2px solid #777777;outline-offset:2px}
+.create-page .dd-program-share-card .dd-program-add-button{display:block;width:100%;background:#555555;color:#fff;border-color:#555555}
+.create-page .dd-program-share-card .dd-program-add-button:hover{background:#494949;border-color:#494949}
 .create-page .dd-program-share-card .dd-program-add-button:disabled{opacity:.5;cursor:not-allowed}
 
 
@@ -3447,16 +3447,16 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-expand-switch-card > summary::marker{content:""}
 .dd-expand-switch-card > summary .dd-expand-switch-track{
   position:relative;display:block;flex:0 0 42px;width:42px;height:24px;
-  border-radius:999px;background:#cbd3df;transition:background .15s ease;
+  border-radius:999px;background:#d5d5d5;transition:background .15s ease;
 }
 .dd-expand-switch-card > summary .dd-expand-switch-track::after{
   content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;
   border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15);
   transition:transform .15s ease;
 }
-.dd-expand-switch-card[open] > summary .dd-expand-switch-track{background:#536faf}
+.dd-expand-switch-card[open] > summary .dd-expand-switch-track{background:#555555}
 .dd-expand-switch-card[open] > summary .dd-expand-switch-track::after{transform:translateX(18px)}
-.dd-expand-switch-card > summary:focus-visible{outline:2px solid #536faf;outline-offset:3px}
+.dd-expand-switch-card > summary:focus-visible{outline:2px solid #555555;outline-offset:3px}
 .dd-share-card.dd-expand-switch-card > summary.dd-share-card-heading{margin-bottom:0}
 .dd-share-card.dd-expand-switch-card[open] > summary.dd-share-card-heading{margin-bottom:12px}
 
@@ -3494,3 +3494,14 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .my-page .invitation-card>div>a:first-child{background:#555555;border-color:#555555;color:#fff}
 .create-page .place-search button:hover{background:#494949;border-color:#494949}
 @media(max-width:800px){.my-page .member-navigation nav>a.active{background:#555555;border-color:#555555;color:#fff}}
+
+/* Editor-only controls: unify remaining legacy blue UI with charcoal gray.
+   Keep published invitation themes and user-selected design colors untouched. */
+.create-page .dd-share-switch input:checked+.dd-share-switch-track{background:#555555}
+.create-page .dd-program-share-card .dd-program-add-button{background:#555555;border-color:#555555;color:#fff}
+.create-page .dd-program-share-card .dd-program-add-button:hover{background:#494949;border-color:#494949}
+.create-page .dd-program-share-card .dd-program-delete-button{background:#f5f5f5;border-color:#d7d7d7;color:#555555}
+.create-page .dd-program-share-card .dd-program-editor-item{border-bottom-color:#e9e9e9}
+.create-page .dd-expand-switch-card[open]>summary .dd-expand-switch-track{background:#555555}
+.create-page .dd-expand-switch-card>summary:focus-visible{outline-color:#777777}
+.create-page .dd-share-card.dd-expand-switch-card[open]>summary{outline-color:#e5e5e5}
