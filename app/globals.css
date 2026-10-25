@@ -3627,3 +3627,14 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   .create-page .create-user { gap:10px; }
   .create-page .create-user a, .create-page .create-user .dd-header-save { font-size:11px; }
 }
+
+/* Centered management items with delicate colored line icons */
+.my-page .dd-my-card-menu a,.my-page .dd-my-card-menu button{justify-content:center;text-align:center;gap:9px}
+.my-page .dd-my-card-menu .dd-my-menu-icon{flex:0 0 18px;width:18px;height:18px}
+.my-page .dd-my-menu-icon--users{color:#4778d9}
+.my-page .dd-my-menu-icon--link{color:#9873d8}
+.my-page .dd-my-menu-icon--share{color:#2b9a78}
+.my-page .dd-my-menu-icon--kakao{color:#d59a14}
+.my-page .dd-my-menu-icon--qr{color:#525e72}
+.my-page .dd-my-menu-icon--eye{color:#626e87}
+.my-page .dd-my-card-menu-danger .dd-my-menu-icon{color:#e34d58}
