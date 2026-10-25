@@ -24,6 +24,13 @@ function retentionNotice(event) {
   if (phase === "grace-period") return `이용기간 만료 · 유예기간 (종료일 ${format(graceEndsAt)})`;
   return `이용기간 만료 · 유예기간 종료 ${format(graceEndsAt)}`;
 }
+function CardImage({ url }) {
+  const [failed, setFailed] = useState(false);
+  return url && !failed
+    ? <img className="dd-my-card-image" src={url} alt="" loading="lazy" decoding="async" onError={() => setFailed(true)} />
+    : <span className="dd-my-card-placeholder" role="img" aria-label="대표 이미지 없음"><span aria-hidden="true">✉</span><span>DearDay</span></span>;
+}
+
 export default function MyInvitations() {
   const [events, setEvents] = useState([]);
   const [notice, setNotice] = useState("초대장을 불러오는 중이에요.");
@@ -110,12 +117,26 @@ export default function MyInvitations() {
       <p className="my-intro">임시저장한 초대장을 이어서 편집하거나,<br />발행한 초대장을 확인하세요.</p>
       {actionNotice && <p className="my-action-notice" role="status" aria-live="polite">{actionNotice}</p>}
       {notice && (notice === "저장한 초대장이 아직 없어요." && !loginRequired ? <div className="dd-empty-state"><span className="dd-empty-icon" aria-hidden="true">✉</span><h2>아직 등록된 초대장이 없어요</h2><p>특별한 날을 위한 첫 초대장을 만들어 보세요.</p><a href="/create" className="dd-empty-cta">새 초대장 만들기</a></div> : <div className="my-notice"><p>{notice}</p>{loginRequired && <a className="my-login-button" href="/?login=required&returnUrl=%2Fmy-invitations">다시 로그인하기</a>}</div>)}
-      <div className="invitation-list">{events.map((event) => <article className="invitation-card" key={event.slug}>
-        <span className={`status ${event.status}`}>{STATUS_LABELS[event.status] || event.status}</span>
-        <h2>{getInvitationTitle(event.settings, event.kind)}</h2>
-        <p>{event.starts_at ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "long", timeStyle: "short" }).format(new Date(event.starts_at)) : "날짜 미정"}</p>
-        {retentionNotice(event) && <p>{retentionNotice(event)}</p>}
-        <div><a href={`/create?slug=${event.slug}`}>편집하기</a>{event.status === "paid" && <><a href={`/create?slug=${event.slug}&preview=final`}>최종 미리보기</a><a href={`/create?slug=${event.slug}&publish=ready`}>초대장 발행하기</a></>}{event.status === "published" && <><a href={`/invite/${event.slug}?from=owner`}>초대장 보기</a><a href={`/guest-management?slug=${event.slug}`}>하객 관리</a><ShareActions path={`/invite/${event.slug}`} title={getInvitationTitle(event.settings, event.kind)} className="invitation-card-share" /><button type="button" className="invitation-state-button" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>발행 중지</button></>}{event.status === "suspended" && <><button type="button" className="invitation-state-button restore" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>다시 발행하기</button><button type="button" className="invitation-delete-button" onClick={() => { setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}>삭제하기</button></>}{event.status === "draft" && <button type="button" className="invitation-delete-button" onClick={() => { setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}>삭제하기</button>}</div>
+      <div className="invitation-list dd-my-card-list">{events.map((event) => <article className="dd-my-card" key={event.slug}>
+        <div className="dd-my-card-media">
+          <CardImage key={event.cardImageUrl || "no-image"} url={event.cardImageUrl} />
+          <span className={`dd-my-card-badge dd-my-card-badge--${event.status}`}>{STATUS_LABELS[event.status] || event.status}</span>
+        </div>
+        <div className="dd-my-card-body">
+          <h2 className="dd-my-card-title">{getInvitationTitle(event.settings, event.kind)}</h2>
+          <p className="dd-my-card-date">{event.starts_at ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "long", timeStyle: "short" }).format(new Date(event.starts_at)) : "날짜 미정"}</p>
+          {retentionNotice(event) && <p className="dd-my-card-retention">{retentionNotice(event)}</p>}
+          <div className="dd-my-card-actions">
+            <a href={`/create?slug=${event.slug}`}>편집하기</a>
+            {event.status === "paid" && <><a href={`/create?slug=${event.slug}&preview=final`}>최종 미리보기</a><a href={`/create?slug=${event.slug}&publish=ready`}>초대장 발행하기</a></>}
+            {event.status === "published" && <a href={`/invite/${event.slug}?from=owner`}>초대장 보기</a>}
+            {event.status === "suspended" && <button type="button" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>다시 발행하기</button>}
+          </div>
+          {["published", "suspended", "draft"].includes(event.status) && <div className="dd-my-card-management" aria-label="초대장 관리">
+            {event.status === "published" && <><a href={`/guest-management?slug=${event.slug}`}>하객 관리</a><ShareActions path={`/invite/${event.slug}`} title={getInvitationTitle(event.settings, event.kind)} className="invitation-card-share" /><button type="button" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>발행 중지</button></>}
+            {["suspended", "draft"].includes(event.status) && <button type="button" onClick={() => { setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}>삭제하기</button>}
+          </div>}
+        </div>
       </article>)}</div>
     </section>
     {publicationTarget && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="publication-state-title">
