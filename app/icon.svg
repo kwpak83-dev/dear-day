@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>DearDay</title>
+  <rect width="64" height="64" rx="12" fill="#fffdfb"/>
+  <g fill="none" stroke="#302b28" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 26 C17 9 40 8 51 18" stroke-width="1.7"/>
+    <path d="M13 42 C18 26 27 18 36 17 C47 15 50 26 45 37 C40 49 27 53 19 49 C15 47 15 44 19 43 C23 42 26 44 29 47" stroke-width="2.5"/>
+    <path d="M39 17 C34 25 27 39 22 49 C19 55 14 57 10 55" stroke-width="3"/>
+  </g>
+  <path d="M52 9 L54.3 16.7 L62 19 L54.3 21.3 L52 29 L49.7 21.3 L42 19 L49.7 16.7 Z" fill="#302b28"/>
+  <path d="M59 30 L60 33 L63 34 L60 35 L59 38 L58 35 L55 34 L58 33 Z" fill="#302b28"/>
+</svg>
