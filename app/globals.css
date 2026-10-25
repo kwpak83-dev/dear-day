@@ -3482,3 +3482,15 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  .dearday-logo.dearday-logo--wordmark{width:136px!important;height:38px!important}
  .dearday-logo--wordmark.dearday-logo--compact{width:118px!important;height:34px!important}
 }
+
+/* DearDay UI refresh: softer charcoal primary actions (editor and member pages only). */
+.create-page .place-search button,
+.create-page .dd-editor-sticky-actions .dd-editor-next-action,
+.create-page .dd-final-primary,
+.my-page .member-navigation nav>a.active,
+.my-page .guest-filters button.active,
+.my-page .guest-list-actions button,
+.my-page .my-login-button,
+.my-page .invitation-card>div>a:first-child{background:#555555;border-color:#555555;color:#fff}
+.create-page .place-search button:hover{background:#494949;border-color:#494949}
+@media(max-width:800px){.my-page .member-navigation nav>a.active{background:#555555;border-color:#555555;color:#fff}}
