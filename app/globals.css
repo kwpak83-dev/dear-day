@@ -3575,3 +3575,12 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .dd-empty-hero-photo > span { font-size:30px; }
 .create-page .dd-empty-hero-photo > strong { font-size:14px; }
 .create-page .dd-empty-hero-photo > small { font-size:12px; line-height:1.5; color:#888; }
+
+/* Editor chrome refresh: compact header and floating preview actions only. */
+.create-page .create-user { display:flex; align-items:center; gap:14px; }
+.create-page .create-user .dd-header-save { appearance:none; background:none; border:0; box-shadow:none; padding:8px 0; color:#333; font-family:Pretendard, sans-serif; font-size:12px; font-weight:500; cursor:pointer; }
+.create-page .create-user .dd-header-save:disabled { opacity:.45; cursor:not-allowed; }
+.create-page .dd-preview-float, .create-page .dd-preview-close-float { position:fixed; bottom:max(16px, env(safe-area-inset-bottom)); z-index:1100; min-height:32px; border-radius:999px; padding:6px 12px; font-family:Pretendard, sans-serif; font-size:11px; font-weight:500; line-height:18px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.09); }
+.create-page .dd-preview-float { left:16px; background:#fff; color:#333; border:1px solid #dedede; }
+.create-page .dd-preview-close-float { right:16px; background:#333; color:#fff; border:1px solid #333; }
+@media (max-width:600px) { .create-page .create-user { gap:12px; } .create-page .create-user a, .create-page .create-user .dd-header-save { font-size:12px; } }
