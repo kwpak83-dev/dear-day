@@ -7,6 +7,20 @@ import ShareActions from "../../components/share-actions";
 import MyPageLayout from "../../components/my-page-layout";
 import { getRetentionState } from "../../lib/invitation-retention";
 
+function MenuIcon({ name }) {
+ const shapes = {
+ users:<><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2M17 4a4 4 0 0 1 0 7m2 4a5 5 0 0 1 3 5v1"/></>,
+ link:<><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7L12 5M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7L12 19"/></>,
+ share:<><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 11 6-4m-6 7 6 4"/></>,
+ kakao:<path d="M21 11c0 5-4 9-9 9-1 0-2-.2-3-.5L4 21l1.5-4A8 8 0 0 1 3 11c0-5 4-8 9-8s9 3 9 8Z"/>,
+ qr:<><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3m7-3v3h-2m-5 4h3m2-2v2h2"/></>,
+ pause:<><circle cx="12" cy="12" r="9"/><path d="M10 8v8m4-8v8"/></>,
+ trash:<><path d="M3 6h18m-2 0-1 14H6L5 6m3 0V4h8v2m-6 4v7m4-7v7"/></>,
+ eye:<><path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="3"/></>
+ };
+ return <svg className={`dd-my-menu-icon dd-my-menu-icon--${name}`} aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{shapes[name]}</svg>;
+}
+
 const STATUS_LABELS = {
   draft: "제작중",
   paid: "결제완료 · 미발행",
@@ -153,13 +167,13 @@ export default function MyInvitations() {
           {["published", "suspended", "draft", "paid"].includes(event.status) && <div className="dd-my-card-management" ref={openMenu === event.slug ? menuRef : null}>
             <button type="button" className="dd-my-card-more" aria-expanded={openMenu === event.slug} aria-controls={`dd-my-card-menu-${event.slug}`} onClick={eventClick => { menuTriggerRef.current = eventClick.currentTarget; setOpenMenu(current => current === event.slug ? null : event.slug); }}>··· 더보기</button>
             <div className="dd-my-card-menu" id={`dd-my-card-menu-${event.slug}`} role="group" aria-label="초대장 관리 메뉴" hidden={openMenu !== event.slug}>
-              {event.status === "paid" && <a href={`/create?slug=${event.slug}&preview=final`}>최종 미리보기</a>}
+              {event.status === "paid" && <a href={`/create?slug=${event.slug}&preview=final`}><MenuIcon name="eye" />최종 미리보기</a>}
               {event.status === "published" && <>
-                <a href={`/guest-management?slug=${event.slug}`}>하객 관리</a>
-                <ShareActions path={`/invite/${event.slug}`} title={getInvitationTitle(event.settings, event.kind)} displayMode="menu" />
-                <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setPublicationError(""); setPublicationTarget(event); }}>발행 중지</button></div>
+                <a href={`/guest-management?slug=${event.slug}`}><MenuIcon name="users" />하객 관리</a>
+                <ShareActions path={`/invite/${event.slug}`} title={getInvitationTitle(event.settings, event.kind)} displayMode="menu" renderMenuIcon={(name) => <MenuIcon name={name} />} />
+                <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setPublicationError(""); setPublicationTarget(event); }}><MenuIcon name="pause" />발행 중지</button></div>
               </>}
-              {["suspended", "draft"].includes(event.status) && <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}>삭제하기</button></div>}
+              {["suspended", "draft"].includes(event.status) && <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}><MenuIcon name="trash" />삭제하기</button></div>}
             </div>
           </div>}
         </div>
