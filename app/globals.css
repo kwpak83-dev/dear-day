@@ -3558,3 +3558,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .dd-wedding-deceased{display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:13px;color:#777}
 .create-page .dd-wedding-deceased input{width:17px;height:17px;accent-color:#555}
 @media(max-width:390px){.create-page .dd-wedding-person-row{gap:6px;grid-template-columns:56px minmax(0,1fr) minmax(0,1.1fr)}.create-page .dd-wedding-parent-row{grid-template-columns:56px minmax(0,1fr) auto}.create-page .dd-wedding-person-row>input{padding:0 8px;font-size:13px}.create-page .dd-wedding-role{font-size:12px}}
+
+/* Mobile-friendly event hour and minute selectors. */
+.create-page .dd-time-selects{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:8px;max-width:370px}
+.create-page .dd-time-selects select{width:100%;min-width:0;height:44px;border:1px solid #e5e5e5;border-radius:10px;background:#f6f6f6;color:#333;padding:0 10px;font-size:14px}
+.create-page .dd-time-selects select:focus{outline:2px solid #aaa;outline-offset:1px}
