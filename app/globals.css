@@ -3563,3 +3563,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .dd-time-selects{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:8px;max-width:370px}
 .create-page .dd-time-selects select{width:100%;min-width:0;height:44px;border:1px solid #e5e5e5;border-radius:10px;background:#f6f6f6;color:#333;padding:0 10px;font-size:14px}
 .create-page .dd-time-selects select:focus{outline:2px solid #aaa;outline-offset:1px}
+
+/* Mobile venue form: smaller placeholder text without shrinking entered values. */
+@media (max-width: 600px) {
+  .create-page .dd-venue-accordion input::placeholder { font-size: 12px; }
+  .create-page .dd-venue-accordion .place-search button { padding-inline: 10px; }
+}
