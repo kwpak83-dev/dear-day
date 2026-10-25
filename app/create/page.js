@@ -1109,7 +1109,7 @@ export default function CreateInvitation() {
             });
             return <div className="dd-wedding-person" key={person}>
               <div className="dd-wedding-person-row dd-wedding-main-row">
-                <span className="dd-wedding-role"><span aria-hidden="true">{person === "groom" ? "🤵" : "👰"}</span> {label}</span>
+                <span className="dd-wedding-role"><span aria-hidden="true">{person === "groom" ? "👨🏻‍💼" : "👰🏻‍♀️"}</span> {label}</span>
                 <input aria-label={label + " 성"} placeholder="성" value={invitation[lastKey] || ""} onChange={(event) => setNamePart(lastKey, event.target.value)} />
                 <input aria-label={label + " 이름"} placeholder="이름" value={invitation[firstKey] || (!invitation[lastKey] && !invitation[firstKey] ? invitation[person] || "" : "")} onChange={(event) => setNamePart(firstKey, event.target.value)} />
               </div>
