@@ -2210,20 +2210,20 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 }
 
 
-/* DearDay full-preview chrome: align toolbar actions and desktop canvas with the blue brand identity. */
+/* DearDay full-preview chrome: neutral grayscale UI, without changing invitation template colors. */
 .full-preview-overlay{
-  background:#eaf2ff;
+  background:#f5f5f5;
 }
 .full-preview-toolbar button{
-  background:#1e3a8a;
+  background:#242424;
   color:#fff;
   box-shadow:none;
 }
 .full-preview-toolbar button.secondary{
-  background:#dbeafe;
-  color:#1e3a8a;
+  background:#fff;
+  color:#333;
+  box-shadow:none;
 }
-
 
 /* Required-field guidance: briefly highlight the first missing field after publish validation. */
 .dd-required-field-missing{
