@@ -279,10 +279,17 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .my-page .dd-my-card-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
 .my-page .dd-my-card-actions>a,.my-page .dd-my-card-actions>button{display:inline-flex;align-items:center;justify-content:center;flex:1 1 110px;min-width:0;min-height:44px;box-sizing:border-box;border:1px solid #dedede;border-radius:9px;background:#fff;padding:10px 12px;color:#333;font:700 12px/1.5 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;text-align:center;text-decoration:none;cursor:pointer;overflow-wrap:anywhere}
 .my-page .dd-my-card-actions>a:first-child{background:#242424;border-color:#242424;color:#fff}
-.my-page .dd-my-card-management{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;border-top:1px solid #eee;padding-top:12px;margin-top:6px}
-.my-page .dd-my-card-management .share-actions{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;margin:0;min-width:0}
-.my-page .dd-my-card-management a,.my-page .dd-my-card-management button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;box-sizing:border-box;border:0;border-radius:6px;background:transparent;padding:8px 0;color:#666;font:400 12px/1.5 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
-.my-page .dd-my-card-management .share-actions-notice{flex-basis:100%;color:#777;font-size:11px;overflow-wrap:anywhere}
+.my-page .dd-my-card-management{border-top:1px solid #eee;padding-top:12px;margin-top:6px}
+.my-page .dd-my-card-more{display:inline-flex;align-items:center;justify-content:center;min-height:44px;box-sizing:border-box;padding:10px 14px;border:1px solid #dedede;border-radius:9px;background:#fff;color:#555;font:700 12px/1.5 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;cursor:pointer}
+.my-page .dd-my-card-menu{display:grid;min-width:0;box-sizing:border-box;margin-top:8px;padding:6px;border:1px solid #e5e5e5;border-radius:10px;background:#fafafa}
+.my-page .dd-my-card-menu[hidden]{display:none}
+.my-page .dd-my-card-menu .dd-share-actions-menu{display:grid;gap:0;margin:0;min-width:0}
+.my-page .dd-my-card-menu a,.my-page .dd-my-card-menu button{display:flex;align-items:center;justify-content:flex-start;width:100%;min-width:0;min-height:44px;box-sizing:border-box;border:0;border-radius:6px;background:transparent;padding:10px 12px;color:#444;font:400 13px/1.5 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;text-align:left;text-decoration:none;overflow-wrap:anywhere;cursor:pointer}
+.my-page .dd-my-card-menu :is(a,button):hover{background:#eee}
+.my-page .dd-my-card-menu-danger{border-top:1px solid #e3e3e3;margin-top:5px;padding-top:5px}
+.my-page .dd-my-card-menu-danger:first-child{border-top:0;margin-top:0;padding-top:0}
+.my-page .dd-my-card-menu-danger button{font-weight:700;color:#222}
+.my-page .dd-my-card-menu .share-actions-notice{color:#666;padding:0 12px;font-size:11px;line-height:1.6;overflow-wrap:anywhere}
 .my-page .dd-my-card :is(a,button):focus-visible{outline:2px solid #555;outline-offset:3px}
 @media(max-width:600px){.my-page .dd-my-card-list{grid-template-columns:minmax(0,1fr);gap:18px}.my-page .dd-my-card-body{padding:18px}}
 

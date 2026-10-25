@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import { getInvitationTitle } from "../../lib/invitation-title";
 import ShareActions from "../../components/share-actions";
@@ -32,6 +32,24 @@ function CardImage({ url }) {
 }
 
 export default function MyInvitations() {
+  const [openMenu, setOpenMenu] = useState(null);
+  const menuRef = useRef(null);
+  const menuTriggerRef = useRef(null);
+  useEffect(() => {
+    if (!openMenu) return;
+    const outside = event => { if (!menuRef.current?.contains(event.target)) setOpenMenu(null); };
+    const escape = event => {
+      if (event.key !== "Escape" || event.target?.closest?.('[role="dialog"]')) return;
+      setOpenMenu(null);
+      menuTriggerRef.current?.focus();
+    };
+    document.addEventListener("pointerdown", outside);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", outside);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [openMenu]);
   const [events, setEvents] = useState([]);
   const [notice, setNotice] = useState("초대장을 불러오는 중이에요.");
   const [loginRequired, setLoginRequired] = useState(false);
@@ -128,13 +146,21 @@ export default function MyInvitations() {
           {retentionNotice(event) && <p className="dd-my-card-retention">{retentionNotice(event)}</p>}
           <div className="dd-my-card-actions">
             <a href={`/create?slug=${event.slug}`}>편집하기</a>
-            {event.status === "paid" && <><a href={`/create?slug=${event.slug}&preview=final`}>최종 미리보기</a><a href={`/create?slug=${event.slug}&publish=ready`}>초대장 발행하기</a></>}
+            {event.status === "paid" && <a href={`/create?slug=${event.slug}&publish=ready`}>초대장 발행하기</a>}
             {event.status === "published" && <a href={`/invite/${event.slug}?from=owner`}>초대장 보기</a>}
             {event.status === "suspended" && <button type="button" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>다시 발행하기</button>}
           </div>
-          {["published", "suspended", "draft"].includes(event.status) && <div className="dd-my-card-management" aria-label="초대장 관리">
-            {event.status === "published" && <><a href={`/guest-management?slug=${event.slug}`}>하객 관리</a><ShareActions path={`/invite/${event.slug}`} title={getInvitationTitle(event.settings, event.kind)} className="invitation-card-share" /><button type="button" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>발행 중지</button></>}
-            {["suspended", "draft"].includes(event.status) && <button type="button" onClick={() => { setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}>삭제하기</button>}
+          {["published", "suspended", "draft", "paid"].includes(event.status) && <div className="dd-my-card-management" ref={openMenu === event.slug ? menuRef : null}>
+            <button type="button" className="dd-my-card-more" aria-expanded={openMenu === event.slug} aria-controls={`dd-my-card-menu-${event.slug}`} onClick={eventClick => { menuTriggerRef.current = eventClick.currentTarget; setOpenMenu(current => current === event.slug ? null : event.slug); }}>··· 더보기</button>
+            <div className="dd-my-card-menu" id={`dd-my-card-menu-${event.slug}`} role="group" aria-label="초대장 관리 메뉴" hidden={openMenu !== event.slug}>
+              {event.status === "paid" && <a href={`/create?slug=${event.slug}&preview=final`}>최종 미리보기</a>}
+              {event.status === "published" && <>
+                <a href={`/guest-management?slug=${event.slug}`}>하객 관리</a>
+                <ShareActions path={`/invite/${event.slug}`} title={getInvitationTitle(event.settings, event.kind)} displayMode="menu" />
+                <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setPublicationError(""); setPublicationTarget(event); }}>발행 중지</button></div>
+              </>}
+              {["suspended", "draft"].includes(event.status) && <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}>삭제하기</button></div>}
+            </div>
           </div>}
         </div>
       </article>)}</div>
