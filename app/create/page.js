@@ -1096,7 +1096,37 @@ export default function CreateInvitation() {
         <div className="dd-editor-step-intro"><p className="section-kicker">STEP {editorStep + 1} OF 6</p><h1>{["기본정보", "디자인", "사진·연락처", "음악·효과", "부가기능", "확인·발행"][editorStep]}</h1><p className="editor-intro">{["초대장에 필요한 기본 정보와 마음 전하실 곳을 입력해 주세요.", "HERO 프레임과 본문 테마를 선택해 주세요.", "대표사진과 갤러리, 연락처를 설정해 주세요.", "배경음악과 화면 효과를 설정해 주세요.", "공지사항과 참석 여부, 방명록 기능을 설정해 주세요.", "최종 확인 후 결제하고 직접 발행해 주세요."][editorStep]}</p></div>
         <div className="dd-required-fields" style={{display:editorStep === 0 ? undefined : "none"}}>
         <div className="form-section"><h2>행사 종류</h2><Field label="초대장 종류"><select value={invitation.eventKind} onChange={(e) => changeEventKind(e.target.value)} disabled={eventStatus === "published"}>{EVENT_KIND_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></Field></div>
-        {eventConfig.sections.map((section) => <div className="form-section" key={section.id}><h2>{section.title}</h2>{section.rows.map((row, rowIndex) => row.length > 1 ? <div className="field-grid" key={rowIndex}>{row.map(renderConfigField)}</div> : row.map(renderConfigField))}</div>)}
+        {eventConfig.sections.map((section) => <div className="form-section" key={section.id}><h2>{section.title}</h2>{invitation.eventKind === "wedding" && section.id === "basic" && <div className="dd-wedding-people">
+          {["groom","bride"].map((person) => {
+            const label = person === "groom" ? "신랑" : "신부";
+            const prefix = person === "groom" ? "groom" : "bride";
+            const lastKey = person + "LastName";
+            const firstKey = person + "FirstName";
+            const setNamePart = (key, value) => setInvitation((current) => {
+              const lastName = key === lastKey ? value : (current[lastKey] || "");
+              const firstName = key === firstKey ? value : (current[firstKey] || (!current[lastKey] && !current[firstKey] ? current[person] || "" : ""));
+              return {...current, [key]: value, [person]: `${lastName}${firstName}`.trim()};
+            });
+            return <div className="dd-wedding-person" key={person}>
+              <div className="dd-wedding-person-row dd-wedding-main-row">
+                <span className="dd-wedding-role"><span aria-hidden="true">{person === "groom" ? "🤵" : "👰"}</span> {label}</span>
+                <input aria-label={label + " 성"} placeholder="성" value={invitation[lastKey] || ""} onChange={(event) => setNamePart(lastKey, event.target.value)} />
+                <input aria-label={label + " 이름"} placeholder="이름" value={invitation[firstKey] || (!invitation[lastKey] && !invitation[firstKey] ? invitation[person] || "" : "")} onChange={(event) => setNamePart(firstKey, event.target.value)} />
+              </div>
+              {["Father","Mother"].map((parent) => {
+                const nameKey = prefix + parent + "Name";
+                const deceasedKey = prefix + parent + "Deceased";
+                const parentLabel = parent === "Father" ? "아버지" : "어머니";
+                return <div className="dd-wedding-person-row dd-wedding-parent-row" key={nameKey}>
+                  <span className="dd-wedding-role">{parentLabel}</span>
+                  <input aria-label={label + " " + parentLabel + " 성함"} placeholder="성함" value={invitation[nameKey] || ""} onChange={(event) => update(nameKey, event.target.value)} />
+                  <label className="dd-wedding-deceased"><input type="checkbox" checked={Boolean(invitation[deceasedKey])} onChange={(event) => update(deceasedKey, event.target.checked)} /><span>故</span></label>
+                </div>;
+              })}
+            </div>;
+          })}
+        </div>}
+        {section.rows.map((row, rowIndex) => invitation.eventKind === "wedding" && section.id === "basic" && rowIndex < 3 ? null : row.length > 1 ? <div className="field-grid" key={rowIndex}>{row.map(renderConfigField)}</div> : row.map(renderConfigField))}</div>)}
         {(detailsMatrix.state !== "none" || externalLinkMatrix.state !== "none" || brandImageMatrix.state !== "none") && <div className="form-section"><h2>추가 행사 정보</h2>
           {detailsMatrix.state !== "none" && <Field label={detailsMatrix.label} fieldKey="details"><textarea rows={5} maxLength={2000} value={invitation.details || ""} onChange={event => update("details", event.target.value)} /></Field>}
           {externalLinkMatrix.state !== "none" && <Field label={externalLinkMatrix.label} fieldKey="externalLink"><input type="url" inputMode="url" placeholder="https://..." value={invitation.externalLink || ""} onChange={event => update("externalLink", event.target.value)} /></Field>}
