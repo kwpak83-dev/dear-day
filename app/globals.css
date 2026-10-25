@@ -3569,3 +3569,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   .create-page .dd-venue-accordion input::placeholder { font-size: 12px; }
   .create-page .dd-venue-accordion .place-search button { padding-inline: 10px; }
 }
+
+/* Empty HERO photo state is shown only inside the editor upload section. */
+.create-page .dd-empty-hero-photo { min-height:210px; padding:24px 16px; border:1px dashed #d8d8d8; border-radius:12px; background:#fafafa; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; color:#555; }
+.create-page .dd-empty-hero-photo > span { font-size:30px; }
+.create-page .dd-empty-hero-photo > strong { font-size:14px; }
+.create-page .dd-empty-hero-photo > small { font-size:12px; line-height:1.5; color:#888; }
