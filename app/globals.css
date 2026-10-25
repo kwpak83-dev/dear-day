@@ -3508,3 +3508,41 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 .create-page .dd-notice-file-button:hover{background:#494949;border-color:#494949}
 .create-page .dd-notice-file-button:focus-within{outline:2px solid #999;outline-offset:2px}
+
+/* DearDay member pages: neutralize legacy premium blue overrides (do not affect template collection). */
+.my-page.member-page{
+ --dd-premium-ink:#333333;
+ --dd-premium-blue:#555555;
+ --dd-premium-muted:#777777;
+ --dd-premium-line:#e5e5e5;
+ --dd-premium-paper:#f7f7f7;
+ color:#333333;
+ background:#f7f7f7;
+}
+.my-page .my-content::before,
+.my-page .guest-management-content::before{
+ background:radial-gradient(ellipse at 65% 24%,#e5e5e5 0 8%,transparent 9%),
+ radial-gradient(ellipse at 42% 45%,#e0e0e0 0 10%,transparent 11%),
+ radial-gradient(ellipse at 78% 67%,#e5e5e5 0 9%,transparent 10%);
+ opacity:.45;
+}
+.my-page :is(.my-content,.guest-management-content)>.section-kicker{color:#777777}
+.my-page :is(.my-content,.guest-management-content)>h1{color:#333333}
+.my-page :is(.my-intro,.guest-management-intro){color:#777777}
+.my-page .invitation-card,
+.my-page .guest-summary article,
+.my-page .guest-rsvp-list>article,
+.my-page .guestbook-management-list article{
+ border-color:#e5e5e5;
+ box-shadow:0 9px 26px rgba(0,0,0,.045);
+}
+.my-page .invitation-card h2,.my-page .guest-summary strong{color:#333333}
+.my-page .invitation-card p,.my-page .guest-summary span{color:#777777}
+.my-page .invitation-card>div{border-top-color:#ededed}
+.my-page .guest-event-select select{border-color:#dedede;color:#333333}
+.my-page .guest-filters button{border-color:#dedede;color:#666666}
+.my-page .guest-filters button.active{background:#555555;border-color:#555555;color:#fff}
+.my-page .guestbook-management{border-top-color:#e5e5e5}
+.my-page .invitation-card>.status.published{background:#eeeeee;color:#555555}
+.create-user.my-page-header-actions .my-page-header-button{border-color:#e1e1e1;color:#555555;box-shadow:0 2px 8px rgba(0,0,0,.035)}
+.create-user.my-page-header-actions .my-page-header-button.primary{background:#555555;border-color:#555555;color:#fff}
