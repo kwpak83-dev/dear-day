@@ -2076,7 +2076,7 @@
   pointer-events:auto;
   transform:translateY(0);
  }
- .landing-v2 .dd-floating-quick a{
+ .landing-v2 .dd-floating-quick a, .landing-v2 .dd-floating-quick button{
   min-width:0;min-height:42px;flex:1;
   display:flex;align-items:center;justify-content:center;gap:5px;
   padding:9px 6px;border-radius:999px;
@@ -2089,7 +2089,8 @@
  .landing-v2 .dd-floating-quick .dd-floating-quick-primary{
   color:#fff;background:#242424;border:1px solid #242424;
  }
- .landing-v2 .dd-floating-quick a span{font-size:14px}
+ .landing-v2 .dd-floating-quick a span, .landing-v2 .dd-floating-quick button span{font-size:14px}
+ .landing-v2 .dd-floating-quick button{appearance:none;font-family:inherit;line-height:normal;cursor:pointer;}
 }
 @media(prefers-reduced-motion:reduce){
  .landing-v2 .dd-floating-quick{transition:none!important}

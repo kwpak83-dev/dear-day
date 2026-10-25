@@ -263,6 +263,36 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .my-notice>p{margin:0}.my-login-button{display:inline-flex;align-items:center;justify-content:center;max-width:100%;margin-top:14px;padding:11px 20px;border-radius:999px;background:#ee7881;color:#fff;font-size:13px;font-weight:700;text-decoration:none;box-sizing:border-box}
 
 .invitation-map{position:relative;z-index:0;isolation:isolate;width:90%;min-width:0;margin:18px auto 0;overflow:visible;border:1px solid #ead8ce;border-radius:10px;background:#f8ede7;box-sizing:border-box}.invitation-map-canvas{width:100%;height:190px;min-width:0}.preview-content .invitation-map{margin-top:14px;border-radius:7px}.preview-content .invitation-map-canvas{height:145px}
+/* My invitations: image cards, isolated from the legacy invitation-card layout. */
+.my-page .dd-my-card-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.my-page .dd-my-card{min-width:0;overflow:hidden;border:1px solid #e5e5e5;border-radius:18px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.025);color:#242424}
+.my-page .dd-my-card-media{position:relative;aspect-ratio:4/3;overflow:hidden;background:#f0f0f0}
+.my-page .dd-my-card-image{display:block;width:100%;height:100%;object-fit:cover}
+.my-page .dd-my-card-placeholder{display:flex;width:100%;height:100%;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#999;font:18px Georgia,serif}
+.my-page .dd-my-card-placeholder>span:first-child{font-size:30px;color:#aaa}
+.my-page .dd-my-card-badge{position:absolute;top:14px;left:14px;max-width:calc(100% - 28px);padding:7px 11px;border:1px solid #e5e5e5;border-radius:999px;background:#fff;color:#444;font-size:11px;font-weight:700;line-height:1.4;overflow-wrap:anywhere}
+.my-page .dd-my-card-badge--published{background:#242424;border-color:#242424;color:#fff}
+.my-page .dd-my-card-body{display:flex;flex-direction:column;gap:10px;padding:20px}
+.my-page .dd-my-card-title{margin:0;font:700 19px/1.45 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:-.03em;overflow-wrap:anywhere;color:#242424}
+.my-page .dd-my-card-date{margin:0;font-size:13px;line-height:1.6;color:#666;overflow-wrap:anywhere}
+.my-page .dd-my-card-retention{margin:0;font-size:11px;line-height:1.6;color:#888;overflow-wrap:anywhere}
+.my-page .dd-my-card-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.my-page .dd-my-card-actions>a,.my-page .dd-my-card-actions>button{display:inline-flex;align-items:center;justify-content:center;flex:1 1 110px;min-width:0;min-height:44px;box-sizing:border-box;border:1px solid #dedede;border-radius:9px;background:#fff;padding:10px 12px;color:#333;font:700 12px/1.5 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;text-align:center;text-decoration:none;cursor:pointer;overflow-wrap:anywhere}
+.my-page .dd-my-card-actions>a:first-child{background:#242424;border-color:#242424;color:#fff}
+.my-page .dd-my-card-management{border-top:1px solid #eee;padding-top:12px;margin-top:6px}
+.my-page .dd-my-card-more{display:inline-flex;align-items:center;justify-content:center;min-height:44px;box-sizing:border-box;padding:10px 14px;border:1px solid #dedede;border-radius:9px;background:#fff;color:#555;font:700 12px/1.5 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;cursor:pointer}
+.my-page .dd-my-card-menu{display:grid;min-width:0;box-sizing:border-box;margin-top:8px;padding:6px;border:1px solid #e5e5e5;border-radius:10px;background:#fafafa}
+.my-page .dd-my-card-menu[hidden]{display:none}
+.my-page .dd-my-card-menu .dd-share-actions-menu{display:grid;gap:0;margin:0;min-width:0}
+.my-page .dd-my-card-menu a,.my-page .dd-my-card-menu button{display:flex;align-items:center;justify-content:flex-start;width:100%;min-width:0;min-height:44px;box-sizing:border-box;border:0;border-radius:6px;background:transparent;padding:10px 12px;color:#444;font:400 13px/1.5 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;text-align:left;text-decoration:none;overflow-wrap:anywhere;cursor:pointer}
+.my-page .dd-my-card-menu :is(a,button):hover{background:#eee}
+.my-page .dd-my-card-menu-danger{border-top:1px solid #e3e3e3;margin-top:5px;padding-top:5px}
+.my-page .dd-my-card-menu-danger:first-child{border-top:0;margin-top:0;padding-top:0}
+.my-page .dd-my-card-menu-danger button{font-weight:700;color:#222}
+.my-page .dd-my-card-menu .share-actions-notice{color:#666;padding:0 12px;font-size:11px;line-height:1.6;overflow-wrap:anywhere}
+.my-page .dd-my-card :is(a,button):focus-visible{outline:2px solid #555;outline-offset:3px}
+@media(max-width:600px){.my-page .dd-my-card-list{grid-template-columns:minmax(0,1fr);gap:18px}.my-page .dd-my-card-body{padding:18px}}
+
 .my-action-notice{margin:22px 0 0;color:#8b7165;font-size:13px;line-height:1.6}.invitation-card .invitation-delete-button{border:0;background:transparent;color:#9a7d70;padding:0;font-size:13px;font-weight:700;text-decoration:underline;text-underline-offset:4px;cursor:pointer}.delete-invitation-modal{width:min(100%,390px);padding:34px 28px;border-radius:20px;background:#fffaf5;box-shadow:0 28px 70px rgba(54,35,27,.25);box-sizing:border-box;text-align:center}.delete-invitation-modal h2{margin:0;font-size:25px}.delete-invitation-modal p{margin:13px 0 25px;color:#8b7165;font-size:13px;line-height:1.6}.delete-invitation-modal>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.delete-invitation-modal button{min-width:0;padding:12px 10px;border:0;border-radius:10px;background:#f1e1d8;color:#765449;font-size:13px;font-weight:700;cursor:pointer}.delete-invitation-modal button.danger{background:#ef786c;color:#fff}.delete-invitation-modal button:disabled{opacity:.55;cursor:default}@media(max-width:380px){.delete-invitation-modal{padding:29px 20px}.delete-invitation-modal h2{font-size:22px}}.delete-invitation-modal .delete-invitation-error{margin:-12px 0 18px;color:#c94f48;font-weight:700}
 /* Classic 001 sales template */
 .classic-001{
@@ -2210,20 +2240,20 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 }
 
 
-/* DearDay full-preview chrome: align toolbar actions and desktop canvas with the blue brand identity. */
+/* DearDay full-preview chrome: neutral grayscale UI, without changing invitation template colors. */
 .full-preview-overlay{
-  background:#eaf2ff;
+  background:#f5f5f5;
 }
 .full-preview-toolbar button{
-  background:#1e3a8a;
+  background:#242424;
   color:#fff;
   box-shadow:none;
 }
 .full-preview-toolbar button.secondary{
-  background:#dbeafe;
-  color:#1e3a8a;
+  background:#fff;
+  color:#333;
+  box-shadow:none;
 }
-
 
 /* Required-field guidance: briefly highlight the first missing field after publish validation. */
 .dd-required-field-missing{
@@ -3563,3 +3593,48 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .dd-time-selects{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:8px;max-width:370px}
 .create-page .dd-time-selects select{width:100%;min-width:0;height:44px;border:1px solid #e5e5e5;border-radius:10px;background:#f6f6f6;color:#333;padding:0 10px;font-size:14px}
 .create-page .dd-time-selects select:focus{outline:2px solid #aaa;outline-offset:1px}
+
+/* Mobile venue form: smaller placeholder text without shrinking entered values. */
+@media (max-width: 600px) {
+  .create-page .dd-venue-accordion input::placeholder { font-size: 12px; }
+  .create-page .dd-venue-accordion .place-search button { padding-inline: 10px; }
+}
+
+/* Empty HERO photo state is shown only inside the editor upload section. */
+.create-page .dd-empty-hero-photo { min-height:210px; padding:24px 16px; border:1px dashed #d8d8d8; border-radius:12px; background:#fafafa; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; color:#555; }
+.create-page .dd-empty-hero-photo > span { font-size:30px; }
+.create-page .dd-empty-hero-photo > strong { font-size:14px; }
+.create-page .dd-empty-hero-photo > small { font-size:12px; line-height:1.5; color:#888; }
+
+/* Editor chrome refresh: compact header and floating preview actions only. */
+.create-page .create-user { display:flex; align-items:center; gap:14px; }
+.create-page .create-user .dd-header-save { appearance:none; background:none; border:0; box-shadow:none; padding:8px 0; color:#333; font-family:Pretendard, sans-serif; font-size:12px; font-weight:500; cursor:pointer; }
+.create-page .create-user .dd-header-save:disabled { opacity:.45; cursor:not-allowed; }
+.create-page .dd-preview-float, .create-page .dd-preview-close-float { position:fixed; bottom:max(16px, env(safe-area-inset-bottom)); z-index:1100; min-height:32px; border-radius:999px; padding:6px 12px; font-family:Pretendard, sans-serif; font-size:11px; font-weight:500; line-height:18px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.09); }
+.create-page .dd-preview-float { left:16px; background:#fff; color:#333; border:1px solid #dedede; }
+.create-page .dd-preview-close-float { right:16px; background:#333; color:#fff; border:1px solid #333; }
+@media (max-width:600px) { .create-page .create-user { gap:12px; } .create-page .create-user a, .create-page .create-user .dd-header-save { font-size:12px; } }
+
+/* DearDay editor header: reference-inspired compact alignment and typography. */
+.create-page .create-header { padding-left:12px; padding-right:14px; }
+.create-page .create-header .brand { margin-left:0; }
+.create-page .create-user { gap:12px; }
+.create-page .create-user a { color:#292929; font-family:Pretendard, sans-serif; font-size:12px; font-weight:500; text-decoration:none; text-underline-offset:initial; white-space:nowrap; }
+.create-page .create-user a:hover { text-decoration:none; color:#555; }
+.create-page .create-user .dd-header-save { color:#dc7885; font-size:12px; font-weight:500; white-space:nowrap; }
+@media (max-width:600px) {
+  .create-page .create-header { height:48px; padding-left:10px; padding-right:12px; }
+  .create-page .create-user { gap:10px; }
+  .create-page .create-user a, .create-page .create-user .dd-header-save { font-size:11px; }
+}
+
+/* Centered management items with delicate colored line icons */
+.my-page .dd-my-card-menu a,.my-page .dd-my-card-menu button{justify-content:center;text-align:center;gap:9px}
+.my-page .dd-my-card-menu .dd-my-menu-icon{flex:0 0 18px;width:18px;height:18px}
+.my-page .dd-my-menu-icon--users{color:#4778d9}
+.my-page .dd-my-menu-icon--link{color:#9873d8}
+.my-page .dd-my-menu-icon--share{color:#2b9a78}
+.my-page .dd-my-menu-icon--kakao{color:#d59a14}
+.my-page .dd-my-menu-icon--qr{color:#525e72}
+.my-page .dd-my-menu-icon--eye{color:#626e87}
+.my-page .dd-my-card-menu-danger .dd-my-menu-icon{color:#e34d58}

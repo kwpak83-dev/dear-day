@@ -22,8 +22,8 @@ export default function BankSelector({ value, onChange }) {
         className="bank-select-trigger"
         onClick={() => setOpen(true)}
       >
-        <span>{value || "은행을 선택하세요"}</span>
-        <span className="bank-select-arrow">선택 ›</span>
+        <span>{value || "선택 ›"}</span>
+        {value && <span className="bank-select-arrow">변경 ›</span>}
       </button>
 
       {open && (

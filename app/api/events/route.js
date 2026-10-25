@@ -8,6 +8,7 @@ import { getAllMissingRequiredFields } from "../../../lib/event-config";
 import { calculateRetentionDates } from "../../../lib/invitation-retention";
 import { getTemplateAssetReferences, resolveTemplateAssetUrls, applySaleTemplateStyles } from "../../../lib/template-config";
 import { preserveCardShareMetadata } from "../../../lib/card-share-image";
+import { addEventCardImages } from "../../../lib/event-card-images";
 
 const slugPattern = /^[a-z0-9-]{4,80}$/;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -203,11 +204,11 @@ export async function GET(request) {
   const auth = await getAuthenticatedClient(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
   const slug = searchParams.get("slug");
-  let query = auth.supabase.from("events").select("slug,title,status,kind,template_id,template_version_id,hero_preset_id,starts_at,paid_at,published_at,service_started_at,service_expires_at,grace_ends_at,updated_at,settings").eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
+  let query = auth.supabase.from("events").select(`slug,title,status,kind,template_id,template_version_id,hero_preset_id,starts_at,paid_at,published_at,service_started_at,service_expires_at,grace_ends_at,updated_at,settings${slug ? "" : ",cover_image_url"}`).eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
   if (slug) query = query.eq("slug", slug).limit(1);
   const { data, error } = await query;
   if (error) return json({ error: "초대장을 불러오지 못했어요." }, 500);
-  if (!slug) return json({ events: data || [] });
+  if (!slug) return json({ events: await addEventCardImages(auth.supabase, data || [], process.env.NEXT_PUBLIC_SUPABASE_URL) });
   const event = data?.[0] || null;
   let renderData = { templateConfig: null, templateAssets: {} };
   if (event?.template_id) {

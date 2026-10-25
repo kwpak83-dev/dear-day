@@ -15,6 +15,7 @@ export default function TemplateCollectionPage(){
  const [ready,setReady]=useState(false);
  const [active,setActive]=useState(0);
  const trackRef=useRef(null);
+ const initialPositioned=useRef(false);
  const dragRef=useRef(null);
  useEffect(()=>{
   const requested=new URLSearchParams(window.location.search).get("category");
@@ -25,20 +26,28 @@ export default function TemplateCollectionPage(){
   if(!ready)return;
   const controller=new AbortController();
   setLoading(true);
-  setItems([]);
-  setActive(0);
-  fetch("/api/templates/collection"+(category?`?category=${encodeURIComponent(category)}`:""),{signal:controller.signal})
+  fetch("/api/templates/collection",{signal:controller.signal})
    .then(r=>{if(!r.ok)throw new Error("템플릿을 불러오지 못했어요.");return r.json();})
-   .then(j=>setItems(j.items||[]))
+   .then(j=>{
+    const all=j.items||[];
+    const order=categories.filter(([v])=>v).map(([v])=>v);
+    setItems([...all].sort((a,b)=>{
+     const ai=order.indexOf(a.category),bi=order.indexOf(b.category);
+     return (ai<0?order.length:ai)-(bi<0?order.length:bi);
+    }));
+   })
    .catch(e=>{if(e.name!=="AbortError")setItems([]);})
    .finally(()=>{if(!controller.signal.aborted)setLoading(false);});
   return()=>controller.abort();
- },[category,ready]);
+ },[ready]);
  const selectCategory=(v)=>{
   setCategory(v);
   const url=new URL(window.location.href);
   if(v)url.searchParams.set("category",v);else url.searchParams.delete("category");
   window.history.replaceState(null,"",url.pathname+url.search);
+  if(!items.length)return;
+  const index=v?items.findIndex(item=>item.category===v):0;
+  if(index>=0)goTo(index);
  };
  const goTo=useCallback((index)=>{
   const track=trackRef.current;
@@ -49,11 +58,12 @@ export default function TemplateCollectionPage(){
   setActive(next);
  },[items.length]);
  useEffect(()=>{
-  const track=trackRef.current;
-  if(!track||!items.length)return;
-  const frame=requestAnimationFrame(()=>goTo(0));
+  if(!items.length||initialPositioned.current)return;
+  initialPositioned.current=true;
+  const index=category?items.findIndex(item=>item.category===category):0;
+  const frame=requestAnimationFrame(()=>goTo(Math.max(0,index)));
   return()=>cancelAnimationFrame(frame);
- },[items,goTo]);
+ },[items,goTo,category]);
  const syncActive=()=>{
   const track=trackRef.current;
   if(!track)return;
@@ -64,6 +74,13 @@ export default function TemplateCollectionPage(){
    if(delta<distance){distance=delta;best=i;}
   });
   setActive(best);
+  const visibleCategory=items[best]?.category;
+  if(visibleCategory&&visibleCategory!==category){
+   setCategory(visibleCategory);
+   const url=new URL(window.location.href);
+   url.searchParams.set("category",visibleCategory);
+   window.history.replaceState(null,"",url.pathname+url.search);
+  }
  };
  const pointerDown=e=>{
   if(e.pointerType!=="mouse"||e.button!==0)return;
