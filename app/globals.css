@@ -3546,3 +3546,15 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .my-page .invitation-card>.status.published{background:#eeeeee;color:#555555}
 .create-user.my-page-header-actions .my-page-header-button{border-color:#e1e1e1;color:#555555;box-shadow:0 2px 8px rgba(0,0,0,.035)}
 .create-user.my-page-header-actions .my-page-header-button.primary{background:#555555;border-color:#555555;color:#fff}
+
+/* Wedding basic information: labeled rows without redundant relationship fields. */
+.create-page .dd-wedding-people{display:grid;gap:18px;margin:12px 0 22px}
+.create-page .dd-wedding-person{display:grid;gap:9px;padding-bottom:18px;border-bottom:1px solid #e7e7e7}
+.create-page .dd-wedding-person-row{display:grid;grid-template-columns:minmax(66px,0.75fr) minmax(0,1fr) minmax(0,1.1fr);align-items:center;gap:8px}
+.create-page .dd-wedding-role{font-size:13px;font-weight:650;color:#333;white-space:nowrap}
+.create-page .dd-wedding-person-row>input{width:100%;min-width:0;height:43px;border:1px solid #e8e8e8;border-radius:9px;background:#f6f6f6;padding:0 11px;color:#333;font-size:14px}
+.create-page .dd-wedding-person-row>input:focus{outline:2px solid #aaa;outline-offset:1px}
+.create-page .dd-wedding-parent-row{grid-template-columns:minmax(66px,0.75fr) minmax(0,2.1fr) auto}
+.create-page .dd-wedding-deceased{display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:13px;color:#777}
+.create-page .dd-wedding-deceased input{width:17px;height:17px;accent-color:#555}
+@media(max-width:390px){.create-page .dd-wedding-person-row{gap:6px;grid-template-columns:56px minmax(0,1fr) minmax(0,1.1fr)}.create-page .dd-wedding-parent-row{grid-template-columns:56px minmax(0,1fr) auto}.create-page .dd-wedding-person-row>input{padding:0 8px;font-size:13px}.create-page .dd-wedding-role{font-size:12px}}
