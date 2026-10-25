@@ -832,6 +832,36 @@ export default function CreateInvitation() {
         <Field label={`${field.label} 이름`} fieldKey={firstKey}><input value={invitation[firstKey] || legacyFallback} onChange={(e) => updateNamePart(firstKey, e.target.value)} /></Field>
       </div>;
     }
+    if (field.type === "time") {
+      const rawTime = String(invitation[field.key] || "");
+      const matched = /^(\\d{1,2}):(\\d{2})/.exec(rawTime);
+      const hour = matched ? matched[1].padStart(2, "0") : "";
+      const minute = matched ? matched[2] : "";
+      const hours = Array.from({length: 24}, (_, h) => ({
+        value: String(h).padStart(2, "0"),
+        label: h === 0 ? "밤 12시" : h < 12 ? `오전 ${h}시` : h === 12 ? "낮 12시" : `오후 ${h - 12}시`
+      }));
+      const minutes = Array.from({length: 12}, (_, i) => String(i * 5).padStart(2, "0"));
+      if (minute && !minutes.includes(minute)) minutes.push(minute);
+      minutes.sort((a,b) => Number(a) - Number(b));
+      const changePart = (part, value) => {
+        const nextHour = part === "hour" ? value : (hour || "12");
+        const nextMinute = part === "minute" ? value : (minute || "00");
+        update(field.key, `${nextHour}:${nextMinute}`);
+      };
+      return <Field key={field.key} label={field.label} fieldKey={field.key}>
+        <div className="dd-time-selects">
+          <select aria-label={field.label + " 시간"} value={hour} onChange={(event) => changePart("hour", event.target.value)}>
+            <option value="" disabled>시간 선택</option>
+            {hours.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}
+          </select>
+          <select aria-label={field.label + " 분"} value={minute} onChange={(event) => changePart("minute", event.target.value)}>
+            <option value="" disabled>분 선택</option>
+            {minutes.map(item => <option key={item} value={item}>{item}분</option>)}
+          </select>
+        </div>
+      </Field>;
+    }
     if (field.key === "birthDate") return <BirthDateField key={field.key} label={field.label} value={invitation.birthDate || ""} onChange={value => update("birthDate", value)} />;
     if (field.type === "venue") return <div key={field.key}><Field label={field.label || "장소명"} fieldKey="venue"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "장소 검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results">{placeResults.map((place) => <button type="button" key={[place.mapx, place.mapy, place.title].join("-")} onClick={() => selectPlace(place)}><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></button>)}<p className="place-search-guide">검색 결과는 최대 5개까지 보여드려요. 원하는 장소가 없다면 지역명과 함께 검색해 주세요.</p></div>}<Field label="기본주소" fieldKey="venueAddress"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), geocodeAddress(invitation.venueAddress))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>주소 검색</button></div></Field><Field label="건물명"><input placeholder="장소 검색으로 기본주소가 입력되면 별도 입력이 필요하지 않아요" value={invitation.venueBuilding || ""} onChange={(e) => update("venueBuilding", e.target.value)} disabled={venueBuildingAuto || Boolean(invitation.venueAddress?.trim())} aria-readonly={venueBuildingAuto || Boolean(invitation.venueAddress?.trim())} title={invitation.venueAddress?.trim() ? "기본주소가 입력되어 건물명은 별도로 입력하지 않습니다." : venueBuildingAuto ? "주소 검색으로 자동 입력된 건물명입니다." : undefined} /></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={setMapContainer} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div>{transportMatrix.state !== "none" && <div className="form-section"><div className="dd-share-card-heading"><div><h2>{transportMatrix.label}</h2><p>교통 및 주차 안내를 설정해요.</p></div><label className="dd-share-switch"><input type="checkbox" checked={transportMatrix.state === "required" || invitation.transportGuideEnabled === true} disabled={transportMatrix.state === "required"} onChange={event => update("transportGuideEnabled", event.target.checked)} aria-label={transportMatrix.label + " 사용"} /><span className="dd-share-switch-track" aria-hidden="true" /></label></div>{(transportMatrix.state === "required" || invitation.transportGuideEnabled === true) && <div className="dd-transport-guide-editor">{[["transportPublicEnabled","transportPublic","대중교통","지하철·버스 등 대중교통 이용 방법을 입력하세요."],["transportCarEnabled","transportCar","자가용 이용 시","자가용 이용 시 찾아오는 방법을 입력하세요."],["transportParkingEnabled","transportParking","주차 안내","주차 위치·무료 주차 시간 등을 입력하세요."]].map(([enabledKey,valueKey,label,placeholder])=><div className="dd-transport-guide-editor-item" key={enabledKey}><label className="dd-transport-guide-item-toggle"><input type="checkbox" checked={invitation[enabledKey] === true} onChange={event => update(enabledKey,event.target.checked)} /> {label}</label>{invitation[enabledKey] === true && <textarea rows={3} placeholder={placeholder} value={invitation[valueKey] || ""} onChange={event => update(valueKey,event.target.value)} />}</div>)}</div>}</div>}</div>;
     if (field.type === "textarea") {
