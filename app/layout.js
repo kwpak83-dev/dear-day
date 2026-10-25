@@ -12,7 +12,7 @@ const alexBrush = Alex_Brush({
 export const metadata = {
   title: "디어데이 | 감성 모바일 초대장",
   description: "몇 분 만에 완성하는 나만의 감성 모바일 초대장",
-  icons: { icon: "/dearday-logo-black.png?v=20261025", shortcut: "/dearday-logo-black.png?v=20261025", apple: "/dearday-logo-black.png?v=20261025" },
+  icons: { icon: "/icon.svg?v=20261025b", shortcut: "/icon.svg?v=20261025b" },
 };
 
 export default function RootLayout({ children }) {
