@@ -389,3 +389,25 @@
  .dd-showcase-page .dd-showcase-menu-toggle span{width:18px}
  .dd-showcase-page .dd-showcase-home{font-size:10px!important}
 }
+
+
+/* Mobile collection: use the empty lower viewport for a taller invitation preview.
+   Keep category/header positions, card swipe, internal vertical preview scrolling,
+   and action navigation unchanged. */
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-poster{
+  height:clamp(330px,calc(100svh - 260px),690px)!important;
+ }
+ .dd-showcase-page .dd-showcase-track{
+  padding-bottom:2px!important;
+ }
+ .dd-showcase-page .dd-showcase-selected{
+  padding-bottom:2px!important;
+ }
+ .dd-showcase-page .dd-showcase-actions{
+  margin-top:8px!important;
+ }
+ .dd-showcase-page .dd-showcase-hint-pill{
+  margin-top:6px!important;
+ }
+}
