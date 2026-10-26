@@ -3638,3 +3638,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .my-page .dd-my-menu-icon--qr{color:#525e72}
 .my-page .dd-my-menu-icon--eye{color:#626e87}
 .my-page .dd-my-card-menu-danger .dd-my-menu-icon{color:#e34d58}
+
+/* Keep the invitation editor's save action accessible while scrolling (draft and published). */
+.create-page .create-header{position:sticky;top:0;z-index:60;background:#fff;}
