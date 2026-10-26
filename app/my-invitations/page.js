@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import { getInvitationTitle } from "../../lib/invitation-title";
 import ShareActions from "../../components/share-actions";
+import { BRAND_THUMBNAIL_PATH, getBrandShareImage } from "../../lib/brand-share-image";
 import MyPageLayout from "../../components/my-page-layout";
 import { getRetentionState } from "../../lib/invitation-retention";
 
@@ -151,7 +152,7 @@ export default function MyInvitations() {
       {notice && (notice === "저장한 초대장이 아직 없어요." && !loginRequired ? <div className="dd-empty-state"><span className="dd-empty-icon" aria-hidden="true">✉</span><h2>아직 등록된 초대장이 없어요</h2><p>특별한 날을 위한 첫 초대장을 만들어 보세요.</p><a href="/create" className="dd-empty-cta">새 초대장 만들기</a></div> : <div className="my-notice"><p>{notice}</p>{loginRequired && <a className="my-login-button" href="/?login=required&returnUrl=%2Fmy-invitations">다시 로그인하기</a>}</div>)}
       <div className="invitation-list dd-my-card-list">{events.map((event) => <article className="dd-my-card" key={event.slug}>
         <div className="dd-my-card-media">
-          <CardImage key={event.cardImageUrl || "no-image"} url={event.cardImageUrl} />
+          <CardImage url={BRAND_THUMBNAIL_PATH} />
           <span className={`dd-my-card-badge dd-my-card-badge--${event.status}`}>{STATUS_LABELS[event.status] || event.status}</span>
         </div>
         <div className="dd-my-card-body">
@@ -170,7 +171,7 @@ export default function MyInvitations() {
               {event.status === "paid" && <a href={`/create?slug=${event.slug}&preview=final`}><MenuIcon name="eye" />최종 미리보기</a>}
               {event.status === "published" && <>
                 <a href={`/guest-management?slug=${event.slug}`}><MenuIcon name="users" />하객 관리</a>
-                <ShareActions path={`/invite/${event.slug}`} title={getInvitationTitle(event.settings, event.kind)} displayMode="menu" renderMenuIcon={(name) => <MenuIcon name={name} />} />
+                <ShareActions path={`/invite/${event.slug}`} title={getInvitationTitle(event.settings, event.kind)} {...getBrandShareImage()} displayMode="menu" renderMenuIcon={(name) => <MenuIcon name={name} />} />
                 <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setPublicationError(""); setPublicationTarget(event); }}><MenuIcon name="pause" />발행 중지</button></div>
               </>}
               {["suspended", "draft"].includes(event.status) && <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}><MenuIcon name="trash" />삭제하기</button></div>}

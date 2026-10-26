@@ -48,7 +48,7 @@ export async function writeToClipboard(value) {
   if (!copied) throw new Error("Clipboard unavailable");
 }
 
-export default function ShareActions({ path, title = "DearDay 초대장", text, imageUrl = "", imageWidth = 800, imageHeight = 600, className = "", showPath = false, previewOnly = false, displayMode = "inline", renderMenuIcon }) {
+export default function ShareActions({ path, title = "DearDay 초대장", text, imageUrl = "", imageUnavailable = false, imageWidth = 800, imageHeight = 600, className = "", showPath = false, previewOnly = false, displayMode = "inline", renderMenuIcon }) {
   const [notice, setNotice] = useState("");
   const [copied, setCopied] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
@@ -112,6 +112,7 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
   };
   const shareKakao = async () => {
     if (previewOnly) return showNotice("미리보기입니다. 발행 후 공유할 수 있어요.");
+    if (imageUnavailable) return showNotice("공유 이미지가 아직 준비되지 않았어요. 링크 복사 또는 일반 공유를 이용해 주세요.");
     const jsKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
     if (!jsKey) return showNotice("카카오 공유 설정을 확인해 주세요.");
     try {

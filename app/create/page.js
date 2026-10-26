@@ -8,7 +8,6 @@ import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import InvitationRenderer, { TEMPLATE_IDS } from "../../components/invitation/invitation-renderer";
 import InvitationMap from "../../components/invitation/invitation-map";
 import ShareActions from "../../components/share-actions";
-import CardShareImageTask from "../../components/invitation/card-share-image-task";
 import TransportGuide from "../../components/invitation/transport-guide";
 import DearDayBrandFooter from "../../components/invitation/dearday-brand-footer";
 import GrowthTimeline from "../../components/invitation/growth-timeline";
@@ -155,9 +154,6 @@ export default function CreateInvitation() {
   const [invitation, setInvitation] = useState(initialInvitation);
   const [provider, setProvider] = useState("");
   const [published, setPublished] = useState(false);
-  const [cardShareJob, setCardShareJob] = useState(null);
-  const [publishShareStatus, setPublishShareStatus] = useState("idle");
-  const [updateShareStatus, setUpdateShareStatus] = useState("idle");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [liveNoticeDismissed, setLiveNoticeDismissed] = useState(false);
   const [fullNoticeDismissed, setFullNoticeDismissed] = useState(false);
@@ -996,8 +992,6 @@ export default function CreateInvitation() {
     }
     if (galleryBusy || photoBusy.current || (showLoading && submitting)) return;
     if (!validateDraftMinimum()) return;
-    setCardShareJob(null);
-    if (showSuccessToast) setUpdateShareStatus("idle");
     if (showSuccessToast) { window.clearTimeout(saveToastTimer.current); setSaveToastVisible(false); }
     if (showLoading) setSubmitting("draft");
     try {
@@ -1012,15 +1006,11 @@ export default function CreateInvitation() {
       const result = await response.json().catch(() => ({}));
       if (!response.ok) return setSaveNotice(result.error || "저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
       const savedStatus = result.status || "draft";
-      if (savedStatus === "published" && showSuccessToast && result.revision) {
-        setUpdateShareStatus("pending");
-        setCardShareJob({ slug, revision: result.revision });
-      }
       templateSelectionChanged.current = false;
       setTemplateRevision(current => current + 1);
       setLoginRequired(false); window.localStorage.setItem("dear-day-event-slug", slug); setEventSlug(slug); setEventStatus(savedStatus);
       if ((savedStatus === "draft" || savedStatus === "suspended") && showSuccessToast) { setSaveNotice(""); showSavedToast(savedStatus === "suspended" ? "변경사항이 저장되었습니다. 재발행은 내 초대장 → 다시 발행하기에서 가능합니다.." : "임시 저장이 완료되었습니다."); }
-      else if (savedStatus === "published" && showSuccessToast) { setSaveNotice(""); if (!result.revision) showSavedToast("수정사항이 공개 초대장에 반영되었습니다."); }
+      else if (savedStatus === "published" && showSuccessToast) { setSaveNotice(""); showSavedToast("수정사항이 공개 초대장에 반영되었습니다."); }
       else setSaveNotice(savedStatus === "paid" ? "결제완료 상태로 저장했어요." : savedStatus === "published" ? "발행된 초대장을 저장했어요." : "");
       return slug;
     } finally {
@@ -1144,8 +1134,6 @@ export default function CreateInvitation() {
       const result = await response.json().catch(() => ({}));
       if (!response.ok) return setFlowNotice(result.missingFields?.length ? `${result.error} (${result.missingFields.join(", ")})` : result.error || "발행에 실패했어요.");
       setEventStatus("published");
-      setPublishShareStatus(result.revision ? "pending" : "failed");
-      if (result.revision) setCardShareJob({ slug, revision: result.revision });
       setPublishConfirmOpen(false);
       setPublished(true);
     } finally {
@@ -1285,12 +1273,7 @@ export default function CreateInvitation() {
           <div className="dd-final-card"><span className="dd-final-eyebrow">PAYMENT & PUBLISH</span><h2>{eventStatus === "published" ? "🎊 초대장 발행 완료" : eventStatus === "paid" ? "결제가 완료되었어요" : "🎉 결제 및 발행"}</h2><div className="dd-final-flow"><span className={eventStatus === "paid" || eventStatus === "published" ? "done" : "current"}>01 · 결제</span><span className={eventStatus === "published" ? "done" : eventStatus === "paid" ? "current" : ""}>02 · 직접 발행</span><span className={eventStatus === "published" ? "done" : ""}>03 · 링크 공유</span></div><p>{eventStatus === "published" ? "발행된 초대장을 확인하고 링크를 공유해 주세요." : eventStatus === "paid" ? "아직 초대장은 공개되지 않았습니다. 최종 확인 후 직접 발행해 주세요." : "현재는 개발용 테스트 결제입니다. 테스트 결제 후에도 직접 발행하기 전까지 초대장은 공개되지 않습니다."}</p>{eventStatus === "published" && eventSlug ? <a className="dd-final-primary" href={`/invite/${eventSlug}?from=owner`}>발행된 초대장 보기 →</a> : <button type="button" className="dd-final-primary" disabled={Boolean(submitting) || uploadingPhoto || galleryBusy} onClick={eventStatus === "paid" ? requestPublish : preparePayment}>{eventStatus === "paid" ? "초대장 발행하기 →" : "발행 준비 및 테스트 결제 →"}</button>}</div>
           <p className="dd-final-help">결제와 발행은 별개 단계입니다. 발행 버튼을 눌러야 초대장 링크가 활성화됩니다.</p>
         </div>
-        {!published && <CardShareImageTask job={cardShareJob} onResult={result => {
-          setUpdateShareStatus(result);
-          if (result === "saved") showSavedToast("수정사항과 카카오 공유 이미지 저장이 완료됐어요.");
-          else if (result === "unchanged" || result === "not-card") showSavedToast("수정사항이 공개 초대장에 반영되었습니다.");
-          else showSavedToast("수정사항은 반영됐지만 공유 이미지 생성에 실패했어요. 다시 생성해 주세요.");
-        }} />}{saveNotice && <p role="status">{saveNotice}</p>}{loginRequired && <button type="button" className="save-button" onClick={continueAfterLogin}>로그인하고 계속하기</button>}
+        {saveNotice && <p role="status">{saveNotice}</p>}{loginRequired && <button type="button" className="save-button" onClick={continueAfterLogin}>로그인하고 계속하기</button>}
       </section>
       <aside className="preview-panel"><div className="preview-label"><span>LIVE PREVIEW</span><i /> <b>입력 즉시 반영돼요</b></div><div className="preview-phone"><div className="preview-notch" /><div ref={livePreviewRef} className={`preview-content full-invitation-renderer dd-bgm-public-style${noticeMatrix.state !== "none" && (noticeMatrix.state === "required" || invitation.notice?.enabled) && invitation.notice?.title && invitation.notice?.body && !liveNoticeDismissed ? " dd-editor-intro-waits-for-notice" : ""}`}>{previewReady ? <>{noticeMatrix.state !== "none" && <InvitationNotice notice={noticeMatrix.state === "required" ? { ...invitation.notice, enabled: true } : invitation.notice} slug="editor-live-preview" imageUrl={noticePreviewUrl || null} preview onClose={() => setLiveNoticeDismissed(true)} />}<InvitationRenderer invitation={previewInvitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} templateId={invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets} userBgmUrl={invitation.bgmMode === "upload" ? (invitation.userBgmUploadUrl || null) : (selectedBgmTrack?.url || null)} placeActions={previewPlaceActions()}><><ParentsIntro invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><GrowthTimeline invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><ExtendedEventInfo invitation={invitation} eventTypeConfig={eventTypeConfig} />{galleryMatrix.state !== "none" && <Gallery photos={galleryPhotos} idPrefix="live-preview-gallery" title={galleryMatrix.label} />}{transportMatrix.state !== "none" && <TransportGuide invitation={invitation} title={transportMatrix.label} required={transportMatrix.state === "required"} />}<AccountCopy invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} /><OptionalInvitationSections invitation={invitation} eventTypeConfig={eventTypeConfig} previewMode="desktop-live" /><ShareActions className="public-share-copy" path={eventSlug ? `/invite/${eventSlug}` : "#preview"} title={getInvitationTitle(invitation, invitation.eventKind)} previewOnly={eventStatus !== "published" || !eventSlug} /><DearDayBrandFooter /></></InvitationRenderer></> : previewLoading}</div></div></aside>
     </div>
@@ -1303,8 +1286,8 @@ export default function CreateInvitation() {
     {checkoutOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="payment-title"><div className="payment-card"><p className="section-kicker">TEST PAYMENT</p><h2 id="payment-title">발행 준비 안내</h2><dl><div><dt>템플릿</dt><dd>{templateOptions.find((template) => template.id === invitation.templateId)?.name || "선택한 템플릿"}</dd></div><div><dt>행사 종류</dt><dd>{eventConfig.label}</dd></div><div><dt>결제 금액</dt><dd>테스트 결제</dd></div></dl><p className="test-payment-notice"><strong>개발용 테스트 결제입니다.</strong> 실제 결제가 발생하지 않습니다.</p><p>테스트 결제 후에도 초대장은 공개되지 않으며, 최종 확인 후 직접 발행해야 합니다.</p>{flowNotice && <p className="payment-error" role="alert">{flowNotice}</p>}<div className="payment-actions"><button type="button" className="save-button" onClick={() => setCheckoutOpen(false)}>계속 수정하기</button><button type="button" className="publish-button" onClick={runMockPayment}>테스트 결제하기</button></div></div></div>}
     {paymentComplete && <div className="publish-overlay" role="dialog" aria-modal="true" aria-labelledby="payment-complete-title"><div className="publish-card"><div className="publish-heart">✓</div><p className="section-kicker">PAYMENT COMPLETE</p><h2 id="payment-complete-title">결제가 완료되었습니다.</h2><p>아직 초대장은 공개되지 않았습니다.<br />내용을 최종 확인한 후 발행해 주세요.</p><button type="button" className="save-button full" onClick={() => { setPaymentComplete(false); setPreviewOpen(true); }}>최종 미리보기</button><button type="button" className="publish-button full" onClick={requestPublish}>초대장 발행하기</button></div></div>}
     {publishConfirmOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="publish-confirm-title"><div className="publish-confirm-card"><h2 id="publish-confirm-title">초대장을 발행하시겠습니까?</h2><p>발행하면 초대장 링크가 활성화됩니다.</p>{flowNotice && <p className="payment-error" role="alert">{flowNotice}</p>}<div><button type="button" className="save-button" onClick={() => setPublishConfirmOpen(false)}>취소</button><button type="button" className="publish-button" onClick={publish}>발행하기</button></div></div></div>}
-    {(submitting || (!published && updateShareStatus === "pending")) && <div className="save-loading" role="status" aria-live="polite"><div className="dd-save-loading-card"><div className="dd-save-logo-scene" aria-hidden="true"><span className="dd-save-orbit" /><span className="dd-save-spark dd-save-spark-one">✦</span><span className="dd-save-spark dd-save-spark-two">✧</span><span className="dd-save-spark dd-save-spark-three">✦</span><span className="dd-save-spark dd-save-spark-four">✧</span><DearDayLogo /></div><strong>{!submitting && updateShareStatus === "pending" ? "카카오 공유 이미지를 준비하고 있어요" : submitting === "publish" ? "초대장을 발행하고 있어요" : submitting === "payment" ? "테스트 결제를 처리하고 있어요" : "초대장을 저장하고 있어요"}</strong><span>잠시만 기다려 주세요.</span></div></div>}
+    {submitting && <div className="save-loading" role="status" aria-live="polite"><div className="dd-save-loading-card"><div className="dd-save-logo-scene" aria-hidden="true"><span className="dd-save-orbit" /><span className="dd-save-spark dd-save-spark-one">✦</span><span className="dd-save-spark dd-save-spark-two">✧</span><span className="dd-save-spark dd-save-spark-three">✦</span><span className="dd-save-spark dd-save-spark-four">✧</span><DearDayLogo /></div><strong>{submitting === "publish" ? "초대장을 발행하고 있어요" : submitting === "payment" ? "테스트 결제를 처리하고 있어요" : "초대장을 저장하고 있어요"}</strong><span>잠시만 기다려 주세요.</span></div></div>}
     {saveToastVisible && <div className="save-success-toast" role="status" aria-live="polite"><strong>{saveToastMessage}</strong>{saveToastMessage === "임시 저장이 완료되었습니다." && <span>발행하려면 미리보기 → 발행 준비하기를 진행해 주세요.</span>}</div>}
-    {published && <div className="publish-overlay"><div className="publish-card"><div className="publish-heart">♥</div><p className="section-kicker">YOUR INVITATION IS READY</p><h2>초대장이<br /><em>발행되었습니다.</em></h2><p>{publishShareStatus === "ready" ? "공유 이미지 준비가 완료됐어요. 이제 링크를 공유해보세요." : publishShareStatus === "failed" ? "초대장은 발행됐지만 공유 이미지 준비에 실패했어요. 아래에서 다시 생성할 수 있어요." : "초대장이 발행됐어요. 카카오 공유 이미지를 준비하는 중이에요."}</p><CardShareImageTask job={cardShareJob} onResult={setPublishShareStatus} />{publishShareStatus === "ready" && <p role="status">초대장 보기에서 카카오톡 공유를 진행해 주세요.</p>}{publishShareStatus === "pending" && <p role="status">이미지 준비 중에는 공유를 잠시 기다려 주세요.</p>}{publishShareStatus !== "pending" && <a className="publish-button full" href={`/invite/${eventSlug}?from=owner`}>초대장 보기 및 공유 →</a>}<button className="publish-button full secondary" onClick={() => setPublished(false)}>완료했어요</button></div></div>}
+    {published && <div className="publish-overlay"><div className="publish-card"><div className="publish-heart">♥</div><p className="section-kicker">YOUR INVITATION IS READY</p><h2>초대장이<br /><em>발행되었습니다.</em></h2><p>초대장이 발행됐어요. 이제 링크를 공유해보세요.</p><a className="publish-button full" href={`/invite/${eventSlug}?from=owner`}>초대장 보기 및 공유 →</a><button className="publish-button full secondary" onClick={() => setPublished(false)}>완료했어요</button></div></div>}
   </main>;
 }
