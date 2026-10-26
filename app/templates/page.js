@@ -104,7 +104,7 @@ export default function TemplateCollectionPage(){
    </button>
    <a href="/" aria-label="DearDay 메인으로" className="dd-showcase-brand"><DearDayLogo /></a>
    <a href="/" className="dd-showcase-home">홈으로 ↗</a>
-   <a href="/?login=required&returnUrl=%2Fmy-invitations" className="dd-showcase-invitations" aria-label="내 초대장" title="내 초대장"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="1.5"/><path d="M4 9h16M10 13h4"/></svg></a>
+   <a href="/my-invitations" className="dd-showcase-invitations" aria-label="내 초대장" title="내 초대장"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="1.5"/><path d="M4 9h16M10 13h4"/></svg></a>
    {menuOpen&&<><button type="button" className="dd-showcase-menu-backdrop" aria-label="메뉴 닫기" onClick={()=>setMenuOpen(false)}/><nav id="dd-showcase-menu" className="dd-showcase-menu-panel" aria-label="사이트 메뉴"><a href="/">홈</a><a href="/templates" onClick={()=>setMenuOpen(false)}>템플릿 컬렉션</a><a href="/create">초대장 만들기</a></nav></>}
   </header>
   <section className="dd-showcase-intro"><h1 className="dd-showcase-kicker">DEARDAY · TEMPLATE COLLECTION</h1></section>
