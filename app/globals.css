@@ -3658,3 +3658,20 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 @keyframes dd-save-twinkle{0%,100%{opacity:.25;transform:scale(.75)}50%{opacity:1;transform:scale(1.2)}}
 @keyframes dd-save-orbit{0%{transform:rotate(-25deg) scale(.97);opacity:.55}100%{transform:rotate(15deg) scale(1.04);opacity:1}}
 @media(prefers-reduced-motion:reduce){.create-page .dd-save-orbit,.create-page .dd-save-spark{animation:none}}
+
+/* User editor: compact, optional HERO intro lettering settings. */
+.dd-user-intro-editor{display:grid;gap:13px}
+.dd-user-intro-editor>label,.dd-user-intro-grid>label{display:grid;gap:7px;font-size:13px;color:#333}
+.dd-user-intro-editor input[type="text"],.dd-user-intro-editor select{width:100%;min-width:0;padding:11px 12px;border:1px solid #dedede;border-radius:9px;background:#fff;color:#242424;font-size:14px}
+.dd-user-intro-editor input[type="range"]{width:100%;accent-color:#333}
+.dd-user-intro-toggle{display:flex!important;justify-content:space-between;align-items:center;font-weight:650}
+.dd-user-intro-toggle input{width:18px;height:18px;accent-color:#333}
+.dd-user-intro-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.dd-user-intro-color{display:flex;align-items:center;gap:9px;min-height:43px;border:1px solid #dedede;border-radius:9px;padding:5px 9px}
+.dd-user-intro-color input{width:34px;height:30px;padding:0;border:0;background:none;cursor:pointer}
+.dd-user-intro-color span{font-size:12px}
+.dd-user-intro-preview{min-height:150px;display:flex;align-items:center;justify-content:center;padding:24px 14px;border:1px solid #e8e8e8;border-radius:11px}
+.dd-user-intro-actions{display:flex;gap:8px;flex-wrap:wrap}
+.dd-user-intro-animation.classic-hero{position:relative!important;display:block!important;width:100%!important;height:230px!important;min-height:230px!important;overflow:hidden!important;border-radius:11px;background:transparent}
+.dd-user-intro-animation.classic-hero>.dd-hero-intro{position:absolute;inset:0;width:100%;height:100%}
+@media(max-width:420px){.dd-user-intro-grid{grid-template-columns:1fr}}
