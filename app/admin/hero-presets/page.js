@@ -273,7 +273,9 @@ export default function HeroPresetsPage(){
  const liveTextLayers=form.config.textLayers||[];
  const liveDisplay={...form.config.display,...Object.fromEntries([...liveBoundSources].map((source)=>[source==="event_title"?"title":source,false]))};
  const liveConfig={hero:{...form.config,display:liveDisplay,textLayers:liveTextLayers,frameAssetId:activeFrame?.id||null,backgroundAssetId:activeBackground?.id||null}};
- const animationSettings=JSON.stringify({intro:form.config.intro||null,photo:form.config.photoFadeUp||null,text:(form.config.textLayers||[]).map(layer=>[layer.id,layer.fadeUp||null])});
+ // Position is a visual-only setting: do not restart the intro animation on every slider movement.
+ const {positionY: _introPositionY, ...introAnimationSettings} = form.config.intro || {};
+ const animationSettings=JSON.stringify({intro:introAnimationSettings,photo:form.config.photoFadeUp||null,text:(form.config.textLayers||[]).map(layer=>[layer.id,layer.fadeUp||null])});
  useEffect(()=>{setAnimationReplay(current=>current+1);},[animationSettings,editing]);
  const liveAssets={...(activeFrame?.url?{[activeFrame.id]:activeFrame.url}:{}),...(activeBackground?.url?{[activeBackground.id]:activeBackground.url}:{}),...Object.fromEntries(decorationAssets.filter(item=>item.url).map(item=>[item.id,item.url]))};
  const previewKind=form.event_kind||"wedding";
