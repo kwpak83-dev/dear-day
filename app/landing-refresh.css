@@ -1911,6 +1911,31 @@
 }
 
 
+/* Desktop editorial copy: match the mobile left rule and shared text start. */
+@media(min-width:1101px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  align-self:center!important;
+  box-sizing:border-box!important;
+  width:max-content!important;
+  max-width:100%!important;
+  border-left:3px solid #858585!important;
+  padding-left:16px!important;
+  text-align:left!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group .dd-hero-eyebrow,
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group h1,
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group .dd-hero-description{
+  align-self:flex-start!important;
+  text-align:left!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group .dd-hero-eyebrow{margin:0 0 16px!important}
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group h1{margin:0!important}
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group .dd-hero-description{margin:22px 0 0!important}
+}
+
 /* Give the mobile CTA stack breathing room below the editorial subtitle. */
 @media(max-width:800px){
  .landing-v2 .dd-hero-variant-c .dd-hero-copy-group{
