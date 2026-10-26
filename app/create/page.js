@@ -957,12 +957,45 @@ export default function CreateInvitation() {
     setTemplateNotice("");
     setTemplateRevision(current => current + 1);
   };
+  const validateDraftMinimum = () => {
+    // Existing published invitations retain their established update behavior.
+    if (eventStatus === "published" || eventStatus === "paid") return true;
+    const present = (key) => String(invitation[key] ?? "").trim().length > 0;
+    const hasName = (key) => present(key) || (present(key + "LastName") && present(key + "FirstName"));
+    const kind = invitation.eventKind;
+    const missing = kind === "wedding"
+      ? [["신랑 이름", hasName("groom")], ["신부 이름", hasName("bride")]]
+      : kind === "first_birthday" ? [["아이 이름", hasName("childName")]]
+      : kind === "birthday" || kind === "milestone_birthday" ? [["주인공 이름", hasName("person1Name")]]
+      : kind === "gathering" ? [["행사명", present("eventTitle")]]
+      : kind === "opening" ? [["상호·행사명", present("eventTitle")]]
+      : [];
+    const firstMissing = missing.find(([, valid]) => !valid);
+    if (!firstMissing) return true;
+    const message = `임시저장하려면 ${firstMissing[0]}을(를) 입력해 주세요.`;
+    setSaveNotice(message);
+    showSavedToast(message);
+    setEditorStep(0);
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+      const basic = document.querySelector(".dd-required-fields .dd-custom-accordion");
+      // The first accordion is event type; the second contains the subject/title inputs.
+      const basicInfo = basic?.nextElementSibling;
+      if (basicInfo?.tagName === "DETAILS") basicInfo.open = true;
+      const input = kind === "wedding"
+        ? document.querySelector(`input[aria-label="${firstMissing[0].startsWith("신랑") ? "신랑" : "신부"} 성"]`)
+        : document.querySelector(`[data-field-key="${kind === "first_birthday" ? "childName" : kind === "birthday" || kind === "milestone_birthday" ? "person1Name" : "eventTitle"}"] input`);
+      (input || basicInfo)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      input?.focus({ preventScroll: true });
+    }));
+    return false;
+  };
   const saveDraft = async ({ showLoading = true, showSuccessToast = false, allowLocalSuccess = false } = {}) => {
     if (!eventReady) {
       setSaveNotice("기존 초대장 정보를 불러오는 중이에요. 잠시 후 다시 시도해 주세요.");
       return;
     }
     if (galleryBusy || photoBusy.current || (showLoading && submitting)) return;
+    if (!validateDraftMinimum()) return;
     setCardShareJob(null);
     if (showSuccessToast) setUpdateShareStatus("idle");
     if (showSuccessToast) { window.clearTimeout(saveToastTimer.current); setSaveToastVisible(false); }
