@@ -3675,3 +3675,17 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-user-intro-animation.classic-hero{position:relative!important;display:block!important;width:100%!important;height:230px!important;min-height:230px!important;overflow:hidden!important;border-radius:11px;background:transparent}
 .dd-user-intro-animation.classic-hero>.dd-hero-intro{position:absolute;inset:0;width:100%;height:100%}
 @media(max-width:420px){.dd-user-intro-grid{grid-template-columns:1fr}}
+
+/* Intro: preview actual lettering fonts in a compact picker. */
+.dd-user-intro-font-field,.dd-user-intro-speed{display:grid;gap:8px;font-size:13px;color:#333}
+.dd-user-intro-font-trigger{width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid #dedede;border-radius:9px;padding:12px;background:#fff;text-align:left;color:#242424;font-size:17px;cursor:pointer}
+.dd-user-intro-font-list{display:grid;gap:6px;max-height:330px;overflow-y:auto;padding:7px;border:1px solid #e4e4e4;border-radius:11px;background:#fafafa}
+.dd-user-intro-font-option{position:relative;display:grid;gap:4px;min-height:70px;width:100%;padding:10px 32px 9px 12px;border:1px solid #e6e6e6;border-radius:9px;background:#fff;color:#292929;text-align:left;cursor:pointer}
+.dd-user-intro-font-option.is-selected{border-color:#323232;background:#f7f7f7}
+.dd-user-intro-font-sample{font-size:22px;line-height:1.35;overflow-wrap:anywhere}
+.dd-user-intro-font-name{font-size:11px;color:#777}
+.dd-user-intro-font-check{position:absolute;right:12px;top:15px;font-weight:700}
+.dd-user-intro-speed-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.dd-user-intro-speed-options button{padding:11px 4px;border:1px solid #dedede;border-radius:9px;background:#fff;color:#444;cursor:pointer;font-size:13px}
+.dd-user-intro-speed-options button.is-selected{border-color:#333;background:#333;color:#fff;font-weight:650}
+.dd-user-intro-speed small{color:#777;font-size:11px}
