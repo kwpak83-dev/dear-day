@@ -3706,3 +3706,28 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .hero-display-settings .dd-hero-user-text-position input{width:100%;accent-color:#4a413d}
 .hero-display-settings .dd-hero-user-text-reset{justify-self:start;padding:5px 0;border:0;background:transparent;color:#756c65;text-decoration:underline;text-underline-offset:3px;font-size:11px;cursor:pointer}
 @media(max-width:370px){.hero-display-settings .dd-hero-user-text-position{grid-template-columns:1fr}}
+
+/* Mobile-first, single-screen HERO lettering editor. */
+.dd-hero-text-editor-launch{display:block;width:100%;margin:9px 0 14px;padding:11px;border:1px solid #cfc5bc;border-radius:9px;background:#faf7f4;color:#453d36;font-size:13px;font-weight:650;cursor:pointer}
+.dd-hero-text-modal-backdrop{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);background:rgba(25,22,20,.65)}
+.dd-hero-text-modal{display:flex;flex-direction:column;width:min(100%,440px);height:100%;max-height:100dvh;overflow:hidden;background:#fff;color:#292522;box-shadow:0 10px 40px #0003}
+.dd-hero-text-modal-header{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;padding:12px 17px;border-bottom:1px solid #eee9e5;font-size:15px}
+.dd-hero-text-modal-header button{border:0;background:transparent;color:#4a423c;font-size:20px;cursor:pointer}
+.dd-hero-text-modal-preview{flex:1 1 auto;min-height:140px;display:flex;justify-content:center;align-items:center;overflow:auto;padding:8px;background:#f5f1ed}
+.dd-hero-text-modal-preview .hero-editor-live-preview{width:100%;display:flex;flex-direction:column;align-items:center}
+.dd-hero-text-modal-preview .hero-editor-live-preview-frame{max-width:245px;flex:0 0 auto}
+.dd-hero-text-modal-controls{flex:0 0 auto;max-height:47dvh;overflow-y:auto;padding:14px 17px 18px;background:#fff}
+.dd-hero-text-modal-fields{display:grid;gap:11px}
+.dd-hero-text-modal-row{display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.dd-hero-text-modal-row small{color:#888;font-weight:400}
+.dd-hero-text-modal-row label{display:flex;align-items:center;gap:6px;font-size:12px}
+.dd-hero-text-modal-fields textarea{width:100%;box-sizing:border-box;padding:10px;border:1px solid #ddd5ce;border-radius:8px;font:inherit;font-size:14px}
+.dd-hero-text-modal-sliders{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.dd-hero-text-modal-sliders label{display:grid;gap:7px;font-size:12px;color:#655a53}
+.dd-hero-text-modal-sliders input{width:100%;accent-color:#4c433d}
+.dd-hero-text-modal-nav{display:flex;justify-content:space-between;gap:10px;margin-top:12px}
+.dd-hero-text-modal-nav button{flex:1;padding:11px;border:1px solid #d7cec7;border-radius:8px;background:#fff;color:#4b413b;cursor:pointer}
+.dd-hero-text-modal-nav button.is-primary{background:#37312e;border-color:#37312e;color:#fff}
+.dd-hero-text-modal-nav button:disabled{opacity:.35;cursor:default}
+@media(min-width:600px){.dd-hero-text-modal{height:min(92dvh,820px);border-radius:16px}}
+@media(max-height:620px){.dd-hero-text-modal-controls{max-height:55dvh}.dd-hero-text-modal-preview{min-height:110px}}
