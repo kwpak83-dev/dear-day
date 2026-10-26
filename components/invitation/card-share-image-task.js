@@ -43,7 +43,7 @@ export default function CardShareImageTask({ job, onResult }) {
     });
     Promise.race([work(), aborted]).then(result => {
       if (requestRef.current !== controller || controller.signal.aborted) return;
-      onResult?.(result.state === "saved" || result.state === "unchanged" || result.state === "not-card" ? "ready" : "failed");
+      onResult?.(result.state === "saved" || result.state === "unchanged" || result.state === "not-card" ? result.state : "failed");
       setStatus(result.state === "saved" ? "카드형 카카오 공유 이미지를 저장했어요." : result.state === "unchanged" ? "기존 카드형 공유 이미지를 유지했어요." : result.state === "not-card" ? "자동 공유 이미지 생성이 건너뛰어졌어요. 저장된 HERO 설정이 카드형(illustration)으로 판별되지 않았습니다." : "공유 이미지 처리 결과를 확인하지 못했어요.");
     }).catch(error => {
       if (requestRef.current !== controller) return;
