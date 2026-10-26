@@ -3731,3 +3731,24 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-hero-text-modal-nav button:disabled{opacity:.35;cursor:default}
 @media(min-width:600px){.dd-hero-text-modal{height:min(92dvh,820px);border-radius:16px}}
 @media(max-height:620px){.dd-hero-text-modal-controls{max-height:55dvh}.dd-hero-text-modal-preview{min-height:110px}}
+
+/* HERO lettering modal: prioritize a complete photo on real mobile viewports. */
+@media(max-width:599px){
+  .dd-hero-text-modal-preview{min-height:0;overflow:hidden;padding:4px 6px;align-items:center}
+  .dd-hero-text-modal-preview .hero-editor-live-preview{margin:0;padding:3px;box-shadow:none;max-height:100%;min-height:0;overflow:hidden}
+  .dd-hero-text-modal-preview .hero-editor-live-preview-label{margin-bottom:3px}
+  .dd-hero-text-modal-preview .hero-editor-live-preview-frame{
+    width:min(245px, max(120px, calc((100dvh - 345px) * .69)));
+    max-width:100%;max-height:100%;min-height:0
+  }
+  .dd-hero-text-modal-controls{padding:8px 14px 10px;max-height:42dvh}
+  .dd-hero-text-modal-fields{gap:7px}
+  .dd-hero-text-modal-fields textarea{padding:7px 9px;min-height:46px}
+  .dd-hero-text-modal-sliders label{gap:4px}
+  .dd-hero-text-modal-nav{margin-top:7px}
+  .dd-hero-text-modal-nav button{padding:9px}
+}
+@media(max-width:599px) and (max-height:620px){
+  .dd-hero-text-modal-controls{max-height:47dvh}
+  .dd-hero-text-modal-preview{min-height:0}
+}
