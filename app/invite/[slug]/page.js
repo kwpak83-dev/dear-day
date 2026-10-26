@@ -29,7 +29,7 @@ const loadPublicEvent = cache(async (slug) => {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !serviceRoleKey) notFound();
   const supabase = createClient(url, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
-  const { data: events } = await supabase.from("events").select("id,owner_id,updated_at,status,kind,template_id,template_version_id,hero_preset_id,starts_at,service_expires_at,grace_ends_at,settings").eq("slug", slug).in("status", ["published", "suspended"]).limit(1);
+  const { data: events } = await supabase.from("events").select("id,owner_id,updated_at,status,kind,template_id,template_version_id,hero_preset_id,starts_at,service_expires_at,grace_ends_at,cover_image_url,settings").eq("slug", slug).in("status", ["published", "suspended"]).limit(1);
   const event = events?.[0];
   return { url, supabase, event };
 });
@@ -39,15 +39,16 @@ export async function generateMetadata({ params }) {
   const { supabase, event } = await loadPublicEvent(slug);
   if (!event || event.status !== "published" || isPublicPeriodExpired(event)) return { title: "DearDay 초대장", openGraph: { images: [] } };
   const settings = event.settings || {};
+  const heroPresetId = event.hero_preset_id || settings.heroPresetId;
   let version = supabase.from("template_versions").select("config").eq("template_id", event.template_id);
   version = event.template_version_id ? version.eq("id", event.template_version_id) : version.order("version", { ascending: false }).limit(1);
   const [versionResult, heroResult] = await Promise.all([
     event.template_id ? version.maybeSingle() : null,
-    event.hero_preset_id ? supabase.from("hero_presets").select("config").eq("id", event.hero_preset_id).maybeSingle() : null,
+    heroPresetId ? supabase.from("hero_presets").select("config").eq("id", heroPresetId).maybeSingle() : null,
   ]);
   const config = versionResult?.data?.config;
   const hero = { ...config?.hero, ...heroResult?.data?.config };
-  const image = selectCardShareImage(settings, { hero }, settings.coverPhotoUrl || settings.heroImageUrl || settings.hero_image_url);
+  const image = selectCardShareImage(settings, { hero }, event.cover_image_url || settings.heroImageUrl || settings.hero_image_url);
   const title = getInvitationTitle(settings, event.kind);
   const presentation = getInvitationPresentation({ ...settings, eventKind: event.kind }, event.kind);
   const description = [presentation.heroSchedule, presentation.venue].filter(Boolean).join(" · ") || "초대장을 확인해 주세요.";
@@ -70,6 +71,7 @@ export default async function InvitationPage({ params, searchParams }) {
     <section><p className="section-kicker">DEARDAY INVITATION</p><h1>이 초대장은 이용기간이<br />만료되었습니다.</h1><p>초대장 내용은 현재 공개되지 않습니다.</p></section>
   </main>;
   const settings = event.settings || {};
+  const heroPresetId = event.hero_preset_id || settings.heroPresetId;
   const invitation = {
     ...settings,
     eventKind: event.kind || settings.eventKind || "wedding",
@@ -95,11 +97,11 @@ export default async function InvitationPage({ params, searchParams }) {
       .maybeSingle(),
     supabase.from("event_media")
       .select("id,storage_path").eq("event_id", event.id).eq("gallery_state", "ready").order("sort_order").order("id").limit(20),
-    event.hero_preset_id
-      ? supabase.from("hero_presets").select("id,config").eq("id", event.hero_preset_id).maybeSingle()
+    heroPresetId
+      ? supabase.from("hero_presets").select("id,config").eq("id", heroPresetId).maybeSingle()
       : null,
-    event.hero_preset_id
-      ? supabase.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path").eq("hero_preset_id", event.hero_preset_id).in("asset_type", ["hero_frame", "hero_background"]).eq("is_active", true)
+    heroPresetId
+      ? supabase.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path").eq("hero_preset_id", heroPresetId).in("asset_type", ["hero_frame", "hero_background"]).eq("is_active", true)
       : null,
     settings.bgmMode === "user" && settings.userBgmTrackId
       ? supabase.from("bgm_tracks").select("storage_bucket,storage_path,is_active").eq("id", settings.userBgmTrackId).eq("is_active", true).maybeSingle()
@@ -126,7 +128,7 @@ export default async function InvitationPage({ params, searchParams }) {
     heroPresetResult?.data?.config?.decorLayers?.some((layer) => layer.assetId && !decorationPathFor(layer)) ||
     selectedVersionResult?.data?.config?.decorations?.some((item) => item.assetId && !decorationPathFor(item))
   );
-  const decorationListPromise = event.hero_preset_id && hasEarlyDecorations
+  const decorationListPromise = heroPresetId && hasEarlyDecorations
     ? supabase.storage.from("template-assets").list("hero-decoration-library", { limit: 1000 })
     : null;
   let templateConfig = null;
@@ -176,7 +178,7 @@ export default async function InvitationPage({ params, searchParams }) {
       }
     }
   }
-  if (event.hero_preset_id) {
+  if (heroPresetId) {
     const { data: heroPreset, error: heroError } = heroPresetResult;
     if (heroError) console.error("Hero preset query failed:", heroError.code);
     if (heroPreset) {
@@ -234,7 +236,7 @@ export default async function InvitationPage({ params, searchParams }) {
   const effectiveNotice = matrixFields.notice?.state === "required" ? { ...(settings.notice || {}), enabled: true } : settings.notice;
   const publicNotice = matrixFields.notice?.state === "none" ? normalizeNotice(null) : normalizeNotice(effectiveNotice);
   const waitForNoticeBeforeHeroIntro = publicNotice.enabled && Boolean(publicNotice.title) && Boolean(publicNotice.body);
-  const existingShareFallback = (templateConfig?.hero?.mode === "illustration" ? (templateAssets?.[templateConfig?.hero?.backgroundAssetId] || templateAssets?.[templateConfig?.hero?.frameAssetId]) : null) || invitation.coverPhotoUrl || templateAssets?.[templateConfig?.hero?.frameAssetId] || invitation.heroImageUrl || invitation.hero_image_url || galleryPhotos[0]?.url || "";
+  const existingShareFallback = event.cover_image_url || invitation.heroImageUrl || invitation.hero_image_url || galleryPhotos[0]?.url || "";
   const shareImage = selectCardShareImage(settings, templateConfig, existingShareFallback);
 
   return <main className={`public-invitation shared-public-invitation${waitForNoticeBeforeHeroIntro ? " dd-hero-intro-waits-for-notice" : ""}`}>

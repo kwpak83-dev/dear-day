@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { prepareKakaoImage } from "../lib/kakao-share-image";
 
 let qrCodePromise;
 function loadQrCode() {
@@ -85,11 +86,11 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
   }, [qrOpen]);
 
   const publicUrl = () => new URL(path, window.location.origin).toString();
-  const showNotice = (message, isCopied = false) => {
+  const showNotice = (message, isCopied = false, duration = 2200) => {
     window.clearTimeout(noticeTimer.current);
     setNotice(message);
     setCopied(isCopied);
-    noticeTimer.current = window.setTimeout(() => { setNotice(""); setCopied(false); }, 2200);
+    if (duration) noticeTimer.current = window.setTimeout(() => { setNotice(""); setCopied(false); }, duration);
   };
   const copy = async (fallback = false) => {
     if (previewOnly) return showNotice("미리보기입니다. 발행 후 공유할 수 있어요.");
@@ -112,10 +113,11 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
   };
   const shareKakao = async () => {
     if (previewOnly) return showNotice("미리보기입니다. 발행 후 공유할 수 있어요.");
-    if (imageUnavailable) return showNotice("공유 이미지가 아직 준비되지 않았어요. 링크 복사 또는 일반 공유를 이용해 주세요.");
+    if (imageUnavailable) return showNotice("외부에서 접근 가능한 HTTPS 공유 이미지가 준비되지 않았어요. 링크 복사 또는 일반 공유를 이용해 주세요.", false, 0);
     const jsKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
     if (!jsKey) return showNotice("카카오 공유 설정을 확인해 주세요.");
     try {
+      const verifiedImageUrl = await prepareKakaoImage(imageUrl);
       const Kakao = await loadKakaoSdk();
       if (!Kakao.isInitialized()) Kakao.init(jsKey);
       const url = new URL(path, "https://dear-day-seven.vercel.app").toString();
@@ -125,7 +127,7 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
         link: { mobileWebUrl: url, webUrl: url },
       };
       if (imageUrl) {
-        content.imageUrl = new URL(imageUrl, window.location.origin).toString();
+        content.imageUrl = verifiedImageUrl;
         content.imageWidth = imageWidth;
         content.imageHeight = imageHeight;
       }
@@ -138,8 +140,8 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
         }],
       });
     } catch (error) {
-      console.error("Kakao share failed:", error);
-      showNotice("카카오톡 공유를 열지 못했습니다. 다시 시도해 주세요.");
+      if (error?.code !== "KAKAO_IMAGE_UNAVAILABLE") console.error("Kakao share failed:", error);
+      showNotice(error?.code === "KAKAO_IMAGE_UNAVAILABLE" ? error.message : "카카오톡 공유를 열지 못했습니다. 다시 시도해 주세요.", false, 0);
     }
   };
   const openQr = async () => {
