@@ -1459,12 +1459,18 @@
   bottom:3%!important;left:-83px!important;
  }
  .landing-v2 .dd-hero-variant-c .dd-hero-media{
-  width:80%!important;
-  max-width:360px!important;
-  height:clamp(280px,50svh,490px)!important;
+  position:relative!important;
+  left:0!important;
+  width:100%!important;
+  max-width:75vw!important;
+  height:auto!important;
+  aspect-ratio:auto!important;
+  box-sizing:border-box!important;
+  padding:13px 13px 36px!important;
   flex:0 0 auto!important;
   margin:8px auto 0!important;
-  transform:rotate(-2.3deg)!important;
+  transform:translateX(32px) rotate(15deg)!important;
+  transform-origin:center center!important;
   background:#fff!important;
   border:1px solid #e8e5df!important;
   border-radius:0!important;
@@ -1472,9 +1478,11 @@
   box-shadow:0 5px 12px rgba(0,0,0,.1),0 16px 30px rgba(0,0,0,.15)!important;
  }
  .landing-v2 .dd-hero-variant-c .dd-hero-video{
-  top:13px!important;left:13px!important;
-  width:calc(100% - 26px)!important;
-  height:calc(100% - 49px)!important;
+  position:relative!important;
+  inset:auto!important;
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:4/3!important;
   object-fit:cover!important;
  }
  .landing-v2 .dd-hero-variant-c .dd-hero-content{
@@ -1566,15 +1574,6 @@
 }
 
 
-/* Mobile: reduce the LIVE video Polaroid by 10%, not the background artwork. */
-@media(max-width:800px){
- .landing-v2 .dd-hero-variant-c .dd-hero-media{
-  width:72%!important; /* previous 80% x 0.9 */
-  max-width:324px!important; /* previous 360px x 0.9 */
-  height:clamp(252px,45svh,441px)!important; /* previous 280px/50svh/490px x 0.9 */
-  transform:rotate(2.3deg)!important;
- }
-}
 
 
 /* Compact reference-style stacked CTA buttons (mobile HERO C only). */
@@ -1619,15 +1618,6 @@
 }
 
 
-/* HERO C mobile Polaroid: right-offset and 10deg further clockwise, as approved. */
-@media(max-width:800px){
- .landing-v2 .dd-hero-variant-c .dd-hero-media{
-  position:relative!important;
-  left:12px!important;
-  transform:rotate(12.3deg)!important;
-  transform-origin:center center!important;
- }
-}
 
 
 /* Approved mobile HERO typography and rhythm (Oct 24 reference). */
@@ -1850,6 +1840,20 @@
 }
 
 
+/* Wide desktop Polaroid: keep the existing tablet/mobile composition. */
+@media(min-width:1101px){
+ .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
+  grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)!important;
+  column-gap:clamp(30px,4vw,80px)!important;
+  padding-inline:max(4vw,calc((100vw - 1540px)/2))!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-media{
+  width:min(100%,750px)!important;
+  aspect-ratio:4/3!important;
+  transform:rotate(-3deg)!important;
+ }
+}
+
 /* Dedicated desktop background: never stretch the portrait mobile asset. */
 @media (min-width:801px){
  .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
@@ -1907,6 +1911,33 @@
 }
 
 
+/* Desktop editorial copy: match the mobile left rule and shared text start. */
+@media(min-width:1101px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  align-self:center!important;
+  box-sizing:border-box!important;
+  width:max-content!important;
+  max-width:100%!important;
+  border-left:3px solid #858585!important;
+  padding-left:16px!important;
+  text-align:left!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group .dd-hero-eyebrow,
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group h1,
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group .dd-hero-description{
+  align-self:flex-start!important;
+  text-align:left!important;
+ }
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group .dd-hero-eyebrow{font-size:11px!important;margin:0 0 16px!important}
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group h1{font-size:58px!important;margin:0!important}
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group h1 em{font-size:53px!important}
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group .dd-hero-description{font-size:17px!important;margin:8px 0 0!important}
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group{margin-bottom:28px!important}
+}
+
 /* Give the mobile CTA stack breathing room below the editorial subtitle. */
 @media(max-width:800px){
  .landing-v2 .dd-hero-variant-c .dd-hero-copy-group{
@@ -1926,10 +1957,10 @@
 }
 
 
-/* Mobile: add space below the Polaroid before the editorial copy block. */
+/* Mobile: leave breathing room below the landscape Polaroid. */
 @media(max-width:800px){
  .landing-v2 .dd-hero-variant-c .dd-hero-copy-group{
-  margin-top:18px!important;
+  margin-top:32px!important;
  }
 }
 
@@ -2136,4 +2167,18 @@
 }
 @media(min-width:801px) and (max-width:1100px){
  .landing-v2 .dd-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* Mobile invitation archive shortcut: balanced with the left menu and centered brand. */
+.landing-v2 .landing-mobile-invitations{display:none}
+@media(max-width:800px){
+ .landing-v2 .landing-header .landing-mobile-invitations{
+  position:absolute!important;right:12px!important;top:50%!important;
+  transform:translateY(-50%)!important;display:flex!important;
+  align-items:center!important;justify-content:center!important;
+  width:32px!important;height:36px!important;color:#292725!important;
+  text-decoration:none!important;z-index:2!important;
+ }
+ .landing-v2 .landing-header .landing-mobile-invitations svg{display:block;width:26px;height:26px}
+ .landing-v2 .landing-header .landing-mobile-invitations:focus-visible{outline:2px solid #555;outline-offset:2px;border-radius:4px}
 }

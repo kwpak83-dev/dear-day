@@ -461,3 +461,19 @@
   text-align:center;
  }
 }
+
+/* Match the landing mobile header: menu / centered logo / invitation archive. */
+.dd-showcase-page .dd-showcase-invitations{display:none}
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-header{height:56px!important;min-height:56px!important}
+ .dd-showcase-page .dd-showcase-home{display:none!important}
+ .dd-showcase-page .dd-showcase-invitations{
+  position:absolute!important;right:12px!important;top:50%!important;
+  transform:translateY(-50%)!important;display:flex!important;
+  align-items:center!important;justify-content:center!important;
+  width:32px!important;height:36px!important;color:#292725!important;
+  text-decoration:none!important;z-index:4!important;
+ }
+ .dd-showcase-page .dd-showcase-invitations svg{display:block;width:26px;height:26px}
+ .dd-showcase-page .dd-showcase-invitations:focus-visible{outline:2px solid #555;outline-offset:2px;border-radius:4px}
+}

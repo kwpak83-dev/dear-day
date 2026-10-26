@@ -1,0 +1,17 @@
+/* Brand loading for the short authentication/consent check. */
+.dd-consent-loading{min-height:100dvh;display:grid;place-items:center;padding:24px;background:#fffaf5;color:#44352e;text-align:center}
+.dd-consent-loading-inner{width:min(100%,340px);display:flex;flex-direction:column;align-items:center}
+.dd-consent-logo-scene{position:relative;width:240px;height:165px;display:grid;place-items:center;isolation:isolate;margin-bottom:12px}
+.dd-consent-orbit{position:absolute;width:200px;height:135px;border:1.5px solid rgba(202,154,101,.48);border-left-color:transparent;border-bottom-color:rgba(202,154,101,.13);border-radius:50%;transform:rotate(-25deg);animation:dd-consent-orbit 4s ease-in-out infinite alternate}
+.dd-consent-logo-scene .dearday-logo{position:relative;z-index:1;display:block;width:190px;max-width:100%;filter:drop-shadow(0 2px 5px rgba(138,101,69,.1))}
+.dd-consent-logo-scene .dearday-logo img{display:block;width:100%;height:auto}
+.dd-consent-star{position:absolute;z-index:2;color:#c79b68;line-height:1;animation:dd-consent-twinkle 1.8s ease-in-out infinite}
+.dd-consent-star-a{right:25px;top:20px;font-size:22px}
+.dd-consent-star-b{left:20px;top:52px;font-size:15px;animation-delay:.4s}
+.dd-consent-star-c{right:30px;bottom:24px;font-size:13px;animation-delay:.85s}
+.dd-consent-star-d{left:43px;bottom:27px;font-size:12px;animation-delay:1.2s}
+.dd-consent-loading-inner strong{font-size:16px;font-weight:600;line-height:1.5}
+.dd-consent-loading-inner p{margin:8px 0 0;font-size:13px;color:#96877c}
+@keyframes dd-consent-twinkle{0%,100%{opacity:.25;transform:scale(.75)}50%{opacity:1;transform:scale(1.2)}}
+@keyframes dd-consent-orbit{from{transform:rotate(-25deg) scale(.97);opacity:.55}to{transform:rotate(15deg) scale(1.04);opacity:1}}
+@media(prefers-reduced-motion:reduce){.dd-consent-star,.dd-consent-orbit{animation:none}}

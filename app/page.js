@@ -90,6 +90,7 @@ export default function Home() {
       <nav className="landing-nav"><button onClick={start}>초대장 만들기</button><a href="/templates">템플릿</a><a href="#how">이용안내</a><a href="#story">고객센터</a></nav>
       <div className="landing-actions">{user ? <><span>{providerLabel}</span><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={() => window.location.assign("/templates")}>지금, 초대장 만들기 →</button></div>
       <div className="landing-mobile-actions"><button aria-label="검색" onClick={comingSoon}>⌕</button><button className="landing-menu" aria-label="메뉴 열기" onClick={() => setMenuOpen(!menuOpen)}>☰</button></div>
+      <a className="landing-mobile-invitations" href={user ? "/my-invitations" : "/?login=required&returnUrl=%2Fmy-invitations"} aria-label="내 초대장" title="내 초대장"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="1.5"/><path d="M4 9h16M10 13h4"/></svg></a>
       {menuOpen && <div className="landing-mobile-nav"><button onClick={() => { setMenuOpen(false); start(); }}>초대장 만들기</button><a href="/templates" onClick={() => setMenuOpen(false)}>템플릿</a><a href="#how" onClick={() => setMenuOpen(false)}>이용안내</a><a href="#story" onClick={() => setMenuOpen(false)}>고객센터</a>{user ? <><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <button onClick={() => openLogin()}>로그인</button>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>}
     </header>
 
@@ -140,7 +141,8 @@ export default function Home() {
           ["07", "FREE PREVIEW", "결제는 나중에, 완성은 먼저.", "먼저 사진과 문구, 디자인을 넣어 완성된 초대장을 미리 확인하고 마음에 들 때 발행하세요.", "preview"],
           ["08", "EASY EDITING", "발행한 뒤에도, 수정은 자유롭게.", "날짜나 장소를 잘못 입력해도 걱정하지 마세요. 행사 시작 전까지 내용과 디자인을 수정할 수 있어요.", "edit"],
           ["09", "DESIGN FREEDOM", "디자인을 바꿀 때마다, 결제하지 마세요.", "디자인 선택을 서두를 필요 없어요. 초대장 발행 전후로 다양한 스타일을 추가 디자인 비용 없이 변경해보세요.", "styles"],
-          ["10", "MADE WITH PURPOSE", "꼭 필요한 기능만, 더 편리하게.", "다양한 초대장의 사용 경험을 살펴보며 복잡함은 줄이고 초대에 필요한 기능을 담기 위해 고민했어요.", "purpose"]
+          ["10", "MADE WITH PURPOSE", "꼭 필요한 기능만, 더 편리하게.", "다양한 초대장의 사용 경험을 살펴보며 복잡함은 줄이고 초대에 필요한 기능을 담기 위해 고민했어요.", "purpose"],
+          ["11", "LIVE HERO EDITING", "작은 모바일 화면에서도, 보면서 바로 편집.", "문구를 고치고 전체 미리보기를 반복할 필요 없이, HERO 사진을 보면서 글자와 위치를 실시간으로 조절할 수 있어요.", "livehero"]
         ].map(([number, eyebrow, title, description, kind]) => (
           <article className={`dd-feature dd-feature-${kind}`} key={number}>
             <div className="dd-feature-visual" aria-label={`${title} 기능 시연 화면 자리`}>
@@ -157,7 +159,7 @@ export default function Home() {
               </div>
             </div>
             <div className="dd-feature-copy">
-              <div className="dd-feature-labels"><span className="dd-feature-number">{number} <span>/ 10</span></span><span className="dd-feature-eyebrow">{eyebrow}</span></div>
+              <div className="dd-feature-labels"><span className="dd-feature-number">{number} <span>/ 11</span></span><span className="dd-feature-eyebrow">{eyebrow}</span></div>
               <h3>{title}</h3>
               <p>{description}</p>
               <ul className="dd-feature-checks">
@@ -170,9 +172,10 @@ export default function Home() {
                   kind === "preview" ? ["발행 전 완성형 초대장 미리보기", "마음에 들 때 발행"] :
                   kind === "edit" ? ["행사 시작 전까지 내용 수정", "사진과 디자인 변경 가능"] :
                   kind === "styles" ? ["추가 디자인 비용 없이 변경", "다양한 스타일 비교"] :
+                  kind === "livehero" ? ["문구와 위치를 실시간으로 확인", "전체 미리보기 반복 없이 편집"] :
                   ["꼭 필요한 핵심 기능", "쉽고 편리한 초대장 관리"]).map((benefit) => <li key={benefit}><span aria-hidden="true">✓</span>{benefit}</li>)}
               </ul>
-              <span className="dd-feature-pill">{kind === "theme" ? "표지·본문 세트 디자인" : kind === "mix" ? "나만의 스타일로 특별하게" : kind === "program" ? "초대장 하나로 행사 안내까지" : kind === "occasions" ? "다양한 특별한 날에" : kind === "rsvp" ? "참석 확인부터 축하 메시지까지" : kind === "intro" ? "초대의 첫 순간부터 특별하게" : kind === "preview" ? "발행 전 무료로 제작" : kind === "edit" ? "실수해도 편리하게 수정" : kind === "styles" ? "디자인 변경 부담 없이" : "꼭 필요한 기능만 담아"}</span>
+              <span className="dd-feature-pill">{kind === "theme" ? "표지·본문 세트 디자인" : kind === "mix" ? "나만의 스타일로 특별하게" : kind === "program" ? "초대장 하나로 행사 안내까지" : kind === "occasions" ? "다양한 특별한 날에" : kind === "rsvp" ? "참석 확인부터 축하 메시지까지" : kind === "intro" ? "초대의 첫 순간부터 특별하게" : kind === "preview" ? "발행 전 무료로 제작" : kind === "edit" ? "실수해도 편리하게 수정" : kind === "styles" ? "디자인 변경 부담 없이" : kind === "livehero" ? "보면서 바로 완성하는 HERO" : "꼭 필요한 기능만 담아"}</span>
             </div>
           </article>
         ))}

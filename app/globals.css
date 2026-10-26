@@ -3638,3 +3638,96 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .my-page .dd-my-menu-icon--qr{color:#525e72}
 .my-page .dd-my-menu-icon--eye{color:#626e87}
 .my-page .dd-my-card-menu-danger .dd-my-menu-icon{color:#e34d58}
+
+/* Keep the invitation editor's save action accessible while scrolling (draft and published). */
+.create-page .create-header{position:sticky;top:0;z-index:60;background:#fff;}
+
+/* DearDay shimmer save overlay: lightweight CSS-only animation. */
+.create-page .save-loading{background:rgba(41,35,32,.24);backdrop-filter:blur(3px)}
+.create-page .save-loading>.dd-save-loading-card{width:min(100%,320px);min-width:0;padding:29px 22px 30px;background:#fffdfa;border:1px solid rgba(224,205,186,.7);border-radius:20px;box-shadow:0 22px 55px rgba(50,37,29,.18)}
+.create-page .dd-save-logo-scene{position:relative;display:grid;place-items:center;width:218px;height:155px;margin:0 auto 14px;isolation:isolate}
+.create-page .dd-save-orbit{position:absolute;width:184px;height:124px;border-radius:50%;border:1.5px solid rgba(208,162,110,.42);border-left-color:transparent;border-bottom-color:rgba(208,162,110,.14);transform:rotate(-25deg);animation:dd-save-orbit 5s ease-in-out infinite alternate}
+.create-page .dd-save-logo-scene .dearday-logo{position:relative;z-index:1;transform:scale(1.14);filter:drop-shadow(0 2px 5px rgba(152,116,85,.12))}
+.create-page .dd-save-spark{position:absolute;z-index:2;color:#c99b66;line-height:1;animation:dd-save-twinkle 1.8s ease-in-out infinite}
+.create-page .dd-save-spark-one{top:15px;right:31px;font-size:22px}
+.create-page .dd-save-spark-two{top:46px;left:17px;font-size:15px;animation-delay:.4s}
+.create-page .dd-save-spark-three{bottom:17px;right:24px;font-size:13px;animation-delay:.85s}
+.create-page .dd-save-spark-four{bottom:30px;left:39px;font-size:12px;animation-delay:1.2s}
+.create-page .save-loading>.dd-save-loading-card strong{font-size:15px;line-height:1.5;text-align:center;color:#43352f}
+.create-page .save-loading>.dd-save-loading-card>span{font-size:12px;color:#93847a}
+@keyframes dd-save-twinkle{0%,100%{opacity:.25;transform:scale(.75)}50%{opacity:1;transform:scale(1.2)}}
+@keyframes dd-save-orbit{0%{transform:rotate(-25deg) scale(.97);opacity:.55}100%{transform:rotate(15deg) scale(1.04);opacity:1}}
+@media(prefers-reduced-motion:reduce){.create-page .dd-save-orbit,.create-page .dd-save-spark{animation:none}}
+
+/* User editor: compact, optional HERO intro lettering settings. */
+.dd-user-intro-editor{display:grid;gap:13px}
+.dd-user-intro-editor>label,.dd-user-intro-grid>label{display:grid;gap:7px;font-size:13px;color:#333}
+.dd-user-intro-editor input[type="text"],.dd-user-intro-editor select{width:100%;min-width:0;padding:11px 12px;border:1px solid #dedede;border-radius:9px;background:#fff;color:#242424;font-size:14px}
+.dd-user-intro-editor input[type="range"]{width:100%;accent-color:#333}
+.dd-user-intro-toggle{display:flex!important;justify-content:space-between;align-items:center;font-weight:650}
+.dd-user-intro-toggle input{width:18px;height:18px;accent-color:#333}
+.dd-user-intro-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.dd-user-intro-color{display:flex;align-items:center;gap:9px;min-height:43px;border:1px solid #dedede;border-radius:9px;padding:5px 9px}
+.dd-user-intro-color input{width:34px;height:30px;padding:0;border:0;background:none;cursor:pointer}
+.dd-user-intro-color span{font-size:12px}
+.dd-user-intro-preview{min-height:150px;display:flex;align-items:center;justify-content:center;padding:24px 14px;border:1px solid #e8e8e8;border-radius:11px}
+.dd-user-intro-actions{display:flex;gap:8px;flex-wrap:wrap}
+.dd-user-intro-animation.classic-hero{position:relative!important;display:block!important;width:100%!important;height:230px!important;min-height:230px!important;overflow:hidden!important;border-radius:11px;background:transparent}
+.dd-user-intro-animation.classic-hero>.dd-hero-intro{position:absolute;inset:0;width:100%;height:100%}
+@media(max-width:420px){.dd-user-intro-grid{grid-template-columns:1fr}}
+
+/* Intro: preview actual lettering fonts in a compact picker. */
+.dd-user-intro-font-field,.dd-user-intro-speed{display:grid;gap:8px;font-size:13px;color:#333}
+.dd-user-intro-font-trigger{width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid #dedede;border-radius:9px;padding:12px;background:#fff;text-align:left;color:#242424;font-size:17px;cursor:pointer}
+.dd-user-intro-font-list{display:grid;gap:6px;max-height:330px;overflow-y:auto;padding:7px;border:1px solid #e4e4e4;border-radius:11px;background:#fafafa}
+.dd-user-intro-font-option{position:relative;display:grid;gap:4px;min-height:70px;width:100%;padding:10px 32px 9px 12px;border:1px solid #e6e6e6;border-radius:9px;background:#fff;color:#292929;text-align:left;cursor:pointer}
+.dd-user-intro-font-option.is-selected{border-color:#323232;background:#f7f7f7}
+.dd-user-intro-font-sample{font-size:22px;line-height:1.35;overflow-wrap:anywhere}
+.dd-user-intro-font-name{font-size:11px;color:#777}
+.dd-user-intro-font-check{position:absolute;right:12px;top:15px;font-weight:700}
+.dd-user-intro-speed-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.dd-user-intro-speed-options button{padding:11px 4px;border:1px solid #dedede;border-radius:9px;background:#fff;color:#444;cursor:pointer;font-size:13px}
+.dd-user-intro-speed-options button.is-selected{border-color:#333;background:#333;color:#fff;font-weight:650}
+.dd-user-intro-speed small{color:#777;font-size:11px}
+
+/* Single intro preview: animation overlays the static lettering only while replaying. */
+.dd-user-intro-preview>.dd-user-intro-animation.classic-hero{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;border-radius:inherit;z-index:1}
+.dd-user-intro-animation-timer{position:absolute;inset:0;pointer-events:none;opacity:0;animation-name:dd-user-intro-replay-timer;animation-timing-function:linear;animation-fill-mode:forwards}
+@keyframes dd-user-intro-replay-timer{from{opacity:0}to{opacity:0}}
+
+/* User-facing HERO fixed lettering controls: scoped to the display settings. */
+.hero-display-settings .dd-hero-user-text-card{display:grid;gap:11px;margin:12px 0;padding:13px;border:1px solid #e9e4df;border-radius:11px;background:#fcfaf8}
+.hero-display-settings .dd-hero-user-text-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:#38322e}
+.hero-display-settings .dd-hero-user-text-heading span{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:400}
+.hero-display-settings .dd-hero-user-text-heading input{accent-color:#37312d}
+.hero-display-settings .dd-hero-user-text-card textarea{box-sizing:border-box;width:100%;min-height:55px;padding:9px 11px;resize:vertical;border:1px solid #ded9d5;border-radius:8px;background:#fff;font:inherit;font-size:13px}
+.hero-display-settings .dd-hero-user-text-position{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.hero-display-settings .dd-hero-user-text-position label{display:grid;gap:7px;font-size:12px;color:#5f5650}
+.hero-display-settings .dd-hero-user-text-position input{width:100%;accent-color:#4a413d}
+.hero-display-settings .dd-hero-user-text-reset{justify-self:start;padding:5px 0;border:0;background:transparent;color:#756c65;text-decoration:underline;text-underline-offset:3px;font-size:11px;cursor:pointer}
+@media(max-width:370px){.hero-display-settings .dd-hero-user-text-position{grid-template-columns:1fr}}
+
+/* Mobile-first, single-screen HERO lettering editor. */
+.dd-hero-text-editor-launch{display:block;width:100%;margin:9px 0 14px;padding:11px;border:1px solid #cfc5bc;border-radius:9px;background:#faf7f4;color:#453d36;font-size:13px;font-weight:650;cursor:pointer}
+.dd-hero-text-modal-backdrop{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);background:rgba(25,22,20,.65)}
+.dd-hero-text-modal{display:flex;flex-direction:column;width:min(100%,440px);height:100%;max-height:100dvh;overflow:hidden;background:#fff;color:#292522;box-shadow:0 10px 40px #0003}
+.dd-hero-text-modal-header{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;padding:12px 17px;border-bottom:1px solid #eee9e5;font-size:15px}
+.dd-hero-text-modal-header button{border:0;background:transparent;color:#4a423c;font-size:20px;cursor:pointer}
+.dd-hero-text-modal-preview{flex:1 1 auto;min-height:140px;display:flex;justify-content:center;align-items:center;overflow:auto;padding:8px;background:#f5f1ed}
+.dd-hero-text-modal-preview .hero-editor-live-preview{width:100%;display:flex;flex-direction:column;align-items:center}
+.dd-hero-text-modal-preview .hero-editor-live-preview-frame{max-width:245px;flex:0 0 auto}
+.dd-hero-text-modal-controls{flex:0 0 auto;max-height:47dvh;overflow-y:auto;padding:14px 17px 18px;background:#fff}
+.dd-hero-text-modal-fields{display:grid;gap:11px}
+.dd-hero-text-modal-row{display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.dd-hero-text-modal-row small{color:#888;font-weight:400}
+.dd-hero-text-modal-row label{display:flex;align-items:center;gap:6px;font-size:12px}
+.dd-hero-text-modal-fields textarea{width:100%;box-sizing:border-box;padding:10px;border:1px solid #ddd5ce;border-radius:8px;font:inherit;font-size:14px}
+.dd-hero-text-modal-sliders{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.dd-hero-text-modal-sliders label{display:grid;gap:7px;font-size:12px;color:#655a53}
+.dd-hero-text-modal-sliders input{width:100%;accent-color:#4c433d}
+.dd-hero-text-modal-nav{display:flex;justify-content:space-between;gap:10px;margin-top:12px}
+.dd-hero-text-modal-nav button{flex:1;padding:11px;border:1px solid #d7cec7;border-radius:8px;background:#fff;color:#4b413b;cursor:pointer}
+.dd-hero-text-modal-nav button.is-primary{background:#37312e;border-color:#37312e;color:#fff}
+.dd-hero-text-modal-nav button:disabled{opacity:.35;cursor:default}
+@media(min-width:600px){.dd-hero-text-modal{height:min(92dvh,820px);border-radius:16px}}
+@media(max-height:620px){.dd-hero-text-modal-controls{max-height:55dvh}.dd-hero-text-modal-preview{min-height:110px}}
