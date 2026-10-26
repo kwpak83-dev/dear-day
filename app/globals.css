@@ -3763,3 +3763,13 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
     flex:0 0 auto;max-height:none
   }
 }
+
+/* Compact axis-centering actions in the mobile HERO lettering modal. */
+.dd-hero-text-modal-axis-heading{display:flex;align-items:center;justify-content:space-between;gap:4px;white-space:nowrap}
+.dd-hero-text-modal-center{border:1px solid #d8cec6;border-radius:5px;background:#faf7f4;color:#51463e;font:inherit;font-size:11px;padding:3px 8px;line-height:1.35;cursor:pointer;touch-action:manipulation}
+.dd-hero-text-modal-center:focus-visible{outline:2px solid #51463e;outline-offset:2px}
+
+/* Visibility toggles stay in the live HERO editor instead of a leftover accordion. */
+.dd-hero-text-modal-visibility{display:flex;flex-wrap:wrap;gap:5px 12px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid #eee9e5}
+.dd-hero-text-modal-visibility label{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#5f5650;white-space:nowrap}
+.dd-hero-text-modal-visibility input{margin:0;accent-color:#4c433d}
