@@ -73,7 +73,7 @@ export default function HeroIntro({ intro }) {
   }) : null;
 
   return <div className={`dd-hero-intro${ready ? " dd-hero-intro-ready" : ""}`} style={{ backgroundColor:intro.backgroundColor, "--dd-intro-write":`${intro.writeDuration}s`, "--dd-intro-hold":`${intro.holdDuration}s`, "--dd-intro-fade":`${intro.fadeDuration}s`, "--dd-intro-total":`${total}s` }} aria-hidden="true">
-    <span className="dd-hero-intro-text-wrap" style={{ fontFamily, fontSize:`${intro.fontSize}px`, color:intro.textColor }}>
+    <span className="dd-hero-intro-text-wrap" style={{ fontFamily, fontSize:`${intro.fontSize}px`, color:intro.textColor, top:`${Math.min(80,Math.max(20,Number(intro.positionY ?? 50)||50))}%` }}>
       <span ref={measureRef} className="dd-hero-intro-measure">{text}</span>
       {ready && <span className="dd-hero-intro-lines">{animatedLines}</span>}
     </span>
