@@ -1216,7 +1216,8 @@ export default function CreateInvitation() {
         </div>
         {!published && <CardShareImageTask job={cardShareJob} onResult={result => {
           setUpdateShareStatus(result);
-          if (result === "ready") showSavedToast("수정사항과 카카오 공유 이미지 처리가 완료됐어요.");
+          if (result === "saved") showSavedToast("수정사항과 카카오 공유 이미지 저장이 완료됐어요.");
+          else if (result === "unchanged" || result === "not-card") showSavedToast("수정사항이 공개 초대장에 반영되었습니다.");
           else showSavedToast("수정사항은 반영됐지만 공유 이미지 생성에 실패했어요. 다시 생성해 주세요.");
         }} />}{saveNotice && <p role="status">{saveNotice}</p>}{loginRequired && <button type="button" className="save-button" onClick={continueAfterLogin}>로그인하고 계속하기</button>}
       </section>
