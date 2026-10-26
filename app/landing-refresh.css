@@ -1931,9 +1931,11 @@
   align-self:flex-start!important;
   text-align:left!important;
  }
- .landing-v2 .dd-hero-variant-c .dd-hero-copy-group .dd-hero-eyebrow{margin:0 0 16px!important}
- .landing-v2 .dd-hero-variant-c .dd-hero-copy-group h1{margin:0!important}
- .landing-v2 .dd-hero-variant-c .dd-hero-copy-group .dd-hero-description{margin:22px 0 0!important}
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group .dd-hero-eyebrow{font-size:11px!important;margin:0 0 16px!important}
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group h1{font-size:58px!important;margin:0!important}
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group h1 em{font-size:53px!important}
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group .dd-hero-description{font-size:17px!important;margin:8px 0 0!important}
+ .landing-v2 .dd-hero-variant-c .dd-hero-copy-group{margin-bottom:28px!important}
 }
 
 /* Give the mobile CTA stack breathing room below the editorial subtitle. */
