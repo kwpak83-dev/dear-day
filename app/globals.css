@@ -3689,3 +3689,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-user-intro-speed-options button{padding:11px 4px;border:1px solid #dedede;border-radius:9px;background:#fff;color:#444;cursor:pointer;font-size:13px}
 .dd-user-intro-speed-options button.is-selected{border-color:#333;background:#333;color:#fff;font-weight:650}
 .dd-user-intro-speed small{color:#777;font-size:11px}
+
+/* Single intro preview: animation overlays the static lettering only while replaying. */
+.dd-user-intro-preview>.dd-user-intro-animation.classic-hero{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;border-radius:inherit;z-index:1}
+.dd-user-intro-animation-timer{position:absolute;inset:0;pointer-events:none;opacity:0;animation-name:dd-user-intro-replay-timer;animation-timing-function:linear;animation-fill-mode:forwards}
+@keyframes dd-user-intro-replay-timer{from{opacity:0}to{opacity:0}}
