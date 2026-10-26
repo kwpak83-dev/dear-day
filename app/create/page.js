@@ -57,23 +57,34 @@ const MILESTONE_BIRTHDAY_MESSAGE_EXAMPLES = [
   { label: "따뜻한 초대", text: "함께한 시간만큼 깊어진 사랑과 감사의 마음을 담아\n특별한 하루를 준비했습니다.\n편안한 마음으로 오셔서 웃음과 따뜻한 추억을 함께 만들어 주세요." },
 ];
 function HeroEditorPreview({ invitation, eventKind, templateId, templateConfig, templateAssets }) {
+  const previewRef = useRef(null);
   const frameRef = useRef(null);
   const contentRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 245, height: 310, scale: 245 / 390 });
   useEffect(() => {
+    const preview = previewRef.current;
     const frame = frameRef.current;
     const content = contentRef.current;
-    if (!frame || !content) return;
+    if (!preview || !frame || !content) return;
     const measure = () => {
       const hero = content.querySelector(".classic-hero,.modern-hero,.romantic-hero");
       if (!hero) return;
-      const width = Math.min(245, frame.clientWidth || 245);
-      const scale = width / 390;
-      const height = Math.ceil(hero.offsetHeight * scale);
-      setDimensions(previous => previous.width === width && Math.abs(previous.height - height) < 2 ? previous : { width, height, scale });
+      const label = preview.querySelector(".hero-editor-live-preview-label");
+      const previewStyle = getComputedStyle(preview);
+      const labelStyle = label ? getComputedStyle(label) : null;
+      const labelHeight = label ? label.getBoundingClientRect().height + parseFloat(labelStyle.marginBottom || 0) : 0;
+      const availableHeight = Math.max(1, preview.clientHeight - parseFloat(previewStyle.paddingTop || 0) - parseFloat(previewStyle.paddingBottom || 0) - labelHeight);
+      const availableWidth = Math.max(1, preview.clientWidth - parseFloat(previewStyle.paddingLeft || 0) - parseFloat(previewStyle.paddingRight || 0));
+      const heroHeight = hero.offsetHeight;
+      if (!heroHeight) return;
+      // Scale the complete HERO to fit BOTH dimensions, including short mobile viewports.
+      const scale = Math.min(245 / 390, availableWidth / 390, availableHeight / heroHeight);
+      const width = Math.floor(390 * scale);
+      const height = Math.floor(heroHeight * scale);
+      setDimensions(previous => previous.width === width && previous.height === height ? previous : { width, height, scale });
     };
     const observer = new ResizeObserver(measure);
-    observer.observe(frame);
+    observer.observe(preview);
     observer.observe(content);
     const hero = content.querySelector(".classic-hero,.modern-hero,.romantic-hero");
     if (hero) observer.observe(hero);
@@ -82,16 +93,15 @@ function HeroEditorPreview({ invitation, eventKind, templateId, templateConfig, 
     measure();
     return () => { observer.disconnect(); images.forEach(img => img.removeEventListener("load", measure)); };
   }, [templateId, templateConfig, templateAssets, invitation]);
-  return <div className="hero-editor-live-preview">
+  return <div ref={previewRef} className="hero-editor-live-preview">
     <div className="hero-editor-live-preview-label">HERO LIVE PREVIEW · 입력 즉시 반영</div>
-    <div ref={frameRef} className="hero-editor-live-preview-frame" style={{ height: dimensions.height }}>
+    <div ref={frameRef} className="hero-editor-live-preview-frame" style={{ width: dimensions.width, height: dimensions.height }}>
       <div ref={contentRef} className="hero-editor-live-preview-scaled" style={{ transform: `scale(${dimensions.scale})` }}>
         <InvitationRenderer invitation={invitation} eventKind={eventKind} templateId={templateId} templateConfig={templateConfig} templateAssets={templateAssets} />
       </div>
     </div>
   </div>;
 }
-
 
 const USER_SCREEN_EFFECTS = [["green", "초록 나뭇잎"], ["autumn", "가을 낙엽"], ["snow", "눈송이"], ["rose", "장미 꽃잎"], ["lavender", "라벤더 꽃잎"], ["daisy", "데이지 꽃"], ["heart", "하트"], ["color-confetti", "컬러 컨페티"], ["balloon", "파스텔 풍선"], ["bubble", "비눗방울"], ["coffee-bean", "커피콩"]];
 const INTRO_FONT_IDS = ["great-vibes","allura","alex-brush","parisienne","dancing-script","playfair-display","cormorant-garamond","cinzel","nanum-brush-script","pocheon-makgeolli"];
