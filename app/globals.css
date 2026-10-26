@@ -3641,3 +3641,20 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Keep the invitation editor's save action accessible while scrolling (draft and published). */
 .create-page .create-header{position:sticky;top:0;z-index:60;background:#fff;}
+
+/* DearDay shimmer save overlay: lightweight CSS-only animation. */
+.create-page .save-loading{background:rgba(41,35,32,.24);backdrop-filter:blur(3px)}
+.create-page .save-loading>.dd-save-loading-card{width:min(100%,320px);min-width:0;padding:29px 22px 30px;background:#fffdfa;border:1px solid rgba(224,205,186,.7);border-radius:20px;box-shadow:0 22px 55px rgba(50,37,29,.18)}
+.create-page .dd-save-logo-scene{position:relative;display:grid;place-items:center;width:218px;height:155px;margin:0 auto 14px;isolation:isolate}
+.create-page .dd-save-orbit{position:absolute;width:184px;height:124px;border-radius:50%;border:1.5px solid rgba(208,162,110,.42);border-left-color:transparent;border-bottom-color:rgba(208,162,110,.14);transform:rotate(-25deg);animation:dd-save-orbit 5s ease-in-out infinite alternate}
+.create-page .dd-save-logo-scene .dearday-logo{position:relative;z-index:1;transform:scale(1.14);filter:drop-shadow(0 2px 5px rgba(152,116,85,.12))}
+.create-page .dd-save-spark{position:absolute;z-index:2;color:#c99b66;line-height:1;animation:dd-save-twinkle 1.8s ease-in-out infinite}
+.create-page .dd-save-spark-one{top:15px;right:31px;font-size:22px}
+.create-page .dd-save-spark-two{top:46px;left:17px;font-size:15px;animation-delay:.4s}
+.create-page .dd-save-spark-three{bottom:17px;right:24px;font-size:13px;animation-delay:.85s}
+.create-page .dd-save-spark-four{bottom:30px;left:39px;font-size:12px;animation-delay:1.2s}
+.create-page .save-loading>.dd-save-loading-card strong{font-size:15px;line-height:1.5;text-align:center;color:#43352f}
+.create-page .save-loading>.dd-save-loading-card>span{font-size:12px;color:#93847a}
+@keyframes dd-save-twinkle{0%,100%{opacity:.25;transform:scale(.75)}50%{opacity:1;transform:scale(1.2)}}
+@keyframes dd-save-orbit{0%{transform:rotate(-25deg) scale(.97);opacity:.55}100%{transform:rotate(15deg) scale(1.04);opacity:1}}
+@media(prefers-reduced-motion:reduce){.create-page .dd-save-orbit,.create-page .dd-save-spark{animation:none}}
