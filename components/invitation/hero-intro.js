@@ -40,6 +40,7 @@ export default function HeroIntro({ intro }) {
     if (!node) return;
     let active = true;
     let frame = 0;
+    let observer;
     const update = () => {
       if (!active) return;
       const next = measureLines(node, text);
@@ -49,16 +50,28 @@ export default function HeroIntro({ intro }) {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(update);
     };
-    schedule();
-    const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(schedule) : null;
-    observer?.observe(node);
-    document.fonts?.ready.then(() => { if (active) schedule(); });
-    document.fonts?.addEventListener?.("loadingdone", schedule);
+    // Never measure or reveal the lettering in a fallback font. The selected
+    // font stylesheet can arrive after hydration in Kakao's in-app browser.
+    const waitForFont = async () => {
+      if (document.fonts?.load) {
+        try {
+          await document.fonts.load(`${intro.fontSize || 36}px ${fontFamily}`, text);
+          await document.fonts.ready;
+        } catch {
+          // Font loading failures should not leave the intro stuck forever.
+        }
+      }
+      if (!active) return;
+      schedule();
+      observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(schedule) : null;
+      observer?.observe(node);
+    };
+    setLines(null);
+    waitForFont();
     return () => {
       active = false;
       cancelAnimationFrame(frame);
       observer?.disconnect();
-      document.fonts?.removeEventListener?.("loadingdone", schedule);
     };
   }, [text, fontFamily, intro.fontSize]);
 
