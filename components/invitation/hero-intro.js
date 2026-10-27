@@ -55,6 +55,16 @@ export default function HeroIntro({ intro }) {
     const waitForFont = async () => {
       if (document.fonts?.load) {
         try {
+          // Wait for the selected local font stylesheet to register its faces.
+          const sheets = [...document.querySelectorAll('link[rel="stylesheet"]')]
+            .filter(link => link.href.includes("/fonts/"));
+          await Promise.all(sheets.map(link => new Promise(resolve => {
+            if (link.sheet) return resolve();
+            const done = () => { link.removeEventListener("load", done); link.removeEventListener("error", done); resolve(); };
+            link.addEventListener("load", done, { once: true });
+            link.addEventListener("error", done, { once: true });
+            setTimeout(done, 2500);
+          })));
           await document.fonts.load(`${intro.fontSize || 36}px ${fontFamily}`, text);
           await document.fonts.ready;
         } catch {
