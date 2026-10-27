@@ -35,6 +35,19 @@ test("official stop/route parameters, singleton lists, route deduplication and d
   const single = await tago.lookupTagoTransport(36.35, 127.38, { serviceKey: "key", fetcher: async url => url.pathname.endsWith("getCrdntPrxmtSttnList") ? response(stop) : response({ routeno: 7 }) });
   assert.match(single.transportPublic, /7번/);
 });
+test("same-name stop with subset routes is shown once; distinct route sets remain", async () => {
+  const second = { ...stop, nodeid: "DJB124", gpslong: 127.3801 };
+  const run = async (firstRoutes, secondRoutes) => tago.lookupTagoTransport(36.35, 127.38, {
+    serviceKey: "key", fetcher: async url => url.pathname.endsWith("getCrdntPrxmtSttnList")
+      ? response([stop, second])
+      : response((url.searchParams.get("nodeid") === stop.nodeid ? firstRoutes : secondRoutes).map(routeno => ({ routeno })))
+  });
+  const duplicate = await run(["232-1", "413", "509"], ["509"]);
+  assert.equal(duplicate.transportPublic, "버스:\\n시청 · 232-1, 413, 509번");
+  const distinct = await run(["232-1", "413"], ["509"]);
+  assert.equal(distinct.transportPublic.split("\\n").length, 3);
+});
+
 test("missing routes and upstream failures never fabricate transit directions", async () => {
   const empty = await tago.lookupTagoTransport(36.35, 127.38, { serviceKey: "key", fetcher: async () => response("") });
   assert.deepEqual(empty, { transportPublic: "", status: "empty" });
