@@ -31,9 +31,9 @@ test("official stop/route parameters, singleton lists, route deduplication and d
   assert.equal(calls[0].searchParams.get("gpsLati"), "36.35");
   assert.equal(calls[1].searchParams.get("cityCode"), "25");
   assert.equal(calls[1].searchParams.get("nodeid"), "DJB123");
-  assert.equal(result.status, "ok"); assert.match(result.transportPublic, /2, 100번 버스/);
+  assert.equal(result.status, "ok"); assert.match(result.transportPublic, /2, 100번/);
   const single = await tago.lookupTagoTransport(36.35, 127.38, { serviceKey: "key", fetcher: async url => url.pathname.endsWith("getCrdntPrxmtSttnList") ? response(stop) : response({ routeno: 7 }) });
-  assert.match(single.transportPublic, /7번 버스/);
+  assert.match(single.transportPublic, /7번/);
 });
 test("missing routes and upstream failures never fabricate transit directions", async () => {
   const empty = await tago.lookupTagoTransport(36.35, 127.38, { serviceKey: "key", fetcher: async () => response("") });
@@ -179,7 +179,7 @@ test("Caladium facility match confirms Ansim line 1 exit 2 using real response s
     calls.push(new URL(url));
     return url.pathname.endsWith("GetKwrdFndSubwaySttnList") ? response(ansimApi) : response([{ exitNo: "1", dirDesc: "다른 시설" }, { exitNo: "2", dirDesc: "칼라디움웨딩홀" }]);
   } });
-  assert.match(result.transportPublic, /대구 도시철도 1호선 안심역 하차, 2번 출구 이용/);
+  assert.match(result.transportPublic, /대구 1호선 안심역 2번 출구/);
   assert.equal(calls[1].searchParams.get("subwayStationId"), "MTRDG10146");
   assert.equal(calls[0].searchParams.get("subwayStationName"), "안심");
 });
@@ -236,4 +236,53 @@ test("rapid selection ignores both old bus and old subway responses", async () =
     await tick();
   }
   assert.equal(editor.current.transportPublic, "B subway\n\nB bus");
+});
+
+test("generated bus copy is compact with a single route suffix and no radius/bullets", async () => {
+  const second = { ...stop, nodeid: "DJB124", nodenm: "송정삼거리3", gpslati: 36.351 };
+  const result = await tago.lookupTagoTransport(36.35, 127.38, { serviceKey: "key", fetcher: async url => {
+    if (url.pathname.endsWith("getCrdntPrxmtSttnList")) return response([{ ...stop, nodenm: "송정삼거리4" }, second]);
+    return response(url.searchParams.get("nodeid") === "DJB123" ? [{ routeno: "55번" }, { routeno: "555" }] : [{ routeno: "802" }, { routeno: "814" }, { routeno: "동구4" }]);
+  } });
+  assert.equal(result.transportPublic, "버스:\n송정삼거리4 · 55, 555번\n송정삼거리3 · 802, 814, 동구4번");
+  assert.doesNotMatch(result.transportPublic, /반경|정류장|•|번번/);
+});
+test("generated car copy uses only venue and address", () => {
+  assert.equal(model.carDirections("칼라디움 웨딩홀", "대구광역시 동구 반야월로 400"), "내비게이션에서 '칼라디움 웨딩홀' 검색\n대구광역시 동구 반야월로 400");
+  assert.equal(model.carDirections("", "주소"), "");
+});
+test("subway only, bus only, both and neither merge without empty headings", () => {
+  const place = { venue: "행사장", address: "주소", eventKind: "wedding" };
+  const initial = { transportPublic: "", transportPublicEnabled: false };
+  const revisions = { transportPublic: 0 };
+  const subwayText = "지하철:\n대구 1호선 안심역 2번 출구", busText = "버스:\n송정삼거리4 · 55, 555번";
+  for (const [sections, expected] of [[{ subway: subwayText, bus: "" }, subwayText], [{ subway: "", bus: busText }, busText], [{ subway: subwayText, bus: busText }, subwayText + "\n\n" + busText], [{ subway: "", bus: "" }, ""]]) {
+    const result = model.mergeTransportPublic(initial, initial, revisions, revisions, sections, place);
+    assert.equal(result.transportPublic, expected); assert.equal(result.transportPublicEnabled, false);
+  }
+  const manual = { ...initial, transportPublic: "🚇 내가 직접 쓴 안내\n주변 버스정류장 (반경 500m)" };
+  assert.equal(model.mergeTransportPublic(manual, manual, revisions, revisions, { subway: subwayText, bus: busText }, place), manual);
+  assert.deepEqual(JSON.parse(JSON.stringify(manual)), manual);
+});
+test("actual common TransportGuide preserves manual copy and checkbox display rules", async () => {
+  const { createRequire } = await import("node:module"); const require = createRequire(import.meta.url);
+  const React = require("react"), { renderToStaticMarkup } = require("react-dom/server");
+  const babel = require("next/dist/compiled/babel/core");
+  const code = babel.transformSync(await source("components/invitation/transport-guide.js"), { configFile: false, babelrc: false,
+    presets: [[require("next/dist/compiled/babel/preset-react"), { runtime: "classic" }]], plugins: [require("next/dist/compiled/babel/plugin-transform-modules-commonjs")] }).code;
+  const exports = {}; new Function("React", "exports", code)(React, exports);
+  const invitation = { transportGuideEnabled: true, transportPublicEnabled: true, transportPublic: "내가 쓴 문구 그대로\n둘째 줄", transportCarEnabled: false, transportCar: "숨긴 자가용", transportParkingEnabled: true, transportParking: "주차 수동 문구" };
+  const html = renderToStaticMarkup(React.createElement(exports.default, { invitation }));
+  assert.ok(html.includes(invitation.transportPublic)); assert.ok(html.includes("주차 수동 문구")); assert.ok(html.includes("대중교통"));
+  assert.ok(!html.includes("숨긴 자가용"));
+  assert.equal(renderToStaticMarkup(React.createElement(exports.default, { invitation: { ...invitation, transportGuideEnabled: false } })), "");
+});
+test("transport-only styles retain inherited fonts/theme and allow long mobile lines to wrap", async () => {
+  const css = await source("app/globals.css");
+  assert.ok(css.includes(".dd-transport-guide-item{min-width:0;text-align:left}"));
+  assert.ok(css.includes(".dd-transport-guide-list{display:grid;gap:14px;text-align:left}"));
+  assert.ok(css.includes("line-height:var(--dd-body-line-height,1.6);overflow-wrap:anywhere"));
+  assert.ok(css.includes("white-space:pre-wrap"));
+  const heading = css.match(/\.dd-transport-guide-item h4\{([^}]+)\}/)[1];
+  assert.ok(heading.includes("margin:0 0 6px")); assert.ok(heading.includes("font:inherit")); assert.ok(!heading.includes("font-size:"));
 });
