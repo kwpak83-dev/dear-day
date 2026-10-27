@@ -1,4 +1,5 @@
 import HeroIntro from "./hero-intro";
+import HeroFontGate from "./hero-font-gate";
 import { backgroundPatternStyle } from "../../lib/background-patterns";
 import { paperTextureImage, paperTextureOpacity, paperTextureSize } from "../../lib/paper-texture";
 import FittedHeroText from "./fitted-hero-text";
@@ -390,7 +391,7 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
       }}/></picture>)}
     </div>}
     {Array.isArray(config?.hero?.textLayers) && config.hero.textLayers.some((layer) => (layer.source && layer.source !== "custom") || layer.text?.trim()) && <>
-      <div className="dd-template-hero-text-layers">
+      <HeroFontGate className="dd-template-hero-text-layers" fonts={config.hero.textLayers.filter(layer => layer.visible !== false).map(layer => getHeroFont(layer.fontId).family)}>
         {config.hero.textLayers.filter((layer) => layer.visible !== false && ((layer.source && layer.source !== "custom") || layer.text?.trim())).map((layer) => {
           const boundText = layer.source === "title" ? (presentation.heroTitle || presentation.title) : layer.source === "name" ? presentation.heroName : layer.source === "full_name" ? presentation.heroFullName : layer.source === "event_title" ? presentation.heroEventTitle : layer.source === "event_subtitle" ? presentation.heroEventSubtitle : layer.source === "parent1" ? presentation.heroParent1 : layer.source === "parent2" ? presentation.heroParent2 : layer.source === "host" ? presentation.heroHostName : layer.source === "note" ? presentation.note : layer.source === "schedule" ? presentation.heroSchedule : layer.source === "venue" ? presentation.venue : layer.source === "venue_detail" ? presentation.addressDetail : layer.text;
           if (!boundText?.trim()) return null;
@@ -421,7 +422,7 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
           const nextY = Math.min(Infinity, ...config.hero.textLayers.filter(other => other !== layer && other.visible !== false && ((other.source && other.source !== "custom") || other.text?.trim()) && Number(other.y ?? 50) > y).map(other => Number(other.y ?? 50)));
           return <FittedHeroText key={layer.id} layer={layer} textStyle={textStyle} nextY={nextY > y ? nextY : null} className={layer.fadeUp?.enabled ? "dd-hero-text-fade-up" : undefined} animationStyle={layer.fadeUp?.enabled ? { animationDuration: `${layer.fadeUp.duration}s`, animationDelay: `${introDelay + Number(layer.fadeUp.delay||0)}s` } : {}}>{renderedText}</FittedHeroText>;
         })}
-      </div>
+      </HeroFontGate>
     </>}
   </>;
 }
