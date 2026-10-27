@@ -39,7 +39,7 @@ test("missing routes and upstream failures never fabricate transit directions", 
   const empty = await tago.lookupTagoTransport(36.35, 127.38, { serviceKey: "key", fetcher: async () => response("") });
   assert.deepEqual(empty, { transportPublic: "", status: "empty" });
   const partial = await tago.lookupTagoTransport(36.35, 127.38, { serviceKey: "key", fetcher: async url => url.pathname.endsWith("getCrdntPrxmtSttnList") ? response(stop) : new Response("failure", { status: 503 }) });
-  assert.equal(partial.status, "partial"); assert.match(partial.transportPublic, /노선 정보 확인 필요/);
+  assert.equal(partial.status, "partial"); assert.equal(partial.transportPublic, "");
   assert.doesNotMatch(partial.transportPublic, /출구|도보|지하철/);
   await assert.rejects(tago.lookupTagoTransport(36.35, 127.38, { serviceKey: "key", fetcher: async () => new Response("<xml>error</xml>") }));
 });
