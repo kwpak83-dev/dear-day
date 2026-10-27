@@ -20,6 +20,7 @@ import InvitationNotice from "../invite/[slug]/invitation-notice";
 import GalleryEditor from "./gallery-editor";
 import ProgramEditor from "./program-editor";
 import { normalizeProgram, toggleProgram } from "../../lib/invitation-program";
+import { clearAutomaticTransport, transportSuggestionPatch, carDirections, TRANSPORT_AUTO_FIELDS, getAutomaticTransport, applyAutomaticTransport, editTransportField, prepareTransportPlaceSelection, mergeTransportPublic } from "../../lib/transport-autofill";
 import { preparePhoto, prepareHeroPhoto, prepareKakaoSharePhoto } from "../../lib/prepare-photo";
 import { normalizeNotice } from "../../lib/invitation-notice";
 import { getInvitationTitle } from "../../lib/invitation-title";
@@ -152,6 +153,15 @@ function BirthDateField({ label, value, onChange }) {
 
 export default function CreateInvitation() {
   const [invitation, setInvitation] = useState(initialInvitation);
+  const [transportNotice, setTransportNotice] = useState("");
+  const transportRequest = useRef(null);
+  const transportAutomatic = useRef({});
+  const transportRevisions = useRef({ transportPublic: 0, transportCar: 0 });
+  const transportPlace = useRef(null);
+  const transportAllowed = useRef(true);
+  const transportLatest = useRef(invitation);
+  transportLatest.current = invitation;
+  useEffect(() => () => { transportRequest.current?.abort(); transportRequest.current = null; }, []);
   const [provider, setProvider] = useState("");
   const [published, setPublished] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -531,7 +541,13 @@ export default function CreateInvitation() {
     setTemplateNotice("");
     templateSelectionChanged.current = false;
   };
-  const update = (key, value) => setInvitation((current) => ({ ...current, [key]: value }));
+  const update = (key, value) => {
+    if (TRANSPORT_AUTO_FIELDS.includes(key)) {
+      transportRevisions.current[key]++;
+      delete transportAutomatic.current[key];
+    }
+    setInvitation((current) => TRANSPORT_AUTO_FIELDS.includes(key) ? editTransportField(current, key, value) : ({ ...current, [key]: value }));
+  };
   const updateProgram = value => setInvitation(current => {
     const program = normalizeProgram(value);
     return JSON.stringify(normalizeProgram(current.program)) === JSON.stringify(program)
@@ -736,7 +752,79 @@ export default function CreateInvitation() {
   };
   const selectPlace = (place) => {
     const address = place.roadAddress || place.address || "";
-    setInvitation((current) => ({ ...current, venue: place.title.replace(/<[^>]+>/g, ""), venueAddress: address, venueBuilding: "" }));
+    const venue = place.title.replace(/<[^>]+>/g, "");
+    transportRequest.current?.abort();
+    const controller = new AbortController();
+    transportRequest.current = controller;
+    const previous = { ...getAutomaticTransport(transportLatest.current), ...transportAutomatic.current };
+    const selected = { venue, address, eventKind: invitation.eventKind };
+    const previousPlace = transportPlace.current || invitation.transportAutoSource;
+    const baseline = prepareTransportPlaceSelection(invitation, selected, previousPlace, previous, transportAllowed.current);
+    const revisions = { ...transportRevisions.current };
+    transportPlace.current = selected;
+    transportAutomatic.current = {};
+    const suggestions = { transportCar: transportAllowed.current ? carDirections(venue, address) : "" };
+    if (!baseline.transportCar && suggestions.transportCar) transportAutomatic.current.transportCar = suggestions.transportCar;
+    setInvitation(current => {
+      const cleared = prepareTransportPlaceSelection(current, selected, previousPlace, previous, transportAllowed.current);
+      return { ...applyAutomaticTransport(cleared, transportSuggestionPatch(cleared, baseline, transportRevisions.current, revisions, suggestions), selected), venue, venueAddress: address, venueBuilding: "" };
+    });
+    setTransportNotice(transportAllowed.current ? "주변 버스 정보를 확인하고 있어요. 자동 입력 후 내용을 확인해 주세요." : "");
+    const isCurrent = () => transportRequest.current === controller && !controller.signal.aborted && transportAllowed.current
+      && transportLatest.current.eventKind === selected.eventKind && transportLatest.current.venue === venue && transportLatest.current.venueAddress === address;
+    const sections = { bus: "", subway: "" };
+    let busDone = false, subwayDone = false;
+    const applyPublicSections = () => {
+      if (!isCurrent()) return;
+      const merged = mergeTransportPublic(transportLatest.current, baseline, transportRevisions.current, revisions, sections, selected);
+      if (merged !== transportLatest.current) transportAutomatic.current.transportPublic = merged.transportPublic;
+      setInvitation(current => mergeTransportPublic(current, baseline, transportRevisions.current, revisions, sections, selected));
+    };
+    if (transportAllowed.current) {
+      const latitude = Number(place.mapy) / 10000000, longitude = Number(place.mapx) / 10000000;
+      (async () => {
+        const timer = setTimeout(() => controller.abort(), 12000);
+        try {
+          if (!Number.isFinite(latitude) || !Number.isFinite(longitude) || !latitude || !longitude) throw new Error("장소 좌표를 확인하지 못했어요. 대중교통 안내는 직접 입력해 주세요.");
+          const response = await fetch(`/api/transport?lat=${latitude}&lng=${longitude}`, { signal: controller.signal });
+          const result = await response.json();
+          if (!isCurrent()) return;
+          if (!response.ok) throw new Error(result.error || "버스 정보를 조회하지 못했어요. 직접 입력할 수 있어요.");
+          const text = typeof result.transportPublic === "string" ? result.transportPublic.slice(0, 2000) : "";
+          sections.bus = text;
+          applyPublicSections();
+          setTransportNotice(result.status === "unconfigured" ? "버스 조회 키가 설정되지 않았어요. 대중교통 안내는 직접 입력해 주세요."
+            : result.status === "empty" ? "주변 버스 정보를 확인하지 못했어요. 대중교통 안내를 직접 입력해 주세요."
+            : "확인된 버스 정보를 반영했어요. 기존 입력 내용은 유지하며 노선·방향을 확인 후 수정해 주세요.");
+        } catch (error) {
+          const latest = transportLatest.current;
+          if (transportRequest.current === controller && transportAllowed.current && latest.eventKind === selected.eventKind && latest.venue === venue && latest.venueAddress === address)
+            setTransportNotice(error.name === "AbortError" ? "버스 조회 시간이 초과됐어요. 대중교통 안내는 직접 입력해 주세요." : error.message || "버스 조회에 실패했어요. 직접 입력할 수 있어요.");
+        } finally { clearTimeout(timer); busDone = true; if (subwayDone && transportRequest.current === controller) transportRequest.current = null; }
+      })();
+      // Independent request: a slow/failed subway lookup never delays bus text.
+      (async () => {
+        const subwayController = new AbortController();
+        const cancel = () => subwayController.abort();
+        controller.signal.addEventListener("abort", cancel, { once: true });
+        const timer = setTimeout(cancel, 9000);
+        try {
+          if (!Number.isFinite(latitude) || !Number.isFinite(longitude) || !latitude || !longitude) return;
+          const params = new URLSearchParams({ mode: "subway", lat: String(latitude), lng: String(longitude), venue: venue.slice(0, 200) });
+          const response = await fetch("/api/transport?" + params, { signal: subwayController.signal });
+          const result = await response.json();
+          if (response.ok && isCurrent() && typeof result.transportPublic === "string") {
+            sections.subway = result.transportPublic.slice(0, 2000);
+            applyPublicSections();
+          }
+        } catch { /* The bus result and manual edits remain intact. */ }
+        finally {
+          clearTimeout(timer); controller.signal.removeEventListener("abort", cancel);
+          subwayDone = true;
+          if (busDone && transportRequest.current === controller) transportRequest.current = null;
+        }
+      })();
+    }
     setVenueBuildingAuto(false);
     // Local Search returns WGS84 coordinates multiplied by 10,000,000. Use them
     // directly so the map follows the selected result even when geocoding is slow.
@@ -829,6 +917,22 @@ export default function CreateInvitation() {
   });
   const galleryMatrix = matrixField("gallery", "우리의 순간들");
   const transportMatrix = matrixField("transport", "교통 안내");
+  transportAllowed.current = transportMatrix.state !== "none";
+  useEffect(() => {
+    const selected = transportPlace.current || invitation.transportAutoSource;
+    if (!selected) {
+      if (eventReady && invitation.venueAddress) transportPlace.current = { venue: invitation.venue, address: invitation.venueAddress, eventKind: invitation.eventKind };
+      return;
+    }
+    if (transportMatrix.state !== "none" && selected.venue === invitation.venue && selected.address === invitation.venueAddress && selected.eventKind === invitation.eventKind) return;
+    transportRequest.current?.abort(); transportRequest.current = null;
+    const previous = { ...transportAutomatic.current };
+    transportAutomatic.current = {};
+    // Keep the last selected venue identity while the user types a new search.
+    transportPlace.current = selected.eventKind === invitation.eventKind ? selected : null;
+    setInvitation(current => clearAutomaticTransport(current, previous));
+    setTransportNotice("");
+  }, [invitation.venue, invitation.venueAddress, invitation.eventKind, transportMatrix.state, invitation.transportAutoSource, eventReady]);
   const noticeMatrix = matrixField("notice", "공지사항");
   const rsvpMatrix = matrixField("rsvp", "참석 여부");
   const guestbookMatrix = matrixField("guestbook", "방명록");
@@ -888,7 +992,7 @@ export default function CreateInvitation() {
       </Field>;
     }
     if (field.key === "birthDate") return <BirthDateField key={field.key} label={field.label} value={invitation.birthDate || ""} onChange={value => update("birthDate", value)} />;
-    if (field.type === "venue") return <div key={field.key}><Field label={field.label || "장소명"} fieldKey="venue"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "장소 검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results">{placeResults.map((place) => <button type="button" key={[place.mapx, place.mapy, place.title].join("-")} onClick={() => selectPlace(place)}><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></button>)}<p className="place-search-guide">검색 결과는 최대 5개까지 보여드려요. 원하는 장소가 없다면 지역명과 함께 검색해 주세요.</p></div>}<Field label="기본주소" fieldKey="venueAddress"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), geocodeAddress(invitation.venueAddress))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>주소 검색</button></div></Field><Field label="🏢 건물명"><input placeholder="장소 검색으로 기본주소가 입력되면 별도 입력이 필요하지 않아요" value={invitation.venueBuilding || ""} onChange={(e) => update("venueBuilding", e.target.value)} disabled={venueBuildingAuto || Boolean(invitation.venueAddress?.trim())} aria-readonly={venueBuildingAuto || Boolean(invitation.venueAddress?.trim())} title={invitation.venueAddress?.trim() ? "기본주소가 입력되어 건물명은 별도로 입력하지 않습니다." : venueBuildingAuto ? "주소 검색으로 자동 입력된 건물명입니다." : undefined} /></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={setMapContainer} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div>{transportMatrix.state !== "none" && <div className="form-section"><div className="dd-share-card-heading"><div><h2>🚗 {transportMatrix.label}</h2><p>교통 및 주차 안내를 설정해요.</p></div><label className="dd-share-switch"><input type="checkbox" checked={transportMatrix.state === "required" || invitation.transportGuideEnabled === true} disabled={transportMatrix.state === "required"} onChange={event => update("transportGuideEnabled", event.target.checked)} aria-label={transportMatrix.label + " 사용"} /><span className="dd-share-switch-track" aria-hidden="true" /></label></div>{(transportMatrix.state === "required" || invitation.transportGuideEnabled === true) && <div className="dd-transport-guide-editor">{[["transportPublicEnabled","transportPublic","🚇 대중교통","지하철·버스 등 대중교통 이용 방법을 입력하세요."],["transportCarEnabled","transportCar","🚙 자가용 이용 시","자가용 이용 시 찾아오는 방법을 입력하세요."],["transportParkingEnabled","transportParking","🅿️ 주차 안내","주차 위치·무료 주차 시간 등을 입력하세요."]].map(([enabledKey,valueKey,label,placeholder])=><div className="dd-transport-guide-editor-item" key={enabledKey}><label className="dd-transport-guide-item-toggle"><input type="checkbox" checked={invitation[enabledKey] === true} onChange={event => update(enabledKey,event.target.checked)} /> {label}</label>{invitation[enabledKey] === true && <textarea rows={3} placeholder={placeholder} value={invitation[valueKey] || ""} onChange={event => update(valueKey,event.target.value)} />}</div>)}</div>}</div>}</div>;
+    if (field.type === "venue") return <div key={field.key}><Field label={field.label || "장소명"} fieldKey="venue"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "장소 검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results">{placeResults.map((place) => <button type="button" key={[place.mapx, place.mapy, place.title].join("-")} onClick={() => selectPlace(place)}><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></button>)}<p className="place-search-guide">검색 결과는 최대 5개까지 보여드려요. 원하는 장소가 없다면 지역명과 함께 검색해 주세요.</p></div>}<Field label="기본주소" fieldKey="venueAddress"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), geocodeAddress(invitation.venueAddress))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>주소 검색</button></div></Field><Field label="🏢 건물명"><input placeholder="장소 검색으로 기본주소가 입력되면 별도 입력이 필요하지 않아요" value={invitation.venueBuilding || ""} onChange={(e) => update("venueBuilding", e.target.value)} disabled={venueBuildingAuto || Boolean(invitation.venueAddress?.trim())} aria-readonly={venueBuildingAuto || Boolean(invitation.venueAddress?.trim())} title={invitation.venueAddress?.trim() ? "기본주소가 입력되어 건물명은 별도로 입력하지 않습니다." : venueBuildingAuto ? "주소 검색으로 자동 입력된 건물명입니다." : undefined} /></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={setMapContainer} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div>{transportMatrix.state !== "none" && <div className="form-section"><div className="dd-share-card-heading"><div><h2>🚗 {transportMatrix.label}</h2><p>교통 및 주차 안내를 설정해요.</p>{transportNotice && <p role="status" aria-live="polite">{transportNotice}</p>}</div><label className="dd-share-switch"><input type="checkbox" checked={transportMatrix.state === "required" || invitation.transportGuideEnabled === true} disabled={transportMatrix.state === "required"} onChange={event => update("transportGuideEnabled", event.target.checked)} aria-label={transportMatrix.label + " 사용"} /><span className="dd-share-switch-track" aria-hidden="true" /></label></div>{(transportMatrix.state === "required" || invitation.transportGuideEnabled === true) && <div className="dd-transport-guide-editor">{[["transportPublicEnabled","transportPublic","🚇 대중교통","지하철·버스 등 대중교통 이용 방법을 입력하세요."],["transportCarEnabled","transportCar","🚙 자가용 이용 시","자가용 이용 시 찾아오는 방법을 입력하세요."],["transportParkingEnabled","transportParking","🅿️ 주차 안내","주차 위치·무료 주차 시간 등을 입력하세요."]].map(([enabledKey,valueKey,label,placeholder])=><div className="dd-transport-guide-editor-item" key={enabledKey}><label className="dd-transport-guide-item-toggle"><input type="checkbox" checked={invitation[enabledKey] === true} onChange={event => update(enabledKey,event.target.checked)} /> {label}</label>{invitation[enabledKey] === true && <textarea rows={3} placeholder={placeholder} value={invitation[valueKey] || ""} onChange={event => update(valueKey,event.target.value)} />}</div>)}</div>}</div>}</div>;
     if (field.type === "textarea") {
       const messageExamples = field.key === "message"
         ? invitation.eventKind === "wedding"
