@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 // Keep the HERO lettering invisible until its actual webfonts are available.
 // This prevents a fallback-font flash in mobile in-app browsers.
-export default function HeroFontGate({ fonts = [], children, className }) {
+export default function HeroFontGate({ fonts = [], children, className, style }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -31,5 +31,5 @@ export default function HeroFontGate({ fonts = [], children, className }) {
     return () => { active = false; };
   }, [fonts.join("|")]);
 
-  return <div className={className} style={{ visibility: ready ? "visible" : "hidden" }}>{children}</div>;
+  return <div className={className} style={{ ...style, visibility: ready ? "visible" : "hidden" }}>{children}</div>;
 }
