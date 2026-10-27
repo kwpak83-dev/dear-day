@@ -22,7 +22,7 @@ export default function HeroFontGate({ fonts = [], children, className, style })
           // Avoid holding the HERO forever on a failed stylesheet.
           setTimeout(done, 2500);
         })));
-        await Promise.all(fonts.filter(Boolean).map(font => document.fonts.load(`16px ${font}`).catch(() => [])));
+        await Promise.all(fonts.filter(Boolean).map(font => document.fonts.load(`16px ${font}`, "정우 수지 2026 SAT Wedding").catch(() => [])));
         await document.fonts.ready;
       }
       if (active) setReady(true);
