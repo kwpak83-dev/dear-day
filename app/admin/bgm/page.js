@@ -65,7 +65,7 @@ export default function AdminBgmPage() {
     <form onSubmit={submit} style={{border:"1px solid #e8dcd4",borderRadius:12,padding:18,margin:"18px 0"}}>
       <h2>{editing ? "음악 수정" : "음악 등록"}</h2>
       <label style={field}>곡 제목<input style={inputStyle} value={draft.title} maxLength={120} required onChange={e=>setDraft(p=>({...p,title:e.target.value}))}/></label>
-      <label style={field}>작곡가 / 출처<input style={inputStyle} value={draft.composer} maxLength={120} onChange={e=>setDraft(p=>({...p,composer:e.target.value}))}/></label>
+      <label style={field}>작곡가 / 곡명<input style={inputStyle} value={draft.composer} maxLength={120} onChange={e=>setDraft(p=>({...p,composer:e.target.value}))}/></label>
       <label style={field}>라이선스 / 이용 권한<input style={inputStyle} value={draft.license_name} maxLength={120} required onChange={e=>setDraft(p=>({...p,license_name:e.target.value}))}/></label>
       {!editing && <label style={field}>MP3 (10MB 이하)<input type="file" accept=".mp3,audio/mpeg" required onChange={e=>setFile(e.target.files?.[0] || null)}/></label>}
       <strong>표시 유형 (선택 안 하면 공통)</strong>

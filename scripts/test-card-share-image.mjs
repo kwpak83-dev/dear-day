@@ -17,7 +17,7 @@ test("brand share URL is absolute HTTPS with the correct asset", () => {
   assert.equal(new URL(image.imageUrl).pathname, "/dearday.png");
   assert.equal(new URL(image.imageUrl).protocol, "https:");
   for (const url of ["http://brand.example/a.png", "javascript:alert(1)", "https://user:secret@brand.example/a.png"]) assert.equal(brand.getBrandShareImage(url), null);
-  assert.equal(image.imageWidth, 1200); assert.equal(image.imageHeight, 630);
+  assert.equal(image.imageWidth, 1730); assert.equal(image.imageHeight, 909);
 });
 test("all six card event kinds use brand before manual or historical generated image", () => {
   for (const eventKind of ["wedding", "first_birthday", "birthday", "milestone_birthday", "gathering", "opening"]) {
@@ -58,7 +58,7 @@ test("publish and explicit save complete without capture states or jobs", async 
 });
 
 test("PNG assets have the expected dimensions and real PNG signatures", async () => {
-  for (const [file, width, height] of [["dearday-brand-share.png", 1200, 630], ["dearday-brand-thumbnail.png", 1086, 1448]]) {
+  for (const [file, width, height] of [["dearday-brand-share.png", 1730, 909], ["dearday-brand-thumbnail.png", 1087, 1447]]) {
     const bytes = await fs.readFile(new URL("public/images/" + file, root));
     assert.equal(bytes.subarray(0, 8).toString("hex"), "89504e470d0a1a0a");
     assert.equal(bytes.readUInt32BE(16), width); assert.equal(bytes.readUInt32BE(20), height);
@@ -97,9 +97,9 @@ test("Kakao image validation rejects local/404 images and accepts a loaded HTTPS
 test("environment URL selection never assumes localhost or an absent production asset", () => {
   assert.equal(brand.resolveBrandShareImageUrl({}), "");
   assert.equal(brand.resolveBrandShareImageUrl({ NEXT_PUBLIC_SHARE_IMAGE_ORIGIN: "http://localhost:3000" }), "");
-  assert.equal(brand.resolveBrandShareImageUrl({ VERCEL_ENV: "preview", VERCEL_URL: "preview.example" }), "https://preview.example/images/dearday-brand-share.png");
-  assert.equal(brand.resolveBrandShareImageUrl({ VERCEL_ENV: "production", VERCEL_URL: "deployment.example", VERCEL_PROJECT_PRODUCTION_URL: "production.example" }), "https://production.example/images/dearday-brand-share.png");
-  assert.equal(brand.resolveBrandShareImageUrl({ NEXT_PUBLIC_SHARE_IMAGE_ORIGIN: "https://images.example", VERCEL_URL: "preview.example" }), "https://images.example/images/dearday-brand-share.png");
+  assert.equal(brand.resolveBrandShareImageUrl({ VERCEL_ENV: "preview", VERCEL_URL: "preview.example" }), "https://preview.example/images/dearday-brand-share.png?v=2");
+  assert.equal(brand.resolveBrandShareImageUrl({ VERCEL_ENV: "production", VERCEL_URL: "deployment.example", VERCEL_PROJECT_PRODUCTION_URL: "production.example" }), "https://production.example/images/dearday-brand-share.png?v=2");
+  assert.equal(brand.resolveBrandShareImageUrl({ NEXT_PUBLIC_SHARE_IMAGE_ORIGIN: "https://images.example", VERCEL_URL: "preview.example" }), "https://images.example/images/dearday-brand-share.png?v=2");
 });
 test("legacy cover and pinned version select thumbnails without changing invitation data", async () => {
   const versionId = "33333333-3333-4333-8333-333333333333";
@@ -124,6 +124,19 @@ test("full Storage test URL applies only to local development card images", () =
   const env = { NODE_ENV: "development", NEXT_PUBLIC_DEV_CARD_SHARE_IMAGE_URL: url };
   assert.equal(brand.resolveBrandShareImageUrl(env), url);
   assert.equal(brand.resolveBrandShareImageUrl({ ...env, NODE_ENV: "production" }), "");
-  assert.equal(brand.resolveBrandShareImageUrl({ ...env, VERCEL_ENV: "preview", VERCEL_URL: "preview.example" }), "https://preview.example/images/dearday-brand-share.png");
+  assert.equal(brand.resolveBrandShareImageUrl({ ...env, VERCEL_ENV: "preview", VERCEL_URL: "preview.example" }), "https://preview.example/images/dearday-brand-share.png?v=2");
   assert.equal(brand.resolveBrandShareImageUrl({ ...env, NEXT_PUBLIC_DEV_CARD_SHARE_IMAGE_URL: "http://localhost/a.png" }), "");
+});
+
+test("version query survives selection and the SDK image preparation unchanged", async () => {
+  const url = "https://production.example/images/dearday-brand-share.png?v=2";
+  const selected = policy.selectCardShareImage({ kakaoShareGenerated: { url: "old-silver" } }, { hero: { mode: "illustration" } }, "old-fallback", brand.getBrandShareImage(url));
+  class Image { set src(value) { this.naturalWidth = 1730; queueMicrotask(() => this.onload()); } }
+  const { prepareKakaoImage } = await load("lib/kakao-share-image.js");
+  assert.equal(await prepareKakaoImage(selected.imageUrl, { ImageClass: Image }), url);
+  const code = await source("components/share-actions.js");
+  assert.ok(code.includes("content.imageUrl = verifiedImageUrl;"));
+  const page = await source("app/invite/[slug]/page.js");
+  assert.ok(page.includes("url: image.imageUrl"));
+  assert.ok(page.includes("imageUrl={shareImage.imageUrl}"));
 });
