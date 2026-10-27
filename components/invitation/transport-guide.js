@@ -10,10 +10,25 @@ function GuideIcon({ type }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 17V7h3.2a3.2 3.2 0 010 6.4H10M10 13.4h3.2"/></svg>;
 }
 
+function PublicTransportText({ value }) {
+  const parts = String(value || "").trim().split(/\n\s*\n/);
+  const sections = parts.map(part => {
+    const match = part.match(/^(지하철|버스):\s*\n([\s\S]+)$/);
+    return match ? { label: match[1], content: match[2].trim() } : null;
+  });
+  if (!sections.length || sections.some(section => !section)) return <p>{value}</p>;
+  return <div className="dd-transport-public-sections">{sections.map((section, index) =>
+    <div className="dd-transport-public-section" key={index}>
+      <strong className="dd-transport-public-label">{section.label}</strong>
+      <p className="dd-transport-public-content">{section.content}</p>
+    </div>
+  )}</div>;
+}
+
 export default function TransportGuide({ invitation, title = "교통 안내", required = false }) {
   if (!required && invitation?.transportGuideEnabled !== true) return null;
   const enabled = items.filter(([enabledKey, valueKey]) => invitation?.[enabledKey] === true && invitation?.[valueKey]?.trim());
-  if (enabled.length) return <section className="dd-transport-guide" aria-label={title}><h3>{title}</h3><div className="dd-transport-guide-list">{enabled.map(([enabledKey,valueKey,label,type])=><div className="dd-transport-guide-item" key={enabledKey}><h4><span className="dd-transport-guide-icon"><GuideIcon type={type}/></span>{label}</h4><p>{invitation[valueKey]}</p></div>)}</div></section>;
+  if (enabled.length) return <section className="dd-transport-guide" aria-label={title}><h3>{title}</h3><div className="dd-transport-guide-list">{enabled.map(([enabledKey,valueKey,label,type])=><div className="dd-transport-guide-item" key={enabledKey}><h4><span className="dd-transport-guide-icon"><GuideIcon type={type}/></span>{label}</h4>{valueKey === "transportPublic" ? <PublicTransportText value={invitation[valueKey]} /> : <p>{invitation[valueKey]}</p>}</div>)}</div></section>;
   if (!invitation?.transportGuide?.trim()) return null;
   return <section className="dd-transport-guide" aria-label={title}><h3>{title}</h3><p>{invitation.transportGuide}</p></section>;
 }
