@@ -1,4 +1,6 @@
 import { invitationFontStylesheets } from "../../../lib/invitation-local-fonts";
+import { getHeroFont } from "../../../lib/hero-fonts";
+import HeroFontGate from "../hero-font-gate";
 import TemplateConfigEffects from "../template-config-effects";
 import { getTemplateConfigRenderProps, TemplateConfigDecorations, TemplateConfigHeroIntro, TemplateConfigHeroPanelCopy, TemplateConfigHeroLayers } from "../template-config-render";
 
@@ -97,7 +99,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
       {hasHeroVisual && <figure style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img fetchPriority="high" loading="eager" decoding="async" style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
       <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} presentation={presentation} />
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />
-      <div className="classic-hero-copy" style={renderConfig.heroCopyStyle}>
+      <HeroFontGate className="classic-hero-copy" style={renderConfig.heroCopyStyle} fonts={[templateConfig?.hero?.nameFontFamily && getHeroFont(templateConfig.hero.nameFontFamily).family, templateConfig?.typography?.heroTitle?.fontFamily && getHeroFont(templateConfig.typography.heroTitle.fontFamily).family, templateConfig?.typography?.body?.fontFamily && getHeroFont(templateConfig.typography.body.fontFamily).family].filter(Boolean)}>
         {showHero("eyebrow") && <small>{wedding ? "소중한 분들을 초대합니다" : kindLabel}</small>}
         {showHero("eventLabel") && <p>{wedding ? "Wedding Day" : kindLabel}</p>}
         {showHero("eventLabel") && <i aria-hidden="true" />}
@@ -112,7 +114,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
         {showHero("note") && note && <span className="classic-note">{note}</span>}
         {showHero("schedule") && heroSchedule && <time>{heroSchedule}</time>}
         {showHero("venue") && venue && <strong>{venue}</strong>}
-      </div>
+      </HeroFontGate>
     </section>
 
     {message && <section className="classic-section classic-message">

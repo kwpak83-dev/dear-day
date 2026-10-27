@@ -193,6 +193,7 @@ export default function CreateInvitation() {
   const [saveNotice, setSaveNotice] = useState("" );
   const [saveToastVisible, setSaveToastVisible] = useState(false);
   const [saveToastMessage, setSaveToastMessage] = useState("");
+  const [saveToastIsValidation, setSaveToastIsValidation] = useState(false);
   const [loginRequired, setLoginRequired] = useState(false);
   const [mapNotice, setMapNotice] = useState("주소를 입력하면 지도를 확인할 수 있어요.");
   const [mapRevision, setMapRevision] = useState(0);
@@ -941,9 +942,10 @@ export default function CreateInvitation() {
     return <Field key={field.key} label={field.label} fieldKey={field.key}><input type={field.type} inputMode={field.inputMode} placeholder={field.placeholder} value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} /></Field>;
   };
 
-  const showSavedToast = (message) => {
+  const showSavedToast = (message, { validation = false } = {}) => {
     window.clearTimeout(saveToastTimer.current);
     setSaveToastMessage(message);
+    setSaveToastIsValidation(validation);
     setSaveToastVisible(true);
     saveToastTimer.current = window.setTimeout(() => setSaveToastVisible(false), 3800);
   };
@@ -970,7 +972,7 @@ export default function CreateInvitation() {
     if (!firstMissing) return true;
     const message = `임시저장하려면 ${firstMissing[0]}을(를) 입력해 주세요.`;
     setSaveNotice(message);
-    showSavedToast(message);
+    showSavedToast(message, { validation: true });
     setEditorStep(0);
     window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
       const basic = document.querySelector(".dd-required-fields .dd-custom-accordion");
@@ -1024,7 +1026,7 @@ export default function CreateInvitation() {
         ? "title"
         : !String(invitation.notice?.body || "").trim() ? "body" : null;
       if (missingNoticeField) {
-        showSavedToast(missingNoticeField === "title" ? "공지사항 제목을 입력해 주세요." : "공지사항 내용을 입력해 주세요.");
+        showSavedToast(missingNoticeField === "title" ? "공지사항 제목을 입력해 주세요." : "공지사항 내용을 입력해 주세요.", { validation: true });
         window.requestAnimationFrame(() => {
           const target = document.querySelector(`[data-notice-field="${missingNoticeField}"]`);
           target?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -1059,7 +1061,7 @@ export default function CreateInvitation() {
 
     const message = `필수 항목을 입력해 주세요: ${missingFields.join(", ")}`;
     setFlowNotice(message);
-    showSavedToast(message);
+    showSavedToast(message, { validation: true });
 
     const fields = eventConfig.sections.flatMap((section) => section.rows.flat());
     const firstMissing = missingFields[0];
@@ -1287,7 +1289,7 @@ export default function CreateInvitation() {
     {paymentComplete && <div className="publish-overlay" role="dialog" aria-modal="true" aria-labelledby="payment-complete-title"><div className="publish-card"><div className="publish-heart">✓</div><p className="section-kicker">PAYMENT COMPLETE</p><h2 id="payment-complete-title">결제가 완료되었습니다.</h2><p>아직 초대장은 공개되지 않았습니다.<br />내용을 최종 확인한 후 발행해 주세요.</p><button type="button" className="save-button full" onClick={() => { setPaymentComplete(false); setPreviewOpen(true); }}>최종 미리보기</button><button type="button" className="publish-button full" onClick={requestPublish}>초대장 발행하기</button></div></div>}
     {publishConfirmOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="publish-confirm-title"><div className="publish-confirm-card"><h2 id="publish-confirm-title">초대장을 발행하시겠습니까?</h2><p>발행하면 초대장 링크가 활성화됩니다.</p>{flowNotice && <p className="payment-error" role="alert">{flowNotice}</p>}<div><button type="button" className="save-button" onClick={() => setPublishConfirmOpen(false)}>취소</button><button type="button" className="publish-button" onClick={publish}>발행하기</button></div></div></div>}
     {submitting && <div className="save-loading" role="status" aria-live="polite"><div className="dd-save-loading-card"><div className="dd-save-logo-scene" aria-hidden="true"><span className="dd-save-orbit" /><span className="dd-save-spark dd-save-spark-one">✦</span><span className="dd-save-spark dd-save-spark-two">✧</span><span className="dd-save-spark dd-save-spark-three">✦</span><span className="dd-save-spark dd-save-spark-four">✧</span><DearDayLogo /></div><strong>{submitting === "publish" ? "초대장을 발행하고 있어요" : submitting === "payment" ? "테스트 결제를 처리하고 있어요" : "초대장을 저장하고 있어요"}</strong><span>잠시만 기다려 주세요.</span></div></div>}
-    {saveToastVisible && <div className="save-success-toast" role="status" aria-live="polite"><strong>{saveToastMessage}</strong>{saveToastMessage === "임시 저장이 완료되었습니다." && <span>발행하려면 미리보기 → 발행 준비하기를 진행해 주세요.</span>}</div>}
+    {saveToastVisible && <div className={`save-success-toast${saveToastIsValidation ? " save-validation-toast" : ""}`} role="status" aria-live="polite"><strong>{saveToastMessage}</strong>{saveToastMessage === "임시 저장이 완료되었습니다." && <span>발행하려면 미리보기 → 발행 준비하기를 진행해 주세요.</span>}</div>}
     {published && <div className="publish-overlay"><div className="publish-card"><div className="publish-heart">♥</div><p className="section-kicker">YOUR INVITATION IS READY</p><h2>초대장이<br /><em>발행되었습니다.</em></h2><p>초대장이 발행됐어요. 이제 링크를 공유해보세요.</p><a className="publish-button full" href={`/invite/${eventSlug}?from=owner`}>초대장 보기 및 공유 →</a><button className="publish-button full secondary" onClick={() => setPublished(false)}>완료했어요</button></div></div>}
   </main>;
 }
