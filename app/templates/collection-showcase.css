@@ -122,8 +122,8 @@
 .dd-showcase-preview-hero>img,.dd-showcase-preview-body>img{
  width:100%!important;
  height:100%!important;
- object-fit:fill!important;
- object-position:center!important;
+ object-fit:contain!important;
+ object-position:center top!important;
  background:transparent!important;
 }
 .dd-showcase-preview-body:before{
