@@ -43,9 +43,9 @@ test("same-name stop with subset routes is shown once; distinct route sets remai
       : response((url.searchParams.get("nodeid") === stop.nodeid ? firstRoutes : secondRoutes).map(routeno => ({ routeno })))
   });
   const duplicate = await run(["232-1", "413", "509"], ["509"]);
-  assert.equal(duplicate.transportPublic, "버스:\\n시청 · 232-1, 413, 509번");
+  assert.equal(duplicate.transportPublic, "버스:\n시청 · 232-1, 413, 509번");
   const distinct = await run(["232-1", "413"], ["509"]);
-  assert.equal(distinct.transportPublic.split("\\n").length, 3);
+  assert.equal(distinct.transportPublic.split("\n").length, 3);
 });
 
 test("missing routes and upstream failures never fabricate transit directions", async () => {
