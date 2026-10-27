@@ -3775,5 +3775,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-hero-text-modal-visibility input{margin:0;accent-color:#4c433d}
 
 /* Required-field feedback stays below the DearDay header while the keyboard opens. */
-.create-page .save-success-toast.save-validation-toast{top:calc(77px + 10px + env(safe-area-inset-top,0px));bottom:auto;left:50%;right:auto;transform:translateX(-50%);width:min(420px,calc(100vw - 28px));max-height:35vh;overflow-y:auto;z-index:75}
+.create-page .save-success-toast.save-validation-toast{top:calc(77px + 10px + env(safe-area-inset-top,0px));bottom:auto;left:50%;right:auto;transform:translateX(-50%);width:min(420px,calc(100vw - 28px));max-height:35vh;overflow-y:auto;z-index:75;background:#FCE8DF;border-color:#E9B9A7;color:#805043}
+.create-page .save-success-toast.save-validation-toast strong{color:#805043;font-weight:600}
 @media(max-width:760px){.create-page .save-success-toast.save-validation-toast{top:calc(64px + 8px + env(safe-area-inset-top,0px));left:50%;right:auto;bottom:auto;width:calc(100vw - 24px);transform:translateX(-50%)}}
