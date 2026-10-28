@@ -2396,7 +2396,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-transport-guide-editor{display:grid;gap:10px;margin-top:14px}
 .dd-transport-guide-editor-item{padding:12px;border:1px solid #eadfd9;border-radius:10px;background:#fff}
 .dd-transport-guide-item-toggle{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
-.dd-transport-guide-editor-item textarea{width:100%;box-sizing:border-box;margin-top:10px;border:1px solid #e5ded9;border-radius:10px;background:#fff;padding:11px 13px;color:#34302e;font:14px/1.6 Arial,"Apple SD Gothic Neo",sans-serif;resize:vertical}
+.dd-transport-guide-editor-item textarea{width:100%;box-sizing:border-box;margin-top:10px;border:1px solid #e5ded9;border-radius:10px;background:#fff;padding:11px 13px;color:#34302e;font:14px/1.6 Arial,"Apple SD Gothic Neo",sans-serif;resize:none;min-height:90px;overflow-y:hidden}
 
 
 /* Gallery carousel: theme-aware, swipe-first presentation. */
@@ -3695,7 +3695,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-user-intro-speed small{color:#777;font-size:11px}
 
 /* Single intro preview: animation overlays the static lettering only while replaying. */
-.dd-user-intro-preview>.dd-user-intro-animation.classic-hero{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;border-radius:inherit;z-index:1}
+.dd-user-intro-preview>div>.dd-user-intro-animation.classic-hero{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;border-radius:inherit;z-index:1}
 .dd-user-intro-animation-timer{position:absolute;inset:0;pointer-events:none;opacity:0;animation-name:dd-user-intro-replay-timer;animation-timing-function:linear;animation-fill-mode:forwards}
 @keyframes dd-user-intro-replay-timer{from{opacity:0}to{opacity:0}}
 
@@ -3782,3 +3782,19 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .save-success-toast.save-validation-toast{top:calc(77px + 10px + env(safe-area-inset-top,0px));bottom:auto;left:50%;right:auto;transform:translateX(-50%);width:min(420px,calc(100vw - 28px));max-height:35vh;overflow-y:auto;z-index:75;background:#FCE8DF;border-color:#E9B9A7;color:#805043}
 .create-page .save-success-toast.save-validation-toast strong{color:#805043;font-weight:600}
 @media(max-width:760px){.create-page .save-success-toast.save-validation-toast{top:calc(64px + 8px + env(safe-area-inset-top,0px));left:50%;right:auto;bottom:auto;width:calc(100vw - 24px);transform:translateX(-50%)}}
+
+/* Venue search results: compact, accessible mobile selection list. */
+.create-page .place-results{min-width:0;margin:12px 0 18px;text-align:left}
+.create-page .place-results-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;font-size:13px;color:#34302e}
+.create-page .place-results-heading span{font-size:12px;font-weight:400;color:#8b7165}
+.create-page .place-results-list{overflow:hidden;border:1px solid #e8ded9;border-radius:12px;background:#fff}
+.create-page .place-result-option{display:flex;align-items:flex-start;gap:10px;width:100%;min-width:0;min-height:58px;padding:12px;border:0;border-radius:0;background:#fff;color:#34302e;text-align:left;cursor:pointer;white-space:normal;font:inherit}
+.create-page .place-result-option+.place-result-option{border-top:1px solid #f0e9e5}
+.create-page .place-result-option:hover{background:#fff9f6}
+.create-page .place-result-option:focus-visible{position:relative;z-index:1;outline:2px solid #a86c60;outline-offset:-2px}
+.create-page .place-result-pin{flex:0 0 18px;font-size:14px;line-height:1.5}
+.create-page .place-result-details{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px;overflow-wrap:anywhere;word-break:keep-all}
+.create-page .place-result-details strong{font-size:14px;font-weight:700;line-height:1.45}
+.create-page .place-result-details>span{font-size:12px;font-weight:400;line-height:1.55;color:#84766e}
+.create-page .place-result-chevron{flex:0 0 auto;align-self:center;font-size:20px;line-height:1;color:#a89b94}
+.create-page .place-results .place-search-guide{margin:9px 0 0;padding:0;background:transparent;font-size:11px;line-height:1.5}
