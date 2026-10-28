@@ -171,6 +171,18 @@ export default function CreateInvitation() {
   const [invitation, setInvitation] = useState(initialInvitation);
   const [expandedAccountEditors, setExpandedAccountEditors] = useState({});
   const [expandedContactEditors, setExpandedContactEditors] = useState({});
+  const introPreviewRef = useRef(null);
+  const [introPreviewWidth, setIntroPreviewWidth] = useState(320);
+  useEffect(() => {
+    const node = introPreviewRef.current;
+    if (!node) return;
+    const updateWidth = () => setIntroPreviewWidth(node.clientWidth);
+    updateWidth();
+    const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(updateWidth) : null;
+    observer?.observe(node);
+    return () => observer?.disconnect();
+  }, []);
+
   const isContactEditorExpanded = (role) => expandedContactEditors[role.key] ?? Boolean(String(invitation[role.phoneKey] || "").trim() || (role.editableName && String(invitation[role.nameKey] || "").trim()));
 
   const accountDisclosureRef = useRef(null);
@@ -1384,7 +1396,12 @@ export default function CreateInvitation() {
             <label>레터링 문구<input type="text" maxLength={80} value={effectiveIntro.text} onChange={event=>setIntroOverride("text",event.target.value)} placeholder="인트로 문구를 입력하세요"/></label>
             <div className="dd-user-intro-font-field"><span>글꼴</span><button type="button" className="dd-user-intro-font-trigger" aria-expanded={introFontPickerOpen} onClick={()=>setIntroFontPickerOpen(open=>!open)}><span style={{fontFamily:introSelectedFont?.family||"inherit"}}>{introSelectedFont?.name||"글꼴 선택"}</span><span aria-hidden="true">{introFontPickerOpen?"⌃":"⌄"}</span></button>{introFontPickerOpen&&<div className="dd-user-intro-font-list" role="group" aria-label="인트로 글꼴 선택">{introFontChoices.map(font=><button key={font.id} type="button" className={"dd-user-intro-font-option"+(effectiveIntro.fontId===font.id?" is-selected":"")} aria-pressed={effectiveIntro.fontId===font.id} onClick={()=>{setIntroOverride("fontId",font.id);setIntroFontPickerOpen(false)}}><span className="dd-user-intro-font-sample" style={{fontFamily:font.family}}>{font.sample}</span><span className="dd-user-intro-font-name">{font.name}{!INTRO_FONT_IDS.includes(font.id)?" · 템플릿 글꼴":""}</span>{effectiveIntro.fontId===font.id&&<span className="dd-user-intro-font-check" aria-hidden="true">✓</span>}</button>)}</div>}</div>
             <div className="dd-user-intro-grid"><label>글자 크기 <span>{effectiveIntro.fontSize}px</span><input type="range" min="16" max="72" step="1" value={effectiveIntro.fontSize} onChange={event=>setIntroOverride("fontSize",Number(event.target.value))}/></label><label>글자 색상<div className="dd-user-intro-color"><input type="color" value={effectiveIntro.textColor} onChange={event=>setIntroOverride("textColor",event.target.value)}/><span>{effectiveIntro.textColor}</span></div></label><label>배경 색상<div className="dd-user-intro-color"><input type="color" value={effectiveIntro.backgroundColor} onChange={event=>setIntroOverride("backgroundColor",event.target.value)}/><span>{effectiveIntro.backgroundColor}</span></div></label></div><div className="dd-user-intro-speed"><span>레터링 쓰기 속도</span><div className="dd-user-intro-speed-options" role="group" aria-label="레터링 쓰기 속도">{introSpeedOptions.map(option=><button key={option.id} type="button" className={introSpeedSelected===option.id?"is-selected":""} aria-pressed={introSpeedSelected===option.id} onClick={()=>setIntroOverride("writeDuration",option.duration)}>{option.label}</button>)}</div>{introSpeedSelected==="custom"&&<small>현재 설정 {effectiveIntro.writeDuration}초 · 버튼을 누르면 속도가 변경됩니다.</small>}</div>
-            <div className="dd-user-intro-preview" style={{backgroundColor:effectiveIntro.backgroundColor,position:"relative",overflow:"hidden"}}><div style={{fontFamily:HERO_FONTS.find(font=>font.id===effectiveIntro.fontId)?.family||"cursive",fontSize:Math.min(40,effectiveIntro.fontSize)+"px",color:effectiveIntro.textColor,whiteSpace:"pre-wrap",overflowWrap:"anywhere",textAlign:"center"}}>{effectiveIntro.text}</div>{introPlaying&&<div className="dd-user-intro-animation classic-hero" key={introReplay} style={{position:"absolute",inset:0,width:"100%",height:"100%"}}><HeroIntro intro={effectiveIntro}/><span className="dd-user-intro-animation-timer" style={{animationDuration:`${Number(effectiveIntro.writeDuration)+Number(effectiveIntro.holdDuration)+Number(effectiveIntro.fadeDuration)}s`}} onAnimationEnd={()=>setIntroPlaying(false)}/></div>}</div>
+            <div ref={introPreviewRef} className="dd-user-intro-preview" style={{backgroundColor:effectiveIntro.backgroundColor,position:"relative",overflow:"hidden",padding:0}}>
+              <div style={{position:"relative",width:390,height:210,flex:"none",transform:`scale(${Math.min(1,introPreviewWidth/390)})`,transformOrigin:"center center"}}>
+                <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",padding:"16px 12px",fontFamily:HERO_FONTS.find(font=>font.id===effectiveIntro.fontId)?.family||"cursive",fontSize:effectiveIntro.fontSize+"px",color:effectiveIntro.textColor,whiteSpace:"pre-wrap",overflowWrap:"normal",textAlign:"center"}}>{effectiveIntro.text}</div>
+                {introPlaying&&<div className="dd-user-intro-animation classic-hero" key={introReplay} style={{position:"absolute",inset:0,width:"100%",height:"100%"}}><HeroIntro intro={effectiveIntro}/><span className="dd-user-intro-animation-timer" style={{animationDuration:`${Number(effectiveIntro.writeDuration)+Number(effectiveIntro.holdDuration)+Number(effectiveIntro.fadeDuration)}s`}} onAnimationEnd={()=>setIntroPlaying(false)}/></div>}
+              </div>
+            </div>
             <div className="dd-user-intro-actions"><button type="button" className="save-button" onClick={()=>{setIntroReplay(n=>n+1);setIntroPlaying(true)}}>▶ 애니메이션 미리보기</button><button type="button" className="save-button" onClick={()=>update("heroIntroOverrides",{})}>템플릿 기본값 복원</button></div>
             
           </>}
