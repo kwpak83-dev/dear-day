@@ -181,7 +181,7 @@ export default function CreateInvitation() {
     const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(updateWidth) : null;
     observer?.observe(node);
     return () => observer?.disconnect();
-  }, []);
+  });
 
   const isContactEditorExpanded = (role) => expandedContactEditors[role.key] ?? Boolean(String(invitation[role.phoneKey] || "").trim() || (role.editableName && String(invitation[role.nameKey] || "").trim()));
 
