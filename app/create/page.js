@@ -170,6 +170,9 @@ function BirthDateField({ label, value, onChange }) {
 export default function CreateInvitation() {
   const [invitation, setInvitation] = useState(initialInvitation);
   const [expandedAccountEditors, setExpandedAccountEditors] = useState({});
+  const [expandedContactEditors, setExpandedContactEditors] = useState({});
+  const isContactEditorExpanded = (role) => expandedContactEditors[role.key] ?? Boolean(String(invitation[role.phoneKey] || "").trim() || (role.editableName && String(invitation[role.nameKey] || "").trim()));
+
   const accountDisclosureRef = useRef(null);
   const accountDisclosureInitialized = useRef(false);
 
@@ -1354,7 +1357,19 @@ export default function CreateInvitation() {
         </div></details>}
         </div>
         {contactConfig.enabled && <details className="dd-custom-accordion"><summary><span><strong>📞 연락처</strong><small>{invitation.eventKind === "wedding" ? "신랑·신부와 양가 혼주 연락처를 설정해요." : invitation.eventKind === "first_birthday" ? "부모 연락처를 설정해요." : "행사 연락처를 설정해요."}</small></span><span className="dd-accordion-chevron" aria-hidden="true">⌄</span></summary><div className="dd-accordion-body">
-        <div className="form-section"><h2>{contactConfig.sectionLabel} <small>선택</small></h2><p style={{fontSize:12,color:"#8c7468"}}>{invitation.eventKind === "wedding" ? "기존에 입력한 이름을 사용합니다. 전화번호를 입력한 사람에게만 전화·문자 버튼이 표시돼요." : invitation.eventKind === "first_birthday" ? "기본정보에서 입력한 부모 이름을 사용합니다. 전화번호를 입력한 사람에게만 연락처를 표시할 수 있어요." : contactConfig.roles.some((role) => role.editableName) ? "연락 담당자별 이름과 전화번호를 선택해서 입력할 수 있어요. 전화번호를 입력한 사람만 초대장에 표시됩니다." : "기본정보에서 입력한 이름을 사용합니다. 전화번호를 입력한 사람만 초대장에 표시됩니다."}</p><div className="field-grid">{contactConfig.roles.map((role)=><div key={role.key}>{role.editableName && <Field label={role.label + " 이름"}><input type="text" autoComplete="off" placeholder="이름 (선택)" value={invitation[role.nameKey]||""} onChange={event=>update(role.nameKey,event.target.value)} maxLength={40}/></Field>}<Field label={role.label + (!role.editableName && invitation[role.nameKey] ? " · " + invitation[role.nameKey] : "")}><input type="tel" inputMode="tel" autoComplete="off" placeholder="전화번호 (선택)" value={invitation[role.phoneKey]||""} onChange={event=>update(role.phoneKey,event.target.value)} maxLength={20}/></Field></div>)}</div></div>
+        <div className="form-section"><h2>{contactConfig.sectionLabel} <small>선택</small></h2><p style={{fontSize:12,color:"#8c7468"}}>{invitation.eventKind === "wedding" ? "기존에 입력한 이름을 사용합니다. 전화번호를 입력한 사람에게만 전화·문자 버튼이 표시돼요." : invitation.eventKind === "first_birthday" ? "기본정보에서 입력한 부모 이름을 사용합니다. 전화번호를 입력한 사람에게만 연락처를 표시할 수 있어요." : contactConfig.roles.some((role) => role.editableName) ? "연락 담당자별 이름과 전화번호를 선택해서 입력할 수 있어요. 전화번호를 입력한 사람만 초대장에 표시됩니다." : "기본정보에서 입력한 이름을 사용합니다. 전화번호를 입력한 사람만 초대장에 표시됩니다."}</p><div style={{display:"flex",flexDirection:"column",gap:12}}>{contactConfig.roles.map((role)=>{
+          const expanded = isContactEditorExpanded(role);
+          return <div key={role.key} style={{border:"1px solid #e9e3df",borderRadius:12,padding:"12px 14px",background:"#fff"}}>
+            <label style={{display:"flex",alignItems:"center",gap:9,cursor:"pointer",fontWeight:700,fontSize:14}}>
+              <input type="checkbox" checked={expanded} onChange={(event)=>setExpandedContactEditors((previous)=>({...previous,[role.key]:event.target.checked}))} style={{width:16,height:16,flex:"none",accentColor:"#a87856"}}/>
+              {role.label}{!role.editableName && invitation[role.nameKey] ? " · " + invitation[role.nameKey] : ""}
+            </label>
+            {expanded && <div style={{marginTop:12}}>
+              {role.editableName && <Field label={role.label + " 이름"}><input type="text" autoComplete="off" placeholder="이름 (선택)" value={invitation[role.nameKey]||""} onChange={event=>update(role.nameKey,event.target.value)} maxLength={40}/></Field>}
+              <Field label="전화번호"><input type="tel" inputMode="tel" autoComplete="off" placeholder="전화번호 (선택)" value={invitation[role.phoneKey]||""} onChange={event=>update(role.phoneKey,event.target.value)} maxLength={20}/></Field>
+            </div>}
+          </div>;
+        })}</div></div>
         </div></details>}
         {(detailsMatrix.state !== "none" || externalLinkMatrix.state !== "none" || brandImageMatrix.state !== "none") && <div className="form-section"><h2>📋 추가 행사 정보</h2>
           {detailsMatrix.state !== "none" && <Field label={detailsMatrix.label} fieldKey="details"><textarea rows={5} maxLength={2000} value={invitation.details || ""} onChange={event => update("details", event.target.value)} /></Field>}
