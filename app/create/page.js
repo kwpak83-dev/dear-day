@@ -170,6 +170,9 @@ function BirthDateField({ label, value, onChange }) {
 export default function CreateInvitation() {
   const [invitation, setInvitation] = useState(initialInvitation);
   const [expandedAccountEditors, setExpandedAccountEditors] = useState({});
+  const accountDisclosureRef = useRef(null);
+  const accountDisclosureInitialized = useRef(false);
+
   const isAccountEditorExpanded = (key, fields) => expandedAccountEditors[key] ?? fields.some((field) => Boolean(String(invitation[field] || "").trim()));
   const toggleAccountEditor = (key, fields, checked) => setExpandedAccountEditors((previous) => ({ ...previous, [key]: checked }));
   const [transportNotice, setTransportNotice] = useState("");
@@ -929,6 +932,19 @@ export default function CreateInvitation() {
   const eventConfig = getConfiguredEventConfig(invitation.eventKind, eventTypeConfig);
   const contactConfig = getEventContactRoles(invitation.eventKind, eventTypeConfig);
   const accountConfig = getEventAccountGroups(invitation.eventKind, eventTypeConfig);
+  useEffect(() => {
+    if (!accountConfig.enabled || accountDisclosureInitialized.current || !accountDisclosureRef.current) return;
+    const groups = [...accountConfig.groups.map((group) => [group.bankKey, group.holderKey, group.accountKey])];
+    if (invitation.eventKind === "wedding") {
+      for (const key of ["groomFather", "groomMother", "brideFather", "brideMother"]) groups.push([`${key}Bank`, `${key}AccountHolder`, `${key}Account`]);
+    }
+    const hasAccountData = groups.some((fields) => fields.some((field) => Boolean(String(invitation[field] || "").trim())));
+    if (hasAccountData) {
+      accountDisclosureRef.current.open = true;
+      accountDisclosureInitialized.current = true;
+    }
+  }, [accountConfig.enabled, accountConfig.groups, invitation]);
+
   const matrixFields = eventTypeConfig?.fields || {};
   const matrixField = (key, fallbackLabel) => ({
     state: ["required", "optional", "none"].includes(matrixFields[key]?.state) ? matrixFields[key].state : "optional",
@@ -1325,7 +1341,7 @@ export default function CreateInvitation() {
         </div>}
         {section.rows.map((row, rowIndex) => invitation.eventKind === "wedding" && section.id === "basic" && rowIndex < 3 ? null : row.length > 1 ? <div className="field-grid" key={rowIndex}>{row.map(renderConfigField)}</div> : row.map(renderConfigField))}</div></div></details>)}
         <div >
-        {accountConfig.enabled && <details className="dd-custom-accordion dd-expand-switch-card"><summary><span><strong>💝 {accountConfig.sectionLabel}</strong><small>은행 및 계좌 정보를 입력해요.</small></span><span className="dd-expand-switch-track" aria-hidden="true" /></summary><div className="dd-accordion-body">
+        {accountConfig.enabled && <details ref={accountDisclosureRef} className="dd-custom-accordion dd-expand-switch-card"><summary><span><strong>💝 {accountConfig.sectionLabel}</strong><small>은행 및 계좌 정보를 입력해요.</small></span><span className="dd-expand-switch-track" aria-hidden="true" /></summary><div className="dd-accordion-body">
         <div className="form-section"><h2>{accountConfig.sectionLabel} <small>선택</small></h2>{accountConfig.groups.map((group) => {
           const accountFields = [group.bankKey, group.holderKey, group.accountKey];
           const expanded = isAccountEditorExpanded(group.key, accountFields);
