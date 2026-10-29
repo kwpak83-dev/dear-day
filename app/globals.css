@@ -3889,3 +3889,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .dd-program-move-controls button{display:grid;place-items:center;width:27px;height:25px;padding:0;border:1px solid #dedbd7;border-radius:6px;background:#faf9f7;color:#5c5650;font-size:16px;line-height:1;cursor:pointer}
 .create-page .dd-program-move-controls button:disabled{opacity:.3;cursor:default}
 .create-page .dd-program-move-controls button:focus-visible{outline:2px solid #bc8492;outline-offset:2px}
+
+/* Editor preview uses the same three-column timeline geometry as the published bottom sheet. */
+.dd-program-preview-content .invitation-program-editorial-list{display:block;list-style:none;padding:0;margin:0 auto;max-width:420px}
+.dd-program-preview-content .invitation-program-editorial-list>li{display:grid;grid-template-columns:minmax(0,1fr) 66px minmax(0,1fr);align-items:center;position:relative;min-height:100px;padding:8px 0;gap:0}
+.dd-program-preview-content .invitation-program-editorial-title{font-size:14px;line-height:1.45;font-weight:400;white-space:pre-wrap;overflow-wrap:anywhere;color:#302f2c}
+@media(max-width:360px){.dd-program-preview-content .invitation-program--editorial{padding-left:5px;padding-right:5px}.dd-program-preview-content .invitation-program-editorial-list>li{grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr);min-height:86px}.dd-program-preview-content .invitation-program-editorial-center svg{width:40px}.dd-program-preview-content .invitation-program-editorial-title{font-size:12px}}
