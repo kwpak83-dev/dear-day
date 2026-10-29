@@ -3979,7 +3979,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* DearDay white/black soft-elevation buttons: ceremony actions and final publish CTA only. */
 .create-page .dd-program-share-card .dd-program-add-button,
 .create-page .dd-program-share-card .dd-program-add-button:hover,
-.create-page .dd-program-share-card .dd-program-add-button:not(:disabled){background:#fff;color:#222;border:1px solid #e5e5e5;box-shadow:0 4px 10px rgba(0,0,0,.11),0 1px 2px rgba(0,0,0,.05);border-radius:10px}
+.create-page .dd-program-share-card .dd-program-add-button:not(:disabled){background:#fff;color:#222;border:1px solid #d5d5d5;box-shadow:0 6px 14px rgba(0,0,0,.16),0 2px 4px rgba(0,0,0,.07);border-radius:10px}
 .create-page .dd-program-share-card .dd-program-add-button:disabled{background:#fff;color:#222;border:1px solid #e5e5e5;box-shadow:0 4px 10px rgba(0,0,0,.08);border-radius:10px}
 .create-page .dd-editor-final .dd-final-primary{background:#fff;color:#222;border:1px solid #e5e5e5;box-shadow:0 4px 10px rgba(0,0,0,.11),0 1px 2px rgba(0,0,0,.05);gap:8px}
 .create-page .dd-editor-final .dd-final-primary:hover{background:#fafafa}
