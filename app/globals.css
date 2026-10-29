@@ -2492,6 +2492,13 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-notice-file-button,.dd-notice-image-delete{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 14px;border-radius:10px;font:600 12px/1.2 inherit;cursor:pointer}
 .create-page .dd-notice-file-button{background:#555555;color:#fff;border:1px solid #555555}
 .dd-notice-file-button input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+/* Compact notice image picker: DearDay neutral raised-button treatment. */
+.create-page .dd-notice-file-button--compact{display:inline-flex;gap:6px;min-height:30px;padding:5px 10px;border:1px solid #b3b3b3;border-radius:8px;background:#fff;color:#111;font-size:12px;font-weight:600;line-height:1.2;box-shadow:0 2px 0 #d8d8d8;transition:background .15s ease,box-shadow .15s ease,transform .15s ease}
+.create-page .dd-notice-file-button--compact:hover{background:#f7f7f7}
+.create-page .dd-notice-file-button--compact:active{transform:translateY(1px);box-shadow:0 1px 0 #d8d8d8}
+.create-page .dd-notice-file-button--compact:focus-within{outline:2px solid #777;outline-offset:2px}
+.dd-notice-file-button-icon{font-size:14px;line-height:1;font-weight:500}
+
 .dd-notice-image-delete{border:1px solid #ead9d1;background:#fff7f3;color:#8a5b49}
 .dd-notice-image-preview{width:100%;display:flex;align-items:center;gap:10px;padding:8px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa}
 .dd-notice-image-preview img{display:block;width:88px;height:66px;object-fit:cover;border-radius:8px}
