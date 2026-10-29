@@ -9,6 +9,9 @@ export default function ProgramEditor({ value, eventKind, onChange }) {
   const [pickerId,setPickerId] = useState(null);
   const [category,setCategory] = useState("all");
   const [previewOpen,setPreviewOpen] = useState(false);
+  const editorRef = useRef(null);
+  const resizeTitle = node => { if (!node) return; node.style.height = "auto"; node.style.height = `${node.scrollHeight}px`; };
+  useEffect(() => { editorRef.current?.querySelectorAll(".dd-program-title-autosize").forEach(resizeTitle); }, [program.items]);
   const pickerRef = useRef(null);
   const openerRef = useRef(null);
   useEffect(() => { if(!pickerId) return; const escape=e=>{if(e.key==="Escape") setPickerId(null)}; document.addEventListener("keydown",escape); pickerRef.current?.focus(); return ()=>document.removeEventListener("keydown",escape); },[pickerId]);
@@ -20,7 +23,7 @@ export default function ProgramEditor({ value, eventKind, onChange }) {
   };
   const patch = values => commit({ ...program, ...values });
   const updateItem = (id, values) => patch({ items: program.items.map(item => item.id === id ? { ...item, ...values } : item) });
-  return <div className="dd-program-editor">
+  return <div className="dd-program-editor" ref={editorRef}>
     <div className="form-section dd-program-editor-fields">
         <label className="form-field"><span>제목</span><input value={program.title} maxLength={PROGRAM_LIMITS.title} placeholder={PROGRAM_DEFAULTS[eventKind]?.title || "행사 일정"} onChange={event => patch({ title: event.target.value })} /></label>
         <label className="dd-transport-guide-toggle"><input type="checkbox" checked={program.displayMode === "time"} onChange={event => patch({ displayMode: event.target.checked ? "time" : "number" })} /> 시간 입력 사용</label>
@@ -29,7 +32,7 @@ export default function ProgramEditor({ value, eventKind, onChange }) {
         {program.items.map((item, index) => <div key={item.id} className="dd-program-editor-item">
           {program.style === "editorial" && <button type="button" className="dd-program-icon-trigger" aria-label={`항목 ${index+1} 클립아트 선택`} onClick={event=>{openerRef.current=event.currentTarget;setCategory("all");setPickerId(item.id)}}>{item.iconId?<ProgramIcon id={item.iconId} size={38}/>:<span>＋<small>클립아트</small></span>}</button>}
           <div className={`dd-program-editor-item-fields${program.displayMode === "time" ? " dd-program-editor-item-fields--time" : ""}`}>
-            <label className="form-field"><span>항목 {index + 1} 제목</span><textarea rows={2} value={item.title} maxLength={PROGRAM_LIMITS.itemTitle} onChange={event => updateItem(item.id, { title: event.target.value })} /></label>
+            <label className="form-field"><span>항목 {index + 1} 제목</span><textarea className="dd-program-title-autosize" rows={1} style={{resize:"none",overflow:"hidden",minHeight:0}} value={item.title} maxLength={PROGRAM_LIMITS.itemTitle} onInput={event => resizeTitle(event.currentTarget)} onChange={event => updateItem(item.id, { title: event.target.value })} /></label>
             {program.displayMode === "time" && <label className="form-field"><span>항목 {index + 1} 시간</span><input type="time" value={item.time} onChange={event => updateItem(item.id, { time: event.target.value })} /></label>}
           </div>
           <div className="dd-program-editor-actions"><button type="button" className="dd-program-delete-button" aria-label={`항목 ${index + 1} 삭제`} onClick={() => patch({ items: program.items.filter(row => row.id !== item.id) })}>삭제</button></div>
