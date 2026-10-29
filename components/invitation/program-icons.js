@@ -2,6 +2,41 @@ import { PROGRAM_ICON_IDS } from "../../lib/invitation-program";
 
 // A single monochrome hand-drawn vocabulary shared by editor and published invitations.
 // SVG paths are authored locally; no external assets or fonts are required.
+const coloredDetails = {
+ "bouquet":<g stroke="none"><path d="M11 15Q7 4 16 5q8-8 13 0 11-4 12 8 8 8-2 15L25 39 11 27z" fill="#F5DED6" opacity=".85"/></g>,
+ "flower":<g stroke="none"><path d="M24 14Q14-2 11 12q-9 4 3 14 1 14 12 7 13 7 14-7 12-11-2-15Q34-2 24 14z" fill="#F5DAD3" opacity=".8"/></g>,
+ "cake":<g stroke="none"><path d="M9 29h30v12H9zM13 14h22v11H13z" fill="#F3DED2"/><path d="M17 8h14v5H17z" fill="#E4B3A5"/></g>,
+ "champagne":<g stroke="none"><path d="M5 7h17l-2 14-7 5-7-5zM26 7h17l-2 14-7 5-7-5z" fill="#F4DED1" opacity=".8"/></g>,
+ "camera":<g stroke="none"><path d="M5 16h38v26H5z" fill="#EADDD6"/><circle cx="25" cy="28" r="10" fill="#F7EAE4"/><circle cx="25" cy="28" r="5" fill="#DDB6A8"/></g>,
+ "microphone":<g stroke="none"><rect x="18" y="4" width="12" height="25" rx="6" fill="#DDB5A8"/><path d="M21 30h6v7h-6z" fill="#E8D7CB"/></g>,
+ "music":<g stroke="none"><path d="M18 10l21-5v10l-21 5z" fill="#E8C7BB"/><circle cx="11" cy="39" r="5" fill="#F1D5CB"/><circle cx="32" cy="35" r="5" fill="#F1D5CB"/></g>,
+ "book":<g stroke="none"><path d="M3 9q10-5 21 4 10-9 21-4v28q-12-3-21 7-10-10-21-7z" fill="#F4E3DA"/></g>,
+ "balloons":<g stroke="none"><path d="M15 3C2 3 3 21 15 28 27 21 28 3 15 3z" fill="#EEC9C2"/><path d="M34 8C22 8 22 25 34 32 46 25 46 8 34 8z" fill="#F4E2D7"/></g>,
+ "dining":<g stroke="none"><circle cx="24" cy="24" r="14" fill="#F4E7DC"/><circle cx="24" cy="24" r="9" fill="#FFF9F5"/></g>,
+ "coffee":<g stroke="none"><path d="M8 17h28v15q-2 10-14 10T8 32z" fill="#F2DFD5"/><path d="M10 19h24v5H10z" fill="#D7B2A3"/></g>,
+ "crown":<g stroke="none"><path d="m5 16 10 8 9-15 9 15 10-8-5 25H10z" fill="#EBD0BF"/><path d="M17 30l7-6 7 6-7 6z" fill="#C99084"/></g>,
+ "star":<g stroke="none"><path d="m24 4 6 13 14 2-10 10 3 15-13-7-13 7 3-15L4 19l14-2z" fill="#F0D8C7"/></g>,
+ "heart":<g stroke="none"><path d="M24 42 7 25Q-2 10 11 7q9-2 13 8 4-10 13-8 13 3 4 18z" fill="#F1CFCB"/></g>,
+ "ribbon":<g stroke="none"><path d="M24 22Q4 4 6 18q2 13 18 4Q44 4 42 18q-2 13-18 4M24 22l-9 22-5-8-8 1 13-19m9 4 9 22 5-8 8 1-13-19" fill="#F0D1C8"/></g>,
+ "airplane":<g stroke="none"><path d="m3 25 41-18-12 35-9-13-10 7 4-14z" fill="#E9DCD3"/></g>,
+ "church":<g stroke="none"><path d="M8 43V20L24 7l16 13v23z" fill="#F3E2D7"/><path d="M16 43V28h16v15z" fill="#E4C1B1"/></g>,
+ "leaf":<g stroke="none"><path d="M9 42Q1 10 41 5q-1 35-32 37" fill="#DAD2B9"/></g>,
+ "tree":<g stroke="none"><path d="M13 35Q1 31 7 19q-3-13 11-14 8-9 16 0 14 1 10 14 6 12-6 16z" fill="#E7D5C3"/></g>,
+ "clock":<g stroke="none"><circle cx="24" cy="24" r="19" fill="#F4E3D8"/><circle cx="24" cy="24" r="15" fill="#FFF9F5"/></g>,
+ "car":<g stroke="none"><path d="M5 20h38v19H5z" fill="#EADBD3"/><path d="M10 20l6-11h16l6 11z" fill="#F6E8DF"/></g>,
+ "host-script":<g stroke="none"><path d="M11 5h24l4 5v33H11z" fill="#F3E6DC"/><path d="M7 34l5-7 3 3-5 7-5 2z" fill="#D8A99B"/></g>,
+ "officiant":<g stroke="none"><circle cx="24" cy="10" r="5" fill="#E9C7B8"/><path d="M15 22q9-8 18 0l4 9H11z" fill="#E2D2CA"/><path d="M9 31h30v5H9z" fill="#E9C6B6"/></g>,
+ "officiant-book":<g stroke="none"><path d="M6 13q9-4 18 2 9-6 18-2v27q-9-4-18 2-9-6-18-2z" fill="#F3E0D5"/></g>,
+ "groom-entry":<g stroke="none"><circle cx="23" cy="9" r="5" fill="#EBCBBD"/><path d="M17 17h12l6 8-4 3-3-5v19H18V23l-3 5-4-3z" fill="#E5D8D0"/></g>,
+ "bride-entry":<g stroke="none"><circle cx="24" cy="9" r="5" fill="#EAC8BB"/><path d="M18 15q-7 6-8 25 14 7 28 0-1-19-8-25z" fill="#F3DFDA"/></g>,
+ "couple-bow":<g stroke="none"><circle cx="14" cy="10" r="4" fill="#EBCBBE"/><circle cx="34" cy="10" r="4" fill="#EBCBBE"/><path d="M8 18q6-4 12 0l3 13H5z" fill="#E7D9D0"/><path d="M28 18q6-4 12 0l3 13H25z" fill="#F2DCD6"/></g>,
+ "vow-hands":<g stroke="none"><path d="M6 23q7-9 15-2l4 4q5-6 11-3l6 5-10 12q-7 5-14 0L6 30z" fill="#EBC8B9"/><path d="M38 17q-4-6-8 0-4-6-8 0 0 5 8 10 8-5 8-10z" fill="#E5B1AA"/></g>,
+ "declaration":<g stroke="none"><path d="M10 5h25l5 5v33H10z" fill="#F3E4D8"/><path d="M24 9l2 3-2 3-2-3z" fill="#D4A394"/></g>,
+ "parents-greeting":<g stroke="none"><path d="M8 27l10-13 5 4-7 11 8 4 9-13 5 4-9 16q-4 5-10 1L9 35q-4-3-1-8z" fill="#EBCBBF"/></g>,
+ "single-flower":<g stroke="none"><circle cx="24" cy="14" r="8" fill="#F2CFC7"/><path d="M23 22v22" stroke="#9C9980" strokeWidth="2"/></g>,
+ "applause":<g stroke="none"><path d="M8 27l10-13 5 4-7 11 8 4 9-13 5 4-9 16q-4 5-10 1L9 35q-4-3-1-8z" fill="#F0D5C8"/></g>,
+ "procession":<g stroke="none"><path d="M7 38q8-7 17-8 9-1 17-8" stroke="#D5A99A" strokeWidth="5" opacity=".35"/></g>,
+};
 const drawings = {
  rings:<><g stroke="#684B40" strokeWidth="1.25"><ellipse cx="18" cy="29" rx="10" ry="8" transform="rotate(-22 18 29)" fill="#E6C7B5"/><ellipse cx="18" cy="29" rx="7.2" ry="5.2" transform="rotate(-22 18 29)" fill="#FFF9F5"/><ellipse cx="30" cy="28" rx="10" ry="8" transform="rotate(22 30 28)" fill="#D6AD98"/><ellipse cx="30" cy="28" rx="7.2" ry="5.2" transform="rotate(22 30 28)" fill="#FFF9F5"/><path d="M10 25q7-6 13-3M27 22q7-2 11 4" stroke="#FFF6EF" strokeWidth="1.5"/></g><path d="m15 17 5-8 5 8-5 4z" fill="#F2D9CB" stroke="#684B40" strokeWidth="1.05"/><path d="m17 13 3-4 3 4m-3-4v11" stroke="#B67E6D" strokeWidth=".7"/><g stroke="#B98073" strokeWidth=".85" strokeLinecap="round"><path d="M7 12v5m-2-2h4M37 8v6m-3-3h6M39 37v5m-2-2h4"/><path d="M5 35q4-5 8-2m-4 5q3-4 7-3M36 38q3-4 7-3" /></g><path d="M6 36q5-2 7 3M39 36q-3 2-3 6" stroke="#9A8871" strokeWidth=".75"/></>,
  dress:<><path d="M19 5q5 5 10 0l4 9-5 7 12 20q-16 6-32 0l12-20-5-7z" fill="#F7E9E4" stroke="#684B40" strokeWidth="1.2"/><path d="M19 5l5 10 5-10M20 18q4 3 8 0M18 23q6 4 12 0M12 34q12 5 24 0M9 40q15 5 30 0" stroke="#B78075" strokeWidth=".85"/><path d="M17 11l-5 8 4 3m15-11 5 8-4 3M24 22v20M18 28l-4 12m16-12 4 12" stroke="#684B40" strokeWidth=".8"/><path d="M21 6q3 4 6 0M20 16l4 3 4-3" stroke="#C79A89" strokeWidth=".7"/><path d="M33 13q4-4 7-2m-4 5q4-3 7 0M35 19q5-2 7 2" stroke="#A18B79" strokeWidth=".75"/><path d="M39 8v5m-2-2h4M7 27v5m-2-2h4" stroke="#C18C7D" strokeWidth=".8"/></>,
@@ -53,6 +88,7 @@ export default function ProgramIcon({id,size=42,className=""}) {
  const colored = new Set(["rings", "dress", "suit", "gift"]).has(id);
  return <svg className={className} width={size} height={size} viewBox="0 0 48 48" fill="none" stroke="#654B42" strokeWidth="1.15" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
   {!colored && <g aria-hidden="true" stroke="#C49B8B" strokeWidth=".85" opacity=".8"><path d="M4 9v4m-2-2h4M43 34v4m-2-2h4" /><path d="M6 39q3-3 6 0M36 7q3-3 6 0" strokeWidth=".65"/></g>}
+  {coloredDetails[id]}
   {drawings[id]}
  </svg>;
 }
