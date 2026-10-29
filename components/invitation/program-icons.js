@@ -33,7 +33,7 @@ export const PROGRAM_ICON_CATEGORIES = [
  {id:"all",label:"전체"}, {id:"wedding",label:"웨딩"}, {id:"celebration",label:"축하"},
  {id:"general",label:"일반"}, {id:"dining",label:"식사"}, {id:"other",label:"기타"}
 ];
-const groups = {wedding:["rings","dress","suit","bouquet","flower","book","church","microphone","music","champagne","camera"],celebration:["cake","champagne","gift","balloons","crown","star","heart","ribbon"],general:["camera","microphone","music","clock","car","airplane"],dining:["dining","coffee"],other:["leaf","tree"]};
+const groups = {wedding:["rings","dress","suit","bouquet","flower","book","church","microphone","music"],celebration:["cake","champagne","gift","balloons","crown","star","heart","ribbon"],general:["camera","microphone","music","clock","car","airplane"],dining:["dining","coffee"],other:["leaf","tree"]};
 const names = ["반지","드레스","턱시도","부케","꽃","케이크","샴페인","카메라","마이크","음악","책/서약","선물","풍선","식기","커피","왕관","별","하트","리본","비행기","집/건물","나뭇잎","나무","시계","자동차"];
 export const PROGRAM_ICONS = PROGRAM_ICON_IDS.map((id,i)=>({id,label:names[i],category:Object.keys(groups).find(group=>groups[group].includes(id))||"other"}));
 export default function ProgramIcon({id,size=42,className=""}) {
