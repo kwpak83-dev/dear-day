@@ -3847,3 +3847,10 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-program-icon-grid button[aria-pressed=true]{border:2px solid #b8798c;background:#fff5f7}
 .dd-program-icon-grid button small{font-size:10px;color:#625c55}
 .dd-program-no-icon{font-size:12px}
+
+/* Keep icon and text inputs on one row in editorial editor items. */
+.dd-program-editor-item:has(>.dd-program-icon-trigger){display:grid;grid-template-columns:60px minmax(0,1fr);column-gap:9px;align-items:start;padding:12px 0}
+.dd-program-editor-item:has(>.dd-program-icon-trigger)>.dd-program-icon-trigger{grid-column:1;grid-row:1}
+.dd-program-editor-item:has(>.dd-program-icon-trigger)>.dd-program-editor-item-fields{grid-column:2;grid-row:1;min-width:0}
+.dd-program-editor-item:has(>.dd-program-icon-trigger)>.dd-program-editor-actions{grid-column:2;justify-self:end}
+.dd-program-icon-trigger:focus-visible,.dd-program-icon-grid button:focus-visible,.dd-program-style-options button:focus-visible{outline:2px solid #302f2c;outline-offset:2px}
