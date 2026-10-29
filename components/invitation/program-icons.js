@@ -85,6 +85,9 @@ const names = ["반지","드레스","턱시도","부케","꽃","케이크","샴�
 export const PROGRAM_ICONS = PROGRAM_ICON_IDS.map((id,i)=>({id,label:names[i],category:Object.keys(groups).find(group=>groups[group].includes(id))||"other"}));
 export default function ProgramIcon({id,size=42,className=""}) {
  if(!drawings[id]) return null;
+ if (["rings", "dress", "suit", "bouquet", "flower", "cake", "champagne", "camera"].includes(id)) {
+  return <img className={className} src={`/program-clipart/${id}.svg`} width={size} height={size} alt="" aria-hidden="true" draggable={false} style={{display:"block",objectFit:"contain",flexShrink:0}} />;
+ }
  const colored = new Set(["rings", "dress", "suit", "gift"]).has(id);
  return <svg className={className} width={size} height={size} viewBox="0 0 48 48" fill="none" stroke="#654B42" strokeWidth="1.15" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
   {!colored && <g aria-hidden="true" stroke="#C49B8B" strokeWidth=".85" opacity=".8"><path d="M4 9v4m-2-2h4M43 34v4m-2-2h4" /><path d="M6 39q3-3 6 0M36 7q3-3 6 0" strokeWidth=".65"/></g>}
