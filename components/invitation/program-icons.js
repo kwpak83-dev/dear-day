@@ -27,7 +27,9 @@ const drawings = {
  leaf:<><path d="M9 42Q1 10 41 5q-1 35-32 37M9 42Q23 19 41 5M18 29l-2-12m9 5 12 1M14 35l-8-3m24-17 3 8" strokeWidth=".95"/></>,
  tree:<><path d="M24 45V23M13 35Q1 31 7 19q-3-13 11-14 8-9 16 0 14 1 10 14 6 12-6 16zM24 31 13 21m11 6 10-11M24 37l-7-6m7 2 8-7"/><path d="M12 13q5-5 10-3m9-1q7 2 7 8M12 29q-4-3-3-8" strokeWidth=".7"/></>,
  clock:<><circle cx="24" cy="24" r="19"/><circle cx="24" cy="24" r="16.5" strokeWidth=".7"/><path d="M24 12v12l9 6M24 3v4m0 34v4M3 24h4m34 0h4M12 12l2 2m20-2-2 2M12 36l2-2m20 2-2-2" strokeWidth=".9"/><circle cx="24" cy="24" r="1.6"/></>,
- car:<><path d="M5 20h38v19H5zM10 20l6-11h16l6 11M9 39v5h8v-5m14 0v5h8v-5M8 28h8m16 0h8M18 20h12M9 34h30"/><path d="M13 17l4-6h14l4 6M6 24l-3-3m39 3 3-3M20 31h8" strokeWidth=".7"/></>,
+ car:<><path d="M5 20h38v19H5zM10 20l6-11h16l6 11M9 39v5h8v-5m14 0v5h8v-5M8 28h8m16 0h8M18 20h12M9 34h30"/><path d="M13 17l4-6h14l4 6M6 24l-3-3m39 3 3-3M20 31h8" strokeWidth=".7"/></>
+};
+export const PROGRAM_ICON_CATEGORIES = [
  {id:"all",label:"전체"}, {id:"wedding",label:"웨딩"}, {id:"celebration",label:"축하"},
  {id:"general",label:"일반"}, {id:"dining",label:"식사"}, {id:"other",label:"기타"}
 ];
