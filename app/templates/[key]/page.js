@@ -31,7 +31,7 @@ export default function TemplatePreviewPage({params}){
   return()=>observer.disconnect();
  },[state.loading,state.error]);
  useEffect(()=>{let alive=true;(async()=>{try{const p=await params;const [r,typesR]=await Promise.all([fetch(`/api/templates/collection/${encodeURIComponent(p.key)}`,{cache:"no-store"}),fetch("/api/event-types",{cache:"no-store"})]);const [j,typesJ]=await Promise.all([r.json(),typesR.json()]);if(!r.ok)throw new Error(j.error);if(alive)setState({loading:false,error:"",data:j,eventTypeConfigs:Array.isArray(typesJ.types)?typesJ.types:[]});}catch(e){if(alive)setState({loading:false,error:e.message,data:null,eventTypeConfigs:[]});}})();return()=>{alive=false;};},[params]);
- if(state.loading)return <PublishedInvitationLoading />;
+ if(state.loading)return <PublishedInvitationLoading preview />;
  if(state.error)return <main style={{padding:40,textAlign:"center"}}>{state.error}</main>;
  const {item,templateConfig,templateAssets}=state.data,eventKind=completedTemplateCategoryToEventKind(item.category),eventTypeConfig=state.eventTypeConfigs.find(x=>x.kind===eventKind)||null;
  const invitation=sampleContentToInvitation(item.sample_content,item.category,{coverPhotoUrl:templateAssets?.heroPhotoUrl||item.sample_content?.hero_image_url||"",templateId:item.body_template_id,heroPresetId:item.hero_preset_id});
