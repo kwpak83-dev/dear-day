@@ -3930,3 +3930,32 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .invitation-bottom-sheet--program-editorial .invitation-program-editorial-description,
 .dd-program-preview-content .invitation-program-editorial-description{display:block;max-width:100%;font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:11px;line-height:1.55;font-weight:400;letter-spacing:0;color:#77716a;white-space:pre-wrap;overflow-wrap:anywhere;word-break:keep-all}
 @media(max-width:360px){.invitation-bottom-sheet--program .invitation-program-card:has(.invitation-program-time) .invitation-program-card-copy{padding-left:8px}}
+
+/* Card-only warm neutral palette: retain the existing editorial timeline unchanged. */
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-kicker{
+  color:#4e4a45;
+  opacity:1;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-ending{
+  color:#4e4a45;
+  opacity:.8;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-step{
+  background:#dcd1c0;
+  border-color:#cbbfac;
+  color:#292725;
+  box-shadow:0 0 0 4px #faf7f2;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-card{
+  background:#f5f0e7;
+  border-color:#ded4c5;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-title{
+  color:#292725;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-description{
+  color:#77716a;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-list>li:not(:last-child)::before{
+  border-left-color:#cbbeac;
+}
