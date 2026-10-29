@@ -6,7 +6,6 @@ export default function InvitationProgram({ program, eventKind }) {
   if (!display.enabled) return null;
   const kicker = ({ wedding: "WEDDING CEREMONY", first_birthday: "FIRST BIRTHDAY", birthday: "BIRTHDAY CELEBRATION", milestone_birthday: "FAMILY CELEBRATION", gathering: "EVENT PROGRAM", opening: "OPENING CEREMONY" })[eventKind] || "EVENT PROGRAM";
   if (display.style === "editorial") return <div className="invitation-program invitation-program--editorial">
-    <p className="invitation-program-editorial-overline">OUR SPECIAL DAY</p>
     <p className="invitation-program-editorial-kicker">{kicker}</p>
     <ol className="invitation-program-editorial-list" aria-label={display.title}>
       {display.items.map((item, index) => <li key={item.id} className={index % 2 ? "is-left" : "is-right"}>
