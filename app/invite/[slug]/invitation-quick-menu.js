@@ -339,7 +339,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
 
       {program.enabled && <button className="invitation-quick-program" type="button" onClick={() => openSheet("program")} title={program.title} aria-label={program.title}><span className="dd-quick-icon-bubble"><QuickMenuIcon kind="program" /></span><span className="invitation-quick-copy"><strong>{programButtonLabel}</strong></span></button>}
     </nav>)}
-    {sheet === "program" && program.enabled && <BottomSheet title={program.title} className="invitation-bottom-sheet--program" onClose={closeSheet} portalTarget={usesPreviewPortal ? (isDesktopLivePreview ? previewSheetPortal : desktopLivePortal) : null} preview={usesPreviewPortal} layerStyle={{ ...desktopLiveStyle, ...(isDesktopLivePreview ? previewSheetStyle : {}) }}>
+    {sheet === "program" && program.enabled && <BottomSheet title={program.title} className={`invitation-bottom-sheet--program${program.style === "editorial" ? " invitation-bottom-sheet--program-editorial" : ""}`} onClose={closeSheet} portalTarget={usesPreviewPortal ? (isDesktopLivePreview ? previewSheetPortal : desktopLivePortal) : null} preview={usesPreviewPortal} layerStyle={{ ...desktopLiveStyle, ...(isDesktopLivePreview ? previewSheetStyle : {}) }}>
       <InvitationProgram program={invitation.program} eventKind={invitation.eventKind} />
     </BottomSheet>}
     {sheet === "rsvp" && rsvpEnabled && <BottomSheet title={rsvpLabel} onClose={closeSheet} portalTarget={usesPreviewPortal ? (isDesktopLivePreview ? previewSheetPortal : desktopLivePortal) : null} preview={usesPreviewPortal} layerStyle={isDesktopLivePreview ? previewSheetStyle : undefined}>
