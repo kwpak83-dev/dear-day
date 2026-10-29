@@ -3959,3 +3959,19 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-list>li:not(:last-child)::before{
   border-left-color:#cbbeac;
 }
+
+/* Optional clipart inside card-style program items; editorial layout is unchanged. */
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-card-icon{
+  display:flex;flex:0 0 38px;align-items:center;justify-content:center;align-self:center;
+  width:38px;min-width:0;color:#292725;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-card-icon svg{
+  display:block;max-width:34px;max-height:34px;width:auto;height:auto;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-card-icon + .invitation-program-card-copy{
+  min-width:0;
+}
+@media(max-width:360px){
+  .invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-card-icon{flex-basis:30px;width:30px}
+  .invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-card-icon svg{max-width:28px;max-height:28px}
+}
