@@ -3854,3 +3854,22 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-program-editor-item:has(>.dd-program-icon-trigger)>.dd-program-editor-item-fields{grid-column:2;grid-row:1;min-width:0}
 .dd-program-editor-item:has(>.dd-program-icon-trigger)>.dd-program-editor-actions{grid-column:2;justify-self:end}
 .dd-program-icon-trigger:focus-visible,.dd-program-icon-grid button:focus-visible,.dd-program-style-options button:focus-visible{outline:2px solid #302f2c;outline-offset:2px}
+
+
+/* Clipart picker refinement: clean editorial ivory cards and balanced line illustrations. */
+.dd-program-icon-picker{background:#faf8f4;border:1px solid #ebe5dc;border-radius:20px;padding:18px;box-shadow:0 16px 50px #211c1833}
+.dd-program-icon-picker>header{margin-bottom:16px}
+.dd-program-icon-picker>header strong{font-size:17px;font-weight:700;letter-spacing:-.02em}
+.dd-program-icon-picker>header button{width:32px;height:32px;display:grid;place-items:center;border-radius:50%;font-size:25px;line-height:1}
+.dd-program-icon-picker>header button:hover{background:#eeeae5}
+.dd-program-icon-categories{gap:6px;margin-bottom:14px}
+.dd-program-icon-categories button{padding:8px 12px;font-size:12px;background:#f0ede8;transition:background .15s ease}
+.dd-program-icon-categories button[aria-pressed=true]{background:#302f2c;color:#fff}
+.dd-program-icon-grid{gap:9px}
+.dd-program-icon-grid button{min-height:84px;gap:7px;padding:9px 4px 7px;border:1px solid #e9e3db;border-radius:12px;background:#fffdfb;transition:border-color .15s ease,background .15s ease}
+.dd-program-icon-grid button svg{flex:none;max-width:100%;height:39px;color:#302f2c}
+.dd-program-icon-grid button small{font-size:11px;line-height:1.2;color:#49433d;white-space:nowrap}
+.dd-program-icon-grid button[aria-pressed=true]{border:2px solid #bd788e;background:#fff5f7;box-shadow:0 0 0 1px #bd788e22}
+.dd-program-icon-grid button:hover:not([aria-pressed=true]){border-color:#c7bcb2;background:#fff}
+.dd-program-no-icon{display:grid;place-items:center;height:39px;font-size:13px;color:#302f2c}
+@media(max-width:360px){.dd-program-icon-picker{padding:13px}.dd-program-icon-grid{gap:6px}.dd-program-icon-grid button{min-height:76px;padding:6px 2px}.dd-program-icon-grid button svg{height:34px}.dd-program-icon-grid button small{font-size:10px}.dd-program-icon-categories button{padding:7px 10px}}
