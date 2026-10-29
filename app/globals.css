@@ -3878,3 +3878,14 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-program-style-options button{flex-direction:row;justify-content:center;align-items:center;gap:6px;min-height:42px;padding:8px 5px}
 .dd-program-style-options .dd-program-style-symbol{font-size:17px;line-height:1;flex-shrink:0}
 .dd-program-style-options button strong{font-size:11px;line-height:1.25;white-space:nowrap}
+
+/* Compact program item controls: heading delete and icon-side ordering. */
+.create-page .dd-program-editor-item--compact{display:grid;grid-template-columns:68px minmax(0,1fr);column-gap:10px;align-items:start;padding:0 0 14px}
+.create-page .dd-program-item-leading{grid-column:1;grid-row:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.create-page .dd-program-editor-item--compact .dd-program-editor-item-fields{grid-column:2;grid-row:1;min-width:0}
+.create-page .dd-program-item-heading{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:28px;margin-bottom:5px;font-size:13px;font-weight:600}
+.create-page .dd-program-share-card .dd-program-item-heading .dd-program-delete-button{min-height:26px;padding:3px 9px;border-radius:7px;font-size:11px;font-weight:500;line-height:1.2;flex-shrink:0}
+.create-page .dd-program-move-controls{display:flex;gap:4px;justify-content:center}
+.create-page .dd-program-move-controls button{display:grid;place-items:center;width:27px;height:25px;padding:0;border:1px solid #dedbd7;border-radius:6px;background:#faf9f7;color:#5c5650;font-size:16px;line-height:1;cursor:pointer}
+.create-page .dd-program-move-controls button:disabled{opacity:.3;cursor:default}
+.create-page .dd-program-move-controls button:focus-visible{outline:2px solid #bc8492;outline-offset:2px}
