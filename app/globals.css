@@ -3947,8 +3947,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   box-shadow:0 0 0 4px #faf7f2;
 }
 .invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-card{
-  background:#f5f0e7;
-  border-color:#ded4c5;
+  background:#eeedeb;
+  border-color:#d9d6d1;
 }
 .invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-title{
   color:#292725;
