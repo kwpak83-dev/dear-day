@@ -3804,10 +3804,10 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .invitation-bottom-sheet--program-editorial{background:#f7f5f0!important;color:#302f2c!important}
 .invitation-bottom-sheet--program-editorial>header{background:#f7f5f0!important;color:#302f2c!important;border-color:#e7e2da!important}
 .invitation-bottom-sheet--program-editorial .invitation-bottom-sheet-content{background:#f7f5f0!important}
-.invitation-bottom-sheet--program-editorial .invitation-program--editorial{padding:15px 12px max(40px,env(safe-area-inset-bottom));font-family:Georgia,"Times New Roman",serif;color:#302f2c}
+.invitation-bottom-sheet--program-editorial .invitation-program--editorial{padding:5px 12px max(40px,env(safe-area-inset-bottom));font-family:Georgia,"Times New Roman",serif;color:#302f2c}
 .invitation-program-editorial-overline,.invitation-program-editorial-kicker{text-align:center;letter-spacing:.24em;font-size:10px;line-height:1.5;color:#4e4a45;margin:0}
 .invitation-program-editorial-overline{margin:0 0 8px}
-.invitation-program-editorial-kicker{margin:0 0 27px;font-size:9px;opacity:.8}
+.invitation-program-editorial-kicker{margin:0 0 9px;font-size:9px;opacity:.8}
 .invitation-bottom-sheet--program-editorial .invitation-program-editorial-list{display:block;list-style:none;padding:0;margin:0 auto;max-width:420px}
 .invitation-bottom-sheet--program-editorial .invitation-program-editorial-list>li{display:grid;grid-template-columns:minmax(0,1fr) 66px minmax(0,1fr);align-items:center;position:relative;min-height:100px;padding:8px 0;gap:0}
 .invitation-program-editorial-list>li::before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid #b6b0a6;transform:translateX(-50%)}
