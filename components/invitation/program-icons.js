@@ -27,14 +27,26 @@ const drawings = {
  leaf:<><path d="M9 42Q1 10 41 5q-1 35-32 37M9 42Q23 19 41 5M18 29l-2-12m9 5 12 1M14 35l-8-3m24-17 3 8" strokeWidth=".95"/></>,
  tree:<><path d="M24 45V23M13 35Q1 31 7 19q-3-13 11-14 8-9 16 0 14 1 10 14 6 12-6 16zM24 31 13 21m11 6 10-11M24 37l-7-6m7 2 8-7"/><path d="M12 13q5-5 10-3m9-1q7 2 7 8M12 29q-4-3-3-8" strokeWidth=".7"/></>,
  clock:<><circle cx="24" cy="24" r="19"/><circle cx="24" cy="24" r="16.5" strokeWidth=".7"/><path d="M24 12v12l9 6M24 3v4m0 34v4M3 24h4m34 0h4M12 12l2 2m20-2-2 2M12 36l2-2m20 2-2-2" strokeWidth=".9"/><circle cx="24" cy="24" r="1.6"/></>,
- car:<><path d="M5 20h38v19H5zM10 20l6-11h16l6 11M9 39v5h8v-5m14 0v5h8v-5M8 28h8m16 0h8M18 20h12M9 34h30"/><path d="M13 17l4-6h14l4 6M6 24l-3-3m39 3 3-3M20 31h8" strokeWidth=".7"/></>
+ car:<><path d="M5 20h38v19H5zM10 20l6-11h16l6 11M9 39v5h8v-5m14 0v5h8v-5M8 28h8m16 0h8M18 20h12M9 34h30"/><path d="M13 17l4-6h14l4 6M6 24l-3-3m39 3 3-3M20 31h8" strokeWidth=".7"/></>,
+ "host-script":<><path d="M11 5h24l4 5v33H11zM35 5v6h4M16 16h17M16 22h17M16 28h13M16 34h15"/><path d="m7 34 5-7 3 3-5 7-5 2zM9 36l2 2" strokeWidth=".75"/></>,
+ "officiant":<><circle cx="24" cy="10" r="5"/><path d="M15 22q9-8 18 0l4 9H11zM9 31h30v5H9zM13 36v9m22-9v9M19 25l5 3 5-3M24 20v8"/><path d="M18 8q6-7 12 0M12 42h24" strokeWidth=".7"/></>,
+ "officiant-book":<><path d="M6 13q9-4 18 2 9-6 18-2v27q-9-4-18 2-9-6-18-2zM24 15v27M11 20q5-1 9 1m-9 5q5-1 9 1m8-6q5-2 9-1m-9 7q5-2 9-1"/><path d="m34 5 4 4m-4 0 4-4M8 7l3 3m0-3-3 3" strokeWidth=".7"/></>,
+ "groom-entry":<><circle cx="23" cy="9" r="5"/><path d="M17 17h12l6 8-4 3-3-5v19H18V23l-3 5-4-3zM21 17l2 7 3-7M23 24v18M17 42h12M13 33l-5 5m30-5 5 5" /><path d="m9 12-4-2m34 2 4-2" strokeWidth=".7"/></>,
+ "bride-entry":<><circle cx="24" cy="9" r="5"/><path d="M18 15q-7 6-8 25 14 7 28 0-1-19-8-25M18 15q6 6 12 0M17 21q7 5 14 0M10 40q14 5 28 0M15 25l-5 8m23-8 5 8"/><path d="M17 7q7-10 14 0M20 17q4 4 8 0M24 27v15" strokeWidth=".7"/></>,
+ "couple-bow":<><circle cx="14" cy="10" r="4"/><circle cx="34" cy="10" r="4"/><path d="M8 18q6-4 12 0l3 13H5zM28 18q6-4 12 0l3 13H25zM10 31v11h9V31m10 0v11h9V31M18 22q6 9 12 0M20 27l4 4 4-4"/><path d="M12 6q3-3 6 0m12 0q3-3 6 0" strokeWidth=".7"/></>,
+ "vow-hands":<><path d="M6 23q7-9 15-2l4 4q5-6 11-3l6 5-10 12q-7 5-14 0L6 30zM12 25l11 9m-5-12 11 10m-5-11 10 8M10 34l8 7M38 17q-4-6-8 0-4-6-8 0 0 5 8 10 8-5 8-10z"/><path d="m5 14 5 2m34-2-5 2" strokeWidth=".7"/></>,
+ "declaration":<><path d="M10 5h25l5 5v33H10zM35 5v6h5M16 18h18M16 23h18M16 28h15M16 34h12"/><path d="M24 9l2 3-2 3-2-3zM6 39l5-7m-5 0 5 7" strokeWidth=".75"/></>,
+ "parents-greeting":<><circle cx="15" cy="10" r="4"/><circle cx="33" cy="10" r="4"/><path d="M8 18q7-5 14 0l2 11-5 2-2-7v18H9V24l-2 7-4-2zM26 18q7-5 14 0l5 11-5 2-3-7v18h-8V24l-2 7-4-2zM17 28l7 5 7-5M19 42h-9m28 0h-9"/><path d="m23 5 1-3 1 3" strokeWidth=".7"/></>,
+ "single-flower":<><path d="M24 44V21M24 30q-11-4-14 5 10 5 14-5m0-4q11-6 15 2-8 7-15-2"/><path d="M24 22q-10-6-7-13 5-8 11-2 7-5 10 3 2 8-14 12zM24 22q-2-10 0-16M15 16q7-3 9 6m8-7q-6-1-8 7" /><circle cx="24" cy="12" r="2"/></>,
+ "applause":<><path d="M8 27l10-13 5 4-7 11 8 4 9-13 5 4-9 16q-4 5-10 1L9 35q-4-3-1-8zM18 14l-3-6m8 10 3-7M33 20l3-8m2 12 5-4"/><path d="m5 12 4 2m34 19-4 2M23 4v4" strokeWidth=".75"/></>,
+ "procession":<><path d="M7 38q8-7 17-8 9-1 17-8M33 20l8 2-2 8M7 43h35"/><path d="m9 14 3-6 3 6-3 6zM28 6l2-4 2 4-2 4zM36 37l2-5 2 5-2 5zM21 22l2-4 2 4-2 4z"/><path d="m4 25 5-2m33-9 3-3M18 7l-2-3" strokeWidth=".7"/></>
 };
 export const PROGRAM_ICON_CATEGORIES = [
  {id:"all",label:"전체"}, {id:"wedding",label:"웨딩"}, {id:"celebration",label:"축하"},
  {id:"general",label:"일반"}, {id:"dining",label:"식사"}, {id:"other",label:"기타"}
 ];
-const groups = {wedding:["rings","dress","suit","bouquet","flower","book","church","microphone","music"],celebration:["cake","champagne","gift","balloons","crown","star","heart","ribbon"],general:["camera","microphone","music","clock","car","airplane"],dining:["dining","coffee"],other:["leaf","tree"]};
-const names = ["반지","드레스","턱시도","부케","꽃","케이크","샴페인","카메라","마이크","음악","책/서약","선물","풍선","식기","커피","왕관","별","하트","리본","비행기","집/건물","나뭇잎","나무","시계","자동차"];
+const groups = {wedding:["rings","dress","suit","bouquet","flower","book","church","microphone","music","host-script","officiant","officiant-book","groom-entry","bride-entry","couple-bow","vow-hands","declaration","parents-greeting","single-flower","applause","procession"],celebration:["cake","champagne","gift","balloons","crown","star","heart","ribbon"],general:["camera","microphone","music","clock","car","airplane"],dining:["dining","coffee"],other:["leaf","tree"]};
+const names = ["반지","드레스","턱시도","부케","꽃","케이크","샴페인","카메라","마이크","음악","책/서약","선물","풍선","식기","커피","왕관","별","하트","리본","비행기","집/건물","나뭇잎","나무","시계","자동차","사회자 대본","사회자","주례사","신랑 입장","신부 입장","신랑신부 맞절","혼인서약","성혼선언","부모님 인사","꽃 한 송이","박수","행진"];
 export const PROGRAM_ICONS = PROGRAM_ICON_IDS.map((id,i)=>({id,label:names[i],category:Object.keys(groups).find(group=>groups[group].includes(id))||"other"}));
 export default function ProgramIcon({id,size=42,className=""}) {
  if(!drawings[id]) return null;
