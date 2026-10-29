@@ -14,6 +14,7 @@ export default function InvitationProgram({ program, eventKind }) {
         <span className="invitation-program-editorial-copy">
           {display.displayMode === "time" && item.time ? <time dateTime={item.time}>{item.time}</time> : display.displayMode === "number" ? <span className="invitation-program-editorial-index">{String(index+1).padStart(2,"0")}</span> : null}
           <span className="invitation-program-editorial-title">{item.title}</span>
+          {item.description && <span className="invitation-program-editorial-description">{item.description}</span>}
         </span>
       </li>)}
     </ol>
@@ -25,7 +26,7 @@ export default function InvitationProgram({ program, eventKind }) {
         <span className="invitation-program-step" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
         <span className="invitation-program-card">
           {display.displayMode === "time" && item.time && <time className="invitation-program-time" dateTime={item.time}>{item.time}</time>}
-          <span className="invitation-program-title">{item.title}</span>
+          <span className="invitation-program-card-copy"><span className="invitation-program-title">{item.title}</span>{item.description && <span className="invitation-program-description">{item.description}</span>}</span>
         </span>
       </li>)}
     </ol>
