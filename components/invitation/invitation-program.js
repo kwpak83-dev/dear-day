@@ -26,6 +26,7 @@ export default function InvitationProgram({ program, eventKind }) {
         <span className="invitation-program-step" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
         <span className="invitation-program-card">
           {display.displayMode === "time" && item.time && <time className="invitation-program-time" dateTime={item.time}>{item.time}</time>}
+          {item.iconId && <span className="invitation-program-card-icon" aria-hidden="true"><ProgramIcon id={item.iconId} size={34} /></span>}
           <span className="invitation-program-card-copy"><span className="invitation-program-title">{item.title}</span>{item.description && <span className="invitation-program-description">{item.description}</span>}</span>
         </span>
       </li>)}
