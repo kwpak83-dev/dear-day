@@ -477,3 +477,8 @@
  .dd-showcase-page .dd-showcase-invitations svg{display:block;width:26px;height:26px}
  .dd-showcase-page .dd-showcase-invitations:focus-visible{outline:2px solid #555;outline-offset:2px;border-radius:4px}
 }
+
+/* Selected template CTA only: white/black elevated DearDay button. */
+.dd-showcase-page .dd-showcase-actions .dd-showcase-primary{background:#fff;color:#222;border:1px solid #e5e5e5;box-shadow:0 4px 10px rgba(0,0,0,.11),0 1px 2px rgba(0,0,0,.05);border-radius:10px}
+.dd-showcase-page .dd-showcase-actions .dd-showcase-primary:hover{background:#fafafa}
+.dd-showcase-page .dd-showcase-actions .dd-showcase-primary:focus-visible{outline:2px solid #555;outline-offset:2px}
