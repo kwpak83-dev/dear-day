@@ -3873,3 +3873,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-program-icon-grid button:hover:not([aria-pressed=true]){border-color:#c7bcb2;background:#fff}
 .dd-program-no-icon{display:grid;place-items:center;height:39px;font-size:13px;color:#302f2c}
 @media(max-width:360px){.dd-program-icon-picker{padding:13px}.dd-program-icon-grid{gap:6px}.dd-program-icon-grid button{min-height:76px;padding:6px 2px}.dd-program-icon-grid button svg{height:34px}.dd-program-icon-grid button small{font-size:10px}.dd-program-icon-categories button{padding:7px 10px}}
+
+/* Compact horizontal style choices: icon and label share one line. */
+.dd-program-style-options button{flex-direction:row;justify-content:center;align-items:center;gap:6px;min-height:42px;padding:8px 5px}
+.dd-program-style-options .dd-program-style-symbol{font-size:17px;line-height:1;flex-shrink:0}
+.dd-program-style-options button strong{font-size:11px;line-height:1.25;white-space:nowrap}
