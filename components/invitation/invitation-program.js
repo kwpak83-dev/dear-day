@@ -1,9 +1,23 @@
+import ProgramIcon from "./program-icons";
 import { getProgramPresentation } from "../../lib/invitation-program";
 
 export default function InvitationProgram({ program, eventKind }) {
   const display = getProgramPresentation(program, eventKind);
   if (!display.enabled) return null;
   const kicker = ({ wedding: "WEDDING CEREMONY", first_birthday: "FIRST BIRTHDAY", birthday: "BIRTHDAY CELEBRATION", milestone_birthday: "FAMILY CELEBRATION", gathering: "EVENT PROGRAM", opening: "OPENING CEREMONY" })[eventKind] || "EVENT PROGRAM";
+  if (display.style === "editorial") return <div className="invitation-program invitation-program--editorial">
+    <p className="invitation-program-editorial-overline">OUR SPECIAL DAY</p>
+    <p className="invitation-program-editorial-kicker">{kicker}</p>
+    <ol className="invitation-program-editorial-list" aria-label={display.title}>
+      {display.items.map((item, index) => <li key={item.id} className={index % 2 ? "is-left" : "is-right"}>
+        <span className="invitation-program-editorial-center" aria-hidden="true">{item.iconId ? <ProgramIcon id={item.iconId} size={46} /> : <span className="invitation-program-editorial-dot" />}</span>
+        <span className="invitation-program-editorial-copy">
+          {display.displayMode === "time" && item.time ? <time dateTime={item.time}>{item.time}</time> : display.displayMode === "number" ? <span className="invitation-program-editorial-index">{String(index+1).padStart(2,"0")}</span> : null}
+          <span className="invitation-program-editorial-title">{item.title}</span>
+        </span>
+      </li>)}
+    </ol>
+  </div>;
   return <div className={`invitation-program invitation-program--${display.displayMode}`}>
     <p className="invitation-program-kicker" aria-hidden="true">{kicker}</p>
     <ol className="invitation-program-list" aria-label={display.title}>
