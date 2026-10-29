@@ -3798,3 +3798,52 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .place-result-details>span{font-size:12px;font-weight:400;line-height:1.55;color:#84766e}
 .create-page .place-result-chevron{flex:0 0 auto;align-self:center;font-size:20px;line-height:1;color:#a89b94}
 .create-page .place-results .place-search-guide{margin:9px 0 0;padding:0;background:transparent;font-size:11px;line-height:1.5}
+
+
+/* DearDay editorial program: intentionally scoped away from legacy card layout. */
+.invitation-bottom-sheet--program-editorial{background:#f7f5f0!important;color:#302f2c!important}
+.invitation-bottom-sheet--program-editorial>header{background:#f7f5f0!important;color:#302f2c!important;border-color:#e7e2da!important}
+.invitation-bottom-sheet--program-editorial .invitation-bottom-sheet-content{background:#f7f5f0!important}
+.invitation-bottom-sheet--program-editorial .invitation-program--editorial{padding:15px 12px max(40px,env(safe-area-inset-bottom));font-family:Georgia,"Times New Roman",serif;color:#302f2c}
+.invitation-program-editorial-overline,.invitation-program-editorial-kicker{text-align:center;letter-spacing:.24em;font-size:10px;line-height:1.5;color:#4e4a45;margin:0}
+.invitation-program-editorial-overline{margin:0 0 8px}
+.invitation-program-editorial-kicker{margin:0 0 27px;font-size:9px;opacity:.8}
+.invitation-bottom-sheet--program-editorial .invitation-program-editorial-list{display:block;list-style:none;padding:0;margin:0 auto;max-width:420px}
+.invitation-bottom-sheet--program-editorial .invitation-program-editorial-list>li{display:grid;grid-template-columns:minmax(0,1fr) 66px minmax(0,1fr);align-items:center;position:relative;min-height:100px;padding:8px 0;gap:0}
+.invitation-program-editorial-list>li::before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid #b6b0a6;transform:translateX(-50%)}
+.invitation-program-editorial-list>li:first-child::before{top:50%}
+.invitation-program-editorial-list>li:last-child::before{bottom:50%}
+.invitation-program-editorial-center{grid-column:2;grid-row:1;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;color:#302f2c;background:#f7f5f0;min-height:56px}
+.invitation-program-editorial-center svg{max-width:54px;height:auto}
+.invitation-program-editorial-dot{width:7px;height:7px;border-radius:50%;background:#302f2c}
+.invitation-program-editorial-copy{grid-row:1;display:flex;flex-direction:column;gap:5px;min-width:0;padding:0 7px;color:#302f2c}
+.invitation-program-editorial-list>li.is-right .invitation-program-editorial-copy{grid-column:3;text-align:left;align-items:flex-start}
+.invitation-program-editorial-list>li.is-left .invitation-program-editorial-copy{grid-column:1;text-align:right;align-items:flex-end}
+.invitation-program-editorial-copy time,.invitation-program-editorial-index{font-family:Georgia,"Times New Roman",serif;font-size:11px;letter-spacing:.12em;color:#676159;font-variant-numeric:tabular-nums}
+.invitation-bottom-sheet--program-editorial .invitation-program-editorial-title{font-size:14px;line-height:1.45;font-weight:400;white-space:pre-wrap;overflow-wrap:anywhere;color:#302f2c}
+@media(max-width:360px){.invitation-bottom-sheet--program-editorial .invitation-program--editorial{padding-left:5px;padding-right:5px}.invitation-bottom-sheet--program-editorial .invitation-program-editorial-list>li{grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr);min-height:86px}.invitation-program-editorial-center svg{width:40px}.invitation-bottom-sheet--program-editorial .invitation-program-editorial-title{font-size:12px}}
+/* Shared program editor: works in user and administrator forms. */
+.dd-program-style-chooser{margin:15px 0;display:grid;gap:9px}
+.dd-program-style-chooser>strong{font-size:13px}
+.dd-program-style-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.dd-program-style-options button{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 5px;border:1px solid #e3ded9;border-radius:10px;background:#fff;color:#3d3936;cursor:pointer;font:inherit}
+.dd-program-style-options button.is-selected{border-color:#bc8492;background:#fff7f8;box-shadow:0 0 0 1px #bc8492}
+.dd-program-style-options button strong{font-size:12px}
+.dd-program-style-options button small{font-size:10px;color:#79716b}
+.dd-program-style-symbol{font-size:25px;color:#77706a}
+.dd-program-editor-item{position:relative}
+.dd-program-icon-trigger{display:flex;align-items:center;justify-content:center;min-width:58px;min-height:56px;padding:5px;border:1px solid #e1dcd7;border-radius:9px;background:#f7f5f0;color:#302f2c;cursor:pointer}
+.dd-program-icon-trigger span{display:flex;flex-direction:column;align-items:center;font-size:20px}
+.dd-program-icon-trigger small{font-size:9px}
+.dd-program-icon-backdrop{position:fixed;inset:0;z-index:10050;background:#0006;display:flex;align-items:center;justify-content:center;padding:12px}
+.dd-program-icon-picker{width:min(420px,100%);max-height:min(85dvh,720px);overflow:auto;background:#f9f7f3;border-radius:16px;padding:15px;box-shadow:0 12px 40px #0003;color:#302f2c}
+.dd-program-icon-picker>header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.dd-program-icon-picker>header button{font-size:23px;background:transparent;border:0;cursor:pointer;color:inherit}
+.dd-program-icon-categories{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.dd-program-icon-categories button{border:0;border-radius:30px;padding:6px 10px;background:#eeebe6;color:#554f48;cursor:pointer;font-size:11px}
+.dd-program-icon-categories button[aria-pressed=true]{background:#302f2c;color:white}
+.dd-program-icon-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.dd-program-icon-grid button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:72px;border:1px solid #e9e3dc;border-radius:9px;background:white;color:#302f2c;cursor:pointer}
+.dd-program-icon-grid button[aria-pressed=true]{border:2px solid #b8798c;background:#fff5f7}
+.dd-program-icon-grid button small{font-size:10px;color:#625c55}
+.dd-program-no-icon{font-size:12px}
