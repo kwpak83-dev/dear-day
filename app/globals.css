@@ -2492,6 +2492,13 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-notice-file-button,.dd-notice-image-delete{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 14px;border-radius:10px;font:600 12px/1.2 inherit;cursor:pointer}
 .create-page .dd-notice-file-button{background:#555555;color:#fff;border:1px solid #555555}
 .dd-notice-file-button input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+/* Compact notice image picker: DearDay neutral raised-button treatment. */
+.create-page .dd-notice-file-button--compact{display:inline-flex;gap:6px;min-height:30px;padding:5px 10px;border:1px solid #b3b3b3;border-radius:8px;background:#fff;color:#111;font-size:12px;font-weight:600;line-height:1.2;box-shadow:0 2px 0 #d8d8d8;transition:background .15s ease,box-shadow .15s ease,transform .15s ease}
+.create-page .dd-notice-file-button--compact:hover{background:#f7f7f7}
+.create-page .dd-notice-file-button--compact:active{transform:translateY(1px);box-shadow:0 1px 0 #d8d8d8}
+.create-page .dd-notice-file-button--compact:focus-within{outline:2px solid #777;outline-offset:2px}
+.dd-notice-file-button-icon{font-size:14px;line-height:1;font-weight:500}
+
 .dd-notice-image-delete{border:1px solid #ead9d1;background:#fff7f3;color:#8a5b49}
 .dd-notice-image-preview{width:100%;display:flex;align-items:center;gap:10px;padding:8px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa}
 .dd-notice-image-preview img{display:block;width:88px;height:66px;object-fit:cover;border-radius:8px}
@@ -3798,3 +3805,196 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .place-result-details>span{font-size:12px;font-weight:400;line-height:1.55;color:#84766e}
 .create-page .place-result-chevron{flex:0 0 auto;align-self:center;font-size:20px;line-height:1;color:#a89b94}
 .create-page .place-results .place-search-guide{margin:9px 0 0;padding:0;background:transparent;font-size:11px;line-height:1.5}
+
+
+/* DearDay editorial program: intentionally scoped away from legacy card layout. */
+.invitation-bottom-sheet--program-editorial{background:#f7f5f0!important;color:#302f2c!important}
+.invitation-bottom-sheet--program-editorial>header{background:#f7f5f0!important;color:#302f2c!important;border-color:#e7e2da!important}
+.invitation-bottom-sheet--program-editorial .invitation-bottom-sheet-content{background:#f7f5f0!important}
+.invitation-bottom-sheet--program-editorial .invitation-program--editorial{padding:5px 12px max(40px,env(safe-area-inset-bottom));font-family:Georgia,"Times New Roman",serif;color:#302f2c}
+.invitation-program-editorial-overline,.invitation-program-editorial-kicker{text-align:center;letter-spacing:.24em;font-size:10px;line-height:1.5;color:#4e4a45;margin:0}
+.invitation-program-editorial-overline{margin:0 0 8px}
+.invitation-program-editorial-kicker{margin:0 0 9px;font-size:9px;opacity:.8}
+.invitation-bottom-sheet--program-editorial .invitation-program-editorial-list{display:block;list-style:none;padding:0;margin:0 auto;max-width:420px}
+.invitation-bottom-sheet--program-editorial .invitation-program-editorial-list>li{display:grid;grid-template-columns:minmax(0,1fr) 66px minmax(0,1fr);align-items:center;position:relative;min-height:100px;padding:8px 0;gap:0}
+.invitation-program-editorial-list>li::before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid #b6b0a6;transform:translateX(-50%)}
+.invitation-program-editorial-list>li:first-child::before{top:50%}
+.invitation-program-editorial-list>li:last-child::before{bottom:50%}
+.invitation-program-editorial-center{grid-column:2;grid-row:1;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;color:#302f2c;background:#f7f5f0;min-height:56px}
+.invitation-program-editorial-center svg{max-width:54px;height:auto}
+.invitation-program-editorial-dot{width:7px;height:7px;border-radius:50%;background:#302f2c}
+.invitation-program-editorial-copy{grid-row:1;display:flex;flex-direction:column;gap:5px;min-width:0;padding:0 7px;color:#302f2c}
+.invitation-program-editorial-list>li.is-right .invitation-program-editorial-copy{grid-column:3;text-align:left;align-items:flex-start}
+.invitation-program-editorial-list>li.is-left .invitation-program-editorial-copy{grid-column:1;text-align:right;align-items:flex-end}
+.invitation-program-editorial-copy time,.invitation-program-editorial-index{font-family:Georgia,"Times New Roman",serif;font-size:11px;letter-spacing:.12em;color:#676159;font-variant-numeric:tabular-nums}
+.invitation-bottom-sheet--program-editorial .invitation-program-editorial-title{font-size:14px;line-height:1.45;font-weight:400;white-space:pre-wrap;overflow-wrap:anywhere;color:#302f2c}
+@media(max-width:360px){.invitation-bottom-sheet--program-editorial .invitation-program--editorial{padding-left:5px;padding-right:5px}.invitation-bottom-sheet--program-editorial .invitation-program-editorial-list>li{grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr);min-height:86px}.invitation-program-editorial-center svg{width:40px}.invitation-bottom-sheet--program-editorial .invitation-program-editorial-title{font-size:12px}}
+/* Shared program editor: works in user and administrator forms. */
+.dd-program-style-chooser{margin:15px 0;display:grid;gap:9px}
+.dd-program-style-chooser>strong{font-size:13px}
+.dd-program-style-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.dd-program-style-options button{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 5px;border:1px solid #e3ded9;border-radius:10px;background:#fff;color:#3d3936;cursor:pointer;font:inherit}
+.dd-program-style-options button.is-selected{border-color:#bc8492;background:#fff7f8;box-shadow:0 0 0 1px #bc8492}
+.dd-program-style-options button strong{font-size:12px}
+.dd-program-style-options button small{font-size:10px;color:#79716b}
+.dd-program-style-symbol{font-size:25px;color:#77706a}
+.dd-program-editor-item{position:relative}
+.dd-program-icon-trigger{display:flex;align-items:center;justify-content:center;min-width:58px;min-height:56px;padding:5px;border:1px solid #e1dcd7;border-radius:9px;background:#f7f5f0;color:#302f2c;cursor:pointer}
+.dd-program-icon-trigger span{display:flex;flex-direction:column;align-items:center;font-size:20px}
+.dd-program-icon-trigger small{font-size:9px}
+.dd-program-icon-backdrop{position:fixed;inset:0;z-index:10050;background:#0006;display:flex;align-items:center;justify-content:center;padding:12px}
+.dd-program-icon-picker{width:min(420px,100%);max-height:min(85dvh,720px);overflow:auto;background:#f9f7f3;border-radius:16px;padding:15px;box-shadow:0 12px 40px #0003;color:#302f2c}
+.dd-program-icon-picker>header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.dd-program-icon-picker>header button{font-size:23px;background:transparent;border:0;cursor:pointer;color:inherit}
+.dd-program-icon-categories{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.dd-program-icon-categories button{border:0;border-radius:30px;padding:6px 10px;background:#eeebe6;color:#554f48;cursor:pointer;font-size:11px}
+.dd-program-icon-categories button[aria-pressed=true]{background:#302f2c;color:white}
+.dd-program-icon-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.dd-program-icon-grid button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:72px;border:1px solid #e9e3dc;border-radius:9px;background:white;color:#302f2c;cursor:pointer}
+.dd-program-icon-grid button[aria-pressed=true]{border:2px solid #b8798c;background:#fff5f7}
+.dd-program-icon-grid button small{font-size:10px;color:#625c55}
+.dd-program-no-icon{font-size:12px}
+
+/* Keep icon and text inputs on one row in editorial editor items. */
+.dd-program-editor-item:has(>.dd-program-icon-trigger){display:grid;grid-template-columns:60px minmax(0,1fr);column-gap:9px;align-items:start;padding:12px 0}
+.dd-program-editor-item:has(>.dd-program-icon-trigger)>.dd-program-icon-trigger{grid-column:1;grid-row:1}
+.dd-program-editor-item:has(>.dd-program-icon-trigger)>.dd-program-editor-item-fields{grid-column:2;grid-row:1;min-width:0}
+.dd-program-editor-item:has(>.dd-program-icon-trigger)>.dd-program-editor-actions{grid-column:2;justify-self:end}
+.dd-program-icon-trigger:focus-visible,.dd-program-icon-grid button:focus-visible,.dd-program-style-options button:focus-visible{outline:2px solid #302f2c;outline-offset:2px}
+
+
+/* Clipart picker refinement: clean editorial ivory cards and balanced line illustrations. */
+.dd-program-icon-picker{background:#faf8f4;border:1px solid #ebe5dc;border-radius:20px;padding:18px;box-shadow:0 16px 50px #211c1833}
+.dd-program-icon-picker>header{margin-bottom:16px}
+.dd-program-icon-picker>header strong{font-size:17px;font-weight:700;letter-spacing:-.02em}
+.dd-program-icon-picker>header button{width:32px;height:32px;display:grid;place-items:center;border-radius:50%;font-size:25px;line-height:1}
+.dd-program-icon-picker>header button:hover{background:#eeeae5}
+.dd-program-icon-categories{gap:6px;margin-bottom:14px}
+.dd-program-icon-categories button{padding:8px 12px;font-size:12px;background:#f0ede8;transition:background .15s ease}
+.dd-program-icon-categories button[aria-pressed=true]{background:#302f2c;color:#fff}
+.dd-program-icon-grid{gap:9px}
+.dd-program-icon-grid button{min-height:84px;gap:7px;padding:9px 4px 7px;border:1px solid #e9e3db;border-radius:12px;background:#fffdfb;transition:border-color .15s ease,background .15s ease}
+.dd-program-icon-grid button svg{flex:none;max-width:100%;height:39px;color:#302f2c}
+.dd-program-icon-grid button small{font-size:11px;line-height:1.2;color:#49433d;white-space:nowrap}
+.dd-program-icon-grid button[aria-pressed=true]{border:2px solid #bd788e;background:#fff5f7;box-shadow:0 0 0 1px #bd788e22}
+.dd-program-icon-grid button:hover:not([aria-pressed=true]){border-color:#c7bcb2;background:#fff}
+.dd-program-no-icon{display:grid;place-items:center;height:39px;font-size:13px;color:#302f2c}
+@media(max-width:360px){.dd-program-icon-picker{padding:13px}.dd-program-icon-grid{gap:6px}.dd-program-icon-grid button{min-height:76px;padding:6px 2px}.dd-program-icon-grid button svg{height:34px}.dd-program-icon-grid button small{font-size:10px}.dd-program-icon-categories button{padding:7px 10px}}
+
+/* Compact horizontal style choices: icon and label share one line. */
+.dd-program-style-options button{flex-direction:row;justify-content:center;align-items:center;gap:6px;min-height:42px;padding:8px 5px}
+.dd-program-style-options .dd-program-style-symbol{font-size:17px;line-height:1;flex-shrink:0}
+.dd-program-style-options button strong{font-size:11px;line-height:1.25;white-space:nowrap}
+
+/* Compact program item controls: heading delete and icon-side ordering. */
+.create-page .dd-program-editor-item--compact{display:grid;grid-template-columns:68px minmax(0,1fr);column-gap:10px;align-items:start;padding:0 0 14px}
+.create-page .dd-program-item-leading{grid-column:1;grid-row:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.create-page .dd-program-editor-item--compact .dd-program-editor-item-fields{grid-column:2;grid-row:1;min-width:0}
+.create-page .dd-program-item-heading{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:28px;margin-bottom:5px;font-size:13px;font-weight:600}
+.create-page .dd-program-share-card .dd-program-item-heading .dd-program-delete-button{min-height:26px;padding:3px 9px;border-radius:7px;font-size:11px;font-weight:500;line-height:1.2;flex-shrink:0}
+.create-page .dd-program-move-controls{display:flex;gap:4px;justify-content:center}
+.create-page .dd-program-move-controls button{display:grid;place-items:center;width:27px;height:25px;padding:0;border:1px solid #dedbd7;border-radius:6px;background:#faf9f7;color:#5c5650;font-size:16px;line-height:1;cursor:pointer}
+.create-page .dd-program-move-controls button:disabled{opacity:.3;cursor:default}
+.create-page .dd-program-move-controls button:focus-visible{outline:2px solid #bc8492;outline-offset:2px}
+
+/* Editor preview uses the same three-column timeline geometry as the published bottom sheet. */
+.dd-program-preview-content .invitation-program-editorial-list{display:block;list-style:none;padding:0;margin:0 auto;max-width:420px}
+.dd-program-preview-content .invitation-program-editorial-list>li{display:grid;grid-template-columns:minmax(0,1fr) 66px minmax(0,1fr);align-items:center;position:relative;min-height:100px;padding:8px 0;gap:0}
+.dd-program-preview-content .invitation-program-editorial-title{font-size:14px;line-height:1.45;font-weight:400;white-space:pre-wrap;overflow-wrap:anywhere;color:#302f2c}
+@media(max-width:360px){.dd-program-preview-content .invitation-program--editorial{padding-left:5px;padding-right:5px}.dd-program-preview-content .invitation-program-editorial-list>li{grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr);min-height:86px}.dd-program-preview-content .invitation-program-editorial-center svg{width:40px}.dd-program-preview-content .invitation-program-editorial-title{font-size:12px}}
+
+/* Shared card-style wedding program palette across published and preview renderers.
+   Scoped to non-editorial programs to preserve the emotional timeline design. */
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial){
+  --dd-program-accent:#8d8070;
+  --dd-program-surface:#f8f5ee;
+  --dd-program-text:#282623;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-step{
+  background:#e8e0d2;
+  border-color:#c9bcaa;
+  color:#252321;
+  box-shadow:0 0 0 4px #f8f5ee;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-card{
+  background:#f5f0e7;
+  border-color:#e1d7c9;
+  box-shadow:0 3px 12px rgba(50,42,32,.035);
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-title{
+  color:#282623;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-list>li:not(:last-child)::before{
+  border-left-color:#d4c8b8;
+}
+
+/* Optional program item descriptions: shared between editor, admin, collection and published sheets. */
+.invitation-bottom-sheet--program .invitation-program-card-copy{display:flex;flex:1;flex-direction:column;align-items:flex-start;min-width:0;gap:3px}
+.invitation-bottom-sheet--program .invitation-program-card-copy .invitation-program-title{flex:none;min-width:0;width:100%}
+.invitation-bottom-sheet--program .invitation-program-card:has(.invitation-program-time) .invitation-program-card-copy{padding-left:12px;border-left:1px solid color-mix(in srgb,var(--dd-program-accent) 20%,transparent)}
+.invitation-bottom-sheet--program .invitation-program-card:has(.invitation-program-time) .invitation-program-card-copy .invitation-program-title{padding-left:0;border-left:0}
+.invitation-bottom-sheet--program .invitation-program-description{display:block;width:100%;font-size:12px;line-height:1.5;color:#736c63;white-space:pre-wrap;overflow-wrap:anywhere;word-break:keep-all}
+.invitation-bottom-sheet--program-editorial .invitation-program-editorial-description,
+.dd-program-preview-content .invitation-program-editorial-description{display:block;max-width:100%;font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:11px;line-height:1.55;font-weight:400;letter-spacing:0;color:#77716a;white-space:pre-wrap;overflow-wrap:anywhere;word-break:keep-all}
+@media(max-width:360px){.invitation-bottom-sheet--program .invitation-program-card:has(.invitation-program-time) .invitation-program-card-copy{padding-left:8px}}
+
+/* Card-only warm neutral palette: retain the existing editorial timeline unchanged. */
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-kicker{
+  color:#4e4a45;
+  opacity:1;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-ending{
+  color:#4e4a45;
+  opacity:.8;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-step{
+  background:#dcd1c0;
+  border-color:#cbbfac;
+  color:#292725;
+  box-shadow:0 0 0 4px #faf7f2;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-card{
+  background:#eeedeb;
+  border-color:#d9d6d1;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-title{
+  color:#292725;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-description{
+  color:#77716a;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-list>li:not(:last-child)::before{
+  border-left-color:#cbbeac;
+}
+
+/* Optional clipart inside card-style program items; editorial layout is unchanged. */
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-card-icon{
+  display:flex;flex:0 0 38px;align-items:center;justify-content:center;align-self:center;
+  width:38px;min-width:0;color:#292725;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-card-icon svg{
+  display:block;max-width:34px;max-height:34px;width:auto;height:auto;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-card-icon + .invitation-program-card-copy{
+  min-width:0;
+}
+@media(max-width:360px){
+  .invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-card-icon{flex-basis:30px;width:30px}
+  .invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-card-icon svg{max-width:28px;max-height:28px}
+}
+
+/* DearDay white/black soft-elevation buttons: ceremony actions and final publish CTA only. */
+.create-page .dd-program-share-card .dd-program-add-button,
+.create-page .dd-program-share-card .dd-program-add-button:hover,
+.create-page .dd-program-share-card .dd-program-add-button:not(:disabled){background:#fff;color:#222;border:1px solid #b3b3b3;box-shadow:0 6px 14px rgba(0,0,0,.16),0 2px 4px rgba(0,0,0,.07);border-radius:10px}
+.create-page .dd-program-share-card .dd-program-add-button:disabled{background:#fff;color:#222;border:1px solid #b3b3b3;box-shadow:0 4px 10px rgba(0,0,0,.08);border-radius:10px}
+.create-page .dd-editor-final .dd-final-primary{background:#fff;color:#222;border:1px solid #b3b3b3;box-shadow:0 4px 10px rgba(0,0,0,.11),0 1px 2px rgba(0,0,0,.05);gap:8px}
+.create-page .dd-editor-final .dd-final-primary:hover{background:#fafafa}
+.create-page .dd-editor-final .dd-final-primary:focus-visible,
+.create-page .dd-program-share-card .dd-program-add-button:focus-visible{outline:2px solid #555;outline-offset:2px}
+
+/* Venue search buttons only: compact elevated white/black CTA, matching selected editor actions. */
+.create-page .dd-venue-accordion .place-search{align-items:center}
+.create-page .dd-venue-accordion .place-search button,
+.create-page .dd-venue-accordion .place-search button:hover{flex:none;align-self:center;width:auto;min-width:48px;height:36px;padding:0 11px;background:#fff;color:#222;border:1px solid #b3b3b3;border-radius:9px;box-shadow:0 6px 14px rgba(0,0,0,.16),0 2px 4px rgba(0,0,0,.07);font-size:11px;font-weight:700;line-height:1;white-space:nowrap;cursor:pointer}
+.create-page .dd-venue-accordion .place-search button:focus-visible{outline:2px solid #555;outline-offset:2px}

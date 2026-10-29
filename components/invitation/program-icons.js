@@ -1,0 +1,97 @@
+import { PROGRAM_ICON_IDS } from "../../lib/invitation-program";
+
+// A single monochrome hand-drawn vocabulary shared by editor and published invitations.
+// SVG paths are authored locally; no external assets or fonts are required.
+const coloredDetails = {
+ "bouquet":<g stroke="none"><path d="M11 15Q7 4 16 5q8-8 13 0 11-4 12 8 8 8-2 15L25 39 11 27z" fill="#F5DED6" opacity=".85"/></g>,
+ "flower":<g stroke="none"><path d="M24 14Q14-2 11 12q-9 4 3 14 1 14 12 7 13 7 14-7 12-11-2-15Q34-2 24 14z" fill="#F5DAD3" opacity=".8"/></g>,
+ "cake":<g stroke="none"><path d="M9 29h30v12H9zM13 14h22v11H13z" fill="#F3DED2"/><path d="M17 8h14v5H17z" fill="#E4B3A5"/></g>,
+ "champagne":<g stroke="none"><path d="M5 7h17l-2 14-7 5-7-5zM26 7h17l-2 14-7 5-7-5z" fill="#F4DED1" opacity=".8"/></g>,
+ "camera":<g stroke="none"><path d="M5 16h38v26H5z" fill="#EADDD6"/><circle cx="25" cy="28" r="10" fill="#F7EAE4"/><circle cx="25" cy="28" r="5" fill="#DDB6A8"/></g>,
+ "microphone":<g stroke="none"><rect x="18" y="4" width="12" height="25" rx="6" fill="#DDB5A8"/><path d="M21 30h6v7h-6z" fill="#E8D7CB"/></g>,
+ "music":<g stroke="none"><path d="M18 10l21-5v10l-21 5z" fill="#E8C7BB"/><circle cx="11" cy="39" r="5" fill="#F1D5CB"/><circle cx="32" cy="35" r="5" fill="#F1D5CB"/></g>,
+ "book":<g stroke="none"><path d="M3 9q10-5 21 4 10-9 21-4v28q-12-3-21 7-10-10-21-7z" fill="#F4E3DA"/></g>,
+ "balloons":<g stroke="none"><path d="M15 3C2 3 3 21 15 28 27 21 28 3 15 3z" fill="#EEC9C2"/><path d="M34 8C22 8 22 25 34 32 46 25 46 8 34 8z" fill="#F4E2D7"/></g>,
+ "dining":<g stroke="none"><circle cx="24" cy="24" r="14" fill="#F4E7DC"/><circle cx="24" cy="24" r="9" fill="#FFF9F5"/></g>,
+ "coffee":<g stroke="none"><path d="M8 17h28v15q-2 10-14 10T8 32z" fill="#F2DFD5"/><path d="M10 19h24v5H10z" fill="#D7B2A3"/></g>,
+ "crown":<g stroke="none"><path d="m5 16 10 8 9-15 9 15 10-8-5 25H10z" fill="#EBD0BF"/><path d="M17 30l7-6 7 6-7 6z" fill="#C99084"/></g>,
+ "star":<g stroke="none"><path d="m24 4 6 13 14 2-10 10 3 15-13-7-13 7 3-15L4 19l14-2z" fill="#F0D8C7"/></g>,
+ "heart":<g stroke="none"><path d="M24 42 7 25Q-2 10 11 7q9-2 13 8 4-10 13-8 13 3 4 18z" fill="#F1CFCB"/></g>,
+ "ribbon":<g stroke="none"><path d="M24 22Q4 4 6 18q2 13 18 4Q44 4 42 18q-2 13-18 4M24 22l-9 22-5-8-8 1 13-19m9 4 9 22 5-8 8 1-13-19" fill="#F0D1C8"/></g>,
+ "airplane":<g stroke="none"><path d="m3 25 41-18-12 35-9-13-10 7 4-14z" fill="#E9DCD3"/></g>,
+ "church":<g stroke="none"><path d="M8 43V20L24 7l16 13v23z" fill="#F3E2D7"/><path d="M16 43V28h16v15z" fill="#E4C1B1"/></g>,
+ "leaf":<g stroke="none"><path d="M9 42Q1 10 41 5q-1 35-32 37" fill="#DAD2B9"/></g>,
+ "tree":<g stroke="none"><path d="M13 35Q1 31 7 19q-3-13 11-14 8-9 16 0 14 1 10 14 6 12-6 16z" fill="#E7D5C3"/></g>,
+ "clock":<g stroke="none"><circle cx="24" cy="24" r="19" fill="#F4E3D8"/><circle cx="24" cy="24" r="15" fill="#FFF9F5"/></g>,
+ "car":<g stroke="none"><path d="M5 20h38v19H5z" fill="#EADBD3"/><path d="M10 20l6-11h16l6 11z" fill="#F6E8DF"/></g>,
+ "host-script":<g stroke="none"><path d="M11 5h24l4 5v33H11z" fill="#F3E6DC"/><path d="M7 34l5-7 3 3-5 7-5 2z" fill="#D8A99B"/></g>,
+ "officiant":<g stroke="none"><circle cx="24" cy="10" r="5" fill="#E9C7B8"/><path d="M15 22q9-8 18 0l4 9H11z" fill="#E2D2CA"/><path d="M9 31h30v5H9z" fill="#E9C6B6"/></g>,
+ "officiant-book":<g stroke="none"><path d="M6 13q9-4 18 2 9-6 18-2v27q-9-4-18 2-9-6-18-2z" fill="#F3E0D5"/></g>,
+ "groom-entry":<g stroke="none"><circle cx="23" cy="9" r="5" fill="#EBCBBD"/><path d="M17 17h12l6 8-4 3-3-5v19H18V23l-3 5-4-3z" fill="#E5D8D0"/></g>,
+ "bride-entry":<g stroke="none"><circle cx="24" cy="9" r="5" fill="#EAC8BB"/><path d="M18 15q-7 6-8 25 14 7 28 0-1-19-8-25z" fill="#F3DFDA"/></g>,
+ "couple-bow":<g stroke="none"><circle cx="14" cy="10" r="4" fill="#EBCBBE"/><circle cx="34" cy="10" r="4" fill="#EBCBBE"/><path d="M8 18q6-4 12 0l3 13H5z" fill="#E7D9D0"/><path d="M28 18q6-4 12 0l3 13H25z" fill="#F2DCD6"/></g>,
+ "vow-hands":<g stroke="none"><path d="M6 23q7-9 15-2l4 4q5-6 11-3l6 5-10 12q-7 5-14 0L6 30z" fill="#EBC8B9"/><path d="M38 17q-4-6-8 0-4-6-8 0 0 5 8 10 8-5 8-10z" fill="#E5B1AA"/></g>,
+ "declaration":<g stroke="none"><path d="M10 5h25l5 5v33H10z" fill="#F3E4D8"/><path d="M24 9l2 3-2 3-2-3z" fill="#D4A394"/></g>,
+ "parents-greeting":<g stroke="none"><path d="M8 27l10-13 5 4-7 11 8 4 9-13 5 4-9 16q-4 5-10 1L9 35q-4-3-1-8z" fill="#EBCBBF"/></g>,
+ "single-flower":<g stroke="none"><circle cx="24" cy="14" r="8" fill="#F2CFC7"/><path d="M23 22v22" stroke="#9C9980" strokeWidth="2"/></g>,
+ "applause":<g stroke="none"><path d="M8 27l10-13 5 4-7 11 8 4 9-13 5 4-9 16q-4 5-10 1L9 35q-4-3-1-8z" fill="#F0D5C8"/></g>,
+ "procession":<g stroke="none"><path d="M7 38q8-7 17-8 9-1 17-8" stroke="#D5A99A" strokeWidth="5" opacity=".35"/></g>,
+};
+const drawings = {
+ rings:<><g stroke="#684B40" strokeWidth="1.25"><ellipse cx="18" cy="29" rx="10" ry="8" transform="rotate(-22 18 29)" fill="#E6C7B5"/><ellipse cx="18" cy="29" rx="7.2" ry="5.2" transform="rotate(-22 18 29)" fill="#FFF9F5"/><ellipse cx="30" cy="28" rx="10" ry="8" transform="rotate(22 30 28)" fill="#D6AD98"/><ellipse cx="30" cy="28" rx="7.2" ry="5.2" transform="rotate(22 30 28)" fill="#FFF9F5"/><path d="M10 25q7-6 13-3M27 22q7-2 11 4" stroke="#FFF6EF" strokeWidth="1.5"/></g><path d="m15 17 5-8 5 8-5 4z" fill="#F2D9CB" stroke="#684B40" strokeWidth="1.05"/><path d="m17 13 3-4 3 4m-3-4v11" stroke="#B67E6D" strokeWidth=".7"/><g stroke="#B98073" strokeWidth=".85" strokeLinecap="round"><path d="M7 12v5m-2-2h4M37 8v6m-3-3h6M39 37v5m-2-2h4"/><path d="M5 35q4-5 8-2m-4 5q3-4 7-3M36 38q3-4 7-3" /></g><path d="M6 36q5-2 7 3M39 36q-3 2-3 6" stroke="#9A8871" strokeWidth=".75"/></>,
+ dress:<><path d="M19 5q5 5 10 0l4 9-5 7 12 20q-16 6-32 0l12-20-5-7z" fill="#F7E9E4" stroke="#684B40" strokeWidth="1.2"/><path d="M19 5l5 10 5-10M20 18q4 3 8 0M18 23q6 4 12 0M12 34q12 5 24 0M9 40q15 5 30 0" stroke="#B78075" strokeWidth=".85"/><path d="M17 11l-5 8 4 3m15-11 5 8-4 3M24 22v20M18 28l-4 12m16-12 4 12" stroke="#684B40" strokeWidth=".8"/><path d="M21 6q3 4 6 0M20 16l4 3 4-3" stroke="#C79A89" strokeWidth=".7"/><path d="M33 13q4-4 7-2m-4 5q4-3 7 0M35 19q5-2 7 2" stroke="#A18B79" strokeWidth=".75"/><path d="M39 8v5m-2-2h4M7 27v5m-2-2h4" stroke="#C18C7D" strokeWidth=".8"/></>,
+ suit:<><path d="M17 6q7 4 14 0l8 6 4 28-8 2-2-19-1 20H16l-1-20-2 19-8-2 4-28z" fill="#EAE0D9" stroke="#684B40" strokeWidth="1.15"/><path d="M17 6l7 15 7-15-4 1-3 8-3-8z" fill="#FFF9F5" stroke="#684B40" strokeWidth=".9"/><path d="M20 12l4 5 4-5-4-3z" fill="#A87366" stroke="#684B40" strokeWidth=".85"/><path d="M17 6l-5 9 8 10 4-4 4 4 8-10-5-9M24 21v22M16 40l-1-17m18 0-1 17M18 32v9m12-9v9" stroke="#684B40" strokeWidth=".85"/><path d="m12 15 5 2-3 3 6 7m16-12-5 2 3 3-6 7M28 30h4M24 27v.3m0 6v.3m0 6v.3" stroke="#B38475" strokeWidth=".75"/><path d="M31 11q4-3 6 0m-4 2q4-2 6 1" stroke="#A58E7C" strokeWidth=".65"/><path d="M38 6v4m-2-2h4" stroke="#C38C7B" strokeWidth=".8"/></>,
+ bouquet:<><path d="M15 22q6 11 10 20m8-20q-6 11-8 20M10 26q15 8 29 0M17 33q8 5 16 0M20 38l10-3M20 40l10-3"/><g strokeWidth=".95"><path d="M13 16q-7-7-1-12 6-3 9 4 2 6-4 10M30 9q1-10 8-6 7 7-3 13M21 8q-2-9 5-7 7 4 1 11M8 22q-9-3-5-9 5-5 11 2M36 20q7-10 11-3 3 8-9 9M17 24q-5-8 1-11 8-2 8 8M28 22q-1-10 6-10 8 4 1 12"/><circle cx="13" cy="12" r="2.5"/><circle cx="34" cy="10" r="2.5"/><circle cx="24" cy="8" r="2.5"/><circle cx="9" cy="19" r="2.2"/><circle cx="40" cy="21" r="2.2"/><circle cx="21" cy="20" r="2.5"/><circle cx="32" cy="20" r="2.5"/><path d="M15 24q-9 1-10 8 9 1 13-6m15 0q10-2 12 5-8 3-14-3M22 26q-5 5-3 10m8-10q7 4 5 10M11 11l-5-5m31 2 5-5m-19 3V2"/></g></>,
+ flower:<><circle cx="24" cy="18" r="3.3"/><path d="M21 16q-13-10-12 1 2 8 12 4M24 14q-6-17 3-13 8 5 0 14M28 17q15-10 13 1-2 8-13 4M22 22q-13 9-5 14 8 3 9-13M27 22q12 10 4 14-8 2-8-12M24 22v23M24 32q-11-11-15-5 3 9 15 9m0 4q9-13 16-9-2 9-16 11"/><path d="M16 15l3 2m11-2-3 2m-8 11 3-3m8 3-3-3" strokeWidth=".65"/></>,
+ cake:<><path d="M6 39q18 7 36 0M4 42q20 8 40 0M9 40V29q15 6 30 0v11M9 29q-3-4 0-6 14-6 30 0 3 2 0 6-15 7-30 0zM13 23v-9q11 5 22 0v9M13 14q-3-3 0-5 10-5 22 0 3 2 0 5-11 6-22 0z"/><path d="M10 32q3 6 6 0 3 6 6 0 3 6 6 0 3 6 6 0 3 6 5 0M14 17q3 4 5 0 3 4 5 0 3 4 5 0 3 4 5 0M20 9V4m8 5V4M18 4q-2-3 2-4 3 2 0 4m6 0q-2-3 2-4 3 2 0 4M6 45h36"/><path d="M13 36l2 2m4-3 2 2m4-2 2 2m4-2 2 2" strokeWidth=".6"/></>,
+ champagne:<><g transform="rotate(-14 14 21)"><path d="M5 6h17l-2 13q-1 7-7 7t-7-7zM13 26v13M6 40h14M7 14q7 3 13 0M9 17q5 2 9 0"/><path d="M9 7l3-4m4 3 3-3" strokeWidth=".6"/></g><g transform="rotate(14 34 21)"><path d="M26 6h17l-2 13q-1 7-7 7t-7-7zM34 26v13M27 40h14M28 14q7 3 13 0M30 17q5 2 9 0"/><path d="M30 7l3-4m4 3 3-3" strokeWidth=".6"/></g><path d="m21 3 3-3 3 3M24 4v4m-4 0-3 2m14-2 3 2M23 45l1-2 1 2" strokeWidth=".8"/></>,
+ camera:<><path d="M4 16h8l4-6h15l4 6h9v26H4zM7 16v-4h5M9 13h4M16 10l2-3h12l2 3M8 21h6M36 21h5M7 39h34M6 43h36"/><circle cx="25" cy="28" r="11"/><circle cx="25" cy="28" r="8"/><circle cx="25" cy="28" r="5"/><path d="M19 23q7-5 12 1M21 33q6 4 10-2M25 17v3m0 16v3m-11-11h3m16 0h3M38 12h4M7 18v2" strokeWidth=".75"/></>,
+ microphone:<><rect x="18" y="4" width="12" height="25" rx="6"/><path d="M14 20q0 17 10 17t10-17M24 37v7m-9 0h18M19 11h10m-10 5h10m-10 5h10M21 6q3-2 6 0" strokeWidth=".95"/><path d="M17 30q-4-3-4-9m22 0q0 6-4 9" strokeWidth=".65"/><path d="M20 9h8M20 14h8M20 19h8M20 24h8M15 43l-2 2m20-2 2 2M10 16l-3-2m31 0 3-2" strokeWidth=".55"/></>,
+ music:<><path d="M18 34V10l21-5v25M18 15l21-5M18 34q-8-5-12 2-3 8 6 8 6-1 6-10M39 30q-8-5-12 2-3 8 6 8 6-1 6-10"/><path d="M22 17v12m4-13v10M31 14v11" strokeWidth=".55"/><path d="M22 7l17-4M23 19l2-2m7-2 2-2M4 12q3-3 6 0t6 0M4 16q3-3 6 0t6 0M33 42l2 3m4-6 3 2" strokeWidth=".65"/></>,
+ book:<><path d="M22 11Q12 3 3 9L2 36q12-4 22 8 9-12 22-8L45 9q-9-6-19 2l-2 33M22 11l2 33M4 37q11-3 20 7m21-7q-12-3-21 7"/><path d="M7 15q7-2 12 3M7 20q7-2 12 3M7 25q7-2 12 3M7 30q7-2 12 3m10-15q5-4 12-3m-12 8q5-4 12-3m-12 8q5-4 12-3" strokeWidth=".65"/><path d="M30 34 42 7l3-5 2 2-2 5-12 27-5 5zM42 7l3 2M30 34l3 2M28 41l2-7" strokeWidth="1"/><path d="M40 11l3 2" strokeWidth=".65"/><path d="M9 12q5-1 9 2m13-1q5-3 9-2M8 34q7-1 12 5m10 0q5-6 12-5M37 15l3 2M36 20l3 2" strokeWidth=".55"/></>,
+ gift:<><rect x="8" y="20" width="32" height="22" rx="1.5" fill="#F5E7DF" stroke="#684B40" strokeWidth="1.2"/><rect x="5" y="14" width="38" height="7" rx="1.5" fill="#F1D8CC" stroke="#684B40" strokeWidth="1.2"/><path d="M21 14h6v28h-6z" fill="#DDAE9D" stroke="#684B40" strokeWidth=".9"/><path d="M24 14Q6 15 11 6q5-8 13 8 8-16 13-8 5 9-13 8z" fill="#F5D8CB" stroke="#684B40" strokeWidth="1.1"/><path d="M24 14q-4-5-8-7m8 7q4-5 8-7M9 26h10m10 0h10M11 39h8m10 0h8" stroke="#B98070" strokeWidth=".75"/><path d="M4 7v5M2 9.5h4M42 29v6m-3-3h6M38 5v4m-2-2h4" stroke="#B98070" strokeWidth=".85"/><path d="M7 35q4-3 8-1m26-24q-4-3-7 0" stroke="#9B967C" strokeWidth=".75"/></>,
+ balloons:<><path d="M15 3C2 3 3 21 15 28 27 21 28 3 15 3zM34 8C22 8 22 25 34 32 46 25 46 8 34 8zM12 28l3 4 3-4m13 4 3 4 3-4M15 32q-8 9 9 12 12 0 10-8"/><path d="M10 9q-4 5-2 10m22-5q-3 5-2 10" strokeWidth=".7"/><path d="M13 7q-5 4-4 11m24-5q-4 4-4 10M15 33q-2 5 1 8m18-4q-3 5-1 8M7 4l2-3m34 7 3-2M23 3l2-2m-1 19 3 2" strokeWidth=".6"/></>,
+ dining:<><circle cx="24" cy="24" r="14"/><circle cx="24" cy="24" r="10"/><circle cx="24" cy="24" r="7" strokeWidth=".65"/><path d="M5 7v34M2 7v12q3 3 6 0V7M43 7v34M43 7q-8 9 0 18M8 44h32"/><path d="M18 14q6-3 12 0" strokeWidth=".65"/><path d="M16 17q8-5 16 0M15 30q9 7 18 0M12 24h2m20 0h2M5 11H2m6 0H5M39 39h7M3 44h7" strokeWidth=".6"/></>,
+ coffee:<><path d="M8 17h28v14q-1 11-14 11T8 31zM36 20q11-2 10 7-1 7-10 7M5 44h37M10 36q12 7 24 0"/><path d="M16 4q-7 6 0 11m9-12q-7 6 0 12m8-11q-6 6 0 11" strokeWidth=".85"/><path d="M12 20h20M13 24h18M12 32q2 5 8 6M37 24q6-1 6 3t-6 4M12 45h22M4 8l-2-2m39 4 3-2" strokeWidth=".65"/></>,
+ crown:<><path d="m5 16 10 8 9-15 9 15 10-8-5 25H10zM10 35h28M12 39h24"/><circle cx="5" cy="14" r="2"/><circle cx="24" cy="7" r="2"/><circle cx="43" cy="14" r="2"/><path d="M17 30l7-6 7 6-7 6zM14 27l-3-4m26 0-3 4" strokeWidth=".75"/><path d="M11 29l5 3 8-7 8 7 5-3M14 36h20M17 18l-2-5m18 5 2-5M21 14l3-4 3 4M19 39v3m10-3v3" strokeWidth=".65"/></>,
+ star:<><path d="m24 4 6 13 14 2-10 10 3 15-13-7-13 7 3-15L4 19l14-2z"/><path d="m24 11 4 9 9 1-7 7 2 9-8-4-8 4 2-9-7-7 9-1z" strokeWidth=".7"/></>,
+ heart:<><path d="M24 42 7 25Q-2 10 11 7q9-2 13 8 4-10 13-8 13 3 4 18z"/><path d="M24 37 11 24Q4 13 12 12q7-1 12 10 5-11 12-10 8 1 1 12z" strokeWidth=".65"/></>,
+ ribbon:<><path d="M24 22Q4 4 6 18q2 13 18 4Q44 4 42 18q-2 13-18 4M24 22l-9 22-5-8-8 1 13-19m9 4 9 22 5-8 8 1-13-19"/><path d="M24 22q-9-8-13-6 1 7 13 6m0 0q9-8 13-6-1 7-13 6M16 30l-4 8m20-8 4 8" strokeWidth=".7"/></>,
+ airplane:<><path d="m3 25 41-18-12 35-9-13-10 7 4-14zM17 22 44 7M23 29l-1 11"/><path d="m6 12 4-2m-5 8 3-1m30 25 4 2" strokeWidth=".7"/></>,
+ church:<><path d="M8 43V20L24 7l16 13v23M5 43h38M16 43V28h16v15M24 7V1m-4 3h8M8 23h32M12 25v14m24-14v14"/><path d="M21 16h6v7h-6zM20 32q4-4 8 0" strokeWidth=".75"/></>,
+ leaf:<><path d="M9 42Q1 10 41 5q-1 35-32 37M9 42Q23 19 41 5M18 29l-2-12m9 5 12 1M14 35l-8-3m24-17 3 8" strokeWidth=".95"/></>,
+ tree:<><path d="M24 45V23M13 35Q1 31 7 19q-3-13 11-14 8-9 16 0 14 1 10 14 6 12-6 16zM24 31 13 21m11 6 10-11M24 37l-7-6m7 2 8-7"/><path d="M12 13q5-5 10-3m9-1q7 2 7 8M12 29q-4-3-3-8" strokeWidth=".7"/></>,
+ clock:<><circle cx="24" cy="24" r="19"/><circle cx="24" cy="24" r="16.5" strokeWidth=".7"/><path d="M24 12v12l9 6M24 3v4m0 34v4M3 24h4m34 0h4M12 12l2 2m20-2-2 2M12 36l2-2m20 2-2-2" strokeWidth=".9"/><circle cx="24" cy="24" r="1.6"/></>,
+ car:<><path d="M5 20h38v19H5zM10 20l6-11h16l6 11M9 39v5h8v-5m14 0v5h8v-5M8 28h8m16 0h8M18 20h12M9 34h30"/><path d="M13 17l4-6h14l4 6M6 24l-3-3m39 3 3-3M20 31h8" strokeWidth=".7"/></>,
+ "host-script":<><path d="M11 5h24l4 5v33H11zM35 5v6h4M16 16h17M16 22h17M16 28h13M16 34h15"/><path d="m7 34 5-7 3 3-5 7-5 2zM9 36l2 2" strokeWidth=".75"/></>,
+ "officiant":<><circle cx="24" cy="10" r="5"/><path d="M15 22q9-8 18 0l4 9H11zM9 31h30v5H9zM13 36v9m22-9v9M19 25l5 3 5-3M24 20v8"/><path d="M18 8q6-7 12 0M12 42h24" strokeWidth=".7"/></>,
+ "officiant-book":<><path d="M6 13q9-4 18 2 9-6 18-2v27q-9-4-18 2-9-6-18-2zM24 15v27M11 20q5-1 9 1m-9 5q5-1 9 1m8-6q5-2 9-1m-9 7q5-2 9-1"/><path d="m34 5 4 4m-4 0 4-4M8 7l3 3m0-3-3 3" strokeWidth=".7"/></>,
+ "groom-entry":<><circle cx="23" cy="9" r="5"/><path d="M17 17h12l6 8-4 3-3-5v19H18V23l-3 5-4-3zM21 17l2 7 3-7M23 24v18M17 42h12M13 33l-5 5m30-5 5 5" /><path d="m9 12-4-2m34 2 4-2" strokeWidth=".7"/></>,
+ "bride-entry":<><circle cx="24" cy="9" r="5"/><path d="M18 15q-7 6-8 25 14 7 28 0-1-19-8-25M18 15q6 6 12 0M17 21q7 5 14 0M10 40q14 5 28 0M15 25l-5 8m23-8 5 8"/><path d="M17 7q7-10 14 0M20 17q4 4 8 0M24 27v15" strokeWidth=".7"/></>,
+ "couple-bow":<><circle cx="14" cy="10" r="4"/><circle cx="34" cy="10" r="4"/><path d="M8 18q6-4 12 0l3 13H5zM28 18q6-4 12 0l3 13H25zM10 31v11h9V31m10 0v11h9V31M18 22q6 9 12 0M20 27l4 4 4-4"/><path d="M12 6q3-3 6 0m12 0q3-3 6 0" strokeWidth=".7"/></>,
+ "vow-hands":<><path d="M6 23q7-9 15-2l4 4q5-6 11-3l6 5-10 12q-7 5-14 0L6 30zM12 25l11 9m-5-12 11 10m-5-11 10 8M10 34l8 7M38 17q-4-6-8 0-4-6-8 0 0 5 8 10 8-5 8-10z"/><path d="m5 14 5 2m34-2-5 2" strokeWidth=".7"/></>,
+ "declaration":<><path d="M10 5h25l5 5v33H10zM35 5v6h5M16 18h18M16 23h18M16 28h15M16 34h12"/><path d="M24 9l2 3-2 3-2-3zM6 39l5-7m-5 0 5 7" strokeWidth=".75"/></>,
+ "parents-greeting":<><circle cx="15" cy="10" r="4"/><circle cx="33" cy="10" r="4"/><path d="M8 18q7-5 14 0l2 11-5 2-2-7v18H9V24l-2 7-4-2zM26 18q7-5 14 0l5 11-5 2-3-7v18h-8V24l-2 7-4-2zM17 28l7 5 7-5M19 42h-9m28 0h-9"/><path d="m23 5 1-3 1 3" strokeWidth=".7"/></>,
+ "single-flower":<><path d="M24 44V21M24 30q-11-4-14 5 10 5 14-5m0-4q11-6 15 2-8 7-15-2"/><path d="M24 22q-10-6-7-13 5-8 11-2 7-5 10 3 2 8-14 12zM24 22q-2-10 0-16M15 16q7-3 9 6m8-7q-6-1-8 7" /><circle cx="24" cy="12" r="2"/></>,
+ "applause":<><path d="M8 27l10-13 5 4-7 11 8 4 9-13 5 4-9 16q-4 5-10 1L9 35q-4-3-1-8zM18 14l-3-6m8 10 3-7M33 20l3-8m2 12 5-4"/><path d="m5 12 4 2m34 19-4 2M23 4v4" strokeWidth=".75"/></>,
+ "procession":<><path d="M7 38q8-7 17-8 9-1 17-8M33 20l8 2-2 8M7 43h35"/><path d="m9 14 3-6 3 6-3 6zM28 6l2-4 2 4-2 4zM36 37l2-5 2 5-2 5zM21 22l2-4 2 4-2 4z"/><path d="m4 25 5-2m33-9 3-3M18 7l-2-3" strokeWidth=".7"/></>
+};
+export const PROGRAM_ICON_CATEGORIES = [
+ {id:"all",label:"전체"}, {id:"wedding",label:"웨딩"}, {id:"celebration",label:"축하"},
+ {id:"general",label:"일반"}, {id:"dining",label:"식사"}, {id:"other",label:"기타"}
+];
+const groups = {wedding:["rings","dress","suit","bouquet","flower","book","church","microphone","music","host-script","officiant","officiant-book","groom-entry","bride-entry","couple-bow","vow-hands","declaration","parents-greeting","single-flower","applause","procession"],celebration:["cake","champagne","gift","balloons","crown","star","heart","ribbon"],general:["camera","microphone","music","clock","car","airplane"],dining:["dining","coffee"],other:["leaf","tree"]};
+const names = ["반지","드레스","턱시도","부케","꽃","케이크","샴페인","카메라","마이크","음악","책/서약","선물","풍선","식기","커피","왕관","별","하트","리본","비행기","집/건물","나뭇잎","나무","시계","자동차","사회자 대본","사회자","주례사","신랑 입장","신부 입장","신랑신부 맞절","혼인서약","성혼선언","부모님 인사","꽃 한 송이","박수","행진"];
+export const PROGRAM_ICONS = PROGRAM_ICON_IDS.map((id,i)=>({id,label:names[i],category:Object.keys(groups).find(group=>groups[group].includes(id))||"other"}));
+export default function ProgramIcon({id,size=42,className=""}) {
+ if(!drawings[id]) return null;
+ if (PROGRAM_ICON_IDS.includes(id)) {
+  return <img className={className} src={`/program-clipart/${id}.svg`} width={size} height={size} alt="" aria-hidden="true" draggable={false} style={{display:"block",objectFit:"contain",flexShrink:0}} />;
+ }
+ const colored = new Set(["rings", "dress", "suit", "gift"]).has(id);
+ return <svg className={className} width={size} height={size} viewBox="0 0 48 48" fill="none" stroke="#654B42" strokeWidth="1.15" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+  {!colored && <g aria-hidden="true" stroke="#C49B8B" strokeWidth=".85" opacity=".8"><path d="M4 9v4m-2-2h4M43 34v4m-2-2h4" /><path d="M6 39q3-3 6 0M36 7q3-3 6 0" strokeWidth=".65"/></g>}
+  {coloredDetails[id]}
+  {drawings[id]}
+ </svg>;
+}
