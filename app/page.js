@@ -14,6 +14,9 @@ export default function Home() {
   const heroButtonsRef = useRef(null);
   const [showQuickButtons, setShowQuickButtons] = useState(false);
   const [heroVariant, setHeroVariant] = useState("c");
+  const heroVideoRef = useRef(null);
+  const [heroVideoIndex, setHeroVideoIndex] = useState(0);
+  const [heroExtraVideoAvailable, setHeroExtraVideoAvailable] = useState(true);
   const [authOpen, setAuthOpen] = useState(false);
   const [authMessage, setAuthMessage] = useState("");
   const [authLoading, setAuthLoading] = useState("");
@@ -65,6 +68,25 @@ export default function Home() {
     };
   }, []);
 
+  const heroVideos = ["/landing/dearday-seaside-hero.mp4", "/landing/dearday-seaside-extra.mp4"];
+  const advanceHeroVideo = () => {
+    if (!heroExtraVideoAvailable) return;
+    setHeroVideoIndex((current) => (current + 1) % heroVideos.length);
+  };
+  const handleHeroVideoError = () => {
+    if (heroVideoIndex === 1) {
+      setHeroExtraVideoAvailable(false);
+      setHeroVideoIndex(0);
+    }
+  };
+  useEffect(() => {
+    const video = heroVideoRef.current;
+    if (!video) return;
+    video.load();
+    const attempt = video.play();
+    if (attempt && typeof attempt.catch === "function") attempt.catch(() => {});
+  }, [heroVideoIndex]);
+
   const switchHero = (variant) => {
     setHeroVariant(variant);
     const url = new URL(window.location.href);
@@ -97,8 +119,8 @@ export default function Home() {
     <section className={`landing-hero dd-cinematic-hero dd-hero-variant-${heroVariant}`} id="top">
       <div className="dd-paper-scene" aria-hidden="true"><span className="dd-paper-sheet dd-paper-sheet-left" /><span className="dd-paper-sheet dd-paper-sheet-right" /><span className="dd-leaf-shadow dd-leaf-shadow-top" /><span className="dd-leaf-shadow dd-leaf-shadow-bottom" /></div>
       <div className="dd-hero-media">
-      <video className="dd-hero-video" autoPlay muted loop playsInline preload="metadata" aria-hidden="true">
-        <source src="/landing/dearday-seaside-hero.mp4" type="video/mp4" />
+      <video ref={heroVideoRef} className="dd-hero-video" autoPlay muted loop={!heroExtraVideoAvailable} playsInline preload="metadata" aria-hidden="true" onEnded={advanceHeroVideo} onError={handleHeroVideoError}>
+        <source src={heroVideos[heroVideoIndex]} type="video/mp4" />
       </video>
       <div className="dd-hero-shade" aria-hidden="true" />
       </div>
