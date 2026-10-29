@@ -40,6 +40,7 @@ export default function ProgramEditor({ value, eventKind, onChange }) {
           <div className={`dd-program-editor-item-fields${program.displayMode === "time" ? " dd-program-editor-item-fields--time" : ""}`}>
             <div className="dd-program-item-heading"><span>항목 {index + 1} 제목</span><button type="button" className="dd-program-delete-button" aria-label={`항목 ${index + 1} 삭제`} onClick={() => patch({ items: program.items.filter(row => row.id !== item.id) })}>삭제</button></div>
             <label className="form-field"><textarea className="dd-program-title-autosize" rows={1} style={{resize:"none",overflow:"hidden",minHeight:0}} value={item.title} maxLength={PROGRAM_LIMITS.itemTitle} onInput={event => resizeTitle(event.currentTarget)} onChange={event => updateItem(item.id, { title: event.target.value })} aria-label={`항목 ${index+1} 제목`} /></label>
+            <label className="form-field"><span>항목 {index + 1} 설명 (선택)</span><textarea rows={2} value={item.description || ""} maxLength={PROGRAM_LIMITS.itemDescription} placeholder="제목 아래에 표시할 설명을 입력해 주세요." onChange={event => updateItem(item.id, { description: event.target.value })} aria-label={`항목 ${index+1} 설명`} style={{resize:"vertical"}} /></label>
             {program.displayMode === "time" && <label className="form-field"><span>항목 {index + 1} 시간</span><input type="time" value={item.time} onChange={event => updateItem(item.id, { time: event.target.value })} /></label>}
           </div>
         </div>)}
