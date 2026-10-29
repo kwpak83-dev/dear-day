@@ -10,7 +10,7 @@ export default function InvitationProgram({ program, eventKind }) {
     <p className="invitation-program-editorial-kicker">{kicker}</p>
     <ol className="invitation-program-editorial-list" aria-label={display.title}>
       {display.items.map((item, index) => <li key={item.id} className={index % 2 ? "is-left" : "is-right"}>
-        <span className="invitation-program-editorial-center" aria-hidden="true">{item.iconId ? <ProgramIcon id={item.iconId} size={46} /> : <span className="invitation-program-editorial-dot" />}</span>
+        <span className="invitation-program-editorial-center" aria-hidden="true">{item.iconId ? <ProgramIcon id={item.iconId} size={50} /> : <span className="invitation-program-editorial-dot" />}</span>
         <span className="invitation-program-editorial-copy">
           {display.displayMode === "time" && item.time ? <time dateTime={item.time}>{item.time}</time> : display.displayMode === "number" ? <span className="invitation-program-editorial-index">{String(index+1).padStart(2,"0")}</span> : null}
           <span className="invitation-program-editorial-title">{item.title}</span>
