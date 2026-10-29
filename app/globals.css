@@ -3895,3 +3895,28 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-program-preview-content .invitation-program-editorial-list>li{display:grid;grid-template-columns:minmax(0,1fr) 66px minmax(0,1fr);align-items:center;position:relative;min-height:100px;padding:8px 0;gap:0}
 .dd-program-preview-content .invitation-program-editorial-title{font-size:14px;line-height:1.45;font-weight:400;white-space:pre-wrap;overflow-wrap:anywhere;color:#302f2c}
 @media(max-width:360px){.dd-program-preview-content .invitation-program--editorial{padding-left:5px;padding-right:5px}.dd-program-preview-content .invitation-program-editorial-list>li{grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr);min-height:86px}.dd-program-preview-content .invitation-program-editorial-center svg{width:40px}.dd-program-preview-content .invitation-program-editorial-title{font-size:12px}}
+
+/* Shared card-style wedding program palette across published and preview renderers.
+   Scoped to non-editorial programs to preserve the emotional timeline design. */
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial){
+  --dd-program-accent:#8d8070;
+  --dd-program-surface:#f8f5ee;
+  --dd-program-text:#282623;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-step{
+  background:#e8e0d2;
+  border-color:#c9bcaa;
+  color:#252321;
+  box-shadow:0 0 0 4px #f8f5ee;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-card{
+  background:#f5f0e7;
+  border-color:#e1d7c9;
+  box-shadow:0 3px 12px rgba(50,42,32,.035);
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-title{
+  color:#282623;
+}
+.invitation-bottom-sheet--program .invitation-program:not(.invitation-program--editorial) .invitation-program-list>li:not(:last-child)::before{
+  border-left-color:#d4c8b8;
+}
