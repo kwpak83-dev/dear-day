@@ -49,5 +49,5 @@ export default function AccountCopy({ invitation, eventKind, eventTypeConfig, pr
   if (!groomSide.length && !brideSide.length) return null;
   const Side=({title,rows})=>Array.isArray(rows)&&rows.length?<details className="public-account-side" open={previewExpanded || undefined}><summary>{title}<span aria-hidden="true">⌄</span></summary>{rows.map(([side,bank,holder,account])=><AccountCard key={side} side={side} bank={bank} holder={holder||"예금주"} account={account}/>)}</details>:null;
   const rowsByGroup = { groom: groomSide, bride: brideSide };
-  return <section className="public-accounts"><h2>{accountConfig.sectionLabel}</h2>{accountConfig.groups.map((group) => <Side key={group.key} title={group.renderLabel} rows={rowsByGroup[group.key]}/>)}</section>;
+  return <section className="public-accounts"><h2>{accountConfig.sectionLabel}</h2><p style={{ textAlign: "center", whiteSpace: "pre-line", margin: "12px 0 24px", lineHeight: 1.8 }}>{"멀리서도 축복의 마음을 전해주시는\n모든 분들께 깊이 감사드립니다."}</p>{accountConfig.groups.map((group) => <Side key={group.key} title={group.renderLabel} rows={rowsByGroup[group.key]}/>)}</section>;
 }
