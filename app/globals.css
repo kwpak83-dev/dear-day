@@ -3607,7 +3607,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Mobile venue form: smaller placeholder text without shrinking entered values. */
 @media (max-width: 600px) {
-  .create-page .dd-venue-accordion input::placeholder { font-size: 12px; }
+  .create-page .dd-venue-accordion input::placeholder { font-size: 10px; }
   .create-page .dd-venue-accordion .place-search button { padding-inline: 10px; }
 }
 
