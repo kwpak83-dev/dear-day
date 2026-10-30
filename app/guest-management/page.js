@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import MyPageLayout from "../../components/my-page-layout";
 
@@ -24,37 +24,44 @@ export default function GuestManagement() {
   const [downloadNotice, setDownloadNotice] = useState("");
   const [guestbookEntries, setGuestbookEntries] = useState([]);
   const [guestbookNotice, setGuestbookNotice] = useState("");
+  const rsvpRequestId = useRef(0);
+  const guestbookRequestId = useRef(0);
 
   const load = useCallback(async (slug = "", nextFilter = "all") => {
+    const requestId = ++rsvpRequestId.current;
     setNotice("하객 정보를 불러오는 중이에요.");
     const supabase = getSupabaseBrowserClient();
     const { data: { session } } = await supabase.auth.getSession();
+    if (requestId !== rsvpRequestId.current) return;
     if (!session) { setLoginRequired(true); return setNotice("로그인이 만료되었어요. 다시 로그인해 주세요."); }
     const query = new URLSearchParams({ filter: nextFilter });
     if (slug) query.set("slug", slug);
     const response = await fetch(`/api/rsvps/manage?${query}`, { headers: { Authorization: `Bearer ${session.access_token}` } });
     const result = await response.json().catch(() => ({}));
+    if (requestId !== rsvpRequestId.current) return;
     if (!response.ok) { if (response.status === 401) setLoginRequired(true); return setNotice(result.error || "하객 정보를 불러오지 못했어요."); }
     setEvents(result.events || []); setSelectedSlug(result.selectedSlug || ""); setSummary(result.summary || emptySummary); setRsvps(result.rsvps || []); setFilteredCount(result.filteredCount || 0); setNotice(result.events?.length ? "" : "관리할 수 있는 발행 초대장이 아직 없어요.");
   }, []);
-  useEffect(() => { load(new URLSearchParams(window.location.search).get("slug") || ""); }, [load]);
+  useEffect(() => { load(new URLSearchParams(window.location.search).get("slug") || ""); return () => { rsvpRequestId.current += 1; }; }, [load]);
   const chooseEvent = (slug) => { setExpandedRsvpIds([]); setSelectedSlug(slug); setFilter("all"); load(slug, "all"); };
   const chooseFilter = (value) => { setExpandedRsvpIds([]); setFilter(value); load(selectedSlug, value); };
   const selectedEvent = events.find((event) => event.slug === selectedSlug);
   const attendanceRate = summary.total ? Math.round((summary.attending / summary.total) * 100) : 0;
   const toggleRsvp = (id) => setExpandedRsvpIds((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
   const loadGuestbook = useCallback(async (slug) => {
-    if (!slug) return;
+    const requestId = ++guestbookRequestId.current;
+    if (!slug) { setGuestbookEntries([]); setGuestbookNotice(""); return; }
     const supabase = getSupabaseBrowserClient();
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
+    if (requestId !== guestbookRequestId.current || !session) return;
     const response = await fetch(`/api/guestbook/manage?slug=${encodeURIComponent(slug)}`, { headers: { Authorization: `Bearer ${session.access_token}` } });
     const result = await response.json().catch(() => ({}));
+    if (requestId !== guestbookRequestId.current) return;
     if (!response.ok) return setGuestbookNotice(result.error || "방명록을 불러오지 못했어요.");
     setGuestbookEntries(result.entries || []);
     setGuestbookNotice(result.guestbookEnabled ? "" : "방명록이 OFF 상태예요. 기존 글은 계속 관리할 수 있어요.");
   }, []);
-  useEffect(() => { loadGuestbook(selectedSlug); }, [selectedSlug, loadGuestbook]);
+  useEffect(() => { loadGuestbook(selectedSlug); return () => { guestbookRequestId.current += 1; }; }, [selectedSlug, loadGuestbook]);
   const deleteGuestbookEntry = async (entry) => {
     if (!window.confirm(`${entry.authorName}님의 방명록을 삭제할까요?`)) return;
     const supabase = getSupabaseBrowserClient();
