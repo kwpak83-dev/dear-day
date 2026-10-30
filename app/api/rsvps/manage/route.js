@@ -31,24 +31,41 @@ export async function GET(request) {
     kind: event.kind,
     startsAt: event.starts_at,
     rsvpEnabled: event.settings?.rsvpEnabled === true,
+    mealEnabled: event.settings?.rsvpOptions?.mealEnabled === true,
+    busEnabled: event.settings?.rsvpOptions?.shuttleBusEnabled === true,
   }));
-  if (!events.length) return json({ events: [], selectedSlug: "", summary: { total: 0, attending: 0, notAttending: 0, partySize: 0 }, rsvps: [], filteredCount: 0 });
+  if (!events.length) return json({ events: [], selectedSlug: "", summary: { total: 0, attending: 0, notAttending: 0, partySize: 0, groomCount: 0, brideCount: 0, unclassifiedCount: 0, mealCount: 0, busCount: 0, mealUnknown: 0, busUnknown: 0 }, rsvps: [], filteredCount: 0 });
 
   const selectedSlug = requestedSlug || events[0].slug;
   const selectedEvent = (ownedEvents || []).find((event) => event.slug === selectedSlug);
   if (!selectedEvent) return json({ error: "관리할 수 있는 초대장을 찾지 못했어요." }, 404);
 
-  const { data: rows, error: rsvpError } = await supabase.from("rsvps")
-    .select("id,guest_name,status,party_size,phone,message,created_at,updated_at").eq("event_id", selectedEvent.id)
-    .order("updated_at", { ascending: false }).order("created_at", { ascending: false });
-  if (rsvpError) return json({ error: "참석 여부 목록을 불러오지 못했어요." }, 500);
-  const allRows = rows || [];
+  // Fetch all pages so summary totals are not truncated by the Supabase row limit.
+  const allRows = [];
+  const pageSize = 500;
+  for (let offset = 0; ; offset += pageSize) {
+    const { data: rows, error: rsvpError } = await supabase.from("rsvps")
+      .select("id,guest_name,status,party_size,phone,message,guest_side,meal_attending,bus_riding,created_at,updated_at")
+      .eq("event_id", selectedEvent.id)
+      .order("updated_at", { ascending: false }).order("created_at", { ascending: false }).order("id", { ascending: false })
+      .range(offset, offset + pageSize - 1);
+    if (rsvpError) return json({ error: "참석 여부 목록을 불러오지 못했어요." }, 500);
+    allRows.push(...(rows || []));
+    if (!rows || rows.length < pageSize) break;
+  }
   const visibleRows = filter === "all" ? allRows : allRows.filter((row) => row.status === filter);
   const summary = {
     total: allRows.length,
     attending: allRows.filter((row) => row.status === "attending").length,
     notAttending: allRows.filter((row) => row.status === "not_attending").length,
     partySize: allRows.filter((row) => row.status === "attending").reduce((sum, row) => sum + (Number(row.party_size) || 0), 0),
+    groomCount: allRows.filter((row) => row.status === "attending" && row.guest_side === "groom").reduce((sum, row) => sum + (Number(row.party_size) || 0), 0),
+    brideCount: allRows.filter((row) => row.status === "attending" && row.guest_side === "bride").reduce((sum, row) => sum + (Number(row.party_size) || 0), 0),
+    unclassifiedCount: allRows.filter((row) => row.status === "attending" && !["groom", "bride"].includes(row.guest_side)).reduce((sum, row) => sum + (Number(row.party_size) || 0), 0),
+    mealCount: allRows.filter((row) => row.status === "attending" && row.meal_attending === true).reduce((sum, row) => sum + (Number(row.party_size) || 0), 0),
+    busCount: allRows.filter((row) => row.status === "attending" && row.bus_riding === true).reduce((sum, row) => sum + (Number(row.party_size) || 0), 0),
+    mealUnknown: allRows.filter((row) => row.status === "attending" && row.meal_attending == null).reduce((sum, row) => sum + (Number(row.party_size) || 0), 0),
+    busUnknown: allRows.filter((row) => row.status === "attending" && row.bus_riding == null).reduce((sum, row) => sum + (Number(row.party_size) || 0), 0),
   };
-  return json({ events, selectedSlug, summary, filteredCount: visibleRows.length, rsvps: visibleRows.map((row) => ({ id: row.id, guestName: row.guest_name, status: row.status, partySize: row.party_size, phone: row.phone || "", message: row.message || "", createdAt: row.created_at, updatedAt: row.updated_at || row.created_at })) });
+  return json({ events, selectedSlug, summary, filteredCount: visibleRows.length, rsvps: visibleRows.map((row) => ({ id: row.id, guestName: row.guest_name, status: row.status, partySize: row.party_size, guestSide: row.guest_side, mealAttending: row.meal_attending, busRiding: row.bus_riding, phone: row.phone || "", message: row.message || "", createdAt: row.created_at, updatedAt: row.updated_at || row.created_at })) });
 }
