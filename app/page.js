@@ -159,17 +159,12 @@ export default function Home() {
           <p>소중한 날을 더 아름답고 편리하게 만드는 DearDay의 핵심 기능을 만나보세요.</p>
         </header>
         {[
-          ["01", "THEMED DESIGN", "표지부터 본문까지, 하나의 디자인으로.", "배경색만 바꾸는 대신 표지와 본문이 자연스럽게 이어지는 테마형 디자인으로 완성도를 높였어요.", "theme"],
-          ["02", "MIX & MATCH", "좋아하는 디자인만 골라, 나답게.", "표지와 본문을 취향에 맞게 조합하고, 사진과 문구를 직접 꾸며 나만의 초대장을 만들어보세요.", "mix"],
-          ["03", "EVENT PROGRAM", "초대장 하나로, 행사 안내까지.", "별도의 식순지 없이 결혼식과 돌잔치, 각종 모임과 행사의 순서를 초대장 안에서 안내할 수 있어요.", "program"],
-          ["04", "ALL OCCASIONS", "특별한 날이라면, 어떤 순간이든.", "결혼식부터 돌잔치, 생일, 환갑·칠순·팔순, 모임·행사, 개업까지 상황에 맞는 초대장을 준비했어요.", "occasions"],
-          ["05", "RSVP & GUESTBOOK", "참석 확인부터 축하 메시지까지, 한눈에.", "참석 여부와 인원을 확인하고 소중한 사람들이 남긴 축하 메시지를 한곳에서 관리하세요.", "rsvp"],
-          ["06", "PERSONAL INTRO", "초대의 첫 순간부터, 특별하게.", "초대장을 여는 순간의 인트로 문구도 원하는 분위기와 이야기로 자유롭게 꾸며보세요.", "intro"],
-          ["07", "FREE PREVIEW", "결제는 나중에, 완성은 먼저.", "먼저 사진과 문구, 디자인을 넣어 완성된 초대장을 미리 확인하고 마음에 들 때 발행하세요.", "preview"],
-          ["08", "EASY EDITING", "발행한 뒤에도, 수정은 자유롭게.", "날짜나 장소를 잘못 입력해도 걱정하지 마세요. 행사 시작 전까지 내용과 디자인을 수정할 수 있어요.", "edit"],
-          ["09", "DESIGN FREEDOM", "디자인을 바꿀 때마다, 결제하지 마세요.", "디자인 선택을 서두를 필요 없어요. 초대장 발행 전후로 다양한 스타일을 추가 디자인 비용 없이 변경해보세요.", "styles"],
-          ["10", "MADE WITH PURPOSE", "꼭 필요한 기능만, 더 편리하게.", "다양한 초대장의 사용 경험을 살펴보며 복잡함은 줄이고 초대에 필요한 기능을 담기 위해 고민했어요.", "purpose"],
-          ["11", "LIVE HERO EDITING", "작은 모바일 화면에서도, 보면서 바로 편집.", "문구를 고치고 전체 미리보기를 반복할 필요 없이, HERO 사진을 보면서 글자와 위치를 실시간으로 조절할 수 있어요.", "livehero"]
+          ["01", "THEMED DESIGN", "표지부터 본문까지, 하나의 이야기처럼.", "단순한 단색 배경을 넘어 표지와 본문이 자연스럽게 이어지는 테마형 디자인. 초대장의 첫 장면부터 마지막까지 하나의 분위기로 완성해요.", "theme"],
+          ["02", "EVENT PROGRAM", "특별한 날의 순서도, 아름답게.", "결혼식의 입장과 축가부터 돌잔치, 칠순, 모임과 행사 일정까지. 클립아트와 감성적인 타임라인으로 소중한 순간의 흐름을 안내해요.", "program"],
+          ["03", "SPECIAL EFFECTS", "초대장을 여는 순간, 감동이 시작돼요.", "인트로와 배경음악, 테마에 어울리는 특별한 연출까지. 카페 오픈 초대장에 커피콩이 떨어지는 효과처럼 행사마다 색다른 분위기를 전해요.", "effects"],
+          ["04", "SMART RSVP", "참석부터 식사까지, 더 똑똑하게.", "참석 여부와 동반 인원을 간편하게 확인하고 관리해요. 식사 여부와 인원별 통계까지 한눈에 살펴볼 수 있도록 기능을 확장할 예정이에요.", "rsvp"],
+          ["05", "ALL OCCASIONS", "인생의 순간부터, 새로운 시작까지.", "결혼 → 돌잔치 → 자녀 생일 → 부모님 칠순, 그리고 모임·행사와 개업·오픈까지. 행사별 맞춤 테마에 어울리는 연출을 제공해요.", "occasions"],
+          ["06", "FLEXIBLE EDITING", "발행한 뒤에도, 마음껏 바꿔보세요.", "초대장을 발행한 뒤에도 사진과 문구, 행사 정보를 수정하고 디자인까지 변경할 수 있어요. 변화하는 일정에도 편리하게 대응하세요.", "edit"]
         ].map(([number, eyebrow, title, description, kind]) => (
           <article className={`dd-feature dd-feature-${kind}`} key={number}>
             <div className="dd-feature-visual" aria-label={`${title} 기능 시연 화면 자리`}>
@@ -180,29 +175,24 @@ export default function Home() {
                   {kind === "program" ? <div className="dd-feature-program"><strong>오늘의 행사 순서</strong><span>01 · 손님 맞이</span><span>02 · 행사 시작</span><span>03 · 축하와 인사</span><span>04 · 기념 촬영</span></div> :
                     kind === "rsvp" ? <div className="dd-feature-program"><strong>참석 여부 확인</strong><span>○ 참석할게요</span><span>○ 참석이 어려워요</span><span>축하 메시지를 남겨주세요 ♡</span></div> :
                     kind === "occasions" ? <div className="dd-feature-occasion-grid"><span>결혼식</span><span>돌잔치</span><span>생일</span><span>환갑·칠순·팔순</span><span>모임·행사</span><span>개업·오픈</span></div> :
-                    <div className="dd-feature-demo-paper"><span>YOUR SPECIAL DAY</span><strong>{kind === "intro" ? "Welcome to our day" : kind === "mix" ? "Your style, your story" : kind === "edit" ? "Make it yours" : "Good People, Good Moment."}</strong><i /><small>DEARDAY · MOBILE INVITATION</small></div>}
+                    <div className="dd-feature-demo-paper"><span>YOUR SPECIAL DAY</span><strong>{kind === "effects" ? "A moment to remember" : kind === "edit" ? "Make it yours" : "Good People, Good Moment."}</strong><i /><small>DEARDAY · MOBILE INVITATION</small></div>}
                 </div>
                 <div className="dd-feature-demo-bottom">미리보기 · 영상 교체 예정</div>
               </div>
             </div>
             <div className="dd-feature-copy">
-              <div className="dd-feature-labels"><span className="dd-feature-number">{number} <span>/ 11</span></span><span className="dd-feature-eyebrow">{eyebrow}</span></div>
+              <div className="dd-feature-labels"><span className="dd-feature-number">{number} <span>/ 06</span></span><span className="dd-feature-eyebrow">{eyebrow}</span></div>
               <h3>{title}</h3>
               <p>{description}</p>
               <ul className="dd-feature-checks">
-                {(kind === "theme" ? ["표지와 본문이 연결되는 테마형 디자인", "처음부터 끝까지 통일된 분위기"] :
-                  kind === "mix" ? ["표지와 본문을 자유롭게 조합", "사진과 문구를 내 취향대로"] :
-                  kind === "program" ? ["행사 유형에 맞춘 식순 안내", "초대장 안에서 순서 확인"] :
-                  kind === "occasions" ? ["6가지 행사 유형별 디자인", "상황에 맞는 초대장 제작"] :
-                  kind === "rsvp" ? ["참석 여부와 인원 확인", "방명록으로 축하 메시지 공유"] :
-                  kind === "intro" ? ["원하는 인트로 문구 설정", "첫 화면부터 나만의 분위기"] :
-                  kind === "preview" ? ["발행 전 완성형 초대장 미리보기", "마음에 들 때 발행"] :
-                  kind === "edit" ? ["행사 시작 전까지 내용 수정", "사진과 디자인 변경 가능"] :
-                  kind === "styles" ? ["추가 디자인 비용 없이 변경", "다양한 스타일 비교"] :
-                  kind === "livehero" ? ["문구와 위치를 실시간으로 확인", "전체 미리보기 반복 없이 편집"] :
-                  ["꼭 필요한 핵심 기능", "쉽고 편리한 초대장 관리"]).map((benefit) => <li key={benefit}><span aria-hidden="true">✓</span>{benefit}</li>)}
+                {(kind === "theme" ? ["표지와 본문이 이어지는 테마형 디자인", "처음부터 끝까지 통일된 분위기"] :
+                  kind === "program" ? ["행사 유형에 맞춘 식순·일정 안내", "클립아트와 감성 타임라인"] :
+                  kind === "effects" ? ["인트로와 배경음악으로 감성 연출", "행사 테마별 애니메이션·특수효과"] :
+                  kind === "rsvp" ? ["참석 여부와 동반 인원 확인", "식사 여부·통계 기능 확장 예정"] :
+                  kind === "occasions" ? ["인생의 주요 순간부터 모임·개업까지", "행사별 테마와 맞춤 연출"] :
+                  ["발행 후 내용과 사진 수정", "발행 후에도 디자인 변경"]).map((benefit) => <li key={benefit}><span aria-hidden="true">✓</span>{benefit}</li>)}
               </ul>
-              <span className="dd-feature-pill">{kind === "theme" ? "표지·본문 세트 디자인" : kind === "mix" ? "나만의 스타일로 특별하게" : kind === "program" ? "초대장 하나로 행사 안내까지" : kind === "occasions" ? "다양한 특별한 날에" : kind === "rsvp" ? "참석 확인부터 축하 메시지까지" : kind === "intro" ? "초대의 첫 순간부터 특별하게" : kind === "preview" ? "발행 전 무료로 제작" : kind === "edit" ? "실수해도 편리하게 수정" : kind === "styles" ? "디자인 변경 부담 없이" : kind === "livehero" ? "보면서 바로 완성하는 HERO" : "꼭 필요한 기능만 담아"}</span>
+              <span className="dd-feature-pill">{kind === "theme" ? "표지·본문이 이어지는 테마 디자인" : kind === "program" ? "감성적인 식순·일정 안내" : kind === "effects" ? "테마마다 다른 특별한 연출" : kind === "rsvp" ? "참석 관리 · 식사 기능 확장 예정" : kind === "occasions" ? "인생의 모든 특별한 날에" : "발행 후에도 유연하게 변경"}</span>
             </div>
           </article>
         ))}
