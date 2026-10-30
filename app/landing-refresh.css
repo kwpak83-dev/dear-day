@@ -2189,3 +2189,8 @@
  .landing-v2 .landing-header .landing-brand .dearday-logo.dearday-logo--wordmark{width:148.2px!important;height:36.1px!important}
  .landing-v2 .landing-hero.dd-cinematic-hero{height:calc(100svh - 52px)!important}
 }
+
+/* Keep the last decoded frame visible until the next preloaded hero video is playing. */
+.landing-v2 .dd-cinematic-hero .dd-hero-media .dd-hero-video.dd-hero-video-layer{opacity:0!important;transition:opacity .32s ease!important;pointer-events:none!important}
+.landing-v2 .dd-cinematic-hero .dd-hero-media .dd-hero-video.dd-hero-video-layer.dd-hero-video-active{opacity:1!important}
+@media(prefers-reduced-motion:reduce){.landing-v2 .dd-cinematic-hero .dd-hero-media .dd-hero-video.dd-hero-video-layer{transition:none!important}}
