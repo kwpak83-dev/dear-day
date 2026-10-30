@@ -30,6 +30,7 @@ export default function GuestManagement() {
   const load = useCallback(async (slug = "", nextFilter = "all") => {
     const requestId = ++rsvpRequestId.current;
     setNotice("하객 정보를 불러오는 중이에요.");
+    setRsvps([]); setSummary(emptySummary); setFilteredCount(0); setDownloadNotice("");
     const supabase = getSupabaseBrowserClient();
     const { data: { session } } = await supabase.auth.getSession();
     if (requestId !== rsvpRequestId.current) return;
@@ -50,10 +51,12 @@ export default function GuestManagement() {
   const toggleRsvp = (id) => setExpandedRsvpIds((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
   const loadGuestbook = useCallback(async (slug) => {
     const requestId = ++guestbookRequestId.current;
-    if (!slug) { setGuestbookEntries([]); setGuestbookNotice(""); return; }
+    setGuestbookEntries([]); setGuestbookNotice(slug ? "방명록을 불러오는 중이에요." : "");
+    if (!slug) return;
     const supabase = getSupabaseBrowserClient();
     const { data: { session } } = await supabase.auth.getSession();
-    if (requestId !== guestbookRequestId.current || !session) return;
+    if (requestId !== guestbookRequestId.current) return;
+    if (!session) return setGuestbookNotice("로그인이 만료되었어요. 다시 로그인해 주세요.");
     const response = await fetch(`/api/guestbook/manage?slug=${encodeURIComponent(slug)}`, { headers: { Authorization: `Bearer ${session.access_token}` } });
     const result = await response.json().catch(() => ({}));
     if (requestId !== guestbookRequestId.current) return;
