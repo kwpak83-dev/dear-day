@@ -14,7 +14,7 @@ export default function Home() {
   const heroButtonsRef = useRef(null);
   const [showQuickButtons, setShowQuickButtons] = useState(false);
   const [heroVariant, setHeroVariant] = useState("c");
-  const heroVideoRef = useRef(null);
+  const heroVideoRefs = useRef([null, null]);
   const [heroVideoIndex, setHeroVideoIndex] = useState(0);
   const [heroExtraVideoAvailable, setHeroExtraVideoAvailable] = useState(true);
   const [authOpen, setAuthOpen] = useState(false);
@@ -68,24 +68,26 @@ export default function Home() {
     };
   }, []);
 
-  const heroVideos = ["/landing/dearday-seaside-hero.mp4", "/landing/dearday-seaside-extra.mp4"];
-  const advanceHeroVideo = () => {
-    if (!heroExtraVideoAvailable) return;
-    setHeroVideoIndex((current) => (current + 1) % heroVideos.length);
+  const advanceHeroVideo = (finishedIndex) => {
+    const nextIndex = heroExtraVideoAvailable ? 1 - finishedIndex : 0;
+    const nextVideo = heroVideoRefs.current[nextIndex];
+    if (!nextVideo) return;
+    nextVideo.currentTime = 0;
+    const playback = nextVideo.play();
+    if (playback && typeof playback.catch === "function") playback.catch(() => {
+      if (nextIndex === 1) {
+        setHeroExtraVideoAvailable(false);
+        const original = heroVideoRefs.current[0];
+        if (original) { original.currentTime = 0; original.play().catch(() => {}); }
+      }
+    });
   };
-  const handleHeroVideoError = () => {
-    if (heroVideoIndex === 1) {
-      setHeroExtraVideoAvailable(false);
-      setHeroVideoIndex(0);
-    }
+  const handleHeroVideoError = (index) => {
+    if (index !== 1) return;
+    setHeroExtraVideoAvailable(false);
+    const original = heroVideoRefs.current[0];
+    if (original?.paused) { original.currentTime = 0; original.play().catch(() => {}); }
   };
-  useEffect(() => {
-    const video = heroVideoRef.current;
-    if (!video) return;
-    video.load();
-    const attempt = video.play();
-    if (attempt && typeof attempt.catch === "function") attempt.catch(() => {});
-  }, [heroVideoIndex]);
 
   const switchHero = (variant) => {
     setHeroVariant(variant);
@@ -119,8 +121,11 @@ export default function Home() {
     <section className={`landing-hero dd-cinematic-hero dd-hero-variant-${heroVariant}`} id="top">
       <div className="dd-paper-scene" aria-hidden="true"><span className="dd-paper-sheet dd-paper-sheet-left" /><span className="dd-paper-sheet dd-paper-sheet-right" /><span className="dd-leaf-shadow dd-leaf-shadow-top" /><span className="dd-leaf-shadow dd-leaf-shadow-bottom" /></div>
       <div className="dd-hero-media">
-      <video ref={heroVideoRef} className="dd-hero-video" autoPlay muted loop={!heroExtraVideoAvailable} playsInline preload="metadata" aria-hidden="true" onEnded={advanceHeroVideo} onError={handleHeroVideoError}>
-        <source src={heroVideos[heroVideoIndex]} type="video/mp4" />
+      <video ref={(node) => { heroVideoRefs.current[0] = node; }} className={`dd-hero-video dd-hero-video-layer${heroVideoIndex === 0 ? " dd-hero-video-active" : ""}`} autoPlay muted playsInline preload="auto" aria-hidden="true" onPlaying={() => setHeroVideoIndex(0)} onEnded={() => advanceHeroVideo(0)}>
+        <source src="/landing/dearday-seaside-hero.mp4" type="video/mp4" />
+      </video>
+      <video ref={(node) => { heroVideoRefs.current[1] = node; }} className={`dd-hero-video dd-hero-video-layer${heroVideoIndex === 1 ? " dd-hero-video-active" : ""}`} muted playsInline preload="auto" aria-hidden="true" onPlaying={() => setHeroVideoIndex(1)} onEnded={() => advanceHeroVideo(1)} onError={() => handleHeroVideoError(1)}>
+        <source src="/landing/dearday-seaside-extra.mp4" type="video/mp4" />
       </video>
       <div className="dd-hero-shade" aria-hidden="true" />
       </div>
