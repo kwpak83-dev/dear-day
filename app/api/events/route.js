@@ -394,7 +394,7 @@ export async function POST(request) {
     ...(hasHeroPresetId ? { hero_preset_id: heroPresetId } : {}),
     title: getInvitationTitle(invitation, eventKind),
     starts_at: startsAt,
-    settings: { ...preserveCardShareMetadata(invitation, existing?.settings), program: normalizeProgram(invitation.program === undefined ? existing?.settings?.program : invitation.program), notice: prepareNoticeForSave(invitation.notice, existing?.settings?.notice) },
+    settings: { ...preserveCardShareMetadata(invitation, existing?.settings), rsvpOptions: { mealEnabled: (invitation.rsvpOptions === undefined ? existing?.settings?.rsvpOptions?.mealEnabled : invitation.rsvpOptions?.mealEnabled) === true, shuttleBusEnabled: (invitation.rsvpOptions === undefined ? existing?.settings?.rsvpOptions?.shuttleBusEnabled : invitation.rsvpOptions?.shuttleBusEnabled) === true }, program: normalizeProgram(invitation.program === undefined ? existing?.settings?.program : invitation.program), notice: prepareNoticeForSave(invitation.notice, existing?.settings?.notice) },
   };
 
   if (publish && !existing) return json({ error: "초대장을 먼저 임시 저장해 주세요." }, 409);
