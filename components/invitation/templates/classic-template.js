@@ -38,7 +38,7 @@ function ClassicDateSection({ eventDate, eventTime, title, wedding }) {
   const eventText = wedding && names ? `${names.replace(" & ", " ♡ ")}의 결혼식` : names;
 
   return <section className="classic-section classic-date">
-    <ClassicHeading eyebrow="DATE"></ClassicHeading>
+    <ClassicHeading eyebrow="DATE">날짜 안내</ClassicHeading>
     <p className="classic-date-summary">{year}.{String(month + 1).padStart(2, "0")}.{String(day).padStart(2, "0")} {weekday} {timeText}</p>
     <div className="classic-calendar">
       <div className="classic-calendar-month">{year}. {String(month + 1).padStart(2, "0")}</div>
@@ -119,7 +119,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
 
     {message && <section className="classic-section classic-message">
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="section" />
-      <ClassicHeading eyebrow="INVITATION"></ClassicHeading>
+      <ClassicHeading eyebrow="INVITATION">소중한 분들을 초대합니다</ClassicHeading>
       <blockquote>{message}</blockquote>
       {wedding && (groomRelation || brideRelation) && <div className="classic-invitation-family">
         {groomRelation && <p>{groomRelation}</p>}

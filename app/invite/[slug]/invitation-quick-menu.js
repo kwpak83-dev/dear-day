@@ -348,7 +348,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       <InvitationProgram program={invitation.program} eventKind={invitation.eventKind} />
     </BottomSheet>}
     {sheet === "rsvp" && rsvpEnabled && <BottomSheet title={rsvpLabel} onClose={closeSheet} portalTarget={usesPreviewPortal ? (isDesktopLivePreview ? previewSheetPortal : desktopLivePortal) : null} preview={usesPreviewPortal} layerStyle={isDesktopLivePreview ? previewSheetStyle : undefined}>
-      <LazyInvitationForm key="rsvp" kind="rsvp" slug={slug} startsAt={startsAt} preview={Boolean(previewMode)} title={rsvpLabel} />
+      <LazyInvitationForm key="rsvp" kind="rsvp" slug={slug} startsAt={startsAt} preview={Boolean(previewMode)} title={rsvpLabel} wedding={invitation.eventKind === "wedding"} mealEnabled={invitation.rsvpOptions?.mealEnabled === true} busEnabled={invitation.rsvpOptions?.shuttleBusEnabled === true} />
     </BottomSheet>}
     {sheet === "guestbook" && guestbookEnabled && <BottomSheet title={guestbookLabel} onClose={closeSheet} portalTarget={usesPreviewPortal ? (isDesktopLivePreview ? previewSheetPortal : desktopLivePortal) : null} preview={usesPreviewPortal} layerStyle={isDesktopLivePreview ? previewSheetStyle : undefined}>
       <LazyInvitationForm key="guestbook" kind="guestbook" slug={slug} preview={Boolean(previewMode)} title={guestbookLabel} />

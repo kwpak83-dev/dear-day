@@ -24,9 +24,20 @@ export async function GET(request) {
   const { data: event, error: eventError } = await supabase.from("events").select("id,title,kind,settings").eq("slug", slug).eq("owner_id", user.id).eq("status", "published").maybeSingle();
   if (eventError) return json({ error: "초대장을 확인하지 못했어요." }, 500);
   if (!event) return json({ error: "다운로드할 수 있는 초대장을 찾지 못했어요." }, 404);
-  const { data: rows, error: rsvpError } = await supabase.from("rsvps").select("guest_name,status,party_size,phone,message,created_at,updated_at").eq("event_id", event.id).order("updated_at", { ascending: false }).order("created_at", { ascending: false });
-  if (rsvpError) return json({ error: "참석 여부 목록을 불러오지 못했어요." }, 500);
-  if (!rows?.length) return json({ error: "다운로드할 참석 여부가 없습니다." }, 404);
+  // Match guest-management pagination to avoid truncated Excel exports.
+  const rows = [];
+  const pageSize = 500;
+  for (let offset = 0; ; offset += pageSize) {
+    const { data: page, error: rsvpError } = await supabase.from("rsvps")
+      .select("id,guest_name,status,party_size,phone,message,guest_side,meal_attending,bus_riding,created_at,updated_at")
+      .eq("event_id", event.id)
+      .order("updated_at", { ascending: false }).order("created_at", { ascending: false }).order("id", { ascending: false })
+      .range(offset, offset + pageSize - 1);
+    if (rsvpError) return json({ error: "참석 여부 목록을 불러오지 못했어요." }, 500);
+    rows.push(...(page || []));
+    if (!page || page.length < pageSize) break;
+  }
+  if (!rows.length) return json({ error: "다운로드할 참석 여부가 없습니다." }, 404);
 
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "DearDay";
@@ -34,11 +45,13 @@ export async function GET(request) {
   const sheet = workbook.addWorksheet("RSVP 명단", { views: [{ state: "frozen", ySplit: 1 }] });
   sheet.columns = [
     { header: "이름", key: "name", width: 18 }, { header: "참석 여부", key: "status", width: 12 },
-    { header: "참석 인원", key: "partySize", width: 12 }, { header: "연락처", key: "phone", width: 20 },
+    { header: "참석 인원", key: "partySize", width: 12 },
+    { header: "하객 구분", key: "guestSide", width: 14 }, { header: "식사 여부", key: "meal", width: 14 }, { header: "전세버스 탑승", key: "bus", width: 16 },
+    { header: "연락처", key: "phone", width: 20 },
     { header: "전달사항", key: "message", width: 42 }, { header: "제출 시각", key: "createdAt", width: 22 },
     { header: "최근 수정 시각", key: "updatedAt", width: 22 },
   ];
-  rows.forEach((row) => sheet.addRow({ name: row.guest_name, status: row.status === "attending" ? "참석" : "불참", partySize: row.status === "attending" ? row.party_size : "", phone: row.phone || "", message: row.message || "", createdAt: formatDateTime(row.created_at), updatedAt: formatDateTime(row.updated_at || row.created_at) }));
+  rows.forEach((row) => sheet.addRow({ name: row.guest_name, status: row.status === "attending" ? "참석" : row.status === "not_attending" ? "불참" : "미정", partySize: row.status === "attending" ? row.party_size : "", guestSide: event.kind === "wedding" ? (row.guest_side === "groom" ? "신랑 측" : row.guest_side === "bride" ? "신부 측" : "미분류") : "해당 없음", meal: row.status !== "attending" ? "해당 없음" : row.meal_attending === true ? "예" : row.meal_attending === false ? "아니요" : "미수집", bus: row.status !== "attending" ? "해당 없음" : row.bus_riding === true ? "예" : row.bus_riding === false ? "아니요" : "미수집", phone: row.phone || "", message: row.message || "", createdAt: formatDateTime(row.created_at), updatedAt: formatDateTime(row.updated_at || row.created_at) }));
   sheet.getRow(1).font = { bold: true, color: { argb: "FFFFFFFF" } };
   sheet.getRow(1).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFEF786C" } };
   sheet.getRow(1).alignment = { vertical: "middle", horizontal: "center" };

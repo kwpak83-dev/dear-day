@@ -870,6 +870,59 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .invitation-quick-menu-trigger{display:block;width:1px;height:1px;pointer-events:none}
 
 /* Shared compact quick actions. Preview variants only change positioning. */
+/* DearDay shared quick menu: unified charcoal segmented capsule (design 11).
+   Visual styles only: preserve visibility triggers, portals, fixed/sticky positioning and sheets. */
+.invitation-quick-menu.invitation-quick-menu--pills{
+  gap:0;
+  padding:3px;
+  border:1px solid #d7d9dd;
+  border-radius:999px;
+  background:#fff;
+  box-shadow:0 5px 18px rgba(34,36,40,.12);
+}
+.invitation-quick-menu.invitation-quick-menu--pills > button{
+  position:relative;
+  flex:1 1 auto;
+  width:94px;
+  min-width:0;
+  max-width:none;
+  height:40px;
+  min-height:40px;
+  gap:5px;
+  padding:0 7px;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:#383b40 !important;
+  box-shadow:none !important;
+  font-size:11px;
+}
+.invitation-quick-menu.invitation-quick-menu--pills > button + button::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:9px;
+  bottom:9px;
+  width:1px;
+  background:#d6d8dc;
+}
+.invitation-quick-menu.invitation-quick-menu--pills > button:first-child{border-radius:999px 0 0 999px !important}
+.invitation-quick-menu.invitation-quick-menu--pills > button:last-child{border-radius:0 999px 999px 0 !important}
+.invitation-quick-menu.invitation-quick-menu--pills > button:only-child{border-radius:999px !important}
+.invitation-quick-menu.invitation-quick-menu--pills .dd-quick-icon-bubble{
+  color:#383b40 !important;
+}
+.invitation-quick-menu.invitation-quick-menu--pills > button:focus-visible{
+  outline:2px solid #50545a;
+  outline-offset:-3px;
+}
+@media(hover:hover){
+  .invitation-quick-menu.invitation-quick-menu--pills > button:hover{background:#f1f2f3 !important}
+}
+@media(max-width:340px){
+  .invitation-quick-menu.invitation-quick-menu--pills > button{width:88px;padding:0 4px;font-size:10px}
+}
+
 
 .invitation-quick-menu{position:fixed;z-index:70;left:50%;right:auto;bottom:max(12px,env(safe-area-inset-bottom));display:flex;flex-direction:row;align-items:center;justify-content:center;gap:6px;width:max-content;max-width:calc(100% - 16px);box-sizing:border-box;margin:0;padding:0;border:0;border-radius:999px;background:transparent;box-shadow:none;transform:translateX(-50%);animation:dd-quick-menu-in .22s ease-out}
 
@@ -4026,3 +4079,60 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   line-height:1;white-space:nowrap;cursor:pointer;
 }
 .create-page .dd-venue-accordion .venue-address button:focus-visible{outline:2px solid #555;outline-offset:2px}
+
+
+/* Compact guest-management dashboard: four columns on desktop, two on mobile. */
+.my-page.member-page .guest-management-content .guest-summary.guest-summary-compact{display:grid;grid-template-columns:minmax(0,1fr);gap:15px;margin-top:20px}
+.my-page.member-page .guest-management-content .guest-summary-compact .guest-summary-group{min-width:0}
+.my-page.member-page .guest-management-content .guest-summary-compact .guest-summary-group-heading{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px}
+.my-page.member-page .guest-management-content .guest-summary-compact .guest-summary-group-heading>strong{font-size:13px;font-weight:750;color:#26364d}
+.my-page.member-page .guest-management-content .guest-summary-compact .guest-summary-group-heading>span{font-size:11px;color:#8190a4}
+.my-page.member-page .guest-management-content .guest-summary-compact .guest-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.my-page.member-page .guest-management-content .guest-summary-compact .guest-summary-grid article{position:static;min-height:72px;padding:12px 13px;border-radius:12px;box-shadow:0 2px 9px rgba(23,43,81,.035)}
+.my-page.member-page .guest-management-content .guest-summary-compact .guest-summary-grid article::before{content:none}
+.my-page.member-page .guest-management-content .guest-summary-compact .guest-summary-grid article>span{font-size:11px;line-height:1.35}
+.my-page.member-page .guest-management-content .guest-summary-compact .guest-summary-grid article>strong{display:block;margin-top:6px;font-size:22px;line-height:1.1}
+.my-page.member-page .guest-management-content .guest-summary-compact .guest-summary-grid article>small{display:block;margin-top:5px;color:#8190a4;font-size:10px;line-height:1.3}
+@media(max-width:640px){.my-page.member-page .guest-management-content .guest-summary-compact .guest-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.my-page.member-page .guest-management-content .guest-summary-compact .guest-summary-grid article{min-height:68px;padding:11px 12px}.my-page.member-page .guest-management-content .guest-summary-compact .guest-summary-grid article>strong{font-size:20px}}
+
+
+/* Guest management: unified RSVP overview and expandable compact table. */
+.my-page.member-page .guest-management-content .guest-overview{margin-top:22px;padding:22px 24px;border:1px solid #e8e7e5;border-radius:19px;background:#fff;box-shadow:0 10px 26px rgba(29,37,46,.055)}
+.guest-overview-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.guest-overview-top>span{color:#87909d;font-size:14px}
+.guest-overview-top>strong{color:#202020;font-size:31px;line-height:1.15;letter-spacing:-.045em}
+.guest-overview-top>strong small{font-size:15px;letter-spacing:0;margin-left:2px}
+.guest-attendance-track{height:9px;margin-top:14px;border-radius:999px;background:#e8e9eb;overflow:hidden}
+.guest-attendance-track>div{height:100%;border-radius:999px;background:#30c66b;transition:width .2s ease}
+.guest-attendance-caption{margin:7px 0 13px;color:#8b929b;font-size:11px}
+.guest-overview-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.guest-overview-metrics>div{display:flex;align-items:center;min-width:0;gap:9px;padding:12px 13px;border-radius:12px;background:#f6f5f4}
+.guest-overview-metrics>div>span:nth-child(2){font-size:12px;color:#606b7b}
+.guest-overview-metrics>div>strong{margin-left:auto;white-space:nowrap;font-size:14px;color:#1d2530}
+.guest-metric-icon{display:grid;place-items:center;flex:none;width:20px;height:20px;color:#48505b;font-size:16px}
+.guest-overview-sides{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:14px;padding-top:13px;border-top:1px solid #eeeeee;color:#777;font-size:12px}
+.guest-overview-sides strong{color:#2a3442;margin-left:4px}
+.guest-overview-note{margin:10px 0 0;font-size:11px;color:#929292;line-height:1.5}
+.my-page.member-page .guest-management-content .guest-table-card{margin-top:12px;padding:13px 17px 14px;border:1px solid #e8e7e5;border-radius:18px;background:#fff;box-shadow:0 10px 26px rgba(29,37,46,.055)}
+.guest-table-head,.guest-table-row{display:grid;grid-template-columns:minmax(0,2.6fr) repeat(4,minmax(42px,.7fr));align-items:center;gap:8px}
+.guest-table-head{padding:5px 9px 12px;border-bottom:1px solid #ececec;color:#939aa5;font-size:11px}
+.guest-table-head>span:not(:first-child),.guest-table-row>span:not(:first-child){text-align:center}
+.guest-table-row{width:100%;min-height:45px;padding:7px 9px;border:0;background:transparent;text-align:left;color:#28303a;font-size:13px;cursor:pointer;border-radius:8px}
+.guest-table-row:hover,.guest-table-row:focus-visible{background:#f6f7f9}
+.guest-table-name{display:flex;align-items:center;min-width:0;gap:7px}
+.guest-table-name strong{font-size:13px;overflow-wrap:anywhere;font-weight:650}
+.guest-side-tag{flex:none;padding:3px 6px;border-radius:5px;background:#ededed;color:#6b7280;font-size:10px;font-weight:700}
+.guest-side-tag.groom{background:#e7f0ff;color:#2972c4}
+.guest-side-tag.bride{background:#ffeaf0;color:#d65380}
+.guest-table-symbol{font-size:20px;font-weight:700;line-height:1}
+.guest-table-symbol.yes{color:#20bd65}
+.guest-table-symbol.no{color:#b9c1ca}
+.guest-table-detail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 15px;margin:0 8px 10px;padding:13px 14px;border-radius:10px;background:#f7f8fa;color:#4c5869;font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+.guest-table-detail b{color:#7a8798;font-weight:600;margin-right:5px}
+.guest-detail-message{grid-column:1/-1;white-space:pre-wrap}
+.guest-table-empty{padding:30px 8px;text-align:center;color:#9299a3;font-size:13px}
+.guest-table-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:12px 7px 0}
+.guest-table-footer button{padding:9px 12px;border:1px solid #e5e5e5;border-radius:9px;background:#fff;color:#343434;font-size:12px;font-weight:650;cursor:pointer}
+.guest-table-footer button:disabled{opacity:.45;cursor:not-allowed}
+.guest-table-footer>span{color:#a1a7ae;font-size:11px}
+@media(max-width:640px){.my-page.member-page .guest-management-content .guest-overview{padding:17px 15px}.guest-overview-metrics>div{padding:10px 9px;gap:5px}.guest-overview-metrics>div>span:nth-child(2){font-size:11px}.guest-overview-metrics>div>strong{font-size:12px}.my-page.member-page .guest-management-content .guest-table-card{padding:10px 8px}.guest-table-head,.guest-table-row{grid-template-columns:minmax(0,2fr) repeat(4,minmax(28px,.65fr));gap:3px}.guest-table-head{font-size:10px;padding:7px 4px}.guest-table-row{font-size:11px;padding:7px 4px}.guest-table-name{gap:3px;flex-wrap:wrap}.guest-table-name strong{font-size:11px}.guest-side-tag{font-size:9px;padding:2px 4px}.guest-table-symbol{font-size:17px}.guest-table-detail{grid-template-columns:1fr;margin:0 4px 8px;padding:11px}.guest-table-footer{padding:10px 5px 0}}
