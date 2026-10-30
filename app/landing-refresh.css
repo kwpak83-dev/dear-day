@@ -2138,14 +2138,20 @@
 .landing-v2 .dd-detail-section.dd-experience{padding-top:48px}
 .landing-v2 .dd-experience .dd-detail-heading{margin-bottom:18px}
 .landing-v2 .dd-detail-heading>.dd-experience-disclaimer{margin:5px 0 0;font-size:11px;line-height:1.5;color:#999;overflow-wrap:anywhere}
-.landing-v2 .dd-experience-controls{position:relative;z-index:1;width:min(100%,390px);box-sizing:border-box;margin:0 auto 10px;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none}
+/* Keep the dropdown and phone together while the outer page crosses Section 2.
+   The stage supplies a short, bounded sticky interval; no wheel/touch interception. */
+.landing-v2 .dd-detail-section.dd-experience{padding-bottom:24px}
+.landing-v2 .dd-experience-stage{position:relative;min-height:calc(100vh + 240px);min-height:calc(100dvh + 240px)}
+.landing-v2 .dd-experience-stack{position:sticky;top:8px;width:min(100%,390px);margin:0 auto}
+@media(prefers-reduced-motion:reduce){.landing-v2 .dd-experience-stack{scroll-behavior:auto}}
+.landing-v2 .dd-experience-controls{position:relative;z-index:1;width:100%;box-sizing:border-box;margin:0 auto 10px;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none}
 .landing-v2 .dd-experience-controls select{display:block;box-sizing:border-box;width:100%;min-width:0;height:44px;min-height:44px;padding:8px 12px;border:1px solid #d5d5d5;border-radius:8px;background:#fff;color:#222;font:inherit;font-size:14px}
-.landing-v2 .dd-experience-phone{position:relative;width:min(100%,390px);height:80vh;height:80dvh;max-height:760px;margin:0 auto;box-sizing:border-box;border:10px solid #252525;border-radius:32px;background:#fff;overflow:hidden;box-shadow:0 12px 32px #0000000d}
+.landing-v2 .dd-experience-phone{position:relative;width:100%;height:calc(100vh - 76px);height:calc(100dvh - 76px);max-height:760px;margin:0 auto;box-sizing:border-box;border:10px solid #252525;border-radius:32px;background:#fff;overflow:hidden;box-shadow:0 12px 32px #0000000d}
 .landing-v2 .dd-experience-phone iframe{display:block;width:100%;height:100%;border:0;background:#fff}
 .landing-v2 .dd-experience-status{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:#faf9f6;color:#555;text-align:center;font-size:14px}
 .landing-v2 .dd-experience-status button{min-height:44px;padding:10px 18px;border:1px solid #ccc;border-radius:8px;background:#fff;color:#222;font:inherit;cursor:pointer}
 .landing-v2 .dd-experience-controls select:focus-visible,.landing-v2 .dd-experience-status button:focus-visible{outline:2px solid #555;outline-offset:3px}
-@media(max-width:800px){.landing-v2 .dd-detail-section.dd-experience{padding-top:32px}.landing-v2 .dd-experience .dd-detail-heading{margin-bottom:14px}.landing-v2 .dd-experience-phone{height:88vh;height:88dvh;max-height:none;border-width:6px;border-radius:24px}}
+@media(max-width:800px){.landing-v2 .dd-detail-section.dd-experience{padding-top:32px}.landing-v2 .dd-experience .dd-detail-heading{margin-bottom:14px}.landing-v2 .dd-experience-phone{max-height:none;border-width:6px;border-radius:24px}}
 .landing-v2 .dd-detail-tabs{display:flex;gap:5px;background:#ededed;border-radius:13px;padding:5px;width:max-content;max-width:100%;margin:0 auto 22px}
 .landing-v2 .dd-detail-tabs button{border:0;background:transparent;color:#777;font-size:13px;cursor:pointer;border-radius:10px;padding:11px 17px;white-space:nowrap;font-weight:600;transition:background .15s,color .15s}
 .landing-v2 .dd-detail-tabs button.active{background:#262626;color:#fff}
