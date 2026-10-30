@@ -49,11 +49,14 @@ export default function Home() {
   useEffect(() => {
     const buttons = heroButtonsRef.current;
     if (!buttons) return;
+    const experience = document.getElementById("how");
     let frame = 0;
     const update = () => {
       frame = 0;
       const rect = buttons.getBoundingClientRect();
-      setShowQuickButtons(rect.bottom < 0);
+      const experienceRect = experience?.getBoundingClientRect();
+      const experienceVisible = experienceRect && experienceRect.top < window.innerHeight && experienceRect.bottom > 0;
+      setShowQuickButtons(rect.bottom < 0 && !experienceVisible);
     };
     const onScroll = () => {
       if (!frame) frame = window.requestAnimationFrame(update);
@@ -61,7 +64,11 @@ export default function Home() {
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
+    const observer = experience && typeof IntersectionObserver !== "undefined"
+      ? new IntersectionObserver(onScroll, { threshold: 0 }) : null;
+    observer?.observe(experience);
     return () => {
+      observer?.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       if (frame) window.cancelAnimationFrame(frame);

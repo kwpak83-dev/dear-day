@@ -25,6 +25,43 @@ test("Landing HERO and all six Section 1 features remain byte-for-byte unchanged
   assert.ok(!current.includes('className="dd-detail-card"'));
 });
 
+test("Actual floating CTA observer hides only while Section 2 intersects the viewport", () => {
+  const source = read("app/page.js");
+  const start = source.indexOf("    const buttons = heroButtonsRef.current;");
+  const body = source.slice(start, source.indexOf("  }, []);", start));
+  const listeners = new Map();
+  let pending, observerCallback, observed, disconnected = false, visible;
+  let heroBottom = -10;
+  let sectionRect = { top: 900, bottom: 1800 };
+  const section = { getBoundingClientRect: () => sectionRect };
+  const win = {
+    innerHeight: 800,
+    requestAnimationFrame: callback => { pending = callback; return 1; },
+    cancelAnimationFrame: () => { pending = null; },
+    addEventListener: (name, handler) => listeners.set(name, handler),
+    removeEventListener: name => listeners.delete(name),
+  };
+  class Observer {
+    constructor(callback) { observerCallback = callback; }
+    observe(node) { observed = node; }
+    disconnect() { disconnected = true; }
+  }
+  const cleanup = new Function("heroButtonsRef", "document", "window", "IntersectionObserver", "setShowQuickButtons", body)(
+    { current: { getBoundingClientRect: () => ({ bottom: heroBottom }) } },
+    { getElementById: id => id === "how" ? section : null }, win, Observer, value => { visible = value; },
+  );
+  const notify = () => { observerCallback(); const callback = pending; pending = null; callback(); };
+  assert.equal(observed, section);
+  assert.equal(visible, true);
+  sectionRect = { top: 799, bottom: 1700 }; notify(); assert.equal(visible, false);
+  sectionRect = { top: -500, bottom: 1 }; notify(); assert.equal(visible, false);
+  sectionRect = { top: -1500, bottom: 0 }; notify(); assert.equal(visible, true);
+  sectionRect = { top: 900, bottom: 1800 }; heroBottom = 20; notify(); assert.equal(visible, false);
+  cleanup();
+  assert.equal(disconnected, true);
+  assert.equal(listeners.size, 0);
+});
+
 // Execute the actual form handlers with stubbed React hooks and a fetch that
 // fails the test on any network access. No real Event or database is involved.
 function previewForm(file, overrides = {}) {
