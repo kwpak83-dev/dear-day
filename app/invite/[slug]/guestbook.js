@@ -30,7 +30,7 @@ export default function Guestbook({ slug, preview = false, title = "방명록" }
     } catch { setNotice("방명록을 남기지 못했어요. 다시 시도해 주세요."); } finally { setSubmitting(false); }
   };
   const remove = async () => {
-    if (!deleteTarget || submitting) return; setSubmitting(true); setDeleteNotice("");
+    if (preview || !deleteTarget || submitting) return; setSubmitting(true); setDeleteNotice("");
     try {
       const response = await fetch("/api/guestbook", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug, entryId: deleteTarget.id, password: deletePassword }) });
       const result = await response.json().catch(() => ({}));
