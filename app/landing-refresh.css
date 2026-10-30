@@ -2194,3 +2194,8 @@
 .landing-v2 .dd-cinematic-hero .dd-hero-media .dd-hero-video.dd-hero-video-layer{opacity:0!important;transition:opacity .32s ease!important;pointer-events:none!important}
 .landing-v2 .dd-cinematic-hero .dd-hero-media .dd-hero-video.dd-hero-video-layer.dd-hero-video-active{opacity:1!important}
 @media(prefers-reduced-motion:reduce){.landing-v2 .dd-cinematic-hero .dd-hero-media .dd-hero-video.dd-hero-video-layer{transition:none!important}}
+
+@media(max-width:800px){
+.landing-v2 .dd-cinematic-hero.dd-hero-variant-c .dd-hero-media::before{content:""!important;display:block!important;width:100%!important;aspect-ratio:4/3!important;height:auto!important;background:none!important}
+.landing-v2 .dd-cinematic-hero.dd-hero-variant-c .dd-hero-media .dd-hero-video.dd-hero-video-layer{position:absolute!important;inset:auto!important;top:13px!important;left:13px!important;width:calc(100% - 26px)!important;height:calc(100% - 49px)!important;aspect-ratio:auto!important;object-fit:cover!important}
+}
