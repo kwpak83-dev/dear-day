@@ -62,7 +62,7 @@ function QuickMenuIcon({ kind }) {
     : <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 5 4 4M4 20l4.5-1 11-11a2.1 2.1 0 0 0-3-3l-11 11L4 20Z" /></svg>;
 }
 
-export default function InvitationQuickMenu({ invitation, slug, startsAt, previewMode = "", rsvpLabel = "참석 여부", guestbookLabel = "방명록" }) {
+export default function InvitationQuickMenu({ invitation, slug, startsAt, previewMode = "", rsvpLabel = "참석 여부", guestbookLabel = "방명록", sheetRequest }) {
   const [visible, setVisible] = useState(false);
   const [sheet, setSheet] = useState(null);
   const [desktopLivePortal, setDesktopLivePortal] = useState(null);
@@ -114,6 +114,11 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const programButtonLabel = ({ wedding: "식순 안내", first_birthday: "잔치 순서", birthday: "파티 일정", milestone_birthday: "잔치 순서", gathering: "행사 일정", opening: "오픈 일정" })[invitation.eventKind] || "일정 안내";
   const menuEnabled = rsvpEnabled || guestbookEnabled || program.enabled;
   const menuCount = Number(rsvpEnabled) + Number(guestbookEnabled) + Number(program.enabled);
+  useEffect(() => {
+    if (previewMode !== "landing-experience" || !sheetRequest) return;
+    const next = sheetRequest.sheet;
+    setSheet((next === "program" && program.enabled) || (next === "rsvp" && rsvpEnabled) || (next === "guestbook" && guestbookEnabled) ? next : null);
+  }, [previewMode, sheetRequest, program.enabled, rsvpEnabled, guestbookEnabled]);
   const hasLocation = Boolean(invitation.venue || invitation.venueAddress || invitation.address);
   const isEditorFullPreview = previewMode === "editor-full";
   const isSalesPreview = previewMode === "sales-preview";

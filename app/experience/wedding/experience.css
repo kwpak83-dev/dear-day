@@ -1,0 +1,5 @@
+.dd-landing-experience-document{margin:0 auto;width:100%;min-height:100dvh;overscroll-behavior-y:contain}
+.dd-landing-experience-document .invitation-navigation-links{display:none}
+.dd-experience-page-status{padding:32px 20px;text-align:center;color:#555;font-size:14px}
+.dd-experience-page-notice{position:fixed;z-index:300;top:10px;left:12px;right:12px;margin:0;padding:12px;display:flex;gap:8px;align-items:center;border-radius:10px;background:#fff;color:#333;box-shadow:0 3px 20px #0002;font:13px/1.5 Arial,sans-serif}
+.dd-experience-page-notice button{margin-left:auto;border:0;background:transparent;color:inherit;font-size:22px;cursor:pointer}
