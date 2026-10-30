@@ -870,6 +870,59 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .invitation-quick-menu-trigger{display:block;width:1px;height:1px;pointer-events:none}
 
 /* Shared compact quick actions. Preview variants only change positioning. */
+/* DearDay shared quick menu: unified charcoal segmented capsule (design 11).
+   Visual styles only: preserve visibility triggers, portals, fixed/sticky positioning and sheets. */
+.invitation-quick-menu.invitation-quick-menu--pills{
+  gap:0;
+  padding:3px;
+  border:1px solid #d7d9dd;
+  border-radius:999px;
+  background:#fff;
+  box-shadow:0 5px 18px rgba(34,36,40,.12);
+}
+.invitation-quick-menu.invitation-quick-menu--pills > button{
+  position:relative;
+  flex:1 1 auto;
+  width:94px;
+  min-width:0;
+  max-width:none;
+  height:40px;
+  min-height:40px;
+  gap:5px;
+  padding:0 7px;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:#383b40 !important;
+  box-shadow:none !important;
+  font-size:11px;
+}
+.invitation-quick-menu.invitation-quick-menu--pills > button + button::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:9px;
+  bottom:9px;
+  width:1px;
+  background:#d6d8dc;
+}
+.invitation-quick-menu.invitation-quick-menu--pills > button:first-child{border-radius:999px 0 0 999px !important}
+.invitation-quick-menu.invitation-quick-menu--pills > button:last-child{border-radius:0 999px 999px 0 !important}
+.invitation-quick-menu.invitation-quick-menu--pills > button:only-child{border-radius:999px !important}
+.invitation-quick-menu.invitation-quick-menu--pills .dd-quick-icon-bubble{
+  color:#383b40 !important;
+}
+.invitation-quick-menu.invitation-quick-menu--pills > button:focus-visible{
+  outline:2px solid #50545a;
+  outline-offset:-3px;
+}
+@media(hover:hover){
+  .invitation-quick-menu.invitation-quick-menu--pills > button:hover{background:#f1f2f3 !important}
+}
+@media(max-width:340px){
+  .invitation-quick-menu.invitation-quick-menu--pills > button{width:88px;padding:0 4px;font-size:10px}
+}
+
 
 .invitation-quick-menu{position:fixed;z-index:70;left:50%;right:auto;bottom:max(12px,env(safe-area-inset-bottom));display:flex;flex-direction:row;align-items:center;justify-content:center;gap:6px;width:max-content;max-width:calc(100% - 16px);box-sizing:border-box;margin:0;padding:0;border:0;border-radius:999px;background:transparent;box-shadow:none;transform:translateX(-50%);animation:dd-quick-menu-in .22s ease-out}
 
