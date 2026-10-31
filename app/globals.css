@@ -4289,7 +4289,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
     transform:translate(-50%,-50%)!important;margin:0!important;
   }
   .my-page.member-page .dd-member-topbar .dd-member-brand .dearday-logo--wordmark{
-    width:148px!important;height:auto!important;max-height:42px!important;
+    width:148.2px!important;height:36.1px!important;max-height:36.1px!important;object-fit:contain!important;
   }
   .my-page.member-page .dd-member-menu-toggle{
     display:flex!important;position:absolute;left:18px;top:50%;transform:translateY(-50%);
@@ -4312,4 +4312,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
     display:block;padding:12px 8px;color:#333;text-decoration:none;font-size:14px;
   }
   .my-page.member-page .dd-member-mobile-menu a[aria-current="page"]{font-weight:750;color:#9e716e}
+}
+
+/* Match the landing header logo's actual displayed size, including SVG sizing. */
+@media(max-width:800px){
+ .my-page.member-page .dd-member-topbar .dd-member-brand{width:148.2px!important;height:36.1px!important;max-width:148.2px!important;min-width:0!important}
+ .my-page.member-page .dd-member-topbar .dd-member-brand .dearday-logo,
+ .my-page.member-page .dd-member-topbar .dd-member-brand svg{width:148.2px!important;height:36.1px!important;max-width:148.2px!important;max-height:36.1px!important}
 }
