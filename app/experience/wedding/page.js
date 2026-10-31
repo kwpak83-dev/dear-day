@@ -22,6 +22,14 @@ export default function WeddingExperience() {
   const [attempt, setAttempt] = useState(0);
   const [sheetRequest, setSheetRequest] = useState(null);
   const [notice, setNotice] = useState("");
+  const [showTop, setShowTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShowTop(window.scrollY > 500);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   const rootRef = useRef(null);
   const lastCommand = useRef(0);
   const data = state.data;
@@ -118,5 +126,6 @@ export default function WeddingExperience() {
         <DearDayBrandFooter />
       </div>
     </InvitationRenderer></TemplatePreviewCanvas>
+    {showTop && <button className="dd-experience-top-button" type="button" aria-label="초대장 맨 위로 이동" onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" })}><span aria-hidden="true">↑</span><small>TOP</small></button>}
   </main>;
 }
