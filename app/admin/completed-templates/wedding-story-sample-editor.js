@@ -9,10 +9,10 @@ function HashtagInput({hashtags,onChange}) {
 }
 const input={width:"100%",boxSizing:"border-box",padding:"8px",border:"1px solid #ddd",borderRadius:7};
 const block={padding:12,border:"1px solid #e7ddd7",borderRadius:9,display:"grid",gap:9};
-export default function WeddingStorySampleEditor({value,onChange,onUpload,disabled=false,shared=false}){
+export default function WeddingStorySampleEditor({value,onChange,onUpload,disabled=false,shared=false,effectiveValue=null}){
  const [uploading,setUploading]=useState("");
- const couple=normalizeCoupleIntro(value?.couple_intro);
- const story=normalizeLoveStory(value?.love_story);
+ const couple=normalizeCoupleIntro((effectiveValue||value)?.couple_intro);
+ const story=normalizeLoveStory((effectiveValue||value)?.love_story);
  const setCouple=patch=>onChange("couple_intro",{...couple,...patch});
  const setPerson=(role,patch)=>setCouple({[role]:{...couple[role],...patch}});
  const setStory=patch=>onChange("love_story",{...story,...patch});
