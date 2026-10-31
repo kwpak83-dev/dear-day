@@ -4368,3 +4368,13 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .my-page .dd-my-guide-event p{margin:7px 0 0}
 @media(max-width:800px){.my-page .dd-my-guide{margin-bottom:18px}.my-page .dd-my-guide-title{padding:16px}.my-page .dd-my-guide-body{padding:0 16px 16px}}
 @media(prefers-reduced-motion:reduce){.my-page .dd-my-guide-chevron{transition:none}}
+
+/* Compact My Invitations notice to prioritize invitation cards on mobile. */
+.my-page .dd-my-guide-title{padding:13px 16px;font-size:14px;gap:7px}
+.my-page .dd-my-guide-body{padding:0 16px 13px;font-size:12px;line-height:1.6}
+.my-page .dd-my-guide-body ul{padding-left:16px}
+.my-page .dd-my-guide-body li{margin-bottom:6px;padding-left:0}
+.my-page .dd-my-guide-event{padding:10px 12px;margin-top:9px;border-radius:10px}
+.my-page .dd-my-guide-event>strong{font-size:12px}
+.my-page .dd-my-guide-event p{margin-top:4px;line-height:1.6}
+@media(max-width:800px){.my-page .dd-my-guide{margin-bottom:12px}.my-page .dd-my-guide-title{padding:12px 15px}.my-page .dd-my-guide-body{padding:0 15px 12px;font-size:12px;line-height:1.55}}
