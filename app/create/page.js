@@ -24,6 +24,7 @@ import InvitationNotice from "../invite/[slug]/invitation-notice";
 import GalleryEditor from "./gallery-editor";
 import ProgramEditor from "./program-editor";
 import { normalizeProgram, toggleProgram } from "../../lib/invitation-program";
+import { normalizeCoupleIntro, normalizeLoveStory } from "../../lib/wedding-story";
 import { clearAutomaticTransport, transportSuggestionPatch, carDirections, TRANSPORT_AUTO_FIELDS, getAutomaticTransport, applyAutomaticTransport, editTransportField, prepareTransportPlaceSelection, mergeTransportPublic } from "../../lib/transport-autofill";
 import { preparePhoto, prepareHeroPhoto, prepareKakaoSharePhoto } from "../../lib/prepare-photo";
 import { normalizeNotice } from "../../lib/invitation-notice";
@@ -405,7 +406,7 @@ export default function CreateInvitation() {
     if (!slug && query.get("resume") === "draft") {
       try {
         const draft = JSON.parse(window.localStorage.getItem("dear-day-draft") || "null");
-        if (draft && typeof draft === "object") setInvitation({ ...initialInvitation, ...draft, program: normalizeProgram(draft.program) });
+        if (draft && typeof draft === "object") setInvitation({ ...initialInvitation, ...draft, program: normalizeProgram(draft.program), coupleIntro: normalizeCoupleIntro(draft.coupleIntro), loveStory: normalizeLoveStory(draft.loveStory) });
       } catch {
         setSaveNotice("기기에 저장된 작성 내용을 불러오지 못했어요.");
       }
@@ -439,11 +440,11 @@ export default function CreateInvitation() {
       if (!response.ok || !result.event) return setSaveNotice(result.error || "초대장을 찾지 못했어요.");
       const status = result.event.status || "draft";
       const query = new URLSearchParams(window.location.search);
-      let restoredInvitation = { ...initialInvitation, ...result.event.settings, eventKind: result.event.kind || result.event.settings?.eventKind || "wedding", templateId: result.event.template_id || result.event.settings?.templateId || "", heroPresetId: result.event.hero_preset_id || result.event.settings?.heroPresetId || "", program: normalizeProgram(result.event.settings?.program) };
+      let restoredInvitation = { ...initialInvitation, ...result.event.settings, eventKind: result.event.kind || result.event.settings?.eventKind || "wedding", templateId: result.event.template_id || result.event.settings?.templateId || "", heroPresetId: result.event.hero_preset_id || result.event.settings?.heroPresetId || "", program: normalizeProgram(result.event.settings?.program), coupleIntro: normalizeCoupleIntro(result.event.settings?.coupleIntro), loveStory: normalizeLoveStory(result.event.settings?.loveStory) };
       if (query.get("resume") === "draft") {
         try {
           const draft = JSON.parse(window.localStorage.getItem("dear-day-draft") || "null");
-          if (draft && typeof draft === "object") restoredInvitation = { ...initialInvitation, ...draft, program: normalizeProgram(draft.program) };
+          if (draft && typeof draft === "object") restoredInvitation = { ...initialInvitation, ...draft, program: normalizeProgram(draft.program), coupleIntro: normalizeCoupleIntro(draft.coupleIntro), loveStory: normalizeLoveStory(draft.loveStory) };
         } catch {
           // Keep the server version when the device draft cannot be read.
         }
