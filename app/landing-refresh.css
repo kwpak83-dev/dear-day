@@ -2203,7 +2203,7 @@
 /* Mobile landing header refinement: logo 5% smaller, less white header space. */
 @media(max-width:800px){
  .landing-v2 .landing-header{height:52px!important;min-height:52px!important}
- .landing-v2 .landing-header .landing-brand .dearday-logo.dearday-logo--wordmark{width:148.2px!important;height:36.1px!important}
+ .landing-v2 .landing-header .landing-brand .dearday-logo.dearday-logo--wordmark{width:116px!important;height:29px!important}
  .landing-v2 .landing-hero.dd-cinematic-hero{height:calc(100svh - 52px)!important}
 }
 
@@ -2258,4 +2258,10 @@
   .landing-v2 .dd-features .dd-feature .dd-feature-checks li{
     font-size:12px;
   }
+}
+
+/* Match the compact My Invitations wordmark on mobile. */
+@media(max-width:800px){
+ .landing-v2 .landing-header .landing-brand .dearday-logo.dearday-logo--wordmark,
+ .landing-v2 .landing-header .landing-brand .dearday-logo-wordmark-image{width:116px!important;height:29px!important;max-width:116px!important;max-height:29px!important;object-fit:contain!important}
 }
