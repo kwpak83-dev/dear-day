@@ -4330,3 +4330,24 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  .my-page.member-page .dd-member-menu-toggle,
  .my-page.member-page .dd-member-envelope{height:30px!important}
 }
+
+/* My Page mobile three-column quick navigation (scroll cutoff is in my-page-layout.js). */
+.dd-member-quick-tabs{display:none}
+@media(max-width:800px){
+ .my-page.member-page .dd-member-quick-tabs{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));height:60px;
+  background:#fff;border-bottom:1px solid #e9e7e4;
+  overflow:hidden;transition:height .18s ease,border-color .18s ease;
+ }
+ .my-page.member-page .dd-member-quick-tabs>a,
+ .my-page.member-page .dd-member-quick-tabs>span{
+  display:flex;align-items:center;justify-content:center;min-width:0;
+  padding:0 4px;border-bottom:2px solid transparent;
+  color:#929292;font-size:13px;font-weight:500;white-space:nowrap;
+ }
+ .my-page.member-page .dd-member-quick-tabs>a.active{color:#222;font-weight:700;border-bottom-color:#777}
+ .my-page.member-page .dd-member-quick-tabs>span[aria-disabled=true]{color:#a4a4a4}
+ .my-page.member-page .dd-member-quick-tabs.is-hidden{height:0;border-bottom-color:transparent}
+ .my-page.member-page .member-navigation{display:none!important}
+}
+@media(prefers-reduced-motion:reduce){.my-page.member-page .dd-member-quick-tabs{transition:none!important}}
