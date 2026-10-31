@@ -1068,7 +1068,13 @@ export default function CreateInvitation() {
           {messageExamples.map((example, index) => <option key={example.label} value={index}>{example.label}</option>)}
           <option value="direct">직접 입력</option>
         </select>}
-        <textarea className="dd-invitation-message-textarea" rows="4" value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} />
+        {field.key === "message" && <div className="dd-message-linebreak-tools">
+          <div className="dd-message-linebreak-tools-head"><strong>✎ 줄바꿈 직접 편집</strong><span>입력한 엔터가 실제 초대장에 반영돼요.</span></div>
+          <p>문장이 어색하게 나뉘면 원하는 위치에서 엔터를 눌러 주세요. 자동 줄바꿈은 화면 폭에 따라 유지됩니다.</p>
+          <button type="button" className="dd-message-preview-button" onClick={() => { setFlowNotice(""); setFullNoticeDismissed(false); setPreviewOpen(true); }}>◉ 실제 초대장으로 줄바꿈 확인</button>
+        </div>}
+        <textarea className="dd-invitation-message-textarea" rows="7" value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} aria-label={field.key === "message" ? "초대 문구 줄바꿈 편집" : undefined} />
+        {field.key === "message" && <p className="dd-message-linebreak-footnote">현재 템플릿의 글꼴·본문 폭·여백이 적용된 전체 미리보기에서 확인할 수 있어요. 저장 전에도 확인 가능합니다.</p>}
       </Field>;
     }
    if (field.type === "parentName") return (
