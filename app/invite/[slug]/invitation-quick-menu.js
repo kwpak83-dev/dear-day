@@ -57,7 +57,16 @@ function BottomSheet({ title, onClose, children, portalTarget = null, preview = 
 }
 
 function QuickMenuIcon({ kind }) {
-  const symbol = kind === "rsvp" ? "🌸" : kind === "guestbook" ? "💌" : "📜";
+  if (kind === "rsvp") return <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none">
+    <path d="M5 21v-2.2c0-3.1 2.7-5.2 6.4-5.2h1.2c3.7 0 6.4 2.1 6.4 5.2V21" fill="#245CA2" stroke="#153C74" strokeWidth="1.1" strokeLinejoin="round"/>
+    <path d="M8 20.8v-3.1M16 20.8v-3.1" stroke="#163E79" strokeWidth="1"/>
+    <circle cx="12" cy="8.3" r="4.3" fill="#F4C5A3" stroke="#DDA581" strokeWidth=".7"/>
+    <path d="M7.8 8.3c-.4-3.7 1.4-5.7 4.3-5.7 2.8 0 4.5 2 4.1 5.7-.9-1.4-1.5-2.4-2-3.5-1.5 1.7-3.7 2.4-6.4 3.5Z" fill="#182E54"/>
+    <path d="M17.8 16.7 19.1 7.5" stroke="#153C74" strokeWidth="2.2" strokeLinecap="round"/>
+    <path d="M19.1 7.8 19.5 3.2M19.1 7.8l-2.4-3.6M19.1 7.8l2-2.9" stroke="#F4C5A3" strokeWidth="1.9" strokeLinecap="round"/>
+    <path d="m18 2.1 1.4-1M21.4 9.8l1.3.6" stroke="#3C86D4" strokeWidth="1.2" strokeLinecap="round"/>
+  </svg>;
+  const symbol = kind === "guestbook" ? "💌" : "📜";
   return <span aria-hidden="true" style={{ fontSize: 17, lineHeight: 1 }}>{symbol}</span>;
 }
 
