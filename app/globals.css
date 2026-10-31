@@ -4511,3 +4511,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-love-story .dd-love-story-item:nth-child(even) .dd-love-story-photo{margin-left:0;margin-right:14%}
 .dd-love-story .dd-love-story-item:nth-child(even) .dd-love-story-copy{margin-left:0;margin-right:5%}
 @media(max-width:360px){.dd-couple-intro .dd-couple-intro-grid{max-width:290px}}
+
+/* Equal breathing room on both sides of the love-story center line. */
+.dd-love-story .dd-love-story-photo{width:32%;flex:0 0 32%;margin-left:13%;margin-right:0}
+.dd-love-story .dd-love-story-item:nth-child(even) .dd-love-story-photo{margin-left:0;margin-right:13%}
