@@ -7,6 +7,13 @@ const QUICK_TABS_HIDE_SCROLL_Y = 60;
 const QUICK_TABS_SHOW_SCROLL_Y = 8;
 import DearDayLogo from "./dearday-logo";
 
+function QuickTabIcon({ type }) {
+  const common = { width: 17, height: 17, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.7, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true };
+  if (type === "invitations") return <svg {...common}><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/></svg>;
+  if (type === "guests") return <svg {...common}><circle cx="9" cy="8" r="3"/><path d="M3.5 19v-1.5a5.5 5.5 0 0 1 11 0V19"/><path d="M16 5.5a3 3 0 0 1 0 5.5M17 14a5 5 0 0 1 3.5 5"/></svg>;
+  return <svg {...common}><rect x="3" y="7" width="18" height="13" rx="1.5"/><path d="M2 4h20v3H2zM10 12h4"/></svg>;
+}
+
 const menuItems = [
   { key: "invitations", label: "내 초대장", href: "/my-invitations" },
   { key: "guests", label: "하객 관리", href: "/guest-management" },
@@ -37,8 +44,8 @@ export default function MyPageLayout({ current, children }) {
     </header>
     <nav className={`dd-member-quick-tabs${quickTabsHidden ? " is-hidden" : ""}`} aria-label="마이페이지 빠른 메뉴">
       {menuItems.slice(0, 3).map(item => item.href
-        ? <a key={item.key} href={item.href} className={current === item.key ? "active" : ""} aria-current={current === item.key ? "page" : undefined}>{item.label}</a>
-        : <span key={item.key} aria-disabled="true">{item.label}</span>)}
+        ? <a key={item.key} href={item.href} className={current === item.key ? "active" : ""} aria-current={current === item.key ? "page" : undefined}><QuickTabIcon type={item.key} /><span>{item.label}</span></a>
+        : <span key={item.key} aria-disabled="true"><QuickTabIcon type={item.key} /><span>{item.label}</span></span>)}
     </nav>
     <div className="member-page-layout">
       <aside className="member-navigation">
