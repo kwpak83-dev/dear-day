@@ -126,7 +126,7 @@ export default function Home() {
         <button className="dd-drawer-backdrop" type="button" aria-label="메뉴 닫기" onClick={() => setMenuOpen(false)} />
         <nav className="landing-mobile-nav dd-home-drawer" aria-label="DearDay 메뉴">
           <div className="dd-drawer-head"><span>DearDay ✧</span><button type="button" aria-label="메뉴 닫기" onClick={() => setMenuOpen(false)}>×</button></div>
-          <a className="dd-drawer-account" href={user ? "/my-invitations" : "/?login=required&returnUrl=%2Fmy-invitations"} onClick={() => setMenuOpen(false)}><span className="dd-drawer-avatar">♙</span><span><strong>{user ? "내 계정" : "로그인하고 시작하기"}</strong><small>{user ? "초대장과 이용권 관리" : "네이버 계정으로 간편하게 시작"}</small></span><span>›</span></a>
+          <a className="dd-drawer-account" href={user ? "/my-profile" : "/?login=required&returnUrl=%2Fmy-profile"} onClick={() => setMenuOpen(false)}><span className="dd-drawer-avatar">♙</span><span><strong>{user ? "내 계정" : "로그인하고 시작하기"}</strong><small>{user ? "계정 정보 확인" : "네이버 계정으로 간편하게 시작"}</small></span><span>›</span></a>
           <div className="dd-drawer-shortcuts"><button type="button" onClick={() => {setMenuOpen(false);start();}}><span>✉</span>초대장 만들기</button><a href={user ? "/my-invitations" : "/?login=required&returnUrl=%2Fmy-invitations"} onClick={() => setMenuOpen(false)}><span>▤</span>내 초대장</a></div>
           <p className="dd-drawer-label">SERVICE</p>
           <a className="dd-drawer-link" href="/templates" onClick={() => setMenuOpen(false)}><span>▦</span>템플릿 둘러보기 <b>›</b></a>
