@@ -4501,3 +4501,13 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .dd-couple-photo-editor>label input{flex:1;min-width:0;accent-color:#ad8290}
 .create-page .dd-couple-photo-editor-actions{display:flex;justify-content:center;gap:8px;margin-top:12px}
 .create-page .dd-couple-photo-editor-actions button{border:1px solid #d9d0c8;border-radius:7px;padding:7px 10px;background:#fff;color:#514942;font-size:12px;cursor:pointer}
+
+/* Wedding refinement: smaller couple portraits, story photos closer to timeline */
+.dd-couple-intro .dd-couple-intro-grid{max-width:310px;gap:12px}
+.dd-couple-intro .dd-couple-intro-photo{aspect-ratio:3/4}
+.dd-love-story .dd-love-story-item{justify-content:initial;gap:0}
+.dd-love-story .dd-love-story-photo{width:36%;flex:0 0 36%;margin-left:14%;margin-right:0}
+.dd-love-story .dd-love-story-copy{width:45%;flex:0 0 45%;margin-left:5%;margin-right:0}
+.dd-love-story .dd-love-story-item:nth-child(even) .dd-love-story-photo{margin-left:0;margin-right:14%}
+.dd-love-story .dd-love-story-item:nth-child(even) .dd-love-story-copy{margin-left:0;margin-right:5%}
+@media(max-width:360px){.dd-couple-intro .dd-couple-intro-grid{max-width:290px}}
