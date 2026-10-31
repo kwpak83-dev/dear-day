@@ -4271,3 +4271,45 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   .my-page .guest-management-content .guest-overview-metrics>div{gap:5px}
   .my-page .guest-management-content .guest-metric-icon{width:21px;height:21px;flex-basis:21px;font-size:18px}
 }
+
+/* Consistent DearDay mobile header for every My Page route. */
+.my-page.member-page .dd-member-menu-toggle,
+.my-page.member-page .dd-member-envelope,
+.my-page.member-page .dd-member-mobile-menu{display:none}
+@media(max-width:800px){
+  .my-page.member-page .dd-member-topbar{
+    position:relative!important;display:flex!important;align-items:center!important;
+    justify-content:center!important;height:62px!important;min-height:62px!important;
+    padding:0 18px!important;background:#fff!important;border-bottom:1px solid #eee6de!important;
+  }
+  .my-page.member-page .dd-member-topbar .my-page-header-actions{display:none!important}
+  .my-page.member-page .dd-member-topbar .dd-member-brand{
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    position:absolute!important;left:50%!important;top:50%!important;
+    transform:translate(-50%,-50%)!important;margin:0!important;
+  }
+  .my-page.member-page .dd-member-topbar .dd-member-brand .dearday-logo--wordmark{
+    width:148px!important;height:auto!important;max-height:42px!important;
+  }
+  .my-page.member-page .dd-member-menu-toggle{
+    display:flex!important;position:absolute;left:18px;top:50%;transform:translateY(-50%);
+    flex-direction:column;justify-content:center;gap:5px;width:30px;height:36px;
+    padding:4px;border:0;background:transparent;cursor:pointer;z-index:2;
+  }
+  .my-page.member-page .dd-member-menu-toggle span{display:block;width:22px;height:2px;border-radius:2px;background:#262626}
+  .my-page.member-page .dd-member-envelope{
+    display:flex!important;align-items:center;justify-content:center;
+    position:absolute;right:18px;top:50%;transform:translateY(-50%);
+    width:32px;height:36px;z-index:2;
+  }
+  .my-page.member-page .dd-member-mobile-menu{
+    display:flex;position:absolute;left:0;right:0;top:100%;z-index:40;
+    flex-direction:column;gap:0;padding:8px 18px 14px;background:#fff;
+    border-bottom:1px solid #e7e0d8;box-shadow:0 12px 22px rgba(0,0,0,.08);
+  }
+  .my-page.member-page .dd-member-mobile-menu a,
+  .my-page.member-page .dd-member-mobile-menu span{
+    display:block;padding:12px 8px;color:#333;text-decoration:none;font-size:14px;
+  }
+  .my-page.member-page .dd-member-mobile-menu a[aria-current="page"]{font-weight:750;color:#9e716e}
+}
