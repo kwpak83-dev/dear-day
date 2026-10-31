@@ -16,7 +16,6 @@ export default function TemplateBgm({ src }) {
   const [playing, setPlaying] = useState(false);
   const [error, setError] = useState("");
   const [showHint, setShowHint] = useState(false);
-  const hintSeenRef = useRef(false);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -35,8 +34,8 @@ export default function TemplateBgm({ src }) {
   }, [src]);
 
   useEffect(() => {
-    if (!src || hintSeenRef.current) return;
-    hintSeenRef.current = true;
+    if (!src) { setShowHint(false); return; }
+    setShowHint(false);
     const showTimer = window.setTimeout(() => setShowHint(true), 500);
     const hideTimer = window.setTimeout(() => setShowHint(false), 3500);
     return () => { window.clearTimeout(showTimer); window.clearTimeout(hideTimer); };
