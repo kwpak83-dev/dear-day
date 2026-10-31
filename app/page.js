@@ -190,7 +190,7 @@ export default function Home() {
               </div>
             </div>
             <div className="dd-feature-copy">
-              <div className="dd-feature-labels"><span className="dd-feature-number">{number} <span>/ 06</span></span><span className="dd-feature-eyebrow">{eyebrow}</span></div>
+              <div className="dd-feature-labels"><span className="dd-feature-number">{number} <span>/ 07</span></span><span className="dd-feature-eyebrow">{eyebrow}</span></div>
               <h3>{title}</h3>
               <p>{description}</p>
               <ul className="dd-feature-checks">
