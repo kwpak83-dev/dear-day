@@ -24,7 +24,14 @@ const getDisplayEmail = (user) => {
   return email.endsWith("@accounts.dear-day.com") ? "" : email;
 };
 
-const formatMobile = (value) => {\n  const digits = String(value || "").replace(/\D/g, "");\n  return digits.length === 11 ? `${digits.slice(0,3)}-${digits.slice(3,7)}-${digits.slice(7)}` : digits.length === 10 ? `${digits.slice(0,3)}-${digits.slice(3,6)}-${digits.slice(6)}` : "정보 없음";\n};\n\nconst formatJoinedAt = (value) => {
+const formatMobile = (value) => {
+  const digits = String(value || "").replace(/\D/g, "");
+  if (digits.length === 11) return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+  if (digits.length === 10) return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+  return "정보 없음";
+};
+
+const formatJoinedAt = (value) => {
   if (!value) return "";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
