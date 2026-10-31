@@ -1,5 +1,5 @@
-import WeddingStorySampleEditor from "./wedding-story-sample-editor";
 "use client";
+import WeddingStorySampleEditor from "./wedding-story-sample-editor";
 import { useEffect, useMemo, useState } from "react";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 import AdminDesignNav from "../admin-design-nav";
