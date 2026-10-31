@@ -4228,3 +4228,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-message-preview-footer{display:flex;justify-content:center;padding:11px 16px 16px;border-top:1px solid #ebddd6}
 .dd-message-preview-footer button{padding:11px 18px;border:1px solid #d7a8a1;border-radius:10px;background:#fff;color:#865a54;font-size:13px;font-weight:650;cursor:pointer}
 @media(max-width:430px){.dd-message-preview-backdrop{padding:8px}.dd-message-preview-dialog{max-height:95dvh}.dd-message-preview-scroll{padding-left:6px;padding-right:6px}}
+
+/* Inline and floating message previews share the same actual template renderer. */
+.dd-message-preview-inline{margin:12px 0 0;padding:9px 7px 12px;border:1px solid #ead9d2;border-radius:12px;background:#fff;overflow:hidden}
+.dd-message-preview-inline-label{margin:0 0 9px!important;font-size:11px!important;line-height:1.5!important;text-align:center;color:#987d72!important;letter-spacing:.03em}
+.dd-message-preview-inline .dd-message-preview-stage{width:100%}
+.dd-message-preview-inline .dd-message-preview-canvas{margin:0 auto}
+.dd-message-preview-inline .dd-message-preview-canvas .classic-message{margin-top:0!important}
+.create-page .dd-invitation-message-textarea{font-size:14px!important;line-height:1.65!important;min-height:128px}
