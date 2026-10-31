@@ -4401,3 +4401,16 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  .my-page.member-page .member-page-content .guest-management-content{padding-top:18px}
  .my-page.member-page .guest-management-content .guest-event-select{margin-top:0}
 }
+
+/* Compact RSVP filters: keep count beside buttons and pull the response table upward. */
+.my-page .guest-management-content .guest-list-heading{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:8px;margin-top:16px;margin-bottom:8px}
+.my-page .guest-management-content .guest-filters{display:flex;flex-wrap:nowrap;gap:5px;align-self:center;min-width:0}
+.my-page .guest-management-content .guest-filters button{min-height:28px;height:28px;padding:3px 11px;font-size:11px;line-height:1.2;white-space:nowrap}
+.my-page .guest-management-content .guest-list-actions{display:flex;align-items:center;justify-content:flex-end;flex:0 0 auto;width:auto;min-width:0}
+.my-page .guest-management-content .guest-list-actions>span{font-size:12px;white-space:nowrap}
+.my-page .guest-management-content .guest-table-card{margin-top:0}
+@media(max-width:640px){
+ .my-page .guest-management-content .guest-list-heading{flex-direction:row;align-items:center;gap:6px;margin-top:14px;margin-bottom:7px}
+ .my-page .guest-management-content .guest-filters button{min-height:28px;height:28px;padding:3px 10px}
+ .my-page .guest-management-content .guest-list-actions{width:auto;justify-content:flex-end}
+}
