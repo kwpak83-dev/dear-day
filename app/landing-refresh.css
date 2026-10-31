@@ -2296,4 +2296,4 @@
 .landing-v2 .dd-landing-top-button>span{font-size:19px;line-height:19px}
 .landing-v2 .dd-landing-top-button>small{font-size:8px;font-weight:700;letter-spacing:.03em}
 .landing-v2 .dd-landing-top-button:focus-visible{outline:2px solid #806b5e;outline-offset:3px}
-@media(max-width:800px){.landing-v2 .dd-landing-top-button{right:14px;bottom:calc(20px + env(safe-area-inset-bottom,0px));width:40px;height:40px}}
+@media(max-width:800px){.landing-v2 .dd-landing-top-button{right:14px;bottom:calc(88px + env(safe-area-inset-bottom,0px));width:34px;height:34px}.landing-v2 .dd-landing-top-button>span{font-size:16px;line-height:16px}.landing-v2 .dd-landing-top-button>small{font-size:7px}}
