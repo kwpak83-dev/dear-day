@@ -4378,3 +4378,20 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .my-page .dd-my-guide-event>strong{font-size:12px}
 .my-page .dd-my-guide-event p{margin-top:4px;line-height:1.6}
 @media(max-width:800px){.my-page .dd-my-guide{margin-bottom:12px}.my-page .dd-my-guide-title{padding:12px 15px}.my-page .dd-my-guide-body{padding:0 15px 12px;font-size:12px;line-height:1.55}}
+
+/* Guest Management: contextual help and guestbook visual alignment with RSVP. */
+.guest-management-content .dd-guest-help{position:relative;display:inline-flex;vertical-align:middle;margin-left:4px}
+.guest-management-content .dd-guest-help>button{display:inline-flex;align-items:center;justify-content:center;width:21px;height:21px;padding:0;border:1px solid #d7d7d7;border-radius:50%;background:#fff;color:#8b8b94;font-size:13px;font-weight:500;cursor:pointer}
+.guest-management-content .dd-guest-help>button:focus-visible{outline:2px solid #777;outline-offset:2px}
+.guest-management-content .dd-guest-help-popover{position:absolute;z-index:10;top:calc(100% + 7px);left:0;width:min(240px,calc(100vw - 55px));padding:10px 12px;border:1px solid #e6e6e8;border-radius:10px;background:#fff;box-shadow:0 6px 20px #00000015;color:#555;font-size:12px;font-weight:400;line-height:1.6;white-space:normal;text-align:left}
+.guest-management-content .guestbook-management{margin-top:32px;padding-top:24px;border-top:1px solid #e5e5e7}
+.guest-management-content .guestbook-management-heading{align-items:center}
+.guest-management-content .guestbook-management-heading h2{margin:0;color:#242424;font-size:20px;font-weight:700;line-height:1.5}
+.guest-management-content .guestbook-management-heading>span{color:#777;font-size:12px}
+.guest-management-content .guestbook-management-list{gap:10px;margin-top:14px}
+.guest-management-content .guestbook-management-list article{background:#fff;border:1px solid #e7e7e9;border-radius:16px;padding:16px;box-shadow:0 2px 12px #00000008}
+.guest-management-content .guestbook-management-list header strong{color:#282828;font-size:13px}
+.guest-management-content .guestbook-management-list time{color:#898b93;font-size:11px}
+.guest-management-content .guestbook-management-list article>p{color:#565d69;font-size:12px;line-height:1.65}
+.guest-management-content .guestbook-management-list article>button{color:#777;font-size:11px}
+@media(max-width:640px){.guest-management-content .guestbook-management{margin-top:26px;padding-top:20px}.guest-management-content .guestbook-management-heading h2{font-size:18px}}
