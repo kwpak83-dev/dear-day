@@ -4442,3 +4442,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Wedding RSVP attendee-side badges: deeper rose and muted navy. */
 .my-page .guest-management-content .guest-side-tag.bride{background:#D96784;color:#fff}
 .my-page .guest-management-content .guest-side-tag.groom{background:#526B88;color:#fff}
+
+/* Compact first-entry BGM hint beside the existing music icon. */
+.dd-template-bgm .dd-bgm-hint{position:absolute;right:48px;top:5px;display:inline-flex;align-items:center;gap:3px;width:max-content;max-width:none;height:24px;box-sizing:border-box;padding:2px 7px;border:1px solid #dcc8b8;border-radius:7px;background:rgba(255,249,244,.97);color:#806b5e;font-size:10px;font-weight:600;line-height:1;white-space:nowrap;box-shadow:0 2px 7px #00000012;pointer-events:none;animation:dd-bgm-hint-in .2s ease-out both}
+.dd-template-bgm .dd-bgm-hint span{font-size:12px;line-height:1}
+@keyframes dd-bgm-hint-in{from{opacity:0;transform:translateX(5px)}to{opacity:1;transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){.dd-template-bgm .dd-bgm-hint{animation:none}}
