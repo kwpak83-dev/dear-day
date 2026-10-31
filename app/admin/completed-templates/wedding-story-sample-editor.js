@@ -4,9 +4,9 @@ import { normalizeCoupleIntro, normalizeLoveStory } from "../../../lib/wedding-s
 
 function HashtagInput({hashtags,onChange}) {
  const [draft,setDraft]=useState(()=>(hashtags||[]).join(", "));
- const lastEmitted=useRef(hashtags);
- useEffect(()=>{if(hashtags!==lastEmitted.current){setDraft((hashtags||[]).join(", "));lastEmitted.current=hashtags;}},[hashtags]);
- const update=(text)=>{setDraft(text);const next=text.split(",").slice(0,8).map(x=>x.trim()).filter(Boolean);lastEmitted.current=next;onChange(next);};
+ const lastEmitted=useRef((hashtags||[]).join("\u0000"));
+ useEffect(()=>{const signature=(hashtags||[]).join("\u0000");if(signature!==lastEmitted.current){setDraft((hashtags||[]).join(", "));lastEmitted.current=signature;}},[hashtags]);
+ const update=(text)=>{setDraft(text);const next=text.split(",").slice(0,8).map(x=>x.trim()).filter(Boolean);lastEmitted.current=next.join("\u0000");onChange(next);};
  return <input style={input} value={draft} placeholder="예: INTJ, 새침, 먹순이" onChange={e=>update(e.target.value)} onBlur={()=>setDraft((hashtags||[]).join(", "))}/>;
 }
 const input={width:"100%",boxSizing:"border-box",padding:"8px",border:"1px solid #ddd",borderRadius:7};
