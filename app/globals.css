@@ -4425,3 +4425,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Invitation floating quick menu: rounded rectangle trial (shared across previews and published invitations). */
 .invitation-quick-menu.invitation-quick-menu--modern{border-radius:12px!important}
+
+/* Invitation quick bar: near full-width rectangular layout with warm illustrated accents. */
+.invitation-quick-menu.invitation-quick-menu--modern{width:calc(100% - 24px)!important;max-width:none!important;left:12px!important;right:12px!important;transform:none!important;box-sizing:border-box;border-radius:12px!important;display:flex!important;align-items:center!important;justify-content:space-evenly!important}
+.invitation-quick-menu.invitation-quick-menu--modern>button{flex:1 1 0!important;min-width:0!important;justify-content:center!important;gap:5px!important}
+.invitation-quick-menu.invitation-quick-menu--modern .dd-quick-icon-bubble{flex-shrink:0}
+.invitation-quick-menu.invitation-quick-menu--modern .invitation-quick-copy{white-space:nowrap}
+/* Preserve preview viewport bounds; do not expand beyond editor preview frame. */
+.invitation-quick-menu--desktop-live.invitation-quick-menu--modern,.invitation-quick-menu--editor-full.invitation-quick-menu--modern,.invitation-quick-menu--sales-preview.invitation-quick-menu--modern{width:calc(100% - 24px)!important}
