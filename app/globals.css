@@ -4414,3 +4414,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  .my-page .guest-management-content .guest-filters button{min-height:28px;height:28px;padding:3px 10px}
  .my-page .guest-management-content .guest-list-actions{width:auto;justify-content:flex-end}
 }
+
+/* Mobile quick tabs: clean sans-serif labels and understated line icons. */
+@media(max-width:800px){
+ .my-page.member-page .dd-member-quick-tabs>a,
+ .my-page.member-page .dd-member-quick-tabs>span{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:5px;font-family:Pretendard,"Noto Sans KR",Arial,sans-serif!important;font-size:12px!important;letter-spacing:-.035em!important;font-weight:500!important}
+ .my-page.member-page .dd-member-quick-tabs>a.active{font-weight:700!important;color:#202020!important;border-bottom-color:#777!important}
+ .my-page.member-page .dd-member-quick-tabs svg{display:block;width:16px;height:16px;flex:0 0 16px;stroke:currentColor}
+}
