@@ -27,3 +27,44 @@
 .invitation-bottom-sheet--stationery>.invitation-bottom-sheet-content .guestbook-form label{position:relative}
 .invitation-bottom-sheet--stationery>.invitation-bottom-sheet-content .guestbook-form textarea{height:86px!important}
 @media(max-width:360px){.invitation-bottom-sheet--stationery>.invitation-bottom-sheet-content>.public-rsvp,.invitation-bottom-sheet--stationery>.invitation-bottom-sheet-content>.guestbook-section{padding-left:12px!important;padding-right:12px!important}.invitation-bottom-sheet--stationery>.invitation-bottom-sheet-content .dd-stationery-clipart{height:36px;width:42px}}
+
+/* Override legacy blue button rules (including their !important declarations).
+   Explicit sheet scope keeps program and other invitation actions unchanged. */
+.invitation-bottom-sheet-layer .invitation-bottom-sheet.invitation-bottom-sheet--stationery .invitation-bottom-sheet-content .public-rsvp form>button:not(:disabled),
+.invitation-bottom-sheet-layer .invitation-bottom-sheet.invitation-bottom-sheet--stationery .invitation-bottom-sheet-content .guestbook-section .guestbook-form>button:not(:disabled){
+  background:#c99487!important;border:1px solid #c99487!important;color:#fff!important;
+  border-radius:9px!important;min-height:43px!important;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet.invitation-bottom-sheet--stationery .invitation-bottom-sheet-content .public-rsvp form>button:disabled,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet.invitation-bottom-sheet--stationery .invitation-bottom-sheet-content .guestbook-section .guestbook-form>button:disabled{
+  background:#eee2dc!important;border:1px solid #dfcfc3!important;color:#927f74!important;
+}
+
+/* Response-edit page is a separate route, not a BottomSheet. */
+.rsvp-edit-page.rsvp-edit-page--stationery{
+  display:block;background:#faf7f1!important;color:#62483c!important;
+  min-height:100svh;padding:12px 10px!important;
+}
+.rsvp-edit-page--stationery .rsvp-edit-card{
+  box-sizing:border-box;width:min(100%,500px);margin:0 auto;
+  padding:14px 16px 22px!important;border:1px solid #dfcfc3!important;
+  border-radius:16px;background:#faf7f1!important;box-shadow:none!important;
+}
+.rsvp-edit-page--stationery .dd-stationery-heading{display:grid;justify-items:center;gap:3px;margin:0 0 13px;text-align:center}
+.rsvp-edit-page--stationery .dd-stationery-clipart{width:46px;height:43px;object-fit:contain}
+.rsvp-edit-page--stationery .rsvp-kicker{font:10px/1.4 Georgia,serif!important;letter-spacing:.23em;color:#917a6d!important;margin:0!important}
+.rsvp-edit-page--stationery .rsvp-edit-card h1{font:500 21px/1.4 Georgia,"Noto Serif KR",serif!important;color:#62483c!important;letter-spacing:.04em;margin:0!important}
+.rsvp-edit-page--stationery .dd-stationery-heading:after{content:"";width:64px;height:1px;background:#ddc4b7;margin-top:5px}
+.rsvp-edit-page--stationery .rsvp-edit-card form{gap:9px!important}
+.rsvp-edit-page--stationery .rsvp-edit-card fieldset{margin:0!important;padding:0!important;border:0!important}
+.rsvp-edit-page--stationery .rsvp-edit-card :is(legend,label>span){font-size:11px!important;color:#62483c!important;margin:0 0 4px!important}
+.rsvp-edit-page--stationery .rsvp-edit-card .rsvp-status-options{gap:7px!important}
+.rsvp-edit-page--stationery .rsvp-edit-card .rsvp-status-options span{min-height:39px!important;padding:8px 5px!important;border:1px solid #dfcfc3!important;border-radius:9px!important;background:#fffdfb!important;color:#62483c!important;font-size:12px!important}
+.rsvp-edit-page--stationery .rsvp-edit-card .rsvp-status-options input:checked+span{border-color:#c99487!important;background:#f8e9e4!important;color:#69483d!important}
+.rsvp-edit-page--stationery .rsvp-edit-card :is(input:not([type=radio]),select,textarea){box-sizing:border-box;min-height:40px!important;padding:8px 11px!important;border:1px solid #dfcfc3!important;border-radius:8px!important;background:#fffdfb!important;color:#62483c!important;font-size:12px!important}
+.rsvp-edit-page--stationery .rsvp-edit-card textarea{min-height:84px!important}
+.rsvp-edit-page--stationery .rsvp-edit-card form>button[type=submit]:not(:disabled){background:#c99487!important;border:1px solid #c99487!important;color:#fff!important;border-radius:9px!important;min-height:43px!important}
+.rsvp-edit-page--stationery .rsvp-edit-card .rsvp-edit-close{color:#62483c!important}
+.rsvp-edit-page--stationery .rsvp-edit-card .rsvp-back-link{color:#917a6d!important}
+.rsvp-edit-page--stationery .rsvp-edit-card .rsvp-success{background:#f8e9e4!important;border-color:#dfcfc3!important;color:#62483c!important}
+@media(max-width:360px){.rsvp-edit-page--stationery .rsvp-edit-card{padding:12px 12px 18px!important}}
