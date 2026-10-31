@@ -1,6 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+// Adjust this value to change when the mobile quick tabs disappear.
+const QUICK_TABS_HIDE_SCROLL_Y = 60;
 import DearDayLogo from "./dearday-logo";
 
 const menuItems = [
@@ -13,6 +16,13 @@ const menuItems = [
 
 export default function MyPageLayout({ current, children }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [quickTabsHidden, setQuickTabsHidden] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setQuickTabsHidden(window.scrollY > QUICK_TABS_HIDE_SCROLL_Y);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   return <main className="my-page member-page">
     <header className="create-header dd-member-topbar">
       <button type="button" className="dd-member-menu-toggle" aria-label="메뉴 열기" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span /><span /><span /></button>
@@ -21,6 +31,11 @@ export default function MyPageLayout({ current, children }) {
       <div className="create-user my-page-header-actions"><a className="my-page-header-button primary" href="/templates">새 초대장 만들기</a><a className="my-page-header-button" href="/">나가기</a></div>
       {menuOpen && <nav className="dd-member-mobile-menu" aria-label="모바일 마이페이지 메뉴"><a href="/templates" onClick={() => setMenuOpen(false)}>새 초대장 만들기</a>{menuItems.map(item => item.href ? <a key={item.key} href={item.href} onClick={() => setMenuOpen(false)} aria-current={current === item.key ? "page" : undefined}>{item.label}</a> : <span key={item.key}>{item.label} · 준비중</span>)}<a href="/" onClick={() => setMenuOpen(false)}>홈으로</a></nav>}
     </header>
+    <nav className={`dd-member-quick-tabs${quickTabsHidden ? " is-hidden" : ""}`} aria-label="마이페이지 빠른 메뉴">
+      {menuItems.slice(0, 3).map(item => item.href
+        ? <a key={item.key} href={item.href} className={current === item.key ? "active" : ""} aria-current={current === item.key ? "page" : undefined}>{item.label}</a>
+        : <span key={item.key} aria-disabled="true">{item.label}</span>)}
+    </nav>
     <div className="member-page-layout">
       <aside className="member-navigation">
         <p>MY PAGE</p>
