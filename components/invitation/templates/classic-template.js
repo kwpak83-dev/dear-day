@@ -1,3 +1,4 @@
+import CountdownTimer from "../countdown-timer";
 import { invitationFontStylesheets } from "../../../lib/invitation-local-fonts";
 import { getHeroFont } from "../../../lib/hero-fonts";
 import HeroFontGate from "../hero-font-gate";
@@ -29,13 +30,9 @@ function ClassicDateSection({ eventDate, eventTime, title, wedding }) {
     timeText = `${hour < 12 ? "오전" : "오후"} ${hour % 12 || 12}시${minute ? ` ${minute}분` : ""}`;
   }
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const target = new Date(year, month, day);
-  const diffDays = Math.ceil((target - today) / 86400000);
-  const ddayText = diffDays === 0 ? "오늘입니다." : null;
   const names = title || "";
   const eventText = wedding && names ? `${names.replace(" & ", " ♡ ")}의 결혼식` : names;
+  const targetDateTime = `${eventDate}T${timeMatch ? eventTime : "00:00"}:00`;
 
   return <section className="classic-section classic-date">
     <ClassicHeading eyebrow="DATE">날짜 안내</ClassicHeading>
@@ -49,7 +46,7 @@ function ClassicDateSection({ eventDate, eventTime, title, wedding }) {
         {cells.map((value, index) => <span key={index} className={value === day ? "is-event-day" : ""}>{value || ""}</span>)}
       </div>
     </div>
-    <p className="classic-dday">{eventText && <><strong>{eventText}</strong><br /></>}{ddayText || <><span className="classic-dday-highlight">{Math.abs(diffDays)}일</span> {diffDays > 0 ? "남았습니다." : "지났습니다."}</>}</p>
+    <CountdownTimer targetDateTime={targetDateTime} eventText={eventText} />
   </section>;
 }
 
