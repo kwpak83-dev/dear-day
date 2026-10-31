@@ -4279,7 +4279,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 @media(max-width:800px){
   .my-page.member-page .dd-member-topbar{
     position:relative!important;display:flex!important;align-items:center!important;
-    justify-content:center!important;height:64px!important;min-height:64px!important;max-height:64px!important;box-sizing:border-box!important;
+    justify-content:center!important;height:52px!important;min-height:52px!important;max-height:52px!important;box-sizing:border-box!important;
     padding:0 18px!important;background:#fff!important;border-bottom:1px solid #eee6de!important;
   }
   .my-page.member-page .dd-member-topbar .my-page-header-actions{display:none!important}
@@ -4319,4 +4319,14 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  .my-page.member-page .dd-member-topbar .dd-member-brand{width:148.2px!important;height:36.1px!important;max-width:148.2px!important;min-width:0!important}
  .my-page.member-page .dd-member-topbar .dd-member-brand .dearday-logo,
  .my-page.member-page .dd-member-topbar .dd-member-brand svg{width:148.2px!important;height:36.1px!important;max-width:148.2px!important;max-height:36.1px!important}
+}
+
+/* Compact mobile My Page header: keep landing header unchanged. */
+@media(max-width:800px){
+ .my-page.member-page .dd-member-topbar .dd-member-brand{width:116px!important;height:29px!important;max-width:116px!important}
+ .my-page.member-page .dd-member-topbar .dd-member-brand .dearday-logo,
+ .my-page.member-page .dd-member-topbar .dd-member-brand .dearday-logo--wordmark,
+ .my-page.member-page .dd-member-topbar .dd-member-brand svg{width:116px!important;height:29px!important;max-width:116px!important;max-height:29px!important}
+ .my-page.member-page .dd-member-menu-toggle,
+ .my-page.member-page .dd-member-envelope{height:30px!important}
 }
