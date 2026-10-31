@@ -319,6 +319,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     : "";
   const decorationsConfigured = Boolean(config?.decorations?.length);
   const safeArea = config?.safeArea;
+  if (safeArea?.messageWidth) rootStyle["--dd-message-max-width"] = `${safeArea.messageWidth}px`;
   if (safeArea) {
     for (const side of ["top", "right", "bottom", "left"]) rootStyle[`--dd-safe-${side}`] = `${safeArea[side]}px`;
   }
