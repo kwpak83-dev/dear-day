@@ -4136,3 +4136,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .guest-table-footer button:disabled{opacity:.45;cursor:not-allowed}
 .guest-table-footer>span{color:#a1a7ae;font-size:11px}
 @media(max-width:640px){.my-page.member-page .guest-management-content .guest-overview{padding:17px 15px}.guest-overview-metrics>div{padding:10px 9px;gap:5px}.guest-overview-metrics>div>span:nth-child(2){font-size:11px}.guest-overview-metrics>div>strong{font-size:12px}.my-page.member-page .guest-management-content .guest-table-card{padding:10px 8px}.guest-table-head,.guest-table-row{grid-template-columns:minmax(0,2fr) repeat(4,minmax(28px,.65fr));gap:3px}.guest-table-head{font-size:10px;padding:7px 4px}.guest-table-row{font-size:11px;padding:7px 4px}.guest-table-name{gap:3px;flex-wrap:wrap}.guest-table-name strong{font-size:11px}.guest-side-tag{font-size:9px;padding:2px 4px}.guest-table-symbol{font-size:17px}.guest-table-detail{grid-template-columns:1fr;margin:0 4px 8px;padding:11px}.guest-table-footer{padding:10px 5px 0}}
+
+/* Narrow only the invitation message; leave gallery, map and accounts unchanged. */
+.full-invitation-renderer .romantic-message blockquote,
+.full-invitation-renderer .modern-message blockquote,
+.full-invitation-renderer .classic-message blockquote,
+.full-invitation-renderer .romantic-message p,
+.full-invitation-renderer .modern-message p,
+.full-invitation-renderer .classic-message p { max-width:var(--dd-message-max-width, 100%); margin-left:auto; margin-right:auto; }
