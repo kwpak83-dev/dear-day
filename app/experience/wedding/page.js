@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import InvitationRenderer from "../../../components/invitation/invitation-renderer";
+import TemplatePreviewCanvas from "../../../components/invitation/template-preview-canvas";
 import InvitationMap from "../../../components/invitation/invitation-map";
 import TransportGuide from "../../../components/invitation/transport-guide";
 import ParentsIntro from "../../../components/invitation/parents-intro";
@@ -105,7 +106,7 @@ export default function WeddingExperience() {
   const gallery = (invitation.galleryImages || []).map((url, index) => ({ id: `experience-${index}`, url }));
   return <main ref={rootRef} className="public-invitation shared-public-invitation dd-landing-experience-document">
     {notice && <p className="dd-experience-page-notice" role="status"><span>{notice}</span><button type="button" aria-label="안내 닫기" onClick={() => setNotice("")}>×</button></p>}
-    <div className="full-invitation-renderer dd-bgm-public-style"><InvitationRenderer invitation={invitation} eventKind="wedding" eventTypeConfig={eventTypeConfig} templateId={item.body_template_id} templateConfig={config} templateAssets={templateAssets} placeActions={<InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView deferUntilVisible />}>
+    <TemplatePreviewCanvas stageClassName="dd-experience-preview-stage" canvasClassName="dd-experience-preview-canvas"><InvitationRenderer invitation={invitation} eventKind="wedding" eventTypeConfig={eventTypeConfig} templateId={item.body_template_id} templateConfig={config} templateAssets={templateAssets} placeActions={<InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView deferUntilVisible />}>
       <div className="public-invitation-sections">
         <ParentsIntro invitation={invitation} eventKind="wedding" eventTypeConfig={eventTypeConfig} />
         <GrowthTimeline invitation={invitation} eventKind="wedding" eventTypeConfig={eventTypeConfig} />
@@ -116,6 +117,6 @@ export default function WeddingExperience() {
         <OptionalInvitationSections invitation={invitation} eventTypeConfig={eventTypeConfig} previewMode="landing-experience" sheetRequest={sheetRequest} />
         <DearDayBrandFooter />
       </div>
-    </InvitationRenderer></div>
+    </InvitationRenderer></TemplatePreviewCanvas>
   </main>;
 }
