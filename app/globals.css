@@ -4250,3 +4250,24 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   width:var(--dd-message-preview-layout-width,390px)!important;
   max-width:none!important;
 }
+
+/* DearDay RSVP dashboard rose-pink variant: only accent indicators change.
+   Keep existing neutral metric tiles, labels, data and export controls. */
+.my-page .guest-management-content .guest-attendance-track>div{
+  background:#d96784;
+}
+.my-page .guest-management-content .guest-table-symbol.yes{
+  color:#d96784;
+}
+.my-page .guest-management-content .guest-filters button.active{
+  background:#d96784;border-color:#d96784;color:#fff;
+}
+.my-page .guest-management-content .guest-metric-icon{
+  width:24px;height:24px;flex:0 0 24px;
+  font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
+  font-size:20px;line-height:1;
+}
+@media(max-width:380px){
+  .my-page .guest-management-content .guest-overview-metrics>div{gap:5px}
+  .my-page .guest-management-content .guest-metric-icon{width:21px;height:21px;flex-basis:21px;font-size:18px}
+}
