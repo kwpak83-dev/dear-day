@@ -98,7 +98,6 @@ export default function GuestManagement() {
   };
 
   return <MyPageLayout current="guests"><section className="guest-management-content">
-    <p className="section-kicker">GUEST MANAGEMENT</p><h1>하객 관리</h1><p className="guest-management-intro">초대장에 전달된 참석 여부를 확인하세요.</p>
     {notice && (notice === "관리할 수 있는 발행 초대장이 아직 없어요." && !loginRequired ? <div className="dd-empty-state"><span className="dd-empty-icon" aria-hidden="true">✉</span><h2>관리할 하객 정보가 아직 없어요</h2><p>초대장을 발행하면 이곳에서 참석 여부를 관리할 수 있어요.</p><a href="/my-invitations" className="dd-empty-cta">내 초대장 확인하기</a></div> : <div className="my-notice"><p>{notice}</p>{loginRequired && <a className="my-login-button" href="/?login=required&returnUrl=%2Fguest-management">다시 로그인하기</a>}</div>)}
     {events.length > 0 && <><label className="guest-event-select"><span>초대장 선택</span><select value={selectedSlug} onChange={(event) => chooseEvent(event.target.value)}>{events.map((event) => <option key={event.slug} value={event.slug}>{event.title}</option>)}</select></label>{selectedEvent && <p className="guest-rsvp-state">RSVP {selectedEvent.rsvpEnabled ? "ON" : "OFF · 기존 응답은 계속 확인할 수 있어요."}</p>}
       <div className="guest-overview">
