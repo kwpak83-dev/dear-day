@@ -486,11 +486,17 @@
 /* Align collection mobile header with the landing header (52px, centered 95% logo). */
 @media(max-width:800px){
  .dd-showcase-page .dd-showcase-header{height:52px!important;min-height:52px!important;padding:0 12px!important}
- .dd-showcase-page .dd-showcase-brand .dearday-logo.dearday-logo--wordmark{width:148.2px!important;height:36.1px!important}
+ .dd-showcase-page .dd-showcase-brand .dearday-logo.dearday-logo--wordmark{width:116px!important;height:29px!important}
  .dd-showcase-page .dd-showcase-menu-toggle{width:28px!important;height:28px!important;flex-basis:28px!important;padding:0!important;gap:0!important}
  .dd-showcase-page .dd-showcase-menu-toggle span{display:none!important}
  .dd-showcase-page .dd-showcase-menu-toggle::after{content:"☰";font-family:Arial,sans-serif;font-size:25px;font-weight:300;line-height:1;color:#222}
  .dd-showcase-page .dd-showcase-home{display:none!important}
  .dd-showcase-page .dd-showcase-invitations{position:absolute!important;right:12px!important;top:50%!important;transform:translateY(-50%)!important;display:flex!important;align-items:center!important;justify-content:center!important;width:32px!important;height:36px!important;color:#292725!important;text-decoration:none!important;z-index:4!important}
  .dd-showcase-page .dd-showcase-invitations svg{display:block;width:26px;height:26px}
+}
+
+/* Match the compact My Invitations wordmark on mobile. */
+@media(max-width:800px){
+ .dd-showcase-page .dd-showcase-brand .dearday-logo.dearday-logo--wordmark,
+ .dd-showcase-page .dd-showcase-brand .dearday-logo-wordmark-image{width:116px!important;height:29px!important;max-width:116px!important;max-height:29px!important;object-fit:contain!important}
 }
