@@ -2142,7 +2142,7 @@
    The stage supplies a short, bounded sticky interval; no wheel/touch interception. */
 .landing-v2 .dd-detail-section.dd-experience{padding-bottom:24px}
 .landing-v2 .dd-experience-stage{position:relative;min-height:calc(100vh + 240px);min-height:calc(100dvh + 240px)}
-.landing-v2 .dd-experience-stack{position:sticky;top:8px;width:min(100%,390px);margin:0 auto}
+.landing-v2 .dd-experience-stack{position:sticky;top:8px;width:min(100%,410px);margin:0 auto}
 @media(prefers-reduced-motion:reduce){.landing-v2 .dd-experience-stack{scroll-behavior:auto}}
 .landing-v2 .dd-experience-controls{position:relative;z-index:1;width:100%;box-sizing:border-box;margin:0 auto 10px;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none}
 .landing-v2 .dd-experience-controls select{display:block;box-sizing:border-box;width:100%;min-width:0;height:44px;min-height:44px;padding:8px 12px;border:1px solid #d5d5d5;border-radius:8px;background:#fff;color:#222;font:inherit;font-size:14px}
@@ -2219,3 +2219,9 @@
 
 /* Use the same Korean typeface as the editor header for the landing tagline. */
 .landing-v2 .dd-cinematic-hero .dd-hero-description{font-family:Pretendard,sans-serif!important}
+
+/* The admin preview renders on a 390px canvas. Allow for the phone frame's
+   10px borders so the landing iframe receives the same usable width. */
+@media (min-width: 480px) {
+  .landing-v2 .dd-experience-stack { width: min(100%, 410px); }
+}
