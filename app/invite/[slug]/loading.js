@@ -2,8 +2,8 @@ import DearDayLogo from "../../../components/dearday-logo";
 
 // Shared by the published invitation route and the template preview page.
 // Only the loading presentation changes; each caller still controls when it disappears.
-export default function PublishedInvitationLoading({ preview = false }) {
-  const message = preview ? "초대장을 준비하고 있어요" : "소중한 초대장을 불러오고 있어요";
+export default function PublishedInvitationLoading({ preview = false, message: customMessage }) {
+  const message = customMessage || (preview ? "초대장을 준비하고 있어요" : "소중한 초대장을 불러오고 있어요");
   return (
     <div className="dd-published-invitation-loading" role="status" aria-label={message}>
       <div className="dd-invitation-loading-center">
