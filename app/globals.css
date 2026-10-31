@@ -4442,3 +4442,126 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Wedding RSVP attendee-side badges: deeper rose and muted navy. */
 .my-page .guest-management-content .guest-side-tag.bride{background:#D96784;color:#fff}
 .my-page .guest-management-content .guest-side-tag.groom{background:#526B88;color:#fff}
+
+/* Compact first-entry BGM hint beside the existing music icon. */
+.dd-template-bgm .dd-bgm-hint{position:absolute;right:48px;top:5px;display:inline-flex;align-items:center;gap:3px;width:max-content;max-width:none;height:24px;box-sizing:border-box;padding:2px 7px;border:1px solid #dcc8b8;border-radius:7px;background:rgba(255,249,244,.97);color:#806b5e;font-size:10px;font-weight:600;line-height:1;white-space:nowrap;box-shadow:0 2px 7px #00000012;pointer-events:none;animation:dd-bgm-hint-in .2s ease-out both}
+.dd-template-bgm .dd-bgm-hint span{font-size:12px;line-height:1}
+@keyframes dd-bgm-hint-in{from{opacity:0;transform:translateX(5px)}to{opacity:1;transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){.dd-template-bgm .dd-bgm-hint{animation:none}}
+
+
+/* Wedding-only introduction and story, rendered immediately after invitation message */
+.dd-couple-intro,.dd-love-story{padding:48px 22px;text-align:center;color:var(--dd-text-color,inherit);font-family:inherit}
+.dd-wedding-story-heading{margin:0 0 30px;text-align:center}
+.dd-wedding-story-heading>p{font-size:10px;letter-spacing:.24em;opacity:.55;margin:0 0 10px}
+.dd-wedding-story-heading h2{font-size:23px;font-weight:500;line-height:1.5;letter-spacing:-.04em;margin:0}
+.dd-wedding-story-heading>span{display:block;font-size:12px;opacity:.7;margin-top:9px;white-space:pre-line}
+.dd-couple-intro-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:440px;margin:auto}
+.dd-couple-intro-person{min-width:0;text-align:center}
+.dd-couple-intro-photo{width:100%;aspect-ratio:3/4;overflow:hidden;border-radius:100px 100px 6px 6px;background:#f2eee9}
+.dd-couple-intro-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.dd-couple-intro-role{font-size:11px;opacity:.6;margin:16px 0 4px}
+.dd-couple-intro-person h3{font-size:18px;font-weight:500;margin:0 0 10px}
+.dd-couple-intro-description{font-size:12px;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0}
+.dd-couple-intro-tags{display:flex;justify-content:center;flex-wrap:wrap;gap:5px 8px;font-size:11px;opacity:.7;margin-top:10px;overflow-wrap:anywhere}
+.dd-love-story-list{position:relative;max-width:460px;margin:auto;padding:4px 0}
+.dd-love-story-list:before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid currentColor;opacity:.17}
+.dd-love-story-item{position:relative;display:flex;align-items:center;gap:10%;margin:0 0 32px;text-align:left}
+.dd-love-story-item:nth-child(even){flex-direction:row-reverse;text-align:right}
+.dd-love-story-item:last-child{margin-bottom:0}
+.dd-love-story-dot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.55;z-index:1}
+.dd-love-story-photo,.dd-love-story-copy{width:45%;min-width:0}
+.dd-love-story-photo{aspect-ratio:4/5;overflow:hidden;border-radius:5px;background:#f2eee9}
+.dd-love-story-photo img{display:block;width:100%;height:100%;object-fit:cover}
+.dd-love-story-copy{white-space:pre-wrap;overflow-wrap:anywhere}
+.dd-love-story-copy time{display:block;font-size:10px;opacity:.6;letter-spacing:.08em;margin-bottom:8px}
+.dd-love-story-copy h3{font-size:15px;font-weight:500;line-height:1.5;margin:0 0 8px}
+.dd-love-story-copy p{font-size:12px;line-height:1.8;opacity:.8;margin:0}
+.dd-love-story-item:not(:has(.dd-love-story-photo)) .dd-love-story-copy{width:45%}
+.dd-love-story-item:not(:has(.dd-love-story-photo)):nth-child(even) .dd-love-story-copy{margin-left:auto}
+@media(max-width:360px){.dd-couple-intro,.dd-love-story{padding:36px 16px}.dd-couple-intro-grid{gap:12px}.dd-love-story-item{gap:8%}.dd-love-story-photo,.dd-love-story-copy{width:46%}}
+
+/* Keep wedding sections after INVITATION in flex-ordered templates. */
+.invitation-template>.dd-couple-intro{order:10.1}
+.invitation-template>.dd-love-story{order:10.2}
+.dd-template-sections-configured>.dd-couple-intro{order:calc(var(--dd-section-invitation-order, 10) + 0.05)}
+.dd-template-sections-configured>.dd-love-story{order:calc(var(--dd-section-invitation-order, 10) + 0.1)}
+
+/* Wedding photo refinement: squared portraits and smaller story imagery */
+.dd-couple-intro .dd-couple-intro-photo{border-radius:6px;aspect-ratio:3/4}
+.dd-love-story .dd-love-story-photo{width:36%;flex:0 0 36%;aspect-ratio:4/5}
+.dd-love-story .dd-love-story-copy{width:45%;flex:0 0 45%}
+.dd-love-story .dd-love-story-item{justify-content:space-between;gap:0}
+.dd-love-story .dd-love-story-item:not(:has(.dd-love-story-photo)) .dd-love-story-copy{width:45%}
+.create-page .dd-couple-photo-editor{margin:10px 0 16px;padding:12px;border:1px solid #e7e1db;border-radius:10px;background:#faf9f7}
+.create-page .dd-couple-photo-editor-frame{width:min(100%,180px);aspect-ratio:3/4;overflow:hidden;border-radius:6px;background:#eee;margin:0 auto 10px}
+.create-page .dd-couple-photo-editor-frame img{width:100%;height:100%;display:block;object-fit:cover}
+.create-page .dd-couple-photo-editor>p{font-size:12px;color:#70675f;text-align:center;margin:0 0 10px}
+.create-page .dd-couple-photo-editor>label{display:flex;align-items:center;gap:12px;font-size:12px;margin:8px 0}
+.create-page .dd-couple-photo-editor>label input{flex:1;min-width:0;accent-color:#ad8290}
+.create-page .dd-couple-photo-editor-actions{display:flex;justify-content:center;gap:8px;margin-top:12px}
+.create-page .dd-couple-photo-editor-actions button{border:1px solid #d9d0c8;border-radius:7px;padding:7px 10px;background:#fff;color:#514942;font-size:12px;cursor:pointer}
+
+/* Wedding refinement: smaller couple portraits, story photos closer to timeline */
+.dd-couple-intro .dd-couple-intro-grid{max-width:310px;gap:12px}
+.dd-couple-intro .dd-couple-intro-photo{aspect-ratio:3/4}
+.dd-love-story .dd-love-story-item{justify-content:initial;gap:0}
+.dd-love-story .dd-love-story-photo{width:36%;flex:0 0 36%;margin-left:14%;margin-right:0}
+.dd-love-story .dd-love-story-copy{width:45%;flex:0 0 45%;margin-left:5%;margin-right:0}
+.dd-love-story .dd-love-story-item:nth-child(even) .dd-love-story-photo{margin-left:0;margin-right:14%}
+.dd-love-story .dd-love-story-item:nth-child(even) .dd-love-story-copy{margin-left:0;margin-right:5%}
+@media(max-width:360px){.dd-couple-intro .dd-couple-intro-grid{max-width:290px}}
+
+/* Equal breathing room on both sides of the love-story center line. */
+.dd-love-story .dd-love-story-photo{width:32%;flex:0 0 32%;margin-left:13%;margin-right:0}
+.dd-love-story .dd-love-story-item:nth-child(even) .dd-love-story-photo{margin-left:0;margin-right:13%}
+
+
+/* Love story: fixed symmetric gutters around the center milestone, no text collision. */
+.dd-love-story .dd-love-story-item,
+.dd-love-story .dd-love-story-item:nth-child(even){
+  display:grid;grid-template-columns:minmax(0,1fr) 40px minmax(0,1fr);
+  column-gap:0;align-items:center;justify-content:initial;text-align:left;
+}
+.dd-love-story .dd-love-story-photo,
+.dd-love-story .dd-love-story-item:nth-child(even) .dd-love-story-photo{
+  grid-column:1;grid-row:1;width:calc(100% - 16px);min-width:0;
+  margin:0;justify-self:end;flex:none;
+}
+.dd-love-story .dd-love-story-copy,
+.dd-love-story .dd-love-story-item:nth-child(even) .dd-love-story-copy{
+  grid-column:3;grid-row:1;width:auto;min-width:0;
+  margin:0;padding:0 0 0 16px;flex:none;text-align:left;
+}
+.dd-love-story .dd-love-story-item:nth-child(even) .dd-love-story-photo{
+  grid-column:3;justify-self:start;
+}
+.dd-love-story .dd-love-story-item:nth-child(even) .dd-love-story-copy{
+  grid-column:1;text-align:right;padding:0 16px 0 0;
+}
+.dd-love-story .dd-love-story-item:not(:has(.dd-love-story-photo)) .dd-love-story-copy,
+.dd-love-story .dd-love-story-item:not(:has(.dd-love-story-photo)):nth-child(even) .dd-love-story-copy{
+  width:auto;margin:0;
+}
+
+/* Wedding order: INVITATION → contacts → couple intro → love story → date. */
+.invitation-template>.dd-wedding-contacts{order:10.01}
+.dd-template-sections-configured>.dd-wedding-contacts{order:calc(var(--dd-section-invitation-order, 10) + 0.01)}
+
+
+/* Single ordered block after INVITATION; internal DOM order is contacts, couple, story. */
+.invitation-template>.dd-wedding-after-message{order:10.05;width:100%;min-width:0}
+.dd-template-sections-configured>.dd-wedding-after-message{order:calc(var(--dd-section-invitation-order, 10) + 0.05)}
+.dd-wedding-after-message>.dd-wedding-contacts,
+.dd-wedding-after-message>.dd-couple-intro,
+.dd-wedding-after-message>.dd-love-story{order:initial}
+
+
+/* Couple introduction section-only floating preview */
+.dd-couple-preview-launch{display:block;width:100%;margin:18px 0 0;padding:12px;border:1px solid #d8c4bb;border-radius:9px;background:#fffaf7;color:#78564c;font-size:13px;cursor:pointer}
+.dd-couple-preview-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.48)}
+.dd-couple-preview-dialog{width:min(100%,430px);max-height:90dvh;overflow:hidden;display:flex;flex-direction:column;border-radius:15px;background:#fff;box-shadow:0 18px 60px #0003}
+.dd-couple-preview-header{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid #eee2dc;font-size:14px;color:#5c4842}
+.dd-couple-preview-header button{font-size:25px;line-height:1;border:0;background:transparent;color:inherit;cursor:pointer}
+.dd-couple-preview-body{overflow:auto;min-height:0;background:#fff}
+.dd-couple-preview-body .dd-couple-intro{padding:32px 20px 42px}

@@ -1,5 +1,6 @@
 import { TERMS_VERSION, PRIVACY_VERSION } from "../../../lib/consent";
 import { normalizeProgram, validateProgram } from "../../../lib/invitation-program";
+import { normalizeCoupleIntro, normalizeLoveStory } from "../../../lib/wedding-story";
 import { prepareNoticeForSave } from "../../../lib/invitation-notice";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
@@ -394,7 +395,7 @@ export async function POST(request) {
     ...(hasHeroPresetId ? { hero_preset_id: heroPresetId } : {}),
     title: getInvitationTitle(invitation, eventKind),
     starts_at: startsAt,
-    settings: { ...preserveCardShareMetadata(invitation, existing?.settings), rsvpOptions: { mealEnabled: (invitation.rsvpOptions === undefined ? existing?.settings?.rsvpOptions?.mealEnabled : invitation.rsvpOptions?.mealEnabled) === true, shuttleBusEnabled: (invitation.rsvpOptions === undefined ? existing?.settings?.rsvpOptions?.shuttleBusEnabled : invitation.rsvpOptions?.shuttleBusEnabled) === true }, program: normalizeProgram(invitation.program === undefined ? existing?.settings?.program : invitation.program), notice: prepareNoticeForSave(invitation.notice, existing?.settings?.notice) },
+    settings: { ...preserveCardShareMetadata(invitation, existing?.settings), ...(eventKind === "wedding" ? { coupleIntro: normalizeCoupleIntro(invitation.coupleIntro === undefined ? existing?.settings?.coupleIntro : invitation.coupleIntro), loveStory: normalizeLoveStory(invitation.loveStory === undefined ? existing?.settings?.loveStory : invitation.loveStory) } : {}), rsvpOptions: { mealEnabled: (invitation.rsvpOptions === undefined ? existing?.settings?.rsvpOptions?.mealEnabled : invitation.rsvpOptions?.mealEnabled) === true, shuttleBusEnabled: (invitation.rsvpOptions === undefined ? existing?.settings?.rsvpOptions?.shuttleBusEnabled : invitation.rsvpOptions?.shuttleBusEnabled) === true }, program: normalizeProgram(invitation.program === undefined ? existing?.settings?.program : invitation.program), notice: prepareNoticeForSave(invitation.notice, existing?.settings?.notice) },
   };
 
   if (publish && !existing) return json({ error: "초대장을 먼저 임시 저장해 주세요." }, 409);

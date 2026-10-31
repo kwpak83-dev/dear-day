@@ -2290,3 +2290,10 @@
 .landing-v2 .dd-drawer-bottom{margin-top:auto;padding:20px 0 0;border-top:1px solid #eee8e4;text-align:center}
 .landing-v2 .dd-drawer-bottom button{border:0!important;background:none!important;color:#999!important;font-size:12px!important;padding:9px 20px!important}
 }
+
+/* Floating return-to-top control for the whole landing page (not the demo iframe). */
+.landing-v2 .dd-landing-top-button{position:fixed;right:20px;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:100;width:42px;height:42px;border:1px solid #ded4ce;border-radius:50%;background:#fff;color:#806b5e;box-shadow:0 3px 14px #0002;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;cursor:pointer;line-height:1}
+.landing-v2 .dd-landing-top-button>span{font-size:19px;line-height:19px}
+.landing-v2 .dd-landing-top-button>small{font-size:8px;font-weight:700;letter-spacing:.03em}
+.landing-v2 .dd-landing-top-button:focus-visible{outline:2px solid #806b5e;outline-offset:3px}
+@media(max-width:800px){.landing-v2 .dd-landing-top-button{right:14px;bottom:calc(76px + env(safe-area-inset-bottom,0px));width:30px;height:30px}.landing-v2 .dd-landing-top-button>span{font-size:14px;line-height:14px}.landing-v2 .dd-landing-top-button>small{font-size:6px}}

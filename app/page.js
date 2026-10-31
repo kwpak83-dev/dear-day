@@ -13,6 +13,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const heroButtonsRef = useRef(null);
   const [showQuickButtons, setShowQuickButtons] = useState(false);
+  const [showLandingTop, setShowLandingTop] = useState(false);
   const [heroVariant, setHeroVariant] = useState("c");
   const heroVideoRefs = useRef([null, null]);
   const [heroVideoIndex, setHeroVideoIndex] = useState(0);
@@ -73,6 +74,13 @@ export default function Home() {
       window.removeEventListener("resize", onScroll);
       if (frame) window.cancelAnimationFrame(frame);
     };
+  }, []);
+
+  useEffect(() => {
+    const updateTopVisibility = () => setShowLandingTop(window.scrollY > 500);
+    updateTopVisibility();
+    window.addEventListener("scroll", updateTopVisibility, { passive: true });
+    return () => window.removeEventListener("scroll", updateTopVisibility);
   }, []);
 
   const advanceHeroVideo = (finishedIndex) => {
@@ -222,6 +230,7 @@ export default function Home() {
       </div>
     </section>
     <LandingInvitationExperience />
+    {showLandingTop && !menuOpen && <button className="dd-landing-top-button" type="button" aria-label="랜딩페이지 맨 위로 이동" onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" })}><span aria-hidden="true">↑</span><small>TOP</small></button>}
     <div id="story" className="dd-detail-end-anchor" aria-hidden="true" />
     {notice && <p className="landing-notice" role="status">{notice}</p>}
     {authOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="간편 로그인"><div className="login-modal"><button className="modal-close" onClick={() => setAuthOpen(false)} aria-label="닫기">×</button><p className="section-kicker">WELCOME TO DEAR DAY</p><h2>3분 만에 시작하는<br /><em>우리의 청첩장</em></h2><p>간편 로그인 후 언제든 수정할 수 있어요.</p><button className="social-login naver" disabled={Boolean(authLoading)} onClick={chooseLogin}>N <span>{authLoading === "naver" ? "네이버로 연결 중..." : "네이버로 계속하기"}</span></button>{authMessage && <p role="status">{authMessage}</p>}<small>네이버 로그인 후 디어데이 약관 동의 절차가 진행됩니다.</small></div></div>}

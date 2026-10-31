@@ -13,8 +13,12 @@ function playbackErrorMessage(error, mediaError) {
 
 export default function TemplateBgm({ src }) {
   const audioRef = useRef(null);
+  const buttonRef = useRef(null);
+  const hintTriggeredRef = useRef(false);
+  const hintDismissedRef = useRef(false);
   const [playing, setPlaying] = useState(false);
   const [error, setError] = useState("");
+  const [showHint, setShowHint] = useState(false);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -29,6 +33,30 @@ export default function TemplateBgm({ src }) {
       if (!audio) return;
       audio.pause();
       audio.currentTime = 0;
+    };
+  }, [src]);
+
+  useEffect(() => {
+    if (!src || hintTriggeredRef.current || hintDismissedRef.current) return;
+    const button = buttonRef.current;
+    if (!button || typeof IntersectionObserver === "undefined") return;
+    let showTimer;
+    let hideTimer;
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting) || hintTriggeredRef.current || hintDismissedRef.current) return;
+      hintTriggeredRef.current = true;
+      observer.disconnect();
+      showTimer = window.setTimeout(() => {
+        if (hintDismissedRef.current) return;
+        setShowHint(true);
+        hideTimer = window.setTimeout(() => setShowHint(false), 3000);
+      }, 300);
+    }, { threshold: 0.5 });
+    observer.observe(button);
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(showTimer);
+      window.clearTimeout(hideTimer);
     };
   }, [src]);
 
@@ -60,6 +88,8 @@ export default function TemplateBgm({ src }) {
   };
 
   const toggle = () => {
+    hintDismissedRef.current = true;
+    setShowHint(false);
     if (playing) {
       stop();
       return;
@@ -68,6 +98,7 @@ export default function TemplateBgm({ src }) {
   };
 
   return <div className="dd-template-bgm" aria-label="배경 음악">
+    {showHint && <span className="dd-bgm-hint" aria-hidden="true">{playing ? "음악 ON" : "음악 켜기"} <span aria-hidden="true">→</span></span>}
     <audio
       ref={audioRef}
       src={src}
@@ -81,6 +112,7 @@ export default function TemplateBgm({ src }) {
       }}
     />
     <button
+      ref={buttonRef}
       className="dd-template-bgm-toggle"
       type="button"
       onClick={toggle}
