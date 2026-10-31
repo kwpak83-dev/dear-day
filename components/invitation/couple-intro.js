@@ -8,7 +8,7 @@ export default function CoupleIntro({ invitation }) {
   return <section className="dd-couple-intro" aria-label={intro.title || "신랑·신부를 소개합니다"}>
     <header className="dd-wedding-story-heading"><p>THE TWO OF US</p><h2>{intro.title || "신랑·신부를 소개합니다"}</h2>{intro.subtitle && <span>{intro.subtitle}</span>}</header>
     <div className="dd-couple-intro-grid">{people.map(person => <article key={person.key} className="dd-couple-intro-person">
-      {person.photoUrl && <div className="dd-couple-intro-photo"><img src={person.photoUrl} alt={person.name ? `${person.role} ${person.name}` : person.role} loading="lazy" /></div>}
+      {person.photoUrl && <div className="dd-couple-intro-photo"><img src={person.photoUrl} style={{ objectPosition: `${person.photoFocusX ?? 50}% ${person.photoFocusY ?? 50}%` }} alt={person.name ? `${person.role} ${person.name}` : person.role} loading="lazy" /></div>}
       <p className="dd-couple-intro-role">{person.role}</p>
       {person.name && <h3>{person.name}</h3>}
       {person.intro && <p className="dd-couple-intro-description">{person.intro}</p>}
