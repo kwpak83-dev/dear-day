@@ -11,15 +11,22 @@ import InvitationRenderer from "./invitation-renderer";
 export default function InvitationMessagePreview({ invitation, eventKind, eventTypeConfig, templateId, templateConfig, templateAssets, onClose, inline = false }) {
   const stageRef = useRef(null);
   const [scale, setScale] = useState(1);
+  const [canvasWidth, setCanvasWidth] = useState(390);
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
-    const measure = () => setScale(Math.min(1, stage.clientWidth / 390));
+    // Match the published invitation viewport, not a permanently fixed 390px
+    // canvas. Scaling is visual only: it must never change line wrapping.
+    const measure = () => {
+      const width = Math.min(540, Math.max(280, window.innerWidth));
+      setCanvasWidth(width);
+      setScale(Math.min(1, stage.clientWidth / width));
+    };
     measure();
     const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
     if (observer) observer.observe(stage);
-    else window.addEventListener("resize", measure);
-    return () => { observer?.disconnect(); if (!observer) window.removeEventListener("resize", measure); };
+    window.addEventListener("resize", measure);
+    return () => { observer?.disconnect(); window.removeEventListener("resize", measure); };
   }, []);
   useEffect(() => {
     if (inline || !onClose) return;
@@ -29,7 +36,7 @@ export default function InvitationMessagePreview({ invitation, eventKind, eventT
   }, [inline, onClose]);
 
   const previewContent = <div className="dd-message-preview-stage" ref={stageRef}>
-    <div className="dd-message-preview-canvas full-invitation-renderer dd-bgm-public-style" style={{ zoom: scale }}>
+    <div className="dd-message-preview-canvas full-invitation-renderer dd-bgm-public-style" style={{ zoom: scale, width: canvasWidth, "--dd-message-preview-layout-width": `${canvasWidth}px` }}>
       <InvitationRenderer invitation={{ ...invitation, bgmMode: "none", screenEffectMode: "none" }} eventKind={eventKind} eventTypeConfig={eventTypeConfig} templateId={templateId} templateConfig={{ ...templateConfig, effects: { ...templateConfig?.effects, scrollReveal: "none", screenEffect: null }, bgm: { mode: "none" } }} templateAssets={templateAssets} />
     </div>
   </div>;
