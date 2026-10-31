@@ -4146,34 +4146,34 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .full-invitation-renderer .classic-message p { max-width:var(--dd-message-max-width, 100%); margin-left:auto; margin-right:auto; }
 
 /* Opt-in, section-scoped Safe Area. Unchecked sections retain template CSS. */
-.dd-template-section-safe-area :is(.classic-message,.modern-message,.romantic-message) {
+.dd-template-section-safe-area.dd-safe-enabled-invitation :is(.classic-message,.modern-message,.romantic-message) {
   padding-top:max(0px,var(--dd-section-invitation-top,0px));
   padding-right:max(0px,var(--dd-section-invitation-right,0px));
   padding-bottom:max(0px,var(--dd-section-invitation-bottom,0px));
   padding-left:max(0px,var(--dd-section-invitation-left,0px));
 }
-.dd-template-section-safe-area :is(.classic-date,.modern-information-body > time,.romantic-information > time) {
+.dd-template-section-safe-area.dd-safe-enabled-date :is(.classic-date,.modern-information-body > time,.romantic-information > time) {
   padding-top:max(0px,var(--dd-section-date-top,0px));
   padding-right:max(0px,var(--dd-section-date-right,0px));
   padding-bottom:max(0px,var(--dd-section-date-bottom,0px));
   padding-left:max(0px,var(--dd-section-date-left,0px));
 }
-.dd-template-section-safe-area :is(.classic-information,.modern-information,.romantic-information) {
+.dd-template-section-safe-area.dd-safe-enabled-place :is(.classic-information,.modern-information,.romantic-information) {
   padding-top:max(0px,var(--dd-section-place-top,0px));
   padding-bottom:max(0px,var(--dd-section-place-bottom,0px));
 }
 /* Keep map's own layout untouched; adjust PLACE text inset only. */
-.dd-template-section-safe-area :is(.classic-information-body,.modern-information-body,.romantic-information) > :is(strong,p,.dd-address-detail) {
+.dd-template-section-safe-area.dd-safe-enabled-place :is(.classic-information-body,.modern-information-body,.romantic-information) > :is(strong,p,.dd-address-detail) {
   margin-left:var(--dd-section-place-left,0px);
   margin-right:var(--dd-section-place-right,0px);
 }
-.dd-template-section-safe-area .invitation-gallery {
+.dd-template-section-safe-area.dd-safe-enabled-gallery .invitation-gallery {
   padding-top:max(0px,var(--dd-section-gallery-top,0px));
   padding-right:max(0px,var(--dd-section-gallery-right,0px));
   padding-bottom:max(0px,var(--dd-section-gallery-bottom,0px));
   padding-left:max(0px,var(--dd-section-gallery-left,0px));
 }
-.dd-template-section-safe-area .public-accounts {
+.dd-template-section-safe-area.dd-safe-enabled-account .public-accounts {
   padding-top:max(0px,var(--dd-section-account-top,0px));
   padding-right:max(0px,var(--dd-section-account-right,0px));
   padding-bottom:max(0px,var(--dd-section-account-bottom,0px));
