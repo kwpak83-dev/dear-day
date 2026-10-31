@@ -1,4 +1,5 @@
 import { normalizeProgram, validateProgram } from "../../../../lib/invitation-program";
+import { normalizeCoupleIntro, normalizeLoveStory } from "../../../../lib/wedding-story";
 import { randomUUID } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
@@ -33,7 +34,7 @@ const cleanSampleContent=(value)=>{
     transport_public_enabled:s.transport_public_enabled===true,transport_public:text("transport_public",2000),transport_car_enabled:s.transport_car_enabled===true,transport_car:text("transport_car",2000),transport_parking_enabled:s.transport_parking_enabled===true,transport_parking:text("transport_parking",2000),
     groom_bank:text("groom_bank",80),groom_account:text("groom_account",100),groom_account_holder:text("groom_account_holder",80),bride_bank:text("bride_bank",80),bride_account:text("bride_account",100),bride_account_holder:text("bride_account_holder",80),invitation_message:text("invitation_message",2000),details:text("details",2000),external_link:text("external_link",2000),brand_image:text("brand_image",2000),
     rsvp_enabled:s.rsvp_enabled!==false,rsvp_meal_enabled:s.rsvp_meal_enabled===true,rsvp_bus_enabled:s.rsvp_bus_enabled===true,guestbook_enabled:s.guestbook_enabled!==false,notice_enabled:s.notice_enabled===true,notice_title:text("notice_title",80),notice_body:text("notice_body",3000),notice_image_url:text("notice_image_url",2000),
-    gallery_images:Array.isArray(s.gallery_images)?s.gallery_images.filter(x=>typeof x==="string"&&x).slice(0,20).map(x=>x.slice(0,2000)):[],timeline_enabled:s.timeline_enabled===true,timeline_items:Array.isArray(s.timeline_items)?s.timeline_items.slice(0,6).map((item,index)=>({id:String(item?.id||`sample-${index+1}`).slice(0,100),date:String(item?.date||"").slice(0,40),text:String(item?.text||"").slice(0,80),photoUrl:String(item?.photoUrl||item?.photo_url||"").slice(0,2000)})):[]
+    gallery_images:Array.isArray(s.gallery_images)?s.gallery_images.filter(x=>typeof x==="string"&&x).slice(0,20).map(x=>x.slice(0,2000)):[],...(Object.prototype.hasOwnProperty.call(s,"couple_intro") ? {couple_intro:normalizeCoupleIntro(s.couple_intro)} : {}),...(Object.prototype.hasOwnProperty.call(s,"love_story") ? {love_story:normalizeLoveStory(s.love_story)} : {}),timeline_enabled:s.timeline_enabled===true,timeline_items:Array.isArray(s.timeline_items)?s.timeline_items.slice(0,6).map((item,index)=>({id:String(item?.id||`sample-${index+1}`).slice(0,100),date:String(item?.date||"").slice(0,40),text:String(item?.text||"").slice(0,80),photoUrl:String(item?.photoUrl||item?.photo_url||"").slice(0,2000)})):[]
   };
 };
 const fieldError=(b)=>{
