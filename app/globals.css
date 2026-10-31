@@ -4351,3 +4351,20 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  .my-page.member-page .member-navigation{display:none!important}
 }
 @media(prefers-reduced-motion:reduce){.my-page.member-page .dd-member-quick-tabs{transition:none!important}}
+
+/* My Invitations collapsible service notice */
+.my-page .dd-my-guide{background:#fff;border:0;border-radius:16px;margin:0 0 20px;overflow:hidden;color:#333;box-shadow:0 1px 2px rgba(0,0,0,.025)}
+.my-page .dd-my-guide-title{display:flex;align-items:center;gap:9px;cursor:pointer;list-style:none;padding:18px 19px;font-size:15px;color:#222;user-select:none}
+.my-page .dd-my-guide-title::-webkit-details-marker{display:none}
+.my-page .dd-my-guide-title:focus-visible{outline:2px solid #a58c79;outline-offset:-3px}
+.my-page .dd-my-guide-chevron{margin-left:auto;font-size:21px;color:#999;line-height:1;transform:rotate(180deg);transition:transform .2s}
+.my-page .dd-my-guide:not([open]) .dd-my-guide-chevron{transform:rotate(0deg)}
+.my-page .dd-my-guide-body{padding:0 19px 19px;font-size:13px;line-height:1.9;color:#5b6170;overflow-wrap:break-word}
+.my-page .dd-my-guide-body ul{margin:0;padding-left:19px}
+.my-page .dd-my-guide-body li{margin:0 0 10px;padding-left:2px}
+.my-page .dd-my-guide-body strong{font-weight:650;color:#333}
+.my-page .dd-my-guide-event{background:#faf6f2;border-radius:11px;padding:13px 14px;margin-top:12px}
+.my-page .dd-my-guide-event>strong{font-size:13px}
+.my-page .dd-my-guide-event p{margin:7px 0 0}
+@media(max-width:800px){.my-page .dd-my-guide{margin-bottom:18px}.my-page .dd-my-guide-title{padding:16px}.my-page .dd-my-guide-body{padding:0 16px 16px}}
+@media(prefers-reduced-motion:reduce){.my-page .dd-my-guide-chevron{transition:none}}
