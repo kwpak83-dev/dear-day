@@ -248,7 +248,8 @@ function validEffectsBgmSafeArea(effects, bgm, safeArea) {
     validScreenEffect(effects.screenEffect) &&
     ((hasOnlyKeys(bgm, ["mode", "assetId"]) && bgm.mode === "none" && bgm.assetId === null) ||
       (hasOnlyKeys(bgm, ["mode", "assetId"]) && bgm.mode === "asset" && uuid.test(bgm.assetId || ""))) &&
-    hasOnlyKeys(safeArea, ["top", "right", "bottom", "left"]) &&
+    hasOnlyKeys(safeArea, ["top", "right", "bottom", "left", "messageWidth"]) &&
+    (safeArea.messageWidth === undefined || (Number.isInteger(safeArea.messageWidth) && safeArea.messageWidth >= 200 && safeArea.messageWidth <= 340)) &&
     [safeArea.top, safeArea.right, safeArea.bottom, safeArea.left].every((value) =>
       Number.isInteger(value) && value >= 0 && value <= 120);
 }
