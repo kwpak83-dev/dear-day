@@ -4422,3 +4422,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  .my-page.member-page .dd-member-quick-tabs>a.active{font-weight:700!important;color:#202020!important;border-bottom-color:#777!important}
  .my-page.member-page .dd-member-quick-tabs svg{display:block;width:16px;height:16px;flex:0 0 16px;stroke:currentColor}
 }
+
+/* Invitation floating quick menu: rounded rectangle trial (shared across previews and published invitations). */
+.invitation-quick-menu.invitation-quick-menu--modern{border-radius:12px!important}
