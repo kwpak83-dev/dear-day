@@ -2265,3 +2265,28 @@
  .landing-v2 .landing-header .landing-brand .dearday-logo.dearday-logo--wordmark,
  .landing-v2 .landing-header .landing-brand .dearday-logo-wordmark-image{width:116px!important;height:29px!important;max-width:116px!important;max-height:29px!important;object-fit:contain!important}
 }
+
+/* DearDay mobile navigation drawer — scoped to home page only. */
+@media(max-width:800px){
+.landing-v2 .dd-drawer-layer{position:fixed;inset:0;z-index:2000;display:block}
+.landing-v2 .dd-drawer-backdrop{position:absolute;inset:0;background:rgba(20,18,17,.42);border:0;width:100%;height:100%;cursor:pointer}
+.landing-v2 .landing-mobile-nav.dd-home-drawer{position:absolute!important;inset:0 auto 0 0!important;display:flex!important;flex-direction:column!important;gap:0!important;width:min(86vw,360px)!important;max-width:360px!important;height:100dvh!important;overflow-y:auto!important;box-sizing:border-box!important;background:#fff!important;padding:22px 18px 24px!important;border:0!important;border-radius:0!important;box-shadow:6px 0 26px rgba(0,0,0,.1)!important;transform:none!important;opacity:1!important}
+.landing-v2 .dd-home-drawer a,.landing-v2 .dd-home-drawer button{font-family:inherit;text-decoration:none}
+.landing-v2 .dd-drawer-head{display:flex;align-items:center;justify-content:space-between;font-family:Georgia,serif;font-style:italic;font-size:23px;color:#806a5d;padding:0 3px 15px;border-bottom:1px solid #eee8e4}
+.landing-v2 .dd-drawer-head button{border:0;background:transparent;font:28px Arial;color:#777;padding:0 5px}
+.landing-v2 .dd-drawer-account{display:flex!important;align-items:center!important;gap:12px!important;padding:18px 3px!important;color:#292929!important;border:0!important;background:none!important}
+.landing-v2 .dd-drawer-account>span:nth-child(2){flex:1;display:flex;flex-direction:column;gap:5px}
+.landing-v2 .dd-drawer-account strong{font-size:14px}.landing-v2 .dd-drawer-account small{font-size:11px;color:#999}
+.landing-v2 .dd-drawer-avatar{width:42px;height:42px;border-radius:50%;background:#f5eee9;display:grid;place-items:center;color:#947c6b;font-size:24px}
+.landing-v2 .dd-drawer-shortcuts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:4px 0 22px}
+.landing-v2 .dd-drawer-shortcuts a,.landing-v2 .dd-drawer-shortcuts button{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:76px;border:1px solid #ebe6e2!important;border-radius:12px!important;background:#faf8f6!important;color:#292929!important;font-size:12px!important;font-weight:600!important;padding:8px!important}
+.landing-v2 .dd-drawer-shortcuts span{font-size:22px;color:#907565;font-weight:400}
+.landing-v2 .dd-drawer-label{font-size:10px;letter-spacing:.14em;color:#a39a93;margin:0 0 8px;padding:0 4px}
+.landing-v2 .dd-drawer-link{display:flex!important;align-items:center!important;gap:13px!important;padding:13px 5px!important;min-height:48px!important;box-sizing:border-box;color:#333!important;background:none!important;border:0!important;font-size:13px!important;font-weight:400!important}
+.landing-v2 .dd-drawer-link>span:first-child{width:22px;font-size:19px;color:#917b6c;text-align:center;flex-shrink:0}
+.landing-v2 .dd-drawer-link>b{margin-left:auto;font-size:22px;font-weight:400;color:#bbb}
+.landing-v2 .dd-drawer-link small{display:block;font-size:10px;color:#999;margin-top:4px}
+.landing-v2 .dd-drawer-disabled{color:#999!important;cursor:default}
+.landing-v2 .dd-drawer-bottom{margin-top:auto;padding:20px 0 0;border-top:1px solid #eee8e4;text-align:center}
+.landing-v2 .dd-drawer-bottom button{border:0!important;background:none!important;color:#999!important;font-size:12px!important;padding:9px 20px!important}
+}
