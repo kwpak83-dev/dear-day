@@ -652,7 +652,18 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
                   {expandedSafeArea===key&&<div style={{display:"grid",gap:10,marginTop:10,opacity:section.enabled?1:0.55}}>
                     {([["top","위쪽"],["right","오른쪽"],["bottom","아래쪽"],["left","왼쪽"]]).map(([side,sideLabel])=><label key={side} style={field}>{sideLabel} <strong>{section[side]}px</strong><input type="range" min="0" max="120" step="2" disabled={!section.enabled} value={section[side]} onChange={event=>change(side,Number(event.target.value))}/></label>)}
                     {key==="invitation"&&<label style={field}>초대 문구 최대 너비 <strong>{section.messageWidth??280}px</strong><input type="range" min="200" max="340" step="10" disabled={!section.enabled} value={section.messageWidth??280} onChange={event=>change("messageWidth",Number(event.target.value))}/></label>}
-                    {key==="place"&&<small style={guideNote}>PLACE 영역 바깥 여백만 변경하며 지도 내부 크기 설정은 변경하지 않습니다.</small>}
+                    {key==="place"&&<>
+                      <small style={guideNote}>장소명·주소 여백은 지도 내부 크기를 변경하지 않습니다.</small>
+                      <div style={{border:"1px solid #dce5f3",borderRadius:8,padding:10,marginTop:4}}>
+                        <label style={{display:"flex",alignItems:"center",gap:8,fontWeight:700,fontSize:12}}>
+                          <input type="checkbox" checked={section.transport?.enabled===true} onChange={event=>change("transport",{...{enabled:false,top:16,right:16,bottom:16,left:16},...section.transport,enabled:event.target.checked})}/>
+                          교통 안내 별도 여백 (대중교통 · 자가용 · 주차)
+                        </label>
+                        {section.transport?.enabled===true&&<div style={{display:"grid",gap:10,marginTop:10}}>
+                          {([["top","위쪽"],["right","오른쪽"],["bottom","아래쪽"],["left","왼쪽"]]).map(([side,sideLabel])=><label key={side} style={field}>{sideLabel} <strong>{section.transport?.[side]??16}px</strong><input type="range" min="0" max="120" step="2" value={section.transport?.[side]??16} onChange={event=>change("transport",{...section.transport,[side]:Number(event.target.value)})}/></label>)}
+                        </div>}
+                      </div>
+                    </>}
                   </div>}
                 </div>;
               })}
