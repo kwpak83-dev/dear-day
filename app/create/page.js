@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import InvitationRenderer, { TEMPLATE_IDS } from "../../components/invitation/invitation-renderer";
 import InvitationMessagePreview from "../../components/invitation/invitation-message-preview";
+import AutoHeightMessageTextarea from "./auto-height-message-textarea";
 import InvitationMap from "../../components/invitation/invitation-map";
 import ShareActions from "../../components/share-actions";
 import TransportGuide from "../../components/invitation/transport-guide";
@@ -1075,7 +1076,7 @@ export default function CreateInvitation() {
           <p>문장이 어색하게 나뉘면 원하는 위치에서 엔터를 눌러 주세요. 자동 줄바꿈은 화면 폭에 따라 유지됩니다.</p>
           <button type="button" className="dd-message-preview-button" onClick={() => setMessagePreviewOpen(true)}>◉ 초대 문구 미리보기</button>
         </div>}
-        <textarea className="dd-invitation-message-textarea" rows="7" value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} aria-label={field.key === "message" ? "초대 문구 줄바꿈 편집" : undefined} />
+        <AutoHeightMessageTextarea value={invitation[field.key] || ""} onChange={(value) => update(field.key, value)} />
         {field.key === "message" && <>
           {previewReady && <InvitationMessagePreview inline invitation={previewInvitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} templateId={invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets} />}
           <p className="dd-message-linebreak-footnote">입력창의 자동 줄바꿈은 편집용입니다. 아래 실시간 미리보기가 실제 초대장과 같은 글꼴·여백·본문 폭으로 표시됩니다.</p>
