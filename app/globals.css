@@ -4438,3 +4438,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .my-page .guest-management-content .guest-attendance-track>div{background:linear-gradient(100deg,#27C9F5 0%,#0787E8 100%)!important}
 .my-page .guest-management-content .guest-filters button.active{background:linear-gradient(120deg,#27C9F5 0%,#0787E8 100%)!important;border-color:#0787E8!important;color:#fff!important}
 .my-page .guest-management-content .guest-table-symbol.yes{color:#0787E8!important}
+
+/* Wedding RSVP attendee-side badges: deeper rose and muted navy. */
+.my-page .guest-management-content .guest-side-tag.bride{background:#D96784;color:#fff}
+.my-page .guest-management-content .guest-side-tag.groom{background:#526B88;color:#fff}
