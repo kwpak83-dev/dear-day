@@ -4395,3 +4395,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .guest-management-content .guestbook-management-list article>p{color:#565d69;font-size:12px;line-height:1.65}
 .guest-management-content .guestbook-management-list article>button{color:#777;font-size:11px}
 @media(max-width:640px){.guest-management-content .guestbook-management{margin-top:26px;padding-top:20px}.guest-management-content .guestbook-management-heading h2{font-size:18px}}
+
+/* Bring Guest Management selector closer to the three quick tabs on mobile. */
+@media(max-width:800px){
+ .my-page.member-page .member-page-content .guest-management-content{padding-top:18px}
+ .my-page.member-page .guest-management-content .guest-event-select{margin-top:0}
+}
