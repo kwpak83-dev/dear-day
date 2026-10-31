@@ -4279,7 +4279,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 @media(max-width:800px){
   .my-page.member-page .dd-member-topbar{
     position:relative!important;display:flex!important;align-items:center!important;
-    justify-content:center!important;height:62px!important;min-height:62px!important;
+    justify-content:center!important;height:64px!important;min-height:64px!important;max-height:64px!important;box-sizing:border-box!important;
     padding:0 18px!important;background:#fff!important;border-bottom:1px solid #eee6de!important;
   }
   .my-page.member-page .dd-member-topbar .my-page-header-actions{display:none!important}
