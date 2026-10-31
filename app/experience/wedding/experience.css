@@ -17,3 +17,20 @@ html:has(.dd-landing-experience-document) body::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
+
+/* The iframe is only a viewport. Its invitation must use the same fixed
+   390px layout canvas as the sales collection, rather than inheriting the
+   legacy public-invitation outer padding and fluid width. */
+.dd-landing-experience-document.public-invitation {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  box-sizing: border-box;
+}
+.dd-landing-experience-document .dd-experience-preview-stage {
+  width: 100%;
+  min-width: 0;
+}
+.dd-landing-experience-document .dd-experience-preview-canvas {
+  box-shadow: none;
+}
