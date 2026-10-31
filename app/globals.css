@@ -4179,3 +4179,12 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   padding-bottom:max(0px,var(--dd-section-account-bottom,0px));
   padding-left:max(0px,var(--dd-section-account-left,0px));
 }
+
+/* Independent transport-guide spacing inside PLACE; map and address unaffected. */
+.dd-template-section-safe-area.dd-safe-enabled-place.dd-safe-transport .dd-transport-guide {
+  padding-top:var(--dd-transport-top,0px);
+  padding-right:var(--dd-transport-right,0px);
+  padding-bottom:var(--dd-transport-bottom,0px);
+  padding-left:var(--dd-transport-left,0px);
+  box-sizing:border-box;
+}
