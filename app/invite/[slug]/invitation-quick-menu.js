@@ -57,7 +57,7 @@ function BottomSheet({ title, onClose, children, portalTarget = null, preview = 
 }
 
 function QuickMenuIcon({ kind }) {
-  const symbol = kind === "rsvp" ? "🌸" : kind === "guestbook" ? "💌" : "💌";
+  const symbol = kind === "rsvp" ? "🌸" : kind === "guestbook" ? "💌" : "📜";
   return <span aria-hidden="true" style={{ fontSize: 17, lineHeight: 1 }}>{symbol}</span>;
 }
 
