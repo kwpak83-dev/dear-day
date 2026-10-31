@@ -4243,3 +4243,10 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   padding-top:10px!important;padding-bottom:10px!important;
   overflow-x:hidden;resize:none!important;
 }
+
+/* The preview must wrap at the published invitation's viewport width.
+   Keep zoom for fitting only; never let the old 390px rule set line breaks. */
+.dd-message-preview-canvas .invitation-template{
+  width:var(--dd-message-preview-layout-width,390px)!important;
+  max-width:none!important;
+}
