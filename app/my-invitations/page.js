@@ -145,8 +145,19 @@ export default function MyInvitations() {
   return <MyPageLayout current="invitations">
 
     <section className="my-content">
-      <p className="section-kicker">MY INVITATIONS</p><h1>내 초대장</h1>
-      <p className="my-intro">임시저장한 초대장을 이어서 편집하거나,<br />발행한 초대장을 확인하세요.</p>
+      <details className="dd-my-guide" open>
+        <summary className="dd-my-guide-title"><span aria-hidden="true">🔔</span><strong>안내드립니다</strong><span className="dd-my-guide-chevron" aria-hidden="true">⌄</span></summary>
+        <div className="dd-my-guide-body">
+          <ul>
+            <li>결제 후 직접 발행하면 공유 링크가 활성화됩니다.</li>
+            <li>초대장 수정은 <strong>행사 시작 전까지</strong> 가능합니다.</li>
+            <li><strong>행사일 30일 후 자동 삭제</strong>되며, 복구할 수 없습니다.</li>
+            <li>삭제 예정일은 마이페이지에서 확인할 수 있으며, D-7·D-1에 안내됩니다.</li>
+            <li>발행 후 수정·템플릿 변경 시 이용권은 추가 차감되지 않습니다.</li>
+          </ul>
+          <div className="dd-my-guide-event"><strong>🎁 오픈 기념 포토리뷰 이벤트 (예정)</strong><p>네이버 구매 포토리뷰 작성 시 <strong>이용권 1개 추가 증정 예정!</strong> 돌잔치·자녀 생일·부모님 칠순 초대장에도 활용해 보세요.</p></div>
+        </div>
+      </details>
       {actionNotice && <p className="my-action-notice" role="status" aria-live="polite">{actionNotice}</p>}
       {notice && (notice === "저장한 초대장이 아직 없어요." && !loginRequired ? <div className="dd-empty-state"><span className="dd-empty-icon" aria-hidden="true">✉</span><h2>아직 등록된 초대장이 없어요</h2><p>특별한 날을 위한 첫 초대장을 만들어 보세요.</p><a href="/create" className="dd-empty-cta">새 초대장 만들기</a></div> : <div className="my-notice"><p>{notice}</p>{loginRequired && <a className="my-login-button" href="/?login=required&returnUrl=%2Fmy-invitations">다시 로그인하기</a>}</div>)}
       <div className="invitation-list dd-my-card-list">{events.map((event) => <article className="dd-my-card" key={event.slug}>

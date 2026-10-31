@@ -3,3 +3,34 @@
 .dd-experience-page-status{padding:32px 20px;text-align:center;color:#555;font-size:14px}
 .dd-experience-page-notice{position:fixed;z-index:300;top:10px;left:12px;right:12px;margin:0;padding:12px;display:flex;gap:8px;align-items:center;border-radius:10px;background:#fff;color:#333;box-shadow:0 3px 20px #0002;font:13px/1.5 Arial,sans-serif}
 .dd-experience-page-notice button{margin-left:auto;border:0;background:transparent;color:inherit;font-size:22px;cursor:pointer}
+
+/* Keep the landing iframe vertically scrollable without reserving the native
+   scrollbar gutter (~15px). This restores the full invitation content width
+   and leaves the shared invitation renderer and saved Safe Area untouched. */
+html:has(.dd-landing-experience-document),
+html:has(.dd-landing-experience-document) body {
+  scrollbar-width: none;
+}
+html:has(.dd-landing-experience-document)::-webkit-scrollbar,
+html:has(.dd-landing-experience-document) body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* The iframe is only a viewport. Its invitation must use the same fixed
+   390px layout canvas as the sales collection, rather than inheriting the
+   legacy public-invitation outer padding and fluid width. */
+.dd-landing-experience-document.public-invitation {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  box-sizing: border-box;
+}
+.dd-landing-experience-document .dd-experience-preview-stage {
+  width: 100%;
+  min-width: 0;
+}
+.dd-landing-experience-document .dd-experience-preview-canvas {
+  box-shadow: none;
+}

@@ -2142,7 +2142,7 @@
    The stage supplies a short, bounded sticky interval; no wheel/touch interception. */
 .landing-v2 .dd-detail-section.dd-experience{padding-bottom:24px}
 .landing-v2 .dd-experience-stage{position:relative;min-height:calc(100vh + 240px);min-height:calc(100dvh + 240px)}
-.landing-v2 .dd-experience-stack{position:sticky;top:8px;width:min(100%,390px);margin:0 auto}
+.landing-v2 .dd-experience-stack{position:sticky;top:8px;width:min(100%,410px);margin:0 auto}
 @media(prefers-reduced-motion:reduce){.landing-v2 .dd-experience-stack{scroll-behavior:auto}}
 .landing-v2 .dd-experience-controls{position:relative;z-index:1;width:100%;box-sizing:border-box;margin:0 auto 10px;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none}
 .landing-v2 .dd-experience-controls select{display:block;box-sizing:border-box;width:100%;min-width:0;height:44px;min-height:44px;padding:8px 12px;border:1px solid #d5d5d5;border-radius:8px;background:#fff;color:#222;font:inherit;font-size:14px}
@@ -2203,7 +2203,7 @@
 /* Mobile landing header refinement: logo 5% smaller, less white header space. */
 @media(max-width:800px){
  .landing-v2 .landing-header{height:52px!important;min-height:52px!important}
- .landing-v2 .landing-header .landing-brand .dearday-logo.dearday-logo--wordmark{width:148.2px!important;height:36.1px!important}
+ .landing-v2 .landing-header .landing-brand .dearday-logo.dearday-logo--wordmark{width:116px!important;height:29px!important}
  .landing-v2 .landing-hero.dd-cinematic-hero{height:calc(100svh - 52px)!important}
 }
 
@@ -2219,3 +2219,74 @@
 
 /* Use the same Korean typeface as the editor header for the landing tagline. */
 .landing-v2 .dd-cinematic-hero .dd-hero-description{font-family:Pretendard,sans-serif!important}
+
+/* The admin preview renders on a 390px canvas. Allow for the phone frame's
+   10px borders so the landing iframe receives the same usable width. */
+@media (min-width: 480px) {
+  .landing-v2 .dd-experience-stack { width: min(100%, 410px); }
+}
+
+/* Keep all seven benefit cards on the same typography scale as card 02. */
+.landing-v2 .dd-features .dd-feature .dd-feature-copy h3{
+  font-size:22px!important;
+  line-height:1.38!important;
+  font-weight:750!important;
+}
+.landing-v2 .dd-features .dd-feature .dd-feature-copy>h3+p{
+  font-size:14px!important;
+  line-height:1.65!important;
+  font-weight:400!important;
+  color:#777!important;
+  letter-spacing:normal!important;
+  word-break:keep-all;
+  margin:0!important;
+}
+.landing-v2 .dd-features .dd-feature .dd-feature-checks li{
+  font-size:14px;
+  line-height:1.55;
+}
+@media(max-width:800px){
+  .landing-v2 .dd-features .dd-feature .dd-feature-copy h3{
+    font-size:22px!important;
+    line-height:1.38!important;
+  }
+  .landing-v2 .dd-features .dd-feature .dd-feature-copy>h3+p{
+    font-size:14px!important;
+    line-height:1.65!important;
+    color:#777!important;
+  }
+  .landing-v2 .dd-features .dd-feature .dd-feature-checks li{
+    font-size:12px;
+  }
+}
+
+/* Match the compact My Invitations wordmark on mobile. */
+@media(max-width:800px){
+ .landing-v2 .landing-header .landing-brand .dearday-logo.dearday-logo--wordmark,
+ .landing-v2 .landing-header .landing-brand .dearday-logo-wordmark-image{width:116px!important;height:29px!important;max-width:116px!important;max-height:29px!important;object-fit:contain!important}
+}
+
+/* DearDay mobile navigation drawer — scoped to home page only. */
+@media(max-width:800px){
+.landing-v2 .dd-drawer-layer{position:fixed;inset:0;z-index:2000;display:block}
+.landing-v2 .dd-drawer-backdrop{position:absolute;inset:0;background:rgba(20,18,17,.42);border:0;width:100%;height:100%;cursor:pointer}
+.landing-v2 .landing-mobile-nav.dd-home-drawer{position:absolute!important;inset:0 auto 0 0!important;display:flex!important;flex-direction:column!important;gap:0!important;width:min(86vw,360px)!important;max-width:360px!important;height:100dvh!important;overflow-y:auto!important;box-sizing:border-box!important;background:#fff!important;padding:22px 18px 24px!important;border:0!important;border-radius:0!important;box-shadow:6px 0 26px rgba(0,0,0,.1)!important;transform:none!important;opacity:1!important}
+.landing-v2 .dd-home-drawer a,.landing-v2 .dd-home-drawer button{font-family:inherit;text-decoration:none}
+.landing-v2 .dd-drawer-head{display:flex;align-items:center;justify-content:space-between;font-family:Georgia,serif;font-style:italic;font-size:23px;color:#806a5d;padding:0 3px 15px;border-bottom:1px solid #eee8e4}
+.landing-v2 .dd-drawer-head button{border:0;background:transparent;font:28px Arial;color:#777;padding:0 5px}
+.landing-v2 .dd-drawer-account{display:flex!important;align-items:center!important;gap:12px!important;padding:18px 3px!important;color:#292929!important;border:0!important;background:none!important}
+.landing-v2 .dd-drawer-account>span:nth-child(2){flex:1;display:flex;flex-direction:column;gap:5px}
+.landing-v2 .dd-drawer-account strong{font-size:14px}.landing-v2 .dd-drawer-account small{font-size:11px;color:#999}
+.landing-v2 .dd-drawer-avatar{width:42px;height:42px;border-radius:50%;background:#f5eee9;display:grid;place-items:center;color:#947c6b;font-size:24px}
+.landing-v2 .dd-drawer-shortcuts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:4px 0 22px}
+.landing-v2 .dd-drawer-shortcuts a,.landing-v2 .dd-drawer-shortcuts button{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:76px;border:1px solid #ebe6e2!important;border-radius:12px!important;background:#faf8f6!important;color:#292929!important;font-size:12px!important;font-weight:600!important;padding:8px!important}
+.landing-v2 .dd-drawer-shortcuts span{font-size:22px;color:#907565;font-weight:400}
+.landing-v2 .dd-drawer-label{font-size:10px;letter-spacing:.14em;color:#a39a93;margin:0 0 8px;padding:0 4px}
+.landing-v2 .dd-drawer-link{display:flex!important;align-items:center!important;gap:13px!important;padding:13px 5px!important;min-height:48px!important;box-sizing:border-box;color:#333!important;background:none!important;border:0!important;font-size:13px!important;font-weight:400!important}
+.landing-v2 .dd-drawer-link>span:first-child{width:22px;font-size:19px;color:#917b6c;text-align:center;flex-shrink:0}
+.landing-v2 .dd-drawer-link>b{margin-left:auto;font-size:22px;font-weight:400;color:#bbb}
+.landing-v2 .dd-drawer-link small{display:block;font-size:10px;color:#999;margin-top:4px}
+.landing-v2 .dd-drawer-disabled{color:#999!important;cursor:default}
+.landing-v2 .dd-drawer-bottom{margin-top:auto;padding:20px 0 0;border-top:1px solid #eee8e4;text-align:center}
+.landing-v2 .dd-drawer-bottom button{border:0!important;background:none!important;color:#999!important;font-size:12px!important;padding:9px 20px!important}
+}

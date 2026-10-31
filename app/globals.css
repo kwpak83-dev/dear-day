@@ -4136,3 +4136,309 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .guest-table-footer button:disabled{opacity:.45;cursor:not-allowed}
 .guest-table-footer>span{color:#a1a7ae;font-size:11px}
 @media(max-width:640px){.my-page.member-page .guest-management-content .guest-overview{padding:17px 15px}.guest-overview-metrics>div{padding:10px 9px;gap:5px}.guest-overview-metrics>div>span:nth-child(2){font-size:11px}.guest-overview-metrics>div>strong{font-size:12px}.my-page.member-page .guest-management-content .guest-table-card{padding:10px 8px}.guest-table-head,.guest-table-row{grid-template-columns:minmax(0,2fr) repeat(4,minmax(28px,.65fr));gap:3px}.guest-table-head{font-size:10px;padding:7px 4px}.guest-table-row{font-size:11px;padding:7px 4px}.guest-table-name{gap:3px;flex-wrap:wrap}.guest-table-name strong{font-size:11px}.guest-side-tag{font-size:9px;padding:2px 4px}.guest-table-symbol{font-size:17px}.guest-table-detail{grid-template-columns:1fr;margin:0 4px 8px;padding:11px}.guest-table-footer{padding:10px 5px 0}}
+
+/* Narrow only the invitation message; leave gallery, map and accounts unchanged. */
+.full-invitation-renderer .romantic-message blockquote,
+.full-invitation-renderer .modern-message blockquote,
+.full-invitation-renderer .classic-message blockquote,
+.full-invitation-renderer .romantic-message p,
+.full-invitation-renderer .modern-message p,
+.full-invitation-renderer .classic-message p { max-width:var(--dd-message-max-width, 100%); margin-left:auto; margin-right:auto; }
+
+/* Opt-in, section-scoped Safe Area. Unchecked sections retain template CSS. */
+.dd-template-section-safe-area.dd-safe-enabled-invitation :is(.classic-message,.modern-message,.romantic-message) {
+  padding-top:max(0px,var(--dd-section-invitation-top,0px));
+  padding-right:max(0px,var(--dd-section-invitation-right,0px));
+  padding-bottom:max(0px,var(--dd-section-invitation-bottom,0px));
+  padding-left:max(0px,var(--dd-section-invitation-left,0px));
+}
+.dd-template-section-safe-area.dd-safe-enabled-date :is(.classic-date,.modern-information-body > time,.romantic-information > time) {
+  padding-top:max(0px,var(--dd-section-date-top,0px));
+  padding-right:max(0px,var(--dd-section-date-right,0px));
+  padding-bottom:max(0px,var(--dd-section-date-bottom,0px));
+  padding-left:max(0px,var(--dd-section-date-left,0px));
+}
+.dd-template-section-safe-area.dd-safe-enabled-place :is(.classic-information,.modern-information,.romantic-information) {
+  padding-top:max(0px,var(--dd-section-place-top,0px));
+  padding-bottom:max(0px,var(--dd-section-place-bottom,0px));
+}
+/* Keep map's own layout untouched; adjust PLACE text inset only. */
+.dd-template-section-safe-area.dd-safe-enabled-place :is(.classic-information-body,.modern-information-body,.romantic-information) > :is(strong,p,.dd-address-detail) {
+  margin-left:var(--dd-section-place-left,0px);
+  margin-right:var(--dd-section-place-right,0px);
+}
+.dd-template-section-safe-area.dd-safe-enabled-gallery .invitation-gallery {
+  padding-top:max(0px,var(--dd-section-gallery-top,0px));
+  padding-right:max(0px,var(--dd-section-gallery-right,0px));
+  padding-bottom:max(0px,var(--dd-section-gallery-bottom,0px));
+  padding-left:max(0px,var(--dd-section-gallery-left,0px));
+}
+.dd-template-section-safe-area.dd-safe-enabled-account .public-accounts {
+  padding-top:max(0px,var(--dd-section-account-top,0px));
+  padding-right:max(0px,var(--dd-section-account-right,0px));
+  padding-bottom:max(0px,var(--dd-section-account-bottom,0px));
+  padding-left:max(0px,var(--dd-section-account-left,0px));
+}
+
+/* Independent transport-guide spacing inside PLACE; map and address unaffected. */
+.dd-template-section-safe-area.dd-safe-enabled-place.dd-safe-transport .dd-transport-guide {
+  padding-top:var(--dd-transport-top,0px);
+  padding-right:var(--dd-transport-right,0px);
+  padding-bottom:var(--dd-transport-bottom,0px);
+  padding-left:var(--dd-transport-left,0px);
+  box-sizing:border-box;
+}
+
+/* Countdown inherits the same per-template accent as the selected calendar day. */
+.classic-001 .classic-countdown{margin:28px auto 0;max-width:340px;text-align:center;color:var(--dd-color-text,#333)}
+.classic-001 .classic-countdown-title{margin:0 0 18px;font-size:13px;line-height:1.7}
+.classic-001 .classic-countdown-grid{display:grid;grid-template-columns:repeat(4,minmax(0,58px));justify-content:center;gap:12px;align-items:start}
+.classic-001 .classic-countdown-unit{min-width:0;display:flex;flex-direction:column;align-items:center;gap:7px}
+.classic-001 .classic-countdown-circle{display:flex;align-items:center;justify-content:center;width:58px;max-width:100%;aspect-ratio:1;border-radius:50%;background:var(--dd-color-accent,#b78b72);color:#fff;font-family:var(--dd-body-font,inherit);font-size:clamp(16px,calc(4vw + 2px),22px);font-weight:500;line-height:1;font-variant-numeric:tabular-nums}
+.classic-001 .classic-countdown-label{font-size:11px;color:var(--dd-color-caption,var(--dd-color-muted,#777));line-height:1.3}
+.classic-001 .classic-countdown-finished{display:block;margin-top:12px;font-size:12px;color:var(--dd-color-muted,#777)}
+
+/* Invitation wording: use the existing actual InvitationRenderer preview rather
+   than a separate approximate text layout. No change to stored message data. */
+.create-page .dd-message-linebreak-tools{margin:10px 0 9px;padding:13px 14px;border:1px solid #ead1cc;border-radius:12px;background:#fff8f5;color:#754e4a}
+.create-page .dd-message-linebreak-tools-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 12px}
+.create-page .dd-message-linebreak-tools-head strong{font-size:13px}
+.create-page .dd-message-linebreak-tools-head span,.create-page .dd-message-linebreak-tools p,.create-page .dd-message-linebreak-footnote{font-size:12px;line-height:1.65;color:#886f6a}
+.create-page .dd-message-linebreak-tools p{margin:7px 0 10px}
+.create-page .dd-message-preview-button{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 13px;border:1px solid #d7a8a1;border-radius:9px;background:#fff;color:#865a54;font-size:12px;font-weight:650;cursor:pointer}
+.create-page .dd-message-preview-button:hover{background:#fbeeea}
+.create-page .dd-message-preview-button:focus-visible{outline:2px solid #b77770;outline-offset:2px}
+.create-page .dd-invitation-message-textarea{min-height:150px;line-height:1.8;white-space:pre-wrap}
+.create-page .dd-message-linebreak-footnote{margin:7px 0 0}
+
+/* Actual INVITATION section preview modal: keep 390px layout metrics and
+   hide other sections without replacing the template's text/layout styles. */
+.dd-message-preview-backdrop{position:fixed;inset:0;z-index:1200;display:grid;place-items:center;padding:12px;background:rgba(27,20,20,.56)}
+.dd-message-preview-dialog{width:min(100%,480px);max-height:min(92dvh,850px);display:flex;flex-direction:column;overflow:hidden;border-radius:17px;background:#fffaf7;box-shadow:0 24px 70px #0003}
+.dd-message-preview-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 18px;border-bottom:1px solid #ebddd6;color:#563d39}
+.dd-message-preview-header strong{font-size:16px}
+.dd-message-preview-header button{border:0;background:transparent;color:inherit;font-size:21px;cursor:pointer;min-width:34px;min-height:34px}
+.dd-message-preview-description{margin:0;padding:9px 16px;color:#806d66;font-size:12px;line-height:1.55}
+.dd-message-preview-scroll{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:0 10px 12px}
+.dd-message-preview-stage{width:100%;min-width:0}
+.dd-message-preview-canvas{width:390px;max-width:none;margin:0 auto;background:#fff;overflow:hidden}
+.dd-message-preview-canvas .invitation-template{width:390px!important;max-width:none!important;min-height:0!important}
+.dd-message-preview-canvas .invitation-template>*:not(.classic-message){display:none!important}
+.dd-message-preview-canvas .invitation-template>.classic-message{display:block!important;order:initial!important;min-height:0!important}
+.dd-message-preview-footer{display:flex;justify-content:center;padding:11px 16px 16px;border-top:1px solid #ebddd6}
+.dd-message-preview-footer button{padding:11px 18px;border:1px solid #d7a8a1;border-radius:10px;background:#fff;color:#865a54;font-size:13px;font-weight:650;cursor:pointer}
+@media(max-width:430px){.dd-message-preview-backdrop{padding:8px}.dd-message-preview-dialog{max-height:95dvh}.dd-message-preview-scroll{padding-left:6px;padding-right:6px}}
+
+/* Inline and floating message previews share the same actual template renderer. */
+.dd-message-preview-inline{margin:12px 0 0;padding:9px 7px 12px;border:1px solid #ead9d2;border-radius:12px;background:#fff;overflow:hidden}
+.dd-message-preview-inline-label{margin:0 0 9px!important;font-size:11px!important;line-height:1.5!important;text-align:center;color:#987d72!important;letter-spacing:.03em}
+.dd-message-preview-inline .dd-message-preview-stage{width:100%}
+.dd-message-preview-inline .dd-message-preview-canvas{margin:0 auto}
+.dd-message-preview-inline .dd-message-preview-canvas .classic-message{margin-top:0!important}
+.create-page .dd-invitation-message-textarea{font-size:14px!important;line-height:1.65!important;min-height:128px}
+
+/* Override the old fixed minimum height only for the auto-sizing message box. */
+.create-page .dd-invitation-message-textarea.dd-invitation-message-textarea--auto{
+  min-height:68px!important;max-height:360px!important;
+  padding-top:10px!important;padding-bottom:10px!important;
+  overflow-x:hidden;resize:none!important;
+}
+
+/* The preview must wrap at the published invitation's viewport width.
+   Keep zoom for fitting only; never let the old 390px rule set line breaks. */
+.dd-message-preview-canvas .invitation-template{
+  width:var(--dd-message-preview-layout-width,390px)!important;
+  max-width:none!important;
+}
+
+/* DearDay RSVP dashboard rose-pink variant: only accent indicators change.
+   Keep existing neutral metric tiles, labels, data and export controls. */
+.my-page .guest-management-content .guest-attendance-track>div{
+  background:#d96784;
+}
+.my-page .guest-management-content .guest-table-symbol.yes{
+  color:#d96784;
+}
+.my-page .guest-management-content .guest-filters button.active{
+  background:#d96784;border-color:#d96784;color:#fff;
+}
+.my-page .guest-management-content .guest-metric-icon{
+  width:24px;height:24px;flex:0 0 24px;
+  font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
+  font-size:20px;line-height:1;
+}
+@media(max-width:380px){
+  .my-page .guest-management-content .guest-overview-metrics>div{gap:5px}
+  .my-page .guest-management-content .guest-metric-icon{width:21px;height:21px;flex-basis:21px;font-size:18px}
+}
+
+/* Consistent DearDay mobile header for every My Page route. */
+.my-page.member-page .dd-member-menu-toggle,
+.my-page.member-page .dd-member-envelope,
+.my-page.member-page .dd-member-mobile-menu{display:none}
+@media(max-width:800px){
+  .my-page.member-page .dd-member-topbar{
+    position:relative!important;display:flex!important;align-items:center!important;
+    justify-content:center!important;height:52px!important;min-height:52px!important;max-height:52px!important;box-sizing:border-box!important;
+    padding:0 18px!important;background:#fff!important;border-bottom:1px solid #eee6de!important;
+  }
+  .my-page.member-page .dd-member-topbar .my-page-header-actions{display:none!important}
+  .my-page.member-page .dd-member-topbar .dd-member-brand{
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    position:absolute!important;left:50%!important;top:50%!important;
+    transform:translate(-50%,-50%)!important;margin:0!important;
+  }
+  .my-page.member-page .dd-member-topbar .dd-member-brand .dearday-logo--wordmark{
+    width:148.2px!important;height:36.1px!important;max-height:36.1px!important;object-fit:contain!important;
+  }
+  .my-page.member-page .dd-member-menu-toggle{
+    display:flex!important;position:absolute;left:18px;top:50%;transform:translateY(-50%);
+    flex-direction:column;justify-content:center;gap:5px;width:30px;height:36px;
+    padding:4px;border:0;background:transparent;cursor:pointer;z-index:2;
+  }
+  .my-page.member-page .dd-member-menu-toggle span{display:block;width:22px;height:2px;border-radius:2px;background:#262626}
+  .my-page.member-page .dd-member-envelope{
+    display:flex!important;align-items:center;justify-content:center;
+    position:absolute;right:18px;top:50%;transform:translateY(-50%);
+    width:32px;height:36px;z-index:2;
+  }
+  .my-page.member-page .dd-member-mobile-menu{
+    display:flex;position:absolute;left:0;right:0;top:100%;z-index:40;
+    flex-direction:column;gap:0;padding:8px 18px 14px;background:#fff;
+    border-bottom:1px solid #e7e0d8;box-shadow:0 12px 22px rgba(0,0,0,.08);
+  }
+  .my-page.member-page .dd-member-mobile-menu a,
+  .my-page.member-page .dd-member-mobile-menu span{
+    display:block;padding:12px 8px;color:#333;text-decoration:none;font-size:14px;
+  }
+  .my-page.member-page .dd-member-mobile-menu a[aria-current="page"]{font-weight:750;color:#9e716e}
+}
+
+/* Match the landing header logo's actual displayed size, including SVG sizing. */
+@media(max-width:800px){
+ .my-page.member-page .dd-member-topbar .dd-member-brand{width:148.2px!important;height:36.1px!important;max-width:148.2px!important;min-width:0!important}
+ .my-page.member-page .dd-member-topbar .dd-member-brand .dearday-logo,
+ .my-page.member-page .dd-member-topbar .dd-member-brand svg{width:148.2px!important;height:36.1px!important;max-width:148.2px!important;max-height:36.1px!important}
+}
+
+/* Compact mobile My Page header: keep landing header unchanged. */
+@media(max-width:800px){
+ .my-page.member-page .dd-member-topbar .dd-member-brand{width:116px!important;height:29px!important;max-width:116px!important}
+ .my-page.member-page .dd-member-topbar .dd-member-brand .dearday-logo,
+ .my-page.member-page .dd-member-topbar .dd-member-brand .dearday-logo--wordmark,
+ .my-page.member-page .dd-member-topbar .dd-member-brand svg{width:116px!important;height:29px!important;max-width:116px!important;max-height:29px!important}
+ .my-page.member-page .dd-member-menu-toggle,
+ .my-page.member-page .dd-member-envelope{height:30px!important}
+}
+
+/* My Page mobile three-column quick navigation (scroll cutoff is in my-page-layout.js). */
+.dd-member-quick-tabs{display:none}
+@media(max-width:800px){
+ .my-page.member-page .dd-member-quick-tabs{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));height:60px;
+  background:#fff;border-bottom:1px solid #e9e7e4;
+  overflow:hidden;transition:none;
+ }
+ .my-page.member-page .dd-member-quick-tabs>a,
+ .my-page.member-page .dd-member-quick-tabs>span{
+  display:flex;align-items:center;justify-content:center;min-width:0;
+  padding:0 4px;border-bottom:2px solid transparent;
+  color:#929292;font-size:13px;font-weight:500;white-space:nowrap;
+ }
+ .my-page.member-page .dd-member-quick-tabs>a.active{color:#222;font-weight:700;border-bottom-color:#777}
+ .my-page.member-page .dd-member-quick-tabs>span[aria-disabled=true]{color:#a4a4a4}
+ .my-page.member-page .dd-member-quick-tabs.is-hidden{height:0;border-bottom-color:transparent}
+ .my-page.member-page .member-navigation{display:none!important}
+}
+@media(prefers-reduced-motion:reduce){.my-page.member-page .dd-member-quick-tabs{transition:none!important}}
+
+/* My Invitations collapsible service notice */
+.my-page .dd-my-guide{background:#fff;border:0;border-radius:16px;margin:0 0 20px;overflow:hidden;color:#333;box-shadow:0 1px 2px rgba(0,0,0,.025)}
+.my-page .dd-my-guide-title{display:flex;align-items:center;gap:9px;cursor:pointer;list-style:none;padding:18px 19px;font-size:15px;color:#222;user-select:none}
+.my-page .dd-my-guide-title::-webkit-details-marker{display:none}
+.my-page .dd-my-guide-title:focus-visible{outline:2px solid #a58c79;outline-offset:-3px}
+.my-page .dd-my-guide-chevron{margin-left:auto;font-size:21px;color:#999;line-height:1;transform:rotate(180deg);transition:transform .2s}
+.my-page .dd-my-guide:not([open]) .dd-my-guide-chevron{transform:rotate(0deg)}
+.my-page .dd-my-guide-body{padding:0 19px 19px;font-size:13px;line-height:1.9;color:#5b6170;overflow-wrap:break-word}
+.my-page .dd-my-guide-body ul{margin:0;padding-left:19px}
+.my-page .dd-my-guide-body li{margin:0 0 10px;padding-left:2px}
+.my-page .dd-my-guide-body strong{font-weight:650;color:#333}
+.my-page .dd-my-guide-event{background:#faf6f2;border-radius:11px;padding:13px 14px;margin-top:12px}
+.my-page .dd-my-guide-event>strong{font-size:13px}
+.my-page .dd-my-guide-event p{margin:7px 0 0}
+@media(max-width:800px){.my-page .dd-my-guide{margin-bottom:18px}.my-page .dd-my-guide-title{padding:16px}.my-page .dd-my-guide-body{padding:0 16px 16px}}
+@media(prefers-reduced-motion:reduce){.my-page .dd-my-guide-chevron{transition:none}}
+
+/* Compact My Invitations notice to prioritize invitation cards on mobile. */
+.my-page .dd-my-guide-title{padding:13px 16px;font-size:14px;gap:7px}
+.my-page .dd-my-guide-body{padding:0 16px 13px;font-size:12px;line-height:1.6}
+.my-page .dd-my-guide-body ul{padding-left:16px}
+.my-page .dd-my-guide-body li{margin-bottom:6px;padding-left:0}
+.my-page .dd-my-guide-event{padding:10px 12px;margin-top:9px;border-radius:10px}
+.my-page .dd-my-guide-event>strong{font-size:12px}
+.my-page .dd-my-guide-event p{margin-top:4px;line-height:1.6}
+@media(max-width:800px){.my-page .dd-my-guide{margin-bottom:12px}.my-page .dd-my-guide-title{padding:12px 15px}.my-page .dd-my-guide-body{padding:0 15px 12px;font-size:12px;line-height:1.55}}
+
+/* Guest Management: contextual help and guestbook visual alignment with RSVP. */
+.guest-management-content .dd-guest-help{position:relative;display:inline-flex;vertical-align:middle;margin-left:4px}
+.guest-management-content .dd-guest-help>button{display:inline-flex;align-items:center;justify-content:center;width:21px;height:21px;padding:0;border:1px solid #d7d7d7;border-radius:50%;background:#fff;color:#8b8b94;font-size:13px;font-weight:500;cursor:pointer}
+.guest-management-content .dd-guest-help>button:focus-visible{outline:2px solid #777;outline-offset:2px}
+.guest-management-content .dd-guest-help-popover{position:absolute;z-index:10;top:calc(100% + 7px);left:0;width:min(240px,calc(100vw - 55px));padding:10px 12px;border:1px solid #e6e6e8;border-radius:10px;background:#fff;box-shadow:0 6px 20px #00000015;color:#555;font-size:12px;font-weight:400;line-height:1.6;white-space:normal;text-align:left}
+.guest-management-content .guestbook-management{margin-top:32px;padding-top:24px;border-top:1px solid #e5e5e7}
+.guest-management-content .guestbook-management-heading{align-items:center}
+.guest-management-content .guestbook-management-heading h2{margin:0;color:#242424;font-size:20px;font-weight:700;line-height:1.5}
+.guest-management-content .guestbook-management-heading>span{color:#777;font-size:12px}
+.guest-management-content .guestbook-management-list{gap:10px;margin-top:14px}
+.guest-management-content .guestbook-management-list article{background:#fff;border:1px solid #e7e7e9;border-radius:16px;padding:16px;box-shadow:0 2px 12px #00000008}
+.guest-management-content .guestbook-management-list header strong{color:#282828;font-size:13px}
+.guest-management-content .guestbook-management-list time{color:#898b93;font-size:11px}
+.guest-management-content .guestbook-management-list article>p{color:#565d69;font-size:12px;line-height:1.65}
+.guest-management-content .guestbook-management-list article>button{color:#777;font-size:11px}
+@media(max-width:640px){.guest-management-content .guestbook-management{margin-top:26px;padding-top:20px}.guest-management-content .guestbook-management-heading h2{font-size:18px}}
+
+/* Bring Guest Management selector closer to the three quick tabs on mobile. */
+@media(max-width:800px){
+ .my-page.member-page .member-page-content .guest-management-content{padding-top:18px}
+ .my-page.member-page .guest-management-content .guest-event-select{margin-top:0}
+}
+
+/* Compact RSVP filters: keep count beside buttons and pull the response table upward. */
+.my-page .guest-management-content .guest-list-heading{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:8px;margin-top:16px;margin-bottom:8px}
+.my-page .guest-management-content .guest-filters{display:flex;flex-wrap:nowrap;gap:5px;align-self:center;min-width:0}
+.my-page .guest-management-content .guest-filters button{min-height:28px;height:28px;padding:3px 11px;font-size:11px;line-height:1.2;white-space:nowrap}
+.my-page .guest-management-content .guest-list-actions{display:flex;align-items:center;justify-content:flex-end;flex:0 0 auto;width:auto;min-width:0}
+.my-page .guest-management-content .guest-list-actions>span{font-size:12px;white-space:nowrap}
+.my-page .guest-management-content .guest-table-card{margin-top:0}
+@media(max-width:640px){
+ .my-page .guest-management-content .guest-list-heading{flex-direction:row;align-items:center;gap:6px;margin-top:14px;margin-bottom:7px}
+ .my-page .guest-management-content .guest-filters button{min-height:28px;height:28px;padding:3px 10px}
+ .my-page .guest-management-content .guest-list-actions{width:auto;justify-content:flex-end}
+}
+
+/* Mobile quick tabs: clean sans-serif labels and understated line icons. */
+@media(max-width:800px){
+ .my-page.member-page .dd-member-quick-tabs>a,
+ .my-page.member-page .dd-member-quick-tabs>span{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:5px;font-family:Pretendard,"Noto Sans KR",Arial,sans-serif!important;font-size:12px!important;letter-spacing:-.035em!important;font-weight:500!important}
+ .my-page.member-page .dd-member-quick-tabs>a.active{font-weight:700!important;color:#202020!important;border-bottom-color:#777!important}
+ .my-page.member-page .dd-member-quick-tabs svg{display:block;width:16px;height:16px;flex:0 0 16px;stroke:currentColor}
+}
+
+/* Invitation floating quick menu: rounded rectangle trial (shared across previews and published invitations). */
+.invitation-quick-menu.invitation-quick-menu--modern{border-radius:12px!important}
+
+/* Invitation quick bar: near full-width rectangular layout with warm illustrated accents. */
+.invitation-quick-menu.invitation-quick-menu--modern{width:calc(100% - 24px)!important;max-width:none!important;left:12px!important;right:12px!important;transform:none!important;box-sizing:border-box;border-radius:12px!important;display:flex!important;align-items:center!important;justify-content:space-evenly!important}
+.invitation-quick-menu.invitation-quick-menu--modern>button{flex:1 1 0!important;min-width:0!important;justify-content:center!important;gap:5px!important}
+.invitation-quick-menu.invitation-quick-menu--modern .dd-quick-icon-bubble{flex-shrink:0}
+.invitation-quick-menu.invitation-quick-menu--modern .invitation-quick-copy{white-space:nowrap}
+/* Preserve preview viewport bounds; do not expand beyond editor preview frame. */
+.invitation-quick-menu--desktop-live.invitation-quick-menu--modern,.invitation-quick-menu--editor-full.invitation-quick-menu--modern,.invitation-quick-menu--sales-preview.invitation-quick-menu--modern{width:calc(100% - 24px)!important}
+
+/* Guest management: Windows-inspired cyan-to-blue RSVP accent (A). */
+.my-page .guest-management-content .guest-attendance-track>div{background:linear-gradient(100deg,#27C9F5 0%,#0787E8 100%)!important}
+.my-page .guest-management-content .guest-filters button.active{background:linear-gradient(120deg,#27C9F5 0%,#0787E8 100%)!important;border-color:#0787E8!important;color:#fff!important}
+.my-page .guest-management-content .guest-table-symbol.yes{color:#0787E8!important}
+
+/* Wedding RSVP attendee-side badges: deeper rose and muted navy. */
+.my-page .guest-management-content .guest-side-tag.bride{background:#D96784;color:#fff}
+.my-page .guest-management-content .guest-side-tag.groom{background:#526B88;color:#fff}

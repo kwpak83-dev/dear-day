@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import MyPageLayout from "../../components/my-page-layout";
+import PublishedInvitationLoading from "../invite/[slug]/loading";
 
 const FILTERS = [["all", "전체"], ["attending", "참석"], ["not_attending", "불참"]];
 const emptySummary = { total: 0, attending: 0, notAttending: 0, partySize: 0, groomCount: 0, brideCount: 0, unclassifiedCount: 0, mealCount: 0, busCount: 0, mealUnknown: 0, busUnknown: 0 };
@@ -24,6 +25,8 @@ export default function GuestManagement() {
   const [downloadNotice, setDownloadNotice] = useState("");
   const [guestbookEntries, setGuestbookEntries] = useState([]);
   const [guestbookNotice, setGuestbookNotice] = useState("");
+  const [rsvpHelpOpen, setRsvpHelpOpen] = useState(false);
+  const [guestbookHelpOpen, setGuestbookHelpOpen] = useState(false);
   const rsvpRequestId = useRef(0);
   const guestbookRequestId = useRef(0);
 
@@ -97,19 +100,22 @@ export default function GuestManagement() {
     finally { setDownloading(false); }
   };
 
+  if (notice === "하객 정보를 불러오는 중이에요." && !loginRequired && events.length === 0) {
+    return <PublishedInvitationLoading message="하객 정보를 불러오고 있어요" />;
+  }
+
   return <MyPageLayout current="guests"><section className="guest-management-content">
-    <p className="section-kicker">GUEST MANAGEMENT</p><h1>하객 관리</h1><p className="guest-management-intro">초대장에 전달된 참석 여부를 확인하세요.</p>
     {notice && (notice === "관리할 수 있는 발행 초대장이 아직 없어요." && !loginRequired ? <div className="dd-empty-state"><span className="dd-empty-icon" aria-hidden="true">✉</span><h2>관리할 하객 정보가 아직 없어요</h2><p>초대장을 발행하면 이곳에서 참석 여부를 관리할 수 있어요.</p><a href="/my-invitations" className="dd-empty-cta">내 초대장 확인하기</a></div> : <div className="my-notice"><p>{notice}</p>{loginRequired && <a className="my-login-button" href="/?login=required&returnUrl=%2Fguest-management">다시 로그인하기</a>}</div>)}
     {events.length > 0 && <><label className="guest-event-select"><span>초대장 선택</span><select value={selectedSlug} onChange={(event) => chooseEvent(event.target.value)}>{events.map((event) => <option key={event.slug} value={event.slug}>{event.title}</option>)}</select></label>{selectedEvent && <p className="guest-rsvp-state">RSVP {selectedEvent.rsvpEnabled ? "ON" : "OFF · 기존 응답은 계속 확인할 수 있어요."}</p>}
       <div className="guest-overview">
-        <div className="guest-overview-top"><span>전체 응답</span><strong>{summary.total}<small>건</small></strong></div>
+        <div className="guest-overview-top"><span>전체 응답 <span className="dd-guest-help"><button type="button" aria-label="참석 여부 안내" aria-expanded={rsvpHelpOpen} onClick={() => setRsvpHelpOpen(!rsvpHelpOpen)}>ⓘ</button>{rsvpHelpOpen && <span role="status" className="dd-guest-help-popover">하객의 참석 여부와 인원을 확인하고 엑셀로 저장할 수 있습니다.</span>}</span></span><strong>{summary.total}<small>건</small></strong></div>
         <div className="guest-attendance-track" role="progressbar" aria-label="참석 응답 비율" aria-valuenow={attendanceRate} aria-valuemin={0} aria-valuemax={100}><div style={{width:`${attendanceRate}%`}} /></div>
         <p className="guest-attendance-caption">참석 응답 {summary.attending}건 · 전체 응답 대비 {attendanceRate}%</p>
         <div className="guest-overview-metrics">
-          <div><span className="guest-metric-icon" aria-hidden="true">✓</span><span>참석 인원</span><strong>{summary.partySize}명</strong></div>
-          <div><span className="guest-metric-icon" aria-hidden="true">♨</span><span>식사</span><strong>{summary.mealCount || 0}명</strong></div>
-          <div><span className="guest-metric-icon" aria-hidden="true">▣</span><span>전세버스</span><strong>{summary.busCount || 0}명</strong></div>
-          <div><span className="guest-metric-icon" aria-hidden="true">×</span><span>불참 응답</span><strong>{summary.notAttending}건</strong></div>
+          <div><span className="guest-metric-icon" aria-hidden="true">💐</span><span>참석 인원</span><strong>{summary.partySize}명</strong></div>
+          <div><span className="guest-metric-icon" aria-hidden="true">🍽️</span><span>식사</span><strong>{summary.mealCount || 0}명</strong></div>
+          <div><span className="guest-metric-icon" aria-hidden="true">🚌</span><span>전세버스</span><strong>{summary.busCount || 0}명</strong></div>
+          <div><span className="guest-metric-icon" aria-hidden="true">💌</span><span>불참 응답</span><strong>{summary.notAttending}건</strong></div>
         </div>
         {selectedEvent?.kind === "wedding" && <div className="guest-overview-sides"><span>신랑 측 <strong>{summary.groomCount || 0}명</strong></span><span>신부 측 <strong>{summary.brideCount || 0}명</strong></span>{summary.unclassifiedCount > 0 && <span>미분류 <strong>{summary.unclassifiedCount}명</strong></span>}</div>}
         {(summary.mealUnknown > 0 || summary.busUnknown > 0 || !selectedEvent?.mealEnabled || !selectedEvent?.busEnabled) && <p className="guest-overview-note">{!selectedEvent?.mealEnabled ? "식사 항목 OFF · " : ""}{!selectedEvent?.busEnabled ? "버스 항목 OFF · " : ""}{summary.mealUnknown > 0 ? `식사 미수집 ${summary.mealUnknown}명 · ` : ""}{summary.busUnknown > 0 ? `버스 미수집 ${summary.busUnknown}명` : ""}</p>}
@@ -134,7 +140,7 @@ export default function GuestManagement() {
         <div className="guest-table-footer"><button type="button" onClick={downloadExcel} disabled={downloading || !summary.total}>{downloading ? "파일 생성 중..." : "▦ Excel 다운로드"}</button><span>행을 누르면 상세정보를 확인할 수 있어요.</span></div>
       </div>
       {downloadNotice && <p className="guest-download-notice" role="status" aria-live="polite">{downloadNotice}</p>}
-      <section className="guestbook-management"><div className="guestbook-management-heading"><div><p className="section-kicker">GUESTBOOK</p><h2>방명록 관리</h2></div><span>{guestbookEntries.length}건</span></div>{guestbookNotice && <p className="guestbook-notice" role="status">{guestbookNotice}</p>}{guestbookEntries.length ? <div className="guestbook-management-list">{guestbookEntries.map((entry) => <article key={entry.id}><header><strong>{entry.authorName}</strong><time>{formatDateTime(entry.createdAt)}</time></header><p>{entry.message}</p><button type="button" onClick={() => deleteGuestbookEntry(entry)}>삭제</button></article>)}</div> : <div className="dd-empty-state dd-empty-state-small"><span className="dd-empty-icon" aria-hidden="true">✉</span><h3>아직 남겨진 방명록이 없어요</h3><p>하객이 남긴 축하 메시지가 여기에 표시돼요.</p></div>}</section>
+      <section className="guestbook-management"><div className="guestbook-management-heading"><div><h2>방명록 관리 <span className="dd-guest-help"><button type="button" aria-label="방명록 안내" aria-expanded={guestbookHelpOpen} onClick={() => setGuestbookHelpOpen(!guestbookHelpOpen)}>ⓘ</button>{guestbookHelpOpen && <span role="status" className="dd-guest-help-popover">하객이 남긴 축하 메시지를 확인하고 관리할 수 있습니다.</span>}</span></h2></div><span>{guestbookEntries.length}건</span></div>{guestbookNotice && <p className="guestbook-notice" role="status">{guestbookNotice}</p>}{guestbookEntries.length ? <div className="guestbook-management-list">{guestbookEntries.map((entry) => <article key={entry.id}><header><strong>{entry.authorName}</strong><time>{formatDateTime(entry.createdAt)}</time></header><p>{entry.message}</p><button type="button" onClick={() => deleteGuestbookEntry(entry)}>삭제</button></article>)}</div> : <div className="dd-empty-state dd-empty-state-small"><span className="dd-empty-icon" aria-hidden="true">✉</span><h3>아직 남겨진 방명록이 없어요</h3><p>하객이 남긴 축하 메시지가 여기에 표시돼요.</p></div>}</section>
     </>}
   </section></MyPageLayout>;
 }

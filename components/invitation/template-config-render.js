@@ -319,10 +319,21 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     : "";
   const decorationsConfigured = Boolean(config?.decorations?.length);
   const safeArea = config?.safeArea;
-  if (safeArea) {
+  if (safeArea?.sections) {
+    for (const key of ["invitation","date","place","gallery","account"]) {
+      const section = safeArea.sections[key];
+      if (!section?.enabled) continue;
+      for (const side of ["top","right","bottom","left"]) rootStyle[`--dd-section-${key}-${side}`] = `${section[side]}px`;
+      if (key==="place" && section.transport?.enabled) {
+        for (const side of ["top","right","bottom","left"]) rootStyle[`--dd-transport-${side}`] = `${section.transport[side]}px`;
+      }
+      if (key==="invitation" && section.messageWidth) rootStyle["--dd-message-max-width"] = `${section.messageWidth}px`;
+    }
+  } else if (safeArea?.messageWidth) rootStyle["--dd-message-max-width"] = `${safeArea.messageWidth}px`;
+  if (safeArea && !safeArea.sections) {
     for (const side of ["top", "right", "bottom", "left"]) rootStyle[`--dd-safe-${side}`] = `${safeArea[side]}px`;
   }
-  const safeAreaClass = safeArea ? " dd-template-safe-area" : "";
+  const safeAreaClass = safeArea?.sections ? ` dd-template-section-safe-area${["invitation","date","place","gallery","account"].filter(key=>safeArea.sections[key]?.enabled).map(key=>` dd-safe-enabled-${key}`).join("")}${safeArea.sections.place?.enabled && safeArea.sections.place?.transport?.enabled ? " dd-safe-transport" : ""}` : safeArea ? " dd-template-safe-area" : "";
   const configured = Boolean(background || hero || typography || colors);
   return { configured, heroConfigured: Boolean(hero), typographyConfigured: Boolean(typography), colorsConfigured: Boolean(colors), buttonStyleConfigured: Boolean(buttonStyle), backgroundConfigured: Boolean(background), centerPanelConfigured: background?.centerPanel?.enabled === true, decorationsConfigured, sectionClasses, safeAreaClass, rootStyle, heroStyle, heroMediaStyle, heroImageStyle, heroCopyStyle, showCoverPhoto, illustrationMode: hero?.mode === "illustration", heroBackgroundConfigured: Boolean(heroBackgroundUrl) };
 }

@@ -38,7 +38,7 @@ export default function Guestbook({ slug, preview = false, title = "방명록" }
       setEntries((current) => current.filter((entry) => entry.id !== deleteTarget.id)); setDeleteTarget(null); setDeletePassword(""); setNotice("방명록을 삭제했습니다.");
     } catch { setDeleteNotice("방명록을 삭제하지 못했어요. 다시 시도해 주세요."); } finally { setSubmitting(false); }
   };
-  return <section className="guestbook-section"><p className="section-kicker">GUESTBOOK</p><h2>{title}</h2>
+  return <section className="guestbook-section"><div className="dd-stationery-heading"><img className="dd-stationery-clipart" src="/program-clipart/book.svg" alt="" aria-hidden="true" /><p className="section-kicker">GUESTBOOK</p><h2>{title}</h2></div>
     <form className="guestbook-form" onSubmit={submit}>
       <label><span>이름</span><input required maxLength={20} value={form.authorName} onChange={(event) => setForm({ ...form, authorName: event.target.value })} /></label>
       <label><span>메시지</span><textarea required maxLength={200} value={form.message} onChange={(event) => setForm({ ...form, message: event.target.value })} /></label>
