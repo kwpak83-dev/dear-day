@@ -15,6 +15,8 @@ export default function TemplateBgm({ src }) {
   const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [error, setError] = useState("");
+  const [showHint, setShowHint] = useState(false);
+  const hintSeenRef = useRef(false);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -30,6 +32,14 @@ export default function TemplateBgm({ src }) {
       audio.pause();
       audio.currentTime = 0;
     };
+  }, [src]);
+
+  useEffect(() => {
+    if (!src || hintSeenRef.current) return;
+    hintSeenRef.current = true;
+    const showTimer = window.setTimeout(() => setShowHint(true), 500);
+    const hideTimer = window.setTimeout(() => setShowHint(false), 3500);
+    return () => { window.clearTimeout(showTimer); window.clearTimeout(hideTimer); };
   }, [src]);
 
   if (!src) return null;
@@ -60,6 +70,7 @@ export default function TemplateBgm({ src }) {
   };
 
   const toggle = () => {
+    setShowHint(false);
     if (playing) {
       stop();
       return;
@@ -68,6 +79,7 @@ export default function TemplateBgm({ src }) {
   };
 
   return <div className="dd-template-bgm" aria-label="배경 음악">
+    {showHint && <span className="dd-bgm-hint" aria-hidden="true">{playing ? "음악 ON" : "음악 켜기"} <span aria-hidden="true">→</span></span>}
     <audio
       ref={audioRef}
       src={src}
