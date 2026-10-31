@@ -96,7 +96,7 @@ export async function GET(request) {
   const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({ type: "magiclink", email, options: { redirectTo: origin + returnPath } });
   if (linkError || !linkData?.properties?.action_link || !linkData.user?.id) return failure(request, "session-link");
   const { error: updateError } = await supabase.auth.admin.updateUserById(linkData.user.id, {
-    user_metadata: { ...linkData.user.user_metadata, ...metadata },
+    user_metadata: { ...linkData.user.user_metadata, ...metadata, ...(linkData.user.user_metadata?.mobile_manually_updated ? { mobile: linkData.user.user_metadata.mobile, mobile_manually_updated: true } : {}) },
   });
   if (updateError) return failure(request, "profile-sync");
 
