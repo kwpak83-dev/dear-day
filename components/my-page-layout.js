@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 // Adjust this value to change when the mobile quick tabs disappear.
 const QUICK_TABS_HIDE_SCROLL_Y = 60;
+const QUICK_TABS_SHOW_SCROLL_Y = 8;
 import DearDayLogo from "./dearday-logo";
 
 const menuItems = [
@@ -18,7 +19,10 @@ export default function MyPageLayout({ current, children }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [quickTabsHidden, setQuickTabsHidden] = useState(false);
   useEffect(() => {
-    const onScroll = () => setQuickTabsHidden(window.scrollY > QUICK_TABS_HIDE_SCROLL_Y);
+    const onScroll = () => {
+      const y = window.scrollY;
+      setQuickTabsHidden(previous => y > QUICK_TABS_HIDE_SCROLL_Y ? true : y <= QUICK_TABS_SHOW_SCROLL_Y ? false : previous);
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
