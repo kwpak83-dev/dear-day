@@ -4236,3 +4236,10 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-message-preview-inline .dd-message-preview-canvas{margin:0 auto}
 .dd-message-preview-inline .dd-message-preview-canvas .classic-message{margin-top:0!important}
 .create-page .dd-invitation-message-textarea{font-size:14px!important;line-height:1.65!important;min-height:128px}
+
+/* Override the old fixed minimum height only for the auto-sizing message box. */
+.create-page .dd-invitation-message-textarea.dd-invitation-message-textarea--auto{
+  min-height:68px!important;max-height:360px!important;
+  padding-top:10px!important;padding-bottom:10px!important;
+  overflow-x:hidden;resize:none!important;
+}
