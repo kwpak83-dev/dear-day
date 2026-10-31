@@ -4515,3 +4515,31 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Equal breathing room on both sides of the love-story center line. */
 .dd-love-story .dd-love-story-photo{width:32%;flex:0 0 32%;margin-left:13%;margin-right:0}
 .dd-love-story .dd-love-story-item:nth-child(even) .dd-love-story-photo{margin-left:0;margin-right:13%}
+
+
+/* Love story: fixed symmetric gutters around the center milestone, no text collision. */
+.dd-love-story .dd-love-story-item,
+.dd-love-story .dd-love-story-item:nth-child(even){
+  display:grid;grid-template-columns:minmax(0,1fr) 40px minmax(0,1fr);
+  column-gap:0;align-items:center;justify-content:initial;text-align:left;
+}
+.dd-love-story .dd-love-story-photo,
+.dd-love-story .dd-love-story-item:nth-child(even) .dd-love-story-photo{
+  grid-column:1;grid-row:1;width:calc(100% - 16px);min-width:0;
+  margin:0;justify-self:end;flex:none;
+}
+.dd-love-story .dd-love-story-copy,
+.dd-love-story .dd-love-story-item:nth-child(even) .dd-love-story-copy{
+  grid-column:3;grid-row:1;width:auto;min-width:0;
+  margin:0;padding:0 0 0 16px;flex:none;text-align:left;
+}
+.dd-love-story .dd-love-story-item:nth-child(even) .dd-love-story-photo{
+  grid-column:3;justify-self:start;
+}
+.dd-love-story .dd-love-story-item:nth-child(even) .dd-love-story-copy{
+  grid-column:1;text-align:right;padding:0 16px 0 0;
+}
+.dd-love-story .dd-love-story-item:not(:has(.dd-love-story-photo)) .dd-love-story-copy,
+.dd-love-story .dd-love-story-item:not(:has(.dd-love-story-photo)):nth-child(even) .dd-love-story-copy{
+  width:auto;margin:0;
+}
