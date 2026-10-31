@@ -4433,3 +4433,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .invitation-quick-menu.invitation-quick-menu--modern .invitation-quick-copy{white-space:nowrap}
 /* Preserve preview viewport bounds; do not expand beyond editor preview frame. */
 .invitation-quick-menu--desktop-live.invitation-quick-menu--modern,.invitation-quick-menu--editor-full.invitation-quick-menu--modern,.invitation-quick-menu--sales-preview.invitation-quick-menu--modern{width:calc(100% - 24px)!important}
+
+/* Guest management: Windows-inspired cyan-to-blue RSVP accent (A). */
+.my-page .guest-management-content .guest-attendance-track>div{background:linear-gradient(100deg,#27C9F5 0%,#0787E8 100%)!important}
+.my-page .guest-management-content .guest-filters button.active{background:linear-gradient(120deg,#27C9F5 0%,#0787E8 100%)!important;border-color:#0787E8!important;color:#fff!important}
+.my-page .guest-management-content .guest-table-symbol.yes{color:#0787E8!important}
