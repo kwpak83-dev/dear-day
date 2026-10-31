@@ -106,10 +106,10 @@ export default function GuestManagement() {
         <div className="guest-attendance-track" role="progressbar" aria-label="참석 응답 비율" aria-valuenow={attendanceRate} aria-valuemin={0} aria-valuemax={100}><div style={{width:`${attendanceRate}%`}} /></div>
         <p className="guest-attendance-caption">참석 응답 {summary.attending}건 · 전체 응답 대비 {attendanceRate}%</p>
         <div className="guest-overview-metrics">
-          <div><span className="guest-metric-icon" aria-hidden="true">✓</span><span>참석 인원</span><strong>{summary.partySize}명</strong></div>
-          <div><span className="guest-metric-icon" aria-hidden="true">♨</span><span>식사</span><strong>{summary.mealCount || 0}명</strong></div>
-          <div><span className="guest-metric-icon" aria-hidden="true">▣</span><span>전세버스</span><strong>{summary.busCount || 0}명</strong></div>
-          <div><span className="guest-metric-icon" aria-hidden="true">×</span><span>불참 응답</span><strong>{summary.notAttending}건</strong></div>
+          <div><span className="guest-metric-icon" aria-hidden="true">💐</span><span>참석 인원</span><strong>{summary.partySize}명</strong></div>
+          <div><span className="guest-metric-icon" aria-hidden="true">🍽️</span><span>식사</span><strong>{summary.mealCount || 0}명</strong></div>
+          <div><span className="guest-metric-icon" aria-hidden="true">🚌</span><span>전세버스</span><strong>{summary.busCount || 0}명</strong></div>
+          <div><span className="guest-metric-icon" aria-hidden="true">💌</span><span>불참 응답</span><strong>{summary.notAttending}건</strong></div>
         </div>
         {selectedEvent?.kind === "wedding" && <div className="guest-overview-sides"><span>신랑 측 <strong>{summary.groomCount || 0}명</strong></span><span>신부 측 <strong>{summary.brideCount || 0}명</strong></span>{summary.unclassifiedCount > 0 && <span>미분류 <strong>{summary.unclassifiedCount}명</strong></span>}</div>}
         {(summary.mealUnknown > 0 || summary.busUnknown > 0 || !selectedEvent?.mealEnabled || !selectedEvent?.busEnabled) && <p className="guest-overview-note">{!selectedEvent?.mealEnabled ? "식사 항목 OFF · " : ""}{!selectedEvent?.busEnabled ? "버스 항목 OFF · " : ""}{summary.mealUnknown > 0 ? `식사 미수집 ${summary.mealUnknown}명 · ` : ""}{summary.busUnknown > 0 ? `버스 미수집 ${summary.busUnknown}명` : ""}</p>}
