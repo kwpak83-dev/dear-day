@@ -1076,7 +1076,10 @@ export default function CreateInvitation() {
           <button type="button" className="dd-message-preview-button" onClick={() => setMessagePreviewOpen(true)}>◉ 초대 문구 미리보기</button>
         </div>}
         <textarea className="dd-invitation-message-textarea" rows="7" value={invitation[field.key] || ""} onChange={(e) => update(field.key, e.target.value)} aria-label={field.key === "message" ? "초대 문구 줄바꿈 편집" : undefined} />
-        {field.key === "message" && <p className="dd-message-linebreak-footnote">현재 템플릿의 글꼴·본문 폭·여백이 적용된 전체 미리보기에서 확인할 수 있어요. 저장 전에도 확인 가능합니다.</p>}
+        {field.key === "message" && <>
+          {previewReady && <InvitationMessagePreview inline invitation={previewInvitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} templateId={invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets} />}
+          <p className="dd-message-linebreak-footnote">입력창의 자동 줄바꿈은 편집용입니다. 아래 실시간 미리보기가 실제 초대장과 같은 글꼴·여백·본문 폭으로 표시됩니다.</p>
+        </>}
       </Field>;
     }
    if (field.type === "parentName") return (
