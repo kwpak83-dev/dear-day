@@ -61,6 +61,9 @@ const screenOrnamentCategories = [
 const screenOrnamentOptions = screenOrnamentCategories.flatMap(([, , options]) => options);
 const bgmDefaults = { mode: "none", assetId: null };
 const safeAreaDefaults = { top: 24, right: 16, bottom: 24, left: 16, messageWidth: 280 };
+const safeAreaSectionLabels = [["invitation","INVITATION · 초대 문구"],["date","DATE · 날짜 및 시간"],["place","PLACE · 오시는 길"],["gallery","GALLERY · 갤러리"],["account","ACCOUNT · 마음 전하실 곳"]];
+const initialSectionSafeArea = () => Object.fromEntries(safeAreaSectionLabels.map(([key])=>[key,{enabled:key==="invitation",top:24,right:16,bottom:24,left:16,...(key==="invitation"?{messageWidth:280}:{})}]));
+
 const colorValue = (value) => /^#[0-9a-fA-F]{6}$/.test(value) ? value : "#000000";
 
 function ColorControl({ label, value, onChange }) {
@@ -117,6 +120,7 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
   const [screenOrnamentCategory, setScreenOrnamentCategory] = useState("all");
   const [bgm, setBgm] = useState(bgmDefaults);
   const [safeArea, setSafeArea] = useState(safeAreaDefaults);
+  const [expandedSafeArea, setExpandedSafeArea] = useState("invitation");
   const [creating, setCreating] = useState(false);
   const [workflowBusy, setWorkflowBusy] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -166,7 +170,7 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
     setSections((previous) => preservePlacements ? previous : sectionsFromConfig(versions.draft?.sections));
     setEffects((previous) => preservePlacements ? previous : fromConfig(effectsDefaults, versions.draft?.effects));
     setBgm((previous) => preservePlacements ? previous : fromConfig(bgmDefaults, versions.draft?.bgm));
-    setSafeArea((previous) => preservePlacements ? previous : fromConfig(safeAreaDefaults, versions.draft?.safeArea));
+    setSafeArea((previous) => preservePlacements ? previous : ({ ...safeAreaDefaults, ...versions.draft?.safeArea, sections: versions.draft?.safeArea?.sections || initialSectionSafeArea() }));
     setPlacements((previous) => {
       const local=active.filter((asset) => asset.asset_type === "decoration").map((asset) =>
         placementFor(asset.id, (preservePlacements ? previous.find((item) => item.assetId === asset.id) : null) ||
@@ -634,14 +638,25 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
               <option value="">사용 안 함</option>
               {bgmAssets.map((asset) => <option key={asset.id} value={asset.id}>{asset.name || asset.id}</option>)}
             </select><small>브라우저 정책에 따라 사용자가 직접 재생 버튼을 눌러야 합니다.</small></label>
-            <fieldset style={{ minWidth: 0, border: "1px solid #eadfd8", borderRadius: 10, padding: 12 }}>
-              <legend>Safe Area (px)</legend>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: 10 }}>
-                {[['top', 'Top'], ['right', 'Right'], ['bottom', 'Bottom'], ['left', 'Left']].map(([key, label]) =>
-                  <label key={key} style={field}>{label} <strong>{safeArea[key]}px</strong><input type="range" min="0" max="120" step="2" value={safeArea[key]} onChange={(event) => setSafeArea((current) => ({ ...current, [key]: Number(event.target.value) }))}/></label>)}
-              </div>
+            <fieldset style={{minWidth:0,border:"1px solid #eadfd8",borderRadius:10,padding:12}}>
+              <legend>영역별 Safe Area</legend>
+              <small style={guideNote}>체크한 영역에만 여백을 적용합니다. 이름을 누르면 슬라이더가 펼쳐지고 오른쪽 미리보기에 즉시 반영됩니다. 저장 전까지 실제 초대장에는 반영되지 않습니다.</small>
+              {safeAreaSectionLabels.map(([key,label])=>{
+                const section=safeArea.sections?.[key] || initialSectionSafeArea()[key];
+                const change=(field,value)=>setSafeArea(current=>({...current,sections:{...current.sections,[key]:{...current.sections?.[key],...section,[field]:value}}}));
+                return <div key={key} style={{border:"1px solid #eadfd8",borderRadius:8,marginTop:8,padding:9}}>
+                  <div style={{display:"flex",alignItems:"center",gap:8}}>
+                    <input type="checkbox" aria-label={`${label} 개별 여백 사용`} checked={section.enabled===true} onChange={event=>change("enabled",event.target.checked)}/>
+                    <button type="button" aria-expanded={expandedSafeArea===key} onClick={()=>setExpandedSafeArea(current=>current===key?"":key)} style={{flex:1,textAlign:"left",background:"transparent",border:0,cursor:"pointer",fontWeight:700,fontSize:13,padding:4}}>{label} {expandedSafeArea===key?"⌃":"⌄"}</button>
+                  </div>
+                  {expandedSafeArea===key&&<div style={{display:"grid",gap:10,marginTop:10,opacity:section.enabled?1:0.55}}>
+                    {([["top","위쪽"],["right","오른쪽"],["bottom","아래쪽"],["left","왼쪽"]]).map(([side,sideLabel])=><label key={side} style={field}>{sideLabel} <strong>{section[side]}px</strong><input type="range" min="0" max="120" step="2" disabled={!section.enabled} value={section[side]} onChange={event=>change(side,Number(event.target.value))}/></label>)}
+                    {key==="invitation"&&<label style={field}>초대 문구 최대 너비 <strong>{section.messageWidth??280}px</strong><input type="range" min="200" max="340" step="10" disabled={!section.enabled} value={section.messageWidth??280} onChange={event=>change("messageWidth",Number(event.target.value))}/></label>}
+                    {key==="place"&&<small style={guideNote}>PLACE 영역 바깥 여백만 변경하며 지도 내부 크기 설정은 변경하지 않습니다.</small>}
+                  </div>}
+                </div>;
+              })}
             </fieldset>
-            <label style={field}>초대 문구 최대 너비 <strong>{safeArea.messageWidth ?? 280}px</strong><input type="range" min="200" max="340" step="10" value={safeArea.messageWidth ?? 280} onChange={(event)=>setSafeArea(current=>({...current,messageWidth:Number(event.target.value)}))}/><small style={guideNote}>저장 전에도 오른쪽 미리보기에 바로 적용됩니다.</small></label>
             <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Effects / BGM / Safe Area 저장"}</button>
           </form>
         </section>
