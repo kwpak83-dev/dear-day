@@ -122,7 +122,20 @@ export default function Home() {
       <div className="landing-actions">{user ? <><span>{providerLabel}</span><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={() => window.location.assign("/templates")}>지금, 초대장 만들기 →</button></div>
       <div className="landing-mobile-actions"><button aria-label="검색" onClick={comingSoon}>⌕</button><button className="landing-menu" aria-label="메뉴 열기" onClick={() => setMenuOpen(!menuOpen)}>☰</button></div>
       <a className="landing-mobile-invitations" href={user ? "/my-invitations" : "/?login=required&returnUrl=%2Fmy-invitations"} aria-label="내 초대장" title="내 초대장"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" aria-hidden="true"><defs><linearGradient id="dd-sealed-envelope" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#fffaf3"/><stop offset="1" stopColor="#e8d7c7"/></linearGradient></defs><rect x="2.5" y="4" width="19" height="16" rx="2.3" fill="url(#dd-sealed-envelope)" stroke="#d5bfae" strokeWidth=".8"/><path d="M3.5 5.5 12 12.2l8.5-6.7M3.5 18.5l6.3-6.1M20.5 18.5l-6.3-6.1" stroke="#c9ad98" strokeWidth=".85" strokeLinejoin="round"/><circle cx="12" cy="12.2" r="2.15" fill="#a87856" stroke="#d6b18d" strokeWidth=".65"/><circle cx="12" cy="12.2" r="1.3" fill="none" stroke="#e8cfb3" strokeWidth=".45"/><path d="M12 11.2v2M11.3 11.8l.7-.6.7.6" stroke="#e8cfb3" strokeWidth=".45" strokeLinecap="round"/></svg></a>
-      {menuOpen && <div className="landing-mobile-nav"><button onClick={() => { setMenuOpen(false); start(); }}>초대장 만들기</button><a href="/templates" onClick={() => setMenuOpen(false)}>템플릿</a><a href="#how" onClick={() => setMenuOpen(false)}>이용안내</a><a href="#story" onClick={() => setMenuOpen(false)}>고객센터</a>{user ? <><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <button onClick={() => openLogin()}>로그인</button>}<button className="landing-cta" onClick={start}>초대장 만들기</button></div>}
+      {menuOpen && <div className="dd-drawer-layer">
+        <button className="dd-drawer-backdrop" type="button" aria-label="메뉴 닫기" onClick={() => setMenuOpen(false)} />
+        <nav className="landing-mobile-nav dd-home-drawer" aria-label="DearDay 메뉴">
+          <div className="dd-drawer-head"><span>DearDay ✧</span><button type="button" aria-label="메뉴 닫기" onClick={() => setMenuOpen(false)}>×</button></div>
+          <a className="dd-drawer-account" href={user ? "/my-invitations" : "/?login=required&returnUrl=%2Fmy-invitations"} onClick={() => setMenuOpen(false)}><span className="dd-drawer-avatar">♙</span><span><strong>{user ? "내 계정" : "로그인하고 시작하기"}</strong><small>{user ? "초대장과 이용권 관리" : "네이버 계정으로 간편하게 시작"}</small></span><span>›</span></a>
+          <div className="dd-drawer-shortcuts"><button type="button" onClick={() => {setMenuOpen(false);start();}}><span>✉</span>초대장 만들기</button><a href={user ? "/my-invitations" : "/?login=required&returnUrl=%2Fmy-invitations"} onClick={() => setMenuOpen(false)}><span>▤</span>내 초대장</a></div>
+          <p className="dd-drawer-label">SERVICE</p>
+          <a className="dd-drawer-link" href="/templates" onClick={() => setMenuOpen(false)}><span>▦</span>템플릿 둘러보기 <b>›</b></a>
+          <a className="dd-drawer-link" href="#how" onClick={() => setMenuOpen(false)}><span>◇</span>초대장 체험하기 <b>›</b></a>
+          <div className="dd-drawer-link dd-drawer-disabled" aria-disabled="true"><span>▣</span><span>이용권 구매<small>네이버 스마트스토어 · 준비 중</small></span><b>›</b></div>
+          <a className="dd-drawer-link" href="#story" onClick={() => setMenuOpen(false)}><span>♧</span>고객센터 <b>›</b></a>
+          <div className="dd-drawer-bottom">{user ? <button type="button" onClick={() => {setMenuOpen(false);signOut();}}>로그아웃</button> : <button type="button" onClick={() => {setMenuOpen(false);openLogin();}}>로그인</button>}</div>
+        </nav>
+      </div>}
     </header>
 
     <section className={`landing-hero dd-cinematic-hero dd-hero-variant-${heroVariant}`} id="top">
