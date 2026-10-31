@@ -57,10 +57,8 @@ function BottomSheet({ title, onClose, children, portalTarget = null, preview = 
 }
 
 function QuickMenuIcon({ kind }) {
-  if (kind === "program") return <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M8 5h12M8 12h12M8 19h12M3 5h1M3 12h1M3 19h1" /></svg>;
-  return kind === "rsvp"
-    ? <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="7.5" r="3.5" /><path d="M5 20v-2a7 7 0 0 1 14 0v2" /></svg>
-    : <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 5 4 4M4 20l4.5-1 11-11a2.1 2.1 0 0 0-3-3l-11 11L4 20Z" /></svg>;
+  const symbol = kind === "rsvp" ? "🌸" : kind === "guestbook" ? "💌" : "💌";
+  return <span aria-hidden="true" style={{ fontSize: 17, lineHeight: 1 }}>{symbol}</span>;
 }
 
 export default function InvitationQuickMenu({ invitation, slug, startsAt, previewMode = "", rsvpLabel = "참석 여부", guestbookLabel = "방명록", sheetRequest }) {
