@@ -60,7 +60,7 @@ const screenOrnamentCategories = [
 ];
 const screenOrnamentOptions = screenOrnamentCategories.flatMap(([, , options]) => options);
 const bgmDefaults = { mode: "none", assetId: null };
-const safeAreaDefaults = { top: 24, right: 16, bottom: 24, left: 16 };
+const safeAreaDefaults = { top: 24, right: 16, bottom: 24, left: 16, messageWidth: 280 };
 const colorValue = (value) => /^#[0-9a-fA-F]{6}$/.test(value) ? value : "#000000";
 
 function ColorControl({ label, value, onChange }) {
@@ -638,10 +638,10 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
               <legend>Safe Area (px)</legend>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: 10 }}>
                 {[['top', 'Top'], ['right', 'Right'], ['bottom', 'Bottom'], ['left', 'Left']].map(([key, label]) =>
-                  <NumberControl key={key} label={label} value={safeArea[key]} min={0} max={120} onChange={(value) => setSafeArea((current) => ({ ...current, [key]: value }))} />)}
+                  <label key={key} style={field}>{label} <strong>{safeArea[key]}px</strong><input type="range" min="0" max="120" step="2" value={safeArea[key]} onChange={(event) => setSafeArea((current) => ({ ...current, [key]: Number(event.target.value) }))}/></label>)}
               </div>
             </fieldset>
-            
+            <label style={field}>초대 문구 최대 너비 <strong>{safeArea.messageWidth ?? 280}px</strong><input type="range" min="200" max="340" step="10" value={safeArea.messageWidth ?? 280} onChange={(event)=>setSafeArea(current=>({...current,messageWidth:Number(event.target.value)}))}/><small style={guideNote}>저장 전에도 오른쪽 미리보기에 바로 적용됩니다.</small></label>
             <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Effects / BGM / Safe Area 저장"}</button>
           </form>
         </section>
@@ -650,7 +650,7 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
     {(state.error || notice) && <p role="status">{state.error || notice}</p>}
       </div>
       <aside className="admin-template-editor-preview"><AdminColorEyedropper />
-        <TemplateDraftPreview templateId={templateId} templateEventKind={eventKind} draft={state.draft ? { ...state.draft, background, typography, colors, buttonStyle, quickMenu, effects, decorations:placements } : null} assets={[...state.allAssets,...sharedDecorations.map(asset=>({...asset,asset_type:"decoration",is_active:true}))]} loading={state.loading} />
+        <TemplateDraftPreview templateId={templateId} templateEventKind={eventKind} draft={state.draft ? { ...state.draft, background, typography, colors, buttonStyle, quickMenu, effects, bgm, safeArea, decorations:placements } : null} assets={[...state.allAssets,...sharedDecorations.map(asset=>({...asset,asset_type:"decoration",is_active:true}))]} loading={state.loading} />
       </aside>
     </div>
   </section>;
