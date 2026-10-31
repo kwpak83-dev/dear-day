@@ -33,3 +33,9 @@ html:has(.dd-landing-experience-document) body::-webkit-scrollbar {
 .dd-landing-experience-document .dd-experience-preview-canvas {
   box-shadow: none;
 }
+
+/* Only the landing invitation demo gets a scroll-to-top control. */
+.dd-landing-experience-document .dd-experience-top-button{position:fixed;right:max(14px,calc((100vw - 390px)/2 + 14px));bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:220;width:40px;height:40px;border:1px solid #ded4ce;border-radius:50%;background:#fff;color:#806b5e;box-shadow:0 3px 12px #0002;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;cursor:pointer;line-height:1}
+.dd-landing-experience-document .dd-experience-top-button>span{font-size:19px;line-height:19px}
+.dd-landing-experience-document .dd-experience-top-button>small{font-size:8px;letter-spacing:.03em;font-weight:700}
+.dd-landing-experience-document .dd-experience-top-button:focus-visible{outline:2px solid #806b5e;outline-offset:3px}
