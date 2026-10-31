@@ -196,12 +196,13 @@ export default function Home() {
               <ul className="dd-feature-checks">
                 {(kind === "theme" ? ["표지와 본문이 이어지는 테마형 디자인", "처음부터 끝까지 통일된 분위기"] :
                   kind === "program" ? ["행사 유형에 맞춘 식순·일정 안내", "클립아트와 감성 타임라인"] :
+                  kind === "preview" ? ["전체 화면 이동 없이, 필요한 부분만 미리보기", "작성과 동시에 확인하고 바로 수정"] :
                   kind === "effects" ? ["인트로와 배경음악으로 감성 연출", "행사 테마별 애니메이션·특수효과"] :
                   kind === "rsvp" ? ["참석 여부와 동반 인원 확인", "식사 여부·통계 기능 확장 예정"] :
                   kind === "occasions" ? ["인생의 주요 순간부터 모임·개업까지", "행사별 테마와 맞춤 연출"] :
                   ["발행 후 내용과 사진 수정", "발행 후에도 디자인 변경"]).map((benefit) => <li key={benefit}><span aria-hidden="true">✓</span>{benefit}</li>)}
               </ul>
-              <span className="dd-feature-pill">{kind === "theme" ? "표지·본문이 이어지는 테마 디자인" : kind === "program" ? "감성적인 식순·일정 안내" : kind === "effects" ? "테마마다 다른 특별한 연출" : kind === "rsvp" ? "참석 관리 · 식사 기능 확장 예정" : kind === "occasions" ? "인생의 모든 특별한 날에" : "발행 후에도 유연하게 변경"}</span>
+              <span className="dd-feature-pill">{kind === "theme" ? "표지·본문이 이어지는 테마 디자인" : kind === "program" ? "감성적인 식순·일정 안내" : kind === "preview" ? "편집 중 바로 확인하는 실시간 미리보기" : kind === "effects" ? "테마마다 다른 특별한 연출" : kind === "rsvp" ? "참석 관리 · 식사 기능 확장 예정" : kind === "occasions" ? "인생의 모든 특별한 날에" : "발행 후에도 유연하게 변경"}</span>
             </div>
           </article>
         ))}
