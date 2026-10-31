@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import MyPageLayout from "../../components/my-page-layout";
+import PublishedInvitationLoading from "../invite/[slug]/loading";
 
 const FILTERS = [["all", "전체"], ["attending", "참석"], ["not_attending", "불참"]];
 const emptySummary = { total: 0, attending: 0, notAttending: 0, partySize: 0, groomCount: 0, brideCount: 0, unclassifiedCount: 0, mealCount: 0, busCount: 0, mealUnknown: 0, busUnknown: 0 };
@@ -98,6 +99,10 @@ export default function GuestManagement() {
     } catch (error) { setDownloadNotice(error.message || "Excel 파일을 만들지 못했어요."); }
     finally { setDownloading(false); }
   };
+
+  if (notice === "하객 정보를 불러오는 중이에요." && !loginRequired && events.length === 0) {
+    return <PublishedInvitationLoading message="하객 정보를 불러오고 있어요" />;
+  }
 
   return <MyPageLayout current="guests"><section className="guest-management-content">
     {notice && (notice === "관리할 수 있는 발행 초대장이 아직 없어요." && !loginRequired ? <div className="dd-empty-state"><span className="dd-empty-icon" aria-hidden="true">✉</span><h2>관리할 하객 정보가 아직 없어요</h2><p>초대장을 발행하면 이곳에서 참석 여부를 관리할 수 있어요.</p><a href="/my-invitations" className="dd-empty-cta">내 초대장 확인하기</a></div> : <div className="my-notice"><p>{notice}</p>{loginRequired && <a className="my-login-button" href="/?login=required&returnUrl=%2Fguest-management">다시 로그인하기</a>}</div>)}
