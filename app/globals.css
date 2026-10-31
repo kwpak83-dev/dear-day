@@ -4547,3 +4547,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Wedding order: INVITATION → contacts → couple intro → love story → date. */
 .invitation-template>.dd-wedding-contacts{order:10.01}
 .dd-template-sections-configured>.dd-wedding-contacts{order:calc(var(--dd-section-invitation-order, 10) + 0.01)}
+
+
+/* Single ordered block after INVITATION; internal DOM order is contacts, couple, story. */
+.invitation-template>.dd-wedding-after-message{order:10.05;width:100%;min-width:0}
+.dd-template-sections-configured>.dd-wedding-after-message{order:calc(var(--dd-section-invitation-order, 10) + 0.05)}
+.dd-wedding-after-message>.dd-wedding-contacts,
+.dd-wedding-after-message>.dd-couple-intro,
+.dd-wedding-after-message>.dd-love-story{order:initial}
