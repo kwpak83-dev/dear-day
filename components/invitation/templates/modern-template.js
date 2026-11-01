@@ -1,5 +1,7 @@
 import { invitationFontStylesheets } from "../../../lib/invitation-local-fonts";
 import TemplateConfigEffects from "../template-config-effects";
+import HeroFontGate from "../hero-font-gate";
+import { getHeroFont } from "../../../lib/hero-fonts";
 import { getTemplateConfigRenderProps, TemplateConfigDecorations, TemplateConfigHeroIntro, TemplateConfigHeroPanelCopy, TemplateConfigHeroLayers } from "../template-config-render";
 
 function SectionHeading({ eyebrow, children }) {
@@ -53,7 +55,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
       {hasHeroVisual && <figure style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img fetchPriority="high" loading="eager" decoding="async" style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
       <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} presentation={presentation} />
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />
-      <div className="modern-hero-copy" style={renderConfig.heroCopyStyle}>
+      <HeroFontGate className="modern-hero-copy" style={renderConfig.heroCopyStyle} fonts={[templateConfig?.hero?.nameFontFamily && getHeroFont(templateConfig.hero.nameFontFamily).family, templateConfig?.typography?.heroTitle?.fontFamily && getHeroFont(templateConfig.typography.heroTitle.fontFamily).family, templateConfig?.typography?.body?.fontFamily && getHeroFont(templateConfig.typography.body.fontFamily).family].filter(Boolean)}>
         {showHero("eventLabel") && <p>{wedding ? "A NEW BEGINNING" : kindLabel}</p>}
         {showHero("title") && title && <h2>{title}</h2>}
         {showHero("relations") && (groomRelation || brideRelation) && <div className="wedding-parent-relations">
@@ -63,7 +65,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
         {showHero("detail") && !hideFirstBirthdayParentDetail && detail && <span>{detail}</span>}
         {showHero("note") && note && <span>{note}</span>}
         {showHero("schedule") && heroSchedule && <time>{heroSchedule}</time>}
-      </div>
+      </HeroFontGate>
     </section>
 
     {message && <section className="modern-section modern-message">
