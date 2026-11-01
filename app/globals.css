@@ -4596,3 +4596,14 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .dd-growth-timeline-editor-item .dd-growth-timeline-remove{display:block;width:max-content;margin:14px 0 0 auto;padding:7px 12px;border:1px solid #dedede;border-radius:8px;background:#f5f5f5;color:#555;font-size:12px;font-weight:400;text-decoration:none;box-shadow:none}
 .create-page .dd-growth-timeline-add{display:block;width:100%;margin:14px 0 0;padding:14px 16px;border:1px solid #c9c9c9 !important;border-radius:12px;background:#fff !important;color:#222 !important;font-size:14px;font-weight:700;text-align:center;box-shadow:0 3px 8px rgba(0,0,0,.12) !important}
 .create-page .dd-growth-timeline-add:hover{background:#fafafa !important}
+
+/* Match wedding section preview/add actions to the compact program preview button. */
+.create-page .dd-couple-preview-launch,
+.create-page .dd-growth-timeline-add{
+  display:flex;width:100%;min-height:32px;align-items:center;justify-content:center;gap:6px;
+  padding:6px 10px;margin-top:10px;border:1px solid #b3b3b3 !important;
+  border-radius:9px;background:#fff !important;color:#222 !important;
+  font-size:12px;font-weight:400;line-height:16px;font-family:inherit;
+  box-shadow:0 4px 10px rgba(0,0,0,.11),0 1px 2px rgba(0,0,0,.05) !important;
+  cursor:pointer;
+}
