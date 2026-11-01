@@ -16,17 +16,19 @@ export default function LoveStory({ invitation }) {
       const dots = [...list.querySelectorAll(".dd-love-story-dot")];
       if (!dots.length) return;
       const listRect = list.getBoundingClientRect();
-      const first = dots[0].getBoundingClientRect();
-      const last = dots[dots.length - 1].getBoundingClientRect();
-      const start = first.top + first.height / 2 - listRect.top;
-      const end = last.top + last.height / 2 - listRect.top;
+      const centers = dots.map(dot => { const rect = dot.getBoundingClientRect(); return rect.top + rect.height / 2; });
       const viewport = list.closest(".dd-couple-preview-dialog, .full-preview-overlay, .dd-template-preview-scroll, .dd-preview-scroll");
       const bounds = viewport?.getBoundingClientRect();
       const viewTop = bounds ? Math.max(0, bounds.top) : 0;
       const viewBottom = bounds ? Math.min(window.innerHeight, bounds.bottom) : window.innerHeight;
       const focus = viewTop + Math.max(0, viewBottom - viewTop) * .55;
-      const y = Math.max(start, Math.min(end, focus - listRect.top));
-      bee.style.top = y + "px";
+      // Snap to the nearest milestone rather than following every scroll pixel.
+      // Midpoints between adjacent dots determine when the bee flies to the next stop.
+      let index = 0;
+      for (let i = 0; i < centers.length - 1; i++) {
+        if (focus >= (centers[i] + centers[i + 1]) / 2) index = i + 1;
+      }
+      bee.style.top = (centers[index] - listRect.top) + "px";
       bee.style.opacity = listRect.bottom > viewTop && listRect.top < viewBottom ? "1" : "0";
       bee.style.setProperty("--dd-bee-motion", reduceMotion.matches ? "none" : "dd-bee-bob 1.8s ease-in-out infinite");
     };
