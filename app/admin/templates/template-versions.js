@@ -61,7 +61,7 @@ const screenOrnamentCategories = [
 const screenOrnamentOptions = screenOrnamentCategories.flatMap(([, , options]) => options);
 const bgmDefaults = { mode: "none", assetId: null };
 const safeAreaDefaults = { top: 24, right: 16, bottom: 24, left: 16, messageWidth: 280 };
-const safeAreaSectionLabels = [["invitation","INVITATION · 초대 문구"],["date","DATE · 날짜 및 시간"],["place","PLACE · 오시는 길"],["gallery","GALLERY · 갤러리"],["account","ACCOUNT · 마음 전하실 곳"]];
+const safeAreaSectionLabels = [["invitation","INVITATION · 초대 문구"],["date","DATE · 날짜 및 시간"],["place","PLACE · 오시는 길"],["gallery","GALLERY · 갤러리"],["account","ACCOUNT · 마음 전하실 곳"],["coupleIntro","COUPLE · 신랑·신부 소개"],["loveStory","STORY · 우리의 이야기"]];
 const initialSectionSafeArea = () => Object.fromEntries(safeAreaSectionLabels.map(([key])=>[key,{enabled:key==="invitation",top:24,right:16,bottom:24,left:16,...(key==="invitation"?{messageWidth:280}:{})}]));
 
 const colorValue = (value) => /^#[0-9a-fA-F]{6}$/.test(value) ? value : "#000000";
@@ -170,7 +170,7 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
     setSections((previous) => preservePlacements ? previous : sectionsFromConfig(versions.draft?.sections));
     setEffects((previous) => preservePlacements ? previous : fromConfig(effectsDefaults, versions.draft?.effects));
     setBgm((previous) => preservePlacements ? previous : fromConfig(bgmDefaults, versions.draft?.bgm));
-    setSafeArea((previous) => preservePlacements ? previous : ({ ...safeAreaDefaults, ...versions.draft?.safeArea, sections: versions.draft?.safeArea?.sections || initialSectionSafeArea() }));
+    setSafeArea((previous) => preservePlacements ? previous : ({ ...safeAreaDefaults, ...versions.draft?.safeArea, sections: { ...initialSectionSafeArea(), ...(versions.draft?.safeArea?.sections || {}) } }));
     setPlacements((previous) => {
       const local=active.filter((asset) => asset.asset_type === "decoration").map((asset) =>
         placementFor(asset.id, (preservePlacements ? previous.find((item) => item.assetId === asset.id) : null) ||

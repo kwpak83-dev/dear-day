@@ -267,7 +267,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .my-page .dd-my-card-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 .my-page .dd-my-card{min-width:0;overflow:hidden;border:1px solid #e5e5e5;border-radius:18px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.025);color:#242424}
 .my-page .dd-my-card-media{position:relative;aspect-ratio:4/3;overflow:hidden;background:#f0f0f0}
-.my-page .dd-my-card-image{display:block;width:100%;height:100%;object-fit:cover}
+.my-page .dd-my-card-image{display:block;width:100%;height:100%;object-fit:cover;object-position:center top}
 .my-page .dd-my-card-placeholder{display:flex;width:100%;height:100%;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#999;font:18px Georgia,serif}
 .my-page .dd-my-card-placeholder>span:first-child{font-size:30px;color:#aaa}
 .my-page .dd-my-card-badge{position:absolute;top:14px;left:14px;max-width:calc(100% - 28px);padding:7px 11px;border:1px solid #e5e5e5;border-radius:999px;background:#fff;color:#444;font-size:11px;font-weight:700;line-height:1.4;overflow-wrap:anywhere}
@@ -812,10 +812,10 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Template Config C6-4: section reveal and content safe area */
 .dd-template-effects-marker{display:none}
 /* SSR-safe initial reveal state: hide only reveal sections before hydration. */
-.dd-reveal-initial.dd-reveal-fade :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.public-rsvp,.guestbook-section):not(.is-revealed),
-.dd-reveal-initial.dd-reveal-fade-up :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.public-rsvp,.guestbook-section):not(.is-revealed){opacity:0}
-.dd-reveal-initial.dd-reveal-fade-up :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.public-rsvp,.guestbook-section):not(.is-revealed){transform:translateY(18px)}
-@media(prefers-reduced-motion:reduce){.dd-reveal-initial :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.public-rsvp,.guestbook-section){opacity:1!important;transform:none!important}}
+.dd-reveal-initial.dd-reveal-fade :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.dd-couple-intro,.dd-love-story,.public-rsvp,.guestbook-section):not(.is-revealed),
+.dd-reveal-initial.dd-reveal-fade-up :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.dd-couple-intro,.dd-love-story,.public-rsvp,.guestbook-section):not(.is-revealed){opacity:0}
+.dd-reveal-initial.dd-reveal-fade-up :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.dd-couple-intro,.dd-love-story,.public-rsvp,.guestbook-section):not(.is-revealed){transform:translateY(18px)}
+@media(prefers-reduced-motion:reduce){.dd-reveal-initial :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.dd-couple-intro,.dd-love-story,.public-rsvp,.guestbook-section){opacity:1!important;transform:none!important}}
 .dd-reveal-ready .dd-reveal-target{transition:opacity var(--dd-reveal-duration,.55s) ease,transform var(--dd-reveal-duration,.55s) ease}
 .dd-reveal-ready.dd-reveal-fade .dd-reveal-target:not(.is-revealed),
 .dd-reveal-ready.dd-reveal-fade-up .dd-reveal-target:not(.is-revealed){opacity:0}
@@ -4180,6 +4180,15 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   padding-left:max(0px,var(--dd-section-account-left,0px));
 }
 
+/* Opt-in wedding section Safe Areas; retain default spacing while disabled. */
+.dd-template-section-safe-area.dd-safe-enabled-coupleIntro .dd-couple-intro{
+  padding:var(--dd-section-coupleIntro-top,0px) var(--dd-section-coupleIntro-right,0px) var(--dd-section-coupleIntro-bottom,0px) var(--dd-section-coupleIntro-left,0px);
+  box-sizing:border-box;
+}
+.dd-template-section-safe-area.dd-safe-enabled-loveStory .dd-love-story{
+  padding:var(--dd-section-loveStory-top,0px) var(--dd-section-loveStory-right,0px) var(--dd-section-loveStory-bottom,0px) var(--dd-section-loveStory-left,0px);
+  box-sizing:border-box;
+}
 /* Independent transport-guide spacing inside PLACE; map and address unaffected. */
 .dd-template-section-safe-area.dd-safe-enabled-place.dd-safe-transport .dd-transport-guide {
   padding-top:var(--dd-transport-top,0px);
@@ -4204,7 +4213,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .dd-message-linebreak-tools-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 12px}
 .create-page .dd-message-linebreak-tools-head strong{font-size:13px}
 .create-page .dd-message-linebreak-tools-head span,.create-page .dd-message-linebreak-tools p,.create-page .dd-message-linebreak-footnote{font-size:12px;line-height:1.65;color:#886f6a}
-.create-page .dd-message-linebreak-tools p{margin:7px 0 10px}
+.create-page .dd-message-linebreak-tools p{margin:7px 0 0}
 .create-page .dd-message-preview-button{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 13px;border:1px solid #d7a8a1;border-radius:9px;background:#fff;color:#865a54;font-size:12px;font-weight:650;cursor:pointer}
 .create-page .dd-message-preview-button:hover{background:#fbeeea}
 .create-page .dd-message-preview-button:focus-visible{outline:2px solid #b77770;outline-offset:2px}
@@ -4451,6 +4460,15 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 
 /* Wedding-only introduction and story, rendered immediately after invitation message */
+/* Wedding introduction/story: inherit the configured body-theme typography and colors. */
+.dd-template-colors :is(.dd-couple-intro,.dd-love-story){color:var(--dd-color-text,currentColor)}
+.dd-template-colors .dd-wedding-story-heading h2{color:var(--dd-color-title,currentColor)}
+.dd-template-typography .dd-wedding-story-heading h2{font-family:var(--dd-section-title-font,inherit);font-size:var(--dd-section-title-size,23px);font-weight:var(--dd-section-title-weight,500);line-height:var(--dd-section-title-line-height,1.5);letter-spacing:var(--dd-section-title-letter-spacing,-.04em);text-align:var(--dd-section-title-align,center)}
+.dd-template-colors :is(.dd-wedding-story-heading>p,.dd-wedding-story-heading>span,.dd-couple-intro-role,.dd-couple-intro-tags,.dd-love-story-copy time){color:var(--dd-color-caption,var(--dd-color-muted,currentColor))}
+.dd-template-typography :is(.dd-wedding-story-heading>p,.dd-wedding-story-heading>span,.dd-couple-intro-role,.dd-couple-intro-tags,.dd-love-story-copy time){font-family:var(--dd-caption-font,inherit);font-size:var(--dd-caption-size,12px);font-weight:var(--dd-caption-weight,400);line-height:var(--dd-caption-line-height,1.5);letter-spacing:var(--dd-caption-letter-spacing,0px);text-align:var(--dd-caption-align,center)}
+.dd-template-colors :is(.dd-couple-intro-person h3,.dd-couple-intro-description,.dd-love-story-copy h3,.dd-love-story-copy p){color:var(--dd-color-text,currentColor)}
+.dd-template-typography :is(.dd-couple-intro-person h3,.dd-couple-intro-description,.dd-love-story-copy h3,.dd-love-story-copy p){font-family:var(--dd-body-font,inherit);font-size:var(--dd-body-size,16px);font-weight:var(--dd-body-weight,500);line-height:var(--dd-body-line-height,1.7);letter-spacing:var(--dd-body-letter-spacing,0px);text-align:var(--dd-body-align,center)}
+
 .dd-couple-intro,.dd-love-story{padding:48px 22px;text-align:center;color:var(--dd-text-color,inherit);font-family:inherit}
 .dd-wedding-story-heading{margin:0 0 30px;text-align:center}
 .dd-wedding-story-heading>p{font-size:10px;letter-spacing:.24em;opacity:.55;margin:0 0 10px}
@@ -4558,10 +4576,41 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 
 /* Couple introduction section-only floating preview */
-.dd-couple-preview-launch{display:block;width:100%;margin:18px 0 0;padding:12px;border:1px solid #d8c4bb;border-radius:9px;background:#fffaf7;color:#78564c;font-size:13px;cursor:pointer}
+.create-page .dd-couple-preview-launch{display:block;width:100%;margin:18px 0 0;padding:16px 14px;border:1px solid #c9c9c9;border-radius:12px;background:#fff;color:#222;font-size:14px;font-weight:700;text-align:center;box-shadow:0 3px 8px rgba(0,0,0,.12);cursor:pointer}
 .dd-couple-preview-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.48)}
 .dd-couple-preview-dialog{width:min(100%,430px);max-height:90dvh;overflow:hidden;display:flex;flex-direction:column;border-radius:15px;background:#fff;box-shadow:0 18px 60px #0003}
 .dd-couple-preview-header{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid #eee2dc;font-size:14px;color:#5c4842}
 .dd-couple-preview-header button{font-size:25px;line-height:1;border:0;background:transparent;color:inherit;cursor:pointer}
 .dd-couple-preview-body{overflow:auto;min-height:0;background:#fff}
 .dd-couple-preview-body .dd-couple-intro{padding:32px 20px 42px}
+
+/* Compact account selection rows in the user invitation editor only. */
+.create-page .account-editor.dd-account-choice{margin-bottom:10px;padding:12px 14px}
+
+/* Match the representative photo picker in the bride/groom introduction editor. */
+.create-page .dd-couple-photo-file-picker{border:1px solid #dedede;border-radius:12px;background:#fff;padding:16px;min-width:0}
+.create-page .dd-couple-photo-file-picker input[type=file]{display:block;width:100%;max-width:100%;font-size:12px;color:#333}
+.create-page .dd-couple-photo-file-picker input[type=file]::file-selector-button{padding:10px 14px;margin-right:12px;border:1px solid #dedede;border-radius:7px;background:#f5f5f5;color:#242424;cursor:pointer;font:inherit}
+
+/* Love story editor actions aligned with other editor controls. */
+.create-page .dd-growth-timeline-editor-item .dd-growth-timeline-remove{display:block;width:max-content;margin:14px 0 0 auto;padding:7px 12px;border:1px solid #dedede;border-radius:8px;background:#f5f5f5;color:#555;font-size:12px;font-weight:400;text-decoration:none;box-shadow:none}
+.create-page .dd-growth-timeline-add{display:block;width:100%;margin:14px 0 0;padding:14px 16px;border:1px solid #c9c9c9 !important;border-radius:12px;background:#fff !important;color:#222 !important;font-size:14px;font-weight:700;text-align:center;box-shadow:0 3px 8px rgba(0,0,0,.12) !important}
+.create-page .dd-growth-timeline-add:hover{background:#fafafa !important}
+
+/* Match wedding section preview/add actions to the compact program preview button. */
+.create-page .dd-couple-preview-launch,
+.create-page .dd-growth-timeline-add{
+  display:flex;width:100%;min-height:32px;align-items:center;justify-content:center;gap:6px;
+  padding:6px 10px;margin-top:10px;border:1px solid #b3b3b3 !important;
+  border-radius:9px;background:#fff !important;color:#222 !important;
+  font-size:12px;font-weight:400;line-height:16px;font-family:inherit;
+  box-shadow:0 4px 10px rgba(0,0,0,.11),0 1px 2px rgba(0,0,0,.05) !important;
+  cursor:pointer;
+}
+
+/* Compact intro action buttons, matching the program preview style. */
+.create-page .dd-user-intro-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.create-page .dd-user-intro-actions>button{display:flex;align-items:center;justify-content:center;min-width:0;min-height:32px;padding:6px 5px;border:1px solid #b3b3b3 !important;border-radius:9px;background:#fff !important;color:#222 !important;font-family:inherit;font-size:12px;font-weight:400;line-height:16px;white-space:nowrap;box-shadow:0 4px 10px rgba(0,0,0,.11),0 1px 2px rgba(0,0,0,.05) !important;cursor:pointer}
+
+/* Keep event-time hour/minute text compact, including native dropdown options where supported. */
+.create-page .dd-time-selects select,.create-page .dd-time-selects select option{font-family:inherit;font-size:13px;font-weight:400}

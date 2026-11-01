@@ -5,6 +5,7 @@ import { useLayoutEffect, useRef } from "react";
 const SECTION_SELECTOR = [
   ".romantic-message", ".modern-message", ".classic-message",
   ".romantic-information", ".modern-information", ".classic-information", ".classic-date", ".dd-wedding-contacts",
+  ".dd-couple-intro", ".dd-love-story",
   ".public-rsvp", ".guestbook-section",
 ].join(",");
 
