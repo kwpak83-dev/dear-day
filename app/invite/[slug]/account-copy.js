@@ -28,7 +28,7 @@ function AccountCard({ side, bank, holder, account, showSide = true }) {
     window.setTimeout(() => setCopied(false), 1800);
   };
 
-  return <article className="public-account-card">{showSide && <p>{side}</p>}<strong className="public-account-holder">예금주 : {holder}</strong><div><span className="public-account-bank">{bankLogo && <img src={bankLogo} alt="" />}<span>{[bank, account].filter(Boolean).join(" ")}</span></span><button type="button" onClick={copy}>{copied ? "복사됨" : "계좌 복사"}</button></div></article>;
+  return <article className="public-account-card dd-account-layout">{showSide && <p className="dd-account-role">{side}</p>}<div className="dd-account-details"><div className="dd-account-info"><strong className="dd-account-number">{account}</strong><span className="public-account-bank">{bankLogo && <img src={bankLogo} alt="" />}<span>{[bank, holder].filter(Boolean).join(" ")}</span></span></div><button type="button" onClick={copy}>{copied ? "복사됨" : "복사"}</button></div></article>;
 }
 
 export default function AccountCopy({ invitation, eventKind, eventTypeConfig, previewExpanded = false }) {

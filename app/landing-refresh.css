@@ -2297,3 +2297,34 @@
 .landing-v2 .dd-landing-top-button>small{font-size:8px;font-weight:700;letter-spacing:.03em}
 .landing-v2 .dd-landing-top-button:focus-visible{outline:2px solid #806b5e;outline-offset:3px}
 @media(max-width:800px){.landing-v2 .dd-landing-top-button{right:14px;bottom:calc(76px + env(safe-area-inset-bottom,0px));width:30px;height:30px}.landing-v2 .dd-landing-top-button>span{font-size:14px;line-height:14px}.landing-v2 .dd-landing-top-button>small{font-size:6px}}
+
+/* Align homepage mobile header proportions with template collection (46px). */
+@media(max-width:800px){
+ .landing-v2 .landing-header{
+  height:46px!important;
+  min-height:46px!important;
+ }
+ .landing-v2 .landing-header .landing-menu::after{
+  font-size:22.5px!important;
+ }
+ .landing-v2 .landing-header .landing-mobile-invitations svg{
+  width:23.4px!important;
+  height:23.4px!important;
+ }
+}
+
+/* Warm B concept: official wordmark and gentle rose/sand drawer clip-art. */
+.landing-v2 .dd-home-drawer .dd-drawer-brand{display:flex;align-items:center;width:150px;height:39px;overflow:hidden}
+.landing-v2 .dd-home-drawer .dd-drawer-brand .dearday-logo{display:flex;align-items:center;width:150px;height:39px}
+.landing-v2 .dd-home-drawer .dd-drawer-brand .dearday-logo-wordmark-image{display:block;width:150px!important;height:39px!important;max-width:150px!important;max-height:39px!important;object-fit:contain!important;object-position:left center!important}
+.landing-v2 .dd-home-drawer .dd-drawer-avatar{background:#fbede7;color:#bb8a72}
+.landing-v2 .dd-home-drawer .dd-drawer-avatar svg{width:23px;height:23px}
+.landing-v2 .dd-home-drawer .dd-drawer-shortcuts a,.landing-v2 .dd-home-drawer .dd-drawer-shortcuts button{background:#fff8f6!important;border-color:#f0e5df!important}
+.landing-v2 .dd-home-drawer .dd-drawer-shortcuts span{display:flex;align-items:center;justify-content:center;color:#bf877b}
+.landing-v2 .dd-home-drawer .dd-drawer-shortcuts svg{width:27px;height:27px}
+.landing-v2 .dd-home-drawer .dd-drawer-link>span:first-child{display:flex;align-items:center;justify-content:center;color:#b28b79}
+.landing-v2 .dd-home-drawer .dd-drawer-link>span:first-child svg{width:22px;height:22px}
+.landing-v2 .dd-home-drawer .dd-drawer-disabled>span:first-child{color:#b9a8a0}
+
+/* Naver Smart Store brand mark in the purchase row. */
+.landing-v2 .dd-home-drawer .dd-drawer-link>.dd-drawer-store-icon img{display:block;width:32px;height:auto;max-width:none;object-fit:contain}

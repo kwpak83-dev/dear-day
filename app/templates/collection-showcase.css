@@ -500,3 +500,93 @@
  .dd-showcase-page .dd-showcase-brand .dearday-logo.dearday-logo--wordmark,
  .dd-showcase-page .dd-showcase-brand .dearday-logo-wordmark-image{width:116px!important;height:29px!important;max-width:116px!important;max-height:29px!important;object-fit:contain!important}
 }
+
+/* Six template categories fit on a single mobile row without the redundant All tab. */
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-categories{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  justify-content:center!important;
+  align-items:center!important;
+  gap:3px!important;
+  padding:0 5px 3px!important;
+  margin-bottom:0!important;
+  overflow-x:auto!important;
+  max-width:100%!important;
+ }
+ .dd-showcase-page .dd-showcase-categories button{
+  flex:0 0 auto!important;
+  padding:6px 5px!important;
+  font-size:clamp(9px,2.55vw,11px)!important;
+  line-height:1.2!important;
+  min-height:27px!important;
+  letter-spacing:-.035em!important;
+  white-space:nowrap!important;
+ }
+}
+
+/* Reclaim the space saved by the single-row category navigation for the preview. */
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-poster{
+  height:clamp(358px,calc(100svh - 212px),738px)!important;
+ }
+ .dd-showcase-page .dd-showcase-track{
+  padding-bottom:6px!important;
+ }
+ .dd-showcase-page .dd-showcase-selected h2{
+  margin-top:5px!important;
+ }
+ .dd-showcase-page .dd-showcase-actions{
+  margin-top:10px!important;
+ }
+ .dd-showcase-page .dd-showcase-hint-pill{
+  margin-top:7px!important;
+ }
+}
+
+/* Fit the bottom guidance on screen without shrinking the invitation preview. */
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-selected h2{
+  font-size:11px!important;
+ }
+ .dd-showcase-page .dd-showcase-actions a,
+ .dd-showcase-page .dd-showcase-actions button{
+  font-size:10px!important;
+  line-height:1.2!important;
+  padding:6px 10px!important;
+  min-height:0!important;
+  height:auto!important;
+  gap:6px!important;
+ }
+}
+
+/* Leave breathing room beneath the bottom guidance on compact mobile screens. */
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-poster{
+  height:clamp(356px,calc(100svh - 214px),736px)!important;
+ }
+ .dd-showcase-page .dd-showcase-selected h2{
+  margin-top:3px!important;
+ }
+ .dd-showcase-page .dd-showcase-actions{
+  margin-top:7px!important;
+ }
+ .dd-showcase-page .dd-showcase-hint-pill{
+  margin-top:4px!important;
+ }
+}
+
+/* Compact the mobile collection's white header and scale its side icons down 10%. */
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-header{
+  height:46px!important;
+  min-height:46px!important;
+ }
+ .dd-showcase-page .dd-showcase-menu-toggle::after{
+  font-size:22.5px!important;
+ }
+ .dd-showcase-page .dd-showcase-invitations svg{
+  width:23.4px!important;
+  height:23.4px!important;
+ }
+}

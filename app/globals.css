@@ -4471,9 +4471,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 .dd-couple-intro,.dd-love-story{padding:48px 22px;text-align:center;color:var(--dd-text-color,inherit);font-family:inherit}
 .dd-wedding-story-heading{margin:0 0 30px;text-align:center}
-.dd-wedding-story-heading>p{font-size:10px;letter-spacing:.24em;opacity:.55;margin:0 0 10px}
+.dd-wedding-story-heading>p{margin:0 0 10px}
 .dd-wedding-story-heading h2{font-size:23px;font-weight:500;line-height:1.5;letter-spacing:-.04em;margin:0}
-.dd-wedding-story-heading>span{display:block;font-size:12px;opacity:.7;margin-top:9px;white-space:pre-line}
+.dd-wedding-story-heading>span{display:block;opacity:.7;margin-top:9px;white-space:pre-line}
 .dd-couple-intro-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:440px;margin:auto}
 .dd-couple-intro-person{min-width:0;text-align:center}
 .dd-couple-intro-photo{width:100%;aspect-ratio:3/4;overflow:hidden;border-radius:100px 100px 6px 6px;background:#f2eee9}
@@ -4481,7 +4481,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-couple-intro-role{font-size:11px;opacity:.6;margin:16px 0 4px}
 .dd-couple-intro-person h3{font-size:18px;font-weight:500;margin:0 0 10px}
 .dd-couple-intro-description{font-size:12px;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0}
-.dd-couple-intro-tags{display:flex;justify-content:center;flex-wrap:wrap;gap:5px 8px;font-size:11px;opacity:.7;margin-top:10px;overflow-wrap:anywhere}
+.dd-couple-intro-tags{display:flex;justify-content:center;flex-wrap:wrap;gap:5px 8px;opacity:.7;margin-top:10px;overflow-wrap:anywhere}
 .dd-love-story-list{position:relative;max-width:460px;margin:auto;padding:4px 0}
 .dd-love-story-list:before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid currentColor;opacity:.17}
 .dd-love-story-item{position:relative;display:flex;align-items:center;gap:10%;margin:0 0 32px;text-align:left}
@@ -4614,3 +4614,137 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Keep event-time hour/minute text compact, including native dropdown options where supported. */
 .create-page .dd-time-selects select,.create-page .dd-time-selects select option{font-family:inherit;font-size:13px;font-weight:400}
+
+/* Match the compact 46px collection header on the mobile homepage and My Page. */
+@media(max-width:800px){
+ .landing-v2 .landing-header{
+  height:46px!important;
+  min-height:46px!important;
+ }
+ .landing-v2 .landing-mobile-actions .landing-menu{
+  font-size:22.5px!important;
+ }
+ .landing-v2 .landing-mobile-invitations svg{
+  width:22.5px!important;
+  height:22.5px!important;
+ }
+ .my-page.member-page .dd-member-topbar{
+  height:46px!important;
+  min-height:46px!important;
+  max-height:46px!important;
+ }
+ .my-page.member-page .dd-member-menu-toggle span{
+  width:19.8px!important;
+ }
+ .my-page.member-page .dd-member-envelope svg{
+  width:23.4px!important;
+  height:23.4px!important;
+ }
+}
+
+/* Subtle separators between the three mobile My Page quick tabs. */
+@media(max-width:800px){
+ .my-page.member-page .dd-member-quick-tabs>a,
+ .my-page.member-page .dd-member-quick-tabs>span{position:relative}
+ .my-page.member-page .dd-member-quick-tabs>a:not(:last-child)::after,
+ .my-page.member-page .dd-member-quick-tabs>span:not(:last-child)::after{
+  content:"";position:absolute;right:0;top:25%;height:50%;width:1px;
+  background:#e5e5e5;pointer-events:none;
+ }
+}
+
+/* Keep Excel export icon and label on one horizontal line. */
+.my-page.member-page .guest-table-footer button{display:inline-flex;align-items:center;justify-content:center;flex-direction:row;gap:5px;white-space:nowrap;width:max-content;max-width:100%}
+.my-page.member-page .guest-table-footer button svg{display:block;flex:0 0 18px;margin-right:0!important}
+
+/* Optional scroll-following bee for wedding love-story timeline. */
+.dd-love-story-list .dd-love-story-bee{position:absolute;left:50%;top:0;z-index:3;display:block;width:44px;height:44px;pointer-events:none;transform:translate(-50%,-50%);opacity:0;transition:opacity .18s ease;will-change:top}
+.dd-love-story-bee img{display:block;width:100%;height:100%;object-fit:contain;animation:var(--dd-bee-motion,none)}
+@keyframes dd-bee-bob{0%,100%{transform:translateY(-2px) rotate(-3deg)}50%{transform:translateY(2px) rotate(3deg)}}
+@media(prefers-reduced-motion:reduce){.dd-love-story-bee img{animation:none!important}.dd-love-story-bee{transition:none!important}}
+
+.dd-love-story-bee-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:29px;line-height:1}
+.dd-love-story-bee img{position:relative;z-index:1}
+
+/* Milestone-based bee flight: larger bee, smooth hops between story dots. */
+.dd-love-story-list .dd-love-story-bee{width:52px;height:52px;transition:top .5s cubic-bezier(.2,.75,.25,1),opacity .18s ease}
+@media(prefers-reduced-motion:reduce){.dd-love-story-list .dd-love-story-bee{transition:none!important}}
+
+/* Story bee stays crisp and stationary at each timeline milestone. */
+.dd-love-story-bee img{animation:none!important;backface-visibility:hidden}
+.dd-love-story-list .dd-love-story-bee{will-change:auto}
+
+/* Keep configured invitation message Body typography identical across
+   collection, create preview, full preview and published invitation.
+   Legacy template/preview rules must not substitute a fixed font size. */
+.full-invitation-renderer .invitation-template.dd-template-typography :is(.romantic-message,.classic-message,.modern-message) blockquote,
+.create-page .preview-content .invitation-template.dd-template-typography :is(.romantic-message,.classic-message,.modern-message) blockquote {
+  font-family:var(--dd-body-font) !important;
+  font-size:var(--dd-body-size) !important;
+  font-weight:var(--dd-body-weight) !important;
+  line-height:var(--dd-body-line-height) !important;
+  letter-spacing:var(--dd-body-letter-spacing) !important;
+  text-align:var(--dd-body-align) !important;
+}
+
+/* Dedicated typography for couple introductions and love-story descriptions. */
+.dd-template-typography :is(.dd-couple-intro-description,.dd-love-story-copy p) {
+  font-family:var(--dd-story-description-font,var(--dd-body-font,inherit));
+  font-size:var(--dd-story-description-size,13px);
+  font-weight:var(--dd-story-description-weight,400);
+  line-height:var(--dd-story-description-line-height,1.7);
+  letter-spacing:var(--dd-story-description-letter-spacing,0px);
+  text-align:var(--dd-story-description-align,center);
+}
+
+
+/* Account details: shared layout across previews and published invitations. */
+.public-account-card.dd-account-layout{padding:17px 18px;text-align:left}
+.public-account-card.dd-account-layout .dd-account-role{margin:0 0 12px;font-size:14px;font-weight:600;letter-spacing:0;color:inherit}
+.public-account-card.dd-account-layout .dd-account-details{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0}
+.public-account-card.dd-account-layout .dd-account-info{display:flex;flex-direction:column;align-items:flex-start;gap:9px;min-width:0;flex:1;margin:0}
+.public-account-card.dd-account-layout .dd-account-number{display:block;font-size:15px;font-weight:500;line-height:1.5;overflow-wrap:anywhere}
+.public-account-card.dd-account-layout .public-account-bank{display:inline-flex;align-items:center;justify-content:flex-start;gap:7px;margin:0;min-width:0}
+.public-account-card.dd-account-layout .public-account-bank>span{font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.public-account-card.dd-account-layout .dd-account-details>button{flex:none;min-width:58px;padding:7px 12px;border:1px solid #d5c9c2;border-radius:8px;background:transparent;color:inherit;box-shadow:none;font-size:12px;font-weight:400;white-space:nowrap}
+.public-account-side>summary{font-size:14px}
+.public-account-side>summary:is(:first-child){letter-spacing:0}
+.public-account-side:has(.dd-account-role:first-child) >summary{font-size:14px}
+.public-accounts .public-account-side:nth-of-type(1)>summary{color:#087fc2}
+.public-accounts .public-account-side:nth-of-type(2)>summary{color:#cf2873}
+
+
+/* Keep account-card layout consistent in editor previews and published pages. */
+.invitation-template .public-account-card.dd-account-layout > .dd-account-role{
+  text-align:left;
+}
+.invitation-template .public-account-card.dd-account-layout > .dd-account-details{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.invitation-template .public-account-card.dd-account-layout > .dd-account-details > .dd-account-info{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:9px;
+  min-width:0;
+  flex:1 1 auto;
+  text-align:left;
+}
+.invitation-template .public-account-card.dd-account-layout > .dd-account-details > button,
+.invitation-template.dd-template-button-style .public-account-card.dd-account-layout > .dd-account-details > button{
+  box-sizing:border-box;
+  width:max-content;
+  max-width:none;
+  min-width:58px;
+  flex:0 0 auto;
+  padding:7px 12px;
+  white-space:nowrap;
+  word-break:keep-all;
+  overflow-wrap:normal;
+}
+
+/* Configurable shadow for shared template action buttons; Quick Menu remains independent. */
+.invitation-template.dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){box-shadow:var(--dd-button-shadow,none)}
