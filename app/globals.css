@@ -4180,6 +4180,15 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   padding-left:max(0px,var(--dd-section-account-left,0px));
 }
 
+/* Opt-in wedding section Safe Areas; retain default spacing while disabled. */
+.dd-template-section-safe-area.dd-safe-enabled-coupleIntro .dd-couple-intro{
+  padding:var(--dd-section-coupleIntro-top,0px) var(--dd-section-coupleIntro-right,0px) var(--dd-section-coupleIntro-bottom,0px) var(--dd-section-coupleIntro-left,0px);
+  box-sizing:border-box;
+}
+.dd-template-section-safe-area.dd-safe-enabled-loveStory .dd-love-story{
+  padding:var(--dd-section-loveStory-top,0px) var(--dd-section-loveStory-right,0px) var(--dd-section-loveStory-bottom,0px) var(--dd-section-loveStory-left,0px);
+  box-sizing:border-box;
+}
 /* Independent transport-guide spacing inside PLACE; map and address unaffected. */
 .dd-template-section-safe-area.dd-safe-enabled-place.dd-safe-transport .dd-transport-guide {
   padding-top:var(--dd-transport-top,0px);
