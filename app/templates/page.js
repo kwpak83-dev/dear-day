@@ -131,7 +131,7 @@ export default function TemplateCollectionPage(){
     <p className="dd-showcase-counter">{active+1} / {items.length}</p>
     <h2>{selected?.name}</h2>
     <div className="dd-showcase-actions"><a href={previewUrl} className="dd-showcase-secondary">샘플 보기 <EyeIcon/></a><button type="button" onClick={makeSelected} className="dd-showcase-primary">이 디자인으로 만들기 <ExternalLinkIcon/></button></div>
-    <div className="dd-showcase-hint dd-showcase-hint-pill" aria-label="위아래로 전체 디자인 확인, 좌우로 다른 템플릿 보기"><span className="dd-showcase-hint-part"><span aria-hidden="true">↕</span> 위아래로 전체 디자인 확인</span><span className="dd-showcase-hint-divider" aria-hidden="true">│</span><span className="dd-showcase-hint-part"><span aria-hidden="true">↔</span> 좌우로 다른 템플릿 보기</span></div>
+    <div className="dd-showcase-hint dd-showcase-hint-pill" aria-label="위아래로 본문 디자인 확인, 좌우로 다른 템플릿 보기"><span className="dd-showcase-hint-part"><span aria-hidden="true">↕</span> 위아래로 본문 디자인 확인</span><span className="dd-showcase-hint-divider" aria-hidden="true">│</span><span className="dd-showcase-hint-part"><span aria-hidden="true">↔</span> 좌우로 다른 템플릿 보기</span></div>
    </div>
   </>}
  </main>;
