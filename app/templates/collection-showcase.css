@@ -524,3 +524,22 @@
   white-space:nowrap!important;
  }
 }
+
+/* Reclaim the space saved by the single-row category navigation for the preview. */
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-poster{
+  height:clamp(350px,calc(100svh - 220px),730px)!important;
+ }
+ .dd-showcase-page .dd-showcase-track{
+  padding-bottom:6px!important;
+ }
+ .dd-showcase-page .dd-showcase-selected h2{
+  margin-top:5px!important;
+ }
+ .dd-showcase-page .dd-showcase-actions{
+  margin-top:10px!important;
+ }
+ .dd-showcase-page .dd-showcase-hint-pill{
+  margin-top:7px!important;
+ }
+}
