@@ -4471,9 +4471,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 .dd-couple-intro,.dd-love-story{padding:48px 22px;text-align:center;color:var(--dd-text-color,inherit);font-family:inherit}
 .dd-wedding-story-heading{margin:0 0 30px;text-align:center}
-.dd-wedding-story-heading>p{font-size:10px;letter-spacing:.24em;opacity:.55;margin:0 0 10px}
+.dd-wedding-story-heading>p{margin:0 0 10px}
 .dd-wedding-story-heading h2{font-size:23px;font-weight:500;line-height:1.5;letter-spacing:-.04em;margin:0}
-.dd-wedding-story-heading>span{display:block;font-size:12px;opacity:.7;margin-top:9px;white-space:pre-line}
+.dd-wedding-story-heading>span{display:block;opacity:.7;margin-top:9px;white-space:pre-line}
 .dd-couple-intro-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:440px;margin:auto}
 .dd-couple-intro-person{min-width:0;text-align:center}
 .dd-couple-intro-photo{width:100%;aspect-ratio:3/4;overflow:hidden;border-radius:100px 100px 6px 6px;background:#f2eee9}
@@ -4481,7 +4481,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-couple-intro-role{font-size:11px;opacity:.6;margin:16px 0 4px}
 .dd-couple-intro-person h3{font-size:18px;font-weight:500;margin:0 0 10px}
 .dd-couple-intro-description{font-size:12px;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0}
-.dd-couple-intro-tags{display:flex;justify-content:center;flex-wrap:wrap;gap:5px 8px;font-size:11px;opacity:.7;margin-top:10px;overflow-wrap:anywhere}
+.dd-couple-intro-tags{display:flex;justify-content:center;flex-wrap:wrap;gap:5px 8px;opacity:.7;margin-top:10px;overflow-wrap:anywhere}
 .dd-love-story-list{position:relative;max-width:460px;margin:auto;padding:4px 0}
 .dd-love-story-list:before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid currentColor;opacity:.17}
 .dd-love-story-item{position:relative;display:flex;align-items:center;gap:10%;margin:0 0 32px;text-align:left}
