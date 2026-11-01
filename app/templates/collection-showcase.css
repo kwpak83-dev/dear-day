@@ -575,3 +575,18 @@
   margin-top:4px!important;
  }
 }
+
+/* Compact the mobile collection's white header and scale its side icons down 10%. */
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-header{
+  height:46px!important;
+  min-height:46px!important;
+ }
+ .dd-showcase-page .dd-showcase-menu-toggle::after{
+  font-size:22.5px!important;
+ }
+ .dd-showcase-page .dd-showcase-invitations svg{
+  width:23.4px!important;
+  height:23.4px!important;
+ }
+}
