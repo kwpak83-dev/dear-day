@@ -4696,3 +4696,19 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   letter-spacing:var(--dd-story-description-letter-spacing,0px);
   text-align:var(--dd-story-description-align,center);
 }
+
+
+/* Account details: shared layout across previews and published invitations. */
+.public-account-card.dd-account-layout{padding:17px 18px;text-align:left}
+.public-account-card.dd-account-layout .dd-account-role{margin:0 0 12px;font-size:14px;font-weight:600;letter-spacing:0;color:inherit}
+.public-account-card.dd-account-layout .dd-account-details{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0}
+.public-account-card.dd-account-layout .dd-account-info{display:flex;flex-direction:column;align-items:flex-start;gap:9px;min-width:0;flex:1;margin:0}
+.public-account-card.dd-account-layout .dd-account-number{display:block;font-size:15px;font-weight:500;line-height:1.5;overflow-wrap:anywhere}
+.public-account-card.dd-account-layout .public-account-bank{display:inline-flex;align-items:center;justify-content:flex-start;gap:7px;margin:0;min-width:0}
+.public-account-card.dd-account-layout .public-account-bank>span{font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.public-account-card.dd-account-layout .dd-account-details>button{flex:none;min-width:58px;padding:7px 12px;border:1px solid #d5c9c2;border-radius:8px;background:transparent;color:inherit;box-shadow:none;font-size:12px;font-weight:400;white-space:nowrap}
+.public-account-side>summary{font-size:14px}
+.public-account-side>summary:is(:first-child){letter-spacing:0}
+.public-account-side:has(.dd-account-role:first-child) >summary{font-size:14px}
+.public-accounts .public-account-side:nth-of-type(1)>summary{color:#087fc2}
+.public-accounts .public-account-side:nth-of-type(2)>summary{color:#cf2873}
