@@ -4583,3 +4583,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-couple-preview-header button{font-size:25px;line-height:1;border:0;background:transparent;color:inherit;cursor:pointer}
 .dd-couple-preview-body{overflow:auto;min-height:0;background:#fff}
 .dd-couple-preview-body .dd-couple-intro{padding:32px 20px 42px}
+
+/* Compact account selection rows in the user invitation editor only. */
+.create-page .account-editor.dd-account-choice{margin-bottom:10px;padding:12px 14px}
