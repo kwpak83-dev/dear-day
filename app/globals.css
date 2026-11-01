@@ -4662,3 +4662,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-love-story-bee img{display:block;width:100%;height:100%;object-fit:contain;animation:var(--dd-bee-motion,none)}
 @keyframes dd-bee-bob{0%,100%{transform:translateY(-2px) rotate(-3deg)}50%{transform:translateY(2px) rotate(3deg)}}
 @media(prefers-reduced-motion:reduce){.dd-love-story-bee img{animation:none!important}.dd-love-story-bee{transition:none!important}}
+
+.dd-love-story-bee-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:29px;line-height:1}
+.dd-love-story-bee img{position:relative;z-index:1}
