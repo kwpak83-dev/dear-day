@@ -49,6 +49,6 @@ export default function LoveStory({ invitation }) {
       <div className="dd-love-story-dot" aria-hidden="true" />
       {item.photoUrl && <div className="dd-love-story-photo"><img src={item.photoUrl} alt={item.title || "러브스토리 사진"} loading="lazy" /></div>}
       <div className="dd-love-story-copy">{item.date && <time>{item.date}</time>}{item.title && <h3>{item.title}</h3>}{item.description && <p>{item.description}</p>}</div>
-    </article>)}{beeEnabled && <span className="dd-love-story-bee" ref={beeRef} aria-hidden="true"><img src="/images/love-story-bee.webp" alt="" /></span>}</div>
+    </article>)}{beeEnabled && <span className="dd-love-story-bee" ref={beeRef} aria-hidden="true"><span className="dd-love-story-bee-fallback">🐝</span><img src="/images/love-story-bee.webp" alt="" onError={event => { event.currentTarget.style.display = "none"; }} /></span>}</div>
   </section>;
 }
