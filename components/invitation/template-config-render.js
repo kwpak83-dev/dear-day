@@ -258,7 +258,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     heroCopyStyle.transform = "translateY(-50%)";
   }
 
-  for (const [role, prefix] of [["heroTitle", "hero-title"], ["sectionTitle", "section-title"], ["body", "body"], ["caption", "caption"]]) {
+  for (const [role, prefix] of [["heroTitle", "hero-title"], ["sectionTitle", "section-title"], ["body", "body"], ["caption", "caption"], ["storyDescription", "story-description"]]) {
     if (role === "heroTitle" && hero?.nameFontFamily && hero.nameFontFamily !== "inherit") continue;
     const item = typography?.[role];
     if (!item) continue;
