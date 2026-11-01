@@ -30,7 +30,7 @@ export default function LoveStory({ invitation }) {
       }
       bee.style.top = (centers[index] - listRect.top) + "px";
       bee.style.opacity = listRect.bottom > viewTop && listRect.top < viewBottom ? "1" : "0";
-      bee.style.setProperty("--dd-bee-motion", reduceMotion.matches ? "none" : "dd-bee-bob 1.8s ease-in-out infinite");
+      // Keep the bee still at each milestone; only its travel is animated.
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
     update();
