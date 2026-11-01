@@ -4611,3 +4611,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Compact intro action buttons, matching the program preview style. */
 .create-page .dd-user-intro-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .create-page .dd-user-intro-actions>button{display:flex;align-items:center;justify-content:center;min-width:0;min-height:32px;padding:6px 5px;border:1px solid #b3b3b3 !important;border-radius:9px;background:#fff !important;color:#222 !important;font-family:inherit;font-size:12px;font-weight:400;line-height:16px;white-space:nowrap;box-shadow:0 4px 10px rgba(0,0,0,.11),0 1px 2px rgba(0,0,0,.05) !important;cursor:pointer}
+
+/* Keep event-time hour/minute text compact, including native dropdown options where supported. */
+.create-page .dd-time-selects select,.create-page .dd-time-selects select option{font-family:inherit;font-size:13px;font-weight:400}
