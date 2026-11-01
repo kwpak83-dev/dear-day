@@ -384,7 +384,7 @@ async function saveBackgroundHero(auth, body) {
   return Response.json({ draftId: body.draftId, background: config.background, hero: config.hero });
 }
 
-const typographyRoles = ["heroTitle", "sectionTitle", "body", "caption"];
+const typographyRoles = ["heroTitle", "sectionTitle", "body", "caption", "storyDescription"];
 const typographyFields = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "textAlign"];
 const colorFields = ["text", "title", "heroTitle", "muted", "caption", "accent", "buttonBackground", "buttonText", "divider"];
 const fontFamilies = new Set(Object.keys(TEMPLATE_FONT_STACKS));
