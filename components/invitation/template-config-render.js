@@ -281,6 +281,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
     set(rootStyle, "--dd-button-radius", buttonStyle.borderRadius, "px");
     set(rootStyle, "--dd-button-border-width", buttonStyle.borderWidth, "px");
     set(rootStyle, "--dd-button-border-color", buttonStyle.borderColor);
+    if (buttonStyle.shadowEnabled === true) { const hex = buttonStyle.shadowColor || "#000000"; const opacity = (buttonStyle.shadowOpacity ?? 12) / 100; rootStyle["--dd-button-shadow"] = `0 ${buttonStyle.shadowY ?? 3}px ${buttonStyle.shadowBlur ?? 8}px ${rgba(hex, opacity)}`; } else { rootStyle["--dd-button-shadow"] = "none"; }
     if (buttonStyle.background) set(rootStyle, "--dd-button-bg", buttonStyle.background);
     if (buttonStyle.text) set(rootStyle, "--dd-button-text", buttonStyle.text);
     if (buttonStyle.syncQuickMenu) {
