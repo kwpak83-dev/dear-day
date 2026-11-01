@@ -4213,7 +4213,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .dd-message-linebreak-tools-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 12px}
 .create-page .dd-message-linebreak-tools-head strong{font-size:13px}
 .create-page .dd-message-linebreak-tools-head span,.create-page .dd-message-linebreak-tools p,.create-page .dd-message-linebreak-footnote{font-size:12px;line-height:1.65;color:#886f6a}
-.create-page .dd-message-linebreak-tools p{margin:7px 0 10px}
+.create-page .dd-message-linebreak-tools p{margin:7px 0 0}
 .create-page .dd-message-preview-button{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 13px;border:1px solid #d7a8a1;border-radius:9px;background:#fff;color:#865a54;font-size:12px;font-weight:650;cursor:pointer}
 .create-page .dd-message-preview-button:hover{background:#fbeeea}
 .create-page .dd-message-preview-button:focus-visible{outline:2px solid #b77770;outline-offset:2px}
