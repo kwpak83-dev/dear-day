@@ -563,7 +563,7 @@
 /* Leave breathing room beneath the bottom guidance on compact mobile screens. */
 @media(max-width:700px){
  .dd-showcase-page .dd-showcase-poster{
-  height:clamp(338px,calc(100svh - 232px),718px)!important;
+  height:clamp(350px,calc(100svh - 220px),730px)!important;
  }
  .dd-showcase-page .dd-showcase-selected h2{
   margin-top:3px!important;
