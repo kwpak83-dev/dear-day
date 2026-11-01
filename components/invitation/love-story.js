@@ -4,7 +4,8 @@ import { useEffect, useRef } from "react";
 export default function LoveStory({ invitation }) {
   const listRef = useRef(null);
   const beeRef = useRef(null);
-  const beeEnabled = invitation?.loveStory?.beeEnabled === true;
+  const clipart = ["none", "bee", "heart"].includes(invitation?.loveStory?.movingClipart) ? invitation.loveStory.movingClipart : (invitation?.loveStory?.beeEnabled === true ? "bee" : "none");
+  const beeEnabled = clipart !== "none";
   useEffect(() => {
     if (!beeEnabled) return;
     const list = listRef.current, bee = beeRef.current;
@@ -40,7 +41,7 @@ export default function LoveStory({ invitation }) {
     const observer = new ResizeObserver(schedule);
     observer.observe(list);
     return () => { document.removeEventListener("scroll", schedule, true); window.removeEventListener("resize", schedule); reduceMotion.removeEventListener?.("change", schedule); observer.disconnect(); if (frame) cancelAnimationFrame(frame); };
-  }, [beeEnabled, invitation?.loveStory?.items?.length]);
+  }, [beeEnabled, clipart, invitation?.loveStory?.items?.length]);
   if (invitation?.eventKind !== "wedding" || invitation?.loveStory?.enabled !== true) return null;
   const story = invitation.loveStory;
   const items = Array.isArray(story.items) ? story.items.filter(item => item && (item.photoUrl || item.date || item.title || item.description)).slice(0,10) : [];
@@ -51,6 +52,6 @@ export default function LoveStory({ invitation }) {
       <div className="dd-love-story-dot" aria-hidden="true" />
       {item.photoUrl && <div className="dd-love-story-photo"><img src={item.photoUrl} alt={item.title || "러브스토리 사진"} loading="lazy" /></div>}
       <div className="dd-love-story-copy">{item.date && <time>{item.date}</time>}{item.title && <h3>{item.title}</h3>}{item.description && <p>{item.description}</p>}</div>
-    </article>)}{beeEnabled && <span className="dd-love-story-bee" ref={beeRef} aria-hidden="true"><span className="dd-love-story-bee-fallback">🐝</span><img src="/images/love-story-bee.webp" alt="" onError={event => { event.currentTarget.style.display = "none"; }} /></span>}</div>
+    </article>)}{beeEnabled && <span className="dd-love-story-bee" ref={beeRef} aria-hidden="true"><span className="dd-love-story-bee-fallback">{clipart === "heart" ? "❤️" : "🐝"}</span><img src={clipart === "heart" ? "/images/love-story-heart.webp" : "/images/love-story-bee.webp"} alt="" onError={event => { event.currentTarget.style.display = "none"; }} /></span>}</div>
   </section>;
 }
