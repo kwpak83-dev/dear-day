@@ -4576,7 +4576,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 
 /* Couple introduction section-only floating preview */
-.dd-couple-preview-launch{display:block;width:100%;margin:18px 0 0;padding:12px;border:1px solid #d8c4bb;border-radius:9px;background:#fffaf7;color:#78564c;font-size:13px;cursor:pointer}
+.create-page .dd-couple-preview-launch{display:block;width:100%;margin:18px 0 0;padding:16px 14px;border:1px solid #c9c9c9;border-radius:12px;background:#fff;color:#222;font-size:14px;font-weight:700;text-align:center;box-shadow:0 3px 8px rgba(0,0,0,.12);cursor:pointer}
 .dd-couple-preview-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.48)}
 .dd-couple-preview-dialog{width:min(100%,430px);max-height:90dvh;overflow:hidden;display:flex;flex-direction:column;border-radius:15px;background:#fff;box-shadow:0 18px 60px #0003}
 .dd-couple-preview-header{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid #eee2dc;font-size:14px;color:#5c4842}
