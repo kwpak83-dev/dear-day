@@ -1,5 +1,7 @@
 import { invitationFontStylesheets } from "../../../lib/invitation-local-fonts";
 import TemplateConfigEffects from "../template-config-effects";
+import HeroFontGate from "../hero-font-gate";
+import { getHeroFont } from "../../../lib/hero-fonts";
 import { getTemplateConfigRenderProps, TemplateConfigDecorations, TemplateConfigHeroIntro, TemplateConfigHeroPanelCopy, TemplateConfigHeroLayers } from "../template-config-render";
 
 function SectionHeading({ eyebrow, children }) {
@@ -53,7 +55,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
       {hasHeroVisual && <figure className="romantic-hero-photo" style={renderConfig.heroMediaStyle}>{showCoverPhoto && <img fetchPriority="high" loading="eager" decoding="async" style={renderConfig.heroImageStyle} src={coverPhotoUrl} alt={title ? `${title} 대표사진` : "등록한 대표사진"} />}</figure>}
       <TemplateConfigHeroLayers config={templateConfig} assets={templateAssets} presentation={presentation} />
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="hero" />
-      <div className="romantic-hero-copy" style={renderConfig.heroCopyStyle}>
+      <HeroFontGate className="romantic-hero-copy" style={renderConfig.heroCopyStyle} fonts={[templateConfig?.hero?.nameFontFamily && getHeroFont(templateConfig.hero.nameFontFamily).family, templateConfig?.typography?.heroTitle?.fontFamily && getHeroFont(templateConfig.typography.heroTitle.fontFamily).family, templateConfig?.typography?.body?.fontFamily && getHeroFont(templateConfig.typography.body.fontFamily).family].filter(Boolean)}>
         {showHero("title") && title && (couple.length === 2
           ? <h2 className="romantic-couple-title"><span>{couple[0]}</span><i aria-hidden="true">♡</i><span>{couple[1]}</span></h2>
           : <h2>{title}</h2>)}
@@ -64,7 +66,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
         {showHero("detail") && !hideFirstBirthdayParentDetail && detail && <p className="romantic-detail">{detail}</p>}
         {showHero("note") && note && <p className="romantic-note">{note}</p>}
         {showHero("schedule") && heroSchedule && <time>{heroSchedule}</time>}
-      </div>
+      </HeroFontGate>
     </section>
 
     {message && <section className="romantic-section romantic-message">
