@@ -4745,3 +4745,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   word-break:keep-all;
   overflow-wrap:normal;
 }
+
+/* Configurable shadow for shared template action buttons; Quick Menu remains independent. */
+.invitation-template.dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){box-shadow:var(--dd-button-shadow,none)}
