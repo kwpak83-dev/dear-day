@@ -4614,3 +4614,30 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Keep event-time hour/minute text compact, including native dropdown options where supported. */
 .create-page .dd-time-selects select,.create-page .dd-time-selects select option{font-family:inherit;font-size:13px;font-weight:400}
+
+/* Match the compact 46px collection header on the mobile homepage and My Page. */
+@media(max-width:800px){
+ .landing-v2 .landing-header{
+  height:46px!important;
+  min-height:46px!important;
+ }
+ .landing-v2 .landing-mobile-actions .landing-menu{
+  font-size:22.5px!important;
+ }
+ .landing-v2 .landing-mobile-invitations svg{
+  width:22.5px!important;
+  height:22.5px!important;
+ }
+ .my-page.member-page .dd-member-topbar{
+  height:46px!important;
+  min-height:46px!important;
+  max-height:46px!important;
+ }
+ .my-page.member-page .dd-member-menu-toggle span{
+  width:19.8px!important;
+ }
+ .my-page.member-page .dd-member-envelope svg{
+  width:23.4px!important;
+  height:23.4px!important;
+ }
+}
