@@ -4688,8 +4688,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 }
 
 /* Dedicated typography for couple introductions and love-story descriptions. */
-.dd-template-typography .dd-couple-intro-description,
-.dd-template-typography .dd-love-story-copy p {
+.dd-template-typography :is(.dd-couple-intro-description,.dd-love-story-copy p) {
   font-family:var(--dd-story-description-font,var(--dd-body-font,inherit));
   font-size:var(--dd-story-description-size,13px);
   font-weight:var(--dd-story-description-weight,400);
