@@ -4673,3 +4673,16 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Story bee stays crisp and stationary at each timeline milestone. */
 .dd-love-story-bee img{animation:none!important;backface-visibility:hidden}
 .dd-love-story-list .dd-love-story-bee{will-change:auto}
+
+/* Keep configured invitation message Body typography identical across
+   collection, create preview, full preview and published invitation.
+   Legacy template/preview rules must not substitute a fixed font size. */
+.full-invitation-renderer .invitation-template.dd-template-typography :is(.romantic-message,.classic-message,.modern-message) blockquote,
+.create-page .preview-content .invitation-template.dd-template-typography :is(.romantic-message,.classic-message,.modern-message) blockquote {
+  font-family:var(--dd-body-font) !important;
+  font-size:var(--dd-body-size) !important;
+  font-weight:var(--dd-body-weight) !important;
+  line-height:var(--dd-body-line-height) !important;
+  letter-spacing:var(--dd-body-letter-spacing) !important;
+  text-align:var(--dd-body-align) !important;
+}
