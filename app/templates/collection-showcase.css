@@ -528,7 +528,7 @@
 /* Reclaim the space saved by the single-row category navigation for the preview. */
 @media(max-width:700px){
  .dd-showcase-page .dd-showcase-poster{
-  height:clamp(352px,calc(100svh - 218px),732px)!important;
+  height:clamp(358px,calc(100svh - 212px),738px)!important;
  }
  .dd-showcase-page .dd-showcase-track{
   padding-bottom:6px!important;
