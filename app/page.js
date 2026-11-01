@@ -153,7 +153,7 @@ export default function Home() {
           <p className="dd-drawer-label">SERVICE</p>
           <a className="dd-drawer-link" href="/templates" onClick={() => setMenuOpen(false)}><span><DrawerIcon name="templates" /></span>템플릿 둘러보기 <b>›</b></a>
           <a className="dd-drawer-link" href="#how" onClick={() => setMenuOpen(false)}><span><DrawerIcon name="experience" /></span>초대장 체험하기 <b>›</b></a>
-          <div className="dd-drawer-link dd-drawer-disabled" aria-disabled="true"><span><DrawerIcon name="ticket" /></span><span>이용권 구매<small>네이버 스마트스토어 · 준비 중</small></span><b>›</b></div>
+          <div className="dd-drawer-link dd-drawer-disabled" aria-disabled="true"><span className="dd-drawer-store-icon"><img src="/naver-smartstore-icon.svg" alt="" width="32" height="18" /></span><span>이용권 구매<small>네이버 스마트스토어 · 준비 중</small></span><b>›</b></div>
           <a className="dd-drawer-link" href={user ? "/my-inquiries" : "/?login=required&returnUrl=%2Fmy-inquiries"} onClick={() => setMenuOpen(false)}><span><DrawerIcon name="inquiry" /></span>문의내역 <b>›</b></a>
           <div className="dd-drawer-bottom">{user ? <button type="button" onClick={() => {setMenuOpen(false);signOut();}}>로그아웃</button> : <button type="button" onClick={() => {setMenuOpen(false);openLogin();}}>로그인</button>}</div>
         </nav>
