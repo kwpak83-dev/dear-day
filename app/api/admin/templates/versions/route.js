@@ -409,7 +409,12 @@ function validColors(value) {
 }
 
 function validButtonStyle(value) {
-  return hasOnlyKeys(value, ["width", "height", "fontSize", "borderRadius", "borderWidth", "borderColor", "background", "text", "fontFamily", "fontWeight", "syncQuickMenu"]) &&
+  return hasOnlyKeys(value, ["width", "height", "fontSize", "borderRadius", "borderWidth", "borderColor", "background", "text", "fontFamily", "fontWeight", "syncQuickMenu", "shadowEnabled", "shadowColor", "shadowOpacity", "shadowBlur", "shadowY"]) &&
+    (value.shadowEnabled === undefined || typeof value.shadowEnabled === "boolean") &&
+    (value.shadowColor === undefined || hexColor(value.shadowColor)) &&
+    (value.shadowOpacity === undefined || (Number.isInteger(value.shadowOpacity) && value.shadowOpacity >= 0 && value.shadowOpacity <= 100)) &&
+    (value.shadowBlur === undefined || (Number.isInteger(value.shadowBlur) && value.shadowBlur >= 0 && value.shadowBlur <= 30)) &&
+    (value.shadowY === undefined || (Number.isInteger(value.shadowY) && value.shadowY >= 0 && value.shadowY <= 15)) &&
     Number.isInteger(value.width) && value.width >= 10 && value.width <= 100 &&
     (value.background === undefined || hexColor(value.background)) &&
     (value.text === undefined || hexColor(value.text)) &&
