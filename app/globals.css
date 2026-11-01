@@ -4665,3 +4665,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 .dd-love-story-bee-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:29px;line-height:1}
 .dd-love-story-bee img{position:relative;z-index:1}
+
+/* Milestone-based bee flight: larger bee, smooth hops between story dots. */
+.dd-love-story-list .dd-love-story-bee{width:52px;height:52px;transition:top .5s cubic-bezier(.2,.75,.25,1),opacity .18s ease}
+@media(prefers-reduced-motion:reduce){.dd-love-story-list .dd-love-story-bee{transition:none!important}}
