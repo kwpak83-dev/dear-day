@@ -4641,3 +4641,14 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   height:23.4px!important;
  }
 }
+
+/* Subtle separators between the three mobile My Page quick tabs. */
+@media(max-width:800px){
+ .my-page.member-page .dd-member-quick-tabs>a,
+ .my-page.member-page .dd-member-quick-tabs>span{position:relative}
+ .my-page.member-page .dd-member-quick-tabs>a:not(:last-child)::after,
+ .my-page.member-page .dd-member-quick-tabs>span:not(:last-child)::after{
+  content:"";position:absolute;right:0;top:25%;height:50%;width:1px;
+  background:#e5e5e5;pointer-events:none;
+ }
+}
