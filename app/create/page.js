@@ -1116,7 +1116,7 @@ export default function CreateInvitation() {
         </select>}
         {field.key === "message" && <div className="dd-message-linebreak-tools">
           <div className="dd-message-linebreak-tools-head"><strong>✎ 줄바꿈 직접 편집</strong></div>
-          <p>엔터로 줄바꿈을 조정할 수 있어요. 아래 미리보기에 바로 반영됩니다.</p>
+          <p>엔터로 줄바꿈을 조정할 수 있어요. 아래<br />미리보기에 바로 반영됩니다.</p>
         </div>}
         <AutoHeightMessageTextarea value={invitation[field.key] || ""} onChange={(value) => update(field.key, value)} />
         {field.key === "message" && <>
