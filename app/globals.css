@@ -4652,3 +4652,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   background:#e5e5e5;pointer-events:none;
  }
 }
+
+/* Keep Excel export icon and label on one horizontal line. */
+.my-page.member-page .guest-table-footer button{display:inline-flex;align-items:center;justify-content:center;flex-direction:row;gap:5px;white-space:nowrap;width:max-content;max-width:100%}
+.my-page.member-page .guest-table-footer button svg{display:block;flex:0 0 18px;margin-right:0!important}
