@@ -2297,3 +2297,18 @@
 .landing-v2 .dd-landing-top-button>small{font-size:8px;font-weight:700;letter-spacing:.03em}
 .landing-v2 .dd-landing-top-button:focus-visible{outline:2px solid #806b5e;outline-offset:3px}
 @media(max-width:800px){.landing-v2 .dd-landing-top-button{right:14px;bottom:calc(76px + env(safe-area-inset-bottom,0px));width:30px;height:30px}.landing-v2 .dd-landing-top-button>span{font-size:14px;line-height:14px}.landing-v2 .dd-landing-top-button>small{font-size:6px}}
+
+/* Align homepage mobile header proportions with template collection (46px). */
+@media(max-width:800px){
+ .landing-v2 .landing-header{
+  height:46px!important;
+  min-height:46px!important;
+ }
+ .landing-v2 .landing-header .landing-menu::after{
+  font-size:22.5px!important;
+ }
+ .landing-v2 .landing-header .landing-mobile-invitations svg{
+  width:23.4px!important;
+  height:23.4px!important;
+ }
+}
