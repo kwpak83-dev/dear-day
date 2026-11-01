@@ -4656,3 +4656,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Keep Excel export icon and label on one horizontal line. */
 .my-page.member-page .guest-table-footer button{display:inline-flex;align-items:center;justify-content:center;flex-direction:row;gap:5px;white-space:nowrap;width:max-content;max-width:100%}
 .my-page.member-page .guest-table-footer button svg{display:block;flex:0 0 18px;margin-right:0!important}
+
+/* Optional scroll-following bee for wedding love-story timeline. */
+.dd-love-story-list .dd-love-story-bee{position:absolute;left:50%;top:0;z-index:3;display:block;width:44px;height:44px;pointer-events:none;transform:translate(-50%,-50%);opacity:0;transition:opacity .18s ease;will-change:top}
+.dd-love-story-bee img{display:block;width:100%;height:100%;object-fit:contain;animation:var(--dd-bee-motion,none)}
+@keyframes dd-bee-bob{0%,100%{transform:translateY(-2px) rotate(-3deg)}50%{transform:translateY(2px) rotate(3deg)}}
+@media(prefers-reduced-motion:reduce){.dd-love-story-bee img{animation:none!important}.dd-love-story-bee{transition:none!important}}
