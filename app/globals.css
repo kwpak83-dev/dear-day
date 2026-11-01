@@ -812,10 +812,10 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 /* Template Config C6-4: section reveal and content safe area */
 .dd-template-effects-marker{display:none}
 /* SSR-safe initial reveal state: hide only reveal sections before hydration. */
-.dd-reveal-initial.dd-reveal-fade :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.public-rsvp,.guestbook-section):not(.is-revealed),
-.dd-reveal-initial.dd-reveal-fade-up :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.public-rsvp,.guestbook-section):not(.is-revealed){opacity:0}
-.dd-reveal-initial.dd-reveal-fade-up :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.public-rsvp,.guestbook-section):not(.is-revealed){transform:translateY(18px)}
-@media(prefers-reduced-motion:reduce){.dd-reveal-initial :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.public-rsvp,.guestbook-section){opacity:1!important;transform:none!important}}
+.dd-reveal-initial.dd-reveal-fade :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.dd-couple-intro,.dd-love-story,.public-rsvp,.guestbook-section):not(.is-revealed),
+.dd-reveal-initial.dd-reveal-fade-up :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.dd-couple-intro,.dd-love-story,.public-rsvp,.guestbook-section):not(.is-revealed){opacity:0}
+.dd-reveal-initial.dd-reveal-fade-up :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.dd-couple-intro,.dd-love-story,.public-rsvp,.guestbook-section):not(.is-revealed){transform:translateY(18px)}
+@media(prefers-reduced-motion:reduce){.dd-reveal-initial :is(.romantic-message,.modern-message,.classic-message,.romantic-information,.modern-information,.classic-information,.classic-date,.dd-wedding-contacts,.dd-couple-intro,.dd-love-story,.public-rsvp,.guestbook-section){opacity:1!important;transform:none!important}}
 .dd-reveal-ready .dd-reveal-target{transition:opacity var(--dd-reveal-duration,.55s) ease,transform var(--dd-reveal-duration,.55s) ease}
 .dd-reveal-ready.dd-reveal-fade .dd-reveal-target:not(.is-revealed),
 .dd-reveal-ready.dd-reveal-fade-up .dd-reveal-target:not(.is-revealed){opacity:0}
@@ -4451,6 +4451,15 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 
 /* Wedding-only introduction and story, rendered immediately after invitation message */
+/* Wedding introduction/story: inherit the configured body-theme typography and colors. */
+.dd-template-colors :is(.dd-couple-intro,.dd-love-story){color:var(--dd-color-text,currentColor)}
+.dd-template-colors .dd-wedding-story-heading h2{color:var(--dd-color-title,currentColor)}
+.dd-template-typography .dd-wedding-story-heading h2{font-family:var(--dd-section-title-font,inherit);font-size:var(--dd-section-title-size,23px);font-weight:var(--dd-section-title-weight,500);line-height:var(--dd-section-title-line-height,1.5);letter-spacing:var(--dd-section-title-letter-spacing,-.04em);text-align:var(--dd-section-title-align,center)}
+.dd-template-colors :is(.dd-wedding-story-heading>p,.dd-wedding-story-heading>span,.dd-couple-intro-role,.dd-couple-intro-tags,.dd-love-story-copy time){color:var(--dd-color-caption,var(--dd-color-muted,currentColor))}
+.dd-template-typography :is(.dd-wedding-story-heading>p,.dd-wedding-story-heading>span,.dd-couple-intro-role,.dd-couple-intro-tags,.dd-love-story-copy time){font-family:var(--dd-caption-font,inherit);font-size:var(--dd-caption-size,12px);font-weight:var(--dd-caption-weight,400);line-height:var(--dd-caption-line-height,1.5);letter-spacing:var(--dd-caption-letter-spacing,0px);text-align:var(--dd-caption-align,center)}
+.dd-template-colors :is(.dd-couple-intro-person h3,.dd-couple-intro-description,.dd-love-story-copy h3,.dd-love-story-copy p){color:var(--dd-color-text,currentColor)}
+.dd-template-typography :is(.dd-couple-intro-person h3,.dd-couple-intro-description,.dd-love-story-copy h3,.dd-love-story-copy p){font-family:var(--dd-body-font,inherit);font-size:var(--dd-body-size,16px);font-weight:var(--dd-body-weight,500);line-height:var(--dd-body-line-height,1.7);letter-spacing:var(--dd-body-letter-spacing,0px);text-align:var(--dd-body-align,center)}
+
 .dd-couple-intro,.dd-love-story{padding:48px 22px;text-align:center;color:var(--dd-text-color,inherit);font-family:inherit}
 .dd-wedding-story-heading{margin:0 0 30px;text-align:center}
 .dd-wedding-story-heading>p{font-size:10px;letter-spacing:.24em;opacity:.55;margin:0 0 10px}
