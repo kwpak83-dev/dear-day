@@ -108,7 +108,7 @@ export default function TemplateCollectionPage(){
    {menuOpen&&<><button type="button" className="dd-showcase-menu-backdrop" aria-label="메뉴 닫기" onClick={()=>setMenuOpen(false)}/><nav id="dd-showcase-menu" className="dd-showcase-menu-panel" aria-label="사이트 메뉴"><a href="/">홈</a><a href="/templates" onClick={()=>setMenuOpen(false)}>템플릿 컬렉션</a><a href="/create">초대장 만들기</a></nav></>}
   </header>
   <section className="dd-showcase-intro"><h1 className="dd-showcase-kicker">DEARDAY · TEMPLATE COLLECTION</h1></section>
-  <nav className="dd-showcase-categories" aria-label="초대장 유형">{categories.map(([v,n])=><button type="button" key={v} className={category===v?"active":""} aria-pressed={category===v} onClick={()=>selectCategory(v)}>{n}</button>)}</nav>
+  <nav className="dd-showcase-categories" aria-label="초대장 유형">{categories.filter(([v])=>v).map(([v,n])=><button type="button" key={v} className={category===v?"active":""} aria-pressed={category===v} onClick={()=>selectCategory(v)}>{n}</button>)}</nav>
   {loading?<div className="dd-showcase-message" role="status">디자인을 불러오는 중이에요.</div>:items.length===0?<div className="dd-showcase-message"><strong>현재 공개된 템플릿이 없어요.</strong><p>다른 카테고리를 선택해 보세요.</p><button onClick={()=>selectCategory("")}>전체 템플릿 보기</button></div>:<>
    <div className="dd-showcase-stage">
     <button className="dd-showcase-arrow prev" type="button" aria-label="이전 템플릿" disabled={active===0} onClick={()=>goTo(active-1)}>‹</button>
