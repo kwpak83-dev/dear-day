@@ -500,3 +500,27 @@
  .dd-showcase-page .dd-showcase-brand .dearday-logo.dearday-logo--wordmark,
  .dd-showcase-page .dd-showcase-brand .dearday-logo-wordmark-image{width:116px!important;height:29px!important;max-width:116px!important;max-height:29px!important;object-fit:contain!important}
 }
+
+/* Six template categories fit on a single mobile row without the redundant All tab. */
+@media(max-width:700px){
+ .dd-showcase-page .dd-showcase-categories{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  justify-content:center!important;
+  align-items:center!important;
+  gap:3px!important;
+  padding:0 5px 3px!important;
+  margin-bottom:0!important;
+  overflow-x:auto!important;
+  max-width:100%!important;
+ }
+ .dd-showcase-page .dd-showcase-categories button{
+  flex:0 0 auto!important;
+  padding:6px 5px!important;
+  font-size:clamp(9px,2.55vw,11px)!important;
+  line-height:1.2!important;
+  min-height:27px!important;
+  letter-spacing:-.035em!important;
+  white-space:nowrap!important;
+ }
+}
