@@ -2344,3 +2344,26 @@
 .landing-v2 .dd-landing-program-scroll{height:285px;overflow:auto;overscroll-behavior:contain;border:1px solid #eee5dc;border-radius:9px;background:#fff;text-align:left}
 .landing-v2 .dd-landing-program-scroll .invitation-program{width:100%;max-width:none;margin:0;transform:none}
 .landing-v2 .dd-landing-program-note{margin:8px 0 0;font-size:10px;color:#8b8179;text-align:center}
+
+
+/* EVENT PROGRAM: preserve the real invitation layout at a fixed design width,
+   then scale the entire preview rather than squeezing its columns. */
+.landing-v2 .dd-feature-program .dd-feature-visual{min-width:0}
+.landing-v2 .dd-feature-program .dd-feature-demo{max-width:100%}
+.landing-v2 .dd-feature-demo:has(.dd-landing-program-demo){width:min(100%,390px);max-width:100%}
+.landing-v2 .dd-feature-demo-content:has(.dd-landing-program-demo){min-width:0;padding:14px 10px;box-sizing:border-box}
+.landing-v2 .dd-landing-program-scroll{height:350px;overflow:auto;overflow-x:hidden}
+.landing-v2 .dd-landing-program-canvas{width:390px;max-width:none;zoom:.81;box-sizing:border-box}
+.landing-v2 .dd-landing-program-canvas .invitation-program{box-sizing:border-box;max-width:100%}
+.landing-v2 .dd-landing-program-canvas .invitation-program-list>li{min-width:0}
+.landing-v2 .dd-landing-program-canvas .invitation-program-card{min-width:0}
+.landing-v2 .dd-landing-program-canvas .invitation-program-editorial-list{max-width:390px}
+@media(max-width:800px){
+ .landing-v2 .dd-feature-program .dd-feature-visual{padding:16px 8px}
+ .landing-v2 .dd-feature-demo:has(.dd-landing-program-demo){width:100%;max-width:390px}
+ .landing-v2 .dd-landing-program-canvas{zoom:.72}
+ .landing-v2 .dd-landing-program-scroll{height:350px}
+}
+@media(max-width:360px){
+ .landing-v2 .dd-landing-program-canvas{zoom:.66}
+}
