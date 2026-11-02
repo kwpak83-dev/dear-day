@@ -20,6 +20,7 @@ import "./experience.css";
 export default function WeddingExperience() {
   const [state, setState] = useState({ data: null, error: false });
   const [attempt, setAttempt] = useState(0);
+  const [visualReady, setVisualReady] = useState(false);
   const [sheetRequest, setSheetRequest] = useState(null);
   const [notice, setNotice] = useState("");
   const rootRef = useRef(null);
@@ -32,6 +33,7 @@ export default function WeddingExperience() {
   useEffect(() => {
     const controller = new AbortController();
     const timer = setTimeout(() => { controller.abort(); setState({ data: null, error: true }); }, 30000);
+    setVisualReady(false);
     setState({ data: null, error: false });
     (async () => {
       try {
@@ -53,12 +55,35 @@ export default function WeddingExperience() {
   }, [attempt]);
 
   useEffect(() => {
-    if (data) reply("ready");
+    if (!data) return;
+    let cancelled = false;
+    let timeoutId;
+    const prepare = async () => {
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      if (cancelled) return;
+      const images = [...(rootRef.current?.querySelectorAll("img") || [])];
+      const imageTasks = images.map(img => img.complete ? Promise.resolve() : new Promise(resolve => {
+        img.addEventListener("load", resolve, { once: true });
+        img.addEventListener("error", resolve, { once: true });
+      }));
+      const fonts = document.fonts?.ready?.catch(() => {}) || Promise.resolve();
+      await Promise.race([
+        Promise.allSettled([...imageTasks, fonts]),
+        new Promise(resolve => { timeoutId = setTimeout(resolve, 8000); })
+      ]);
+      if (!cancelled) setVisualReady(true);
+    };
+    prepare();
+    return () => { cancelled = true; clearTimeout(timeoutId); };
+  }, [data]);
+
+  useEffect(() => {
+    if (data && visualReady) reply("ready");
     else if (state.error) reply("error");
     const receive = event => {
       if (event.origin !== window.location.origin || event.source !== window.parent || event.data?.channel !== EXPERIENCE_CHANNEL) return;
       const message = event.data;
-      if (message.type === "connect") { if (data) reply("ready"); else if (state.error) reply("error"); return; }
+      if (message.type === "connect") { if (data && visualReady) reply("ready"); else if (state.error) reply("error"); return; }
       if (!data || message.type !== "select" || !isExperienceFeature(message.feature) || !Number.isSafeInteger(message.id) || message.id <= lastCommand.current) return;
       lastCommand.current = message.id;
       setNotice("");
@@ -96,7 +121,7 @@ export default function WeddingExperience() {
       document.removeEventListener("auxclick", blockLink, true);
       document.removeEventListener("submit", blockSubmit, true);
     };
-  }, [data, state.error]);
+  }, [data, state.error, visualReady]);
 
   if (!data) return <main className="dd-experience-page-status" role={state.error ? "alert" : "status"}>{state.error ? <><p>초대장을 불러오지 못했어요.</p><button type="button" onClick={() => setAttempt(value => value + 1)}>다시 시도</button></> : "초대장을 불러오는 중이에요."}</main>;
   const { item, templateConfig, templateAssets, eventTypeConfig } = data;
