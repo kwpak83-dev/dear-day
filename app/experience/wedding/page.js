@@ -20,9 +20,17 @@ import "./experience.css";
 export default function WeddingExperience() {
   const [state, setState] = useState({ data: null, error: false });
   const [attempt, setAttempt] = useState(0);
+  const [visualReady, setVisualReady] = useState(false);
   const [sheetRequest, setSheetRequest] = useState(null);
   const [notice, setNotice] = useState("");
   const rootRef = useRef(null);
+  const noticeTimerRef = useRef(null);
+  const showToast = (message) => {
+    clearTimeout(noticeTimerRef.current);
+    setNotice(message);
+    noticeTimerRef.current = setTimeout(() => setNotice(""), 2500);
+  };
+  useEffect(() => () => clearTimeout(noticeTimerRef.current), []);
   const lastCommand = useRef(0);
   const data = state.data;
   const reply = (type, extra = {}) => {
@@ -32,6 +40,7 @@ export default function WeddingExperience() {
   useEffect(() => {
     const controller = new AbortController();
     const timer = setTimeout(() => { controller.abort(); setState({ data: null, error: true }); }, 30000);
+    setVisualReady(false);
     setState({ data: null, error: false });
     (async () => {
       try {
@@ -53,14 +62,38 @@ export default function WeddingExperience() {
   }, [attempt]);
 
   useEffect(() => {
-    if (data) reply("ready");
+    if (!data) return;
+    let cancelled = false;
+    let timeoutId;
+    const prepare = async () => {
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      if (cancelled) return;
+      const images = [...(rootRef.current?.querySelectorAll('img[fetchpriority="high"], img[loading="eager"]') || [])];
+      const imageTasks = images.map(img => img.complete ? Promise.resolve() : new Promise(resolve => {
+        img.addEventListener("load", resolve, { once: true });
+        img.addEventListener("error", resolve, { once: true });
+      }));
+      const fonts = document.fonts?.ready?.catch(() => {}) || Promise.resolve();
+      await Promise.race([
+        Promise.allSettled([...imageTasks, fonts]),
+        new Promise(resolve => { timeoutId = setTimeout(resolve, 8000); })
+      ]);
+      if (!cancelled) setVisualReady(true);
+    };
+    prepare();
+    return () => { cancelled = true; clearTimeout(timeoutId); };
+  }, [data]);
+
+  useEffect(() => {
+    if (data && visualReady) reply("ready");
     else if (state.error) reply("error");
     const receive = event => {
       if (event.origin !== window.location.origin || event.source !== window.parent || event.data?.channel !== EXPERIENCE_CHANNEL) return;
       const message = event.data;
-      if (message.type === "connect") { if (data) reply("ready"); else if (state.error) reply("error"); return; }
+      if (message.type === "connect") { if (data && visualReady) reply("ready"); else if (state.error) reply("error"); return; }
       if (!data || message.type !== "select" || !isExperienceFeature(message.feature) || !Number.isSafeInteger(message.id) || message.id <= lastCommand.current) return;
       lastCommand.current = message.id;
+      clearTimeout(noticeTimerRef.current);
       setNotice("");
       const fields = data.eventTypeConfig.fields || {};
       const sample = data.item.sample_content;
@@ -72,7 +105,7 @@ export default function WeddingExperience() {
       const target = EXPERIENCE_TARGETS[message.feature] && rootRef.current?.querySelector(EXPERIENCE_TARGETS[message.feature]);
       if (!target) {
         const text = "이 샘플에는 선택한 기능이 준비되어 있지 않아요.";
-        setNotice(text); reply("notice", { id: message.id, message: text }); return;
+        showToast(text); reply("notice", { id: message.id, message: text }); return;
       }
       requestAnimationFrame(() => {
         if (lastCommand.current !== message.id) return;
@@ -84,7 +117,7 @@ export default function WeddingExperience() {
     const blockLink = event => {
       if (!event.target.closest?.("a[href]")) return;
       event.preventDefault(); event.stopImmediatePropagation();
-      setNotice("체험 화면에서는 전화·문자·외부 이동을 사용할 수 없어요.");
+      showToast("체험 화면에서는 전화·문자를 사용할 수 없어요.");
     };
     const blockSubmit = event => { event.preventDefault(); event.stopImmediatePropagation(); };
     document.addEventListener("click", blockLink, true);
@@ -96,7 +129,7 @@ export default function WeddingExperience() {
       document.removeEventListener("auxclick", blockLink, true);
       document.removeEventListener("submit", blockSubmit, true);
     };
-  }, [data, state.error]);
+  }, [data, state.error, visualReady]);
 
   if (!data) return <main className="dd-experience-page-status" role={state.error ? "alert" : "status"}>{state.error ? <><p>초대장을 불러오지 못했어요.</p><button type="button" onClick={() => setAttempt(value => value + 1)}>다시 시도</button></> : "초대장을 불러오는 중이에요."}</main>;
   const { item, templateConfig, templateAssets, eventTypeConfig } = data;
@@ -105,7 +138,7 @@ export default function WeddingExperience() {
   const config = { ...templateConfig, hero: { ...templateConfig.hero, intro: { ...templateConfig.hero?.intro, enabled: false } } };
   const gallery = (invitation.galleryImages || []).map((url, index) => ({ id: `experience-${index}`, url }));
   return <main ref={rootRef} className="public-invitation shared-public-invitation dd-landing-experience-document">
-    {notice && <p className="dd-experience-page-notice" role="status"><span>{notice}</span><button type="button" aria-label="안내 닫기" onClick={() => setNotice("")}>×</button></p>}
+    {notice && <p className="dd-experience-page-notice" role="status">{notice}</p>}
     <TemplatePreviewCanvas stageClassName="dd-experience-preview-stage" canvasClassName="dd-experience-preview-canvas"><InvitationRenderer invitation={invitation} eventKind="wedding" eventTypeConfig={eventTypeConfig} templateId={item.body_template_id} templateConfig={config} templateAssets={templateAssets} placeActions={<InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView deferUntilVisible />}>
       <div className="public-invitation-sections">
         <ParentsIntro invitation={invitation} eventKind="wedding" eventTypeConfig={eventTypeConfig} />

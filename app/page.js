@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../lib/supabase/browser";
 import { DEFAULT_AUTH_RETURN_PATH, getSafeAuthReturnPath } from "../lib/auth-return-url";
 import DearDayLogo from "../components/dearday-logo";
+import InvitationProgram from "../components/invitation/invitation-program";
+import { PROGRAM_DEFAULTS, normalizeProgram } from "../lib/invitation-program";
 import LandingInvitationExperience from "../components/landing-invitation-experience";
 import "./landing-refresh.css";
 
@@ -25,6 +27,7 @@ const steps = [["01", "▧", "템플릿 선택", "마음에 드는 디자인을 
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [landingProgramStyle, setLandingProgramStyle] = useState("editorial");
   const heroButtonsRef = useRef(null);
   const [showQuickButtons, setShowQuickButtons] = useState(false);
   const [showLandingTop, setShowLandingTop] = useState(false);
@@ -201,7 +204,7 @@ export default function Home() {
           <p>소중한 날을 더 아름답고 편리하게 만드는 DearDay의 핵심 기능을 만나보세요.</p>
         </header>
         {[
-          ["01", "THEMED DESIGN", "표지부터 본문까지, 하나의 이야기처럼.", "단순한 단색 배경을 넘어 표지와 본문이 자연스럽게 이어지는 테마형 디자인. 초대장의 첫 장면부터 마지막까지 하나의 분위기로 완성해요.", "theme"],
+          ["01", "THEMED DESIGN", "표지부터 본문, 화면 효과까지 하나의 테마로.", "단순히 배경만 바꾸는 디자인이 아닙니다. 표지와 본문은 물론, 각 테마에 어울리는 흩날림 효과까지 자연스럽게 이어져 초대장 전체를 하나의 분위기로 완성합니다.", "theme"],
           ["02", "EVENT PROGRAM", "식순지까지 담은 초대장, 준비는 더 간편하게.", "결혼식부터 돌잔치, 칠순, 각종 행사까지. 별도의 식순지를 인쇄하거나 배포할 필요 없이, 모바일 초대장 하나로 행사 순서를 아름답고 편리하게 안내해요.", "program"],
           ["03", "INSTANT PREVIEW", "작성하면서 바로 확인, 더 쉽고 편리하게.", "인사말부터 표지 문구, 인트로, 행사 식순까지. 전체 미리보기 화면을 오갈 필요 없이, 편집 중인 부분을 팝업 미리보기로 바로 확인하며 완성할 수 있어요.", "preview"],
           ["04", "SPECIAL EFFECTS", "초대장을 여는 순간, 감동이 시작돼요.", "인트로와 배경음악, 테마에 어울리는 특별한 연출까지. 카페 오픈 초대장에 커피콩이 떨어지는 효과처럼 행사마다 색다른 분위기를 전해요.", "effects"],
@@ -215,7 +218,16 @@ export default function Home() {
                 <div className="dd-feature-demo-top"><span>DearDay</span><span>✦</span></div>
                 <div className="dd-feature-demo-content">
                   <span className="dd-feature-demo-kicker">{eyebrow}</span>
-                  {kind === "program" ? <div className="dd-feature-program"><strong>오늘의 행사 순서</strong><span>01 · 손님 맞이</span><span>02 · 행사 시작</span><span>03 · 축하와 인사</span><span>04 · 기념 촬영</span></div> :
+                  {kind === "program" ? <div className="dd-landing-program-demo">
+                    <div className="dd-landing-program-switch" role="group" aria-label="식순 디자인 선택">
+                      <button type="button" className={landingProgramStyle === "editorial" ? "is-active" : ""} aria-pressed={landingProgramStyle === "editorial"} onClick={() => setLandingProgramStyle("editorial")}>감성 타임라인</button>
+                      <button type="button" className={landingProgramStyle === "card" ? "is-active" : ""} aria-pressed={landingProgramStyle === "card"} onClick={() => setLandingProgramStyle("card")}>카드형</button>
+                    </div>
+                    <div className="dd-landing-program-scroll" aria-label="예식 식순 디자인 미리보기"><div className="dd-landing-program-canvas dd-program-preview-content invitation-bottom-sheet--program invitation-bottom-sheet--program-editorial">
+                      <InvitationProgram eventKind="wedding" program={normalizeProgram({enabled:true,title:PROGRAM_DEFAULTS.wedding.title,displayMode:"number",style:landingProgramStyle,items:PROGRAM_DEFAULTS.wedding.items.slice(0,5).map((item,index)=>({id:`landing-program-${index+1}`,title:item.title,description:item.description||"",time:"",iconId:item.iconId||""}))})} />
+                    </div></div>
+                    <p className="dd-landing-program-note">식순 디자인을 전환해 보세요</p>
+                  </div> :
                     kind === "preview" ? <div className="dd-feature-program"><strong>✦ 초대 문구 미리보기</strong><span>인사말을 작성하고</span><span>↗ 필요한 부분만 바로 확인</span><span>♡ 화면 이동 없이 완성해요</span></div> :
                     kind === "rsvp" ? <div className="dd-feature-program"><strong>참석 여부 확인</strong><span>○ 참석할게요</span><span>○ 참석이 어려워요</span><span>축하 메시지를 남겨주세요 ♡</span></div> :
                     kind === "occasions" ? <div className="dd-feature-occasion-grid"><span>결혼식</span><span>돌잔치</span><span>생일</span><span>환갑·칠순·팔순</span><span>모임·행사</span><span>개업·오픈</span></div> :
@@ -229,7 +241,7 @@ export default function Home() {
               <h3>{title}</h3>
               <p>{description}</p>
               <ul className="dd-feature-checks">
-                {(kind === "theme" ? ["표지와 본문이 이어지는 테마형 디자인", "처음부터 끝까지 통일된 분위기"] :
+                {(kind === "theme" ? ["표지·본문·화면 효과가 연결되는 테마형 디자인", "처음부터 마지막까지 일관된 분위기"] :
                   kind === "program" ? ["행사 유형에 맞춘 식순·일정 안내", "클립아트와 감성 타임라인"] :
                   kind === "preview" ? ["전체 화면 이동 없이, 필요한 부분만 미리보기", "작성과 동시에 확인하고 바로 수정"] :
                   kind === "effects" ? ["인트로와 배경음악으로 감성 연출", "행사 테마별 애니메이션·특수효과"] :
@@ -237,7 +249,7 @@ export default function Home() {
                   kind === "occasions" ? ["인생의 주요 순간부터 모임·개업까지", "행사별 테마와 맞춤 연출"] :
                   ["발행 후 내용과 사진 수정", "발행 후에도 디자인 변경"]).map((benefit) => <li key={benefit}><span aria-hidden="true">✓</span>{benefit}</li>)}
               </ul>
-              <span className="dd-feature-pill">{kind === "theme" ? "표지·본문이 이어지는 테마 디자인" : kind === "program" ? "감성적인 식순·일정 안내" : kind === "preview" ? "편집 중 바로 확인하는 실시간 미리보기" : kind === "effects" ? "테마마다 다른 특별한 연출" : kind === "rsvp" ? "참석 관리 · 식사 기능 확장 예정" : kind === "occasions" ? "인생의 모든 특별한 날에" : "발행 후에도 유연하게 변경"}</span>
+              <span className="dd-feature-pill">{kind === "theme" ? "표지부터 화면 효과까지, 하나의 테마" : kind === "program" ? "감성적인 식순·일정 안내" : kind === "preview" ? "편집 중 바로 확인하는 실시간 미리보기" : kind === "effects" ? "테마마다 다른 특별한 연출" : kind === "rsvp" ? "참석 관리 · 식사 기능 확장 예정" : kind === "occasions" ? "인생의 모든 특별한 날에" : "발행 후에도 유연하게 변경"}</span>
             </div>
           </article>
         ))}

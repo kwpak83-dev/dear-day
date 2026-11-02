@@ -3676,7 +3676,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .create-user .dd-header-save:disabled { opacity:.45; cursor:not-allowed; }
 .create-page .dd-preview-float, .create-page .dd-preview-close-float { position:fixed; bottom:max(16px, env(safe-area-inset-bottom)); z-index:1100; min-height:32px; border-radius:999px; padding:6px 12px; font-family:Pretendard, sans-serif; font-size:11px; font-weight:500; line-height:18px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.09); }
 .create-page .dd-preview-float { left:16px; background:#fff; color:#dc7885; border:1px solid #dedede; }
-.create-page .dd-preview-close-float { right:16px; background:#333; color:#fff; border:1px solid #333; }
+.create-page .dd-preview-close-float { right:16px; bottom:calc(max(12px, env(safe-area-inset-bottom)) + 48px); background:#333; color:#fff; border:1px solid #333; }
 @media (max-width:600px) { .create-page .create-user { gap:12px; } .create-page .create-user a, .create-page .create-user .dd-header-save { font-size:12px; } }
 
 /* DearDay editor header: reference-inspired compact alignment and typography. */
@@ -4663,7 +4663,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 @keyframes dd-bee-bob{0%,100%{transform:translateY(-2px) rotate(-3deg)}50%{transform:translateY(2px) rotate(3deg)}}
 @media(prefers-reduced-motion:reduce){.dd-love-story-bee img{animation:none!important}.dd-love-story-bee{transition:none!important}}
 
-.dd-love-story-bee-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:29px;line-height:1}
+.dd-love-story-bee .dd-love-story-bee-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:29px;line-height:1}
 .dd-love-story-bee img{position:relative;z-index:1}
 
 /* Milestone-based bee flight: larger bee, smooth hops between story dots. */

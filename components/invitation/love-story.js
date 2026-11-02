@@ -1,9 +1,10 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function LoveStory({ invitation }) {
   const listRef = useRef(null);
   const beeRef = useRef(null);
+  const [failedClipart, setFailedClipart] = useState(null);
   const clipart = ["none", "bee", "heart", "star"].includes(invitation?.loveStory?.movingClipart) ? invitation.loveStory.movingClipart : (invitation?.loveStory?.beeEnabled === true ? "bee" : "none");
   const beeEnabled = clipart !== "none";
   useEffect(() => {
@@ -23,13 +24,22 @@ export default function LoveStory({ invitation }) {
       const viewTop = bounds ? Math.max(0, bounds.top) : 0;
       const viewBottom = bounds ? Math.min(window.innerHeight, bounds.bottom) : window.innerHeight;
       const focus = viewTop + Math.max(0, viewBottom - viewTop) * .55;
-      // Snap to the nearest milestone rather than following every scroll pixel.
-      // Midpoints between adjacent dots determine when the bee flies to the next stop.
+      // Park exactly on a milestone. Use the dot nearest the visible focus,
+      // never a continuously interpolated position between two dots.
       let index = 0;
-      for (let i = 0; i < centers.length - 1; i++) {
-        if (focus >= (centers[i] + centers[i + 1]) / 2) index = i + 1;
-      }
-      bee.style.top = (centers[index] - listRect.top) + "px";
+      let nearestDistance = Infinity;
+      centers.forEach((center, i) => {
+        const distance = Math.abs(center - focus);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          index = i;
+        }
+      });
+      // CSS top uses layout coordinates, not scaled viewport pixels.
+      // The milestone dot is centered at 50% of its positioned item.
+      const milestone = dots[index].parentElement;
+      const dotOffset = milestone.offsetTop + milestone.offsetHeight / 2;
+      bee.style.top = dotOffset + "px";
       bee.style.opacity = listRect.bottom > viewTop && listRect.top < viewBottom ? "1" : "0";
       // Keep the bee still at each milestone; only its travel is animated.
     };
@@ -52,6 +62,6 @@ export default function LoveStory({ invitation }) {
       <div className="dd-love-story-dot" aria-hidden="true" />
       {item.photoUrl && <div className="dd-love-story-photo"><img src={item.photoUrl} alt={item.title || "러브스토리 사진"} loading="lazy" /></div>}
       <div className="dd-love-story-copy">{item.date && <time>{item.date}</time>}{item.title && <h3>{item.title}</h3>}{item.description && <p>{item.description}</p>}</div>
-    </article>)}{beeEnabled && <span className="dd-love-story-bee" ref={beeRef} aria-hidden="true"><span className="dd-love-story-bee-fallback">{clipart === "heart" ? "❤️" : clipart === "star" ? "⭐" : "🐝"}</span><img src={clipart === "heart" ? "/images/love-story-heart.webp" : clipart === "star" ? "/images/love-story-star.webp" : "/images/love-story-bee.webp"} alt="" onError={event => { event.currentTarget.style.display = "none"; }} /></span>}</div>
+    </article>)}{beeEnabled && <span className="dd-love-story-bee" ref={beeRef} aria-hidden="true">{failedClipart === clipart && <span className="dd-love-story-bee-fallback">{clipart === "heart" ? "❤️" : clipart === "star" ? "⭐" : "🐝"}</span>}<img key={clipart} src={clipart === "heart" ? "/images/love-story-heart.webp" : clipart === "star" ? "/images/love-story-star.webp" : "/images/love-story-bee.webp"} alt="" onLoad={() => setFailedClipart(null)} onError={() => setFailedClipart(clipart)} /></span>}</div>
   </section>;
 }

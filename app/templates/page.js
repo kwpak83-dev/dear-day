@@ -6,7 +6,7 @@ import { completedTemplateCategoryToEventKind } from "../../lib/completed-templa
 
 const EyeIcon=()=> <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>;
 const ExternalLinkIcon=()=> <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M13 5h6v6"/><path d="m19 5-9 9"/><path d="M19 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>;
-const categories=[["wedding","결혼식"],["first-birthday","돌잔치"],["birthday","생일"],["milestone_birthday","환갑·칠순·팔순"],["gathering","모임·행사"],["opening","개업·오픈"],["","전체"]];
+const categories=[["wedding","결혼식"],["first-birthday","돌잔치"],["birthday","생 일"],["milestone_birthday","환갑·칠순·팔순"],["gathering","모임·행사"],["opening","개업·오픈"],["","전체"]];
 export default function TemplateCollectionPage(){
  const [items,setItems]=useState([]);
  const [menuOpen,setMenuOpen]=useState(false);

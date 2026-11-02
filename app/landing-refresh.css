@@ -2328,3 +2328,117 @@
 
 /* Naver Smart Store brand mark in the purchase row. */
 .landing-v2 .dd-home-drawer .dd-drawer-link>.dd-drawer-store-icon img{display:block;width:32px;height:auto;max-width:none;object-fit:contain}
+
+
+/* Homepage EVENT PROGRAM demo: read-only shared invitation renderer. */
+.landing-v2 .dd-feature-program + .dd-landing-program-demo{width:100%}
+.landing-v2 .dd-feature-program:has(.dd-landing-program-demo){padding:0}
+.landing-v2 .dd-feature-program .dd-landing-program-demo{width:100%}
+.landing-v2 .dd-feature-demo:has(.dd-landing-program-demo){width:min(100%,340px)}
+.landing-v2 .dd-feature-demo-content:has(.dd-landing-program-demo){padding:14px 10px;gap:9px;justify-content:flex-start}
+.landing-v2 .dd-landing-program-demo{width:100%;min-width:0}
+.landing-v2 .dd-landing-program-switch{display:flex;gap:4px;background:#f4f0eb;border-radius:999px;padding:4px;margin:0 0 10px}
+.landing-v2 .dd-landing-program-switch button{flex:1;min-width:0;border:0;border-radius:999px;padding:9px 3px;background:transparent;color:#6c625b;font-size:11px;cursor:pointer}
+.landing-v2 .dd-landing-program-switch button.is-active{background:#fff;color:#352b26;font-weight:700;box-shadow:0 1px 5px #00000012}
+.landing-v2 .dd-landing-program-switch button:focus-visible{outline:2px solid #a67b61;outline-offset:2px}
+.landing-v2 .dd-landing-program-scroll{height:285px;overflow:auto;overscroll-behavior:contain;border:1px solid #eee5dc;border-radius:9px;background:#fff;text-align:left}
+.landing-v2 .dd-landing-program-scroll .invitation-program{width:100%;max-width:none;margin:0;transform:none}
+.landing-v2 .dd-landing-program-note{margin:8px 0 0;font-size:10px;color:#8b8179;text-align:center}
+
+
+/* EVENT PROGRAM: preserve the real invitation layout at a fixed design width,
+   then scale the entire preview rather than squeezing its columns. */
+.landing-v2 .dd-feature-program .dd-feature-visual{min-width:0}
+.landing-v2 .dd-feature-program .dd-feature-demo{max-width:100%}
+.landing-v2 .dd-feature-demo:has(.dd-landing-program-demo){width:min(100%,390px);max-width:100%}
+.landing-v2 .dd-feature-demo-content:has(.dd-landing-program-demo){min-width:0;padding:14px 10px;box-sizing:border-box}
+.landing-v2 .dd-landing-program-scroll{height:350px;overflow:auto;overflow-x:hidden}
+.landing-v2 .dd-landing-program-canvas{width:390px;max-width:none;zoom:.81;box-sizing:border-box}
+.landing-v2 .dd-landing-program-canvas .invitation-program{box-sizing:border-box;max-width:100%}
+.landing-v2 .dd-landing-program-canvas .invitation-program-list>li{min-width:0}
+.landing-v2 .dd-landing-program-canvas .invitation-program-card{min-width:0}
+.landing-v2 .dd-landing-program-canvas .invitation-program-editorial-list{max-width:390px}
+@media(max-width:800px){
+ .landing-v2 .dd-feature-program .dd-feature-visual{padding:16px 8px}
+ .landing-v2 .dd-feature-demo:has(.dd-landing-program-demo){width:100%;max-width:390px}
+ .landing-v2 .dd-landing-program-canvas{zoom:.72}
+ .landing-v2 .dd-landing-program-scroll{height:350px}
+}
+@media(max-width:360px){
+ .landing-v2 .dd-landing-program-canvas{zoom:.66}
+}
+
+
+/* The landing preview uses the same bottom-sheet program layout, not the
+   bare renderer's legacy three-column grid. Keep its content legible. */
+.landing-v2 .dd-feature-demo:has(.dd-landing-program-demo){width:min(100%,420px)}
+.landing-v2 .dd-feature-demo-content:has(.dd-landing-program-demo){padding:12px 8px}
+.landing-v2 .dd-landing-program-canvas{width:340px;zoom:1}
+.landing-v2 .dd-landing-program-scroll{height:410px}
+.landing-v2 .dd-landing-program-canvas.invitation-bottom-sheet--program .invitation-program{padding:8px 10px 24px}
+.landing-v2 .dd-landing-program-canvas .invitation-program-card-copy{min-width:0;flex:1}
+.landing-v2 .dd-landing-program-canvas .invitation-program-card-copy .invitation-program-title{width:100%;min-width:0}
+@media(max-width:800px){
+ .landing-v2 .dd-feature-demo:has(.dd-landing-program-demo){width:100%;max-width:420px}
+ .landing-v2 .dd-landing-program-canvas{width:340px;zoom:.9}
+ .landing-v2 .dd-landing-program-scroll{height:390px}
+}
+@media(max-width:360px){
+ .landing-v2 .dd-landing-program-canvas{zoom:.8}
+}
+
+
+/* EVENT PROGRAM: the article also has dd-feature-program; the old placeholder
+   rule gave the whole article 18px side padding and squeezed its preview.
+   Override that legacy placeholder rule only for this feature. */
+.landing-v2 .dd-feature.dd-feature-program{
+  width:100%;box-sizing:border-box;background:transparent;padding:0;
+}
+.landing-v2 .dd-feature.dd-feature-program .dd-feature-visual{
+  min-width:0;box-sizing:border-box;
+}
+.landing-v2 .dd-feature.dd-feature-program .dd-feature-demo{
+  width:100%;max-width:440px;min-width:0;box-sizing:border-box;
+}
+.landing-v2 .dd-feature.dd-feature-program .dd-feature-demo-content{
+  width:100%;box-sizing:border-box;padding:12px 10px;
+}
+.landing-v2 .dd-feature.dd-feature-program .dd-landing-program-scroll{
+  width:100%;box-sizing:border-box;overflow-x:hidden;
+}
+.landing-v2 .dd-feature.dd-feature-program .dd-landing-program-canvas{
+  width:100%;max-width:100%;zoom:1;
+}
+.landing-v2 .dd-feature.dd-feature-program .invitation-program-editorial-list>li{
+  grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr);
+}
+.landing-v2 .dd-feature.dd-feature-program .invitation-program-editorial-center svg{
+  max-width:46px;
+}
+@media(max-width:800px){
+  .landing-v2 .dd-feature.dd-feature-program{
+    padding:8px 6px 24px!important;
+  }
+  .landing-v2 .dd-feature.dd-feature-program .dd-feature-visual{
+    padding:8px 4px!important;
+  }
+  .landing-v2 .dd-feature.dd-feature-program .dd-feature-demo-content{
+    padding:10px 8px;
+  }
+  .landing-v2 .dd-feature.dd-feature-program .dd-landing-program-canvas{
+    width:100%;zoom:1;
+  }
+}
+
+
+/* Widen only feature 02's EVENT PROGRAM frame by 15px per side on mobile. */
+@media(max-width:800px){
+  .landing-v2 .dd-feature.dd-feature-program{padding-left:0!important;padding-right:0!important}
+  .landing-v2 .dd-feature.dd-feature-program .dd-feature-visual{
+    width:calc(100% + 18px)!important;
+    margin-left:-9px;
+    margin-right:-9px;
+    padding-left:2px!important;
+    padding-right:2px!important;
+  }
+}
