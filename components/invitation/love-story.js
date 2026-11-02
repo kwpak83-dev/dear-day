@@ -34,7 +34,10 @@ export default function LoveStory({ invitation }) {
           index = i;
         }
       });
-      const dotOffset = centers[index] - listRect.top;
+      // CSS top uses layout coordinates, not scaled viewport pixels.
+      // The milestone dot is centered at 50% of its positioned item.
+      const milestone = dots[index].parentElement;
+      const dotOffset = milestone.offsetTop + milestone.offsetHeight / 2;
       bee.style.top = dotOffset + "px";
       bee.style.opacity = listRect.bottom > viewTop && listRect.top < viewBottom ? "1" : "0";
       // Keep the bee still at each milestone; only its travel is animated.
