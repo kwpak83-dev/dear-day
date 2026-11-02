@@ -223,7 +223,7 @@ export default function Home() {
                       <button type="button" className={landingProgramStyle === "editorial" ? "is-active" : ""} aria-pressed={landingProgramStyle === "editorial"} onClick={() => setLandingProgramStyle("editorial")}>감성 타임라인</button>
                       <button type="button" className={landingProgramStyle === "card" ? "is-active" : ""} aria-pressed={landingProgramStyle === "card"} onClick={() => setLandingProgramStyle("card")}>카드형</button>
                     </div>
-                    <div className="dd-landing-program-scroll" aria-label="예식 식순 디자인 미리보기"><div className="dd-landing-program-canvas dd-program-preview-content">
+                    <div className="dd-landing-program-scroll" aria-label="예식 식순 디자인 미리보기"><div className="dd-landing-program-canvas dd-program-preview-content invitation-bottom-sheet--program invitation-bottom-sheet--program-editorial">
                       <InvitationProgram eventKind="wedding" program={normalizeProgram({enabled:true,title:PROGRAM_DEFAULTS.wedding.title,displayMode:"number",style:landingProgramStyle,items:PROGRAM_DEFAULTS.wedding.items.slice(0,5).map((item,index)=>({id:`landing-program-${index+1}`,title:item.title,description:item.description||"",time:"",iconId:item.iconId||""}))})} />
                     </div></div>
                     <p className="dd-landing-program-note">식순 디자인을 전환해 보세요</p>
