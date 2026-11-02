@@ -2328,3 +2328,19 @@
 
 /* Naver Smart Store brand mark in the purchase row. */
 .landing-v2 .dd-home-drawer .dd-drawer-link>.dd-drawer-store-icon img{display:block;width:32px;height:auto;max-width:none;object-fit:contain}
+
+
+/* Homepage EVENT PROGRAM demo: read-only shared invitation renderer. */
+.landing-v2 .dd-feature-program + .dd-landing-program-demo{width:100%}
+.landing-v2 .dd-feature-program:has(.dd-landing-program-demo){padding:0}
+.landing-v2 .dd-feature-program .dd-landing-program-demo{width:100%}
+.landing-v2 .dd-feature-demo:has(.dd-landing-program-demo){width:min(100%,340px)}
+.landing-v2 .dd-feature-demo-content:has(.dd-landing-program-demo){padding:14px 10px;gap:9px;justify-content:flex-start}
+.landing-v2 .dd-landing-program-demo{width:100%;min-width:0}
+.landing-v2 .dd-landing-program-switch{display:flex;gap:4px;background:#f4f0eb;border-radius:999px;padding:4px;margin:0 0 10px}
+.landing-v2 .dd-landing-program-switch button{flex:1;min-width:0;border:0;border-radius:999px;padding:9px 3px;background:transparent;color:#6c625b;font-size:11px;cursor:pointer}
+.landing-v2 .dd-landing-program-switch button.is-active{background:#fff;color:#352b26;font-weight:700;box-shadow:0 1px 5px #00000012}
+.landing-v2 .dd-landing-program-switch button:focus-visible{outline:2px solid #a67b61;outline-offset:2px}
+.landing-v2 .dd-landing-program-scroll{height:285px;overflow:auto;overscroll-behavior:contain;border:1px solid #eee5dc;border-radius:9px;background:#fff;text-align:left}
+.landing-v2 .dd-landing-program-scroll .invitation-program{width:100%;max-width:none;margin:0;transform:none}
+.landing-v2 .dd-landing-program-note{margin:8px 0 0;font-size:10px;color:#8b8179;text-align:center}
