@@ -61,7 +61,7 @@ export default function WeddingExperience() {
     const prepare = async () => {
       await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
       if (cancelled) return;
-      const images = [...(rootRef.current?.querySelectorAll(".classic-hero img, .romantic-hero img, .modern-hero img, .dd-template-hero-frame") || [])];
+      const images = [...(rootRef.current?.querySelectorAll('img[fetchpriority="high"], img[loading="eager"]') || [])];
       const imageTasks = images.map(img => img.complete ? Promise.resolve() : new Promise(resolve => {
         img.addEventListener("load", resolve, { once: true });
         img.addEventListener("error", resolve, { once: true });
