@@ -24,6 +24,13 @@ export default function WeddingExperience() {
   const [sheetRequest, setSheetRequest] = useState(null);
   const [notice, setNotice] = useState("");
   const rootRef = useRef(null);
+  const noticeTimerRef = useRef(null);
+  const showToast = (message) => {
+    clearTimeout(noticeTimerRef.current);
+    setNotice(message);
+    noticeTimerRef.current = setTimeout(() => setNotice(""), 2500);
+  };
+  useEffect(() => () => clearTimeout(noticeTimerRef.current), []);
   const lastCommand = useRef(0);
   const data = state.data;
   const reply = (type, extra = {}) => {
@@ -86,6 +93,7 @@ export default function WeddingExperience() {
       if (message.type === "connect") { if (data && visualReady) reply("ready"); else if (state.error) reply("error"); return; }
       if (!data || message.type !== "select" || !isExperienceFeature(message.feature) || !Number.isSafeInteger(message.id) || message.id <= lastCommand.current) return;
       lastCommand.current = message.id;
+      clearTimeout(noticeTimerRef.current);
       setNotice("");
       const fields = data.eventTypeConfig.fields || {};
       const sample = data.item.sample_content;
@@ -97,7 +105,7 @@ export default function WeddingExperience() {
       const target = EXPERIENCE_TARGETS[message.feature] && rootRef.current?.querySelector(EXPERIENCE_TARGETS[message.feature]);
       if (!target) {
         const text = "이 샘플에는 선택한 기능이 준비되어 있지 않아요.";
-        setNotice(text); reply("notice", { id: message.id, message: text }); return;
+        showToast(text); reply("notice", { id: message.id, message: text }); return;
       }
       requestAnimationFrame(() => {
         if (lastCommand.current !== message.id) return;
@@ -109,7 +117,7 @@ export default function WeddingExperience() {
     const blockLink = event => {
       if (!event.target.closest?.("a[href]")) return;
       event.preventDefault(); event.stopImmediatePropagation();
-      setNotice("체험 화면에서는 전화·문자·외부 이동을 사용할 수 없어요.");
+      showToast("체험 화면에서는 전화·문자를 사용할 수 없어요.");
     };
     const blockSubmit = event => { event.preventDefault(); event.stopImmediatePropagation(); };
     document.addEventListener("click", blockLink, true);
@@ -130,7 +138,7 @@ export default function WeddingExperience() {
   const config = { ...templateConfig, hero: { ...templateConfig.hero, intro: { ...templateConfig.hero?.intro, enabled: false } } };
   const gallery = (invitation.galleryImages || []).map((url, index) => ({ id: `experience-${index}`, url }));
   return <main ref={rootRef} className="public-invitation shared-public-invitation dd-landing-experience-document">
-    {notice && <p className="dd-experience-page-notice" role="status"><span>{notice}</span><button type="button" aria-label="안내 닫기" onClick={() => setNotice("")}>×</button></p>}
+    {notice && <p className="dd-experience-page-notice" role="status">{notice}</p>}
     <TemplatePreviewCanvas stageClassName="dd-experience-preview-stage" canvasClassName="dd-experience-preview-canvas"><InvitationRenderer invitation={invitation} eventKind="wedding" eventTypeConfig={eventTypeConfig} templateId={item.body_template_id} templateConfig={config} templateAssets={templateAssets} placeActions={<InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView deferUntilVisible />}>
       <div className="public-invitation-sections">
         <ParentsIntro invitation={invitation} eventKind="wedding" eventTypeConfig={eventTypeConfig} />
