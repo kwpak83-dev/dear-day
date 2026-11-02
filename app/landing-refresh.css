@@ -2367,3 +2367,22 @@
 @media(max-width:360px){
  .landing-v2 .dd-landing-program-canvas{zoom:.66}
 }
+
+
+/* The landing preview uses the same bottom-sheet program layout, not the
+   bare renderer's legacy three-column grid. Keep its content legible. */
+.landing-v2 .dd-feature-demo:has(.dd-landing-program-demo){width:min(100%,420px)}
+.landing-v2 .dd-feature-demo-content:has(.dd-landing-program-demo){padding:12px 8px}
+.landing-v2 .dd-landing-program-canvas{width:340px;zoom:1}
+.landing-v2 .dd-landing-program-scroll{height:410px}
+.landing-v2 .dd-landing-program-canvas.invitation-bottom-sheet--program .invitation-program{padding:8px 10px 24px}
+.landing-v2 .dd-landing-program-canvas .invitation-program-card-copy{min-width:0;flex:1}
+.landing-v2 .dd-landing-program-canvas .invitation-program-card-copy .invitation-program-title{width:100%;min-width:0}
+@media(max-width:800px){
+ .landing-v2 .dd-feature-demo:has(.dd-landing-program-demo){width:100%;max-width:420px}
+ .landing-v2 .dd-landing-program-canvas{width:340px;zoom:.9}
+ .landing-v2 .dd-landing-program-scroll{height:390px}
+}
+@media(max-width:360px){
+ .landing-v2 .dd-landing-program-canvas{zoom:.8}
+}
