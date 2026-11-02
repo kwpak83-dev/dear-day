@@ -2429,3 +2429,16 @@
     width:100%;zoom:1;
   }
 }
+
+
+/* Widen only feature 02's EVENT PROGRAM frame by 15px per side on mobile. */
+@media(max-width:800px){
+  .landing-v2 .dd-feature.dd-feature-program{padding-left:0!important;padding-right:0!important}
+  .landing-v2 .dd-feature.dd-feature-program .dd-feature-visual{
+    width:calc(100% + 18px)!important;
+    margin-left:-9px;
+    margin-right:-9px;
+    padding-left:2px!important;
+    padding-right:2px!important;
+  }
+}
