@@ -506,10 +506,10 @@
  .dd-showcase-page .dd-showcase-categories{
   display:flex!important;
   flex-wrap:nowrap!important;
-  justify-content:center!important;
+  justify-content:flex-start!important;
   align-items:center!important;
-  gap:3px!important;
-  padding:0 5px 3px!important;
+  gap:8px!important;
+  padding:0 12px 3px!important;
   margin-bottom:0!important;
   overflow-x:auto!important;
   max-width:100%!important;
