@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../lib/supabase/browser";
 import { DEFAULT_AUTH_RETURN_PATH, getSafeAuthReturnPath } from "../lib/auth-return-url";
 import DearDayLogo from "../components/dearday-logo";
+import InvitationProgram from "../components/invitation/invitation-program";
+import { PROGRAM_DEFAULTS, normalizeProgram } from "../lib/invitation-program";
 import LandingInvitationExperience from "../components/landing-invitation-experience";
 import "./landing-refresh.css";
 
@@ -25,6 +27,7 @@ const steps = [["01", "▧", "템플릿 선택", "마음에 드는 디자인을 
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [landingProgramStyle, setLandingProgramStyle] = useState("editorial");
   const heroButtonsRef = useRef(null);
   const [showQuickButtons, setShowQuickButtons] = useState(false);
   const [showLandingTop, setShowLandingTop] = useState(false);
@@ -215,7 +218,16 @@ export default function Home() {
                 <div className="dd-feature-demo-top"><span>DearDay</span><span>✦</span></div>
                 <div className="dd-feature-demo-content">
                   <span className="dd-feature-demo-kicker">{eyebrow}</span>
-                  {kind === "program" ? <div className="dd-feature-program"><strong>오늘의 행사 순서</strong><span>01 · 손님 맞이</span><span>02 · 행사 시작</span><span>03 · 축하와 인사</span><span>04 · 기념 촬영</span></div> :
+                  {kind === "program" ? <div className="dd-landing-program-demo">
+                    <div className="dd-landing-program-switch" role="group" aria-label="식순 디자인 선택">
+                      <button type="button" className={landingProgramStyle === "editorial" ? "is-active" : ""} aria-pressed={landingProgramStyle === "editorial"} onClick={() => setLandingProgramStyle("editorial")}>감성 타임라인</button>
+                      <button type="button" className={landingProgramStyle === "card" ? "is-active" : ""} aria-pressed={landingProgramStyle === "card"} onClick={() => setLandingProgramStyle("card")}>카드형</button>
+                    </div>
+                    <div className="dd-landing-program-scroll" aria-label="예식 식순 디자인 미리보기">
+                      <InvitationProgram eventKind="wedding" program={normalizeProgram({enabled:true,title:PROGRAM_DEFAULTS.wedding.title,displayMode:"number",style:landingProgramStyle,items:PROGRAM_DEFAULTS.wedding.items.slice(0,5).map((item,index)=>({id:`landing-program-${index+1}`,title:item.title,description:item.description||"",time:"",iconId:item.iconId||""}))})} />
+                    </div>
+                    <p className="dd-landing-program-note">식순 디자인을 전환해 보세요</p>
+                  </div> :
                     kind === "preview" ? <div className="dd-feature-program"><strong>✦ 초대 문구 미리보기</strong><span>인사말을 작성하고</span><span>↗ 필요한 부분만 바로 확인</span><span>♡ 화면 이동 없이 완성해요</span></div> :
                     kind === "rsvp" ? <div className="dd-feature-program"><strong>참석 여부 확인</strong><span>○ 참석할게요</span><span>○ 참석이 어려워요</span><span>축하 메시지를 남겨주세요 ♡</span></div> :
                     kind === "occasions" ? <div className="dd-feature-occasion-grid"><span>결혼식</span><span>돌잔치</span><span>생일</span><span>환갑·칠순·팔순</span><span>모임·행사</span><span>개업·오픈</span></div> :
