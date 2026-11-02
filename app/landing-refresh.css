@@ -2386,3 +2386,46 @@
 @media(max-width:360px){
  .landing-v2 .dd-landing-program-canvas{zoom:.8}
 }
+
+
+/* EVENT PROGRAM: the article also has dd-feature-program; the old placeholder
+   rule gave the whole article 18px side padding and squeezed its preview.
+   Override that legacy placeholder rule only for this feature. */
+.landing-v2 .dd-feature.dd-feature-program{
+  width:100%;box-sizing:border-box;background:transparent;padding:0;
+}
+.landing-v2 .dd-feature.dd-feature-program .dd-feature-visual{
+  min-width:0;box-sizing:border-box;
+}
+.landing-v2 .dd-feature.dd-feature-program .dd-feature-demo{
+  width:100%;max-width:440px;min-width:0;box-sizing:border-box;
+}
+.landing-v2 .dd-feature.dd-feature-program .dd-feature-demo-content{
+  width:100%;box-sizing:border-box;padding:12px 10px;
+}
+.landing-v2 .dd-feature.dd-feature-program .dd-landing-program-scroll{
+  width:100%;box-sizing:border-box;overflow-x:hidden;
+}
+.landing-v2 .dd-feature.dd-feature-program .dd-landing-program-canvas{
+  width:100%;max-width:100%;zoom:1;
+}
+.landing-v2 .dd-feature.dd-feature-program .invitation-program-editorial-list>li{
+  grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr);
+}
+.landing-v2 .dd-feature.dd-feature-program .invitation-program-editorial-center svg{
+  max-width:46px;
+}
+@media(max-width:800px){
+  .landing-v2 .dd-feature.dd-feature-program{
+    padding:8px 6px 24px!important;
+  }
+  .landing-v2 .dd-feature.dd-feature-program .dd-feature-visual{
+    padding:8px 4px!important;
+  }
+  .landing-v2 .dd-feature.dd-feature-program .dd-feature-demo-content{
+    padding:10px 8px;
+  }
+  .landing-v2 .dd-feature.dd-feature-program .dd-landing-program-canvas{
+    width:100%;zoom:1;
+  }
+}
