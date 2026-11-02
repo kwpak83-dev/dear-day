@@ -112,7 +112,7 @@ export default function GuestManagement() {
         <div className="guest-attendance-track" role="progressbar" aria-label="참석 응답 비율" aria-valuenow={attendanceRate} aria-valuemin={0} aria-valuemax={100}><div style={{width:`${attendanceRate}%`}} /></div>
         <p className="guest-attendance-caption">참석 응답 {summary.attending}건 · 전체 응답 대비 {attendanceRate}%</p>
         <div className="guest-overview-metrics">
-          <div><span className="guest-metric-icon" aria-hidden="true">💐</span><span>참석 인원</span><strong>{summary.partySize}명</strong></div>
+          <div><span className="guest-metric-icon" aria-hidden="true">👥</span><span>참석 인원</span><strong>{summary.partySize}명</strong></div>
           <div><span className="guest-metric-icon" aria-hidden="true">🍽️</span><span>식사</span><strong>{summary.mealCount || 0}명</strong></div>
           <div><span className="guest-metric-icon" aria-hidden="true">🚌</span><span>전세버스</span><strong>{summary.busCount || 0}명</strong></div>
           <div><span className="guest-metric-icon" aria-hidden="true">💌</span><span>불참 응답</span><strong>{summary.notAttending}건</strong></div>
