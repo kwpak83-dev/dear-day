@@ -23,13 +23,19 @@ export default function LoveStory({ invitation }) {
       const viewTop = bounds ? Math.max(0, bounds.top) : 0;
       const viewBottom = bounds ? Math.min(window.innerHeight, bounds.bottom) : window.innerHeight;
       const focus = viewTop + Math.max(0, viewBottom - viewTop) * .55;
-      // Snap to the nearest milestone rather than following every scroll pixel.
-      // Midpoints between adjacent dots determine when the bee flies to the next stop.
+      // Park exactly on a milestone. Use the dot nearest the visible focus,
+      // never a continuously interpolated position between two dots.
       let index = 0;
-      for (let i = 0; i < centers.length - 1; i++) {
-        if (focus >= (centers[i] + centers[i + 1]) / 2) index = i + 1;
-      }
-      bee.style.top = (centers[index] - listRect.top) + "px";
+      let nearestDistance = Infinity;
+      centers.forEach((center, i) => {
+        const distance = Math.abs(center - focus);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          index = i;
+        }
+      });
+      const dotOffset = centers[index] - listRect.top;
+      bee.style.top = dotOffset + "px";
       bee.style.opacity = listRect.bottom > viewTop && listRect.top < viewBottom ? "1" : "0";
       // Keep the bee still at each milestone; only its travel is animated.
     };
