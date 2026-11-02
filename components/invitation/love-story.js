@@ -1,9 +1,10 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function LoveStory({ invitation }) {
   const listRef = useRef(null);
   const beeRef = useRef(null);
+  const [failedClipart, setFailedClipart] = useState(null);
   const clipart = ["none", "bee", "heart", "star"].includes(invitation?.loveStory?.movingClipart) ? invitation.loveStory.movingClipart : (invitation?.loveStory?.beeEnabled === true ? "bee" : "none");
   const beeEnabled = clipart !== "none";
   useEffect(() => {
@@ -61,6 +62,6 @@ export default function LoveStory({ invitation }) {
       <div className="dd-love-story-dot" aria-hidden="true" />
       {item.photoUrl && <div className="dd-love-story-photo"><img src={item.photoUrl} alt={item.title || "러브스토리 사진"} loading="lazy" /></div>}
       <div className="dd-love-story-copy">{item.date && <time>{item.date}</time>}{item.title && <h3>{item.title}</h3>}{item.description && <p>{item.description}</p>}</div>
-    </article>)}{beeEnabled && <span className="dd-love-story-bee" ref={beeRef} aria-hidden="true"><span className="dd-love-story-bee-fallback">{clipart === "heart" ? "❤️" : clipart === "star" ? "⭐" : "🐝"}</span><img src={clipart === "heart" ? "/images/love-story-heart.webp" : clipart === "star" ? "/images/love-story-star.webp" : "/images/love-story-bee.webp"} alt="" onError={event => { event.currentTarget.style.display = "none"; }} /></span>}</div>
+    </article>)}{beeEnabled && <span className="dd-love-story-bee" ref={beeRef} aria-hidden="true">{failedClipart === clipart && <span className="dd-love-story-bee-fallback">{clipart === "heart" ? "❤️" : clipart === "star" ? "⭐" : "🐝"}</span>}<img key={clipart} src={clipart === "heart" ? "/images/love-story-heart.webp" : clipart === "star" ? "/images/love-story-star.webp" : "/images/love-story-bee.webp"} alt="" onLoad={() => setFailedClipart(null)} onError={() => setFailedClipart(clipart)} /></span>}</div>
   </section>;
 }
