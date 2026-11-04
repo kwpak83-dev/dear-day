@@ -278,7 +278,7 @@ async function saveEffectsBgmSafeArea(auth, body) {
   }
 
   if (body.bgm.mode === "shared") {
-    const { data: track, error: trackError } = await auth.adminClient.from("bgm_tracks")
+    const { data: track, error: trackError } = await auth.serverClient.from("bgm_tracks")
       .select("id,is_active").eq("id", body.bgm.assetId).maybeSingle();
     if (trackError) return fail("공용 BGM을 확인하지 못했어요.", 500);
     if (!track?.is_active) return fail("활성 공용 BGM만 지정할 수 있어요.", 400);
