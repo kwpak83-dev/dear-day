@@ -247,7 +247,8 @@ function validEffectsBgmSafeArea(effects, bgm, safeArea) {
     Number.isInteger(effects.scrollRevealTrigger) && effects.scrollRevealTrigger >= 10 && effects.scrollRevealTrigger <= 50 &&
     validScreenEffect(effects.screenEffect) &&
     ((hasOnlyKeys(bgm, ["mode", "assetId"]) && bgm.mode === "none" && bgm.assetId === null) ||
-      (hasOnlyKeys(bgm, ["mode", "assetId"]) && bgm.mode === "asset" && uuid.test(bgm.assetId || ""))) &&
+      (hasOnlyKeys(bgm, ["mode", "assetId"]) && bgm.mode === "asset" && uuid.test(bgm.assetId || "")) ||
+      (hasOnlyKeys(bgm, ["mode", "assetId"]) && bgm.mode === "shared" && uuid.test(bgm.assetId || ""))) &&
     hasOnlyKeys(safeArea, ["top", "right", "bottom", "left", "messageWidth", "sections"]) &&
     (safeArea.sections === undefined || (safeArea.sections && typeof safeArea.sections === "object" && !Array.isArray(safeArea.sections) && Object.keys(safeArea.sections).length === 7 && ["invitation","date","place","gallery","account","coupleIntro","loveStory"].every(key => { const section=safeArea.sections[key]; return section && typeof section==="object" && !Array.isArray(section) && Object.keys(section).every(k=>["enabled","top","right","bottom","left",...(key==="invitation"?["messageWidth"]:[]),...(key==="place"?["transport"]:[])].includes(k)) && typeof section.enabled==="boolean" && (key!=="place" || section.transport===undefined || (section.transport && typeof section.transport==="object" && !Array.isArray(section.transport) && Object.keys(section.transport).every(k=>["enabled","top","right","bottom","left"].includes(k)) && typeof section.transport.enabled==="boolean" && ["top","right","bottom","left"].every(side=>Number.isInteger(section.transport[side]) && section.transport[side]>=0 && section.transport[side]<=120))) && ["top","right","bottom","left"].every(side=>Number.isInteger(section[side]) && section[side]>=0 && section[side]<=120) && (key!=="invitation" || section.messageWidth===undefined || (Number.isInteger(section.messageWidth)&&section.messageWidth>=200&&section.messageWidth<=340)); }))) &&
     (safeArea.messageWidth === undefined || (Number.isInteger(safeArea.messageWidth) && safeArea.messageWidth >= 200 && safeArea.messageWidth <= 340)) &&
@@ -274,6 +275,13 @@ async function saveEffectsBgmSafeArea(auth, body) {
     if (!asset || asset.template_id !== body.templateId || asset.asset_type !== "bgm" || !asset.is_active) {
       return fail("현재 템플릿의 활성 BGM Asset만 저장할 수 있어요.", 400);
     }
+  }
+
+  if (body.bgm.mode === "shared") {
+    const { data: track, error: trackError } = await auth.adminClient.from("bgm_tracks")
+      .select("id,is_active").eq("id", body.bgm.assetId).maybeSingle();
+    if (trackError) return fail("공용 BGM을 확인하지 못했어요.", 500);
+    if (!track?.is_active) return fail("활성 공용 BGM만 지정할 수 있어요.", 400);
   }
 
   if (body.effects.screenEffect?.assetId) {
