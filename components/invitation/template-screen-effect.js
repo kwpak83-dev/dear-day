@@ -1,4 +1,4 @@
-const ORNAMENTS = new Set(["blossom","green","autumn","snow","star","heart","rose","lavender","daisy","ginkgo","feather","gold-confetti","color-confetti","balloon","blue-balloon","bubble","ribbon","music","butterfly","moon","blossom-flower","coffee-bean"]);
+const ORNAMENTS = new Set(["blossom","green","autumn","autumn-maple","autumn-mixed","snow","star","heart","rose","lavender","daisy","ginkgo","feather","gold-confetti","color-confetti","balloon","blue-balloon","bubble","ribbon","music","butterfly","moon","blossom-flower","blue-hydrangea","coffee-bean"]);
 
 export default function TemplateScreenEffect({ config, assets = {} }) {
   const effect = config?.effects?.screenEffect;
@@ -11,9 +11,12 @@ export default function TemplateScreenEffect({ config, assets = {} }) {
   const range = (min, max, index, factor) => min + ((index * factor) % 101) / 100 * (max - min);
   return <div className={`dd-template-screen-effect dd-template-screen-effect--${motion}`} aria-hidden="true">
     {Array.from({ length: Math.min(24, effect.count || 8) }, (_, index) => {
+      const leafSrc = effect.ornament === "autumn-mixed"
+        ? ["/screen-effects/autumn-maple.svg", "/screen-effects/autumn-mixed-ginkgo.svg", "/screen-effects/autumn-mixed-brown.svg"][index % 3]
+        : src;
       const size = range(effect.minSize ?? 18, effect.maxSize ?? 36, index, 47);
       const duration = range(effect.minDuration ?? 10, effect.maxDuration ?? 18, index, 61);
-      return <img key={index} src={src} alt="" style={{
+      return <img key={index} src={leafSrc} alt="" style={{
         "--dd-screen-x": `${range(2, 96, index, 37)}%`,
         "--dd-screen-y": `${range(8, 85, index, 53)}vh`,
         "--dd-screen-size": `${size}px`,

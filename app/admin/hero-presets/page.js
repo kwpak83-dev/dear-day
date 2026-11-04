@@ -51,7 +51,7 @@ function HeroHexColor({label,value,onChange}){
  const normalized=isHexColor(value)?value.toUpperCase():"#FFFFFF";
  const [draft,setDraft]=useState(normalized);
  const [copied,setCopied]=useState(false);
- useEffect(()=>{setDraft(normalized);},[normalized]);
+ useEffect(()=>{setDraft(current=>current===normalized?current:normalized);},[normalized]);
  const valid=isHexColor(draft);
  const change=(next)=>{const text=next.toUpperCase();setDraft(text);setCopied(false);if(isHexColor(text))onChange(text);};
  return <div style={{...field,minWidth:0}}>
