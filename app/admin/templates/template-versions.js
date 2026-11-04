@@ -120,6 +120,8 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
   const [effects, setEffects] = useState(effectsDefaults);
   const [screenOrnamentCategory, setScreenOrnamentCategory] = useState("all");
   const [bgm, setBgm] = useState(bgmDefaults);
+  const [sharedBgmTracks, setSharedBgmTracks] = useState([]);
+  useEffect(() => { let active = true; fetch("/api/bgm").then(r => r.json()).then(data => { if (active) setSharedBgmTracks((data.tracks || []).filter(track => track.isActive)); }).catch(() => {}); return () => { active = false; }; }, []);
   const [safeArea, setSafeArea] = useState(safeAreaDefaults);
   const [expandedSafeArea, setExpandedSafeArea] = useState("invitation");
   const [creating, setCreating] = useState(false);
@@ -640,10 +642,11 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
                 </>}
               </div>
             </fieldset>
-            <label style={field}>BGM<select style={input} value={bgm.assetId || ""} onChange={(event) => setBgm(event.target.value ? { mode: "asset", assetId: event.target.value } : { mode: "none", assetId: null })}>
+            <label style={field}>BGM<select style={input} value={bgm.mode === "none" ? "" : `${bgm.mode}:${bgm.assetId}`} onChange={(event) => { const value = event.target.value; setBgm(value ? { mode: value.split(":")[0], assetId: value.split(":")[1] } : { mode: "none", assetId: null }); }}>
               <option value="">사용 안 함</option>
-              {bgmAssets.map((asset) => <option key={asset.id} value={asset.id}>{asset.name || asset.id}</option>)}
-            </select><small>브라우저 정책에 따라 사용자가 직접 재생 버튼을 눌러야 합니다.</small></label>
+              <optgroup label="공용 BGM">{sharedBgmTracks.map(track => <option key={track.id} value={`shared:${track.id}`}>{track.title}</option>)}</optgroup>
+              <optgroup label="템플릿 업로드 BGM">{bgmAssets.map((asset) => <option key={asset.id} value={`asset:${asset.id}`}>{asset.name || asset.id}</option>)}</optgroup>
+            </select>{bgm.mode === "shared" && sharedBgmTracks.find(track => track.id === bgm.assetId)?.url && <audio key={bgm.assetId} controls preload="none" src={sharedBgmTracks.find(track => track.id === bgm.assetId).url} style={{width:"100%",maxWidth:340,marginTop:8}} />}<small>브라우저 정책에 따라 사용자가 직접 재생 버튼을 눌러야 합니다.</small></label>
             <fieldset style={{minWidth:0,border:"1px solid #eadfd8",borderRadius:10,padding:12}}>
               <legend>영역별 Safe Area</legend>
               <small style={guideNote}>체크한 영역에만 여백을 적용합니다. 이름을 누르면 슬라이더가 펼쳐지고 오른쪽 미리보기에 즉시 반영됩니다. 저장 전까지 실제 초대장에는 반영되지 않습니다.</small>
