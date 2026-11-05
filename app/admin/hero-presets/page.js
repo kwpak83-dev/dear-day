@@ -53,11 +53,11 @@ function HeroHexColor({label,value,onChange}){
  const [copied,setCopied]=useState(false);
  useEffect(()=>{setDraft(current=>current===normalized?current:normalized);},[normalized]);
  const valid=isHexColor(draft);
- const change=(next)=>{const text=next.toUpperCase();setDraft(text);setCopied(false);if(isHexColor(text))onChange(text);};
+ const change=(next)=>{const text=next.toUpperCase();setDraft(current=>current===text?current:text);setCopied(false);if(isHexColor(text)&&text!==normalized)onChange(text);};
  return <div style={{...field,minWidth:0}}>
   <span>{label}</span>
   <div style={{display:"flex",gap:6,alignItems:"center",minWidth:0,flexWrap:"wrap"}}>
-   <input aria-label={`${label} 선택`} type="color" value={normalized} onChange={(e)=>change(e.target.value)} style={{width:42,height:40,padding:3,border:"1px solid #d7c5ba",borderRadius:7,cursor:"pointer",background:"#fff"}}/>
+   <input aria-label={`${label} 선택`} type="color" value={normalized.toLowerCase()} onChange={(e)=>change(e.target.value)} style={{width:42,height:40,padding:3,border:"1px solid #d7c5ba",borderRadius:7,cursor:"pointer",background:"#fff"}}/>
    <input aria-label={`${label} HEX 값`} style={{...input,flex:"1 1 90px",width:100,minWidth:90,borderColor:valid?"#d7c5ba":"#c94e4e"}} value={draft} maxLength={7} spellCheck={false} onChange={(e)=>change(e.target.value)} onBlur={()=>{if(!isHexColor(draft))setDraft(normalized);}} placeholder="#FFFFFF" aria-invalid={!valid}/>
    <button type="button" className="save-button" style={{minHeight:40}} onClick={async()=>{try{await navigator.clipboard.writeText(normalized);setCopied(true);}catch{setCopied(false);}}} aria-label={`${label} HEX 복사`}>{copied?"복사됨":"복사"}</button>
   </div>
@@ -157,7 +157,7 @@ export default function HeroPresetsPage(){
  const setHeroCenterPanel=(key,value)=>setForm(current=>({...current,config:{...current.config,heroCenterPanel:{...defaultConfig.heroCenterPanel,...current.config.heroCenterPanel,[key]:value}}}));
   const setHeroCenterPanelCopy=(key,value)=>setForm(current=>({...current,config:{...current.config,heroCenterPanelCopy:{...current.config.heroCenterPanelCopy,[key]:value}}}));
  const setBackdrop=(key,value)=>setForm(current=>({...current,config:{...current.config,heroBackdrop:{...defaultConfig.heroBackdrop,...current.config.heroBackdrop,[key]:value}}}));
- const setConfig=(key,value)=>setForm((current)=>({...current,config:{...current.config,[key]:value}}));
+ const setConfig=(key,value)=>setForm((current)=>current.config[key]===value?current:{...current,config:{...current.config,[key]:value}});
  const linkedDisplaySources={title:"title",schedule:"schedule",venue:"venue",venue_detail:"venue_detail",milestone_event:"event_title",milestone_person:"full_name",milestone_host:"host"};
  const isMilestoneKey=(key)=>["milestone_event","milestone_person","milestone_host"].includes(key);
  const isBirthdayParents=(key)=>key==="detail"&&form.event_kind==="first_birthday";
@@ -195,8 +195,8 @@ export default function HeroPresetsPage(){
  };
 
  const addTextLayer=()=>{const id=`text-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;setForm((current)=>({...current,config:{...current.config,textLayers:[...(current.config.textLayers||[]),{id,text:"",fontId:"great-vibes",fontSize:32,color:"#ffffff",x:50,y:50,align:"center"}]}}));setExpandedLayerId(id);};
- const updateTextLayer=(id,key,value)=>setForm((current)=>({...current,config:{...current.config,textLayers:(current.config.textLayers||[]).map((layer)=>layer.id===id?{...layer,[key]:value}:layer)}}));
- const setLayerEffect=(id,effect,key,value)=>setForm((current)=>({...current,config:{...current.config,textLayers:(current.config.textLayers||[]).map((layer)=>layer.id===id?{...layer,[effect]:{...effectDefaults[effect],...layer[effect], [key]:value}}:layer)}}));
+ const updateTextLayer=(id,key,value)=>setForm((current)=>{const layers=current.config.textLayers||[];if(!layers.some(layer=>layer.id===id&&layer[key]!==value))return current;return {...current,config:{...current.config,textLayers:layers.map(layer=>layer.id===id?{...layer,[key]:value}:layer)}};});
+ const setLayerEffect=(id,effect,key,value)=>setForm((current)=>{const layers=current.config.textLayers||[];if(!layers.some(layer=>layer.id===id&&(layer[effect]?.[key]??effectDefaults[effect]?.[key])!==value))return current;return {...current,config:{...current.config,textLayers:layers.map(layer=>layer.id===id?{...layer,[effect]:{...effectDefaults[effect],...layer[effect],[key]:value}}:layer)}};});
  const setTextFadeUp=(id,key,value)=>setForm(current=>({...current,config:{...current.config,textLayers:(current.config.textLayers||[]).map(layer=>layer.id===id?{...layer,fadeUp:{enabled:false,duration:0.8,delay:0.3,...layer.fadeUp,[key]:value}}:layer)}}));
  const effectDefaults={stroke:{enabled:false,color:"#ffffff",width:1},shadow:{enabled:false,color:"#000000",x:2,y:2,blur:3,opacity:.6},gradient:{enabled:false,start:"#c28b77",end:"#f1d5a2",angle:90}};
  const effectInput=(id,effect,key,value)=>setLayerEffect(id,effect,key,value);
