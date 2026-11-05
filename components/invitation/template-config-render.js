@@ -423,7 +423,7 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
           const textStyle = {
             fontFamily: getHeroFont(layer.fontId).family,
             fontSize: designLength(Math.min(100, Math.max(8, Number(layer.fontSize ?? 32)))),
-            fontWeight: layer.fontWeight === 700 ? 700 : 400,
+            fontWeight: getHeroFont(layer.fontId).weight ?? (layer.fontWeight === 700 ? 700 : 400),
             color: layer.color || "#ffffff", whiteSpace: "pre-wrap", overflowWrap: "anywhere",
             opacity: layer.opacity ?? 1, letterSpacing: designLength(layer.letterSpacing ?? 0),
             lineHeight: layer.lineHeight ?? 1.5, textShadow,
