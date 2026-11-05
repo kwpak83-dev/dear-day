@@ -62,8 +62,10 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
       rootStyle.backgroundPosition = "top center";
       rootStyle.backgroundRepeat = "repeat-y";
     } else if (mode === "custom") {
-      if (custom.mode === "paper") {
-        const texture = Number(custom.paperStrength) > 0 ? 'url("/paper-texture-main.svg")' : "none";
+      if (custom.mode === "paper" || custom.mode === "fiber-paper") {
+        const texture = Number(custom.paperStrength) > 0
+          ? (custom.mode === "fiber-paper" ? 'url("/paper-texture-fiber.svg")' : 'url("/paper-texture-main.svg")')
+          : "none";
         if (texture !== "none") {
           // Keep the center-panel strength curve unchanged. The main paper
           // background uses a linear 0–100% response without early saturation.
