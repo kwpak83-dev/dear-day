@@ -329,9 +329,9 @@ function validBackground(value) {
       (panel.paperBlend !== undefined && !["soft-light","overlay","multiply"].includes(panel.paperBlend)))) return false;
   return ["image", "custom"].includes(value.mode) &&
     hasOnlyKeys(custom, ["mode", "endColor", "angle", "pattern", "patternColor", "patternSize", "patternOpacity", "paperStrength", "paperSize"]) &&
-    ["solid", "gradient", "pattern", "paper"].includes(custom.mode) &&
+    ["solid", "gradient", "pattern", "paper", "fiber-paper"].includes(custom.mode) &&
     (custom.paperStrength === undefined || (Number.isInteger(custom.paperStrength) && decimal(custom.paperStrength,0,100))) &&
-    (custom.paperSize === undefined || ["fine","normal","coarse"].includes(custom.paperSize)) &&
+    (custom.paperSize === undefined || ["ultra-fine","fine","normal","coarse"].includes(custom.paperSize)) &&
     hexColor(custom.endColor) && decimal(custom.angle, 0, 360) &&
     BACKGROUND_PATTERN_KEYS.includes(custom.pattern) &&
     hexColor(custom.patternColor) && Number.isInteger(custom.patternSize) &&

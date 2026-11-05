@@ -62,15 +62,22 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
       rootStyle.backgroundPosition = "top center";
       rootStyle.backgroundRepeat = "repeat-y";
     } else if (mode === "custom") {
-      if (custom.mode === "paper") {
-        const texture = paperTextureImage(custom.paperStrength);
+      if (custom.mode === "paper" || custom.mode === "fiber-paper") {
+        const texture = Number(custom.paperStrength) > 0
+          ? (custom.mode === "fiber-paper" ? 'url("/paper-texture-fiber.svg")' : 'url("/paper-texture-main.svg")')
+          : "none";
         if (texture !== "none") {
-          const amount = paperTextureOpacity(custom.paperStrength);
+          // Keep the center-panel strength curve unchanged. The main paper
+          // background uses a linear 0–100% response without early saturation.
+          const amount = Math.max(0, Math.min(100, Number(custom.paperStrength) || 0)) / 100;
           const base = rgba(background.color || "#ffffff", 1 - amount);
           layers.push(`linear-gradient(${base}, ${base})`, texture);
-          rootStyle.backgroundBlendMode = "normal, multiply";
+          // background-* lists map from top to bottom, including the overlay.
+          // Align each entry explicitly so the texture receives the tile size
+          // and multiply blend rather than inheriting 'auto' and 'normal'.
+          rootStyle.backgroundBlendMode = layers.map((_, index) => index === layers.length - 1 ? "multiply" : "normal").join(", ");
+          rootStyle.backgroundSize = layers.map((_, index) => index === layers.length - 1 ? paperTextureSize(custom.paperSize) : "auto").join(", ");
         }
-        rootStyle.backgroundSize = `auto, ${paperTextureSize(custom.paperSize)}`;
         rootStyle.backgroundRepeat = "repeat";
       } else if (custom.mode === "gradient") {
         layers.push(`linear-gradient(${custom.angle ?? 135}deg, ${background.color || "#ffffff"}, ${custom.endColor || "#f3e8df"})`);
@@ -423,7 +430,7 @@ export function TemplateConfigHeroLayers({ config, assets = {}, presentation = {
           const textStyle = {
             fontFamily: getHeroFont(layer.fontId).family,
             fontSize: designLength(Math.min(100, Math.max(8, Number(layer.fontSize ?? 32)))),
-            fontWeight: layer.fontWeight === 700 ? 700 : 400,
+            fontWeight: getHeroFont(layer.fontId).weight ?? (layer.fontWeight === 700 ? 700 : 400),
             color: layer.color || "#ffffff", whiteSpace: "pre-wrap", overflowWrap: "anywhere",
             opacity: layer.opacity ?? 1, letterSpacing: designLength(layer.letterSpacing ?? 0),
             lineHeight: layer.lineHeight ?? 1.5, textShadow,
