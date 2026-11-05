@@ -353,14 +353,14 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
               <NumberControl label="Overlay 투명도" value={background.overlayOpacity} min={0} max={1} step={0.05} onChange={(overlayOpacity) => setBackground(current => ({ ...current, overlayOpacity }))} />
             </div> : <div style={{ display: "grid", gap: 12 }}>
               <label style={field}>직접 제작 유형<select style={input} value={background.custom.mode} onChange={event => setBackground(current => ({ ...current, custom: { ...current.custom, mode: event.target.value } }))}>
-                <option value="solid">단색</option><option value="gradient">그라데이션</option><option value="pattern">무늬</option><option value="paper">수제 종이 질감</option>
+                <option value="solid">단색</option><option value="gradient">그라데이션</option><option value="pattern">무늬</option><option value="paper">수제 종이 질감</option><option value="fiber-paper">고급 섬유 종이</option>
               </select></label>
               <ColorControl label="기본 배경색" value={background.color} onChange={(color) => setBackground(current => ({ ...current, color }))} />
               {background.custom.mode === "gradient" && <>
                 <ColorControl label="종료 색상" value={background.custom.endColor} onChange={endColor => setBackground(current => ({ ...current, custom: { ...current.custom, endColor } }))} />
                 <NumberControl label="방향 (도)" value={background.custom.angle} min={0} max={360} onChange={angle => setBackground(current => ({ ...current, custom: { ...current.custom, angle } }))} />
               </>}
-              {background.custom.mode === "paper" && <fieldset style={{border:"1px solid #eadfd8",borderRadius:10,padding:12,display:"grid",gap:10}}><legend>수제 종이 질감</legend>
+              {["paper", "fiber-paper"].includes(background.custom.mode) && <fieldset style={{border:"1px solid #eadfd8",borderRadius:10,padding:12,display:"grid",gap:10}}><legend>{background.custom.mode === "fiber-paper" ? "고급 섬유 종이" : "수제 종이 질감"}</legend>
                 <NumberControl label="질감 강도 (%)" value={background.custom.paperStrength ?? 30} min={0} max={100} onChange={paperStrength => setBackground(current => ({...current,custom:{...current.custom,paperStrength}}))}/>
                 <label style={field}>질감 크기<select style={input} value={background.custom.paperSize || "normal"} onChange={event => setBackground(current => ({...current,custom:{...current.custom,paperSize:event.target.value}}))}><option value="ultra-fine">초미세</option><option value="fine">미세</option><option value="normal">보통</option><option value="coarse">굵게</option></select></label>
                 <p style={guideNote}>기본 배경색 위에 종이결만 더합니다. 중앙 본문 배경의 질감은 아래에서 별도로 설정할 수 있어요.</p>
