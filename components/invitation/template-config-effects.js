@@ -7,6 +7,7 @@ const SECTION_SELECTOR = [
   ".romantic-information", ".modern-information", ".classic-information", ".classic-date", ".dd-wedding-contacts",
   ".dd-couple-intro", ".dd-love-story",
   ".public-rsvp", ".guestbook-section",
+  ".invitation-template-sections > .public-invitation-sections > *",
 ].join(",");
 
 function findScrollRoot(element) {
