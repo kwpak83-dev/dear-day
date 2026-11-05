@@ -120,7 +120,7 @@ function validConfig(value){
     &&(layer.shadow===undefined||(layer.shadow&&typeof layer.shadow==="object"&&!Array.isArray(layer.shadow)&&typeof layer.shadow.enabled==="boolean"&&hex(layer.shadow.color)&&decimal(layer.shadow.x,-20,20)&&decimal(layer.shadow.y,-20,20)&&decimal(layer.shadow.blur,0,30)&&decimal(layer.shadow.opacity,0,1)))
     &&(layer.fadeUp===undefined||validFadeUp(layer.fadeUp))
     &&(layer.opacity===undefined||decimal(layer.opacity,0,1))
-    &&(layer.letterSpacing===undefined||decimal(layer.letterSpacing,-5,20))
+    &&(layer.letterSpacing===undefined||decimal(layer.letterSpacing,-15,20))
     &&(layer.lineHeight===undefined||decimal(layer.lineHeight,.8,2.5))
     &&(layer.rotation===undefined||decimal(layer.rotation,-180,180))
     &&(layer.gradient===undefined||(layer.gradient&&typeof layer.gradient==="object"&&!Array.isArray(layer.gradient)&&typeof layer.gradient.enabled==="boolean"&&hex(layer.gradient.start)&&hex(layer.gradient.end)&&decimal(layer.gradient.angle,0,360))))
