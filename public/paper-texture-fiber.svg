@@ -5,9 +5,9 @@
       <feTurbulence type="fractalNoise" baseFrequency=".34 .46" numOctaves="3" seed="17" stitchTiles="stitch" result="relief"/>
       <feColorMatrix in="relief" type="saturate" values="0" result="mono"/>
       <feComponentTransfer in="mono">
-        <feFuncR type="linear" slope=".25" intercept=".76"/>
-        <feFuncG type="linear" slope=".25" intercept=".76"/>
-        <feFuncB type="linear" slope=".25" intercept=".76"/>
+        <feFuncR type="linear" slope=".3375" intercept=".6725"/>
+        <feFuncG type="linear" slope=".3375" intercept=".6725"/>
+        <feFuncB type="linear" slope=".3375" intercept=".6725"/>
         <feFuncA type="identity"/>
       </feComponentTransfer>
     </filter>
