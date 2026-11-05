@@ -65,12 +65,17 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
       if (custom.mode === "paper") {
         const texture = paperTextureImage(custom.paperStrength);
         if (texture !== "none") {
-          const amount = paperTextureOpacity(custom.paperStrength);
+          // Keep the center-panel strength curve unchanged. The main paper
+          // background uses a linear 0–100% response without early saturation.
+          const amount = Math.max(0, Math.min(100, Number(custom.paperStrength) || 0)) / 100;
           const base = rgba(background.color || "#ffffff", 1 - amount);
           layers.push(`linear-gradient(${base}, ${base})`, texture);
-          rootStyle.backgroundBlendMode = "normal, multiply";
+          // background-* lists map from top to bottom, including the overlay.
+          // Align each entry explicitly so the texture receives the tile size
+          // and multiply blend rather than inheriting 'auto' and 'normal'.
+          rootStyle.backgroundBlendMode = layers.map((_, index) => index === layers.length - 1 ? "multiply" : "normal").join(", ");
+          rootStyle.backgroundSize = layers.map((_, index) => index === layers.length - 1 ? paperTextureSize(custom.paperSize) : "auto").join(", ");
         }
-        rootStyle.backgroundSize = `auto, ${paperTextureSize(custom.paperSize)}`;
         rootStyle.backgroundRepeat = "repeat";
       } else if (custom.mode === "gradient") {
         layers.push(`linear-gradient(${custom.angle ?? 135}deg, ${background.color || "#ffffff"}, ${custom.endColor || "#f3e8df"})`);
