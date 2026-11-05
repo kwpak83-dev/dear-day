@@ -63,7 +63,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
       rootStyle.backgroundRepeat = "repeat-y";
     } else if (mode === "custom") {
       if (custom.mode === "paper") {
-        const texture = paperTextureImage(custom.paperStrength);
+        const texture = Number(custom.paperStrength) > 0 ? 'url("/paper-texture-main.svg")' : "none";
         if (texture !== "none") {
           // Keep the center-panel strength curve unchanged. The main paper
           // background uses a linear 0–100% response without early saturation.
