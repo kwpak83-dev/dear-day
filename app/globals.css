@@ -3798,6 +3798,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-hero-text-modal-sliders{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .dd-hero-text-modal-sliders label{display:grid;gap:7px;font-size:12px;color:#655a53}
 .dd-hero-text-modal-sliders input{width:100%;accent-color:#4c433d}
+.dd-hero-text-modal-font-size{display:grid;gap:7px;margin-top:12px;font-size:12px;color:#655a53}
+.dd-hero-text-modal-font-size input{width:100%;accent-color:#4c433d}
 .dd-hero-text-modal-nav{display:flex;justify-content:space-between;gap:10px;margin-top:12px}
 .dd-hero-text-modal-nav button{flex:1;padding:11px;border:1px solid #d7cec7;border-radius:8px;background:#fff;color:#4b413b;cursor:pointer}
 .dd-hero-text-modal-nav button.is-primary{background:#37312e;border-color:#37312e;color:#fff}
