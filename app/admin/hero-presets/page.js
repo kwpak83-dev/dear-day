@@ -287,6 +287,8 @@ export default function HeroPresetsPage(){
  const selectedPreviewTemplate=compatiblePreviewTemplates.find(item=>item.id===previewTemplateId);
  const previewSampleContent={...(sharedPreviewSamples[previewKind]||{}),...(selectedPreviewTemplate?.sample_content||{})};
  const liveInvitation=sampleContentToInvitation(previewSampleContent,previewKind,{coverPhotoUrl:activeFrame?.url||previewSampleContent.hero_image_url||""});
+ const previewSlotPhotoUrl=previewSampleContent.hero_image_url||activeFrame?.url||"";
+ if(previewSlotPhotoUrl)for(const layer of form.config.photoLayers||[])liveAssets[`photo-slot:${layer.id}`]=previewSlotPhotoUrl;
  const previewPresentation=getInvitationPresentation(liveInvitation,previewKind);
  const previewReferenceText=(key)=>key==="title"?previewPresentation.heroTitle:key==="schedule"?previewPresentation.heroSchedule:key==="venue"?liveInvitation.venue||"":key==="venue_detail"?previewPresentation.addressDetail||"": "";
 
