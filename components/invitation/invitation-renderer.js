@@ -35,6 +35,17 @@ export default function InvitationRenderer({ invitation, eventKind, eventTypeCon
     ...(matrixFields.message?.state === "none" ? { message: "" } : {}),
   };
   const normalizedConfig = normalizeTemplateConfig(templateConfig);
+  // Per-slot photo adjustments reuse the existing HERO crop/zoom renderer.
+  // Only image properties are user-editable; the admin frame geometry stays fixed.
+  const slotAdjustments = invitation?.heroSlotAdjustments && typeof invitation.heroSlotAdjustments === "object" ? invitation.heroSlotAdjustments : {};
+  if (Array.isArray(normalizedConfig?.hero?.photoLayers)) {
+    normalizedConfig.hero = {...normalizedConfig.hero,photoLayers:normalizedConfig.hero.photoLayers.map(layer=>{
+      const override=slotAdjustments[layer.id];
+      if (!override || typeof override !== "object") return layer;
+      const bounded=(value,min,max,fallback)=>Number.isFinite(Number(value))?Math.min(max,Math.max(min,Number(value))):fallback;
+      return {...layer,imageX:bounded(override.imageX,0,100,layer.imageX??50),imageY:bounded(override.imageY,0,100,layer.imageY??50),imageZoom:bounded(override.imageZoom,0.7,2,layer.imageZoom??1),imageFit:override.imageFit==="contain"?"contain":"cover"};
+    })};
+  }
   // User-specific photo focus overrides the rendered crop, never the shared Hero preset.
   const photoFrame = normalizedConfig?.hero?.photoFrame;
   const showEntirePhoto = invitation?.heroPhotoFit === "contain" && ["photo", "frame"].includes(normalizedConfig?.hero?.mode);
