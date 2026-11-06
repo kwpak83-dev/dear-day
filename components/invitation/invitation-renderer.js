@@ -35,6 +35,22 @@ export default function InvitationRenderer({ invitation, eventKind, eventTypeCon
     ...(matrixFields.message?.state === "none" ? { message: "" } : {}),
   };
   const normalizedConfig = normalizeTemplateConfig(templateConfig);
+  // Per-slot photo adjustments reuse the existing HERO crop/zoom renderer.
+  // Only image properties are user-editable; the admin frame geometry stays fixed.
+  const slotAdjustments = invitation?.heroSlotAdjustments && typeof invitation.heroSlotAdjustments === "object" ? invitation.heroSlotAdjustments : {};
+  if (Array.isArray(normalizedConfig?.hero?.photoLayers)) {
+    normalizedConfig.hero = {...normalizedConfig.hero,photoLayers:normalizedConfig.hero.photoLayers.map(layer=>{
+      const override=slotAdjustments[layer.id];
+      if (!override || typeof override !== "object") return layer;
+      const bounded=(value,min,max,fallback)=>Number.isFinite(Number(value))?Math.min(max,Math.max(min,Number(value))):fallback;
+      return {...layer,imageX:bounded(override.imageX,0,100,layer.imageX??50),imageY:bounded(override.imageY,0,100,layer.imageY??50),imageZoom:bounded(override.imageZoom,0.7,2,layer.imageZoom??1),imageFit:override.imageFit==="contain"?"contain":"cover"};
+    })};
+  }
+  // Multi-photo HERO slots replace the legacy single cover visually, but keep
+  // invitation.coverPhotoUrl saved for switching back to a single-photo HERO.
+  if (Array.isArray(normalizedConfig?.hero?.photoLayers) && normalizedConfig.hero.photoLayers.length > 0) {
+    presentation.coverPhotoUrl = "";
+  }
   // User-specific photo focus overrides the rendered crop, never the shared Hero preset.
   const photoFrame = normalizedConfig?.hero?.photoFrame;
   const showEntirePhoto = invitation?.heroPhotoFit === "contain" && ["photo", "frame"].includes(normalizedConfig?.hero?.mode);
@@ -63,7 +79,16 @@ export default function InvitationRenderer({ invitation, eventKind, eventTypeCon
       zoom: showEntirePhoto ? (hasPhotoZoom ? photoZoom : 1) : hasPhotoZoom ? (Number(normalizedConfig.hero.zoom) > 0 ? Number(normalizedConfig.hero.zoom) : 1) * photoZoom : normalizedConfig.hero.zoom,
     };
   }
-  const templateBgmUrl = normalizedConfig.bgm?.mode === "asset" ? templateAssets?.[normalizedConfig.bgm.assetId] : null;
+  // Keep user-uploaded slot photos separate from the shared admin preset assets.
+  // Only active slot IDs are resolved, so changing HERO presets cannot leak old images.
+  const slotPhotos = invitation?.heroSlotPhotos && typeof invitation.heroSlotPhotos === "object" && !Array.isArray(invitation.heroSlotPhotos) ? invitation.heroSlotPhotos : {};
+  const resolvedAssets = { ...(templateAssets || {}) };
+  for (const layer of normalizedConfig?.hero?.photoLayers || []) {
+    const userUrl = slotPhotos[layer.id];
+    if (typeof userUrl === "string" && /^https:\/\//i.test(userUrl)) resolvedAssets[`photo-slot:${layer.id}`] = userUrl;
+
+  }
+  const templateBgmUrl = normalizedConfig.bgm?.mode === "asset" ? resolvedAssets?.[normalizedConfig.bgm.assetId] : null;
   const bgmMode = invitation.bgmMode || "background";
   const bgmUrl = bgmMode === "none" ? null : (bgmMode === "user" || bgmMode === "upload") ? (userBgmUrl || null) : templateBgmUrl;
   const mode = invitation.screenEffectMode || (invitation.petalEffectEnabled === true ? "legacy-blossom" : "none");
@@ -73,5 +98,5 @@ export default function InvitationRenderer({ invitation, eventKind, eventTypeCon
   const defaultUserScreenEffect = { motion: "fall", count: 12, minSize: 18, maxSize: 24, minDuration: 20, maxDuration: 25, sway: 40, rotate: true, opacity: 0.8 };
   const screenEffect = mode === "background" ? templateScreenEffect : mode === "user" ? { ...defaultUserScreenEffect, ...(templateScreenEffect || {}), ornament: selectedOrnament } : mode === "legacy-blossom" ? { ornament: "blossom", motion: "flutter", count: 10, minSize: 14, maxSize: 28, minDuration: 10, maxDuration: 18, sway: 35, rotate: true, opacity: 0.75 } : null;
   const effectConfig = { ...normalizedConfig, effects: { ...normalizedConfig.effects, screenEffect } };
-  return <Template presentation={presentation} templateConfig={normalizedConfig} templateAssets={templateAssets} eventKind={eventKind || invitation.eventKind || "wedding"} placeActions={placeActions} weddingContacts={(eventKind || invitation.eventKind) === "wedding" ? null : <WeddingContacts invitation={invitation} eventTypeConfig={eventTypeConfig} />} bgmControl={bgmMode === "background" && normalizedConfig.bgm?.mode === "shared" ? <SharedTemplateBgm trackId={normalizedConfig.bgm.assetId} /> : <TemplateBgm src={bgmUrl} />} screenEffect={<TemplateScreenEffect config={effectConfig} assets={templateAssets} />} afterMessage={(eventKind || invitation.eventKind) === "wedding" ? <div className="dd-wedding-after-message">{afterMessage}<WeddingContacts invitation={invitation} eventTypeConfig={eventTypeConfig} /><CoupleIntro invitation={{ ...invitation, eventKind: "wedding" }} /><LoveStory invitation={{ ...invitation, eventKind: "wedding" }} /></div> : afterMessage}>{children}</Template>;
+  return <Template presentation={presentation} templateConfig={normalizedConfig} templateAssets={resolvedAssets} eventKind={eventKind || invitation.eventKind || "wedding"} placeActions={placeActions} weddingContacts={(eventKind || invitation.eventKind) === "wedding" ? null : <WeddingContacts invitation={invitation} eventTypeConfig={eventTypeConfig} />} bgmControl={bgmMode === "background" && normalizedConfig.bgm?.mode === "shared" ? <SharedTemplateBgm trackId={normalizedConfig.bgm.assetId} /> : <TemplateBgm src={bgmUrl} />} screenEffect={<TemplateScreenEffect config={effectConfig} assets={resolvedAssets} />} afterMessage={(eventKind || invitation.eventKind) === "wedding" ? <div className="dd-wedding-after-message">{afterMessage}<WeddingContacts invitation={invitation} eventTypeConfig={eventTypeConfig} /><CoupleIntro invitation={{ ...invitation, eventKind: "wedding" }} /><LoveStory invitation={{ ...invitation, eventKind: "wedding" }} /></div> : afterMessage}>{children}</Template>;
 }

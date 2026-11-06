@@ -6,9 +6,19 @@ export async function GET(){
  const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.SUPABASE_SERVICE_ROLE_KEY;
  if(!url||!key)return json({error:"Hero 서비스를 준비하지 못했어요."},503);
  const client=createClient(url,key,{auth:{autoRefreshToken:false,persistSession:false}});
- const {data,error}=await client.from("hero_presets").select("id,name,description,event_kind,config,sort_order").eq("status","on_sale").eq("is_visible",true).order("sort_order",{ascending:true});
- if(error)return json({error:"Hero 목록을 불러오지 못했어요."},500);
- const ids=(data||[]).map(x=>x.id);
+ // A visible completed template can reference a HERO that is not separately on sale.
+ // Include only those explicitly published through the collection, not arbitrary drafts.
+ const [saleResult,collectionResult]=await Promise.all([
+  client.from("hero_presets").select("id,name,description,event_kind,config,sort_order").eq("status","on_sale").eq("is_visible",true).order("sort_order",{ascending:true}),
+  client.from("completed_templates").select("hero_preset_id").eq("is_visible",true)
+ ]);
+ if(saleResult.error||collectionResult.error)return json({error:"Hero 목록을 불러오지 못했어요."},500);
+ const sale=saleResult.data||[];
+ const collectionIds=[...new Set((collectionResult.data||[]).map(x=>x.hero_preset_id).filter(Boolean))].filter(id=>!sale.some(x=>x.id===id));
+ let collectionHeroes=[];
+ if(collectionIds.length){const found=await client.from("hero_presets").select("id,name,description,event_kind,config,sort_order").in("id",collectionIds);if(found.error)return json({error:"컬렉션 Hero를 불러오지 못했어요."},500);collectionHeroes=found.data||[];}
+ const data=[...sale,...collectionHeroes];
+ const ids=data.map(x=>x.id);
  let assets=[];
  if(ids.length){const result=await client.from("hero_preset_assets").select("id,hero_preset_id,asset_type,storage_bucket,storage_path").in("hero_preset_id",ids).eq("is_active",true);if(result.error)return json({error:"Hero 이미지를 불러오지 못했어요."},500);assets=result.data||[];}
  const byPreset={};

@@ -34,7 +34,7 @@ const fontIds=new Set(HERO_FONTS.map((font)=>font.id));
 const validFadeUp=(value)=>value&&typeof value==="object"&&!Array.isArray(value)&&Object.keys(value).every(key=>["enabled","duration","delay"].includes(key))&&typeof value.enabled==="boolean"&&[0.4,0.6,0.8,1,1.5,2].includes(value.duration)&&[0,0.2,0.3,0.5,0.8,1,1.5,2].includes(value.delay);
 function validConfig(value){
   if(!value||typeof value!=="object"||Array.isArray(value)) return false;
-  const allowed=["mode","aspectRatio","positionX","positionY","textYPercent","scheduleFontSize","nameFontSize","nameFontFamily","nameFontWeight","nameLineHeight","nameLetterSpacing","nameTextAlign","nameColor","separatorFontSize","separatorColor","zoom","photoGrayscale","overlayColor","overlayOpacity","headerVisible","mastheadVisible","mastheadText","display","textLayers","decorLayers","heroBackdrop","heroCenterPanel","heroCenterPanelCopy","photoFrame","photoFadeUp","photoEffects","intro"];
+  const allowed=["mode","aspectRatio","positionX","positionY","textYPercent","scheduleFontSize","nameFontSize","nameFontFamily","nameFontWeight","nameLineHeight","nameLetterSpacing","nameTextAlign","nameColor","separatorFontSize","separatorColor","zoom","photoGrayscale","overlayColor","overlayOpacity","headerVisible","mastheadVisible","mastheadText","display","textLayers","decorLayers","heroBackdrop","heroCenterPanel","heroCenterPanelCopy","photoFrame","photoFadeUp","photoEffects","intro","photoLayers"];
   if(Object.keys(value).some((key)=>!allowed.includes(key))) return false;
   const baseValid=heroModes.has(value.mode)&&heroRatios.has(value.aspectRatio)
     &&decimal(value.positionX,0,100)&&decimal(value.positionY,0,100)
@@ -75,6 +75,19 @@ function validConfig(value){
       ||!hex(p.color)||!Number.isInteger(p.opacity)||!decimal(p.opacity,0,100)||(p.autoFitToDisplay!==undefined&&typeof p.autoFitToDisplay!=="boolean")||(p.autoFitSchedule!==undefined&&typeof p.autoFitSchedule!=="boolean")||(p.autoFitVenue!==undefined&&typeof p.autoFitVenue!=="boolean"))return false;
   }
   if(value.heroBackdrop!==undefined){const b=value.heroBackdrop;if(!b||typeof b!=="object"||Array.isArray(b)||Object.keys(b).some(k=>!["mode","color","endColor","angle","pattern","patternColor","patternSize","patternOpacity"].includes(k))||!["inherit","solid","gradient","pattern"].includes(b.mode)||!hex(b.color)||!hex(b.endColor)||!decimal(b.angle,0,360)||!["dots","grid","diagonal","stripes","cross","checker","diamonds","waves","horizontal","confetti"].includes(b.pattern)||!hex(b.patternColor)||!Number.isInteger(b.patternSize)||!decimal(b.patternSize,8,80)||!decimal(b.patternOpacity,0,1))return false;}
+  if(value.photoLayers!==undefined){
+    const layers=value.photoLayers;
+    if(!Array.isArray(layers)||layers.length>3)return false;
+    const ids=new Set();
+    for(const layer of layers){
+      if(!layer||typeof layer!=="object"||Array.isArray(layer)||Object.keys(layer).some(k=>!["id","role","sampleAssetId","samplePhotoPath","x","y","width","height","imageX","imageY","imageZoom","radius","borderWidth","borderColor","shadow","shadowBlur","rotation"].includes(k)))return false;
+      if(typeof layer.id!=="string"||!/^[a-zA-Z0-9_-]{1,80}$/.test(layer.id)||ids.has(layer.id))return false;
+      ids.add(layer.id);
+      if(layer.samplePhotoPath!==undefined&&layer.samplePhotoPath!==null&&(typeof layer.samplePhotoPath!=="string"||!/^hero-presets\/[0-9a-f-]{36}\/photo-slots\/[0-9a-f-]{36}\.(jpg|png|webp)$/i.test(layer.samplePhotoPath)))return false;
+      if(layer.sampleAssetId!==undefined&&layer.sampleAssetId!==null&&(typeof layer.sampleAssetId!=="string"||!/^[0-9a-f-]{36}$/i.test(layer.sampleAssetId)))return false;
+      if(!["groom","bride","general"].includes(layer.role)||!decimal(layer.x,0,100)||!decimal(layer.y,0,100)||!decimal(layer.width,1,100)||!decimal(layer.height,1,100)||!decimal(layer.imageX,0,100)||!decimal(layer.imageY,0,100)||!decimal(layer.imageZoom,1,3)||!Number.isInteger(layer.radius)||!decimal(layer.radius,0,100)||!Number.isInteger(layer.borderWidth)||!decimal(layer.borderWidth,0,12)||!hex(layer.borderColor)||typeof layer.shadow!=="boolean"||!Number.isInteger(layer.shadowBlur)||!decimal(layer.shadowBlur,0,40)||!decimal(layer.rotation,-45,45))return false;
+    }
+  }
   if(value.photoFadeUp!==undefined&&!validFadeUp(value.photoFadeUp))return false;
   if(value.photoEffects!==undefined){
     const fx=value.photoEffects;

@@ -330,6 +330,15 @@ export async function POST(request) {
   const templateId = invitation.templateId || null;
   if (templateId && !uuidPattern.test(templateId)) return json({ error: "선택한 템플릿 정보가 올바르지 않아요." }, 400);
   const hasHeroPresetId = Object.prototype.hasOwnProperty.call(invitation, "heroPresetId");
+  // User HERO slot images must belong to the authenticated account's upload folder.
+  const heroSlotPhotos = invitation.heroSlotPhotos;
+  if (heroSlotPhotos !== undefined) {
+    if (!heroSlotPhotos || typeof heroSlotPhotos !== "object" || Array.isArray(heroSlotPhotos) || Object.keys(heroSlotPhotos).length > 30) return json({error:"HERO 사진 정보가 올바르지 않아요."},400);
+    const expectedPrefix = supabase.storage.from("invitation-photos").getPublicUrl(`${user.id}/`).data.publicUrl;
+    for (const [slotId, photoUrl] of Object.entries(heroSlotPhotos)) {
+      if (!/^[a-zA-Z0-9_-]{1,80}$/.test(slotId) || typeof photoUrl !== "string" || (photoUrl && (!photoUrl.startsWith(expectedPrefix) || !/^[0-9a-f-]{36}\.(jpg|webp)$/i.test(photoUrl.slice(expectedPrefix.length))))) return json({error:"HERO 사진 소유권 또는 형식이 올바르지 않아요."},400);
+    }
+  }
   const heroPresetId = invitation.heroPresetId || null;
   if (heroPresetId && !uuidPattern.test(heroPresetId)) return json({ error: "선택한 Hero 정보가 올바르지 않아요." }, 400);
 
@@ -343,7 +352,7 @@ export async function POST(request) {
   if (lookupError) return json({ error: "기존 초대장을 확인하지 못했어요." }, 500);
   const existing = matches?.[0];
   if (existing && existing.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 수정할 수 없어요." }, 403);
-  if (heroPresetId) { const { data: hero, error: heroError } = await supabase.from("hero_presets").select("id,status,is_visible").eq("id", heroPresetId).maybeSingle(); if (heroError) return json({ error: "선택한 Hero를 확인하지 못했어요." }, 500); if (!hero || (!existing && (hero.status !== "on_sale" || !hero.is_visible))) return json({ error: "현재 사용할 수 없는 Hero예요." }, 409); }
+  if (heroPresetId) { const { data: hero, error: heroError } = await supabase.from("hero_presets").select("id,status,is_visible").eq("id", heroPresetId).maybeSingle(); if (heroError) return json({ error: "선택한 Hero를 확인하지 못했어요." }, 500); if (!hero) return json({ error: "선택한 Hero를 찾지 못했어요." }, 409); if (!existing && (hero.status !== "on_sale" || !hero.is_visible)) { const { data: linked, error: linkedError } = await supabase.from("completed_templates").select("id").eq("hero_preset_id", heroPresetId).eq("is_visible", true).limit(1); if (linkedError || !linked?.length) return json({ error: "현재 사용할 수 없는 Hero예요." }, 409); } }
 
   // Published invitations must never be overwritten by an uninitialized editor state.
   // Validate the complete incoming editor payload before allowing a published save.
