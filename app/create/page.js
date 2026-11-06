@@ -989,7 +989,7 @@ export default function CreateInvitation() {
   </div>;
   const composedTemplateRender=selectedHero?{config:templateRender.config?{...templateRender.config,hero:{...templateRender.config.hero,...selectedHero.config,intro:effectiveIntro,textLayers:[...(selectedHero.config?.textLayers||[]),...(invitation.heroExtraTextLayers||[])].map((layer)=>({...layer,...(invitation.heroLayerOverrides?.[layer.id]||{}),text:typeof invitation.heroTextOverrides?.[layer.id]==="string"?invitation.heroTextOverrides[layer.id]:layer.text})),frameAssetId:selectedHeroFrame?.id||null,backgroundAssetId:selectedHeroBackground?.id||null}}:templateRender.config,assets:{...templateRender.assets,...selectedHeroAssets,...(selectedHeroFrame?.url?{[selectedHeroFrame.id]:selectedHeroFrame.url}:{}),...(selectedHeroBackground?.url?{[selectedHeroBackground.id]:selectedHeroBackground.url}:{})}}:templateRender;
   // Use the active Hero photo as the editor preview fallback; never persist it into invitation settings.
-  const previewInvitation = selectedHero && !invitation.coverPhotoUrl && selectedHero.config?.mode !== "illustration" && selectedHeroFrame?.url
+  const previewInvitation = selectedHero && !hasPhotoSlots && !invitation.coverPhotoUrl && selectedHero.config?.mode !== "illustration" && selectedHeroFrame?.url
     ? { ...invitation, coverPhotoUrl: selectedHeroFrame.url }
     : invitation;
   const eventTypeConfig = eventTypeConfigs.find((item) => item.kind === invitation.eventKind) || null;
