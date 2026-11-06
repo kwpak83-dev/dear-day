@@ -6,6 +6,7 @@ import { matchesCompletedTemplate, findLegacyCompletedTemplate, completedTemplat
 import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import InvitationRenderer, { TEMPLATE_IDS } from "../../components/invitation/invitation-renderer";
+import { resolveHeroPhotoSlotSamples } from "../../lib/template-config";
 import InvitationMessagePreview from "../../components/invitation/invitation-message-preview";
 import AutoHeightMessageTextarea from "./auto-height-message-textarea";
 import InvitationMap from "../../components/invitation/invitation-map";
@@ -987,7 +988,7 @@ export default function CreateInvitation() {
       ? <>{templateNotice}<button type="button" onClick={() => setTemplateRevision(current => current + 1)}>다시 불러오기</button></>
       : "템플릿 디자인을 불러오는 중이에요."}
   </div>;
-  const composedTemplateRender=selectedHero?{config:templateRender.config?{...templateRender.config,hero:{...templateRender.config.hero,...selectedHero.config,intro:effectiveIntro,textLayers:[...(selectedHero.config?.textLayers||[]),...(invitation.heroExtraTextLayers||[])].map((layer)=>({...layer,...(invitation.heroLayerOverrides?.[layer.id]||{}),text:typeof invitation.heroTextOverrides?.[layer.id]==="string"?invitation.heroTextOverrides[layer.id]:layer.text})),frameAssetId:selectedHeroFrame?.id||null,backgroundAssetId:selectedHeroBackground?.id||null}}:templateRender.config,assets:{...templateRender.assets,...selectedHeroAssets,...(selectedHeroFrame?.url?{[selectedHeroFrame.id]:selectedHeroFrame.url}:{}),...(selectedHeroBackground?.url?{[selectedHeroBackground.id]:selectedHeroBackground.url}:{})}}:templateRender;
+  const composedTemplateRender=selectedHero?{config:templateRender.config?{...templateRender.config,hero:{...templateRender.config.hero,...selectedHero.config,intro:effectiveIntro,textLayers:[...(selectedHero.config?.textLayers||[]),...(invitation.heroExtraTextLayers||[])].map((layer)=>({...layer,...(invitation.heroLayerOverrides?.[layer.id]||{}),text:typeof invitation.heroTextOverrides?.[layer.id]==="string"?invitation.heroTextOverrides[layer.id]:layer.text})),frameAssetId:selectedHeroFrame?.id||null,backgroundAssetId:selectedHeroBackground?.id||null}}:templateRender.config,assets:{...templateRender.assets,...selectedHeroAssets,...resolveHeroPhotoSlotSamples(selectedHero.config,process.env.NEXT_PUBLIC_SUPABASE_URL),...(selectedHeroFrame?.url?{[selectedHeroFrame.id]:selectedHeroFrame.url}:{}),...(selectedHeroBackground?.url?{[selectedHeroBackground.id]:selectedHeroBackground.url}:{})}}:templateRender;
   // Use the active Hero photo as the editor preview fallback; never persist it into invitation settings.
   const previewInvitation = selectedHero && !hasPhotoSlots && !invitation.coverPhotoUrl && selectedHero.config?.mode !== "illustration" && selectedHeroFrame?.url
     ? { ...invitation, coverPhotoUrl: selectedHeroFrame.url }
