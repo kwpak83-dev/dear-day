@@ -1,6 +1,6 @@
 import { completedTemplateCategoryToEventKind, mergeCompletedTemplateSamples } from "../../../../../lib/completed-template-sample";
 import { createClient } from "@supabase/supabase-js";
-import { applySaleTemplateStyles, resolveTemplateAssetUrls } from "../../../../../lib/template-config";
+import { applySaleTemplateStyles, resolveTemplateAssetUrls, resolveHeroPhotoSlotSamples } from "../../../../../lib/template-config";
 const configOf=d=>d?({decorations:d.decorations,background:d.background,hero:d.hero,typography:d.typography,colors:d.colors,buttonStyle:d.buttonStyle,quickMenu:d.quickMenu,sections:d.sections,effects:d.effects,bgm:d.bgm,safeArea:d.safeArea}):null;
 export async function GET(_request,{params}){
  const {key}=await params,url=process.env.NEXT_PUBLIC_SUPABASE_URL,service=process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -24,6 +24,7 @@ export async function GET(_request,{params}){
  if(!hero||!base)return Response.json({error:"템플릿 미리보기를 준비하지 못했어요."},{status:409});
  const frame=(heroAssets||[]).find(x=>x.asset_type==="hero_frame"),background=(heroAssets||[]).find(x=>x.asset_type==="hero_background"),config={...visualConfig,hero:{...base.hero,...hero.config,frameAssetId:frame?.id||null,backgroundAssetId:background?.id||null}};
  const assets=resolveTemplateAssetUrls(config,(bodyAssets||[]).filter(asset=>asset.is_active),item.body_template_id,(asset)=>asset?.storage_bucket&&asset?.storage_path?s.storage.from(asset.storage_bucket).getPublicUrl(asset.storage_path).data.publicUrl:null);
+ Object.assign(assets,resolveHeroPhotoSlotSamples(config.hero,url));
  // Resolve the selected audio asset using the same public URL source as the admin preview.
  const bgmId=config.bgm?.mode==="asset"?config.bgm.assetId:null;
  if(bgmId && !assets[bgmId]) {
