@@ -80,9 +80,10 @@ function validConfig(value){
     if(!Array.isArray(layers)||layers.length>3)return false;
     const ids=new Set();
     for(const layer of layers){
-      if(!layer||typeof layer!=="object"||Array.isArray(layer)||Object.keys(layer).some(k=>!["id","role","x","y","width","height","imageX","imageY","imageZoom","radius","borderWidth","borderColor","shadow","shadowBlur","rotation"].includes(k)))return false;
+      if(!layer||typeof layer!=="object"||Array.isArray(layer)||Object.keys(layer).some(k=>!["id","role","sampleAssetId","x","y","width","height","imageX","imageY","imageZoom","radius","borderWidth","borderColor","shadow","shadowBlur","rotation"].includes(k)))return false;
       if(typeof layer.id!=="string"||!/^[a-zA-Z0-9_-]{1,80}$/.test(layer.id)||ids.has(layer.id))return false;
       ids.add(layer.id);
+      if(layer.sampleAssetId!==undefined&&layer.sampleAssetId!==null&&(typeof layer.sampleAssetId!=="string"||!/^[0-9a-f-]{36}$/i.test(layer.sampleAssetId)))return false;
       if(!["groom","bride","general"].includes(layer.role)||!decimal(layer.x,0,100)||!decimal(layer.y,0,100)||!decimal(layer.width,1,100)||!decimal(layer.height,1,100)||!decimal(layer.imageX,0,100)||!decimal(layer.imageY,0,100)||!decimal(layer.imageZoom,1,3)||!Number.isInteger(layer.radius)||!decimal(layer.radius,0,100)||!Number.isInteger(layer.borderWidth)||!decimal(layer.borderWidth,0,12)||!hex(layer.borderColor)||typeof layer.shadow!=="boolean"||!Number.isInteger(layer.shadowBlur)||!decimal(layer.shadowBlur,0,40)||!decimal(layer.rotation,-45,45))return false;
     }
   }
