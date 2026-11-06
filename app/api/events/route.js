@@ -336,7 +336,7 @@ export async function POST(request) {
     if (!heroSlotPhotos || typeof heroSlotPhotos !== "object" || Array.isArray(heroSlotPhotos) || Object.keys(heroSlotPhotos).length > 30) return json({error:"HERO 사진 정보가 올바르지 않아요."},400);
     const expectedPrefix = supabase.storage.from("invitation-photos").getPublicUrl(`${user.id}/`).data.publicUrl;
     for (const [slotId, photoUrl] of Object.entries(heroSlotPhotos)) {
-      if (!/^[a-zA-Z0-9_-]{1,80}$/.test(slotId) || typeof photoUrl !== "string" || (photoUrl && (!photoUrl.startsWith(expectedPrefix) || !/^[0-9a-f-]{36}\\.(jpg|webp)$/i.test(photoUrl.slice(expectedPrefix.length))))) return json({error:"HERO 사진 소유권 또는 형식이 올바르지 않아요."},400);
+      if (!/^[a-zA-Z0-9_-]{1,80}$/.test(slotId) || typeof photoUrl !== "string" || (photoUrl && (!photoUrl.startsWith(expectedPrefix) || !/^[0-9a-f-]{36}\.(jpg|webp)$/i.test(photoUrl.slice(expectedPrefix.length))))) return json({error:"HERO 사진 소유권 또는 형식이 올바르지 않아요."},400);
     }
   }
   const heroPresetId = invitation.heroPresetId || null;
