@@ -46,6 +46,11 @@ export default function InvitationRenderer({ invitation, eventKind, eventTypeCon
       return {...layer,imageX:bounded(override.imageX,0,100,layer.imageX??50),imageY:bounded(override.imageY,0,100,layer.imageY??50),imageZoom:bounded(override.imageZoom,0.7,2,layer.imageZoom??1),imageFit:override.imageFit==="contain"?"contain":"cover"};
     })};
   }
+  // Multi-photo HERO slots replace the legacy single cover visually, but keep
+  // invitation.coverPhotoUrl saved for switching back to a single-photo HERO.
+  if (Array.isArray(normalizedConfig?.hero?.photoLayers) && normalizedConfig.hero.photoLayers.length > 0) {
+    presentation.coverPhotoUrl = "";
+  }
   // User-specific photo focus overrides the rendered crop, never the shared Hero preset.
   const photoFrame = normalizedConfig?.hero?.photoFrame;
   const showEntirePhoto = invitation?.heroPhotoFit === "contain" && ["photo", "frame"].includes(normalizedConfig?.hero?.mode);
