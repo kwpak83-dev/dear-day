@@ -1267,6 +1267,14 @@ export default function CreateInvitation() {
     window.location.assign(`/?login=required&returnUrl=${encodeURIComponent(returnPath)}`);
   };
   const validateForPublish = () => {
+    const unfilledPhotoSlots = activePhotoSlots.filter(layer => !invitation.heroSlotPhotos?.[layer.id]);
+    if (unfilledPhotoSlots.length) {
+      const message = `HERO 사진 ${unfilledPhotoSlots.length}장을 더 등록해 주세요.`;
+      setFlowNotice(message);
+      showSavedToast(message, { validation: true });
+      setEditorStep(0);
+      return false;
+    }
     const invitationForValidation = { ...invitation, galleryImages: galleryPhotos.map((photo) => photo.url).filter(Boolean) };
     const missingFields = getAllMissingRequiredFields(invitationForValidation, invitation.eventKind, eventTypeConfig);
     if (!missingFields.length) return true;
