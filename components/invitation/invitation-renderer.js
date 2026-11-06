@@ -70,9 +70,7 @@ export default function InvitationRenderer({ invitation, eventKind, eventTypeCon
   for (const layer of normalizedConfig?.hero?.photoLayers || []) {
     const userUrl = slotPhotos[layer.id];
     if (typeof userUrl === "string" && /^https:\/\//i.test(userUrl)) resolvedAssets[`photo-slot:${layer.id}`] = userUrl;
-    else if (typeof layer.samplePhotoPath === "string" && /^hero-presets\/[0-9a-f-]{36}\/photo-slots\/[0-9a-f-]{36}\.(jpg|png|webp)$/i.test(layer.samplePhotoPath) && process.env.NEXT_PUBLIC_SUPABASE_URL) {
-      resolvedAssets[`photo-slot:${layer.id}`] = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/template-assets/${layer.samplePhotoPath}`;
-    }
+
   }
   const templateBgmUrl = normalizedConfig.bgm?.mode === "asset" ? resolvedAssets?.[normalizedConfig.bgm.assetId] : null;
   const bgmMode = invitation.bgmMode || "background";
