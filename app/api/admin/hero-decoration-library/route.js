@@ -54,7 +54,7 @@ export async function DELETE(request){
  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id||""))return fail("삭제할 장식 정보가 올바르지 않아요.",400);
  const {data:presets,error:presetError}=await a.client.from("hero_presets").select("id,name,config");
  if(presetError)return fail("장식 사용 여부를 확인하지 못했어요.",500);
- const used=(presets||[]).filter(p=>Array.isArray(p.config?.decorLayers)&&p.config.decorLayers.some(layer=>layer?.assetId===id));
+ const used=(presets||[]).filter(p=>(Array.isArray(p.config?.decorLayers)&&p.config.decorLayers.some(layer=>layer?.assetId===id))||(Array.isArray(p.config?.photoLayers)&&p.config.photoLayers.some(layer=>layer?.sampleAssetId===id)));
  if(used.length)return Response.json({error:`현재 ${used.length}개 Hero에서 사용 중인 장식입니다. Hero에서 먼저 제거한 뒤 삭제해 주세요.`,usedBy:used.map(p=>({id:p.id,name:p.name}))},{status:409});
  const {data:files,error:listError}=await a.client.storage.from(bucket).list(folder,{limit:1000});
  if(listError)return fail("장식 파일을 확인하지 못했어요.",500);
