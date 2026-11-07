@@ -13,7 +13,7 @@ export default function HeroFontGate({ fonts = [], children, className, style })
       if (document.fonts?.load) {
         // Stylesheets may still be downloading when the component hydrates.
         const sheets = [...document.querySelectorAll('link[rel="stylesheet"]')]
-          .filter(link => link.href.includes("/fonts/"));
+          .filter(link => (link.href.includes("/fonts/") || link.href.includes("fonts.googleapis.com/css2")));
         await Promise.all(sheets.map(link => new Promise(resolve => {
           if (link.sheet) return resolve();
           const done = () => { link.removeEventListener("load", done); link.removeEventListener("error", done); resolve(); };
@@ -22,7 +22,7 @@ export default function HeroFontGate({ fonts = [], children, className, style })
           // Avoid holding the HERO forever on a failed stylesheet.
           setTimeout(done, 2500);
         })));
-        await Promise.all(fonts.filter(Boolean).map(font => document.fonts.load(`16px ${font}`, "정우 수지 2026 SAT Wedding").catch(() => [])));
+        await Promise.all(fonts.filter(Boolean).map(font => document.fonts.load(/\b\d+px\b/.test(font) ? font : `16px ${font}`, "HAPPY WEDDING DAY 정우 수지 2026 SAT Wedding").catch(() => [])));
         await document.fonts.ready;
       }
       if (active) setReady(true);
