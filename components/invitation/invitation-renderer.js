@@ -6,6 +6,7 @@ import ModernTemplate from "./templates/modern-template";
 import RomanticTemplate from "./templates/romantic-template";
 import { getInvitationPresentation } from "./presentation";
 import { normalizeTemplateConfig } from "../../lib/template-config";
+import { readHeroPhotoGrayscaleChoice } from "../../lib/hero-photo-grayscale";
 import TemplateBgm from "./template-bgm";
 import SharedTemplateBgm from "./shared-template-bgm";
 import TemplateScreenEffect from "./template-screen-effect";
@@ -45,6 +46,22 @@ export default function InvitationRenderer({ invitation, eventKind, eventTypeCon
       const bounded=(value,min,max,fallback)=>Number.isFinite(Number(value))?Math.min(max,Math.max(min,Number(value))):fallback;
       return {...layer,imageX:bounded(override.imageX,0,100,layer.imageX??50),imageY:bounded(override.imageY,0,100,layer.imageY??50),imageZoom:bounded(override.imageZoom,0.7,2,layer.imageZoom??1),imageFit:override.imageFit==="contain"?"contain":"cover"};
     })};
+  }
+  // Apply per-invitation choices after preset normalization, without mutating admin defaults.
+  const grayscaleChoices = invitation?.heroPhotoGrayscaleOverrides;
+  const selectedPresetId = invitation?.heroPresetId;
+  const coverGrayscaleChoice = readHeroPhotoGrayscaleChoice(grayscaleChoices, selectedPresetId);
+  if (coverGrayscaleChoice !== undefined && normalizedConfig?.hero) {
+    normalizedConfig.hero = { ...normalizedConfig.hero, photoGrayscale: coverGrayscaleChoice ? 100 : 0 };
+  }
+  if (Array.isArray(normalizedConfig?.hero?.photoLayers)) {
+    normalizedConfig.hero = {
+      ...normalizedConfig.hero,
+      photoLayers: normalizedConfig.hero.photoLayers.map(layer => {
+        const choice = readHeroPhotoGrayscaleChoice(grayscaleChoices, selectedPresetId, layer.id);
+        return choice === undefined ? layer : { ...layer, userGrayscaleOverride: choice ? 100 : 0 };
+      }),
+    };
   }
   // Multi-photo HERO slots replace the legacy single cover visually, but keep
   // invitation.coverPhotoUrl saved for switching back to a single-photo HERO.
