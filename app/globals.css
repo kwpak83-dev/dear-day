@@ -4759,3 +4759,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Configurable shadow for shared template action buttons; Quick Menu remains independent. */
 .invitation-template.dd-template-button-style :is(.public-address-copy button,.public-account-card button,.public-rsvp form>button,.guestbook-form>button,.guestbook-delete-backdrop footer button:last-child,.rsvp-edit-actions a,.rsvp-edit-actions button,.dd-contact-toggle){box-shadow:var(--dd-button-shadow,none)}
+
+/* User calendar accent stays independent from admin shared buttons and quick menu. */
+.invitation-template .classic-calendar-grid span.is-event-day{background:var(--dd-calendar-accent,var(--dd-color-accent,#b78b72))}
+.invitation-template .classic-dday .classic-dday-highlight{background:color-mix(in srgb,var(--dd-calendar-accent,var(--dd-color-accent,#b78b72)) 15%,transparent);color:var(--dd-calendar-accent,var(--dd-color-accent,#b78b72))}
+.invitation-template .classic-countdown-circle{background:var(--dd-calendar-accent,var(--dd-color-accent,#b78b72))}
