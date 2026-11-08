@@ -4799,3 +4799,15 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-body-style-accordion-trigger{display:flex;align-items:center;justify-content:space-between;width:100%;padding:10px 2px;border:0;border-bottom:1px solid #e9ded8;background:transparent;color:#73594f;font-size:13px;text-align:left;cursor:pointer}
 .dd-body-style-accordion-trigger span{font-size:18px;line-height:1}
 .dd-body-style-color-fields{display:grid;gap:12px}
+
+
+/* Unsaved editor changes: deliberate three-way exit confirmation. */
+.dd-exit-confirm-backdrop{z-index:10050}
+.dd-exit-confirm-card{width:min(370px,calc(100vw - 32px));padding:24px 20px;border-radius:16px;background:#fff;box-shadow:0 16px 55px #0003;text-align:center}
+.dd-exit-confirm-card h2{margin:0 0 10px;font-size:19px;line-height:1.4;color:#40352f}
+.dd-exit-confirm-card p{margin:0 0 20px;font-size:13px;line-height:1.65;color:#756a65}
+.dd-exit-confirm-actions{display:grid;gap:9px}
+.dd-exit-confirm-actions button{min-height:43px;border-radius:9px;border:1px solid #d9c9c0;background:#fff;color:#604e47;font-weight:600;cursor:pointer}
+.dd-exit-confirm-actions button:first-child{background:#755d52;border-color:#755d52;color:#fff}
+.dd-exit-confirm-actions button:nth-child(2){color:#a34e4e}
+.dd-exit-confirm-actions button:disabled{opacity:.55;cursor:wait}
