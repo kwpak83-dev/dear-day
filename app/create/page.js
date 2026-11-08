@@ -178,6 +178,14 @@ function BirthDateField({ label, value, onChange }) {
 
 export default function CreateInvitation() {
   const [invitation, setInvitation] = useState(initialInvitation);
+  const [exitConfirmOpen, setExitConfirmOpen] = useState(false);
+  const [exitSaving, setExitSaving] = useState(false);
+  const savedInvitationSnapshot = useRef(JSON.stringify(initialInvitation));
+  const latestInvitation = useRef(invitation);
+  latestInvitation.current = invitation;
+  const exitDestination = useRef(null);
+  const skipExitWarning = useRef(false);
+  const hasUnsavedChanges = () => JSON.stringify(latestInvitation.current) !== savedInvitationSnapshot.current;
   const [expandedAccountEditors, setExpandedAccountEditors] = useState({});
   const [expandedContactEditors, setExpandedContactEditors] = useState({});
   const introPreviewRef = useRef(null);
@@ -211,6 +219,8 @@ export default function CreateInvitation() {
   const [provider, setProvider] = useState("");
   const [published, setPublished] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const previewOpenRef = useRef(false);
+  previewOpenRef.current = previewOpen;
   const [liveNoticeDismissed, setLiveNoticeDismissed] = useState(false);
   const [fullNoticeDismissed, setFullNoticeDismissed] = useState(false);
   const [editorStep, setEditorStep] = useState(0);
@@ -274,6 +284,8 @@ export default function CreateInvitation() {
   const [templateNotice, setTemplateNotice] = useState("");
   const [designPickerOpen, setDesignPickerOpen] = useState(null);
   const [bodyStylePreviewOpen, setBodyStylePreviewOpen] = useState(false);
+  const [bodyPaletteOpen, setBodyPaletteOpen] = useState(true);
+  const [bodyColorsOpen, setBodyColorsOpen] = useState(true);
   const [submitting, setSubmitting] = useState("");
   const [galleryBusy, setGalleryBusy] = useState(false);
   const [galleryPhotos, setGalleryPhotos] = useState([]);
@@ -399,18 +411,20 @@ export default function CreateInvitation() {
         try {
           const selected=JSON.parse(window.localStorage.getItem("dear-day-template-start")||"null");
           if (selected?.templateKey===query.get("template")&&selected.heroPresetId&&selected.templateId) {
-            setInvitation(current=>({...current,eventKind:selected.eventKind||"wedding",heroPresetId:selected.heroPresetId,templateId:selected.templateId,completedTemplateKey:selected.templateKey}));
+            setInvitation(current=>{const next={...current,eventKind:selected.eventKind||"wedding",heroPresetId:selected.heroPresetId,templateId:selected.templateId,completedTemplateKey:selected.templateKey};savedInvitationSnapshot.current=JSON.stringify(next);return next;});
             startedFromTemplate=true;
           }
         } catch {}
       }
+      // New invitations start with a clean baseline, including preselected designs.
+      if (!startedFromTemplate) savedInvitationSnapshot.current = JSON.stringify(initialInvitation);
       setEventReady(true);
       if (startedFromTemplate) setEditorStep(0);
     }
     if (!slug && query.get("resume") === "draft") {
       try {
         const draft = JSON.parse(window.localStorage.getItem("dear-day-draft") || "null");
-        if (draft && typeof draft === "object") setInvitation({ ...initialInvitation, ...draft, program: normalizeProgram(draft.program), coupleIntro: normalizeCoupleIntro(draft.coupleIntro), loveStory: normalizeLoveStory(draft.loveStory) });
+        if (draft && typeof draft === "object") { const restored = { ...initialInvitation, ...draft, program: normalizeProgram(draft.program), coupleIntro: normalizeCoupleIntro(draft.coupleIntro), loveStory: normalizeLoveStory(draft.loveStory) }; setInvitation(restored); savedInvitationSnapshot.current = JSON.stringify(restored); }
       } catch {
         setSaveNotice("기기에 저장된 작성 내용을 불러오지 못했어요.");
       }
@@ -454,6 +468,7 @@ export default function CreateInvitation() {
         }
       }
       setInvitation(restoredInvitation);
+      savedInvitationSnapshot.current = JSON.stringify(restoredInvitation);
       templateSelectionChanged.current = false;
       setEventSlug(result.event.slug);
       setEventStatus(status);
@@ -1225,6 +1240,7 @@ export default function CreateInvitation() {
     }
     if (galleryBusy || photoBusy.current || (showLoading && submitting)) return;
     if (!validateDraftMinimum()) return;
+    const savingSnapshot = JSON.stringify(invitation);
     if (showSuccessToast) { window.clearTimeout(saveToastTimer.current); setSaveToastVisible(false); }
     if (showLoading) setSubmitting("draft");
     try {
@@ -1241,6 +1257,7 @@ export default function CreateInvitation() {
       const savedStatus = result.status || "draft";
       templateSelectionChanged.current = false;
       setTemplateRevision(current => current + 1);
+      savedInvitationSnapshot.current = savingSnapshot;
       setLoginRequired(false); window.localStorage.setItem("dear-day-event-slug", slug); setEventSlug(slug); setEventStatus(savedStatus);
       if ((savedStatus === "draft" || savedStatus === "suspended") && showSuccessToast) { setSaveNotice(""); showSavedToast(savedStatus === "suspended" ? "변경사항이 저장되었습니다. 재발행은 내 초대장 → 다시 발행하기에서 가능합니다.." : "임시 저장이 완료되었습니다."); }
       else if (savedStatus === "published" && showSuccessToast) { setSaveNotice(""); showSavedToast("수정사항이 공개 초대장에 반영되었습니다."); }
@@ -1249,6 +1266,52 @@ export default function CreateInvitation() {
     } finally {
       if (showLoading) setSubmitting("");
     }
+  };
+  // A history sentinel catches Android hardware Back and browser Back without
+  // navigating away before the user decides. Full-preview Back has its own entry.
+  useEffect(() => {
+    if (!eventReady) return;
+    const marker = "dearday-editor-guard";
+    if (window.history.state?.deardayOverlay !== marker) {
+      window.history.pushState({ ...(window.history.state || {}), deardayOverlay: marker }, "", window.location.href);
+    }
+    const onBack = () => {
+      if (skipExitWarning.current || previewOpenRef.current) return;
+      if (window.history.state?.deardayOverlay !== marker) {
+        window.history.pushState({ ...(window.history.state || {}), deardayOverlay: marker }, "", window.location.href);
+      }
+      if (hasUnsavedChanges()) { exitDestination.current = { type: "back" }; setExitConfirmOpen(true); }
+      else { skipExitWarning.current = true; window.history.go(-2); }
+    };
+    const onBeforeUnload = event => {
+      if (!skipExitWarning.current && hasUnsavedChanges()) { event.preventDefault(); event.returnValue = ""; }
+    };
+    window.addEventListener("popstate", onBack);
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => { window.removeEventListener("popstate", onBack); window.removeEventListener("beforeunload", onBeforeUnload); };
+  }, [eventReady]);
+  const requestEditorExit = (event, href) => {
+    if (!hasUnsavedChanges()) return;
+    event.preventDefault();
+    exitDestination.current = { type: "url", href };
+    setExitConfirmOpen(true);
+  };
+  const completeEditorExit = () => {
+    const destination = exitDestination.current;
+    skipExitWarning.current = true;
+    setExitConfirmOpen(false);
+    if (destination?.type === "url") window.location.assign(destination.href);
+    else window.history.go(-2);
+  };
+  const saveAndExitEditor = async () => {
+    if (exitSaving) return;
+    setExitSaving(true);
+    try {
+      const result = await saveDraft({ showSuccessToast: true });
+      if (result && result !== "local" && !hasUnsavedChanges()) completeEditorExit();
+    } catch (error) {
+      setSaveNotice(error?.message || "저장에 실패했어요. 다시 시도해 주세요.");
+    } finally { setExitSaving(false); }
   };
   const moveEditorStep = async (nextStep) => {
     if (stepSaveLock.current || submitting || galleryBusy || photoBusy.current || uploadingPhoto || !eventReady || nextStep === editorStep) return;
@@ -1402,7 +1465,7 @@ export default function CreateInvitation() {
   const previewPlaceActions = () => invitation.venueAddress ? <><div className="public-address-copy"><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button><span role="status" aria-live="polite">{addressCopied ? "주소가 복사되었습니다." : ""}</span></div><InvitationMap address={invitation.venueAddress} /></> : null;
 
   return <main className={`create-page${editorStep === 4 ? " dd-program-step" : ""}`}>
-    <header className="create-header"><a className="brand" href="/" aria-label="DearDay 홈"><DearDayLogo /></a><div className="create-user"><a href="/my-invitations">마이페이지</a><button type="button" className="dd-header-save" onClick={() => saveDraft({ showSuccessToast: true })} disabled={!eventReady || Boolean(submitting) || uploadingPhoto || galleryBusy}>{eventStatus === "published" ? "수정사항 반영" : "저장하기"}</button></div></header>
+    <header className="create-header"><a className="brand" href="/" aria-label="DearDay 홈" onClick={event=>requestEditorExit(event,"/")}><DearDayLogo /></a><div className="create-user"><a href="/my-invitations" onClick={event=>requestEditorExit(event,"/my-invitations")}>마이페이지</a><button type="button" className="dd-header-save" onClick={() => saveDraft({ showSuccessToast: true })} disabled={!eventReady || Boolean(submitting) || uploadingPhoto || galleryBusy}>{eventStatus === "published" ? "수정사항 반영" : "저장하기"}</button></div></header>
     <div className="create-layout">
       <section className="editor-panel">
         <p className="dd-editor-group-label">기본 정보 <small>행사 내용을 입력해 주세요.</small></p>
@@ -1494,14 +1557,16 @@ export default function CreateInvitation() {
         <details className="dd-custom-accordion"><summary><span><strong>🎨 본문 테마</strong><small>초대장 본문의 스타일을 선택하세요.</small></span><span className="dd-accordion-chevron" aria-hidden="true">⌄</span></summary><div className="dd-accordion-body"><div className="dd-design-picker-row"><span>선택된 디자인: {templateOptions.find((template)=>template.id===invitation.templateId)?.name || "없음"}</span><button type="button" className="dd-design-picker-launch" onClick={()=>setDesignPickerOpen("body")}>디자인 선택</button></div>{templateNotice && <p className="photo-notice" role="status">{templateNotice}</p>}
           <div className="dd-body-style-controls">
             <div className="dd-body-style-heading"><strong>본문 스타일 꾸미기</strong><button type="button" onClick={()=>setBodyStylePreviewOpen(value=>!value)}>{bodyStylePreviewOpen?"미리보기 접기":"실시간 미리보기 열기"}</button></div>
-            {bodyStylePreviewOpen && (previewReady ? <div className="dd-body-style-sticky-preview"><BodyStyleLivePreview invitation={previewInvitation} eventKind={invitation.eventKind} templateId={invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets}/></div> : <p>{previewLoading}</p>)}
-            <strong className="dd-body-style-subheading">추천 색상 조합</strong>
-            <div className="dd-body-style-palettes">{BODY_STYLE_PALETTES.map(palette=><button key={palette.id} type="button" onClick={()=>setInvitation(current=>({...current,bodyStyleOverrides:{...normalizeBodyStyleOverrides(current.bodyStyleOverrides),overlayColor:palette.overlayColor,overlayOpacity:current.bodyStyleOverrides?.overlayOpacity??0.25,textColor:palette.textColor,titleColor:palette.titleColor,calendarColor:palette.calendarColor}}))}><span className="dd-body-style-swatches">{["overlayColor","textColor","titleColor","calendarColor"].map(key=><i key={key} style={{background:palette[key]}}/>)}</span><span>{palette.name}</span></button>)}</div>
-            <strong className="dd-body-style-subheading">개별 색상</strong>
+            {bodyStylePreviewOpen && (previewReady ? <div className="dd-body-style-sticky-preview"><BodyStyleLivePreview invitation={previewInvitation} eventKind={invitation.eventKind} templateId={invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets}/></div> : <div>{previewLoading}</div>)}
+            <button type="button" className="dd-body-style-accordion-trigger" aria-expanded={bodyPaletteOpen} onClick={()=>setBodyPaletteOpen(open=>!open)}><strong>추천 색상 조합</strong><span aria-hidden="true">{bodyPaletteOpen?"⌃":"⌄"}</span></button>
+            {bodyPaletteOpen && <div className="dd-body-style-palettes">{BODY_STYLE_PALETTES.map(palette=><button key={palette.id} type="button" onClick={()=>setInvitation(current=>({...current,bodyStyleOverrides:{...normalizeBodyStyleOverrides(current.bodyStyleOverrides),overlayColor:palette.overlayColor,overlayOpacity:current.bodyStyleOverrides?.overlayOpacity??0.25,textColor:palette.textColor,titleColor:palette.titleColor,calendarColor:palette.calendarColor}}))}><span className="dd-body-style-swatches">{["overlayColor","textColor","titleColor","calendarColor"].map(key=><i key={key} style={{background:palette[key]}}/>)}</span><span>{palette.name}</span></button>)}</div>}
+            <button type="button" className="dd-body-style-accordion-trigger" aria-expanded={bodyColorsOpen} onClick={()=>setBodyColorsOpen(open=>!open)}><strong>개별 색상</strong><span aria-hidden="true">{bodyColorsOpen?"⌃":"⌄"}</span></button>
+            {bodyColorsOpen && <div className="dd-body-style-color-fields">
             {([["overlayColor","배경 Overlay 색상"],["textColor","기본 글자색"],["titleColor","본문 제목색"],["calendarColor","달력 포인트색"]]).map(([key,label])=>{const current=normalizeBodyStyleOverrides(invitation.bodyStyleOverrides);const defaultColor=key==="overlayColor"?(templateRender.config?.background?.overlayColor||"#FFFFFF"):key==="textColor"?(templateRender.config?.colors?.text||"#303030"):key==="titleColor"?(templateRender.config?.colors?.title||"#604E47"):(templateRender.config?.colors?.accent||"#B78B72");const value=current[key]||defaultColor;return <label key={key} className="dd-body-style-color-row"><span>{label}</span><input type="color" value={value} onChange={event=>setInvitation(old=>({...old,bodyStyleOverrides:{...normalizeBodyStyleOverrides(old.bodyStyleOverrides),[key]:event.target.value,...(key==="overlayColor"&&old.bodyStyleOverrides?.overlayOpacity===undefined?{overlayOpacity:0.25}:{})}}))}/><input type="text" aria-label={label+" HEX"} maxLength={7} value={value} onChange={event=>{if(/^#[0-9a-fA-F]{6}$/.test(event.target.value))setInvitation(old=>({...old,bodyStyleOverrides:{...normalizeBodyStyleOverrides(old.bodyStyleOverrides),[key]:event.target.value}}))}}/></label>})}
             <label className="dd-body-style-opacity"><span>Overlay 투명도 · {Math.round((invitation.bodyStyleOverrides?.overlayOpacity??templateRender.config?.background?.overlayOpacity??0)*100)}%</span><input type="range" min="0" max="100" step="1" value={Math.round((invitation.bodyStyleOverrides?.overlayOpacity??templateRender.config?.background?.overlayOpacity??0)*100)} onChange={event=>setInvitation(old=>({...old,bodyStyleOverrides:{...normalizeBodyStyleOverrides(old.bodyStyleOverrides),overlayOpacity:Number(event.target.value)/100}}))}/></label>
+            </div>}
             <strong className="dd-body-style-subheading">글꼴</strong>
-            {([["bodyFont","기본 글꼴"],["titleFont","제목 글꼴"]]).map(([key,label])=><label key={key} className="dd-body-style-font-row"><span>{label}</span><select value={invitation.bodyStyleOverrides?.[key]||""} onChange={event=>setInvitation(old=>{const overrides={...normalizeBodyStyleOverrides(old.bodyStyleOverrides)};if(event.target.value)overrides[key]=event.target.value;else delete overrides[key];return {...old,bodyStyleOverrides:overrides}})}><option value="">테마 기본값</option>{TEMPLATE_FONT_OPTIONS.map(font=><option key={font.value} value={font.value}>{font.label}</option>)}</select></label>)}
+            {([["bodyFont","기본 글꼴"],["titleFont","제목 글꼴"]]).map(([key,label])=><label key={key} className="dd-body-style-font-row"><span>{label}</span><select value={invitation.bodyStyleOverrides?.[key]||""} onFocus={()=>{setBodyPaletteOpen(false);setBodyColorsOpen(false)}} onPointerDown={()=>{setBodyPaletteOpen(false);setBodyColorsOpen(false)}} onChange={event=>setInvitation(old=>{const overrides={...normalizeBodyStyleOverrides(old.bodyStyleOverrides)};if(event.target.value)overrides[key]=event.target.value;else delete overrides[key];return {...old,bodyStyleOverrides:overrides}})}><option value="">테마 기본값</option>{TEMPLATE_FONT_OPTIONS.map(font=><option key={font.value} value={font.value}>{font.label}</option>)}</select></label>)}
             <button type="button" className="dd-body-style-reset" onClick={()=>setInvitation(old=>({...old,bodyStyleOverrides:{}}))}>색상·글꼴 테마 기본값 복원</button>
             <p className="dd-body-style-hint">버튼 디자인과 퀵메뉴 아이콘 색상은 관리자 공통 설정을 유지합니다.</p>
           </div></div></details>
@@ -1564,6 +1629,7 @@ export default function CreateInvitation() {
     {checkoutOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="payment-title"><div className="payment-card"><p className="section-kicker">TEST PAYMENT</p><h2 id="payment-title">발행 준비 안내</h2><dl><div><dt>템플릿</dt><dd>{templateOptions.find((template) => template.id === invitation.templateId)?.name || "선택한 템플릿"}</dd></div><div><dt>행사 종류</dt><dd>{eventConfig.label}</dd></div><div><dt>결제 금액</dt><dd>테스트 결제</dd></div></dl><p className="test-payment-notice"><strong>개발용 테스트 결제입니다.</strong> 실제 결제가 발생하지 않습니다.</p><p>테스트 결제 후에도 초대장은 공개되지 않으며, 최종 확인 후 직접 발행해야 합니다.</p>{flowNotice && <p className="payment-error" role="alert">{flowNotice}</p>}<div className="payment-actions"><button type="button" className="save-button" onClick={() => setCheckoutOpen(false)}>계속 수정하기</button><button type="button" className="publish-button" onClick={runMockPayment}>테스트 결제하기</button></div></div></div>}
     {paymentComplete && <div className="publish-overlay" role="dialog" aria-modal="true" aria-labelledby="payment-complete-title"><div className="publish-card"><div className="publish-heart">✓</div><p className="section-kicker">PAYMENT COMPLETE</p><h2 id="payment-complete-title">결제가 완료되었습니다.</h2><p>아직 초대장은 공개되지 않았습니다.<br />내용을 최종 확인한 후 발행해 주세요.</p><button type="button" className="save-button full" onClick={() => { setPaymentComplete(false); setPreviewOpen(true); }}>최종 미리보기</button><button type="button" className="publish-button full" onClick={requestPublish}>초대장 발행하기</button></div></div>}
     {publishConfirmOpen && <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="publish-confirm-title"><div className="publish-confirm-card"><h2 id="publish-confirm-title">초대장을 발행하시겠습니까?</h2><p>발행하면 초대장 링크가 활성화됩니다.</p>{flowNotice && <p className="payment-error" role="alert">{flowNotice}</p>}<div><button type="button" className="save-button" onClick={() => setPublishConfirmOpen(false)}>취소</button><button type="button" className="publish-button" onClick={publish}>발행하기</button></div></div></div>}
+    {exitConfirmOpen && <div className="modal-backdrop dd-exit-confirm-backdrop" role="presentation"><div className="dd-exit-confirm-card" role="dialog" aria-modal="true" aria-labelledby="dd-exit-confirm-title"><h2 id="dd-exit-confirm-title">저장하지 않은 변경사항이 있어요</h2><p>지금 나가면 입력하거나 수정한 내용이 사라질 수 있어요.</p><div className="dd-exit-confirm-actions"><button type="button" disabled={exitSaving} onClick={saveAndExitEditor}>저장하고 나가기</button><button type="button" disabled={exitSaving} onClick={completeEditorExit}>저장하지 않고 나가기</button><button type="button" disabled={exitSaving} onClick={()=>{exitDestination.current=null;setExitConfirmOpen(false)}}>계속 편집하기</button></div></div></div>}
     {submitting && <div className="save-loading" role="status" aria-live="polite"><div className="dd-save-loading-card"><div className="dd-save-logo-scene" aria-hidden="true"><span className="dd-save-orbit" /><span className="dd-save-spark dd-save-spark-one">✦</span><span className="dd-save-spark dd-save-spark-two">✧</span><span className="dd-save-spark dd-save-spark-three">✦</span><span className="dd-save-spark dd-save-spark-four">✧</span><DearDayLogo /></div><strong>{submitting === "publish" ? "초대장을 발행하고 있어요" : submitting === "payment" ? "테스트 결제를 처리하고 있어요" : "초대장을 저장하고 있어요"}</strong><span>잠시만 기다려 주세요.</span></div></div>}
     {saveToastVisible && <div className={`save-success-toast${saveToastIsValidation ? " save-validation-toast" : ""}`} role="status" aria-live="polite"><strong>{saveToastMessage}</strong>{saveToastMessage === "임시 저장이 완료되었습니다." && <span>발행하려면 미리보기 → 발행 준비하기를 진행해 주세요.</span>}</div>}
     {published && <div className="publish-overlay"><div className="publish-card"><div className="publish-heart">♥</div><p className="section-kicker">YOUR INVITATION IS READY</p><h2>초대장이<br /><em>발행되었습니다.</em></h2><p>초대장이 발행됐어요. 이제 링크를 공유해보세요.</p><a className="publish-button full" href={`/invite/${eventSlug}?from=owner`}>초대장 보기 및 공유 →</a><button className="publish-button full secondary" onClick={() => setPublished(false)}>완료했어요</button></div></div>}
