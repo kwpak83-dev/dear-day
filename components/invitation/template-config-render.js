@@ -28,6 +28,7 @@ export function getTemplateConfigRenderProps(config, assets = {}) {
   const hero = config?.hero;
   const typography = config?.typography;
   const colors = config?.colors;
+  if (config?.userCalendarAccent) rootStyle["--dd-calendar-accent"] = config.userCalendarAccent;
   const buttonStyle = config?.buttonStyle;
   const quickMenu = config?.quickMenu;
   if (config?.effects?.scrollRevealDuration != null) rootStyle["--dd-reveal-duration"] = `${config.effects.scrollRevealDuration}s`;

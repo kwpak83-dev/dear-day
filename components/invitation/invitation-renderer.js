@@ -6,6 +6,7 @@ import ModernTemplate from "./templates/modern-template";
 import RomanticTemplate from "./templates/romantic-template";
 import { getInvitationPresentation } from "./presentation";
 import { normalizeTemplateConfig } from "../../lib/template-config";
+import { applyBodyStyleOverrides } from "../../lib/body-style-overrides";
 import { readHeroPhotoGrayscaleChoice } from "../../lib/hero-photo-grayscale";
 import TemplateBgm from "./template-bgm";
 import SharedTemplateBgm from "./shared-template-bgm";
@@ -35,7 +36,7 @@ export default function InvitationRenderer({ invitation, eventKind, eventTypeCon
     ...(matrixFields.venue?.state === "none" ? { venue: "", address: "", addressDetail: "" } : {}),
     ...(matrixFields.message?.state === "none" ? { message: "" } : {}),
   };
-  const normalizedConfig = normalizeTemplateConfig(templateConfig);
+  const normalizedConfig = normalizeTemplateConfig(applyBodyStyleOverrides(templateConfig, invitation?.bodyStyleOverrides));
   // Per-slot photo adjustments reuse the existing HERO crop/zoom renderer.
   // Only image properties are user-editable; the admin frame geometry stays fixed.
   const slotAdjustments = invitation?.heroSlotAdjustments && typeof invitation.heroSlotAdjustments === "object" ? invitation.heroSlotAdjustments : {};
