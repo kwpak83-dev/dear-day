@@ -10,6 +10,7 @@ import { calculateRetentionDates } from "../../../lib/invitation-retention";
 import { getTemplateAssetReferences, resolveTemplateAssetUrls, applySaleTemplateStyles } from "../../../lib/template-config";
 import { preserveCardShareMetadata } from "../../../lib/card-share-image";
 import { addEventCardImages } from "../../../lib/event-card-images";
+import { validHeroPhotoGrayscaleOverrides } from "../../../lib/hero-photo-grayscale";
 
 const slugPattern = /^[a-z0-9-]{4,80}$/;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -339,6 +340,7 @@ export async function POST(request) {
       if (!/^[a-zA-Z0-9_-]{1,80}$/.test(slotId) || typeof photoUrl !== "string" || (photoUrl && (!photoUrl.startsWith(expectedPrefix) || !/^[0-9a-f-]{36}\.(jpg|webp)$/i.test(photoUrl.slice(expectedPrefix.length))))) return json({error:"HERO 사진 소유권 또는 형식이 올바르지 않아요."},400);
     }
   }
+  if (invitation.heroPhotoGrayscaleOverrides !== undefined && !validHeroPhotoGrayscaleOverrides(invitation.heroPhotoGrayscaleOverrides)) return json({ error: "HERO 사진 흑백 설정이 올바르지 않아요." }, 400);
   const heroPresetId = invitation.heroPresetId || null;
   if (heroPresetId && !uuidPattern.test(heroPresetId)) return json({ error: "선택한 Hero 정보가 올바르지 않아요." }, 400);
 
@@ -404,7 +406,7 @@ export async function POST(request) {
     ...(hasHeroPresetId ? { hero_preset_id: heroPresetId } : {}),
     title: getInvitationTitle(invitation, eventKind),
     starts_at: startsAt,
-    settings: { ...preserveCardShareMetadata(invitation, existing?.settings), ...(eventKind === "wedding" ? { coupleIntro: normalizeCoupleIntro(invitation.coupleIntro === undefined ? existing?.settings?.coupleIntro : invitation.coupleIntro), loveStory: normalizeLoveStory(invitation.loveStory === undefined ? existing?.settings?.loveStory : invitation.loveStory) } : {}), rsvpOptions: { mealEnabled: (invitation.rsvpOptions === undefined ? existing?.settings?.rsvpOptions?.mealEnabled : invitation.rsvpOptions?.mealEnabled) === true, shuttleBusEnabled: (invitation.rsvpOptions === undefined ? existing?.settings?.rsvpOptions?.shuttleBusEnabled : invitation.rsvpOptions?.shuttleBusEnabled) === true }, program: normalizeProgram(invitation.program === undefined ? existing?.settings?.program : invitation.program), notice: prepareNoticeForSave(invitation.notice, existing?.settings?.notice) },
+    settings: { ...preserveCardShareMetadata(invitation, existing?.settings), heroPhotoGrayscaleOverrides: invitation.heroPhotoGrayscaleOverrides === undefined ? (existing?.settings?.heroPhotoGrayscaleOverrides || {}) : invitation.heroPhotoGrayscaleOverrides, ...(eventKind === "wedding" ? { coupleIntro: normalizeCoupleIntro(invitation.coupleIntro === undefined ? existing?.settings?.coupleIntro : invitation.coupleIntro), loveStory: normalizeLoveStory(invitation.loveStory === undefined ? existing?.settings?.loveStory : invitation.loveStory) } : {}), rsvpOptions: { mealEnabled: (invitation.rsvpOptions === undefined ? existing?.settings?.rsvpOptions?.mealEnabled : invitation.rsvpOptions?.mealEnabled) === true, shuttleBusEnabled: (invitation.rsvpOptions === undefined ? existing?.settings?.rsvpOptions?.shuttleBusEnabled : invitation.rsvpOptions?.shuttleBusEnabled) === true }, program: normalizeProgram(invitation.program === undefined ? existing?.settings?.program : invitation.program), notice: prepareNoticeForSave(invitation.notice, existing?.settings?.notice) },
   };
 
   if (publish && !existing) return json({ error: "초대장을 먼저 임시 저장해 주세요." }, 409);
