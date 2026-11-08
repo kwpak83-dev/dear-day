@@ -4793,3 +4793,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-body-style-live-content{position:absolute;top:0;left:0;width:390px;transform-origin:top left}
 .dd-body-style-live-content .invitation-template{width:390px;max-width:none}
 @media(max-width:360px){.dd-body-style-palettes{grid-template-columns:repeat(2,minmax(0,1fr))}.dd-body-style-sticky-preview{top:50px}}
+
+
+/* Collapsible color controls keep the font selectors close to the live preview. */
+.dd-body-style-accordion-trigger{display:flex;align-items:center;justify-content:space-between;width:100%;padding:10px 2px;border:0;border-bottom:1px solid #e9ded8;background:transparent;color:#73594f;font-size:13px;text-align:left;cursor:pointer}
+.dd-body-style-accordion-trigger span{font-size:18px;line-height:1}
+.dd-body-style-color-fields{display:grid;gap:12px}
