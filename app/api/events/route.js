@@ -174,9 +174,9 @@ export async function GET(request) {
     if (!url || !serviceRoleKey) return json({ error: "템플릿 서비스를 준비하지 못했어요." }, 503);
     const supabase = createClient(url, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
     const { data: template, error: templateError } = await supabase.from("templates")
-      .select("id,is_active,current_sale_version_id").eq("id", previewTemplateId).maybeSingle();
+      .select("id,status,is_visible,current_sale_version_id").eq("id", previewTemplateId).maybeSingle();
     if (templateError) return json({ error: "템플릿을 불러오지 못했어요." }, 500);
-    if (!template?.is_active) return json({ error: "현재 사용할 수 있는 템플릿을 찾지 못했어요." }, 404);
+    if (!template || template.status !== "on_sale" || template.is_visible !== true) return json({ error: "현재 사용할 수 있는 템플릿을 찾지 못했어요." }, 404);
     // Templates marked in use may have only a saved Draft (legacy sale-version
     // publishing was removed). Keep the sale version as a base when it exists.
     const { data: draft, error: draftError } = await supabase.from("template_versions")
