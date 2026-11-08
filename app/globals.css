@@ -4811,3 +4811,23 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-exit-confirm-actions button:first-child{background:#755d52;border-color:#755d52;color:#fff}
 .dd-exit-confirm-actions button:nth-child(2){color:#a34e4e}
 .dd-exit-confirm-actions button:disabled{opacity:.55;cursor:wait}
+
+
+/* Curated invitation typography picker */
+.dd-body-font-open{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;min-height:39px;padding:8px 12px;border:1px solid #e4dcd7;border-radius:8px;background:#fff;color:#443b37;font:inherit;text-align:left;cursor:pointer}
+.dd-body-font-open>span{margin-left:auto;font-size:16px}
+.dd-body-font-modal-backdrop{position:fixed;inset:0;z-index:10020;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(25,21,19,.56)}
+.dd-body-font-modal{display:flex;flex-direction:column;width:min(560px,100%);max-height:min(740px,calc(100dvh - 32px));overflow:hidden;border-radius:16px;background:#fff;box-shadow:0 18px 60px #0004}
+.dd-body-font-modal-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:19px 20px 13px;border-bottom:1px solid #eee5e1}
+.dd-body-font-modal-header strong{font-size:17px;color:#483831}
+.dd-body-font-modal-header p{margin:5px 0 0;color:#87776e;font-size:12px}
+.dd-body-font-modal-header button{border:0;background:transparent;font-size:25px;color:#796b64;cursor:pointer}
+.dd-body-font-modal-scroll{overflow-y:auto;overscroll-behavior:contain;padding:14px 16px 20px}
+.dd-body-font-modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.dd-body-font-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;min-width:0;min-height:120px;padding:12px 10px;border:1px solid #e3d9d3;border-radius:10px;background:#fff;text-align:left;cursor:pointer}
+.dd-body-font-card.is-selected{border:2px solid #ad796c;background:#fff9f6;padding:11px 9px}
+.dd-body-font-card-name{font-size:11px;font-weight:650;color:#544239;overflow-wrap:anywhere}
+.dd-body-font-card-category{margin-top:3px;font-size:10px;color:#99867b}
+.dd-body-font-card-sample{display:flex;align-items:center;justify-content:center;flex:1;width:100%;margin-top:9px;font-size:18px;line-height:1.4;color:#42352f;text-align:center;overflow-wrap:anywhere}
+.dd-body-font-card-selected{align-self:flex-end;font-size:10px;color:#a66e60}
+@media(max-width:420px){.dd-body-font-modal-backdrop{padding:10px}.dd-body-font-modal{max-height:calc(100dvh - 20px)}.dd-body-font-modal-scroll{padding:10px}.dd-body-font-modal-grid{gap:8px}.dd-body-font-card{padding:10px 8px}.dd-body-font-card-sample{font-size:16px}}
