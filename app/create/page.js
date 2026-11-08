@@ -219,6 +219,8 @@ export default function CreateInvitation() {
   const [provider, setProvider] = useState("");
   const [published, setPublished] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const previewOpenRef = useRef(false);
+  previewOpenRef.current = previewOpen;
   const [liveNoticeDismissed, setLiveNoticeDismissed] = useState(false);
   const [fullNoticeDismissed, setFullNoticeDismissed] = useState(false);
   const [editorStep, setEditorStep] = useState(0);
@@ -409,12 +411,13 @@ export default function CreateInvitation() {
         try {
           const selected=JSON.parse(window.localStorage.getItem("dear-day-template-start")||"null");
           if (selected?.templateKey===query.get("template")&&selected.heroPresetId&&selected.templateId) {
-            setInvitation(current=>({...current,eventKind:selected.eventKind||"wedding",heroPresetId:selected.heroPresetId,templateId:selected.templateId,completedTemplateKey:selected.templateKey}));
+            setInvitation(current=>{const next={...current,eventKind:selected.eventKind||"wedding",heroPresetId:selected.heroPresetId,templateId:selected.templateId,completedTemplateKey:selected.templateKey};savedInvitationSnapshot.current=JSON.stringify(next);return next;});
             startedFromTemplate=true;
           }
         } catch {}
       }
-      savedInvitationSnapshot.current = JSON.stringify(startedFromTemplate ? { ...initialInvitation, ...JSON.parse(window.localStorage.getItem("dear-day-template-start") || "{}") } : initialInvitation);
+      // New invitations start with a clean baseline, including preselected designs.
+      if (!startedFromTemplate) savedInvitationSnapshot.current = JSON.stringify(initialInvitation);
       setEventReady(true);
       if (startedFromTemplate) setEditorStep(0);
     }
@@ -1273,7 +1276,7 @@ export default function CreateInvitation() {
       window.history.pushState({ ...(window.history.state || {}), deardayOverlay: marker }, "", window.location.href);
     }
     const onBack = () => {
-      if (skipExitWarning.current) return;
+      if (skipExitWarning.current || previewOpenRef.current) return;
       if (window.history.state?.deardayOverlay !== marker) {
         window.history.pushState({ ...(window.history.state || {}), deardayOverlay: marker }, "", window.location.href);
       }
