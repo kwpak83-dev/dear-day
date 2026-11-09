@@ -77,19 +77,10 @@ function collectOwnedStoragePaths(value, supabaseUrl, ownerId, found = { photos:
   return found;
 }
 
-async function removeIfUnreferenced(supabase, bucket, path, ownerId) {
-  if (!path.startsWith(ownerId + "/")) return false;
-  const publicUrl = supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
-  const { data: remaining, error } = await supabase.from("events").select("id,cover_image_url,settings").eq("owner_id", ownerId);
-  if (error) return false;
-  const referenced = (remaining || []).some((row) =>
-    row.cover_image_url === publicUrl ||
-    JSON.stringify(row.settings || {}).includes(publicUrl) ||
-    JSON.stringify(row.settings || {}).includes(path)
-  );
-  if (referenced) return true;
-  const { error: removeError } = await supabase.storage.from(bucket).remove([path]);
-  return !removeError;
+// Fail closed: reference checks cannot currently prevent cross-account or concurrent
+// references. Keep objects until a durable, globally referenced cleanup worker exists.
+async function removeIfUnreferenced(_supabase, _bucket, _path, _ownerId) {
+  return false;
 }
 
 function json(body, status = 200) {
