@@ -17,6 +17,6 @@ export default function OptionalInvitationSections({ invitation, eventTypeConfig
   if (!preview) return <InvitationQuickMenu invitation={effectiveInvitation} slug={slug} startsAt={startsAt} previewMode={previewMode} rsvpLabel={rsvpLabel} guestbookLabel={guestbookLabel} sheetRequest={sheetRequest} />;
   return <>
     {effectiveInvitation.rsvpEnabled === true && <LazyInvitationForm kind="rsvp" slug={slug} startsAt={startsAt} preview title={rsvpLabel} />}
-    {effectiveInvitation.guestbookEnabled !== false && <LazyInvitationForm kind="guestbook" slug={slug} preview title={guestbookLabel} />}
+    {effectiveInvitation.guestbookEnabled !== false && <LazyInvitationForm kind="guestbook" slug={slug} startsAt={startsAt} preview title={guestbookLabel} />}
   </>;
 }
