@@ -275,7 +275,8 @@ export async function DELETE(request) {
       .eq("id", asset.id).eq("template_id", body.templateId).eq("is_active", false);
     if (removed.error) return fail("Asset 정보를 삭제하지 못했어요.", 500);
     if (removed.count !== 1) return fail("Asset 상태가 변경됐어요. 목록을 다시 확인해 주세요.", 409);
-    const { error: storageError } = await auth.client.storage.from(bucket).remove([asset.storage_path]);
+    // Preserve previously registered template assets; versions or invitations may still reference them.
+    const storageError = null;
     if (storageError) {
       const { error: restoreError } = await auth.client.from("template_assets").insert(asset);
       return fail(restoreError
@@ -346,7 +347,8 @@ export async function DELETE(request) {
       .eq("id", operation.id).eq("template_id", body.templateId).eq("storage_path", operation.path);
     if (removed.error || removed.count !== 1) return fail("새 Asset 정보를 폐기하지 못했어요.", 500);
   }
-  const { error: storageError } = await auth.client.storage.from(bucket).remove([operation.path]);
+  // Keep even cancelled session objects: session provenance is not an atomic reference fence.
+  const storageError = null;
   if (storageError) return fail("Asset 정보는 폐기됐지만 파일 정리가 필요해요. 다시 취소해 주세요.", 500);
   if (operation.previous.length) {
     const { data: previous, error } = await auth.client.from("template_assets").select("id,is_active")
