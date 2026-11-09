@@ -275,7 +275,8 @@ export async function DELETE(request) {
       .eq("id", asset.id).eq("template_id", body.templateId).eq("is_active", false);
     if (removed.error) return fail("Asset 정보를 삭제하지 못했어요.", 500);
     if (removed.count !== 1) return fail("Asset 상태가 변경됐어요. 목록을 다시 확인해 주세요.", 409);
-    // Storage is intentionally retained because published invitations may still use the object.\n    return Response.json({ removed: asset.id, physicalDeletionDeferred: true });
+    // Storage is intentionally retained because published invitations may still use the object.
+    return Response.json({ removed: asset.id, physicalDeletionDeferred: true });
   }
   const operation = readOperation(body?.receipt, auth.user.id, body.templateId);
   if (!operation || !uuid.test(operation.id || "")) return fail("이번 편집 세션의 Asset 변경만 취소할 수 있어요.", 403);
