@@ -453,6 +453,7 @@ export async function DELETE(request) {
   const noticePrefix = `${user.id}/notice/${event.id}`;
   const { data: noticeFiles, error: noticeError } = await supabase.storage.from(photoBucket).list(noticePrefix, { limit: 1000 });
   if (noticeError) return json({ error: "공지 사진 목록을 확인하지 못했어요. 다시 시도해 주세요." }, 503);
+  if ((noticeFiles || []).length >= 1000) return json({ error: "공지 사진 목록이 조회 한도에 도달해 안전한 삭제를 보류했어요." }, 409);
   for (const file of noticeFiles || []) {
     if (file.name && file.id) owned.photos.add(`${noticePrefix}/${file.name}`);
   }
