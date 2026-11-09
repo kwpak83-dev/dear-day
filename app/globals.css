@@ -700,6 +700,13 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .wedding-parent-relations{max-width:100%;min-width:0;margin-top:12px}
 .wedding-parent-relations p,.modern-hero-copy .wedding-parent-relations p{margin:3px 0 0;font:11px/1.7 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:0;overflow-wrap:anywhere}
 .romantic-hero-copy .wedding-parent-relations{color:#866a63}
+/* Keep wedding family names together on narrow published invitation screens. */
+.romantic-001 .romantic-hero-copy .wedding-parent-relations p{
+  font-size:10px;
+  word-break:keep-all;
+  overflow-wrap:normal;
+}
+
 .modern-hero.no-photo .wedding-parent-relations{color:var(--modern-muted)}
 .classic-hero.no-photo .wedding-parent-relations{color:var(--classic-muted)}
 .classic-001 .classic-hero-copy .wedding-parent-relations p{margin:3px 0 0;font:10px/1.7 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:0;white-space:normal;overflow-wrap:anywhere}
@@ -1288,12 +1295,21 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
    scrolling space so the share actions and footer are not obscured. */
 .full-preview-scroll{padding-bottom:110px}
 
+/* Live phone preview: keep short wedding parent/relation lines intact.
+   Scoped to the editor preview; published invitations retain their own wrapping. */
+.create-page .preview-content .wedding-parent-relations p{
+  overflow-wrap:normal;
+  word-break:keep-all;
+  text-wrap:pretty;
+}
+
 /* User editor: show a realistic 390px mobile viewport instead of compressing
    account-copy labels and quick-menu text into the old 286px mock phone. */
 @media (min-width:761px){
   .create-layout{grid-template-columns:minmax(0,1fr) 480px;gap:40px}
   .preview-panel{height:744px;padding:30px 34px}
-  .preview-phone{width:390px;height:650px;margin-top:20px}
+  .preview-phone{width:406px;height:650px;margin-top:20px;box-sizing:border-box}
+  .preview-phone > .preview-content{width:390px;max-width:100%;box-sizing:border-box}
   .preview-content{height:595px}
 }
 .preview-content .public-account-card button{
