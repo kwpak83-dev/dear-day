@@ -197,7 +197,7 @@ export async function GET(request) {
   const auth = await getAuthenticatedClient(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
   const slug = searchParams.get("slug");
-  let query = auth.supabase.from("events").select(`slug,title,status,kind,template_id,template_version_id,hero_preset_id,starts_at,paid_at,published_at,service_started_at,service_expires_at,grace_ends_at,updated_at,settings${slug ? "" : ",cover_image_url"}`).eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
+  let query = auth.supabase.from("events").select(`slug,title,status,kind,template_id,template_version_id,hero_preset_id,starts_at,paid_at,published_at,service_started_at,service_expires_at,grace_ends_at,retention_v2,updated_at,settings${slug ? "" : ",cover_image_url"}`).eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
   if (slug) query = query.eq("slug", slug).limit(1);
   const { data, error } = await query;
   if (error) return json({ error: "초대장을 불러오지 못했어요." }, 500);
@@ -268,7 +268,7 @@ export async function POST(request) {
     const sourceStatus = action === "suspend" ? "published" : "suspended";
     const targetStatus = action === "suspend" ? "suspended" : "published";
     const { data: ownedEvent, error: lookupError } = await supabase.from("events")
-      .select("id,status,starts_at").eq("slug", slug).eq("owner_id", user.id).maybeSingle();
+      .select("id,status,starts_at,retention_v2").eq("slug", slug).eq("owner_id", user.id).maybeSingle();
     if (lookupError) return json({ error: "초대장을 확인하지 못했어요." }, 500);
     if (!ownedEvent) return json({ error: "초대장을 찾지 못했어요." }, 404);
     if (isEventReadOnly(ownedEvent)) return json({ error: "행사가 종료되어 발행 상태를 변경할 수 없어요." }, 409);
@@ -342,12 +342,12 @@ export async function POST(request) {
     if (Number.isNaN(new Date(startsAt).getTime())) return json({ error: "예식 날짜 또는 시간을 확인해 주세요." }, 400);
   }
 
-  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id,status,kind,settings,template_id,template_version_id,hero_preset_id,paid_at,published_at,service_started_at,service_expires_at,starts_at,updated_at").eq("slug", slug).limit(1);
+  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id,status,kind,settings,template_id,template_version_id,hero_preset_id,paid_at,published_at,service_started_at,service_expires_at,starts_at,retention_v2,updated_at").eq("slug", slug).limit(1);
   if (lookupError) return json({ error: "기존 초대장을 확인하지 못했어요." }, 500);
   const existing = matches?.[0];
   if (existing && existing.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 수정할 수 없어요." }, 403);
   if (isEventReadOnly(existing)) return json({ error: "행사가 종료되어 초대장을 수정할 수 없어요." }, 409);
-  if (existing && ["published", "suspended"].includes(existing.status) && startsAt && new Date(startsAt).getTime() <= Date.now()) return json({ error: "발행된 초대장의 행사 날짜를 과거 또는 현재 시각으로 변경할 수 없어요." }, 409);
+  if (existing?.retention_v2 && ["published", "suspended"].includes(existing.status) && startsAt && new Date(startsAt).getTime() <= Date.now()) return json({ error: "발행된 초대장의 행사 날짜를 과거 또는 현재 시각으로 변경할 수 없어요." }, 409);
   if (heroPresetId) { const { data: hero, error: heroError } = await supabase.from("hero_presets").select("id,status,is_visible").eq("id", heroPresetId).maybeSingle(); if (heroError) return json({ error: "선택한 Hero를 확인하지 못했어요." }, 500); if (!hero) return json({ error: "선택한 Hero를 찾지 못했어요." }, 409); if (!existing && (hero.status !== "on_sale" || !hero.is_visible)) { const { data: linked, error: linkedError } = await supabase.from("completed_templates").select("id").eq("hero_preset_id", heroPresetId).eq("is_visible", true).limit(1); if (linkedError || !linked?.length) return json({ error: "현재 사용할 수 없는 Hero예요." }, 409); } }
 
   // Published invitations must never be overwritten by an uninitialized editor state.
@@ -388,7 +388,7 @@ export async function POST(request) {
     templateVersionId = null;
   }
 
-  const retentionDates = (publish && existing?.status === "paid") || ["published", "suspended"].includes(existing?.status)
+  const retentionDates = (publish && existing?.status === "paid") || existing?.retention_v2
     ? calculateRetentionDates(startsAt)
     : null;
   if (publish && existing?.status === "paid" && !retentionDates) return json({ error: "행사 날짜와 시간을 확인해 주세요." }, 400);

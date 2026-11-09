@@ -29,3 +29,13 @@ test("missing and invalid dates never produce a deletion timestamp", () => {
   assert.equal(eventDeletionTime("invalid"), null);
   assert.equal(calculateRetentionDates("invalid"), null);
 });
+test("legacy stored expiry and KST edit boundary are preserved", () => {
+  const event = { status: "published", retention_v2: false,
+    starts_at: "2026-11-09T15:30:00+09:00", service_expires_at: "2026-11-23T15:30:00+09:00" };
+  assert.equal(getRetentionState(event, kst("2026-11-24T00:00:00+09:00")).phase, "expired");
+  assert.equal(getRetentionState(event).deletionEligibleAt, null);
+  assert.equal(isEventReadOnly(event, kst("2026-11-09T22:00:00+09:00")), false);
+  assert.equal(isEventReadOnly(event, kst("2026-11-10T00:00:00+09:00")), true);
+  assert.equal(retention.isPublicPeriodExpired({ ...event, starts_at: null, service_expires_at: null }), false);
+  assert.equal(retention.isPublicPeriodExpired({ ...event, retention_v2: true, starts_at: null }), true);
+});

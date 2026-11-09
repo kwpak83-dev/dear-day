@@ -27,6 +27,12 @@ create table storage.objects (
 \ir ../../supabase/migrations/202609190001_event_suspended_status.sql
 \ir ../../supabase/migrations/202609210001_event_retention.sql
 \ir ../../supabase/migrations/202609300001_public_bgm_tracks.sql
+insert into auth.users(id,email) values('88888888-8888-4888-8888-888888888888','legacy@example.test');
+insert into public.events(id,owner_id,kind,status,slug,title,starts_at,service_expires_at)
+values ('99999999-9999-4999-8999-999999999999','88888888-8888-4888-8888-888888888888',
+  'wedding','published','legacy-fixture','Legacy fixture',now()-interval '40 days',now()+interval '2 days'),
+ ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','88888888-8888-4888-8888-888888888888',
+  'wedding','published','undated-fixture','Undated fixture',null,null);
 \ir ../../supabase/migrations/202611090001_event_retention_policy_alignment.sql
 \ir ../../supabase/migrations/202611090002_invitation_deletion_jobs.sql
 \ir ../../supabase/migrations/202611090003_retention_notices.sql
@@ -49,6 +55,7 @@ create table storage.objects (
 \ir ../../supabase/migrations/202611090020_scoped_storage_cleanup.sql
 \ir ../../supabase/migrations/202611090021_expand_scoped_storage_cleanup.sql
 \ir ../../supabase/migrations/202611090022_preserve_shared_cleanup_ownership.sql
+\ir ../../supabase/migrations/202611090023_preserve_legacy_invitation_retention.sql
 
 do $test$
 begin
@@ -93,3 +100,43 @@ begin
   end if;
 end;
 $shared$;
+
+do $cohorts$
+declare
+  v_legacy uuid := '99999999-9999-4999-8999-999999999999';
+  v_undated uuid := 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+  v_new uuid := 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+  v_owner uuid := '88888888-8888-4888-8888-888888888888';
+  v_job uuid;
+  v_token uuid;
+begin
+  perform set_config('request.jwt.claim.role','service_role',true);
+  if not public.is_published_event(v_legacy) or not public.is_published_event(v_undated)
+    then raise exception 'Legacy public policy changed'; end if;
+  update public.events set title='Undated edit', retention_v2=true where id=v_undated;
+  if (select retention_v2 from public.events where id=v_undated)
+    then raise exception 'Legacy cohort could be overwritten'; end if;
+  if public.reserve_invitation_upload(v_undated,v_owner,'invitation-photos',v_owner::text||'/undated.jpg') is null
+    then raise exception 'Legacy undated upload was unexpectedly blocked'; end if;
+  begin
+    update public.events set status='draft',published_at=null where id=v_undated;
+    raise exception 'Existing publication could be reset';
+  exception when check_violation then null;
+  end;
+  if public.reconcile_invitation_deletion_schedule(array[v_legacy])<>0
+    then raise exception 'Legacy event enrolled'; end if;
+  insert into public.invitation_deletion_jobs(event_id,owner_id,due_at)
+    select id,owner_id,public.event_retention_deadline_kst(starts_at) from public.events where id=v_legacy
+    returning id into v_job;
+  select claim_token into v_token from public.claim_invitation_deletion_job(v_job,10);
+  if v_token is null or public.finalize_invitation_deletion(v_job,v_token,'[]')
+    then raise exception 'Legacy job was not safely refused'; end if;
+  insert into public.events(id,owner_id,kind,status,slug,title,starts_at)
+    values(v_new,v_owner,'wedding','paid','new-policy-fixture','New fixture',now()+interval '2 days');
+  update public.events set status='published',published_at=now() where id=v_new;
+  if not exists(select 1 from public.events where id=v_new and retention_v2
+      and service_expires_at=public.event_retention_deadline_kst(starts_at)
+      and grace_ends_at=service_expires_at)
+    then raise exception 'First publication did not activate 30-day policy'; end if;
+end;
+$cohorts$;

@@ -1,6 +1,6 @@
 # Customer Storage upload cutover
 
-The PostgreSQL CI fixture applies retention migrations 001–022 in order with
+The PostgreSQL CI fixture applies retention migrations 001–023 in order with
 minimal platform schemas. It does not validate Supabase Storage HTTP behavior.
 Keep the upload guard and all physical cleanup disabled until the HTTP suite
 passes against a disposable Supabase stack.
@@ -118,7 +118,7 @@ finally { Remove-Item Env:DEARDAY_TEST_STORAGE_URL, Env:DEARDAY_TEST_STORAGE_SER
 ```
 
 Apply the fixture only once per fresh test database. It takes the ordered
-prerequisites and migrations 001–022 from the CI fixture without importing
+prerequisites and migrations 001–023 from the CI fixture without importing
 its mock platform schemas or the duplicate historical migration versions.
 The HTTP smoke test can be repeated on that database with unique synthetic
 users and paths. It preserves fixtures for inspection. When finished, run
@@ -161,9 +161,13 @@ PostgreSQL metadata test separate.
 
 1. Compare target migration history and schema against the ordered fixture
    before approving any SQL. Resolve duplicate historical version
-   `202609300002` explicitly. Review the legacy expiry backfill and the
-   public-read and editing policy changes in 001, which apply independently
-   of worker flags. Apply only pending migrations in order after approval.
+   `202609300002` explicitly by checking both the table and thumbnail columns.
+   Use a new uniquely versioned repair only for missing DDL. The revised 001
+   omits its original deadline backfill. If the original 001 already ran,
+   023 preserves currently stored deadlines; recover overwritten legacy values
+   only from a verified pre-001 snapshot under separate approval.
+   Apply only pending migrations in order after approval. Apply 023 before
+   deploying code that reads `retention_v2`, with workers and enrollment off.
 2. With the DB write gate off and deletion flags unset, enable
    `RETENTION_SCHEMA_READY` for dry-run diagnostics. Check older published
    invitations, legacy URLs, first-upload draft creation and the due queue

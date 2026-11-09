@@ -77,7 +77,8 @@ export async function GET(request) {
     report.abandoned = abandoned || 0;
     const now = new Date().toISOString();
     const jobs = await required(db.from("invitation_deletion_jobs")
-      .select("id,event_id,owner_id,due_at,status,attempts")
+      .select("id,event_id,owner_id,due_at,status,attempts,events!inner(retention_v2)")
+      .eq("events.retention_v2", true)
       .lt("attempts", 10).lte("due_at", now).lte("next_attempt_at", now)
       .or(`status.in.(pending,retry),and(status.eq.processing,lease_expires_at.lt.${now})`)
       .order("due_at", { ascending: true }).limit(10));
@@ -85,9 +86,9 @@ export async function GET(request) {
       report.scanned++;
       try {
         const event = await required(db.from("events")
-          .select("id,owner_id,status,starts_at,cover_image_url,settings")
+          .select("id,owner_id,status,starts_at,retention_v2,cover_image_url,settings")
           .eq("id", job.event_id).maybeSingle());
-        if (!event || event.owner_id !== job.owner_id ||
+        if (event?.retention_v2 !== true || event.owner_id !== job.owner_id ||
           !["published", "suspended"].includes(event.status) ||
           eventDeletionTime(event.starts_at) === null ||
           eventDeletionTime(event.starts_at) > Date.now() ||

@@ -19,13 +19,13 @@ export async function GET(request) {
   const user = await authenticate(request, supabase);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const { data, error } = await supabase.from("invitation_retention_notices")
-    .select("id,event_id,notice_type,deletion_due_at,created_at,read_at,events!inner(slug,starts_at)")
+    .select("id,event_id,notice_type,deletion_due_at,created_at,read_at,events!inner(slug,starts_at,retention_v2)")
     .eq("owner_id", user.id).order("created_at", { ascending: false }).limit(100);
   if (error) return Response.json({ error: "Notice lookup failed" }, { status: 500 });
   // Discard notices whose event date has changed since they were issued.
   const { eventDeletionTime } = await import("../../../../lib/invitation-retention");
   return Response.json({ notices: (data || []).filter(row =>
-    eventDeletionTime(row.events?.starts_at) === new Date(row.deletion_due_at).getTime()
+    row.events?.retention_v2 === true && eventDeletionTime(row.events.starts_at) === new Date(row.deletion_due_at).getTime()
   ) }, { headers: { "Cache-Control": "no-store" } });
 }
 export async function PATCH(request) {

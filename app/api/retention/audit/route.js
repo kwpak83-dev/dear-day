@@ -20,7 +20,7 @@ export async function GET(request) {
     const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
     const { data, error } = await supabase.from("events")
       .select("id,slug,status,starts_at,service_expires_at")
-      .in("status", ["published", "suspended"])
+      .eq("retention_v2", true).in("status", ["published", "suspended"])
       .order("starts_at", { ascending: true }).limit(1000);
     if (error) throw error;
     const now = Date.now();

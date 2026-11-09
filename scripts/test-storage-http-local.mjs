@@ -206,13 +206,20 @@ if (process.argv.includes("--deletion-fixture")) {
   const cover = path => `${endpoint.origin}/storage/v1/object/public/${bucket}/${path}`;
   for (const path of [exclusive, shared]) result(await storage.upload(path, bytes, options));
   fixtureSql(`
+    begin;
     insert into public.events(id,owner_id,kind,status,slug,title,starts_at)
-    values('${expired}','${user.id}','wedding','published','expired-${run}','Expired fixture',clock_timestamp()-interval '40 days');
+    values('${expired}','${user.id}','wedding','paid','expired-${run}','Expired fixture',clock_timestamp()+interval '1 day');
+    update public.events set status='published', published_at=clock_timestamp() where id='${expired}';
+    -- Advance the synthetic event into the past without changing the clock.
+    alter table public.events disable trigger enforce_event_start_edit_lock;
+    update public.events set starts_at=clock_timestamp()-interval '40 days' where id='${expired}';
+    alter table public.events enable trigger enforce_event_start_edit_lock;
     insert into public.events(id,owner_id,kind,status,slug,title,cover_image_url)
     values('${survivor}','${user.id}','wedding','draft','survivor-${run}','Surviving fixture','${cover(shared)}');
     insert into public.invitation_upload_reservations(event_id,owner_id,bucket,storage_path,status)
     values ('${expired}','${user.id}','${bucket}','${exclusive}','uploaded'),
            ('${expired}','${user.id}','${bucket}','${shared}','uploaded');
+    commit;
   `);
   const job = fixtureSql(`insert into public.invitation_deletion_jobs(event_id,owner_id,due_at)
     select id,owner_id,public.event_retention_deadline_kst(starts_at)-interval '1 day'

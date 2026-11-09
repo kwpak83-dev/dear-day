@@ -36,7 +36,7 @@ const loadPublicEvent = cache(async (slug) => {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !serviceRoleKey) notFound();
   const supabase = createClient(url, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
-  const { data: events } = await supabase.from("events").select("id,owner_id,updated_at,status,kind,template_id,template_version_id,hero_preset_id,starts_at,service_expires_at,grace_ends_at,cover_image_url,settings").eq("slug", slug).in("status", ["published", "suspended"]).limit(1);
+  const { data: events } = await supabase.from("events").select("id,owner_id,updated_at,status,kind,template_id,template_version_id,hero_preset_id,starts_at,service_expires_at,grace_ends_at,retention_v2,cover_image_url,settings").eq("slug", slug).in("status", ["published", "suspended"]).limit(1);
   const event = events?.[0];
   return { url, supabase, event };
 });

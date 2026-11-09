@@ -37,7 +37,7 @@ function passwordMatches(password, stored) {
   return timingSafeEqual(scryptSync(password, salt, 32), Buffer.from(expected, "hex"));
 }
 async function getEvent(supabase, slug) {
-  const { data, error } = await supabase.from("events").select("id,status,starts_at,service_expires_at,grace_ends_at,settings").eq("slug", slug).eq("status", "published").maybeSingle();
+  const { data, error } = await supabase.from("events").select("id,status,starts_at,service_expires_at,grace_ends_at,retention_v2,settings").eq("slug", slug).eq("status", "published").maybeSingle();
   if (error) return { error: "초대장을 확인하지 못했어요.", status: 500 };
   if (!data) return { error: "공개된 초대장을 찾지 못했어요.", status: 404 };
   if (data.settings?.guestbookEnabled === false) return { error: "현재 방명록이 비활성화되어 있어요.", status: 403 };
@@ -77,7 +77,7 @@ export async function POST(request) {
   if (!supabase) return json({ error: "방명록 서비스를 준비하지 못했어요." }, 503);
   const context = await getEvent(supabase, slug);
   if (context.error) return json({ error: context.error }, context.status);
-  if (isEventReadOnly(context.event)) return json({ error: "행사가 종료되어 방명록 작성이 마감되었습니다." }, 409);
+  if (isEventReadOnly({ status: context.event.status, starts_at: context.event.starts_at })) return json({ error: "행사가 종료되어 방명록 작성이 마감되었습니다." }, 409);
   const { data, error } = await supabase.from("guestbook_entries").insert({ event_id: context.event.id, author_name: fields.authorName, message: fields.message, password_hash: hashPassword(fields.password) }).select("id,author_name,message,created_at").single();
   if (error) { console.error("Guestbook insert failed:", error.code, error.message); return json({ error: "방명록을 남기지 못했어요." }, 500); }
   return json({ entry: { id: data.id, authorName: data.author_name, message: data.message, createdAt: data.created_at } }, 201);

@@ -32,7 +32,12 @@ const STATUS_LABELS = {
 function retentionNotice(event) {
   const { phase, expiresAt } = getRetentionState(event);
   if (phase === "not-applicable") return "";
-  if (phase === "unknown") return "삭제 예정일 확인 필요";
+  if (event.retention_v2 === false) {
+    if (!expiresAt) return "";
+    const date = new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeZone: "Asia/Seoul" }).format(new Date(expiresAt));
+    return `공개 ${phase === "expired" ? "종료" : "종료 예정"} · ${date}`;
+  }
+  if (!expiresAt) return "행사 날짜 확인 필요";
   const date = new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeZone: "Asia/Seoul" }).format(new Date(expiresAt));
   if (phase === "expired") return `삭제 예정일 경과 · ${date}`;
   const remaining = Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 86400000);

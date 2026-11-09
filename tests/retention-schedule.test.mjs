@@ -14,7 +14,11 @@ function mockScheduler(total, pageCap, enroll = false) {
       queries++;
       let after = 0;
       const query = {
-        select: () => query, in: () => query, order: () => query, limit: () => query,
+        select: () => query, eq: (key, value) => {
+          assert.equal(key, "retention_v2");
+          assert.equal(value, true);
+          return query;
+        }, in: () => query, order: () => query, limit: () => query,
         gt: (_, cursor) => { after = Number(cursor.slice(-12)); return query; },
         then: resolve => resolve({
           data: Array.from({ length: Math.min(pageCap, total - after) }, (_, index) => ({

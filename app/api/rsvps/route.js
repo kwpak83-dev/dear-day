@@ -59,7 +59,7 @@ function validateFields(fields, event) {
   return "";
 }
 async function getEvent(supabase, slug) {
-  const { data, error } = await supabase.from("events").select("id,kind,status,starts_at,service_expires_at,grace_ends_at,settings").eq("slug", slug).eq("status", "published").maybeSingle();
+  const { data, error } = await supabase.from("events").select("id,kind,status,starts_at,service_expires_at,grace_ends_at,retention_v2,settings").eq("slug", slug).eq("status", "published").maybeSingle();
   if (error) return { error: "초대장을 확인하지 못했어요.", status: 500 };
   if (!data) return { error: "공개된 초대장을 찾지 못했어요.", status: 404 };
   if (isPublicPeriodExpired(data)) return { error: "초대장 이용기간이 종료되어 참석 여부를 처리할 수 없어요.", status: 410 };
@@ -89,7 +89,7 @@ export async function POST(request) {
   const validationError = validateFields(fields, context.event);
   if (validationError) return json({ error: validationError }, 400);
   const editToken = randomBytes(32).toString("base64url");
-  if (isEventReadOnly(context.event)) return json({ error: "행사가 종료되어 참석 여부 접수가 마감되었습니다." }, 409);
+  if (isEventReadOnly({ status: context.event.status, starts_at: context.event.starts_at })) return json({ error: "행사가 종료되어 참석 여부 접수가 마감되었습니다." }, 409);
   const { error } = await supabase.from("rsvps").insert({ event_id: context.event.id, guest_name: fields.guestName, status: fields.status, party_size: fields.partySize, phone: fields.phone || null, message: fields.message || null, edit_token_hash: tokenHash(editToken), guest_side: context.event.kind === "wedding" ? fields.guestSide : null, meal_attending: fields.status === "attending" && context.event.settings?.rsvpOptions?.mealEnabled === true ? fields.mealAttending : null, bus_riding: fields.status === "attending" && context.event.settings?.rsvpOptions?.shuttleBusEnabled === true ? fields.busRiding : null });
   if (error) { console.error("RSVP insert failed:", error.code, error.message); return json({ error: "참석 여부를 전달하지 못했어요. 다시 시도해 주세요." }, 500); }
   return json({ submitted: true, editToken }, 201);
@@ -125,7 +125,7 @@ export async function PATCH(request) {
   if (validationError) return json({ error: validationError }, 400);
   const current = await getRsvp(supabase, context.event.id, token);
   if (current.error) return json({ error: current.error }, current.status);
-  if (isEventReadOnly(context.event)) return json({ error: "행사가 종료되어 참석 여부를 수정할 수 없어요." }, 409);
+  if (isEventReadOnly({ status: context.event.status, starts_at: context.event.starts_at })) return json({ error: "행사가 종료되어 참석 여부를 수정할 수 없어요." }, 409);
   const { data, error } = await supabase.from("rsvps").update({ guest_name: fields.guestName, status: fields.status, party_size: fields.partySize, phone: fields.phone || null, message: fields.message || null, guest_side: context.event.kind === "wedding" ? fields.guestSide : current.rsvp.guest_side, meal_attending: fields.status === "attending" && context.event.settings?.rsvpOptions?.mealEnabled === true ? fields.mealAttending : current.rsvp.meal_attending, bus_riding: fields.status === "attending" && context.event.settings?.rsvpOptions?.shuttleBusEnabled === true ? fields.busRiding : current.rsvp.bus_riding }).eq("id", current.rsvp.id).eq("event_id", context.event.id).eq("edit_token_hash", tokenHash(token)).select("id").maybeSingle();
   if (error) { console.error("RSVP update failed:", error.code, error.message); return json({ error: "참석 여부를 수정하지 못했어요. 다시 시도해 주세요." }, 500); }
   if (!data) return json({ error: "유효하지 않은 RSVP 수정 링크예요." }, 404);
