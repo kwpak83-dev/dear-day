@@ -66,7 +66,7 @@ async function getEvent(supabase, slug) {
   if (data.settings?.rsvpEnabled !== true) return { error: "현재 RSVP 접수가 비활성화되어 있어요.", status: 403 };
   const startsAt = data.starts_at ? new Date(data.starts_at).getTime() : NaN;
   if (!Number.isFinite(startsAt)) return { error: "행사 시간을 확인할 수 없어 참석 여부를 처리할 수 없어요.", status: 409 };
-  // RSVP remains open through the event day, then becomes read-only at midnight KST.
+  // RSVP submissions and edits close at the scheduled event start.
   return { event: data };
 }
 async function getRsvp(supabase, eventId, token) {
