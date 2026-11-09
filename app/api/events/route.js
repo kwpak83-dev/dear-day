@@ -397,7 +397,7 @@ export async function POST(request) {
   }
 
   const retentionDates = (publish && existing?.status === "paid") || ["published", "suspended"].includes(existing?.status)
-    ? calculateRetentionDates(startsAt, existing?.service_expires_at)
+    ? calculateRetentionDates(startsAt)
     : null;
   if (publish && existing?.status === "paid" && !retentionDates) return json({ error: "행사 날짜와 시간을 확인해 주세요." }, 400);
 
@@ -448,7 +448,7 @@ export async function DELETE(request) {
   if (lookupError) return json({ error: "초대장을 확인하지 못했어요." }, 500);
   if (!event) return json({ error: "초대장을 찾지 못했어요." }, 404);
   if (event.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 삭제할 수 없어요." }, 403);
-  if (!["draft", "suspended"].includes(event.status)) return json({ error: "제작중 또는 발행 중지 상태의 초대장만 삭제할 수 있어요." }, 409);
+  if (!["draft", "suspended", "published", "paid"].includes(event.status)) return json({ error: "현재 상태에서는 초대장을 삭제할 수 없어요." }, 409);
 
   // Capture every event-owned Storage object before the DB cascade removes its rows.
   const owned = collectOwnedStoragePaths(
