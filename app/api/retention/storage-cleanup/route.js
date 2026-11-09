@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { timingSafeEqual } from "node:crypto";
 import { inspectStorageReferences } from "../../../../lib/invitation-storage-references";
+import { cleanupFailureCategory } from "../../../../lib/storage-cleanup-diagnostics";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -55,6 +56,7 @@ export async function GET(request) {
       attempts: job.attempts,
       updatedAt: job.updated_at,
       hasError: Boolean(job.last_error),
+      category: cleanupFailureCategory(job.last_error),
       // Diagnostic messages can contain object names or URLs; keep them server-side.
     }));
     const { data: jobs, error } = await db.from("invitation_storage_cleanup_jobs")
@@ -94,7 +96,7 @@ export async function GET(request) {
         if (result.referenced) report.referenced++;
         else report.unreferenced++;
       } catch (err) {
-        report.errors.push({ id: job.id, error: String(err.message || err).slice(0, 160) });
+        report.errors.push({ id: job.id, category: cleanupFailureCategory(String(err.message || err)) });
       }
     }
     return Response.json(report, { headers: { "Cache-Control": "no-store" } });
