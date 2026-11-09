@@ -1,7 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { timingSafeEqual } from "node:crypto";
 import { eventDeletionTime } from "../../../../lib/invitation-retention";
-import { inspectStorageReferences } from "../../../../lib/invitation-storage-references";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -56,18 +55,12 @@ async function planFiles(db, event, url) {
   }
   return [...paths.values()];
 }
-async function referencedElsewhere(db, event, file, supabaseUrl) {
-  const inspection = await inspectStorageReferences(db, {
-    supabaseUrl, bucket: file.bucket, path: file.storage_path, excludeEventId: event.id,
-  });
-  return inspection.referenced;
-}
 export async function GET(request) {
   if (!authorized(request)) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return Response.json({ error: "Configuration missing" }, { status: 503 });
-  // Fail closed until atomic claim and recovery are implemented.
+  // Hard-locked until isolated SQL tests and Storage cleanup worker are verified.
   const execute = false;
   if (process.env.RETENTION_SCHEMA_READY !== "true") return Response.json({ mode: "disabled", deleted: 0, reason: "Schema not enabled" });
   const db = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
@@ -99,28 +92,15 @@ export async function GET(request) {
         const claimed = claims?.[0];
         if (!claimed) { report.skipped++; continue; }
         try {
-          // Durable file ledger is inserted BEFORE any destructive action.
-          if (files.length) await required(db.from("invitation_storage_cleanup_jobs")
-            .upsert(files.map(file => ({ ...file, event_id: event.id, owner_id: event.owner_id })),
-              { onConflict: "bucket,storage_path", ignoreDuplicates: true }));
-          for (const file of files) {
-            if (await referencedElsewhere(db, event, file, url)) throw new Error("Shared Storage reference requires review");
-            await required(db.storage.from(file.bucket).remove([file.storage_path]));
-            await required(db.from("invitation_storage_cleanup_jobs")
-              .update({ status: "done", updated_at: new Date().toISOString(), last_error: null })
-              .eq("bucket", file.bucket).eq("storage_path", file.storage_path).eq("event_id", event.id));
-          }
-          // Recheck date/status after cleanup, before cascading DB deletion.
-          const current = await required(db.from("events").select("status,starts_at")
-            .eq("id", event.id).maybeSingle());
-          if (!current || !["published", "suspended"].includes(current.status) ||
-            eventDeletionTime(current.starts_at) !== eventDeletionTime(event.starts_at)) throw new Error("Event changed during cleanup");
-          const deleted = await required(db.from("events").delete()
-            .eq("id", event.id).eq("owner_id", event.owner_id).eq("starts_at", event.starts_at)
-            .select("id").maybeSingle());
-          if (!deleted) throw new Error("Event deletion not confirmed");
-          const audit = await db.from("invitation_deletion_audit").insert({ event_id: event.id, owner_id: event.owner_id, outcome: "completed", details: "Event deletion confirmed" });
-          if (audit.error) console.error("Retention audit write failed", { eventId: event.id, code: audit.error.code });
+          // The RPC checks the current claim, locks the event, writes the file
+          // ledger and audit, then deletes the DB event in ONE transaction.
+          // Storage deletion is deliberately deferred to a separate, gated worker.
+          const finalized = await required(db.rpc("finalize_invitation_deletion", {
+            p_job_id: job.id,
+            p_claim_token: claimed.claim_token,
+            p_files: files,
+          }));
+          if (finalized !== true) throw new Error("Deletion claim expired or event changed");
           report.deleted++;
         } catch (error) {
           await required(db.rpc("retry_invitation_deletion_job", { p_job_id: job.id, p_claim_token: claimed.claim_token, p_error: String(error.message || error) }));
