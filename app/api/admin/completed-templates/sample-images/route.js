@@ -40,6 +40,6 @@ export async function DELETE(request){
  const {error:updateError}=await a.client.from("completed_templates").update({sample_content:next,updated_at:new Date().toISOString()}).eq("id",completedTemplateId);
  if(updateError)return fail("샘플 이미지 정보를 삭제하지 못했어요.",500);
  const marker="/storage/v1/object/public/"+bucket+"/",at=url.indexOf(marker);
- if(at>=0){const storagePath=decodeURIComponent(url.slice(at+marker.length));if(storagePath.startsWith("completed-templates/"+completedTemplateId+"/samples/"))await a.client.storage.from(bucket).remove([storagePath]);}
+ // Keep detached samples physically intact: published invitations may reference them.
  return Response.json({sample_content:next});
 }
