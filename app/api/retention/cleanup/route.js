@@ -75,12 +75,13 @@ export async function GET(request) {
   if (!url || !key) return Response.json({ error: "Configuration missing" }, { status: 503 });
   // Fail closed until atomic claim and recovery are implemented.
   const execute = false;
+  if (process.env.RETENTION_SCHEMA_READY !== "true") return Response.json({ mode: "disabled", deleted: 0, reason: "Schema not enabled" });
   const db = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
   const report = { mode: execute ? "execute" : "dry-run", scanned: 0, eligible: 0, deleted: 0, failed: 0, skipped: 0, errors: [] };
   try {
     const jobs = await required(db.from("invitation_deletion_jobs")
       .select("id,event_id,owner_id,due_at,status,attempts")
-      .in("status", ["pending", "retry"]).lte("next_attempt_at", new Date().toISOString())
+      .or("and(status.in.(pending,retry),next_attempt_at.lte." + new Date().toISOString() + "),and(status.eq.processing,claimed_at.lt." + new Date(Date.now() - 10 * 60000).toISOString() + ")")
       .order("due_at", { ascending: true }).limit(10));
     for (const job of jobs) {
       report.scanned++;
