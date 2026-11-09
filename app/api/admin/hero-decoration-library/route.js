@@ -40,7 +40,7 @@ export async function POST(request){
   const mobilePath=`${folder}/${id}-mobile.webp`;
   const {error:mobileError}=await storage.upload(mobilePath,mobileBytes,{contentType:"image/webp",upsert:false});
   if(mobileError){
-   await storage.remove([path]);
+   /* keep unregistered file until safe cleanup is available */
    return fail("모바일 경량본 저장에 실패하여 업로드를 취소했습니다.",500);
   }
   mobileUrl=storage.getPublicUrl(mobilePath).data.publicUrl;
