@@ -38,3 +38,28 @@ grep -q 'Invitation unavailable for upload' "$tmp/reservation.log" || { cat "$tm
 count="$(psql -X -At -c "select count(*) from public.invitation_upload_reservations where event_id='$event'")"
 [[ "$count" == "0" ]] || { echo "FAIL: orphaned reservation after deletion"; exit 1; }
 echo "PASS: concurrent event deletion fences a late upload reservation"
+
+# Reverse order: a reservation holds the event lock while deletion waits.
+event2="55555555-5555-4555-8555-555555555555"
+psql -X -v ON_ERROR_STOP=1 -c "insert into public.events(id,owner_id,status) values ('$event2','$owner','draft')"
+(
+  psql -X -v ON_ERROR_STOP=1 >"$tmp/upload-first.log" 2>&1 <<SQL
+begin;
+select public.reserve_invitation_upload('$event2','$owner','invitation-photos','$owner/upload-first.jpg');
+\\echo RESERVATION_CREATED
+select pg_sleep(3);
+commit;
+SQL
+) &
+upload_pid=$!
+for i in $(seq 1 80); do
+  if grep -q RESERVATION_CREATED "$tmp/upload-first.log" 2>/dev/null; then break; fi
+  if ! kill -0 "$upload_pid" 2>/dev/null; then cat "$tmp/upload-first.log"; exit 1; fi
+  sleep 0.05
+done
+grep -q RESERVATION_CREATED "$tmp/upload-first.log" || { echo "Upload-first lock not acquired"; exit 1; }
+psql -X -v ON_ERROR_STOP=1 -c "begin; select id from public.events where id='$event2' for update; delete from public.events where id='$event2'; commit;" >"$tmp/delete-second.log" 2>&1
+wait "$upload_pid"
+count2="$(psql -X -At -c "select count(*) from public.invitation_upload_reservations where event_id='$event2' and storage_path='$owner/upload-first.jpg'")"
+[[ "$count2" == "1" ]] || { echo "FAIL: committed reservation was lost during deletion"; exit 1; }
+echo "PASS: upload-first reservation persists for post-deletion cleanup"
