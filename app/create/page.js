@@ -644,7 +644,7 @@ export default function CreateInvitation() {
       if(!supabase) throw new Error("음악 저장 서비스를 준비하지 못했어요.");
       const {data:{session}}=await supabase.auth.getSession();
       if(!session) throw new Error("로그인 후 음악을 첨부할 수 있어요.");
-      const response=await fetch("/api/bgm-upload",{method:"POST",headers:{ "X-Event-Slug": eventSlug || "","Content-Type":"audio/mpeg",Authorization:"Bearer "+session.access_token},body:file});
+      const response=await fetch("/api/bgm-upload",{method:"POST",headers:{ "X-Event-Slug": await uploadEventSlug(),"Content-Type":"audio/mpeg",Authorization:"Bearer "+session.access_token},body:file});
       const result=await response.json().catch(()=>({}));
       if(!response.ok||!result.path||!result.url) throw new Error(result.error||"음악 업로드에 실패했어요.");
       const oldPath=invitation.userBgmUploadPath;
@@ -676,7 +676,7 @@ export default function CreateInvitation() {
       // WebP is optional: existing Supabase buckets may allow JPEG only.
       const prepared = await prepareHeroPhoto(file);
       const send = async (photo, mime) => {
-        const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": eventSlug || "", "Content-Type": mime, Authorization: "Bearer " + session.access_token }, body: photo });
+        const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": await uploadEventSlug(), "Content-Type": mime, Authorization: "Bearer " + session.access_token }, body: photo });
         const result = await response.json().catch(() => ({}));
         return { response, result };
       };
@@ -713,7 +713,7 @@ export default function CreateInvitation() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("로그인 후 이미지를 첨부할 수 있어요.");
       const photo = await preparePhoto(file);
-      const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": eventSlug || "", "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
+      const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": await uploadEventSlug(), "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.url) throw new Error(result.error || "이미지 업로드에 실패했어요.");
       update("brandImageUrl", result.url);
@@ -732,7 +732,7 @@ export default function CreateInvitation() {
     try { const supabase=getSupabaseBrowserClient(); const {data:{session}}=supabase?await supabase.auth.getSession():{data:{}};
       if(!session)throw new Error("로그인 후 사진을 첨부할 수 있어요.");
       const photo=await preparePhoto(file);
-      const response=await fetch("/api/photos",{method:"POST",headers:{ "X-Event-Slug": eventSlug || "","Content-Type":"image/jpeg",Authorization:"Bearer "+session.access_token},body:photo});
+      const response=await fetch("/api/photos",{method:"POST",headers:{ "X-Event-Slug": await uploadEventSlug(),"Content-Type":"image/jpeg",Authorization:"Bearer "+session.access_token},body:photo});
       const result=await response.json().catch(()=>({})); if(!response.ok||!result.url)throw new Error(result.error||"사진 업로드에 실패했어요.");
       update(key,result.url);
     } catch(error){setPhotoNotice(error.message||"부모 소개 사진을 업로드하지 못했어요.");}
@@ -769,7 +769,7 @@ export default function CreateInvitation() {
       const { data: { session } } = supabase ? await supabase.auth.getSession() : { data: {} };
       if (!session) throw new Error("로그인 후 사진을 첨부할 수 있어요.");
       const photo = await preparePhoto(file);
-      const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": eventSlug || "", "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
+      const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": await uploadEventSlug(), "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.url) throw new Error(result.error || "사진 업로드에 실패했어요.");
       if (roleOrId === "groom" || roleOrId === "bride") updateCouplePerson(roleOrId, { photoUrl: result.url, photoFocusX: 50, photoFocusY: 50, photoZoom: 100 });
@@ -794,7 +794,7 @@ export default function CreateInvitation() {
       const { data: { session } } = supabase ? await supabase.auth.getSession() : { data: {} };
       if (!session) throw new Error("로그인 후 사진을 첨부할 수 있어요.");
       const photo = await preparePhoto(file);
-      const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": eventSlug || "", "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
+      const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": await uploadEventSlug(), "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.url) throw new Error(result.error || "사진 업로드에 실패했어요.");
       updateTimelineItem(id, { photoUrl: result.url });
@@ -834,7 +834,7 @@ export default function CreateInvitation() {
         const photo = await prepareKakaoSharePhoto(kakaoCrop.file, 50, kakaoCropY);
         const response = await fetch("/api/photos", {
           method: "POST",
-          headers: { "X-Event-Slug": eventSlug || "", "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token },
+          headers: { "X-Event-Slug": await uploadEventSlug(), "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token },
           body: photo,
         });
         const result = await response.json().catch(() => ({}));
@@ -1274,13 +1274,13 @@ export default function CreateInvitation() {
     }));
     return false;
   };
-  const saveDraft = async ({ showLoading = true, showSuccessToast = false, allowLocalSuccess = false } = {}) => {
+  const saveDraft = async ({ showLoading = true, showSuccessToast = false, allowLocalSuccess = false, allowUploadBusy = false } = {}) => {
     if (eventReadOnly) { setSaveNotice("행사가 종료되어 초대장을 수정할 수 없어요."); return; }
     if (!eventReady) {
       setSaveNotice("기존 초대장 정보를 불러오는 중이에요. 잠시 후 다시 시도해 주세요.");
       return;
     }
-    if (galleryBusy || photoBusy.current || (showLoading && submitting)) return;
+    if (galleryBusy || (!allowUploadBusy && photoBusy.current) || (showLoading && submitting)) return;
     if (!validateDraftMinimum()) return;
     const draftToSave = latestInvitation.current;
     const savingSnapshot = JSON.stringify(draftToSave);
@@ -1310,6 +1310,24 @@ export default function CreateInvitation() {
       if (showLoading) setSubmitting("");
     }
   };
+  // When the reservation feature is enabled, a Storage upload needs an existing
+  // event row. Reuse the regular draft validation/save path; never invent a slug
+  // without persisting the event. Only one pre-upload save may run at a time.
+  const preUploadSave = useRef(null);
+  const ensureEventSlugForUpload = async () => {
+    if (eventSlug) return eventSlug;
+    if (!preUploadSave.current) {
+      preUploadSave.current = saveDraft({ showLoading: false, allowUploadBusy: true })
+        .finally(() => { preUploadSave.current = null; });
+    }
+    const slug = await preUploadSave.current;
+    if (!slug || slug === "local") throw new Error("사진·음악을 올리려면 필수 정보를 입력하고 먼저 임시저장해 주세요.");
+    return slug;
+  };
+  const uploadEventSlug = async () =>
+    process.env.NEXT_PUBLIC_INVITATION_UPLOAD_RESERVATIONS_READY === "true"
+      ? ensureEventSlugForUpload()
+      : eventSlug || "";
   // A history sentinel catches Android hardware Back and browser Back without
   // navigating away before the user decides. Full-preview Back has its own entry.
   useEffect(() => {
