@@ -611,7 +611,14 @@ export default function CreateInvitation() {
       transportRevisions.current[key]++;
       delete transportAutomatic.current[key];
     }
-    setInvitation((current) => TRANSPORT_AUTO_FIELDS.includes(key) ? editTransportField(current, key, value) : ({ ...current, [key]: value }));
+    const next = TRANSPORT_AUTO_FIELDS.includes(key) ? editTransportField(latestInvitation.current, key, value) : { ...latestInvitation.current, [key]: value };
+    latestInvitation.current = next;
+    setInvitation(next);
+  };
+  // Reconcile finalized Korean IME values on compositionend and blur.
+  const commitTextInput = (key, event) => {
+    const value = event.currentTarget.value;
+    if (latestInvitation.current[key] !== value) update(key, value);
   };
   const updateProgram = value => setInvitation(current => {
     const program = normalizeProgram(value);
@@ -1152,7 +1159,7 @@ export default function CreateInvitation() {
       </Field>;
     }
     if (field.key === "birthDate") return <BirthDateField key={field.key} label={field.label} value={invitation.birthDate || ""} onChange={value => update("birthDate", value)} />;
-    if (field.type === "venue") return <div key={field.key}><Field label={field.label || "장소명"} fieldKey="venue"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results"><div className="place-results-heading"><strong>검색 결과</strong><span>{placeResults.length}건</span></div><div className="place-results-list">{placeResults.map((place) => <button className="place-result-option" type="button" key={[place.mapx, place.mapy, place.title].join("-")} onClick={() => selectPlace(place)}><span className="place-result-pin" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a86c60" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg></span><span className="place-result-details"><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></span><span className="place-result-chevron" aria-hidden="true">›</span></button>)}</div><p className="place-search-guide">원하는 장소가 없다면 지역명을 함께 입력해 검색해 주세요.</p></div>}<Field label="기본주소" fieldKey="venueAddress"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), geocodeAddress(invitation.venueAddress))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>검색</button></div></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={setMapContainer} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div>{transportMatrix.state !== "none" && <div className="form-section"><div className="dd-share-card-heading"><div><h2>🚗 {transportMatrix.label}</h2><p>교통 및 주차 안내를 설정해요.</p>{transportNotice && <p role="status" aria-live="polite">{transportNotice}</p>}</div><label className="dd-share-switch"><input type="checkbox" checked={transportMatrix.state === "required" || invitation.transportGuideEnabled === true} disabled={transportMatrix.state === "required"} onChange={event => update("transportGuideEnabled", event.target.checked)} aria-label={transportMatrix.label + " 사용"} /><span className="dd-share-switch-track" aria-hidden="true" /></label></div>{(transportMatrix.state === "required" || invitation.transportGuideEnabled === true) && <div className="dd-transport-guide-editor">{[["transportPublicEnabled","transportPublic","🚇 대중교통","지하철·버스 등 대중교통 이용 방법을 입력하세요."],["transportCarEnabled","transportCar","🚙 자가용 이용 시","자가용 이용 시 찾아오는 방법을 입력하세요."],["transportParkingEnabled","transportParking","🅿️ 주차 안내","주차 위치·무료 주차 시간 등을 입력하세요."]].map(([enabledKey,valueKey,label,placeholder])=><div className="dd-transport-guide-editor-item" key={enabledKey}><label className="dd-transport-guide-item-toggle"><input type="checkbox" checked={invitation[enabledKey] === true} onChange={event => update(enabledKey,event.target.checked)} /> {label}</label>{invitation[enabledKey] === true && <TransportAutoTextarea placeholder={placeholder} value={invitation[valueKey] || ""} onChange={value => update(valueKey, value)} />}</div>)}</div>}</div>}</div>;
+    if (field.type === "venue") return <div key={field.key}><Field label={field.label || "장소명"} fieldKey="venue"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onCompositionEnd={(e) => commitTextInput("venue", e)} onBlur={(e) => commitTextInput("venue", e)} onKeyDown={(e) => e.key === "Enter" && !e.nativeEvent.isComposing && e.keyCode !== 229 && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results"><div className="place-results-heading"><strong>검색 결과</strong><span>{placeResults.length}건</span></div><div className="place-results-list">{placeResults.map((place) => <button className="place-result-option" type="button" key={[place.mapx, place.mapy, place.title].join("-")} onClick={() => selectPlace(place)}><span className="place-result-pin" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a86c60" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg></span><span className="place-result-details"><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></span><span className="place-result-chevron" aria-hidden="true">›</span></button>)}</div><p className="place-search-guide">원하는 장소가 없다면 지역명을 함께 입력해 검색해 주세요.</p></div>}<Field label="기본주소" fieldKey="venueAddress"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onCompositionEnd={(e) => commitTextInput("venueAddress", e)} onBlur={(e) => commitTextInput("venueAddress", e)} onKeyDown={(e) => e.key === "Enter" && !e.nativeEvent.isComposing && e.keyCode !== 229 && (e.preventDefault(), geocodeAddress(e.currentTarget.value))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>검색</button></div></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} onCompositionEnd={(e) => commitTextInput("venueDetail", e)} onBlur={(e) => commitTextInput("venueDetail", e)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={setMapContainer} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div>{transportMatrix.state !== "none" && <div className="form-section"><div className="dd-share-card-heading"><div><h2>🚗 {transportMatrix.label}</h2><p>교통 및 주차 안내를 설정해요.</p>{transportNotice && <p role="status" aria-live="polite">{transportNotice}</p>}</div><label className="dd-share-switch"><input type="checkbox" checked={transportMatrix.state === "required" || invitation.transportGuideEnabled === true} disabled={transportMatrix.state === "required"} onChange={event => update("transportGuideEnabled", event.target.checked)} aria-label={transportMatrix.label + " 사용"} /><span className="dd-share-switch-track" aria-hidden="true" /></label></div>{(transportMatrix.state === "required" || invitation.transportGuideEnabled === true) && <div className="dd-transport-guide-editor">{[["transportPublicEnabled","transportPublic","🚇 대중교통","지하철·버스 등 대중교통 이용 방법을 입력하세요."],["transportCarEnabled","transportCar","🚙 자가용 이용 시","자가용 이용 시 찾아오는 방법을 입력하세요."],["transportParkingEnabled","transportParking","🅿️ 주차 안내","주차 위치·무료 주차 시간 등을 입력하세요."]].map(([enabledKey,valueKey,label,placeholder])=><div className="dd-transport-guide-editor-item" key={enabledKey}><label className="dd-transport-guide-item-toggle"><input type="checkbox" checked={invitation[enabledKey] === true} onChange={event => update(enabledKey,event.target.checked)} /> {label}</label>{invitation[enabledKey] === true && <TransportAutoTextarea placeholder={placeholder} value={invitation[valueKey] || ""} onChange={value => update(valueKey, value)} />}</div>)}</div>}</div>}</div>;
     if (field.type === "textarea") {
       const messageExamples = field.key === "message"
         ? invitation.eventKind === "wedding"
@@ -1267,18 +1274,19 @@ export default function CreateInvitation() {
     }
     if (galleryBusy || photoBusy.current || (showLoading && submitting)) return;
     if (!validateDraftMinimum()) return;
-    const savingSnapshot = JSON.stringify(invitation);
+    const draftToSave = latestInvitation.current;
+    const savingSnapshot = JSON.stringify(draftToSave);
     if (showSuccessToast) { window.clearTimeout(saveToastTimer.current); setSaveToastVisible(false); }
     if (showLoading) setSubmitting("draft");
     try {
-      window.localStorage.setItem("dear-day-draft", JSON.stringify(invitation));
+      window.localStorage.setItem("dear-day-draft", savingSnapshot);
       setPublished(false);
       const supabase = getSupabaseBrowserClient();
       if (!supabase) { setSaveNotice("이 기기 임시 저장 완료"); return allowLocalSuccess ? "local" : undefined; }
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { setLoginRequired(true); setSaveNotice("이 기기 임시 저장 완료 · 로그인 후 온라인 저장이 가능해요"); return allowLocalSuccess ? "local" : undefined; }
       const slug = eventSlug || `invite-${window.crypto.randomUUID()}`;
-      const response = await fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ slug, invitation, templateSelectionChanged: templateSelectionChanged.current }) });
+      const response = await fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ slug, invitation: draftToSave, templateSelectionChanged: templateSelectionChanged.current }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) return setSaveNotice(result.error || "저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
       const savedStatus = result.status || "draft";
@@ -1461,7 +1469,7 @@ export default function CreateInvitation() {
       const supabase = getSupabaseBrowserClient();
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return setFlowNotice("로그인 후 발행할 수 있어요.");
-      const response = await fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ slug, invitation, publish: true }) });
+      const response = await fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ slug, invitation: latestInvitation.current, publish: true }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) return setFlowNotice(result.missingFields?.length ? `${result.error} (${result.missingFields.join(", ")})` : result.error || "발행에 실패했어요.");
       setEventStatus("published");
@@ -1504,16 +1512,18 @@ export default function CreateInvitation() {
             const prefix = person === "groom" ? "groom" : "bride";
             const lastKey = person + "LastName";
             const firstKey = person + "FirstName";
-            const setNamePart = (key, value) => setInvitation((current) => {
+            const setNamePart = (key, value) => { const current = latestInvitation.current;
               const lastName = key === lastKey ? value : (current[lastKey] || "");
               const firstName = key === firstKey ? value : (current[firstKey] || (!current[lastKey] && !current[firstKey] ? current[person] || "" : ""));
-              return {...current, [key]: value, [person]: `${lastName}${firstName}`.trim()};
-            });
+              const next = {...current, [key]: value, [person]: `${lastName}${firstName}`.trim()};
+              latestInvitation.current = next;
+              setInvitation(next);
+            };
             return <div className="dd-wedding-person" key={person}>
               <div className="dd-wedding-person-row dd-wedding-main-row">
                 <span className="dd-wedding-role"><span aria-hidden="true">{person === "groom" ? "👨🏻‍💼" : "👰🏻‍♀️"}</span> {label}</span>
-                <input aria-label={label + " 성"} placeholder="성" value={invitation[lastKey] || ""} onChange={(event) => setNamePart(lastKey, event.target.value)} />
-                <input aria-label={label + " 이름"} placeholder="이름" value={invitation[firstKey] || (!invitation[lastKey] && !invitation[firstKey] ? invitation[person] || "" : "")} onChange={(event) => setNamePart(firstKey, event.target.value)} />
+                <input aria-label={label + " 성"} placeholder="성" value={invitation[lastKey] || ""} onChange={(event) => setNamePart(lastKey, event.target.value)} onCompositionEnd={(event) => setNamePart(lastKey, event.currentTarget.value)} onBlur={(event) => setNamePart(lastKey, event.currentTarget.value)} />
+                <input aria-label={label + " 이름"} placeholder="이름" value={invitation[firstKey] || (!invitation[lastKey] && !invitation[firstKey] ? invitation[person] || "" : "")} onChange={(event) => setNamePart(firstKey, event.target.value)} onCompositionEnd={(event) => setNamePart(firstKey, event.currentTarget.value)} onBlur={(event) => setNamePart(firstKey, event.currentTarget.value)} />
               </div>
               {["Father","Mother"].map((parent) => {
                 const nameKey = prefix + parent + "Name";
@@ -1521,7 +1531,7 @@ export default function CreateInvitation() {
                 const parentLabel = parent === "Father" ? "아버지" : "어머니";
                 return <div className="dd-wedding-person-row dd-wedding-parent-row" key={nameKey}>
                   <span className="dd-wedding-role">{parentLabel}</span>
-                  <input aria-label={label + " " + parentLabel + " 성함"} placeholder="성함" value={invitation[nameKey] || ""} onChange={(event) => update(nameKey, event.target.value)} />
+                  <input aria-label={label + " " + parentLabel + " 성함"} placeholder="성함" value={invitation[nameKey] || ""} onChange={(event) => update(nameKey, event.target.value)} onCompositionEnd={(event) => commitTextInput(nameKey, event)} onBlur={(event) => commitTextInput(nameKey, event)} />
                   <label className="dd-wedding-deceased"><input type="checkbox" checked={Boolean(invitation[deceasedKey])} onChange={(event) => update(deceasedKey, event.target.checked)} /><span>故</span></label>
                 </div>;
               })}
