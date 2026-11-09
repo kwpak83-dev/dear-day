@@ -81,23 +81,11 @@ export async function DELETE(request) {
   if (!uuid.test(input?.id || "")) return json({ error: "음악을 선택해 주세요." }, 400);
   const { data: track, error: readError } = await auth.server.from("bgm_tracks").select("*").eq("id", input.id).maybeSingle();
   if (readError || !track) return json({ error: "음악을 찾을 수 없어요." }, 404);
-  // Never delete an asset referenced by an invitation, including drafts and suspended invitations.
-  const { count, error: usageError } = await auth.server.from("events").select("id", { count: "exact", head: true })
-    .contains("settings", { userBgmTrackId: input.id });
-  if (usageError) return json({ error: "사용 중 여부를 확인할 수 없어 삭제를 중단했어요." }, 503);
-  if (count > 0) return json({ error: `이 음악을 사용하는 초대장이 ${count}개 있어요. 삭제 대신 숨기기를 이용해 주세요.` }, 409);
-  // Existing catalog entries may also be removed, but never delete shared template assets.
-  const { count: templateUses, error: templateError } = await auth.server.from("template_assets")
-    .select("id", { count: "exact", head: true })
-    .eq("storage_bucket", track.storage_bucket).eq("storage_path", track.storage_path);
-  if (templateError) return json({ error: "템플릿 파일 사용 여부를 확인하지 못해 삭제를 중단했어요." }, 503);
-  if (templateUses > 0) return json({ error: "템플릿에서 사용 중인 파일입니다. 완전 삭제 대신 숨기기를 이용해 주세요." }, 409);
-  const { count: catalogUses, error: catalogError } = await auth.server.from("bgm_tracks")
-    .select("id", { count: "exact", head: true })
-    .eq("storage_bucket", track.storage_bucket).eq("storage_path", track.storage_path).neq("id", track.id);
-  if (catalogError || catalogUses > 0) return json({ error: "다른 음악 등록 정보에서 공유 중인 파일이라 삭제할 수 없어요." }, 409);
-  // Shared public assets may be referenced concurrently; never physically remove them here.
-  const { error: deleteError } = await auth.server.from("bgm_tracks").delete().eq("id", input.id);
-  if (deleteError) return json({ error: "음악 목록을 삭제하지 못했어요. 파일은 보존됐습니다." }, 500);
-  return json({ ok: true });
+  // Never delete a catalog row: a concurrent invitation save can reference its ID
+  // after a non-atomic reference check. Existing published invitations resolve by ID.
+  // Hide it from future selection instead, preserving the row and Storage object.
+  const { data: hidden, error: hideError } = await auth.server.from("bgm_tracks")
+    .update({ is_active: false }).eq("id", input.id).select("id,is_active").maybeSingle();
+  if (hideError || !hidden) return json({ error: "음악을 숨기지 못했어요." }, 500);
+  return json({ ok: true, hidden: true, physicalDeletionDeferred: true });
 }
