@@ -49,7 +49,7 @@ export async function writeToClipboard(value) {
   if (!copied) throw new Error("Clipboard unavailable");
 }
 
-export default function ShareActions({ path, title = "DearDay 초대장", text, imageUrl = "", imageUnavailable = false, imageWidth = 800, imageHeight = 600, className = "", showPath = false, previewOnly = false, displayMode = "inline", renderMenuIcon }) {
+export default function ShareActions({ path, title = "DearDay 초대장", text, imageUrl = "", fallbackImageUrl = "", imageUnavailable = false, imageWidth = 800, imageHeight = 600, className = "", showPath = false, previewOnly = false, displayMode = "inline", renderMenuIcon }) {
   const [notice, setNotice] = useState("");
   const [copied, setCopied] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
@@ -117,7 +117,15 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
     const jsKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
     if (!jsKey) return showNotice("카카오 공유 설정을 확인해 주세요.");
     try {
-      const verifiedImageUrl = await prepareKakaoImage(imageUrl);
+      let verifiedImageUrl;
+      let usedOriginalFallback = false;
+      try {
+        verifiedImageUrl = await prepareKakaoImage(imageUrl);
+      } catch (error) {
+        if (!fallbackImageUrl || error?.code !== "KAKAO_IMAGE_UNAVAILABLE") throw error;
+        verifiedImageUrl = await prepareKakaoImage(fallbackImageUrl);
+        usedOriginalFallback = true;
+      }
       const Kakao = await loadKakaoSdk();
       if (!Kakao.isInitialized()) Kakao.init(jsKey);
       const url = new URL(path, "https://dear-day-seven.vercel.app").toString();
@@ -128,8 +136,8 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
       };
       if (imageUrl) {
         content.imageUrl = verifiedImageUrl;
-        content.imageWidth = imageWidth;
-        content.imageHeight = imageHeight;
+        content.imageWidth = usedOriginalFallback ? 800 : imageWidth;
+        content.imageHeight = usedOriginalFallback ? 600 : imageHeight;
       }
       Kakao.Share.sendDefault({
         objectType: "feed",
