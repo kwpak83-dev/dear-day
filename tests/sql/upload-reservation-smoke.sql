@@ -42,6 +42,33 @@ begin
     raise exception 'foreign owner path accepted';
   exception when sqlstate '22023' then null;
   end;
+  -- The same Storage object must not be reserved for a different event.
+  insert into public.events(id,owner_id,status)
+    values('66666666-6666-4666-8666-666666666666',owner,'draft');
+  begin
+    perform public.reserve_invitation_upload(
+      '66666666-6666-4666-8666-666666666666',
+      owner,'invitation-photos',owner::text||'/photo.jpg'
+    );
+    raise exception 'Duplicate object path unexpectedly accepted';
+  exception when unique_violation then null;
+  end;
+  if (select count(*) from public.invitation_upload_reservations
+      where bucket='invitation-photos' and storage_path=owner::text||'/photo.jpg')<>1 then
+    raise exception 'Duplicate reservation modified existing ledger';
+  end if;
+  -- Failed uploads remain recorded and cannot be finished twice.
+  rid := public.reserve_invitation_upload(
+    draft,owner,'invitation-bgm',owner::text||'/failed.mp3');
+  if not public.finish_invitation_upload(rid,owner,false) then
+    raise exception 'Failed upload finalization rejected';
+  end if;
+  if (select status from public.invitation_upload_reservations where id=rid)<>'failed' then
+    raise exception 'Failed upload not persisted';
+  end if;
+  if public.finish_invitation_upload(rid,owner,true) then
+    raise exception 'Failed reservation was resurrected';
+  end if;
   raise notice 'PASS: reservation, finish, replay rejection, read-only fence, path validation';
 end;
 $test$;
