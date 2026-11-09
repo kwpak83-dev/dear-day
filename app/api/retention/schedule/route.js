@@ -31,7 +31,7 @@ export async function GET(request) {
     let cursor = null;
     const PAGE_SIZE = 100;
     const MAX_PAGES = 200;
-    for (let page = 0; page < MAX_PAGES; page++) {
+    for (let page = 0; page <= MAX_PAGES; page++) {
       let query = supabase.from("events")
         .select("id,owner_id,status,starts_at")
         .in("status", ["published", "suspended"])
@@ -39,11 +39,15 @@ export async function GET(request) {
       if (cursor) query = query.gt("id", cursor);
       const { data: batch, error } = await query;
       if (error) throw error;
-      events.push(...(batch || []));
+      if (!Array.isArray(batch)) throw new Error("Invalid retention scan response");
       report.pages++;
-      if (!batch?.length || batch.length < PAGE_SIZE) break;
+      if (!batch.length) break;
+      if (page === MAX_PAGES) {
+        report.truncated = true;
+        break;
+      }
+      events.push(...batch);
       cursor = batch[batch.length - 1].id;
-      if (page === MAX_PAGES - 1) report.truncated = true;
     }
     report.scanned = events.length;
     if (report.truncated && enroll) throw new Error("Retention scan incomplete; refusing enrollment");
