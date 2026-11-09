@@ -55,6 +55,15 @@ neither listing entries nor backend files at the synthetic path. This
 does not certify hosted policies, other Storage versions, or the S3
 backend. GitHub CI still runs PostgreSQL fixtures separately.
 
+With the guard restored to OFF, run
+`node scripts/test-storage-http-local.mjs --standalone --deletion-fixture`
+using the same loopback URL. This scenario creates two synthetic invitations,
+checks that an outdated due date blocks DB deletion, then verifies that the
+existing finalization RPC deletes the expired invitation and leaves a durable
+cleanup ledger. It deletes only the newly created exclusive fixture object by
+HTTP and verifies that the second invitation's shared file remains. The
+production cleanup endpoint still reports candidates without deleting files.
+
 ### Run the guard-off HTTP smoke test on Windows
 
 Use Docker Desktop in Linux-container mode and a dedicated CLI project.

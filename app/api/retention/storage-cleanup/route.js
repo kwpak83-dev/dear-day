@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { timingSafeEqual } from "node:crypto";
 import { inspectStorageReferences } from "../../../../lib/invitation-storage-references";
 import { cleanupFailureCategory } from "../../../../lib/storage-cleanup-diagnostics";
+import { hasInvitationScopedUpload } from "../../../../lib/invitation-storage-cleanup-scope";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -25,7 +26,7 @@ export async function GET(request) {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return Response.json({ error: "Configuration missing" }, { status: 503 });
   const db = createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
-  const report = { mode: "dry-run", scanned: 0, referenced: 0, unreferenced: 0, inFlight: 0, staleReservations: 0, priorErrors: 0, retries: 0, totals: { pending: 0, retry: 0, failed: 0, done: 0 }, failedJobs: [], errors: [], removed: 0 };
+  const report = { mode: "dry-run", scanned: 0, referenced: 0, unreferenced: 0, scopedUnreferenced: 0, inFlight: 0, staleReservations: 0, priorErrors: 0, retries: 0, totals: { pending: 0, retry: 0, failed: 0, done: 0 }, failedJobs: [], errors: [], removed: 0 };
   try {
     // Count every status, including terminal failures excluded from the 20-item
     // due-work inspection. Head-only exact counts avoid downloading object paths.
@@ -79,7 +80,7 @@ export async function GET(request) {
         // was deleted. Do not label its cleanup object unreferenced.
         const { data: reservations, error: reservationError } = await db
           .from("invitation_upload_reservations")
-          .select("id,status,created_at")
+          .select("id,event_id,owner_id,status,created_at")
           .eq("bucket", job.bucket)
           .eq("storage_path", job.storage_path)
           .limit(1);
@@ -101,7 +102,10 @@ export async function GET(request) {
           supabaseUrl: url, bucket: job.bucket, path: job.storage_path,
         });
         if (result.referenced) report.referenced++;
-        else report.unreferenced++;
+        else {
+          report.unreferenced++;
+          if (hasInvitationScopedUpload(job, reservations[0])) report.scopedUnreferenced++;
+        }
       } catch (err) {
         report.errors.push({ id: job.id, category: cleanupFailureCategory(String(err.message || err)) });
       }

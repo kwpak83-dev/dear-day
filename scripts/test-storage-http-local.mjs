@@ -3,6 +3,7 @@ import { execFileSync } from "node:child_process";
 import { createHash, createHmac, randomUUID } from "node:crypto";
 import { request } from "node:http";
 import { createClient } from "@supabase/supabase-js";
+import { hasInvitationScopedUpload } from "../lib/invitation-storage-cleanup-scope.js";
 
 const endpoint = new URL(process.env.DEARDAY_TEST_STORAGE_URL || "http://127.0.0.1:54321");
 assert.equal(endpoint.hostname, "127.0.0.1", "Use the isolated loopback Supabase API");
@@ -191,3 +192,49 @@ const status = standalone ? fixtureSql(`select status from public.invitation_upl
     .eq("bucket", bucket).eq("storage_path", uncertain).single()).status;
 assert.equal(status, "reserved");
 console.log(`PASS: guard-${guarded ? "on" : "off"} HTTP cases and response loss; metadata and download bytes match`);
+
+if (process.argv.includes("--deletion-fixture")) {
+  assert.ok(standalone && !guarded, "Deletion fixture requires the standalone synthetic stack with guard off");
+  const expired = randomUUID();
+  const survivor = randomUUID();
+  const exclusive = `${user.id}/notice/${expired}/${randomUUID()}.jpg`;
+  const shared = `${user.id}/notice/${expired}/${randomUUID()}.jpg`;
+  const cover = path => `${endpoint.origin}/storage/v1/object/public/${bucket}/${path}`;
+  for (const path of [exclusive, shared]) result(await storage.upload(path, bytes, options));
+  fixtureSql(`
+    insert into public.events(id,owner_id,kind,status,slug,title,starts_at)
+    values('${expired}','${user.id}','wedding','published','expired-${run}','Expired fixture',clock_timestamp()-interval '40 days');
+    insert into public.events(id,owner_id,kind,status,slug,title,cover_image_url)
+    values('${survivor}','${user.id}','wedding','draft','survivor-${run}','Surviving fixture','${cover(shared)}');
+    insert into public.invitation_upload_reservations(event_id,owner_id,bucket,storage_path,status)
+    values ('${expired}','${user.id}','${bucket}','${exclusive}','uploaded'),
+           ('${expired}','${user.id}','${bucket}','${shared}','uploaded');
+  `);
+  const job = fixtureSql(`insert into public.invitation_deletion_jobs(event_id,owner_id,due_at)
+    select id,owner_id,public.event_retention_deadline_kst(starts_at)-interval '1 day'
+    from public.events where id='${expired}' returning id`);
+  const role = "set request.jwt.claim.role = 'service_role';";
+  const claim = fixtureSql(`${role} select claim_token from public.claim_invitation_deletion_job('${job}',10)`);
+  const finalize = () => fixtureSql(`${role} select public.finalize_invitation_deletion('${job}','${claim}','[]')`);
+  assert.equal(finalize(), "f", "Stale due date must prevent DB deletion");
+  fixtureSql(`update public.invitation_deletion_jobs j set due_at=public.event_retention_deadline_kst(e.starts_at)
+    from public.events e where e.id=j.event_id and j.id='${job}'`);
+  assert.equal(finalize(), "t");
+  assert.equal(fixtureSql(`select count(*) from public.events where id='${expired}'`), "0");
+  assert.equal(fixtureSql(`select count(*) from public.events where id='${survivor}'`), "1");
+  const entries = JSON.parse(fixtureSql(`
+    select json_agg(json_build_object('job',j,'reservation',r,'referenced',exists(
+      select 1 from public.invitation_storage_object_references ref
+      where (ref.bucket,ref.storage_path)=(j.bucket,j.storage_path))))
+    from public.invitation_storage_cleanup_jobs j join public.invitation_upload_reservations r
+      using(bucket,storage_path) where j.event_id='${expired}'`));
+  assert.equal(entries.length, 2);
+  const candidates = entries.filter(entry => !entry.referenced && hasInvitationScopedUpload(entry.job, entry.reservation));
+  assert.deepEqual(candidates.map(entry => entry.job.storage_path), [exclusive]);
+  // Fixture only. The generated paths belong to this synthetic run. The live
+  // inventory is not yet sufficient to authorize physical removal.
+  result(await storage.remove([exclusive]));
+  await checkAbsent(exclusive);
+  await check(shared);
+  console.log("PASS: expired DB deletion queues both paths; isolated HTTP deletion removes only the exclusive fixture");
+}
