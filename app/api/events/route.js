@@ -482,14 +482,8 @@ export async function DELETE(request) {
       else await supabase.from("gallery_storage_cleanup").delete().eq("storage_path", path).eq("owner_id", user.id);
     } catch { cleanupPending = true; failedPhotoPaths.push(path); }
   }
-  // Gallery paths can be retried by the existing scheduled cleanup worker.
-  // Non-gallery failures remain explicitly reported rather than silently treated as success.
-  for (const path of failedPhotoPaths) {
-    if (!path.startsWith(`${user.id}/gallery/${event.id}/`)) continue;
-    const { error: queueError } = await supabase.from("gallery_storage_cleanup")
-      .upsert({ storage_path: path, owner_id: user.id }, { onConflict: "storage_path" });
-    if (queueError) cleanupPending = true;
-  }
+  // Do not enqueue these paths into the legacy gallery worker: it has not been
+  // verified to protect references across accounts. cleanupPending remains true.
   for (const path of owned.bgm) {
     try {
       if (!await removeIfUnreferenced(supabase, bgmBucket, path, user.id)) cleanupPending = true;
