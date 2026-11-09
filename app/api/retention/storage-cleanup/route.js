@@ -24,7 +24,7 @@ export async function GET(request) {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return Response.json({ error: "Configuration missing" }, { status: 503 });
   const db = createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
-  const report = { mode: "dry-run", scanned: 0, referenced: 0, unreferenced: 0, errors: [], removed: 0 };
+  const report = { mode: "dry-run", scanned: 0, referenced: 0, unreferenced: 0, inFlight: 0, errors: [], removed: 0 };
   try {
     const { data: jobs, error } = await db.from("invitation_storage_cleanup_jobs")
       .select("id,event_id,owner_id,bucket,storage_path,status")
@@ -39,6 +39,21 @@ export async function GET(request) {
             typeof job.storage_path !== "string" ||
             !job.storage_path.startsWith(job.owner_id + "/")) {
           throw new Error("Invalid object ownership");
+        }
+        // A reserved upload may still be writing to Storage after its event
+        // was deleted. Do not label its cleanup object unreferenced.
+        const { data: reservations, error: reservationError } = await db
+          .from("invitation_upload_reservations")
+          .select("id,status")
+          .eq("bucket", job.bucket)
+          .eq("storage_path", job.storage_path)
+          .limit(1);
+        if (reservationError || !Array.isArray(reservations)) {
+          throw new Error("Upload reservation inspection failed");
+        }
+        if (reservations.some((reservation) => reservation.status === "reserved")) {
+          report.inFlight++;
+          continue;
         }
         const result = await inspectStorageReferences(db, {
           supabaseUrl: url, bucket: job.bucket, path: job.storage_path,
