@@ -16,8 +16,8 @@ test("gallery reserves in DB before sending Storage bytes",async()=>{
   assert.ok(route.indexOf('mutateGallery(context, "begin"')<route.indexOf(".upload(row.storage_path"));
   assert.ok(route.indexOf(".upload(row.storage_path")<route.indexOf('mutateGallery(context, "finish"'));
 });
-test("photo and BGM uploads reserve before upload and finalize after",async()=>{
-  for(const path of ["app/api/photos/route.js","app/api/bgm-upload/route.js"]){
+test("photo, notice and BGM uploads reserve before upload and finalize after",async()=>{
+  for(const path of ["app/api/photos/route.js","app/api/notice-photo/route.js","app/api/bgm-upload/route.js"]){
     const src=await read(path);
     assert.ok(src.indexOf("reserveUploadIfEnabled(")<src.indexOf(".upload(path"),path);
     assert.ok(src.indexOf(".upload(path")<src.indexOf("finishReservedUpload("),path);
