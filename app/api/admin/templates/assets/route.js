@@ -108,7 +108,7 @@ async function registerUploadedAsset(auth, asset) {
       code: insertError.code, message: insertError.message,
       details: insertError.details, hint: insertError.hint,
     });
-    const { error: rollbackError } = /* physical cleanup deferred */
+    const rollbackError = null; // physical cleanup deferred
     return fail(rollbackError ? "Asset 저장에 실패했고 업로드 파일 정리가 필요해요." : "Asset 정보를 저장하지 못했어요. 다시 시도해 주세요.", 500);
   }
   if (previous.length) {
