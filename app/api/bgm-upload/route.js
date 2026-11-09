@@ -50,8 +50,10 @@ export async function DELETE(request) {
     if(!user) return fail("다시 로그인해 주세요.",401);
     const {path}=await request.json().catch(()=>({}));
     if(typeof path!=="string" || !path.startsWith(user.id+"/") || !path.endsWith(".mp3")) return fail("삭제할 음악을 확인하지 못했어요.",400);
-    const {error}=await supabase.storage.from(bucket).remove([path]);
-    if(error) return fail("음악 삭제에 실패했어요.",500);
-    return Response.json({ok:true});
+    // P0 containment: owner-path authorization alone does not prove that
+    // another invitation is not using this file. Defer physical removal.
+    // Callers can still unlink the BGM from their invitation settings.
+    return Response.json({ok:true,cleanupPending:true,physicalDeletionDeferred:true});
+
   } catch { return fail("음악 삭제 중 연결이 끊겼어요.",500); }
 }
