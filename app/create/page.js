@@ -298,6 +298,7 @@ export default function CreateInvitation() {
   const [kakaoCrop, setKakaoCrop] = useState(null);
   const [kakaoCropY, setKakaoCropY] = useState(50);
   const photoBusy = useRef(false);
+  const preUploadSave = useRef(null);
   const saveToastTimer = useRef(null);
   const [mapContainer, setMapContainer] = useState(null);
   const mapInstance = useRef(null);
@@ -1313,7 +1314,6 @@ export default function CreateInvitation() {
   // When the reservation feature is enabled, a Storage upload needs an existing
   // event row. Reuse the regular draft validation/save path; never invent a slug
   // without persisting the event. Only one pre-upload save may run at a time.
-  const preUploadSave = useRef(null);
   const ensureEventSlugForUpload = async () => {
     if (eventSlug) return eventSlug;
     if (!preUploadSave.current) {
