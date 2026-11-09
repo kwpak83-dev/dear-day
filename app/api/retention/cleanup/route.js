@@ -7,7 +7,6 @@ export const maxDuration = 60;
 const PHOTO = "invitation-photos";
 const BGM = "invitation-bgm";
 const buckets = [PHOTO, BGM];
-const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 function authorized(request) {
   const secret = process.env.CRON_SECRET;
@@ -74,7 +73,8 @@ export async function GET(request) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return Response.json({ error: "Configuration missing" }, { status: 503 });
-  const execute = process.env.RETENTION_DELETE_ENABLED === "true";
+  // Fail closed until atomic claim and recovery are implemented.
+  const execute = false;
   const db = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
   const report = { mode: execute ? "execute" : "dry-run", scanned: 0, eligible: 0, deleted: 0, failed: 0, skipped: 0, errors: [] };
   try {
@@ -110,7 +110,7 @@ export async function GET(request) {
             .upsert(files.map(file => ({ ...file, event_id: event.id, owner_id: event.owner_id })),
               { onConflict: "bucket,storage_path", ignoreDuplicates: true }));
           for (const file of files) {
-            if (await referencedElsewhere(db, event, file)) continue;
+            if (await referencedElsewhere(db, event, file)) throw new Error("Shared Storage reference requires review");
             await required(db.storage.from(file.bucket).remove([file.storage_path]));
             await required(db.from("invitation_storage_cleanup_jobs")
               .update({ status: "done", updated_at: new Date().toISOString(), last_error: null })
@@ -121,12 +121,11 @@ export async function GET(request) {
             .eq("id", event.id).maybeSingle());
           if (!current || !["published", "suspended"].includes(current.status) ||
             eventDeletionTime(current.starts_at) !== eventDeletionTime(event.starts_at)) throw new Error("Event changed during cleanup");
-          await required(db.from("invitation_deletion_audit")
-            .insert({ event_id: event.id, owner_id: event.owner_id, outcome: "completed", details: "Storage cleanup attempted; DB deletion follows" }));
           const deleted = await required(db.from("events").delete()
             .eq("id", event.id).eq("owner_id", event.owner_id).eq("starts_at", event.starts_at)
             .select("id").maybeSingle());
           if (!deleted) throw new Error("Event deletion not confirmed");
+          await required(db.from("invitation_deletion_audit").insert({ event_id: event.id, owner_id: event.owner_id, outcome: "completed", details: "Event deletion confirmed" }));
           report.deleted++;
         } catch (error) {
           await required(db.from("invitation_deletion_jobs").update({
