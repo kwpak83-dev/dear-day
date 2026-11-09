@@ -55,6 +55,10 @@ jobs:
         env:
           PGPASSWORD: test-only
         run: psql -h 127.0.0.1 -U postgres -d dear_day_ci -f tests/sql/upload-reservation-smoke.sql
+      - name: Validate deletion retry and lease safety in PostgreSQL
+        env:
+          PGPASSWORD: test-only
+        run: psql -h 127.0.0.1 -U postgres -d dear_day_ci -f tests/sql/deletion-job-retry-smoke.sql
       - name: Test concurrent deletion versus upload reservation
         env:
           PGHOST: 127.0.0.1
