@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test:retention": "node --test tests/invitation-retention.test.mjs",
     "test:storage-references": "node --test tests/invitation-storage-references.test.mjs",
-    "test:retention-sql": "node --test tests/retention-sql-safety.test.mjs"
+    "test:retention-sql": "node --test tests/retention-sql-safety.test.mjs",
+    "test:upload-reservations": "node --test tests/upload-reservation-wiring.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
