@@ -7,7 +7,7 @@ function client() {
   return url && key ? createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } }) : null;
 }
 async function authenticate(request, supabase) {
-  const token = request.headers.get("authorization")?.replace(/^Bearer\\s+/i, "");
+  const token = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   if (!token) return null;
   const { data: { user }, error } = await supabase.auth.getUser(token);
   return error ? null : user;
