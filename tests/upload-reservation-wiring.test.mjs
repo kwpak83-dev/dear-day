@@ -46,5 +46,5 @@ test("pre-save uploads remain blocked if opt-in reservation mode is enabled",asy
   assert.match(helper,/x-event-slug/);
   assert.match(helper,/초대장을 먼저 임시저장/);
   const editor=await read("app/create/page.js");
-  assert.match(editor,/const \\[eventSlug, setEventSlug\\] = useState\\("?"\\)/);
+  assert.ok(editor.includes('const [eventSlug, setEventSlug] = useState("")'));
 });
