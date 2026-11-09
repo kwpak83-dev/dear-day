@@ -24,8 +24,20 @@ export async function GET(request) {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return Response.json({ error: "Configuration missing" }, { status: 503 });
   const db = createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
-  const report = { mode: "dry-run", scanned: 0, referenced: 0, unreferenced: 0, inFlight: 0, priorErrors: 0, retries: 0, errors: [], removed: 0 };
+  const report = { mode: "dry-run", scanned: 0, referenced: 0, unreferenced: 0, inFlight: 0, priorErrors: 0, retries: 0, totals: { pending: 0, retry: 0, failed: 0, done: 0 }, errors: [], removed: 0 };
   try {
+    // Count every status, including terminal failures excluded from the 20-item
+    // due-work inspection. Head-only exact counts avoid downloading object paths.
+    for (const status of ["pending", "retry", "failed", "done"]) {
+      const { count, error: countError } = await db
+        .from("invitation_storage_cleanup_jobs")
+        .select("id", { count: "exact", head: true })
+        .eq("status", status);
+      if (countError || !Number.isInteger(count)) {
+        throw new Error("Storage cleanup status count failed");
+      }
+      report.totals[status] = count;
+    }
     const { data: jobs, error } = await db.from("invitation_storage_cleanup_jobs")
       .select("id,event_id,owner_id,bucket,storage_path,status,attempts,last_error,next_attempt_at")
       .in("status", ["pending", "retry"])
