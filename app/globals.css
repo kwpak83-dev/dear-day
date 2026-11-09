@@ -1288,6 +1288,14 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
    scrolling space so the share actions and footer are not obscured. */
 .full-preview-scroll{padding-bottom:110px}
 
+/* Live phone preview: keep short wedding parent/relation lines intact.
+   Scoped to the editor preview; published invitations retain their own wrapping. */
+.create-page .preview-content .wedding-parent-relations p{
+  overflow-wrap:normal;
+  word-break:keep-all;
+  text-wrap:pretty;
+}
+
 /* User editor: show a realistic 390px mobile viewport instead of compressing
    account-copy labels and quick-menu text into the old 286px mock phone. */
 @media (min-width:761px){
