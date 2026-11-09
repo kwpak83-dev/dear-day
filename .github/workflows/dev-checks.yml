@@ -93,5 +93,11 @@ jobs:
         env:
           PGPASSWORD: test-only
         run: psql -h 127.0.0.1 -U postgres -d dear_day_ci -f tests/sql/storage-write-guard-smoke.sql
+      - name: Validate retention migrations 001 through 019 in order
+        env:
+          PGPASSWORD: test-only
+        run: |
+          createdb -h 127.0.0.1 -U postgres dear_day_migration_order_ci
+          psql -h 127.0.0.1 -U postgres -d dear_day_migration_order_ci -f tests/sql/retention-migration-order-smoke.sql
       - name: Build Next.js
         run: pnpm build
