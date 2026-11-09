@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { timingSafeEqual } from "node:crypto";
 import { eventDeletionTime } from "../../../../lib/invitation-retention";
+import { inspectStorageReferences } from "../../../../lib/invitation-storage-references";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -55,18 +56,11 @@ async function planFiles(db, event, url) {
   }
   return [...paths.values()];
 }
-async function referencedElsewhere(db, event, file) {
-  const url = db.storage.from(file.bucket).getPublicUrl(file.storage_path).data.publicUrl;
-  // Fail closed if the owner has too many events to check comprehensively.
-  const others = await required(db.from("events").select("id,cover_image_url,settings")
-    .eq("owner_id", event.owner_id).neq("id", event.id).limit(1001));
-  if (others.length === 1001) throw new Error("Reference scan exceeds safe limit");
-  if (others.some(row => row.cover_image_url === url ||
-      JSON.stringify(row.settings || {}).includes(url) ||
-      JSON.stringify(row.settings || {}).includes(file.storage_path))) return true;
-  const media = await required(db.from("event_media").select("id")
-    .eq("storage_path", file.storage_path).neq("event_id", event.id).limit(1));
-  return media.length > 0;
+async function referencedElsewhere(db, event, file, supabaseUrl) {
+  const inspection = await inspectStorageReferences(db, {
+    supabaseUrl, bucket: file.bucket, path: file.storage_path, excludeEventId: event.id,
+  });
+  return inspection.referenced;
 }
 export async function GET(request) {
   if (!authorized(request)) return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -110,7 +104,7 @@ export async function GET(request) {
             .upsert(files.map(file => ({ ...file, event_id: event.id, owner_id: event.owner_id })),
               { onConflict: "bucket,storage_path", ignoreDuplicates: true }));
           for (const file of files) {
-            if (await referencedElsewhere(db, event, file)) throw new Error("Shared Storage reference requires review");
+            if (await referencedElsewhere(db, event, file, url)) throw new Error("Shared Storage reference requires review");
             await required(db.storage.from(file.bucket).remove([file.storage_path]));
             await required(db.from("invitation_storage_cleanup_jobs")
               .update({ status: "done", updated_at: new Date().toISOString(), last_error: null })
