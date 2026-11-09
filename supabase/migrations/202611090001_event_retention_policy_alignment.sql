@@ -36,7 +36,7 @@ create policy "published events are public" on public.events for select
 -- Do NOT revoke event writes: doing so would break draft creation and editing.
 -- Enforce event-start restrictions in a trigger for all write paths instead.
 create or replace function public.enforce_event_start_edit_lock()
-returns trigger language plpgsql set search_path = public as $
+returns trigger language plpgsql set search_path = public as $retention_lock$
 begin
   if TG_OP = 'UPDATE' and old.status in ('published', 'suspended')
      and (old.starts_at is null or old.starts_at <= now()) then
@@ -48,7 +48,7 @@ begin
   end if;
   return new;
 end;
-$;
+$retention_lock$;
 drop trigger if exists enforce_event_start_edit_lock on public.events;
 create trigger enforce_event_start_edit_lock before update on public.events
   for each row execute function public.enforce_event_start_edit_lock();
