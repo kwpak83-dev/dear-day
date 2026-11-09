@@ -8,7 +8,7 @@ test("all editor photo/BGM POST calls supply event slug",async()=>{
   const calls=[...src.matchAll(/fetch\("\/api\/(photos|bgm-upload)"\s*,\s*\{[\s\S]*?\}\)/g)]
     .filter(m=>/method\s*:\s*"POST"/.test(m[0]));
   assert.equal(calls.length,7,"expected all seven editor upload calls");
-  for(const call of calls)assert.match(call[0],/"X-Event-Slug"\s*:\s*eventSlug\s*\|\|\s*""/);
+  for(const call of calls)assert.match(call[0],/"X-Event-Slug"\s*:\s*await uploadEventSlug\(\)/);
 });
 test("gallery reserves in DB before sending Storage bytes",async()=>{
   const route=await read("app/api/gallery/route.js");
@@ -41,10 +41,13 @@ test("manual and scheduled deletion both collect reservation rows",async()=>{
   assert.match(sql,/where event_id=p_event and owner_id=p_owner/);
   assert.match(sql,/where event_id=v_event\.id and owner_id=v_event\.owner_id/);
 });
-test("pre-save uploads remain blocked if opt-in reservation mode is enabled",async()=>{
+test("first upload saves an event when the client opt-in is enabled",async()=>{
   const helper=await read("lib/invitation-upload-reservation.js");
   assert.match(helper,/x-event-slug/);
   assert.match(helper,/초대장을 먼저 임시저장/);
   const editor=await read("app/create/page.js");
   assert.ok(editor.includes('const [eventSlug, setEventSlug] = useState("")'));
+  assert.match(editor,/NEXT_PUBLIC_INVITATION_UPLOAD_RESERVATIONS_READY === "true"/);
+  assert.match(editor,/saveDraft\(\{ showLoading: false, allowUploadBusy: true \}\)/);
+  assert.match(editor,/if \(!slug \|\| slug === "local"\) throw new Error/);
 });
