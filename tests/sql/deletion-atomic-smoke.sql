@@ -9,6 +9,7 @@ create table public.event_media (
 \ir ../../supabase/migrations/202611090009_event_media_deletion_fence.sql
 \ir ../../supabase/migrations/202611090010_cleanup_validation_hardening.sql
 \ir ../../supabase/migrations/202611090013_collect_upload_reservations_on_deletion.sql
+\ir ../../supabase/migrations/202611090015_manual_deletion_lock_order.sql
 
 do $test$
 declare
