@@ -29,7 +29,24 @@ export async function POST(request) {
   const bytes = Buffer.concat(chunks);
   if (bytes.length < 4 || bytes[0] !== 255 || bytes[1] !== 216 || bytes[2] !== 255) return fail("올바른 JPG 이미지가 아니에요.", 400);
   const path = `${user.id}/notice/${event.id}/${randomUUID()}.jpg`;
+  // Opt-in only after migration 012 and deletion-manifest integration are verified.
+  // Reserve BEFORE Storage upload, so an interrupted request leaves a durable path.
+  const reserveEnabled = process.env.INVITATION_UPLOAD_RESERVATIONS_READY === "true";
+  let reservationId = null;
+  if (reserveEnabled) {
+    const { data, error: reserveError } = await supabase.rpc("reserve_invitation_upload", {
+      p_event: event.id, p_owner: user.id, p_bucket: "invitation-photos", p_path: path,
+    });
+    if (reserveError || !data) return fail("초대장 상태가 변경됐어요. 새로고침 후 다시 시도해 주세요.", 409);
+    reservationId = data;
+  }
   const { error } = await supabase.storage.from("invitation-photos").upload(path, bytes, { contentType: "image/jpeg", upsert: false });
+  if (reservationId) {
+    const { data: finished, error: finishError } = await supabase.rpc("finish_invitation_upload", {
+      p_reservation: reservationId, p_owner: user.id, p_uploaded: !error,
+    });
+    if (finishError || finished !== true) return fail("업로드 상태를 확인하지 못했어요. 잠시 후 다시 확인해 주세요.", 503);
+  }
   if (error) return fail("공지 이미지를 업로드하지 못했어요.", 500);
   return Response.json({ path, url: supabase.storage.from("invitation-photos").getPublicUrl(path).data.publicUrl });
 }
