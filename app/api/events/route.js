@@ -436,7 +436,7 @@ export async function DELETE(request) {
 
   const { supabase, user } = auth;
   const { data: event, error: lookupError } = await supabase.from("events")
-    .select("id,owner_id,status,cover_image_url,settings").eq("slug", slug).maybeSingle();
+    .select("id,owner_id,status,cover_image_url,settings,updated_at").eq("slug", slug).maybeSingle();
   if (lookupError) return json({ error: "초대장을 확인하지 못했어요." }, 500);
   if (!event) return json({ error: "초대장을 찾지 못했어요." }, 404);
   if (event.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 삭제할 수 없어요." }, 403);
@@ -461,6 +461,28 @@ export async function DELETE(request) {
   if (mediaError) return json({ error: "초대장 파일 정보를 확인하지 못했어요." }, 500);
   for (const row of media || []) {
     if (typeof row.storage_path === "string" && row.storage_path.startsWith(user.id + "/")) owned.photos.add(row.storage_path);
+  }
+
+  // Opt-in only after migration 007 is applied and validated. Existing deployments
+  // retain their current behavior until the schema is explicitly enabled.
+  if (process.env.MANUAL_DELETION_ATOMIC_READY === "true") {
+    const manifest = [
+      ...[...owned.photos].map(storage_path => ({ bucket: photoBucket, storage_path })),
+      ...[...owned.bgm].map(storage_path => ({ bucket: bgmBucket, storage_path })),
+    ];
+    if (manifest.length > 1000) return json({ error: "파일 목록이 너무 많아 삭제를 안전하게 진행할 수 없어요." }, 409);
+    const { data: committed, error: atomicError } = await supabase.rpc("delete_invitation_with_cleanup", {
+      p_event: event.id,
+      p_owner: user.id,
+      p_expected_updated_at: event.updated_at,
+      p_files: manifest,
+    });
+    if (atomicError) {
+      console.error("Atomic invitation deletion failed", { code: atomicError.code });
+      return json({ error: "초대장 삭제와 파일 정리 예약을 완료하지 못했어요." }, 503);
+    }
+    if (committed !== true) return json({ error: "초대장 상태가 변경되었어요. 새로고침 후 다시 시도해 주세요." }, 409);
+    return json({ deleted: true, slug, cleanupPending: manifest.length > 0 || (media || []).length > 0, cleanupQueued: true });
   }
 
   const deletingStatus = event.status;
