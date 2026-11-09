@@ -13,6 +13,7 @@ async function authenticate(request, supabase) {
   return error ? null : user;
 }
 export async function GET(request) {
+  if (process.env.RETENTION_NOTICES_ENABLED !== "true") return Response.json({ notices: [], enabled: false }, { headers: { "Cache-Control": "no-store" } });
   const supabase = client();
   if (!supabase) return Response.json({ error: "Configuration missing" }, { status: 503 });
   const user = await authenticate(request, supabase);
@@ -28,6 +29,7 @@ export async function GET(request) {
   ) }, { headers: { "Cache-Control": "no-store" } });
 }
 export async function PATCH(request) {
+  if (process.env.RETENTION_NOTICES_ENABLED !== "true") return Response.json({ error: "Retention notices not enabled" }, { status: 503 });
   const supabase = client();
   if (!supabase) return Response.json({ error: "Configuration missing" }, { status: 503 });
   const user = await authenticate(request, supabase);
