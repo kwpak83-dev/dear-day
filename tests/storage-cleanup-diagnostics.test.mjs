@@ -29,5 +29,5 @@ test("diagnostics cannot authorize or perform destructive cleanup", async () => 
   assert.doesNotMatch(route, /safeToDelete|canDelete|authorizedToDelete/);
   assert.doesNotMatch(route, /\.remove\s*\(|\.delete\s*\(|\.update\s*\(|\.upsert\s*\(/);
   assert.doesNotMatch(diagnostics, /\.remove\s*\(|\.delete\s*\(|\.update\s*\(/);
-  assert.equal(cleanupFailureCategory("No references found"), "reference_exists");
+  assert.equal(cleanupFailureCategory("No references found"), "unknown");
 });
