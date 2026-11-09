@@ -5,7 +5,8 @@ const read = async path => readFile(new URL("../"+path,import.meta.url),"utf8");
 
 test("all editor photo/BGM POST calls supply event slug",async()=>{
   const src=await read("app/create/page.js");
-  const calls=[...src.matchAll(/fetch\("\/api\/(photos|bgm-upload)"\s*,\s*\{[\s\S]*?body\s*:\s*(?:photo|file)[\s\S]*?\}\)/g)].filter(m=>/method\s*:\s*"POST"/.test(m[0]));
+  const calls=[...src.matchAll(/fetch\("\/api\/(photos|bgm-upload)"\s*,\s*\{[\s\S]*?\}\)/g)]
+    .filter(m=>/method\s*:\s*"POST"/.test(m[0]));
   assert.equal(calls.length,7,"expected all seven editor upload calls");
   for(const call of calls)assert.match(call[0],/"X-Event-Slug"\s*:\s*eventSlug\s*\|\|\s*""/);
 });
