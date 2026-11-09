@@ -5,7 +5,7 @@ import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import { getInvitationTitle } from "../../lib/invitation-title";
 import ShareActions from "../../components/share-actions";
 import MyPageLayout from "../../components/my-page-layout";
-import { getRetentionState } from "../../lib/invitation-retention";
+import { getRetentionState, isEventReadOnly } from "../../lib/invitation-retention";
 
 function MenuIcon({ name }) {
  const shapes = {
@@ -163,17 +163,17 @@ export default function MyInvitations() {
       <div className="invitation-list dd-my-card-list">{events.map((event) => <article className="dd-my-card" key={event.slug}>
         <div className="dd-my-card-media">
           <CardImage key={event.cardImageUrl || "no-image"} url={event.cardImageUrl} />
-          <span className={`dd-my-card-badge dd-my-card-badge--${event.status}`}>{STATUS_LABELS[event.status] || event.status}</span>
+          <span className={`dd-my-card-badge dd-my-card-badge--${event.status}`}>{isEventReadOnly(event) ? "행사종료" : STATUS_LABELS[event.status] || event.status}</span>
         </div>
         <div className="dd-my-card-body">
           <h2 className="dd-my-card-title">{getInvitationTitle(event.settings, event.kind)}</h2>
           <p className="dd-my-card-date">{event.starts_at ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "long", timeStyle: "short" }).format(new Date(event.starts_at)) : "날짜 미정"}</p>
           {retentionNotice(event) && <p className="dd-my-card-retention">{retentionNotice(event)}</p>}
           <div className="dd-my-card-actions">
-            <a href={`/create?slug=${event.slug}`}>편집하기</a>
+            {!isEventReadOnly(event) && <a href={`/create?slug=${event.slug}`}>편집하기</a>}
             {event.status === "paid" && <a href={`/create?slug=${event.slug}&publish=ready`}>초대장 발행하기</a>}
             {event.status === "published" && <a href={`/invite/${event.slug}?from=owner`}>초대장 보기</a>}
-            {event.status === "suspended" && <button type="button" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>다시 발행하기</button>}
+            {event.status === "suspended" && !isEventReadOnly(event) && <button type="button" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>다시 발행하기</button>}
           </div>
           {["published", "suspended", "draft", "paid"].includes(event.status) && <div className="dd-my-card-management" ref={openMenu === event.slug ? menuRef : null}>
             <button type="button" className="dd-my-card-more" aria-expanded={openMenu === event.slug} aria-controls={`dd-my-card-menu-${event.slug}`} onClick={eventClick => { menuTriggerRef.current = eventClick.currentTarget; setOpenMenu(current => current === event.slug ? null : event.slug); }}>··· 더보기</button>
@@ -182,7 +182,7 @@ export default function MyInvitations() {
               {event.status === "published" && <>
                 <a href={`/guest-management?slug=${event.slug}`}><MenuIcon name="users" />하객 관리</a>
                 <ShareActions path={`/invite/${event.slug}`} title={getInvitationTitle(event.settings, event.kind)} {...(event.kakaoShareImage || { imageUnavailable: true })} displayMode="menu" renderMenuIcon={(name) => <MenuIcon name={name} />} />
-                <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setPublicationError(""); setPublicationTarget(event); }}><MenuIcon name="pause" />발행 중지</button></div>
+                {!isEventReadOnly(event) && <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setPublicationError(""); setPublicationTarget(event); }}><MenuIcon name="pause" />발행 중지</button></div>}
               </>}
               {["suspended", "draft"].includes(event.status) && <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}><MenuIcon name="trash" />삭제하기</button></div>}
             </div>
