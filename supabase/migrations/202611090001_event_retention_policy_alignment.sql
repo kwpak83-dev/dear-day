@@ -32,7 +32,26 @@ create policy "published events are public" on public.events for select
     and public.event_retention_deadline_kst(starts_at) > now());
 
 -- Browser clients must use server-side validation for writes.
-revoke insert, update, delete on table public.events from anon, authenticated;
+-- The editor saves events through the authenticated user's Supabase client.
+-- Do NOT revoke event writes: doing so would break draft creation and editing.
+-- Enforce event-start restrictions in a trigger for all write paths instead.
+create or replace function public.enforce_event_start_edit_lock()
+returns trigger language plpgsql set search_path = public as $
+begin
+  if TG_OP = 'UPDATE' and old.status in ('published', 'suspended')
+     and (old.starts_at is null or old.starts_at <= now()) then
+    raise exception 'EVENT_EDIT_CLOSED' using errcode = '23514';
+  end if;
+  if TG_OP = 'UPDATE' and new.status in ('published', 'suspended')
+     and (new.starts_at is null or new.starts_at <= now()) then
+    raise exception 'EVENT_DATE_MUST_BE_FUTURE' using errcode = '23514';
+  end if;
+  return new;
+end;
+$;
+drop trigger if exists enforce_event_start_edit_lock on public.events;
+create trigger enforce_event_start_edit_lock before update on public.events
+  for each row execute function public.enforce_event_start_edit_lock();
 revoke insert on table public.guestbook_entries from anon, authenticated;
 revoke insert, update, delete on table public.rsvps from anon, authenticated;
 -- Existing owner access and service_role are not revoked.
