@@ -100,9 +100,8 @@ export async function GET(request) {
         const files = await planFiles(db, event, url);
         if (!execute) continue;
         // Optimistic claim: only one concurrent worker may process this job.
-        const claimed = await required(db.from("invitation_deletion_jobs")
-          .update({ status: "processing", claimed_at: new Date().toISOString(), attempts: job.attempts + 1 })
-          .eq("id", job.id).eq("status", job.status).select("id").maybeSingle());
+        const claims = await required(db.rpc("claim_invitation_deletion_job", { p_job_id: job.id, p_lease_minutes: 10 }));
+        const claimed = claims?.[0];
         if (!claimed) { report.skipped++; continue; }
         try {
           // Durable file ledger is inserted BEFORE any destructive action.
@@ -128,10 +127,7 @@ export async function GET(request) {
           await required(db.from("invitation_deletion_audit").insert({ event_id: event.id, owner_id: event.owner_id, outcome: "completed", details: "Event deletion confirmed" }));
           report.deleted++;
         } catch (error) {
-          await required(db.from("invitation_deletion_jobs").update({
-            status: "retry", last_error: String(error.message || error).slice(0, 500),
-            next_attempt_at: new Date(Date.now() + Math.min(24, 2 ** Math.min(job.attempts + 1, 10)) * 3600000).toISOString()
-          }).eq("id", job.id).eq("status", "processing"));
+          await required(db.rpc("retry_invitation_deletion_job", { p_job_id: job.id, p_claim_token: claimed.claim_token, p_error: String(error.message || error) }));
           throw error;
         }
       } catch (error) {
