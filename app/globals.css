@@ -1293,7 +1293,8 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 @media (min-width:761px){
   .create-layout{grid-template-columns:minmax(0,1fr) 480px;gap:40px}
   .preview-panel{height:744px;padding:30px 34px}
-  .preview-phone{width:390px;height:650px;margin-top:20px}
+  .preview-phone{width:406px;height:650px;margin-top:20px;box-sizing:border-box}
+  .preview-phone > .preview-content{width:390px;max-width:100%;box-sizing:border-box}
   .preview-content{height:595px}
 }
 .preview-content .public-account-card button{
