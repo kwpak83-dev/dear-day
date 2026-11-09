@@ -72,7 +72,7 @@ export async function PATCH(request) {
   if (!uuid.test(input?.id || "") || !values) return json({ error: "수정할 정보를 확인해 주세요." }, 400);
   const { data, error } = await auth.server.from("bgm_tracks").update(values).eq("id", input.id).select("id").maybeSingle();
   if (error || !data) return json({ error: "음악 수정에 실패했어요." }, 500);
-  return json({ ok: true });
+  return json({ ok: true, physicalDeletionDeferred: true });
 }
 export async function DELETE(request) {
   const auth = await admin(request);
@@ -96,9 +96,8 @@ export async function DELETE(request) {
     .select("id", { count: "exact", head: true })
     .eq("storage_bucket", track.storage_bucket).eq("storage_path", track.storage_path).neq("id", track.id);
   if (catalogError || catalogUses > 0) return json({ error: "다른 음악 등록 정보에서 공유 중인 파일이라 삭제할 수 없어요." }, 409);
-  const { error: storageError } = await auth.server.storage.from(track.storage_bucket).remove([track.storage_path]);
-  if (storageError) return json({ error: "Storage 파일 삭제에 실패했어요. 다시 시도해 주세요." }, 503);
+  // Shared public assets may be referenced concurrently; never physically remove them here.
   const { error: deleteError } = await auth.server.from("bgm_tracks").delete().eq("id", input.id);
-  if (deleteError) return json({ error: "파일은 삭제됐지만 목록 정리에 실패했어요. 관리자에게 확인이 필요합니다." }, 500);
+  if (deleteError) return json({ error: "음악 목록을 삭제하지 못했어요. 파일은 보존됐습니다." }, 500);
   return json({ ok: true });
 }
