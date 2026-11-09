@@ -359,7 +359,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       <LazyInvitationForm key="rsvp" kind="rsvp" slug={slug} startsAt={startsAt} preview={Boolean(previewMode)} title={rsvpLabel} wedding={invitation.eventKind === "wedding"} mealEnabled={invitation.rsvpOptions?.mealEnabled === true} busEnabled={invitation.rsvpOptions?.shuttleBusEnabled === true} />
     </BottomSheet>}
     {sheet === "guestbook" && guestbookEnabled && <BottomSheet title={guestbookLabel} className="invitation-bottom-sheet--stationery" onClose={closeSheet} portalTarget={usesPreviewPortal ? (isDesktopLivePreview ? previewSheetPortal : desktopLivePortal) : (typeof document !== "undefined" ? document.body : null)} preview={usesPreviewPortal} layerStyle={isDesktopLivePreview ? previewSheetStyle : undefined}>
-      <LazyInvitationForm key="guestbook" kind="guestbook" slug={slug} preview={Boolean(previewMode)} title={guestbookLabel} />
+      <LazyInvitationForm key="guestbook" kind="guestbook" slug={slug} startsAt={startsAt} preview={Boolean(previewMode)} title={guestbookLabel} />
     </BottomSheet>}
   </>;
 }
