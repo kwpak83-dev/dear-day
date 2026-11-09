@@ -24,7 +24,7 @@ export async function GET(request) {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return Response.json({ error: "Configuration missing" }, { status: 503 });
   const db = createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
-  const report = { mode: "dry-run", scanned: 0, referenced: 0, unreferenced: 0, inFlight: 0, priorErrors: 0, retries: 0, totals: { pending: 0, retry: 0, failed: 0, done: 0 }, errors: [], removed: 0 };
+  const report = { mode: "dry-run", scanned: 0, referenced: 0, unreferenced: 0, inFlight: 0, priorErrors: 0, retries: 0, totals: { pending: 0, retry: 0, failed: 0, done: 0 }, failedJobs: [], errors: [], removed: 0 };
   try {
     // Count every status, including terminal failures excluded from the 20-item
     // due-work inspection. Head-only exact counts avoid downloading object paths.
@@ -38,6 +38,25 @@ export async function GET(request) {
       }
       report.totals[status] = count;
     }
+    // Show a bounded sample of terminal failures, even though they are not
+    // eligible for the due-work scan. Do not expose owner IDs or Storage paths.
+    const { data: failedJobs, error: failedError } = await db
+      .from("invitation_storage_cleanup_jobs")
+      .select("id,bucket,attempts,last_error,updated_at")
+      .eq("status", "failed")
+      .order("updated_at", { ascending: false })
+      .limit(20);
+    if (failedError || !Array.isArray(failedJobs)) {
+      throw new Error("Storage cleanup failure inspection failed");
+    }
+    report.failedJobs = failedJobs.map((job) => ({
+      id: job.id,
+      bucket: job.bucket,
+      attempts: job.attempts,
+      updatedAt: job.updated_at,
+      hasError: Boolean(job.last_error),
+      // Diagnostic messages can contain object names or URLs; keep them server-side.
+    }));
     const { data: jobs, error } = await db.from("invitation_storage_cleanup_jobs")
       .select("id,event_id,owner_id,bucket,storage_path,status,attempts,last_error,next_attempt_at")
       .in("status", ["pending", "retry"])
