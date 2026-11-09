@@ -64,8 +64,16 @@ export async function GET(request) {
   const execute = false;
   if (process.env.RETENTION_SCHEMA_READY !== "true") return Response.json({ mode: "disabled", deleted: 0, reason: "Schema not enabled" });
   const db = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
-  const report = { mode: execute ? "execute" : "dry-run", scanned: 0, eligible: 0, deleted: 0, failed: 0, skipped: 0, errors: [] };
+  const report = { mode: execute ? "execute" : "dry-run", scanned: 0, eligible: 0, deleted: 0, failed: 0, skipped: 0, abandoned: 0, errors: [] };
   try {
+    // Read-only visibility into abandoned final-attempt leases.
+    // Do not call expire_invitation_deletion_leases until cleanup activation is approved.
+    const { count: abandoned, error: abandonedError } = await db.from("invitation_deletion_jobs")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "processing").gte("attempts", 10)
+      .lt("claimed_at", new Date(Date.now() - 60 * 60000).toISOString());
+    if (abandonedError) throw abandonedError;
+    report.abandoned = abandoned || 0;
     const jobs = await required(db.from("invitation_deletion_jobs")
       .select("id,event_id,owner_id,due_at,status,attempts")
       .or("and(status.in.(pending,retry),next_attempt_at.lte." + new Date().toISOString() + "),and(status.eq.processing,claimed_at.lt." + new Date(Date.now() - 10 * 60000).toISOString() + ")")
