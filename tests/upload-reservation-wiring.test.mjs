@@ -28,3 +28,23 @@ test("reservation feature is opt-in, physical deletion stays disabled",async()=>
   assert.match(helper,/INVITATION_UPLOAD_RESERVATIONS_READY !== "true"/);
   assert.doesNotMatch(helper,/\.remove\s*\(/);
 });
+
+test("expired published and suspended events cannot reserve uploads",async()=>{
+  const sql=await read("supabase/migrations/202611090014_upload_reservation_readonly_guard.sql");
+  assert.match(sql,/v_event\.status in \('published','suspended'\)/);
+  assert.match(sql,/v_event\.starts_at<=clock_timestamp\(\)/);
+  assert.match(sql,/from public\.events where id=p_event for update/);
+});
+test("manual and scheduled deletion both collect reservation rows",async()=>{
+  const sql=await read("supabase/migrations/202611090013_collect_upload_reservations_on_deletion.sql");
+  assert.equal((sql.match(/from public\.invitation_upload_reservations/g)||[]).length,2);
+  assert.match(sql,/where event_id=p_event and owner_id=p_owner/);
+  assert.match(sql,/where event_id=v_event\.id and owner_id=v_event\.owner_id/);
+});
+test("pre-save uploads remain blocked if opt-in reservation mode is enabled",async()=>{
+  const helper=await read("lib/invitation-upload-reservation.js");
+  assert.match(helper,/x-event-slug/);
+  assert.match(helper,/초대장을 먼저 임시저장/);
+  const editor=await read("app/create/page.js");
+  assert.match(editor,/const \\[eventSlug, setEventSlug\\] = useState\\("?"\\)/);
+});
