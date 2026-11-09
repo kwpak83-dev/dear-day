@@ -19,3 +19,15 @@ test("audit response uses category rather than raw error text", async () => {
   assert.match(route, /report\.errors\.push\(\{ id: job\.id, category: cleanupFailureCategory/);
   assert.doesNotMatch(route, /error: String\(err\.message/);
 });
+
+test("diagnostics cannot authorize or perform destructive cleanup", async () => {
+  const route = await readFile(new URL("../app/api/retention/storage-cleanup/route.js", import.meta.url), "utf8");
+  const diagnostics = await readFile(new URL("../lib/storage-cleanup-diagnostics.js", import.meta.url), "utf8");
+  assert.match(route, /mode: "dry-run"/);
+  assert.match(route, /removed: 0/);
+  assert.match(route, /if \(result\.referenced\) report\.referenced\+\+;/);
+  assert.doesNotMatch(route, /safeToDelete|canDelete|authorizedToDelete/);
+  assert.doesNotMatch(route, /\.remove\s*\(|\.delete\s*\(|\.update\s*\(|\.upsert\s*\(/);
+  assert.doesNotMatch(diagnostics, /\.remove\s*\(|\.delete\s*\(|\.update\s*\(/);
+  assert.equal(cleanupFailureCategory("No references found"), "reference_exists");
+});
