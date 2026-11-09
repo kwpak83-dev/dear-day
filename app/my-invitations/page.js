@@ -30,13 +30,13 @@ const STATUS_LABELS = {
 };
 
 function retentionNotice(event) {
-  const { phase, expiresAt, graceEndsAt } = getRetentionState(event);
+  const { phase, expiresAt } = getRetentionState(event);
   if (phase === "not-applicable") return "";
-  if (phase === "unknown") return "이용기간 확인 필요";
-  const format = (value) => new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium" }).format(new Date(value));
-  if (phase === "active") return `정상 이용중 · 만료일 ${format(expiresAt)}`;
-  if (phase === "grace-period") return `이용기간 만료 · 유예기간 (종료일 ${format(graceEndsAt)})`;
-  return `이용기간 만료 · 유예기간 종료 ${format(graceEndsAt)}`;
+  if (phase === "unknown") return "삭제 예정일 확인 필요";
+  const date = new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeZone: "Asia/Seoul" }).format(new Date(expiresAt));
+  if (phase === "expired") return `삭제 예정일 경과 · ${date}`;
+  const remaining = Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 86400000);
+  return `자동삭제 예정일 ${date}${remaining <= 7 ? ` · D-${remaining} · 삭제 후 복구 불가, RSVP 엑셀 다운로드 권장` : ""}`;
 }
 function CardImage({ url }) {
   const [failed, setFailed] = useState(false);
