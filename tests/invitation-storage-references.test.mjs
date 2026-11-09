@@ -39,3 +39,36 @@ test("fails closed on database error", async () => {
   const db = { from() { return { select() { return this; }, order() { return this; }, async range() { return { data: null, error: new Error("offline") }; } }; } };
   await assert.rejects(inspectStorageReferences(db, { supabaseUrl: base, bucket: "invitation-photos", path }), /scan failed/);
 });
+
+test("detects another invitation's cover image reference", async () => {
+  const db = fakeDb([
+    { id: "event-a", cover_image_url: null, settings: {} },
+    { id: "event-b", cover_image_url: url, settings: {} },
+  ]);
+  const result = await inspectStorageReferences(db, {
+    supabaseUrl: base, bucket: "invitation-photos", path, excludeEventId: "event-a",
+  });
+  assert.equal(result.referenced, true);
+  assert.equal(result.safeToDelete, false);
+  assert.equal(result.inspectionOnly, true);
+});
+
+test("ambiguous media path across buckets is treated as shared", async () => {
+  const db = fakeDb([], [{ event_id: "event-b", storage_path: path }]);
+  const result = await inspectStorageReferences(db, {
+    supabaseUrl: base, bucket: "invitation-bgm", path, excludeEventId: "event-a",
+  });
+  // Current event_media records do not carry a bucket discriminator. A matching
+  // path must therefore be treated conservatively as potentially shared.
+  assert.equal(result.referenced, true);
+  assert.equal(result.safeToDelete, false);
+});
+
+test("even an unreferenced object is never authorized for deletion by inspection", async () => {
+  const result = await inspectStorageReferences(fakeDb([], []), {
+    supabaseUrl: base, bucket: "invitation-photos", path,
+  });
+  assert.equal(result.referenced, false);
+  assert.equal(result.safeToDelete, false);
+  assert.equal(result.inspectionOnly, true);
+});
