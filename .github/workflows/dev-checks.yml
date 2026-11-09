@@ -85,5 +85,9 @@ jobs:
         env:
           PGPASSWORD: test-only
         run: psql -h 127.0.0.1 -U postgres -d dear_day_ci -f tests/sql/storage-object-fence-smoke.sql
+      - name: Validate Storage reference inventory in PostgreSQL
+        env:
+          PGPASSWORD: test-only
+        run: psql -h 127.0.0.1 -U postgres -d dear_day_ci -f tests/sql/storage-reference-inventory-smoke.sql
       - name: Build Next.js
         run: pnpm build
