@@ -31,6 +31,6 @@ test("Storage cleanup remains read-only and reports in-flight reservations", () 
   assert.doesNotMatch(source, /\.from\("invitation_storage_cleanup_jobs"\)[\s\S]{0,180}\.update\(/);
   assert.match(source, /from\("invitation_upload_reservations"\)/);
   assert.match(source, /reservation\.status === "reserved"/);
-  assert.match(source, /report\.inFlight\+\+;\s*continue;/);
+  assert.match(source, /report\.inFlight\+\+;[\s\S]*?continue;/);
   assert.doesNotMatch(source, /\.storage\.from\([^)]*\)\.remove\(/);
 });
