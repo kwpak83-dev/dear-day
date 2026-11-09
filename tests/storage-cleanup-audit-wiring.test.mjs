@@ -11,6 +11,10 @@ test("Storage cleanup remains read-only and reports in-flight reservations", () 
   assert.match(source, /mode: "dry-run"/);
   assert.match(source, /removed: 0/);
   assert.match(source, /inFlight: 0/);
+  assert.match(source, /staleReservations: 0/);
+  assert.match(source, /24 \* 60 \* 60 \* 1000/);
+  assert.match(source, /report\.staleReservations\+\+/);
+  assert.match(source, /Stale reservations still block cleanup/);
   assert.match(source, /priorErrors: 0/);
   assert.match(source, /retries: 0/);
   assert.match(source, /totals: \{ pending: 0, retry: 0, failed: 0, done: 0 \}/);
