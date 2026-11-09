@@ -20,6 +20,10 @@ export async function GET(request) {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return Response.json({ error: "Configuration missing" }, { status: 503 });
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+  const after = new URL(request.url).searchParams.get("after");
+  if (after !== null && !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(after)) {
+    return Response.json({ error: "Invalid retention cursor" }, { status: 400 });
+  }
   const now = Date.now();
   const report = { mode: "dry-run", mutationPerformed: false, scanned: 0, expired: 0, d7: 0, d1: 0, missingDate: 0, truncated: false, pages: 0 };
   try {
@@ -28,7 +32,7 @@ export async function GET(request) {
     // Stable keyset pagination, not offset pagination: deleting earlier rows
     // cannot shift later rows out of the scan.
     const events = [];
-    let cursor = null;
+    let cursor = after;
     const PAGE_SIZE = 100;
     const MAX_PAGES = 200;
     for (let page = 0; page <= MAX_PAGES; page++) {
@@ -50,7 +54,10 @@ export async function GET(request) {
       cursor = batch[batch.length - 1].id;
     }
     report.scanned = events.length;
-    if (report.truncated && enroll) throw new Error("Retention scan incomplete; refusing enrollment");
+    report.nextCursor = report.truncated ? cursor : null;
+    if (enroll && (report.truncated || after !== null)) {
+      throw new Error("Retention scan incomplete; refusing enrollment");
+    }
     const deletionJobs = [];
     const notices = [];
     for (const event of events) {

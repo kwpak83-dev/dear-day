@@ -43,3 +43,15 @@ test("manual atomic RPC uses server-side credentials only", async () => {
   assert.match(source, /serviceDb\.rpc\("delete_invitation_with_cleanup"/);
   assert.match(source, /MANUAL_DELETION_ATOMIC_READY === "true"/);
 });
+
+test("cleanup recovery RPC matches the bounded SQL transition", async () => {
+  const cleanup = await route("app/api/retention/cleanup/route.js");
+  const recovery = await sql(6, "retention_lease_recovery");
+  assert.match(cleanup, /if \(execute\)\s*\{\s*report\.recovered = await required\(db\.rpc\("expire_invitation_deletion_leases", \{ p_limit: 100 \}/);
+  assert.match(recovery, /expire_invitation_deletion_leases\(p_limit integer default 100\)/);
+  assert.match(recovery, /status = 'processing' and attempts >= 10/);
+  assert.match(recovery, /for update skip locked/i);
+  assert.match(recovery, /set status = 'failed', claim_token = null, claimed_at = null,\s*lease_expires_at = null/);
+  assert.match(cleanup, /\.lt\("attempts", 10\)\.lte\("due_at", now\)\.lte\("next_attempt_at", now\)/);
+  assert.ok(cleanup.indexOf("if (!claimed)") < cleanup.indexOf("const files = await planFiles"));
+});

@@ -64,19 +64,23 @@ export async function GET(request) {
   const execute = false;
   if (process.env.RETENTION_SCHEMA_READY !== "true") return Response.json({ mode: "disabled", deleted: 0, reason: "Schema not enabled" });
   const db = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
-  const report = { mode: execute ? "execute" : "dry-run", scanned: 0, eligible: 0, deleted: 0, failed: 0, skipped: 0, abandoned: 0, errors: [] };
+  const report = { mode: execute ? "execute" : "dry-run", scanned: 0, eligible: 0, deleted: 0, failed: 0, skipped: 0, abandoned: 0, recovered: 0, errors: [] };
   try {
     // Read-only visibility into expired final-attempt leases.
-    // Do not call expire_invitation_deletion_leases until cleanup activation is approved.
+    if (execute) {
+      report.recovered = await required(db.rpc("expire_invitation_deletion_leases", { p_limit: 100 }));
+    }
     const { count: abandoned, error: abandonedError } = await db.from("invitation_deletion_jobs")
       .select("id", { count: "exact", head: true })
       .eq("status", "processing").gte("attempts", 10)
       .lt("lease_expires_at", new Date().toISOString());
     if (abandonedError) throw abandonedError;
     report.abandoned = abandoned || 0;
+    const now = new Date().toISOString();
     const jobs = await required(db.from("invitation_deletion_jobs")
       .select("id,event_id,owner_id,due_at,status,attempts")
-      .or("and(status.in.(pending,retry),next_attempt_at.lte." + new Date().toISOString() + "),and(status.eq.processing,lease_expires_at.lt." + new Date().toISOString() + ")")
+      .lt("attempts", 10).lte("due_at", now).lte("next_attempt_at", now)
+      .or(`status.in.(pending,retry),and(status.eq.processing,lease_expires_at.lt.${now})`)
       .order("due_at", { ascending: true }).limit(10));
     for (const job of jobs) {
       report.scanned++;
@@ -94,12 +98,13 @@ export async function GET(request) {
         }
         report.eligible++;
         if (!execute) continue;
-        const files = await planFiles(db, event, url);
+
         // Optimistic claim: only one concurrent worker may process this job.
         const claims = await required(db.rpc("claim_invitation_deletion_job", { p_job_id: job.id, p_lease_minutes: 10 }));
         const claimed = claims?.[0];
         if (!claimed) { report.skipped++; continue; }
         try {
+          const files = await planFiles(db, event, url);
           // The RPC checks the current claim, locks the event, writes the file
           // ledger and audit, then deletes the DB event in ONE transaction.
           // Storage deletion is deliberately deferred to a separate, gated worker.
