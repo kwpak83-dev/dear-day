@@ -289,6 +289,12 @@ if (process.argv.includes("--deletion-fixture")) {
   }
   assert.ok((await storage.upload(exclusive, bytes, options)).error, "Fenced path must stay blocked after gate rollback");
   await checkAbsent(exclusive);
+  assert.equal(fixtureSql(`${role} select public.delete_invitation_with_cleanup(
+    '${survivor}','${user.id}',(select updated_at from public.events where id='${survivor}'),
+    jsonb_build_array(jsonb_build_object('bucket','${bucket}','storage_path','${shared}')))`), "t");
+  assert.equal(fixtureSql(`select event_id from public.invitation_storage_cleanup_jobs
+    where bucket='${bucket}' and storage_path='${shared}'`), expired);
+  await check(shared);
   await check(shared);
   console.log(`PASS: ${deletionKind} DB deletion, shared file preservation and isolated HTTP retry after a lost response`);
 }

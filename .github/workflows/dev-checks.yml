@@ -93,7 +93,7 @@ jobs:
         env:
           PGPASSWORD: test-only
         run: psql -h 127.0.0.1 -U postgres -d dear_day_ci -f tests/sql/storage-write-guard-smoke.sql
-      - name: Validate retention migrations 001 through 021 in order
+      - name: Validate retention migrations 001 through 022 in order
         env:
           PGPASSWORD: test-only
         run: |

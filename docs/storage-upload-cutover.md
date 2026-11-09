@@ -1,6 +1,6 @@
 # Customer Storage upload cutover
 
-The PostgreSQL CI fixture applies retention migrations 001–021 in order with
+The PostgreSQL CI fixture applies retention migrations 001–022 in order with
 minimal platform schemas. It does not validate Supabase Storage HTTP behavior.
 Keep the upload guard and all physical cleanup disabled until the HTTP suite
 passes against a disposable Supabase stack.
@@ -118,7 +118,7 @@ finally { Remove-Item Env:DEARDAY_TEST_STORAGE_URL, Env:DEARDAY_TEST_STORAGE_SER
 ```
 
 Apply the fixture only once per fresh test database. It takes the ordered
-prerequisites and migrations 001–021 from the CI fixture without importing
+prerequisites and migrations 001–022 from the CI fixture without importing
 its mock platform schemas or the duplicate historical migration versions.
 The HTTP smoke test can be repeated on that database with unique synthetic
 users and paths. It preserves fixtures for inspection. When finished, run
@@ -159,18 +159,32 @@ PostgreSQL metadata test separate.
 
 ## Rollout and rollback
 
-1. Verify legacy readers and uploads with the guard off. Apply migrations only
-   under separate approval. Verify the reservation RPC and first-upload draft
-   flow in the target environment.
-2. Coordinate the server reservation flag and the public build-time editor
-   flag. Refresh or retire older editor builds before enforcing the gate.
-   Monitor reservation failures, stuck reservations and gallery begin/finish.
-3. Verify direct and signed Storage writes, object backend consistency and
-   reservation ownership against the hosted API version. Do not enforce the
-   gate until these checks pass.
-4. If enforcement must be rolled back, disable the database gate first and
-   then roll back the client/server flags together. Keep the object registry,
-   reservations and references. Physical cleanup stays disabled.
+1. Compare target migration history and schema against the ordered fixture
+   before approving any SQL. Resolve duplicate historical version
+   `202609300002` explicitly. Review the legacy expiry backfill and the
+   public-read and editing policy changes in 001, which apply independently
+   of worker flags. Apply only pending migrations in order after approval.
+2. With the DB write gate off and deletion flags unset, enable
+   `RETENTION_SCHEMA_READY` for dry-run diagnostics. Check older published
+   invitations, legacy URLs, first-upload draft creation and the due queue
+   volume. Registration refuses incomplete scans and each worker is bounded.
+3. Coordinate `INVITATION_UPLOAD_RESERVATIONS_READY` on the server with
+   `NEXT_PUBLIC_INVITATION_UPLOAD_RESERVATIONS_READY` in the editor build.
+   Refresh older clients, then verify photo, gallery, notice and BGM writes
+   before enforcing the DB gate. Finish reference backfill and reconcile
+   gaps, including indirect and unrecognized paths.
+4. Only after matching-version Storage tests pass, enable the DB write
+   gate. Enable enrollment separately and review the queued events before
+   approving `RETENTION_DELETE_ENABLED`. Enable
+   `MANUAL_DELETION_ATOMIC_READY` separately for the shared manual cleanup
+   queue. Only after proving reference coverage enable both
+   `RETENTION_STORAGE_INVENTORY_VERIFIED` and
+   `RETENTION_STORAGE_DELETE_ENABLED`.
+5. Roll back by stopping both deletion workers and enrollment first.
+   For upload compatibility, turn the DB write gate off before reverting
+   the client/server reservation flags together. Keep the object registry,
+   reservations, references, queue and deletion fences. Disabling flags
+   does not restore already deleted data.
 
 Public template assets and customer-owned paths must be classified by resolved
 bucket and path. In particular, resolve BGM track IDs, HERO preset and template

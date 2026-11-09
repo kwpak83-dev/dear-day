@@ -48,6 +48,7 @@ create table storage.objects (
 \ir ../../supabase/migrations/202611090019_guard_invitation_storage_writes.sql
 \ir ../../supabase/migrations/202611090020_scoped_storage_cleanup.sql
 \ir ../../supabase/migrations/202611090021_expand_scoped_storage_cleanup.sql
+\ir ../../supabase/migrations/202611090022_preserve_shared_cleanup_ownership.sql
 
 do $test$
 begin
@@ -70,3 +71,25 @@ begin
   end if;
 end;
 $test$;
+
+do $shared$
+declare
+  v_owner uuid := '44444444-4444-4444-8444-444444444444';
+  v_source uuid := '55555555-5555-4555-8555-555555555555';
+  v_consumer uuid := '66666666-6666-4666-8666-666666666666';
+  v_path text := v_owner::text || '/photo/' || v_source::text || '/77777777-7777-4777-8777-777777777777.jpg';
+begin
+  perform set_config('request.jwt.claim.role','service_role',true);
+  insert into public.invitation_upload_reservations(event_id,owner_id,bucket,storage_path,status)
+    values(v_source,v_owner,'invitation-photos',v_path,'uploaded');
+  perform public.enqueue_invitation_cleanup_object(v_consumer,v_owner,'invitation-photos',v_path);
+  if exists(select 1 from public.invitation_storage_cleanup_jobs where storage_path=v_path) then
+    raise exception 'Consumer took ownership before original event was deleted';
+  end if;
+  perform public.enqueue_invitation_cleanup_object(v_source,v_owner,'invitation-photos',v_path);
+  perform public.enqueue_invitation_cleanup_object(v_consumer,v_owner,'invitation-photos',v_path);
+  if (select event_id from public.invitation_storage_cleanup_jobs where storage_path=v_path) is distinct from v_source then
+    raise exception 'Consumer replaced the original cleanup job';
+  end if;
+end;
+$shared$;
