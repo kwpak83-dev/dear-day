@@ -55,5 +55,12 @@ jobs:
         env:
           PGPASSWORD: test-only
         run: psql -h 127.0.0.1 -U postgres -d dear_day_ci -f tests/sql/upload-reservation-smoke.sql
+      - name: Test concurrent deletion versus upload reservation
+        env:
+          PGHOST: 127.0.0.1
+          PGUSER: postgres
+          PGDATABASE: dear_day_ci
+          PGPASSWORD: test-only
+        run: bash tests/sql/upload-delete-race.sh
       - name: Build Next.js
         run: pnpm build
