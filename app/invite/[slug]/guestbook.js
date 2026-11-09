@@ -32,7 +32,7 @@ export default function Guestbook({ slug, preview = false, title = "방명록", 
     } catch { setNotice("방명록을 남기지 못했어요. 다시 시도해 주세요."); } finally { setSubmitting(false); }
   };
   const remove = async () => {
-    if (preview || closed || !deleteTarget || submitting) return; setSubmitting(true); setDeleteNotice("");
+    if (preview || !deleteTarget || submitting) return; setSubmitting(true); setDeleteNotice("");
     try {
       const response = await fetch("/api/guestbook", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug, entryId: deleteTarget.id, password: deletePassword }) });
       const result = await response.json().catch(() => ({}));
@@ -48,7 +48,7 @@ export default function Guestbook({ slug, preview = false, title = "방명록", 
       <button type="submit" disabled={preview || submitting}>{submitting ? "등록 중..." : "방명록 남기기"}</button>
     </form>}
     {notice && <p className="guestbook-notice" role="status" aria-live="polite">{notice}</p>}
-    <div className="guestbook-list">{entries.map((entry) => <article key={entry.id}><header><strong>{entry.authorName}</strong><time>{new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium" }).format(new Date(entry.createdAt))}</time></header><p>{entry.message}</p>{!closed && <button type="button" onClick={() => { setDeleteTarget(entry); setDeleteNotice(""); }}>삭제</button>}</article>)}</div>
+    <div className="guestbook-list">{entries.map((entry) => <article key={entry.id}><header><strong>{entry.authorName}</strong><time>{new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium" }).format(new Date(entry.createdAt))}</time></header><p>{entry.message}</p><button type="button" onClick={() => { setDeleteTarget(entry); setDeleteNotice(""); }}>삭제</button></article>)}</div>
     {deleteTarget && <div className="guestbook-delete-backdrop" role="dialog" aria-modal="true" aria-label="방명록 삭제"><div><h3>방명록을 삭제할까요?</h3><input aria-label="삭제 비밀번호" inputMode="numeric" pattern="[0-9]{4}" maxLength={4} placeholder="삭제 비밀번호 4자리" value={deletePassword} onChange={(event) => setDeletePassword(event.target.value.replace(/\D/g, "").slice(0, 4))} />{deleteNotice && <p role="alert">{deleteNotice}</p>}<footer><button type="button" onClick={() => { setDeleteTarget(null); setDeletePassword(""); }}>취소</button><button type="button" disabled={submitting} onClick={remove}>삭제하기</button></footer></div></div>}
   </section>;
 }
