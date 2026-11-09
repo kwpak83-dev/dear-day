@@ -1,7 +1,7 @@
 import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
-import { isPublicPeriodExpired } from "../../../lib/invitation-retention";
+import { isPublicPeriodExpired, isEventReadOnly } from "../../../lib/invitation-retention";
 
 const slugPattern = /^[a-z0-9-]{4,80}$/;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -77,6 +77,7 @@ export async function POST(request) {
   if (!supabase) return json({ error: "방명록 서비스를 준비하지 못했어요." }, 503);
   const context = await getEvent(supabase, slug);
   if (context.error) return json({ error: context.error }, context.status);
+  if (isEventReadOnly(context.event)) return json({ error: "행사가 종료되어 방명록 작성이 마감되었습니다." }, 409);
   const { data, error } = await supabase.from("guestbook_entries").insert({ event_id: context.event.id, author_name: fields.authorName, message: fields.message, password_hash: hashPassword(fields.password) }).select("id,author_name,message,created_at").single();
   if (error) { console.error("Guestbook insert failed:", error.code, error.message); return json({ error: "방명록을 남기지 못했어요." }, 500); }
   return json({ entry: { id: data.id, authorName: data.author_name, message: data.message, createdAt: data.created_at } }, 201);
@@ -93,6 +94,7 @@ export async function DELETE(request) {
   if (!supabase) return json({ error: "방명록 서비스를 준비하지 못했어요." }, 503);
   const context = await getEvent(supabase, slug);
   if (context.error) return json({ error: context.error }, context.status);
+  if (isEventReadOnly(context.event)) return json({ error: "행사가 종료되어 방명록을 삭제할 수 없어요." }, 409);
   const { data: entry, error } = await supabase.from("guestbook_entries").select("id,password_hash").eq("id", entryId).eq("event_id", context.event.id).maybeSingle();
   if (error) return json({ error: "방명록을 확인하지 못했어요." }, 500);
   if (!entry) return json({ error: "방명록을 찾지 못했어요." }, 404);
