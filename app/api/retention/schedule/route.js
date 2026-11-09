@@ -24,7 +24,7 @@ export async function GET(request) {
   const report = { mode: "dry-run", mutationPerformed: false, scanned: 0, expired: 0, d7: 0, d1: 0, missingDate: 0, truncated: false };
   try {
     // Safe-by-default. Writes only register jobs and notices, never remove user data.
-    const enroll = process.env.RETENTION_ENROLL_ENABLED === "true";
+    const enroll = process.env.RETENTION_SCHEMA_READY === "true" && process.env.RETENTION_ENROLL_ENABLED === "true";
     const { data: events, error } = await supabase.from("events")
       .select("id,owner_id,status,starts_at").in("status", ["published", "suspended"])
       .order("starts_at", { ascending: true }).limit(1000);
