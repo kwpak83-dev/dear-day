@@ -184,7 +184,7 @@ export default function MyInvitations() {
                 <ShareActions path={`/invite/${event.slug}`} title={getInvitationTitle(event.settings, event.kind)} {...(event.kakaoShareImage || { imageUnavailable: true })} displayMode="menu" renderMenuIcon={(name) => <MenuIcon name={name} />} />
                 {!isEventReadOnly(event) && <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setPublicationError(""); setPublicationTarget(event); }}><MenuIcon name="pause" />발행 중지</button></div>}
               </>}
-              {["suspended", "draft"].includes(event.status) && <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}><MenuIcon name="trash" />삭제하기</button></div>}
+              {["suspended", "draft", "published", "paid"].includes(event.status) && <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}><MenuIcon name="trash" />삭제하기</button></div>}
             </div>
           </div>}
         </div>
