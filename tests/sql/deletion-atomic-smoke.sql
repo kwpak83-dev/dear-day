@@ -22,10 +22,11 @@ declare
   job_id uuid;
   token uuid;
   updated timestamptz;
+  reservation_id uuid;
 begin
   insert into public.events(id,owner_id,status) values(manual_id,owner,'draft');
   select updated_at into updated from public.events where id=manual_id;
-  perform public.reserve_invitation_upload(manual_id,owner,'invitation-photos',owner::text||'/manual.jpg');
+  reservation_id := public.reserve_invitation_upload(manual_id,owner,'invitation-photos',owner::text||'/manual.jpg');
   if public.delete_invitation_with_cleanup(manual_id,owner,updated-interval '1 second','[]'::jsonb) then
     raise exception 'Stale updated_at permitted manual deletion';
   end if;
@@ -39,6 +40,25 @@ begin
     where event_id=manual_id and storage_path=owner::text||'/manual.jpg' and status='pending') then
     raise exception 'Manual deletion lost upload cleanup reservation';
   end if;
+  -- An upload may complete after the event is deleted. Its pre-existing
+  -- cleanup ledger entry must remain intact for eventual reconciliation.
+  if not public.finish_invitation_upload(reservation_id,owner,true) then
+    raise exception 'Late upload finish rejected after event deletion';
+  end if;
+  if (select status from public.invitation_upload_reservations
+      where id=reservation_id)<>'uploaded' then
+    raise exception 'Late upload status not recorded';
+  end if;
+  if (select count(*) from public.invitation_storage_cleanup_jobs
+      where event_id=manual_id and storage_path=owner::text||'/manual.jpg')<>1 then
+    raise exception 'Late upload corrupted cleanup ledger';
+  end if;
+  begin
+    perform public.reserve_invitation_upload(manual_id,owner,
+      'invitation-photos',owner::text||'/late-new.jpg');
+    raise exception 'New reservation accepted after event deletion';
+  exception when sqlstate '23503' then null;
+  end;
   if not exists(select 1 from public.invitation_deletion_audit
     where event_id=manual_id and outcome='completed') then
     raise exception 'Manual deletion audit missing';
