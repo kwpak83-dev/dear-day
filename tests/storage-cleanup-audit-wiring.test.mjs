@@ -13,6 +13,10 @@ test("Storage cleanup remains read-only and reports in-flight reservations", () 
   assert.match(source, /inFlight: 0/);
   assert.match(source, /priorErrors: 0/);
   assert.match(source, /retries: 0/);
+  assert.match(source, /totals: \{ pending: 0, retry: 0, failed: 0, done: 0 \}/);
+  assert.match(source, /\["pending", "retry", "failed", "done"\]/);
+  assert.match(source, /count: "exact", head: true/);
+  assert.match(source, /report\.totals\[status\] = count/);
   assert.match(source, /job\.status === "retry"/);
   assert.match(source, /job\.last_error/);
   assert.doesNotMatch(source, /\.from\("invitation_storage_cleanup_jobs"\)[\s\S]{0,180}\.update\(/);
