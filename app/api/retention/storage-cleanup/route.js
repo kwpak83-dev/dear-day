@@ -24,7 +24,7 @@ export async function GET(request) {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return Response.json({ error: "Configuration missing" }, { status: 503 });
   const db = createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
-  const report = { mode: "dry-run", scanned: 0, referenced: 0, unreferenced: 0, inFlight: 0, failed: 0, retries: 0, errors: [], removed: 0 };
+  const report = { mode: "dry-run", scanned: 0, referenced: 0, unreferenced: 0, inFlight: 0, priorErrors: 0, retries: 0, errors: [], removed: 0 };
   try {
     const { data: jobs, error } = await db.from("invitation_storage_cleanup_jobs")
       .select("id,event_id,owner_id,bucket,storage_path,status,attempts,last_error,next_attempt_at")
@@ -35,7 +35,7 @@ export async function GET(request) {
     for (const job of jobs || []) {
       report.scanned++;
       if (job.status === "retry") report.retries++;
-      if (job.last_error) report.failed++;
+      if (job.last_error) report.priorErrors++;
       try {
         if (!["invitation-photos", "invitation-bgm"].includes(job.bucket) ||
             typeof job.storage_path !== "string" ||
