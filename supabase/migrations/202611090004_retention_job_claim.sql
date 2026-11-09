@@ -1,5 +1,7 @@
 -- Atomic job claim and crash recovery. Does not enable deletion.
 -- Only service_role may execute these functions.
+alter table public.invitation_deletion_jobs
+  add column if not exists claim_token uuid;
 create or replace function public.claim_invitation_deletion_job(p_job_id uuid, p_lease_minutes integer default 10)
 returns table(job_id uuid, event_id uuid, owner_id uuid, due_at timestamptz, attempts integer, claim_token uuid)
 language plpgsql security definer set search_path = public
@@ -17,6 +19,7 @@ begin
        set status = 'processing', attempts = j.attempts + 1,
            claimed_at = now(), claim_token = v_token, updated_at = now()
      where j.id = p_job_id
+       and j.attempts < 10
        and j.due_at <= now()
        and j.next_attempt_at <= now()
        and (j.status in ('pending', 'retry')
@@ -47,8 +50,6 @@ begin
 end;
 $retry$;
 
-alter table public.invitation_deletion_jobs
-  add column if not exists claim_token uuid;
 revoke all on function public.claim_invitation_deletion_job(uuid, integer) from public, anon, authenticated;
 revoke all on function public.retry_invitation_deletion_job(uuid, uuid, text) from public, anon, authenticated;
 grant execute on function public.claim_invitation_deletion_job(uuid, integer) to service_role;
