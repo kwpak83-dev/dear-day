@@ -111,7 +111,7 @@ export default async function InvitationPage({ params, searchParams }) {
       ? supabase.from("hero_preset_assets").select("id,asset_type,storage_bucket,storage_path").eq("hero_preset_id", heroPresetId).in("asset_type", ["hero_frame", "hero_background"]).eq("is_active", true)
       : null,
     settings.bgmMode === "user" && settings.userBgmTrackId
-      ? supabase.from("bgm_tracks").select("storage_bucket,storage_path,is_active").eq("id", settings.userBgmTrackId).eq("is_active", true).maybeSingle()
+      ? supabase.from("bgm_tracks").select("storage_bucket,storage_path,is_active").eq("id", settings.userBgmTrackId).maybeSingle()
       : null,
     versionQuery,
   ]);
