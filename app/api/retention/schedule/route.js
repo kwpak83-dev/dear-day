@@ -21,17 +21,32 @@ export async function GET(request) {
   if (!url || !key) return Response.json({ error: "Configuration missing" }, { status: 503 });
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
   const now = Date.now();
-  const report = { mode: "dry-run", mutationPerformed: false, scanned: 0, expired: 0, d7: 0, d1: 0, missingDate: 0, truncated: false };
+  const report = { mode: "dry-run", mutationPerformed: false, scanned: 0, expired: 0, d7: 0, d1: 0, missingDate: 0, truncated: false, pages: 0 };
   try {
     // Safe-by-default. Writes only register jobs and notices, never remove user data.
     const enroll = process.env.RETENTION_SCHEMA_READY === "true" && process.env.RETENTION_ENROLL_ENABLED === "true";
-    const { data: events, error } = await supabase.from("events")
-      .select("id,owner_id,status,starts_at").in("status", ["published", "suspended"])
-      .order("starts_at", { ascending: true }).limit(1000);
-    if (error) throw error;
+    // Stable keyset pagination, not offset pagination: deleting earlier rows
+    // cannot shift later rows out of the scan.
+    const events = [];
+    let cursor = null;
+    const PAGE_SIZE = 100;
+    const MAX_PAGES = 200;
+    for (let page = 0; page < MAX_PAGES; page++) {
+      let query = supabase.from("events")
+        .select("id,owner_id,status,starts_at")
+        .in("status", ["published", "suspended"])
+        .order("id", { ascending: true }).limit(PAGE_SIZE);
+      if (cursor) query = query.gt("id", cursor);
+      const { data: batch, error } = await query;
+      if (error) throw error;
+      events.push(...(batch || []));
+      report.pages++;
+      if (!batch?.length || batch.length < PAGE_SIZE) break;
+      cursor = batch[batch.length - 1].id;
+      if (page === MAX_PAGES - 1) report.truncated = true;
+    }
     report.scanned = events.length;
-    report.truncated = events.length === 1000;
-    if (report.truncated && enroll) throw new Error("Pagination required before enabling enrollment");
+    if (report.truncated && enroll) throw new Error("Retention scan incomplete; refusing enrollment");
     const deletionJobs = [];
     const notices = [];
     for (const event of events) {
@@ -53,6 +68,16 @@ export async function GET(request) {
       }
     }
     if (enroll) {
+      // Enrollment remains fail-closed until stale job replacement is atomic.
+      // A date change must never leave an outdated deletion job active.
+      if (deletionJobs.length) {
+        const { data: existing, error: existingError } = await supabase.from("invitation_deletion_jobs")
+          .select("event_id,due_at").in("event_id", deletionJobs.map(job => job.event_id));
+        if (existingError) throw existingError;
+        const expected = new Map(deletionJobs.map(job => [job.event_id, job.due_at]));
+        if ((existing || []).some(job => new Date(job.due_at).toISOString() !== expected.get(job.event_id)))
+          throw new Error("Stale deletion job detected; atomic rescheduling required");
+      }
       // Conflict-ignore keeps prior retry state and read state intact.
       if (deletionJobs.length) {
         const { error: jobError } = await supabase.from("invitation_deletion_jobs")
