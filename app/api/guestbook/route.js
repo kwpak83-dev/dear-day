@@ -94,7 +94,6 @@ export async function DELETE(request) {
   if (!supabase) return json({ error: "방명록 서비스를 준비하지 못했어요." }, 503);
   const context = await getEvent(supabase, slug);
   if (context.error) return json({ error: context.error }, context.status);
-  if (isEventReadOnly(context.event)) return json({ error: "행사가 종료되어 방명록을 삭제할 수 없어요." }, 409);
   const { data: entry, error } = await supabase.from("guestbook_entries").select("id,password_hash").eq("id", entryId).eq("event_id", context.event.id).maybeSingle();
   if (error) return json({ error: "방명록을 확인하지 못했어요." }, 500);
   if (!entry) return json({ error: "방명록을 찾지 못했어요." }, 404);
