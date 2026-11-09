@@ -4,6 +4,7 @@ import { createHash, createHmac, randomUUID } from "node:crypto";
 import { request } from "node:http";
 import { createClient } from "@supabase/supabase-js";
 import { hasInvitationScopedUpload } from "../lib/invitation-storage-cleanup-scope.js";
+import { processScopedStorageJob } from "../lib/scoped-invitation-storage-worker.mjs";
 
 const endpoint = new URL(process.env.DEARDAY_TEST_STORAGE_URL || "http://127.0.0.1:54321");
 assert.equal(endpoint.hostname, "127.0.0.1", "Use the isolated loopback Supabase API");
@@ -235,50 +236,55 @@ if (process.argv.includes("--deletion-fixture")) {
   // inventory is not yet sufficient to authorize physical removal.
   const cleanupId = String(candidates[0].job.id);
   assert.match(cleanupId, /^[0-9]+$/);
-  const claimCleanup = () => fixtureSql(`
-    begin;
-    select 1 from public.invitation_storage_cleanup_jobs where id=${cleanupId} for update;
-    select 1 from public.invitation_storage_objects where bucket='${bucket}' and storage_path='${exclusive}' for update;
-    update public.invitation_storage_objects set state='deleting'
-      where bucket='${bucket}' and storage_path='${exclusive}'
-        and not exists(select 1 from public.invitation_storage_object_references
-          where bucket='${bucket}' and storage_path='${exclusive}')
-        and exists(select 1 from public.invitation_upload_reservations
-          where bucket='${bucket}' and storage_path='${exclusive}'
-            and event_id='${expired}' and owner_id='${user.id}' and status='uploaded');
-    update public.invitation_storage_cleanup_jobs
-      set attempts=attempts+1,next_attempt_at=clock_timestamp()+interval '1 minute'
-      where id=${cleanupId} and status in ('pending','retry') and next_attempt_at<=clock_timestamp()
-        and exists(select 1 from public.invitation_storage_objects
-          where bucket='${bucket}' and storage_path='${exclusive}' and state='deleting')
-      returning attempts;
-    commit;
-  `).split(/\r?\n/).at(-1);
-  const settleCleanup = (attempt, succeeded) => fixtureSql(`
-    with settled as (
-      update public.invitation_storage_cleanup_jobs
-      set status='${succeeded ? "done" : "retry"}',next_attempt_at=clock_timestamp()
-      where id=${cleanupId} and attempts=${attempt} and status in ('pending','retry')
-      returning bucket,storage_path
-    )
-    update public.invitation_storage_objects o set state='deleted' from settled s
-      where ${succeeded} and (o.bucket,o.storage_path)=(s.bucket,s.storage_path);
-  `);
-  const firstAttempt = claimCleanup();
-  assert.equal(firstAttempt, "1");
-  assert.notEqual(claimCleanup(), "2", "An active attempt must not be claimed twice");
-  // Storage completed the first request, but the worker never sees its response.
-  result(await storage.remove([exclusive]));
-  settleCleanup(firstAttempt, false);
-  await checkAbsent(exclusive);
-  const secondAttempt = claimCleanup();
-  assert.equal(secondAttempt, "2");
-  settleCleanup(firstAttempt, true);
-  assert.equal(fixtureSql(`select status from public.invitation_storage_cleanup_jobs where id=${cleanupId}`), "retry");
-  result(await storage.remove([exclusive]));
-  settleCleanup(secondAttempt, true);
-  assert.equal(fixtureSql(`select status from public.invitation_storage_cleanup_jobs where id=${cleanupId}`), "done");
-  assert.equal(fixtureSql(`select state from public.invitation_storage_objects where bucket='${bucket}' and storage_path='${exclusive}'`), "deleted");
+  const claimCleanup = id => JSON.parse(fixtureSql(`
+    ${role} select coalesce(json_agg(c),'[]') from public.claim_scoped_invitation_storage_cleanup(${id}) c
+  `));
+  let lostResponse = true;
+  const workerDb = {
+    async rpc(name, args) {
+      if (name === "claim_scoped_invitation_storage_cleanup") return { data: claimCleanup(args.p_job_id) };
+      assert.equal(name, "settle_scoped_invitation_storage_cleanup");
+      return { data: fixtureSql(`${role} select public.settle_scoped_invitation_storage_cleanup(
+        ${args.p_job_id},${args.p_attempt},${args.p_succeeded})`) === "t" };
+    },
+    storage: { from: selectedBucket => ({ remove: async paths => {
+      assert.equal(selectedBucket, bucket);
+      assert.deepEqual(paths, [exclusive]);
+      assert.deepEqual(claimCleanup(cleanupId), [], "An active lease prevents duplicate claims");
+      if (!lostResponse) {
+        assert.equal(fixtureSql(`${role} select public.settle_scoped_invitation_storage_cleanup(${cleanupId},1,true)`), "f");
+      }
+      const response = await storage.remove(paths);
+      if (lostResponse) {
+        result(response);
+        lostResponse = false;
+        throw new Error("Synthetic lost Storage response");
+      }
+      return response;
+    } }) },
+  };
+  fixtureSql("update public.invitation_storage_write_gate set require_reservation=true");
+  try {
+    const sharedId = Number(entries.find(entry => entry.referenced).job.id);
+    assert.ok(Number.isSafeInteger(sharedId));
+    assert.deepEqual(claimCleanup(sharedId), []);
+    assert.equal(await processScopedStorageJob(workerDb, Number(cleanupId)), "failed");
+    await checkAbsent(exclusive);
+    assert.ok((await storage.upload(exclusive, bytes, options)).error, "Deleting object must reject uploads");
+    assert.throws(() => fixtureSql(`update public.events set cover_image_url='${cover(exclusive)}'
+      where id='${survivor}'`), /Storage object path is fenced/);
+    assert.equal(fixtureSql(`select cover_image_url from public.events where id='${survivor}'`), cover(shared));
+    assert.equal(fixtureSql(`select status from public.invitation_storage_cleanup_jobs where id=${cleanupId}`), "retry");
+    fixtureSql(`update public.invitation_storage_cleanup_jobs set next_attempt_at=clock_timestamp() where id=${cleanupId}`);
+    assert.equal(await processScopedStorageJob(workerDb, Number(cleanupId)), "removed");
+    assert.equal(fixtureSql(`select status from public.invitation_storage_cleanup_jobs where id=${cleanupId}`), "done");
+    assert.equal(fixtureSql(`select state from public.invitation_storage_objects where bucket='${bucket}' and storage_path='${exclusive}'`), "deleted");
+    assert.equal(await processScopedStorageJob(workerDb, Number(cleanupId)), "skipped");
+    await check(shared);
+  } finally {
+    fixtureSql("update public.invitation_storage_write_gate set require_reservation=false");
+  }
+  assert.ok((await storage.upload(exclusive, bytes, options)).error, "Fenced path must stay blocked after gate rollback");
   await checkAbsent(exclusive);
   await check(shared);
   console.log("PASS: expired DB deletion, shared file preservation and idempotent isolated HTTP retry after a lost response");

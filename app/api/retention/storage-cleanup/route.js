@@ -3,6 +3,7 @@ import { timingSafeEqual } from "node:crypto";
 import { inspectStorageReferences } from "../../../../lib/invitation-storage-references";
 import { cleanupFailureCategory } from "../../../../lib/storage-cleanup-diagnostics";
 import { hasInvitationScopedUpload } from "../../../../lib/invitation-storage-cleanup-scope";
+import { runScopedStorageCleanup } from "../../../../lib/scoped-invitation-storage-worker.mjs";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -28,6 +29,10 @@ export async function GET(request) {
   const db = createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
   const report = { mode: "dry-run", scanned: 0, referenced: 0, unreferenced: 0, scopedUnreferenced: 0, inFlight: 0, staleReservations: 0, priorErrors: 0, retries: 0, totals: { pending: 0, retry: 0, failed: 0, done: 0 }, failedJobs: [], errors: [], removed: 0 };
   try {
+    if (process.env.RETENTION_STORAGE_DELETE_ENABLED === "true" &&
+        process.env.RETENTION_STORAGE_INVENTORY_VERIFIED === "true") {
+      return Response.json(await runScopedStorageCleanup(db), { headers: { "Cache-Control": "no-store" } });
+    }
     // Count every status, including terminal failures excluded from the 20-item
     // due-work inspection. Head-only exact counts avoid downloading object paths.
     for (const status of ["pending", "retry", "failed", "done"]) {

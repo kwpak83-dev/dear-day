@@ -60,8 +60,7 @@ export async function GET(request) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return Response.json({ error: "Configuration missing" }, { status: 503 });
-  // Hard-locked until isolated SQL tests and Storage cleanup worker are verified.
-  const execute = false;
+  const execute = process.env.RETENTION_DELETE_ENABLED === "true";
   if (process.env.RETENTION_SCHEMA_READY !== "true") return Response.json({ mode: "disabled", deleted: 0, reason: "Schema not enabled" });
   const db = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
   const report = { mode: execute ? "execute" : "dry-run", scanned: 0, eligible: 0, deleted: 0, failed: 0, skipped: 0, abandoned: 0, recovered: 0, errors: [] };

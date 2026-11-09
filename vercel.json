@@ -5,5 +5,10 @@
       "dev": false
     }
   },
-  "crons": [{ "path": "/api/gallery/cleanup", "schedule": "0 19 * * *" }, { "path": "/api/retention/schedule", "schedule": "10 15 * * *" }]
+  "crons": [
+    { "path": "/api/gallery/cleanup", "schedule": "0 19 * * *" },
+    { "path": "/api/retention/schedule", "schedule": "10 15 * * *" },
+    { "path": "/api/retention/cleanup", "schedule": "30 15 * * *" },
+    { "path": "/api/retention/storage-cleanup", "schedule": "50 15 * * *" }
+  ]
 }

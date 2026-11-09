@@ -30,10 +30,11 @@ test("retry clears the persisted lease and requires an unexpired claim", async (
   assert.match(source, /p_claim_token is null/);
 });
 
-test("destructive retention and Storage cleanup remain hard disabled", async () => {
+test("destructive retention and Storage cleanup default to disabled", async () => {
   const cleanup = await route("app/api/retention/cleanup/route.js");
   const storage = await route("app/api/retention/storage-cleanup/route.js");
-  assert.match(cleanup, /const execute = false/);
+  assert.match(cleanup, /const execute = process\.env\.RETENTION_DELETE_ENABLED === "true"/);
+  assert.match(storage, /RETENTION_STORAGE_DELETE_ENABLED === "true" &&\s*process\.env\.RETENTION_STORAGE_INVENTORY_VERIFIED === "true"/);
   assert.doesNotMatch(storage, /\.remove\s*\(/);
 });
 

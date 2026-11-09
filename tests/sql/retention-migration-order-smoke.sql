@@ -45,6 +45,7 @@ create table storage.objects (
 \ir ../../supabase/migrations/202611090017_invitation_storage_object_fence.sql
 \ir ../../supabase/migrations/202611090018_inventory_invitation_storage_references.sql
 \ir ../../supabase/migrations/202611090019_guard_invitation_storage_writes.sql
+\ir ../../supabase/migrations/202611090020_scoped_storage_cleanup.sql
 
 do $test$
 begin
@@ -60,6 +61,10 @@ begin
   if not exists (select 1 from pg_trigger
     where tgrelid = 'storage.objects'::regclass and tgname = 'guard_invitation_storage_write' and tgenabled = 'O') then
     raise exception 'Storage metadata trigger missing';
+  end if;
+  if has_function_privilege('authenticated', 'public.claim_scoped_invitation_storage_cleanup(bigint)', 'EXECUTE')
+    or has_function_privilege('anon', 'public.settle_scoped_invitation_storage_cleanup(bigint,integer,boolean)', 'EXECUTE') then
+    raise exception 'Storage cleanup RPC grants are too broad';
   end if;
 end;
 $test$;
