@@ -55,3 +55,14 @@ test("cleanup recovery RPC matches the bounded SQL transition", async () => {
   assert.match(cleanup, /\.lt\("attempts", 10\)\.lte\("due_at", now\)\.lte\("next_attempt_at", now\)/);
   assert.ok(cleanup.indexOf("if (!claimed)") < cleanup.indexOf("const files = await planFiles"));
 });
+
+test("schedule reconciliation locks the job then reads the current event deadline", async () => {
+  const source = await sql(16, "reconcile_retention_schedule");
+  const scheduler = await route("app/api/retention/schedule/route.js");
+  assert.match(scheduler, /rpc\("reconcile_invitation_deletion_schedule", \{\s*p_event_ids:/);
+  assert.match(source, /reconcile_invitation_deletion_schedule\(p_event_ids uuid\[\]\)/);
+  assert.match(source, /from public\.invitation_deletion_jobs\s+where event_id = v_id for update;\s+select \* into v_event from public\.events where id = v_id for update;/);
+  assert.match(source, /event_retention_deadline_kst\(v_event\.starts_at\)/);
+  assert.match(source, /v_job\.due_at is distinct from v_due/);
+  assert.match(source, /claimed_at = null, claim_token = null, lease_expires_at = null/);
+});

@@ -58,14 +58,12 @@ export async function GET(request) {
     if (enroll && (report.truncated || after !== null)) {
       throw new Error("Retention scan incomplete; refusing enrollment");
     }
-    const deletionJobs = [];
     const notices = [];
     for (const event of events) {
       const due = eventDeletionTime(event.starts_at);
       if (due === null) { report.missingDate++; continue; }
       if (due <= now) {
         report.expired++;
-        deletionJobs.push({ event_id: event.id, owner_id: event.owner_id, due_at: new Date(due).toISOString() });
         continue;
       }
       const remaining = Math.ceil((due - now) / DAY);
@@ -79,21 +77,13 @@ export async function GET(request) {
       }
     }
     if (enroll) {
-      // Enrollment remains fail-closed until stale job replacement is atomic.
-      // A date change must never leave an outdated deletion job active.
-      if (deletionJobs.length) {
-        const { data: existing, error: existingError } = await supabase.from("invitation_deletion_jobs")
-          .select("event_id,due_at").in("event_id", deletionJobs.map(job => job.event_id));
-        if (existingError) throw existingError;
-        const expected = new Map(deletionJobs.map(job => [job.event_id, job.due_at]));
-        if ((existing || []).some(job => new Date(job.due_at).toISOString() !== expected.get(job.event_id)))
-          throw new Error("Stale deletion job detected; atomic rescheduling required");
-      }
-      // Conflict-ignore keeps prior retry state and read state intact.
-      if (deletionJobs.length) {
-        const { error: jobError } = await supabase.from("invitation_deletion_jobs")
-          .upsert(deletionJobs, { onConflict: "event_id", ignoreDuplicates: true });
-        if (jobError) throw jobError;
+      let reconciled = 0;
+      for (let offset = 0; offset < events.length; offset += PAGE_SIZE) {
+        const { data, error } = await supabase.rpc("reconcile_invitation_deletion_schedule", {
+          p_event_ids: events.slice(offset, offset + PAGE_SIZE).map(event => event.id),
+        });
+        if (error) throw error;
+        reconciled += data;
       }
       if (notices.length) {
         const { error: noticeError } = await supabase.from("invitation_retention_notices")
@@ -101,7 +91,7 @@ export async function GET(request) {
         if (noticeError) throw noticeError;
       }
       report.mode = "enroll-only";
-      report.mutationPerformed = deletionJobs.length > 0 || notices.length > 0;
+      report.mutationPerformed = reconciled > 0 || notices.length > 0;
     }
     return Response.json(report, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
