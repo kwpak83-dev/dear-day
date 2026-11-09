@@ -92,7 +92,7 @@ async function registerUploadedAsset(auth, asset) {
     const result = await auth.client.from("template_assets").select("id")
       .eq("template_id", asset.templateId).eq("asset_type", asset.type).eq("is_active", true);
     if (result.error) {
-      await auth.client.storage.from(bucket).remove([asset.path]);
+      /* physical cleanup deferred */
       return fail("기존 Asset을 확인하지 못했어요.", 500);
     }
     previous = result.data || [];
@@ -108,7 +108,7 @@ async function registerUploadedAsset(auth, asset) {
       code: insertError.code, message: insertError.message,
       details: insertError.details, hint: insertError.hint,
     });
-    const { error: rollbackError } = await auth.client.storage.from(bucket).remove([asset.path]);
+    const { error: rollbackError } = /* physical cleanup deferred */
     return fail(rollbackError ? "Asset 저장에 실패했고 업로드 파일 정리가 필요해요." : "Asset 정보를 저장하지 못했어요. 다시 시도해 주세요.", 500);
   }
   if (previous.length) {
@@ -118,7 +118,7 @@ async function registerUploadedAsset(auth, asset) {
         await auth.client.from("template_assets").update({ is_active: true })
           .eq("template_id", asset.templateId).in("id", previous.map((row) => row.id));
         await auth.client.from("template_assets").delete().eq("id", asset.id).eq("template_id", asset.templateId);
-        await auth.client.storage.from(bucket).remove([asset.path]);
+        /* physical cleanup deferred */
         return fail("기존 BGM 교체를 완료하지 못해 새 음원을 취소했어요. 다시 시도해 주세요.", 409);
       }
       await auth.client.from("template_assets").update({ is_active: false }).eq("id", asset.id);
@@ -146,7 +146,7 @@ export async function POST(request) {
     }
     const invalid = await checkTemplate(auth.client, body.templateId);
     if (invalid) {
-      await auth.client.storage.from(bucket).remove([body.storagePath]);
+      /* physical cleanup deferred */
       return invalid;
     }
     const folder = `${body.templateId}/audio`;
@@ -157,7 +157,7 @@ export async function POST(request) {
     const storedSize = Number(stored?.metadata?.size);
     const storedMime = stored?.metadata?.mimetype;
     if (objectError || !stored || storedSize !== body.fileSize || storedMime !== "audio/mpeg") {
-      await auth.client.storage.from(bucket).remove([body.storagePath]);
+      /* physical cleanup deferred */
       return fail("업로드된 MP3 파일을 확인하지 못했어요.", 409);
     }
     return registerUploadedAsset(auth, {
