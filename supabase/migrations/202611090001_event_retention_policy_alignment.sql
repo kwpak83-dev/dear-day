@@ -38,11 +38,11 @@ create policy "published events are public" on public.events for select
 create or replace function public.enforce_event_start_edit_lock()
 returns trigger language plpgsql set search_path = public as $retention_lock$
 begin
-  if TG_OP = 'UPDATE' and auth.role() is distinct from 'service_role' and old.status in ('published', 'suspended')
+  if TG_OP = 'UPDATE' and old.status in ('published', 'suspended')
      and (old.starts_at is null or old.starts_at <= now()) then
     raise exception 'EVENT_EDIT_CLOSED' using errcode = '23514';
   end if;
-  if TG_OP = 'UPDATE' and auth.role() is distinct from 'service_role' and new.status in ('published', 'suspended')
+  if TG_OP = 'UPDATE' and new.status in ('published', 'suspended')
      and (new.starts_at is null or new.starts_at <= now()) then
     raise exception 'EVENT_DATE_MUST_BE_FUTURE' using errcode = '23514';
   end if;
