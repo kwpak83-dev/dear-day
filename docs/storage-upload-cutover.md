@@ -1,6 +1,6 @@
 # Customer Storage upload cutover
 
-The PostgreSQL CI fixture applies retention migrations 001–020 in order with
+The PostgreSQL CI fixture applies retention migrations 001–021 in order with
 minimal platform schemas. It does not validate Supabase Storage HTTP behavior.
 Keep the upload guard and all physical cleanup disabled until the HTTP suite
 passes against a disposable Supabase stack.
@@ -66,7 +66,9 @@ exercises a claim under the job and object locks, duplicate claim rejection,
 and a second HTTP deletion after simulating loss of the first successful
 response. A stale attempt cannot mark the newer attempt complete.
 
-The fixture invokes the same worker and SQL 020 RPCs used by the scheduled
+Pass `--deletion-kind=photo`, `--deletion-kind=gallery`, or
+`--deletion-kind=bgm` to exercise those event-scoped paths instead of notice.
+The fixture invokes the same worker and claim/settle RPCs used by the scheduled
 endpoint. It enables the upload gate only in the disposable database and
 restores it after the test. `scopedUnreferenced` remains a review count and
 does not authorize physical removal.
@@ -81,9 +83,12 @@ does not authorize physical removal.
   `RETENTION_STORAGE_DELETE_ENABLED=true`, and
   `RETENTION_STORAGE_INVENTORY_VERIFIED=true`. The inventory flag is an
   explicit operational prerequisite. Set it only after completing the
-  backfill and verifying all reference paths for the target notice files.
-- Storage execution only accepts completed reservations for event-scoped
-  notice JPEGs. Other photos, gallery, BGM, and ambiguous paths are retained.
+  backfill and verifying all reference paths for the target files.
+- Storage execution accepts completed reservations for event-scoped notice
+  JPEGs, photo JPEG/WebP files, gallery JPEGs, and uploaded MP3s. Photo and
+  MP3 uploads use event-scoped paths only with reservations enabled. Gallery
+  files must also have a completed upload reservation. Account-wide paths,
+  unreserved gallery files, public assets, and ambiguous paths are retained.
 - Disable the execution flags to pause. Preserve the object registry and
   deletion fences even if upload enforcement is rolled back, since an older
   Storage request might still be in flight.
@@ -113,7 +118,7 @@ finally { Remove-Item Env:DEARDAY_TEST_STORAGE_URL, Env:DEARDAY_TEST_STORAGE_SER
 ```
 
 Apply the fixture only once per fresh test database. It takes the ordered
-prerequisites and migrations 001–020 from the CI fixture without importing
+prerequisites and migrations 001–021 from the CI fixture without importing
 its mock platform schemas or the duplicate historical migration versions.
 The HTTP smoke test can be repeated on that database with unique synthetic
 users and paths. It preserves fixtures for inspection. When finished, run

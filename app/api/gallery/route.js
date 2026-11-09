@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { reserveUploadIfEnabled, finishReservedUpload } from "../../../lib/invitation-upload-reservation";
 import { galleryContext, mutateGallery, readGallery, cleanupGallery, readPhotoBytes, photoForClient, GalleryError, GALLERY_BUCKET, MAX_PHOTO_BYTES } from "../../../lib/gallery-server";
 
 export const maxDuration = 60;
@@ -39,10 +40,16 @@ export const PUT = handle(async (request, context) => {
     const { error: createError } = await storage.createBucket(GALLERY_BUCKET, { public: true, fileSizeLimit: MAX_PHOTO_BYTES, allowedMimeTypes: ["image/jpeg"] });
     if (createError && !(await storage.getBucket(GALLERY_BUCKET)).data) throw new GalleryError("사진 저장 공간을 준비하지 못했어요.", 503);
   }
+  const reservation = await reserveUploadIfEnabled(context.supabase, context.user.id, request,
+    GALLERY_BUCKET, row.storage_path, context.event.id);
+  if (reservation.error) throw new GalleryError(reservation.error, reservation.status);
   const { error: uploadError } = await storage.from(GALLERY_BUCKET).upload(row.storage_path, bytes, { contentType: "image/jpeg", upsert: false });
   // Keep uncertain writes tracked until the grace period expires, rather than deleting a possibly in-flight object.
   if (uploadError) throw new GalleryError("사진 업로드에 실패했어요. 미완료 파일은 15분 후 갤러리를 열 때 정리돼요.");
   const saved = await mutateGallery(context, "finish", { id });
+  if (!(await finishReservedUpload(context.supabase, context.user.id, reservation, true))) {
+    throw new GalleryError("사진 업로드 기록을 확인하지 못했어요. 갤러리를 새로고침해 주세요.", 503);
+  }
   return json({ photo: photoForClient(context.supabase, saved) });
 });
 

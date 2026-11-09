@@ -36,9 +36,10 @@ export async function POST(request) {
     if(bytes.length<3 || !((bytes[0]===0x49&&bytes[1]===0x44&&bytes[2]===0x33)||(bytes[0]===0xff&&(bytes[1]&0xe0)===0xe0))) return fail("올바른 MP3 파일을 선택해 주세요.",400);
     const {data:existing}=await supabase.storage.getBucket(bucket);
     if(!existing){ const {error}=await supabase.storage.createBucket(bucket,{public:true,fileSizeLimit:maxBytes,allowedMimeTypes:["audio/mpeg","audio/mp3"]}); if(error){const {data:raced}=await supabase.storage.getBucket(bucket);if(!raced)return fail("음악 저장 공간을 준비하지 못했어요.",503);} }
-    const path=`${user.id}/${randomUUID()}.mp3`;
-    const reservation = await reserveUploadIfEnabled(supabase, user.id, request, bucket, path);
+    const legacyPath=`${user.id}/${randomUUID()}.mp3`;
+    const reservation = await reserveUploadIfEnabled(supabase, user.id, request, bucket, legacyPath, undefined, "bgm");
     if (reservation.error) return fail(reservation.error, reservation.status);
+    const path = reservation.path ?? legacyPath;
     const {error}=await supabase.storage.from(bucket).upload(path,bytes,{contentType:"audio/mpeg",upsert:false});
     if (!(await finishReservedUpload(supabase, user.id, reservation, !error))) return fail("업로드 기록을 확인하지 못했어요. 잠시 후 다시 확인해 주세요.",503);
     if(error) return fail("음악 업로드에 실패했어요. 다시 시도해 주세요.",500);

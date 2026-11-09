@@ -36,7 +36,9 @@ const result = ({ data, error }) => {
   return data;
 };
 const run = randomUUID();
-const bucket = "invitation-photos";
+const deletionKind = process.argv.find(arg => arg.startsWith("--deletion-kind="))?.split("=")[1] ?? "notice";
+assert.ok(["notice", "photo", "gallery", "bgm"].includes(deletionKind));
+const bucket = deletionKind === "bgm" ? "invitation-bgm" : "invitation-photos";
 const guarded = process.argv.includes("--guard-on");
 assert.equal(fixtureSql("select require_reservation from public.invitation_storage_write_gate"), guarded ? "t" : "f");
 const listed = result(await client.storage.listBuckets());
@@ -198,8 +200,9 @@ if (process.argv.includes("--deletion-fixture")) {
   assert.ok(standalone && !guarded, "Deletion fixture requires the standalone synthetic stack with guard off");
   const expired = randomUUID();
   const survivor = randomUUID();
-  const exclusive = `${user.id}/notice/${expired}/${randomUUID()}.jpg`;
-  const shared = `${user.id}/notice/${expired}/${randomUUID()}.jpg`;
+  const extension = { notice: "jpg", photo: "webp", gallery: "jpg", bgm: "mp3" }[deletionKind];
+  const exclusive = `${user.id}/${deletionKind}/${expired}/${randomUUID()}.${extension}`;
+  const shared = `${user.id}/${deletionKind}/${expired}/${randomUUID()}.${extension}`;
   const cover = path => `${endpoint.origin}/storage/v1/object/public/${bucket}/${path}`;
   for (const path of [exclusive, shared]) result(await storage.upload(path, bytes, options));
   fixtureSql(`
@@ -287,5 +290,5 @@ if (process.argv.includes("--deletion-fixture")) {
   assert.ok((await storage.upload(exclusive, bytes, options)).error, "Fenced path must stay blocked after gate rollback");
   await checkAbsent(exclusive);
   await check(shared);
-  console.log("PASS: expired DB deletion, shared file preservation and idempotent isolated HTTP retry after a lost response");
+  console.log(`PASS: ${deletionKind} DB deletion, shared file preservation and isolated HTTP retry after a lost response`);
 }

@@ -26,6 +26,7 @@ create table storage.objects (
 \ir ../../supabase/migrations/202609150001_event_payment_publish_states.sql
 \ir ../../supabase/migrations/202609190001_event_suspended_status.sql
 \ir ../../supabase/migrations/202609210001_event_retention.sql
+\ir ../../supabase/migrations/202609300001_public_bgm_tracks.sql
 \ir ../../supabase/migrations/202611090001_event_retention_policy_alignment.sql
 \ir ../../supabase/migrations/202611090002_invitation_deletion_jobs.sql
 \ir ../../supabase/migrations/202611090003_retention_notices.sql
@@ -46,6 +47,7 @@ create table storage.objects (
 \ir ../../supabase/migrations/202611090018_inventory_invitation_storage_references.sql
 \ir ../../supabase/migrations/202611090019_guard_invitation_storage_writes.sql
 \ir ../../supabase/migrations/202611090020_scoped_storage_cleanup.sql
+\ir ../../supabase/migrations/202611090021_expand_scoped_storage_cleanup.sql
 
 do $test$
 begin
