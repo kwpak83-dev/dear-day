@@ -76,6 +76,24 @@ begin
   if not exists(select 1 from public.events where id=auto_id) then
     raise exception 'Wrong token deleted event';
   end if;
+  -- Reject a stale scheduled due date even with a valid claim token.
+  update public.invitation_deletion_jobs
+    set due_at=due-interval '1 day' where id=job_id;
+  if public.finalize_invitation_deletion(job_id,token,'[]'::jsonb) then
+    raise exception 'Mismatched due date permitted deletion';
+  end if;
+  if not exists(select 1 from public.events where id=auto_id) then
+    raise exception 'Mismatched due date deleted event';
+  end if;
+  update public.invitation_deletion_jobs set due_at=due where id=job_id;
+  -- An expired lease must reject finalization even with the correct token.
+  update public.invitation_deletion_jobs
+    set lease_expires_at=clock_timestamp()-interval '1 second' where id=job_id;
+  if public.finalize_invitation_deletion(job_id,token,'[]'::jsonb) then
+    raise exception 'Expired lease permitted deletion';
+  end if;
+  update public.invitation_deletion_jobs
+    set lease_expires_at=clock_timestamp()+interval '10 minutes' where id=job_id;
   if not public.finalize_invitation_deletion(job_id,token,'[]'::jsonb) then
     raise exception 'Valid automatic finalization failed';
   end if;
