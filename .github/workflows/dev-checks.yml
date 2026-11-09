@@ -70,5 +70,12 @@ jobs:
           PGDATABASE: dear_day_ci
           PGPASSWORD: test-only
         run: bash tests/sql/upload-delete-race.sh
+      - name: Verify manual deletion job-first lock order
+        env:
+          PGHOST: 127.0.0.1
+          PGUSER: postgres
+          PGDATABASE: dear_day_ci
+          PGPASSWORD: test-only
+        run: bash tests/sql/manual-deletion-lock-order.sh
       - name: Build Next.js
         run: pnpm build
