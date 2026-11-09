@@ -356,6 +356,7 @@ export async function POST(request) {
   const existing = matches?.[0];
   if (existing && existing.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 수정할 수 없어요." }, 403);
   if (isEventReadOnly(existing)) return json({ error: "행사가 종료되어 초대장을 수정할 수 없어요." }, 409);
+  if (existing && ["published", "suspended"].includes(existing.status) && startsAt && new Date(startsAt).getTime() <= Date.now()) return json({ error: "발행된 초대장의 행사 날짜를 과거 또는 현재 시각으로 변경할 수 없어요." }, 409);
   if (heroPresetId) { const { data: hero, error: heroError } = await supabase.from("hero_presets").select("id,status,is_visible").eq("id", heroPresetId).maybeSingle(); if (heroError) return json({ error: "선택한 Hero를 확인하지 못했어요." }, 500); if (!hero) return json({ error: "선택한 Hero를 찾지 못했어요." }, 409); if (!existing && (hero.status !== "on_sale" || !hero.is_visible)) { const { data: linked, error: linkedError } = await supabase.from("completed_templates").select("id").eq("hero_preset_id", heroPresetId).eq("is_visible", true).limit(1); if (linkedError || !linked?.length) return json({ error: "현재 사용할 수 없는 Hero예요." }, 409); } }
 
   // Published invitations must never be overwritten by an uninitialized editor state.
