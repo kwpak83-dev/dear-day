@@ -472,7 +472,15 @@ export async function DELETE(request) {
       ...[...owned.bgm].map(storage_path => ({ bucket: bgmBucket, storage_path })),
     ];
     if (manifest.length > 1000) return json({ error: "파일 목록이 너무 많아 삭제를 안전하게 진행할 수 없어요." }, 409);
-    const { data: committed, error: atomicError } = await supabase.rpc("delete_invitation_with_cleanup", {
+    // The deletion RPC is service-role-only. Authenticate and verify ownership
+    // above with the user's JWT, then use a server-only privileged client.
+    const serviceUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!serviceUrl || !serviceKey) return json({ error: "안전한 삭제 서비스를 사용할 수 없어요." }, 503);
+    const serviceDb = createClient(serviceUrl, serviceKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { data: committed, error: atomicError } = await serviceDb.rpc("delete_invitation_with_cleanup", {
       p_event: event.id,
       p_owner: user.id,
       p_expected_updated_at: event.updated_at,
