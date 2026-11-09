@@ -1,4 +1,5 @@
 "use client";
+import { isEventReadOnly } from "../../lib/invitation-retention";
 import { HERO_FONTS } from "../../lib/hero-fonts";
 import { readHeroPhotoGrayscaleChoice } from "../../lib/hero-photo-grayscale";
 import HeroIntro from "../../components/invitation/hero-intro";
@@ -252,6 +253,7 @@ export default function CreateInvitation() {
   };
 
   const [eventStatus, setEventStatus] = useState("draft");
+  const [eventReadOnly, setEventReadOnly] = useState(false);
   const [eventReady, setEventReady] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [paymentComplete, setPaymentComplete] = useState(false);
@@ -458,6 +460,11 @@ export default function CreateInvitation() {
       if (controller.signal.aborted) return;
       if (!response.ok || !result.event) return setSaveNotice(result.error || "초대장을 찾지 못했어요.");
       const status = result.event.status || "draft";
+      if (isEventReadOnly(result.event)) {
+        setEventReadOnly(true);
+        window.location.replace("/my-invitations");
+        return;
+      }
       const query = new URLSearchParams(window.location.search);
       let restoredInvitation = { ...initialInvitation, ...result.event.settings, eventKind: result.event.kind || result.event.settings?.eventKind || "wedding", templateId: result.event.template_id || result.event.settings?.templateId || "", heroPresetId: result.event.hero_preset_id || result.event.settings?.heroPresetId || "", program: normalizeProgram(result.event.settings?.program), coupleIntro: normalizeCoupleIntro(result.event.settings?.coupleIntro), loveStory: normalizeLoveStory(result.event.settings?.loveStory) };
       if (query.get("resume") === "draft") {
@@ -1268,6 +1275,7 @@ export default function CreateInvitation() {
     return false;
   };
   const saveDraft = async ({ showLoading = true, showSuccessToast = false, allowLocalSuccess = false } = {}) => {
+    if (eventReadOnly) { setSaveNotice("행사가 종료되어 초대장을 수정할 수 없어요."); return; }
     if (!eventReady) {
       setSaveNotice("기존 초대장 정보를 불러오는 중이에요. 잠시 후 다시 시도해 주세요.");
       return;
