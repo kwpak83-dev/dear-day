@@ -98,8 +98,8 @@ export async function GET(request) {
           continue;
         }
         report.eligible++;
-        const files = await planFiles(db, event, url);
         if (!execute) continue;
+        const files = await planFiles(db, event, url);
         // Optimistic claim: only one concurrent worker may process this job.
         const claims = await required(db.rpc("claim_invitation_deletion_job", { p_job_id: job.id, p_lease_minutes: 10 }));
         const claimed = claims?.[0];
@@ -125,7 +125,8 @@ export async function GET(request) {
             .eq("id", event.id).eq("owner_id", event.owner_id).eq("starts_at", event.starts_at)
             .select("id").maybeSingle());
           if (!deleted) throw new Error("Event deletion not confirmed");
-          await required(db.from("invitation_deletion_audit").insert({ event_id: event.id, owner_id: event.owner_id, outcome: "completed", details: "Event deletion confirmed" }));
+          const audit = await db.from("invitation_deletion_audit").insert({ event_id: event.id, owner_id: event.owner_id, outcome: "completed", details: "Event deletion confirmed" });
+          if (audit.error) console.error("Retention audit write failed", { eventId: event.id, code: audit.error.code });
           report.deleted++;
         } catch (error) {
           await required(db.rpc("retry_invitation_deletion_job", { p_job_id: job.id, p_claim_token: claimed.claim_token, p_error: String(error.message || error) }));
