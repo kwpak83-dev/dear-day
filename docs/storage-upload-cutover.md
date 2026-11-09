@@ -61,8 +61,16 @@ using the same loopback URL. This scenario creates two synthetic invitations,
 checks that an outdated due date blocks DB deletion, then verifies that the
 existing finalization RPC deletes the expired invitation and leaves a durable
 cleanup ledger. It deletes only the newly created exclusive fixture object by
-HTTP and verifies that the second invitation's shared file remains. The
-production cleanup endpoint still reports candidates without deleting files.
+HTTP and verifies that the second invitation's shared file remains. It also
+exercises a claim under the job and object locks, duplicate claim rejection,
+and a second HTTP deletion after simulating loss of the first successful
+response. A stale attempt cannot mark the newer attempt complete.
+
+Those queue transitions are confined to the synthetic fixture. The production
+cleanup endpoint still reports candidates without deleting files.
+`scopedUnreferenced` is a review count for completed event-scoped notice
+uploads that had no reference found by inspection. It cannot authorize a
+physical removal.
 
 ### Run the guard-off HTTP smoke test on Windows
 

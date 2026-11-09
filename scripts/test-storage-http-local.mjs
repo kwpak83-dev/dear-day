@@ -233,8 +233,53 @@ if (process.argv.includes("--deletion-fixture")) {
   assert.deepEqual(candidates.map(entry => entry.job.storage_path), [exclusive]);
   // Fixture only. The generated paths belong to this synthetic run. The live
   // inventory is not yet sufficient to authorize physical removal.
+  const cleanupId = String(candidates[0].job.id);
+  assert.match(cleanupId, /^[0-9]+$/);
+  const claimCleanup = () => fixtureSql(`
+    begin;
+    select 1 from public.invitation_storage_cleanup_jobs where id=${cleanupId} for update;
+    select 1 from public.invitation_storage_objects where bucket='${bucket}' and storage_path='${exclusive}' for update;
+    update public.invitation_storage_objects set state='deleting'
+      where bucket='${bucket}' and storage_path='${exclusive}'
+        and not exists(select 1 from public.invitation_storage_object_references
+          where bucket='${bucket}' and storage_path='${exclusive}')
+        and exists(select 1 from public.invitation_upload_reservations
+          where bucket='${bucket}' and storage_path='${exclusive}'
+            and event_id='${expired}' and owner_id='${user.id}' and status='uploaded');
+    update public.invitation_storage_cleanup_jobs
+      set attempts=attempts+1,next_attempt_at=clock_timestamp()+interval '1 minute'
+      where id=${cleanupId} and status in ('pending','retry') and next_attempt_at<=clock_timestamp()
+        and exists(select 1 from public.invitation_storage_objects
+          where bucket='${bucket}' and storage_path='${exclusive}' and state='deleting')
+      returning attempts;
+    commit;
+  `).split(/\r?\n/).at(-1);
+  const settleCleanup = (attempt, succeeded) => fixtureSql(`
+    with settled as (
+      update public.invitation_storage_cleanup_jobs
+      set status='${succeeded ? "done" : "retry"}',next_attempt_at=clock_timestamp()
+      where id=${cleanupId} and attempts=${attempt} and status in ('pending','retry')
+      returning bucket,storage_path
+    )
+    update public.invitation_storage_objects o set state='deleted' from settled s
+      where ${succeeded} and (o.bucket,o.storage_path)=(s.bucket,s.storage_path);
+  `);
+  const firstAttempt = claimCleanup();
+  assert.equal(firstAttempt, "1");
+  assert.notEqual(claimCleanup(), "2", "An active attempt must not be claimed twice");
+  // Storage completed the first request, but the worker never sees its response.
   result(await storage.remove([exclusive]));
+  settleCleanup(firstAttempt, false);
+  await checkAbsent(exclusive);
+  const secondAttempt = claimCleanup();
+  assert.equal(secondAttempt, "2");
+  settleCleanup(firstAttempt, true);
+  assert.equal(fixtureSql(`select status from public.invitation_storage_cleanup_jobs where id=${cleanupId}`), "retry");
+  result(await storage.remove([exclusive]));
+  settleCleanup(secondAttempt, true);
+  assert.equal(fixtureSql(`select status from public.invitation_storage_cleanup_jobs where id=${cleanupId}`), "done");
+  assert.equal(fixtureSql(`select state from public.invitation_storage_objects where bucket='${bucket}' and storage_path='${exclusive}'`), "deleted");
   await checkAbsent(exclusive);
   await check(shared);
-  console.log("PASS: expired DB deletion queues both paths; isolated HTTP deletion removes only the exclusive fixture");
+  console.log("PASS: expired DB deletion, shared file preservation and idempotent isolated HTTP retry after a lost response");
 }
