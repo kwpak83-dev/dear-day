@@ -1,3 +1,4 @@
+import { reserveUploadIfEnabled, finishReservedUpload } from "../../../lib/invitation-upload-reservation";
 import { createClient } from "@supabase/supabase-js";
 import { randomUUID } from "node:crypto";
 
@@ -36,7 +37,10 @@ export async function POST(request) {
     const {data:existing}=await supabase.storage.getBucket(bucket);
     if(!existing){ const {error}=await supabase.storage.createBucket(bucket,{public:true,fileSizeLimit:maxBytes,allowedMimeTypes:["audio/mpeg","audio/mp3"]}); if(error){const {data:raced}=await supabase.storage.getBucket(bucket);if(!raced)return fail("음악 저장 공간을 준비하지 못했어요.",503);} }
     const path=`${user.id}/${randomUUID()}.mp3`;
+    const reservation = await reserveUploadIfEnabled(supabase, user.id, request, bucket, path);
+    if (reservation.error) return fail(reservation.error, reservation.status);
     const {error}=await supabase.storage.from(bucket).upload(path,bytes,{contentType:"audio/mpeg",upsert:false});
+    if (!(await finishReservedUpload(supabase, user.id, reservation, !error))) return fail("업로드 기록을 확인하지 못했어요. 잠시 후 다시 확인해 주세요.",503);
     if(error) return fail("음악 업로드에 실패했어요. 다시 시도해 주세요.",500);
     return Response.json({path,url:supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl});
   } catch { return fail("음악 업로드 중 연결이 끊겼어요. 다시 시도해 주세요.",500); }
