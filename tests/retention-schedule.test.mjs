@@ -17,15 +17,15 @@ function mockScheduler(total, pageCap, enroll = false) {
       const query = {
         select: () => query, eq: (key, value) => {
           filters.set(key, value);
-          assert.equal(value, true);
+          if (key === "retention_delete_eligible") assert.equal(value, true);
           return query;
         }, in: () => query, order: () => query, limit: () => query,
         gt: (_, cursor) => { after = Number(cursor.slice(-12)); return query; },
         then: resolve => {
-          assert.deepEqual(filters, new Map([["retention_delete_eligible", true], ["retention_v2", true]]));
+          assert.deepEqual(filters, new Map([["retention_delete_eligible", true]]));
           return resolve({
             data: Array.from({ length: Math.min(pageCap, total - after) }, (_, index) => ({
-              id: id(after + index + 1), starts_at: "2000-01-01",
+              id: id(after + index + 1), status: "published", starts_at: "2000-01-01", retention_v2: true, updated_at: "2000-01-01T00:00:00Z",
             })),
           });
         },
@@ -36,7 +36,7 @@ function mockScheduler(total, pageCap, enroll = false) {
   const handler = runInNewContext(
     source.replace(/^import .*$/gm, "").replaceAll("export ", "") + "\nGET",
     {
-      Buffer, URL, Response, createClient: () => db, eventDeletionTime: Date.parse,
+      Buffer, URL, Response, createClient: () => db, invitationDeletionTime: event => Date.parse(event.starts_at),
       timingSafeEqual: (a, b) => a.equals(b), console: { error() {} },
       process: { env: {
         CRON_SECRET: "test", NEXT_PUBLIC_SUPABASE_URL: "http://mock",
