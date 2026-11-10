@@ -67,3 +67,23 @@ test("schedule reconciliation locks the job then reads the current event deadlin
   assert.match(source, /v_job\.due_at is distinct from v_due/);
   assert.match(source, /claimed_at = null, claim_token = null, lease_expires_at = null/);
 });
+
+test("new draft retention reuses queue and atomic finalization", async () => {
+  const migration = await sql(25, "new_draft_retention");
+  const schedule = await route("app/api/retention/schedule/route.js");
+  const cleanup = await route("app/api/retention/cleanup/route.js");
+  const simple = await route("app/api/retention/simple/route.js");
+
+  assert.match(migration, /not v_event\.retention_delete_eligible/);
+  assert.match(migration, /v_event\.updated_at \+ interval '30 days'/);
+  assert.match(migration, /v_event\.status in \('published','suspended'\)/);
+  assert.match(migration, /v_due <> v_job\.due_at/);
+  assert.match(migration, /source_status/);
+  assert.match(migration, /event_kind/);
+  assert.match(schedule, /\["draft", "published", "suspended"\]/);
+  assert.match(cleanup, /invitationDeletionTime\(event\)/);
+  assert.match(simple, /mode: "dry-run", mutationPerformed: false/);
+  assert.doesNotMatch(simple, /\.delete\s*\(/);
+  assert.doesNotMatch(simple, /\.remove\s*\(/);
+  assert.doesNotMatch(simple, /SIMPLE_RETENTION_DELETE_ENABLED\s*===/);
+});
