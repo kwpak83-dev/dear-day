@@ -4,8 +4,11 @@ import { eventDeletionTime } from "../../../../lib/invitation-retention";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
-const DAY = 86400000;
-const LIMIT = 20;
+
+const DAY = 24 * 60 * 60 * 1000;
+const PAGE_SIZE = 100;
+const MAX_PAGES = 200;
+const UUID = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 
 function authorized(request) {
   const secret = process.env.CRON_SECRET;
@@ -15,10 +18,10 @@ function authorized(request) {
   return actual.length === expected.length && timingSafeEqual(actual, expected);
 }
 
-function dueAt(event) {
+function deletionDueAt(event) {
   if (event.status === "draft") {
-    const edited = Date.parse(event.updated_at || "");
-    return Number.isFinite(edited) ? edited + 30 * DAY : null;
+    const saved = Date.parse(event.updated_at || "");
+    return Number.isFinite(saved) ? saved + 30 * DAY : null;
   }
   if (["published", "suspended"].includes(event.status) && event.retention_v2 === true) {
     return eventDeletionTime(event.starts_at);
@@ -26,88 +29,66 @@ function dueAt(event) {
   return null;
 }
 
-// Only delete files explicitly scoped to this invitation ID. Shared template/BGM
-// assets and legacy owner-wide paths are deliberately left alone.
-function filesFor(event, supabaseUrl) {
-  const paths = new Map();
-  function visit(value) {
-    if (typeof value === "string") {
-      try {
-        const u = new URL(value);
-        if (u.origin !== new URL(supabaseUrl).origin) return;
-        for (const bucket of ["invitation-photos", "invitation-bgm"]) {
-          const prefix = `/storage/v1/object/public/${bucket}/`;
-          if (!u.pathname.startsWith(prefix)) continue;
-          const path = decodeURIComponent(u.pathname.slice(prefix.length));
-          if (path.startsWith(`${event.owner_id}/`) && path.split("/").includes(event.id)) {
-            paths.set(`${bucket}:${path}`, { bucket, path });
-          }
-        }
-      } catch {}
-    } else if (Array.isArray(value)) value.forEach(visit);
-    else if (value && typeof value === "object") Object.values(value).forEach(visit);
-  }
-  visit(event.cover_image_url);
-  visit(event.settings);
-  return [...paths.values()];
-}
-
+// Read-only diagnostic. This endpoint NEVER deletes DB rows or Storage files,
+// even if an old SIMPLE_RETENTION_DELETE_ENABLED environment flag is set.
+// The authoritative deletion path is the existing queue + finalization RPC.
 export async function GET(request) {
   if (!authorized(request)) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return Response.json({ error: "Configuration missing" }, { status: 503 });
-  const enabled = process.env.SIMPLE_RETENTION_DELETE_ENABLED === "true";
-  const db = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
-  const report = { mode: enabled ? "execute" : "dry-run", scanned: 0, eligible: 0, deleted: 0, fileRemoved: 0, fileFailed: 0, failed: 0 };
+
+  const after = new URL(request.url).searchParams.get("after");
+  if (after !== null && !UUID.test(after))
+    return Response.json({ error: "Invalid cursor" }, { status: 400 });
+
+  const db = createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  const now = Date.now();
+  const report = {
+    mode: "dry-run", mutationPerformed: false,
+    scanned: 0, eligible: 0, expiredDrafts: 0, expiredPublished: 0,
+    notYetDue: 0, invalidDate: 0, excludedPublication: 0,
+    truncated: false, pages: 0, nextCursor: null,
+  };
   try {
-    // Creation-cohort flag protects all invitations made before the cutover.
-    const { data: events, error } = await db.from("events")
-      .select("id,owner_id,status,starts_at,updated_at,retention_v2,retention_delete_eligible,cover_image_url,settings")
-      .eq("retention_delete_eligible", true)
-      .in("status", ["draft", "published", "suspended"])
-      .order("updated_at", { ascending: true }).limit(500);
-    if (error) throw error;
-    for (const event of events || []) {
-      report.scanned++;
-      const due = dueAt(event);
-      if (due === null || due > Date.now()) continue;
-      report.eligible++;
-      if (!enabled || report.deleted >= LIMIT) continue;
-      try {
-        const paths = filesFor(event, url);
-        const { data: media, error: mediaError } = await db.from("event_media")
-          .select("storage_path").eq("event_id", event.id);
-        if (mediaError) throw mediaError;
-        for (const item of media || []) {
-          const path = item.storage_path;
-          if (typeof path === "string" && path.startsWith(`${event.owner_id}/`) && path.split("/").includes(event.id))
-            paths.push({ bucket: "invitation-photos", path });
-        }
-        // Optimistic check prevents deleting a draft edited during the scan.
-        let deletion = db.from("events").delete().eq("id", event.id)
-          .eq("owner_id", event.owner_id).eq("status", event.status)
-          .eq("updated_at", event.updated_at).eq("retention_delete_eligible", true);
-        if (event.status !== "draft") deletion = deletion.eq("retention_v2", true).eq("starts_at", event.starts_at);
-        const { data: removed, error: deleteError } = await deletion.select("id").maybeSingle();
-        if (deleteError) throw deleteError;
-        if (!removed) continue;
-        report.deleted++;
-        // Best effort: file failures must never break invitation publishing or editing.
-        const unique = [...new Map(paths.map(item => [`${item.bucket}:${item.path}`, item])).values()];
-        for (const item of unique) {
-          const { error: storageError } = await db.storage.from(item.bucket).remove([item.path]);
-          if (storageError) report.fileFailed++;
-          else report.fileRemoved++;
-        }
-      } catch (err) {
-        report.failed++;
-        console.error("Simple retention item failed", event.id, err);
+    let cursor = after;
+    for (let page = 0; page < MAX_PAGES; page++) {
+      let query = db.from("events")
+        .select("id,status,starts_at,updated_at,retention_v2")
+        .eq("retention_delete_eligible", true)
+        .in("status", ["draft", "published", "suspended"])
+        .order("id", { ascending: true })
+        .limit(PAGE_SIZE);
+      if (cursor) query = query.gt("id", cursor);
+      const { data, error } = await query;
+      if (error) throw error;
+      if (!Array.isArray(data)) throw new Error("Invalid scan response");
+      report.pages++;
+      if (!data.length) break;
+      for (const event of data) {
+        report.scanned++;
+        const due = deletionDueAt(event);
+        if (due === null) {
+          if (event.status !== "draft" && event.retention_v2 !== true) report.excludedPublication++;
+          else report.invalidDate++;
+        } else if (due <= now) {
+          report.eligible++;
+          if (event.status === "draft") report.expiredDrafts++;
+          else report.expiredPublished++;
+        } else report.notYetDue++;
+      }
+      cursor = data[data.length - 1].id;
+      if (data.length < PAGE_SIZE) break;
+      if (page === MAX_PAGES - 1) {
+        report.truncated = true;
+        report.nextCursor = cursor;
       }
     }
     return Response.json(report, { headers: { "Cache-Control": "no-store" } });
-  } catch (err) {
-    console.error("Simple retention failed", err);
-    return Response.json({ error: "Simple retention failed" }, { status: 500 });
+  } catch (error) {
+    console.error("Retention dry-run failed", error);
+    return Response.json({ error: "Retention dry-run failed" }, { status: 500 });
   }
 }
