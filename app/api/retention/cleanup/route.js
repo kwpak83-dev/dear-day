@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { timingSafeEqual } from "node:crypto";
-import { eventDeletionTime } from "../../../../lib/invitation-retention";
+import { invitationDeletionTime } from "../../../../lib/invitation-retention";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -77,8 +77,9 @@ export async function GET(request) {
     report.abandoned = abandoned || 0;
     const now = new Date().toISOString();
     const jobs = await required(db.from("invitation_deletion_jobs")
-      .select("id,event_id,owner_id,due_at,status,attempts,events!inner(retention_v2,retention_delete_eligible)")
-      .eq("events.retention_v2", true).eq("events.retention_delete_eligible", true)
+      .select("id,event_id,owner_id,due_at,status,attempts,events!inner(status,retention_delete_eligible)")
+      .eq("events.retention_delete_eligible", true)
+      .in("events.status", ["draft", "published", "suspended"])
       .lt("attempts", 10).lte("due_at", now).lte("next_attempt_at", now)
       .or(`status.in.(pending,retry),and(status.eq.processing,lease_expires_at.lt.${now})`)
       .order("due_at", { ascending: true }).limit(10));
@@ -86,13 +87,14 @@ export async function GET(request) {
       report.scanned++;
       try {
         const event = await required(db.from("events")
-          .select("id,owner_id,status,starts_at,retention_v2,retention_delete_eligible,cover_image_url,settings")
+          .select("id,owner_id,status,starts_at,updated_at,retention_v2,retention_delete_eligible,cover_image_url,settings")
           .eq("id", job.event_id).maybeSingle());
-        if (event?.retention_v2 !== true || event.retention_delete_eligible !== true || event.owner_id !== job.owner_id ||
-          !["published", "suspended"].includes(event.status) ||
-          eventDeletionTime(event.starts_at) === null ||
-          eventDeletionTime(event.starts_at) > Date.now() ||
-          new Date(job.due_at).getTime() !== eventDeletionTime(event.starts_at)) {
+        // The SQL finalizer repeats these checks under the event row lock.
+        // In particular a draft saved/paid after scheduling must survive.
+        const due = invitationDeletionTime(event);
+        if (event?.retention_delete_eligible !== true || event.owner_id !== job.owner_id ||
+          due === null || due > Date.now() ||
+          new Date(job.due_at).getTime() !== due) {
           report.skipped++;
           continue;
         }
