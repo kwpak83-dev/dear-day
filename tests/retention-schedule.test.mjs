@@ -14,15 +14,17 @@ function mockScheduler(total, pageCap, enroll = false) {
       queries++;
       let after = 0;
       const filters = new Map();
+      let selectedStatuses = null;
       const query = {
         select: () => query, eq: (key, value) => {
           filters.set(key, value);
           if (key === "retention_delete_eligible") assert.equal(value, true);
           return query;
-        }, in: () => query, order: () => query, limit: () => query,
+        }, in: (key, values) => { assert.equal(key, "status"); selectedStatuses = values; return query; }, order: () => query, limit: () => query,
         gt: (_, cursor) => { after = Number(cursor.slice(-12)); return query; },
         then: resolve => {
           assert.deepEqual(filters, new Map([["retention_delete_eligible", true]]));
+          assert.deepEqual(Array.from(selectedStatuses), ["draft", "published", "suspended"]);
           return resolve({
             data: Array.from({ length: Math.min(pageCap, total - after) }, (_, index) => ({
               id: id(after + index + 1), status: "published", starts_at: "2000-01-01", retention_v2: true, updated_at: "2000-01-01T00:00:00Z",
