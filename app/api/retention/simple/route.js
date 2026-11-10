@@ -1,11 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
 import { timingSafeEqual } from "node:crypto";
-import { eventDeletionTime } from "../../../../lib/invitation-retention";
+import { invitationDeletionTime } from "../../../../lib/invitation-retention";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-const DAY = 24 * 60 * 60 * 1000;
 const PAGE_SIZE = 100;
 const MAX_PAGES = 200;
 const UUID = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
@@ -16,17 +15,6 @@ function authorized(request) {
   const actual = Buffer.from(request.headers.get("authorization") || "");
   const expected = Buffer.from(`Bearer ${secret}`);
   return actual.length === expected.length && timingSafeEqual(actual, expected);
-}
-
-function deletionDueAt(event) {
-  if (event.status === "draft") {
-    const saved = Date.parse(event.updated_at || "");
-    return Number.isFinite(saved) ? saved + 30 * DAY : null;
-  }
-  if (["published", "suspended"].includes(event.status) && event.retention_v2 === true) {
-    return eventDeletionTime(event.starts_at);
-  }
-  return null;
 }
 
 // Read-only diagnostic. This endpoint NEVER deletes DB rows or Storage files,
@@ -69,7 +57,7 @@ export async function GET(request) {
       if (!data.length) break;
       for (const event of data) {
         report.scanned++;
-        const due = deletionDueAt(event);
+        const due = invitationDeletionTime(event);
         if (due === null) {
           if (event.status !== "draft" && event.retention_v2 !== true) report.excludedPublication++;
           else report.invalidDate++;
