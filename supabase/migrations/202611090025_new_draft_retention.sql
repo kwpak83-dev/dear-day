@@ -39,7 +39,7 @@ begin
     end if;
     if v_event.status = 'draft' then
       if v_event.updated_at is null then continue; end if;
-      v_due := v_event.updated_at + interval '30 days';
+      v_due := v_event.updated_at + interval '720 hours';
     elsif v_event.status in ('published', 'suspended')
       and v_event.retention_v2 and v_event.starts_at is not null then
       v_due := public.event_retention_deadline_kst(v_event.starts_at);
@@ -107,7 +107,7 @@ begin
   -- after the job was scheduled. A stale job must never delete that event.
   if v_event.status = 'draft' then
     if v_event.updated_at is null then return false; end if;
-    v_due := v_event.updated_at + interval '30 days';
+    v_due := v_event.updated_at + interval '720 hours';
   elsif v_event.status in ('published','suspended') and
         v_event.retention_v2 and v_event.starts_at is not null then
     v_due := public.event_retention_deadline_kst(v_event.starts_at);
