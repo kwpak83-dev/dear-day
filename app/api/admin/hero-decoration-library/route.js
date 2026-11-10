@@ -40,7 +40,7 @@ export async function POST(request){
   const mobilePath=`${folder}/${id}-mobile.webp`;
   const {error:mobileError}=await storage.upload(mobilePath,mobileBytes,{contentType:"image/webp",upsert:false});
   if(mobileError){
-   await storage.remove([path]);
+   /* keep unregistered file until safe cleanup is available */
    return fail("모바일 경량본 저장에 실패하여 업로드를 취소했습니다.",500);
   }
   mobileUrl=storage.getPublicUrl(mobilePath).data.publicUrl;
@@ -59,6 +59,6 @@ export async function DELETE(request){
  const {data:files,error:listError}=await a.client.storage.from(bucket).list(folder,{limit:1000});
  if(listError)return fail("장식 파일을 확인하지 못했어요.",500);
  const file=(files||[]).find(x=>x.name.startsWith(`${id}.`));if(!file)return fail("장식 파일을 찾지 못했어요.",404);
- const {error:removeError}=await a.client.storage.from(bucket).remove([`${folder}/${file.name}`,`${folder}/${id}-mobile.webp`]);if(removeError)return fail("장식 파일을 삭제하지 못했어요.",500);
- return Response.json({id});
+ // Shared decoration objects are retained until reference registration and deletion are serialized.
+ return Response.json({id,physicalDeletionDeferred:true});
 }

@@ -92,7 +92,7 @@ async function registerUploadedAsset(auth, asset) {
     const result = await auth.client.from("template_assets").select("id")
       .eq("template_id", asset.templateId).eq("asset_type", asset.type).eq("is_active", true);
     if (result.error) {
-      await auth.client.storage.from(bucket).remove([asset.path]);
+      /* physical cleanup deferred */
       return fail("기존 Asset을 확인하지 못했어요.", 500);
     }
     previous = result.data || [];
@@ -108,7 +108,7 @@ async function registerUploadedAsset(auth, asset) {
       code: insertError.code, message: insertError.message,
       details: insertError.details, hint: insertError.hint,
     });
-    const { error: rollbackError } = await auth.client.storage.from(bucket).remove([asset.path]);
+    const rollbackError = null; // physical cleanup deferred
     return fail(rollbackError ? "Asset 저장에 실패했고 업로드 파일 정리가 필요해요." : "Asset 정보를 저장하지 못했어요. 다시 시도해 주세요.", 500);
   }
   if (previous.length) {
@@ -118,7 +118,7 @@ async function registerUploadedAsset(auth, asset) {
         await auth.client.from("template_assets").update({ is_active: true })
           .eq("template_id", asset.templateId).in("id", previous.map((row) => row.id));
         await auth.client.from("template_assets").delete().eq("id", asset.id).eq("template_id", asset.templateId);
-        await auth.client.storage.from(bucket).remove([asset.path]);
+        /* physical cleanup deferred */
         return fail("기존 BGM 교체를 완료하지 못해 새 음원을 취소했어요. 다시 시도해 주세요.", 409);
       }
       await auth.client.from("template_assets").update({ is_active: false }).eq("id", asset.id);
@@ -146,7 +146,7 @@ export async function POST(request) {
     }
     const invalid = await checkTemplate(auth.client, body.templateId);
     if (invalid) {
-      await auth.client.storage.from(bucket).remove([body.storagePath]);
+      /* physical cleanup deferred */
       return invalid;
     }
     const folder = `${body.templateId}/audio`;
@@ -157,7 +157,7 @@ export async function POST(request) {
     const storedSize = Number(stored?.metadata?.size);
     const storedMime = stored?.metadata?.mimetype;
     if (objectError || !stored || storedSize !== body.fileSize || storedMime !== "audio/mpeg") {
-      await auth.client.storage.from(bucket).remove([body.storagePath]);
+      /* physical cleanup deferred */
       return fail("업로드된 MP3 파일을 확인하지 못했어요.", 409);
     }
     return registerUploadedAsset(auth, {
@@ -275,14 +275,8 @@ export async function DELETE(request) {
       .eq("id", asset.id).eq("template_id", body.templateId).eq("is_active", false);
     if (removed.error) return fail("Asset 정보를 삭제하지 못했어요.", 500);
     if (removed.count !== 1) return fail("Asset 상태가 변경됐어요. 목록을 다시 확인해 주세요.", 409);
-    const { error: storageError } = await auth.client.storage.from(bucket).remove([asset.storage_path]);
-    if (storageError) {
-      const { error: restoreError } = await auth.client.from("template_assets").insert(asset);
-      return fail(restoreError
-        ? "Asset 파일 삭제에 실패했고 DB 정보 복원도 실패했어요. 관리자 확인이 필요합니다."
-        : "Asset 파일 삭제에 실패해 DB 정보를 복원했어요. 다시 시도해 주세요.", 500);
-    }
-    return Response.json({ removed: asset.id });
+    // Storage is intentionally retained because published invitations may still use the object.
+    return Response.json({ removed: asset.id, physicalDeletionDeferred: true });
   }
   const operation = readOperation(body?.receipt, auth.user.id, body.templateId);
   if (!operation || !uuid.test(operation.id || "")) return fail("이번 편집 세션의 Asset 변경만 취소할 수 있어요.", 403);
@@ -346,8 +340,8 @@ export async function DELETE(request) {
       .eq("id", operation.id).eq("template_id", body.templateId).eq("storage_path", operation.path);
     if (removed.error || removed.count !== 1) return fail("새 Asset 정보를 폐기하지 못했어요.", 500);
   }
-  const { error: storageError } = await auth.client.storage.from(bucket).remove([operation.path]);
-  if (storageError) return fail("Asset 정보는 폐기됐지만 파일 정리가 필요해요. 다시 취소해 주세요.", 500);
+  // Keep even cancelled session objects: session provenance is not an atomic reference fence.
+
   if (operation.previous.length) {
     const { data: previous, error } = await auth.client.from("template_assets").select("id,is_active")
       .eq("template_id", body.templateId).in("id", operation.previous);
@@ -359,6 +353,6 @@ export async function DELETE(request) {
       if (restored.error || restored.count !== inactive.length) return fail("기존 Asset 복원에 실패했어요. 다시 취소해 주세요.", 500);
     }
   }
-  return Response.json({ removed: operation.id });
+  return Response.json({ removed: operation.id, physicalDeletionDeferred: true });
 }
 

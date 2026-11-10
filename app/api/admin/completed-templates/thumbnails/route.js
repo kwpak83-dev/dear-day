@@ -23,7 +23,7 @@ export async function POST(request){
  const publicUrl=a.client.storage.from(bucket).getPublicUrl(path).data.publicUrl,column=slot===1?"thumbnail_1_url":"thumbnail_2_url";
  const {data:old}=await a.client.from("completed_templates").select(column).eq("id",completedTemplateId).maybeSingle();
  const {error:updateError}=await a.client.from("completed_templates").update({[column]:publicUrl,updated_at:new Date().toISOString()}).eq("id",completedTemplateId);
- if(updateError){await a.client.storage.from(bucket).remove([path]);return fail("대표 이미지 정보를 저장하지 못했어요.",500);}
- const oldUrl=old?.[column];if(oldUrl?.includes("/storage/v1/object/public/template-assets/")){const oldPath=oldUrl.split("/storage/v1/object/public/template-assets/")[1];if(oldPath&&oldPath!==path)await a.client.storage.from(bucket).remove([decodeURIComponent(oldPath)]);}
+ if(updateError){/* physical cleanup deferred */return fail("대표 이미지 정보를 저장하지 못했어요.",500);}
+ const oldUrl=old?.[column];if(oldUrl?.includes("/storage/v1/object/public/template-assets/")){const oldPath=oldUrl.split("/storage/v1/object/public/template-assets/")[1];if(oldPath&&oldPath!==path){/* preserve shared previous thumbnail */}}
  return Response.json({url:publicUrl});
 }

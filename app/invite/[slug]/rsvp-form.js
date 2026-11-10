@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { isEventReadOnly } from "../../../lib/invitation-retention";
 import { writeToClipboard } from "../../../components/share-actions";
 import RsvpFields, { EMPTY_RSVP, validateRsvp } from "./rsvp-fields";
 
 export default function RsvpForm({ slug, startsAt, preview = false, title = "참석 여부 확인", wedding = false, mealEnabled = false, busEnabled = false }) {
-  const closed = !preview && (!startsAt || new Date(startsAt).getTime() <= Date.now());
+  const closed = !preview && (!startsAt || isEventReadOnly({ status: "published", starts_at: startsAt }));
   const storageKey = `dear-day-rsvp-edit-token:${slug}`;
   const [form, setForm] = useState(EMPTY_RSVP);
   const [submitting, setSubmitting] = useState(false);
@@ -64,7 +65,7 @@ export default function RsvpForm({ slug, startsAt, preview = false, title = "참
     try { await writeToClipboard(new URL(editHref, window.location.origin).toString()); setCopyNotice("수정 링크가 복사되었습니다."); }
     catch { setCopyNotice("수정 링크를 복사하지 못했어요. 다시 시도해 주세요."); }
   };
-  if (closed) return <section className="public-rsvp"><p className="rsvp-kicker">RSVP</p><h2>{title}</h2><p className="rsvp-closed">행사가 시작되어 참석 여부 접수가 마감되었습니다.</p></section>;
+  if (closed) return <section className="public-rsvp"><p className="rsvp-kicker">RSVP</p><h2>{title}</h2><p className="rsvp-closed">행사가 종료되어 참석 여부 접수가 마감되었습니다.</p></section>;
   if (checkingStoredToken) return <section className="public-rsvp"><p className="rsvp-kicker">RSVP</p><h2>{title}</h2><p className="rsvp-closed">기존 응답을 확인하고 있어요.</p></section>;
   if (storedTokenNotice) return <section className="public-rsvp"><p className="rsvp-kicker">RSVP</p><h2>{title}</h2><p className="rsvp-closed">{storedTokenNotice}</p></section>;
   if (editToken) return <section className="public-rsvp"><p className="rsvp-kicker">RSVP</p><h2>{title}</h2><p className="rsvp-success" role="status">{restoredToken ? "이미 참석 여부를 전달하셨어요." : "참석 여부가 전달되었습니다."}</p><p className="rsvp-edit-guide">아래 링크를 저장해두면 행사 시작 전까지 참석 여부를 다시 수정할 수 있습니다.</p><div className="rsvp-edit-actions"><a href={editHref}>참석 여부 수정하기</a><button type="button" onClick={copyEditLink}>수정 링크 복사</button></div><p className="rsvp-copy-notice" role="status" aria-live="polite">{copyNotice}</p></section>;

@@ -58,7 +58,7 @@ export async function POST(request) {
   if (uploadError) return json({ error: "MP3 업로드에 실패했어요." }, 500);
   const { error } = await auth.server.from("bgm_tracks").insert({ ...values, storage_bucket: bucket, storage_path: path });
   if (error) {
-    const { error: cleanupError } = await auth.server.storage.from(bucket).remove([path]);
+    const cleanupError = null; // retain even failed uploads until safe cleanup exists
     console.error("[admin/bgm] DB insert failed", { code: error.code, message: error.message, details: error.details, hint: error.hint, cleanupFailed: Boolean(cleanupError) });
     return json({ error: `음악 등록 DB 오류 (${error.code || "unknown"}): ${error.message || "원인 미확인"}` }, 500);
   }
@@ -72,7 +72,7 @@ export async function PATCH(request) {
   if (!uuid.test(input?.id || "") || !values) return json({ error: "수정할 정보를 확인해 주세요." }, 400);
   const { data, error } = await auth.server.from("bgm_tracks").update(values).eq("id", input.id).select("id").maybeSingle();
   if (error || !data) return json({ error: "음악 수정에 실패했어요." }, 500);
-  return json({ ok: true });
+  return json({ ok: true, physicalDeletionDeferred: true });
 }
 export async function DELETE(request) {
   const auth = await admin(request);
@@ -81,24 +81,11 @@ export async function DELETE(request) {
   if (!uuid.test(input?.id || "")) return json({ error: "음악을 선택해 주세요." }, 400);
   const { data: track, error: readError } = await auth.server.from("bgm_tracks").select("*").eq("id", input.id).maybeSingle();
   if (readError || !track) return json({ error: "음악을 찾을 수 없어요." }, 404);
-  // Never delete an asset referenced by an invitation, including drafts and suspended invitations.
-  const { count, error: usageError } = await auth.server.from("events").select("id", { count: "exact", head: true })
-    .contains("settings", { userBgmTrackId: input.id });
-  if (usageError) return json({ error: "사용 중 여부를 확인할 수 없어 삭제를 중단했어요." }, 503);
-  if (count > 0) return json({ error: `이 음악을 사용하는 초대장이 ${count}개 있어요. 삭제 대신 숨기기를 이용해 주세요.` }, 409);
-  // Existing catalog entries may also be removed, but never delete shared template assets.
-  const { count: templateUses, error: templateError } = await auth.server.from("template_assets")
-    .select("id", { count: "exact", head: true })
-    .eq("storage_bucket", track.storage_bucket).eq("storage_path", track.storage_path);
-  if (templateError) return json({ error: "템플릿 파일 사용 여부를 확인하지 못해 삭제를 중단했어요." }, 503);
-  if (templateUses > 0) return json({ error: "템플릿에서 사용 중인 파일입니다. 완전 삭제 대신 숨기기를 이용해 주세요." }, 409);
-  const { count: catalogUses, error: catalogError } = await auth.server.from("bgm_tracks")
-    .select("id", { count: "exact", head: true })
-    .eq("storage_bucket", track.storage_bucket).eq("storage_path", track.storage_path).neq("id", track.id);
-  if (catalogError || catalogUses > 0) return json({ error: "다른 음악 등록 정보에서 공유 중인 파일이라 삭제할 수 없어요." }, 409);
-  const { error: storageError } = await auth.server.storage.from(track.storage_bucket).remove([track.storage_path]);
-  if (storageError) return json({ error: "Storage 파일 삭제에 실패했어요. 다시 시도해 주세요." }, 503);
-  const { error: deleteError } = await auth.server.from("bgm_tracks").delete().eq("id", input.id);
-  if (deleteError) return json({ error: "파일은 삭제됐지만 목록 정리에 실패했어요. 관리자에게 확인이 필요합니다." }, 500);
-  return json({ ok: true });
+  // Never delete a catalog row: a concurrent invitation save can reference its ID
+  // after a non-atomic reference check. Existing published invitations resolve by ID.
+  // Hide it from future selection instead, preserving the row and Storage object.
+  const { data: hidden, error: hideError } = await auth.server.from("bgm_tracks")
+    .update({ is_active: false }).eq("id", input.id).select("id,is_active").maybeSingle();
+  if (hideError || !hidden) return json({ error: "음악을 숨기지 못했어요." }, 500);
+  return json({ ok: true, hidden: true, physicalDeletionDeferred: true });
 }

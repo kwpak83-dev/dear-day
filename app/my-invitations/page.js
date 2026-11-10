@@ -5,7 +5,7 @@ import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import { getInvitationTitle } from "../../lib/invitation-title";
 import ShareActions from "../../components/share-actions";
 import MyPageLayout from "../../components/my-page-layout";
-import { getRetentionState } from "../../lib/invitation-retention";
+import { getRetentionState, isEventReadOnly } from "../../lib/invitation-retention";
 
 function MenuIcon({ name }) {
  const shapes = {
@@ -30,13 +30,18 @@ const STATUS_LABELS = {
 };
 
 function retentionNotice(event) {
-  const { phase, expiresAt, graceEndsAt } = getRetentionState(event);
+  const { phase, expiresAt } = getRetentionState(event);
   if (phase === "not-applicable") return "";
-  if (phase === "unknown") return "이용기간 확인 필요";
-  const format = (value) => new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium" }).format(new Date(value));
-  if (phase === "active") return `정상 이용중 · 만료일 ${format(expiresAt)}`;
-  if (phase === "grace-period") return `이용기간 만료 · 유예기간 (종료일 ${format(graceEndsAt)})`;
-  return `이용기간 만료 · 유예기간 종료 ${format(graceEndsAt)}`;
+  if (event.retention_v2 === false) {
+    if (!expiresAt) return "";
+    const date = new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeZone: "Asia/Seoul" }).format(new Date(expiresAt));
+    return `공개 ${phase === "expired" ? "종료" : "종료 예정"} · ${date}`;
+  }
+  if (!expiresAt) return "행사 날짜 확인 필요";
+  const date = new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeZone: "Asia/Seoul" }).format(new Date(expiresAt));
+  if (phase === "expired") return `삭제 예정일 경과 · ${date}`;
+  const remaining = Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 86400000);
+  return `자동삭제 예정일 ${date}${remaining <= 7 ? ` · D-${remaining} · 삭제 후 복구 불가, RSVP 엑셀 다운로드 권장` : ""}`;
 }
 function CardImage({ url }) {
   const [failed, setFailed] = useState(false);
@@ -65,6 +70,7 @@ export default function MyInvitations() {
     };
   }, [openMenu]);
   const [events, setEvents] = useState([]);
+  const [retentionNotices, setRetentionNotices] = useState([]);
   const [notice, setNotice] = useState("초대장을 불러오는 중이에요.");
   const [loginRequired, setLoginRequired] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -84,6 +90,8 @@ export default function MyInvitations() {
       const result = await response.json().catch(() => ({}));
       if (!response.ok) { if (response.status === 401) setLoginRequired(true); return setNotice(result.error || "초대장을 불러오지 못했어요."); }
       setEvents(result.events || []); setNotice(result.events?.length ? "" : "저장한 초대장이 아직 없어요.");
+      const noticeResponse = await fetch("/api/retention/notices", { headers: { Authorization: `Bearer ${session.access_token}` } });
+      if (noticeResponse.ok) { const payload = await noticeResponse.json().catch(() => ({})); setRetentionNotices(payload.notices || []); }
     };
     loadEvents();
   }, []);
@@ -158,22 +166,35 @@ export default function MyInvitations() {
           <div className="dd-my-guide-event"><strong>🎁 오픈 기념 포토리뷰 이벤트 (예정)</strong><p><span style={{ color: "#03C75A", fontWeight: 600 }}>네이버 구매 포토리뷰</span> 별다섯개 후기 작성 시<br /><strong style={{ color: "#D97745", fontWeight: 700 }}>100% 이용권 1개 추가 증정</strong> 예정!<br />돌잔치·자녀 생일·부모님 칠순 초대장에도 활용해 보세요.</p></div>
         </div>
       </details>
+      {retentionNotices.some(item => !item.read_at) && <section className="dd-my-guide" style={{ padding: 16, marginBottom: 16 }} aria-label="초대장 삭제 예정 알림">
+        <strong>🔔 초대장 삭제 예정 알림</strong>
+        {retentionNotices.filter(item => !item.read_at).map(item => <div key={item.id} style={{ paddingTop: 10 }}>
+          <p>{item.notice_type} · {item.events?.slug || "초대장"} · {new Intl.DateTimeFormat("ko-KR", { dateStyle: "long", timeZone: "Asia/Seoul" }).format(new Date(item.deletion_due_at))} 자동 삭제 예정. 필요한 RSVP 자료를 미리 저장해 주세요.</p>
+          <button type="button" onClick={async () => {
+            const supabase = getSupabaseBrowserClient();
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) return;
+            const response = await fetch("/api/retention/notices", { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ id: item.id }) });
+            if (response.ok) setRetentionNotices(current => current.map(row => row.id === item.id ? { ...row, read_at: new Date().toISOString() } : row));
+          }}>확인했어요</button>
+        </div>)}
+      </section>}
       {actionNotice && <p className="my-action-notice" role="status" aria-live="polite">{actionNotice}</p>}
       {notice && (notice === "저장한 초대장이 아직 없어요." && !loginRequired ? <div className="dd-empty-state"><span className="dd-empty-icon" aria-hidden="true">✉</span><h2>아직 등록된 초대장이 없어요</h2><p>특별한 날을 위한 첫 초대장을 만들어 보세요.</p><a href="/create" className="dd-empty-cta">새 초대장 만들기</a></div> : <div className="my-notice"><p>{notice}</p>{loginRequired && <a className="my-login-button" href="/?login=required&returnUrl=%2Fmy-invitations">다시 로그인하기</a>}</div>)}
       <div className="invitation-list dd-my-card-list">{events.map((event) => <article className="dd-my-card" key={event.slug}>
         <div className="dd-my-card-media">
           <CardImage key={event.cardImageUrl || "no-image"} url={event.cardImageUrl} />
-          <span className={`dd-my-card-badge dd-my-card-badge--${event.status}`}>{STATUS_LABELS[event.status] || event.status}</span>
+          <span className={`dd-my-card-badge dd-my-card-badge--${event.status}`}>{isEventReadOnly(event) ? "행사종료" : STATUS_LABELS[event.status] || event.status}</span>
         </div>
         <div className="dd-my-card-body">
           <h2 className="dd-my-card-title">{getInvitationTitle(event.settings, event.kind)}</h2>
           <p className="dd-my-card-date">{event.starts_at ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "long", timeStyle: "short" }).format(new Date(event.starts_at)) : "날짜 미정"}</p>
           {retentionNotice(event) && <p className="dd-my-card-retention">{retentionNotice(event)}</p>}
           <div className="dd-my-card-actions">
-            <a href={`/create?slug=${event.slug}`}>편집하기</a>
+            {!isEventReadOnly(event) && <a href={`/create?slug=${event.slug}`}>편집하기</a>}
             {event.status === "paid" && <a href={`/create?slug=${event.slug}&publish=ready`}>초대장 발행하기</a>}
             {event.status === "published" && <a href={`/invite/${event.slug}?from=owner`}>초대장 보기</a>}
-            {event.status === "suspended" && <button type="button" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>다시 발행하기</button>}
+            {event.status === "suspended" && !isEventReadOnly(event) && <button type="button" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>다시 발행하기</button>}
           </div>
           {["published", "suspended", "draft", "paid"].includes(event.status) && <div className="dd-my-card-management" ref={openMenu === event.slug ? menuRef : null}>
             <button type="button" className="dd-my-card-more" aria-expanded={openMenu === event.slug} aria-controls={`dd-my-card-menu-${event.slug}`} onClick={eventClick => { menuTriggerRef.current = eventClick.currentTarget; setOpenMenu(current => current === event.slug ? null : event.slug); }}>··· 더보기</button>
@@ -182,9 +203,9 @@ export default function MyInvitations() {
               {event.status === "published" && <>
                 <a href={`/guest-management?slug=${event.slug}`}><MenuIcon name="users" />하객 관리</a>
                 <ShareActions path={`/invite/${event.slug}`} title={getInvitationTitle(event.settings, event.kind)} {...(event.kakaoShareImage || { imageUnavailable: true })} displayMode="menu" renderMenuIcon={(name) => <MenuIcon name={name} />} />
-                <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setPublicationError(""); setPublicationTarget(event); }}><MenuIcon name="pause" />발행 중지</button></div>
+                {!isEventReadOnly(event) && <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setPublicationError(""); setPublicationTarget(event); }}><MenuIcon name="pause" />발행 중지</button></div>}
               </>}
-              {["suspended", "draft"].includes(event.status) && <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}><MenuIcon name="trash" />삭제하기</button></div>}
+              {["suspended", "draft", "published", "paid"].includes(event.status) && <div className="dd-my-card-menu-danger"><button type="button" onClick={() => { setOpenMenu(null); setActionNotice(""); setDeleteError(""); setDeleteTarget(event); }}><MenuIcon name="trash" />삭제하기</button></div>}
             </div>
           </div>}
         </div>

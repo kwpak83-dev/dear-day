@@ -22,10 +22,10 @@ export async function POST(request){
  const {error:uploadError}=await a.client.storage.from(bucket).upload(path,bytes,{contentType:file.type,upsert:false});if(uploadError)return fail("샘플 이미지를 업로드하지 못했어요.",500);
  const url=a.client.storage.from(bucket).getPublicUrl(path).data.publicUrl,posted=form?.get("sampleContent");let supplied=null;try{supplied=posted?JSON.parse(String(posted)):null;}catch{}const current=supplied&&typeof supplied==="object"&&!Array.isArray(supplied)?supplied:(item.sample_content&&typeof item.sample_content==="object"?item.sample_content:{});
  const timelineId=String(form?.get("timelineId")||""),parentKey=String(form?.get("parentKey")||"");
- if(kind==="parents_intro"&&!["parent1_photo_url","parent2_photo_url"].includes(parentKey)){await a.client.storage.from(bucket).remove([path]);return fail("부모 소개 사진 위치를 확인해 주세요.",400);}
+ if(kind==="parents_intro"&&!["parent1_photo_url","parent2_photo_url"].includes(parentKey)){/* physical cleanup deferred */return fail("부모 소개 사진 위치를 확인해 주세요.",400);}
  const next=kind==="hero"?{...current,hero_image_url:url}:kind==="notice"?{...current,notice_image_url:url}:kind==="brand_image"?{...current,brand_image:url}:kind==="timeline"?{...current,timeline_items:(Array.isArray(current.timeline_items)?current.timeline_items:[]).map(item=>String(item?.id||"")===timelineId?{...item,photoUrl:url}:item)}:kind==="parents_intro"?{...current,[parentKey]:url}:{...current,gallery_images:[...(Array.isArray(current.gallery_images)?current.gallery_images:[]),url].slice(0,20)};
  const {error:updateError}=await a.client.from("completed_templates").update({sample_content:next,updated_at:new Date().toISOString()}).eq("id",completedTemplateId);
- if(updateError){await a.client.storage.from(bucket).remove([path]);return fail("샘플 이미지 정보를 저장하지 못했어요.",500);}
+ if(updateError){/* physical cleanup deferred */return fail("샘플 이미지 정보를 저장하지 못했어요.",500);}
  return Response.json({url,sample_content:next});
 }
 
@@ -40,6 +40,6 @@ export async function DELETE(request){
  const {error:updateError}=await a.client.from("completed_templates").update({sample_content:next,updated_at:new Date().toISOString()}).eq("id",completedTemplateId);
  if(updateError)return fail("샘플 이미지 정보를 삭제하지 못했어요.",500);
  const marker="/storage/v1/object/public/"+bucket+"/",at=url.indexOf(marker);
- if(at>=0){const storagePath=decodeURIComponent(url.slice(at+marker.length));if(storagePath.startsWith("completed-templates/"+completedTemplateId+"/samples/"))await a.client.storage.from(bucket).remove([storagePath]);}
+ // Keep detached samples physically intact: published invitations may reference them.
  return Response.json({sample_content:next});
 }

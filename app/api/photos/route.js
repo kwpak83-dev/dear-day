@@ -1,3 +1,4 @@
+import { reserveUploadIfEnabled, finishReservedUpload } from "../../../lib/invitation-upload-reservation";
 import { createClient } from "@supabase/supabase-js";
 import { randomUUID } from "node:crypto";
 
@@ -42,8 +43,12 @@ export async function POST(request) {
         if (!racedBucket) return fail("사진 저장 공간을 준비하지 못했어요. 잠시 후 다시 시도해 주세요.", 503);
       }
     }
-    const path = `${user.id}/${randomUUID()}.${mime === "image/webp" ? "webp" : "jpg"}`;
+    const legacyPath = `${user.id}/${randomUUID()}.${mime === "image/webp" ? "webp" : "jpg"}`;
+    const reservation = await reserveUploadIfEnabled(supabase, user.id, request, bucket, legacyPath, undefined, "photo");
+    if (reservation.error) return fail(reservation.error, reservation.status);
+    const path = reservation.path ?? legacyPath;
     const { error: uploadError } = await supabase.storage.from(bucket).upload(path, bytes, { contentType: mime, upsert: false });
+    if (!(await finishReservedUpload(supabase, user.id, reservation, !uploadError))) return fail("업로드 기록을 확인하지 못했어요. 잠시 후 다시 확인해 주세요.", 503);
     if (uploadError) return fail(mime === "image/webp" ? "WEBP_UPLOAD_FAILED" : "사진 업로드에 실패했어요. 다시 시도해 주세요.", 500);
     const { data } = supabase.storage.from(bucket).getPublicUrl(path);
     return Response.json({ url: data.publicUrl });

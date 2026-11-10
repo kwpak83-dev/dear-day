@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { randomUUID } from "node:crypto";
+import { reserveUploadIfEnabled, finishReservedUpload } from "../../../lib/invitation-upload-reservation";
 const fail = (error, status) => Response.json({ error }, { status });
 export async function POST(request) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -29,7 +30,12 @@ export async function POST(request) {
   const bytes = Buffer.concat(chunks);
   if (bytes.length < 4 || bytes[0] !== 255 || bytes[1] !== 216 || bytes[2] !== 255) return fail("올바른 JPG 이미지가 아니에요.", 400);
   const path = `${user.id}/notice/${event.id}/${randomUUID()}.jpg`;
+  const reservation = await reserveUploadIfEnabled(supabase, user.id, request, "invitation-photos", path, event.id);
+  if (reservation.error) return fail(reservation.error, reservation.status);
   const { error } = await supabase.storage.from("invitation-photos").upload(path, bytes, { contentType: "image/jpeg", upsert: false });
+  if (!(await finishReservedUpload(supabase, user.id, reservation, !error))) {
+    return fail("업로드 상태를 확인하지 못했어요. 잠시 후 다시 확인해 주세요.", 503);
+  }
   if (error) return fail("공지 이미지를 업로드하지 못했어요.", 500);
   return Response.json({ path, url: supabase.storage.from("invitation-photos").getPublicUrl(path).data.publicUrl });
 }

@@ -6,7 +6,7 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { getInvitationTitle } from "../../../lib/invitation-title";
 import { getAllMissingRequiredFields } from "../../../lib/event-config";
-import { calculateRetentionDates } from "../../../lib/invitation-retention";
+import { calculateRetentionDates, isEventReadOnly } from "../../../lib/invitation-retention";
 import { getTemplateAssetReferences, resolveTemplateAssetUrls, applySaleTemplateStyles } from "../../../lib/template-config";
 import { preserveCardShareMetadata } from "../../../lib/card-share-image";
 import { addEventCardImages } from "../../../lib/event-card-images";
@@ -77,19 +77,10 @@ function collectOwnedStoragePaths(value, supabaseUrl, ownerId, found = { photos:
   return found;
 }
 
-async function removeIfUnreferenced(supabase, bucket, path, ownerId) {
-  if (!path.startsWith(ownerId + "/")) return false;
-  const publicUrl = supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
-  const { data: remaining, error } = await supabase.from("events").select("id,cover_image_url,settings").eq("owner_id", ownerId);
-  if (error) return false;
-  const referenced = (remaining || []).some((row) =>
-    row.cover_image_url === publicUrl ||
-    JSON.stringify(row.settings || {}).includes(publicUrl) ||
-    JSON.stringify(row.settings || {}).includes(path)
-  );
-  if (referenced) return true;
-  const { error: removeError } = await supabase.storage.from(bucket).remove([path]);
-  return !removeError;
+// Fail closed: reference checks cannot currently prevent cross-account or concurrent
+// references. Keep objects until a durable, globally referenced cleanup worker exists.
+async function removeIfUnreferenced(_supabase, _bucket, _path, _ownerId) {
+  return false;
 }
 
 function json(body, status = 200) {
@@ -206,7 +197,7 @@ export async function GET(request) {
   const auth = await getAuthenticatedClient(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
   const slug = searchParams.get("slug");
-  let query = auth.supabase.from("events").select(`slug,title,status,kind,template_id,template_version_id,hero_preset_id,starts_at,paid_at,published_at,service_started_at,service_expires_at,grace_ends_at,updated_at,settings${slug ? "" : ",cover_image_url"}`).eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
+  let query = auth.supabase.from("events").select(`slug,title,status,kind,template_id,template_version_id,hero_preset_id,starts_at,paid_at,published_at,service_started_at,service_expires_at,grace_ends_at,retention_v2,updated_at,settings${slug ? "" : ",cover_image_url"}`).eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
   if (slug) query = query.eq("slug", slug).limit(1);
   const { data, error } = await query;
   if (error) return json({ error: "초대장을 불러오지 못했어요." }, 500);
@@ -277,9 +268,10 @@ export async function POST(request) {
     const sourceStatus = action === "suspend" ? "published" : "suspended";
     const targetStatus = action === "suspend" ? "suspended" : "published";
     const { data: ownedEvent, error: lookupError } = await supabase.from("events")
-      .select("id,status").eq("slug", slug).eq("owner_id", user.id).maybeSingle();
+      .select("id,status,starts_at,retention_v2").eq("slug", slug).eq("owner_id", user.id).maybeSingle();
     if (lookupError) return json({ error: "초대장을 확인하지 못했어요." }, 500);
     if (!ownedEvent) return json({ error: "초대장을 찾지 못했어요." }, 404);
+    if (isEventReadOnly(ownedEvent)) return json({ error: "행사가 종료되어 발행 상태를 변경할 수 없어요." }, 409);
     if (ownedEvent.status === targetStatus) return json({ slug, status: targetStatus });
     if (ownedEvent.status !== sourceStatus) return json({ error: "현재 상태에서는 발행 상태를 변경할 수 없어요." }, 409);
 
@@ -350,10 +342,12 @@ export async function POST(request) {
     if (Number.isNaN(new Date(startsAt).getTime())) return json({ error: "예식 날짜 또는 시간을 확인해 주세요." }, 400);
   }
 
-  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id,status,kind,settings,template_id,template_version_id,hero_preset_id,paid_at,published_at,service_started_at,service_expires_at,updated_at").eq("slug", slug).limit(1);
+  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id,status,kind,settings,template_id,template_version_id,hero_preset_id,paid_at,published_at,service_started_at,service_expires_at,starts_at,retention_v2,updated_at").eq("slug", slug).limit(1);
   if (lookupError) return json({ error: "기존 초대장을 확인하지 못했어요." }, 500);
   const existing = matches?.[0];
   if (existing && existing.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 수정할 수 없어요." }, 403);
+  if (isEventReadOnly(existing)) return json({ error: "행사가 종료되어 초대장을 수정할 수 없어요." }, 409);
+  if (existing?.retention_v2 && ["published", "suspended"].includes(existing.status) && startsAt && new Date(startsAt).getTime() <= Date.now()) return json({ error: "발행된 초대장의 행사 날짜를 과거 또는 현재 시각으로 변경할 수 없어요." }, 409);
   if (heroPresetId) { const { data: hero, error: heroError } = await supabase.from("hero_presets").select("id,status,is_visible").eq("id", heroPresetId).maybeSingle(); if (heroError) return json({ error: "선택한 Hero를 확인하지 못했어요." }, 500); if (!hero) return json({ error: "선택한 Hero를 찾지 못했어요." }, 409); if (!existing && (hero.status !== "on_sale" || !hero.is_visible)) { const { data: linked, error: linkedError } = await supabase.from("completed_templates").select("id").eq("hero_preset_id", heroPresetId).eq("is_visible", true).limit(1); if (linkedError || !linked?.length) return json({ error: "현재 사용할 수 없는 Hero예요." }, 409); } }
 
   // Published invitations must never be overwritten by an uninitialized editor state.
@@ -394,8 +388,8 @@ export async function POST(request) {
     templateVersionId = null;
   }
 
-  const retentionDates = (publish && existing?.status === "paid") || ["published", "suspended"].includes(existing?.status)
-    ? calculateRetentionDates(startsAt, existing?.service_expires_at)
+  const retentionDates = (publish && existing?.status === "paid") || existing?.retention_v2
+    ? calculateRetentionDates(startsAt)
     : null;
   if (publish && existing?.status === "paid" && !retentionDates) return json({ error: "행사 날짜와 시간을 확인해 주세요." }, 400);
 
@@ -442,11 +436,11 @@ export async function DELETE(request) {
 
   const { supabase, user } = auth;
   const { data: event, error: lookupError } = await supabase.from("events")
-    .select("id,owner_id,status,cover_image_url,settings").eq("slug", slug).maybeSingle();
+    .select("id,owner_id,status,cover_image_url,settings,updated_at").eq("slug", slug).maybeSingle();
   if (lookupError) return json({ error: "초대장을 확인하지 못했어요." }, 500);
   if (!event) return json({ error: "초대장을 찾지 못했어요." }, 404);
   if (event.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 삭제할 수 없어요." }, 403);
-  if (!["draft", "suspended"].includes(event.status)) return json({ error: "제작중 또는 발행 중지 상태의 초대장만 삭제할 수 있어요." }, 409);
+  if (!["draft", "suspended", "published", "paid"].includes(event.status)) return json({ error: "현재 상태에서는 초대장을 삭제할 수 없어요." }, 409);
 
   // Capture every event-owned Storage object before the DB cascade removes its rows.
   const owned = collectOwnedStoragePaths(
@@ -459,6 +453,7 @@ export async function DELETE(request) {
   const noticePrefix = `${user.id}/notice/${event.id}`;
   const { data: noticeFiles, error: noticeError } = await supabase.storage.from(photoBucket).list(noticePrefix, { limit: 1000 });
   if (noticeError) return json({ error: "공지 사진 목록을 확인하지 못했어요. 다시 시도해 주세요." }, 503);
+  if ((noticeFiles || []).length >= 1000) return json({ error: "공지 사진 목록이 조회 한도에 도달해 안전한 삭제를 보류했어요." }, 409);
   for (const file of noticeFiles || []) {
     if (file.name && file.id) owned.photos.add(`${noticePrefix}/${file.name}`);
   }
@@ -467,6 +462,36 @@ export async function DELETE(request) {
   if (mediaError) return json({ error: "초대장 파일 정보를 확인하지 못했어요." }, 500);
   for (const row of media || []) {
     if (typeof row.storage_path === "string" && row.storage_path.startsWith(user.id + "/")) owned.photos.add(row.storage_path);
+  }
+
+  // Opt-in only after migration 007 is applied and validated. Existing deployments
+  // retain their current behavior until the schema is explicitly enabled.
+  if (process.env.MANUAL_DELETION_ATOMIC_READY === "true") {
+    const manifest = [
+      ...[...owned.photos].map(storage_path => ({ bucket: photoBucket, storage_path })),
+      ...[...owned.bgm].map(storage_path => ({ bucket: bgmBucket, storage_path })),
+    ];
+    if (manifest.length > 1000) return json({ error: "파일 목록이 너무 많아 삭제를 안전하게 진행할 수 없어요." }, 409);
+    // The deletion RPC is service-role-only. Authenticate and verify ownership
+    // above with the user's JWT, then use a server-only privileged client.
+    const serviceUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!serviceUrl || !serviceKey) return json({ error: "안전한 삭제 서비스를 사용할 수 없어요." }, 503);
+    const serviceDb = createClient(serviceUrl, serviceKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { data: committed, error: atomicError } = await serviceDb.rpc("delete_invitation_with_cleanup", {
+      p_event: event.id,
+      p_owner: user.id,
+      p_expected_updated_at: event.updated_at,
+      p_files: manifest,
+    });
+    if (atomicError) {
+      console.error("Atomic invitation deletion failed", { code: atomicError.code });
+      return json({ error: "초대장 삭제와 파일 정리 예약을 완료하지 못했어요." }, 503);
+    }
+    if (committed !== true) return json({ error: "초대장 상태가 변경되었어요. 새로고침 후 다시 시도해 주세요." }, 409);
+    return json({ deleted: true, slug, cleanupPending: manifest.length > 0 || (media || []).length > 0, cleanupQueued: true });
   }
 
   const deletingStatus = event.status;
@@ -488,14 +513,8 @@ export async function DELETE(request) {
       else await supabase.from("gallery_storage_cleanup").delete().eq("storage_path", path).eq("owner_id", user.id);
     } catch { cleanupPending = true; failedPhotoPaths.push(path); }
   }
-  // Gallery paths can be retried by the existing scheduled cleanup worker.
-  // Non-gallery failures remain explicitly reported rather than silently treated as success.
-  for (const path of failedPhotoPaths) {
-    if (!path.startsWith(`${user.id}/gallery/${event.id}/`)) continue;
-    const { error: queueError } = await supabase.from("gallery_storage_cleanup")
-      .upsert({ storage_path: path, owner_id: user.id }, { onConflict: "storage_path" });
-    if (queueError) cleanupPending = true;
-  }
+  // Do not enqueue these paths into the legacy gallery worker: it has not been
+  // verified to protect references across accounts. cleanupPending remains true.
   for (const path of owned.bgm) {
     try {
       if (!await removeIfUnreferenced(supabase, bgmBucket, path, user.id)) cleanupPending = true;

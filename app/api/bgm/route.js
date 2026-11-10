@@ -7,8 +7,8 @@ export async function GET() {
   const supabase = createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
   const columns = "id,title,composer,storage_bucket,storage_path,license_name,source_url,sort_order,event_kinds,is_active";
   let { data, error } = await supabase.from("bgm_tracks")
-    .select(columns + ",event_kinds")
-    .order("sort_order").order("created_at");
+    .select(columns)
+    .eq("is_active", true).order("sort_order").order("created_at");
   // Until the event_kinds migration is applied, keep the existing catalog working.
   if (error?.code === "42703" || error?.code === "PGRST204") {
     ({ data, error } = await supabase.from("bgm_tracks")
