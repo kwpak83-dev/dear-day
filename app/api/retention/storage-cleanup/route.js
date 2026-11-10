@@ -31,7 +31,12 @@ export async function GET(request) {
   try {
     if (process.env.RETENTION_STORAGE_DELETE_ENABLED === "true" &&
         process.env.RETENTION_STORAGE_INVENTORY_VERIFIED === "true") {
-      return Response.json(await runScopedStorageCleanup(db), { headers: { "Cache-Control": "no-store" } });
+      // Fail closed during controlled rollout: never run the global queue without an explicit scope.
+      const eventId = process.env.RETENTION_STORAGE_CLEANUP_EVENT_ID;
+      if (!eventId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(eventId)) {
+        return Response.json({ error: "Scoped cleanup event ID required" }, { status: 503 });
+      }
+      return Response.json(await runScopedStorageCleanup(db, eventId), { headers: { "Cache-Control": "no-store" } });
     }
     // Count every status, including terminal failures excluded from the 20-item
     // due-work inspection. Head-only exact counts avoid downloading object paths.
