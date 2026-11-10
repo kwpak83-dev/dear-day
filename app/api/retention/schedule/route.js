@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { timingSafeEqual } from "node:crypto";
-import { eventDeletionTime } from "../../../../lib/invitation-retention";
+import { invitationDeletionTime } from "../../../../lib/invitation-retention";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -37,8 +37,8 @@ export async function GET(request) {
     const MAX_PAGES = 200;
     for (let page = 0; page <= MAX_PAGES; page++) {
       let query = supabase.from("events")
-        .select("id,owner_id,status,starts_at")
-        .eq("retention_delete_eligible", true).eq("retention_v2", true).in("status", ["published", "suspended"])
+        .select("id,owner_id,status,starts_at,updated_at,retention_v2")
+        .eq("retention_delete_eligible", true).in("status", ["draft", "published", "suspended"])
         .order("id", { ascending: true }).limit(PAGE_SIZE);
       if (cursor) query = query.gt("id", cursor);
       const { data: batch, error } = await query;
@@ -60,14 +60,15 @@ export async function GET(request) {
     }
     const notices = [];
     for (const event of events) {
-      const due = eventDeletionTime(event.starts_at);
+      const due = invitationDeletionTime(event);
       if (due === null) { report.missingDate++; continue; }
       if (due <= now) {
         report.expired++;
         continue;
       }
       const remaining = Math.ceil((due - now) / DAY);
-      if (remaining === 7 || remaining === 1) {
+      // Keep published-invitation notices unchanged; drafts are not publicly visible.
+      if (event.status !== "draft" && (remaining === 7 || remaining === 1)) {
         report[remaining === 7 ? "d7" : "d1"]++;
         notices.push({
           event_id: event.id, owner_id: event.owner_id,
