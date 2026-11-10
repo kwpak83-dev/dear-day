@@ -335,7 +335,7 @@ export async function POST(request) {
     if (Number.isNaN(new Date(startsAt).getTime())) return json({ error: "예식 날짜 또는 시간을 확인해 주세요." }, 400);
   }
 
-  const { data: matches, error: lookupError } = await supabase.from("events").select("id,owner_id,status,kind,settings,template_id,template_version_id,hero_preset_id,paid_at,published_at,service_started_at,service_expires_at,starts_at,retention_v2,updated_at").eq("slug", slug).limit(1);
+  const { data: matches, error: lookupError } = await supabase.from("events").select("id,owner_id,status,kind,settings,template_id,template_version_id,hero_preset_id,paid_at,published_at,service_started_at,service_expires_at,starts_at,retention_v2,retention_delete_eligible,updated_at").eq("slug", slug).limit(1);
   if (lookupError) return json({ error: "기존 초대장을 확인하지 못했어요." }, 500);
   const existing = matches?.[0];
   if (existing && existing.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 수정할 수 없어요." }, 403);
@@ -438,7 +438,7 @@ export async function DELETE(request) {
 
   const { supabase, user } = auth;
   const { data: event, error: lookupError } = await supabase.from("events")
-    .select("id,owner_id,status,cover_image_url,settings,updated_at").eq("slug", slug).maybeSingle();
+    .select("id,owner_id,status,cover_image_url,settings,updated_at,retention_delete_eligible").eq("slug", slug).maybeSingle();
   if (lookupError) return json({ error: "초대장을 확인하지 못했어요." }, 500);
   if (!event) return json({ error: "초대장을 찾지 못했어요." }, 404);
   if (event.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 삭제할 수 없어요." }, 403);
@@ -468,7 +468,7 @@ export async function DELETE(request) {
 
   // Opt-in only after migration 007 is applied and validated. Existing deployments
   // retain their current behavior until the schema is explicitly enabled.
-  if (process.env.MANUAL_DELETION_ATOMIC_READY === "true") {
+  if (event.retention_delete_eligible && process.env.MANUAL_DELETION_ATOMIC_READY === "true") {
     const manifest = [
       ...[...owned.photos].map(storage_path => ({ bucket: photoBucket, storage_path })),
       ...[...owned.bgm].map(storage_path => ({ bucket: bgmBucket, storage_path })),

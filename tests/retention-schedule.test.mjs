@@ -13,18 +13,22 @@ function mockScheduler(total, pageCap, enroll = false) {
       assert.equal(table, "events");
       queries++;
       let after = 0;
+      const filters = new Map();
       const query = {
         select: () => query, eq: (key, value) => {
-          assert.equal(key, "retention_v2");
+          filters.set(key, value);
           assert.equal(value, true);
           return query;
         }, in: () => query, order: () => query, limit: () => query,
         gt: (_, cursor) => { after = Number(cursor.slice(-12)); return query; },
-        then: resolve => resolve({
-          data: Array.from({ length: Math.min(pageCap, total - after) }, (_, index) => ({
-            id: id(after + index + 1), starts_at: "2000-01-01",
-          })),
-        }),
+        then: resolve => {
+          assert.deepEqual(filters, new Map([["retention_delete_eligible", true], ["retention_v2", true]]));
+          return resolve({
+            data: Array.from({ length: Math.min(pageCap, total - after) }, (_, index) => ({
+              id: id(after + index + 1), starts_at: "2000-01-01",
+            })),
+          });
+        },
       };
       return query;
     },

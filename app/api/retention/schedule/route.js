@@ -38,7 +38,7 @@ export async function GET(request) {
     for (let page = 0; page <= MAX_PAGES; page++) {
       let query = supabase.from("events")
         .select("id,owner_id,status,starts_at")
-        .eq("retention_v2", true).in("status", ["published", "suspended"])
+        .eq("retention_delete_eligible", true).eq("retention_v2", true).in("status", ["published", "suspended"])
         .order("id", { ascending: true }).limit(PAGE_SIZE);
       if (cursor) query = query.gt("id", cursor);
       const { data: batch, error } = await query;

@@ -99,5 +99,6 @@ jobs:
         run: |
           createdb -h 127.0.0.1 -U postgres dear_day_migration_order_ci
           psql -h 127.0.0.1 -U postgres -d dear_day_migration_order_ci -f tests/sql/retention-migration-order-smoke.sql
+          psql -h 127.0.0.1 -U postgres -d dear_day_migration_order_ci -f tests/sql/retention-creation-cohort-smoke.sql
       - name: Build Next.js
         run: pnpm build
