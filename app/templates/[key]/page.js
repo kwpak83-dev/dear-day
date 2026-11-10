@@ -14,7 +14,7 @@ import InvitationNotice from "../../invite/[slug]/invitation-notice";
 import { sampleContentToInvitation, completedTemplateCategoryToEventKind } from "../../../lib/completed-template-sample";
 import OptionalInvitationSections from "../../invite/[slug]/optional-invitation-sections";
 import Gallery from "../../invite/[slug]/gallery";
-import PublishedInvitationLoading from "../../invite/[slug]/loading";
+import PublishedInvitationLoading from "../../invite/[slug]/published-invitation-loading";
 import { normalizeNotice } from "../../../lib/invitation-notice";
 function Tail({invitation,eventTypeConfig}){const gallery=(invitation.galleryImages||[]).map((url,i)=>({id:`sales-preview-${i}`,url}));return <div className="public-invitation-sections"><Gallery photos={gallery} idPrefix="sales-template-gallery" title={eventTypeConfig?.fields?.gallery?.label||"우리의 순간들"} /><TransportGuide invitation={invitation} title={eventTypeConfig?.fields?.transport?.label||"교통·주차"} /><AccountCopy invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig}/><OptionalInvitationSections invitation={invitation} eventTypeConfig={eventTypeConfig} previewMode="sales-preview"/><DearDayBrandFooter/></div>}
 export default function TemplatePreviewPage({params}){

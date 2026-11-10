@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { EXPERIENCE_CHANNEL, EXPERIENCE_FEATURES } from "../lib/landing-experience";
-import PublishedInvitationLoading from "../app/invite/[slug]/loading";
+import PublishedInvitationLoading from "../app/invite/[slug]/published-invitation-loading";
 
 export default function LandingInvitationExperience() {
   const sectionRef = useRef(null);

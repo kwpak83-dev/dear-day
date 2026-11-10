@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import MyPageLayout from "../../components/my-page-layout";
-import PublishedInvitationLoading from "../invite/[slug]/loading";
+import PublishedInvitationLoading from "../invite/[slug]/published-invitation-loading";
 
 const FILTERS = [["all", "전체"], ["attending", "참석"], ["not_attending", "불참"]];
 const emptySummary = { total: 0, attending: 0, notAttending: 0, partySize: 0, groomCount: 0, brideCount: 0, unclassifiedCount: 0, mealCount: 0, busCount: 0, mealUnknown: 0, busUnknown: 0 };

@@ -1,3 +1,4 @@
+import { isHeroSlotPhotoUrl } from "../../../lib/hero-slot-photo-url.mjs";
 import { TERMS_VERSION, PRIVACY_VERSION } from "../../../lib/consent";
 import { normalizeProgram, validateProgram } from "../../../lib/invitation-program";
 import { normalizeCoupleIntro, normalizeLoveStory } from "../../../lib/wedding-story";
@@ -324,15 +325,6 @@ export async function POST(request) {
   const templateId = invitation.templateId || null;
   if (templateId && !uuidPattern.test(templateId)) return json({ error: "선택한 템플릿 정보가 올바르지 않아요." }, 400);
   const hasHeroPresetId = Object.prototype.hasOwnProperty.call(invitation, "heroPresetId");
-  // User HERO slot images must belong to the authenticated account's upload folder.
-  const heroSlotPhotos = invitation.heroSlotPhotos;
-  if (heroSlotPhotos !== undefined) {
-    if (!heroSlotPhotos || typeof heroSlotPhotos !== "object" || Array.isArray(heroSlotPhotos) || Object.keys(heroSlotPhotos).length > 30) return json({error:"HERO 사진 정보가 올바르지 않아요."},400);
-    const expectedPrefix = supabase.storage.from("invitation-photos").getPublicUrl(`${user.id}/`).data.publicUrl;
-    for (const [slotId, photoUrl] of Object.entries(heroSlotPhotos)) {
-      if (!/^[a-zA-Z0-9_-]{1,80}$/.test(slotId) || typeof photoUrl !== "string" || (photoUrl && (!photoUrl.startsWith(expectedPrefix) || !/^[0-9a-f-]{36}\.(jpg|webp)$/i.test(photoUrl.slice(expectedPrefix.length))))) return json({error:"HERO 사진 소유권 또는 형식이 올바르지 않아요."},400);
-    }
-  }
   if (invitation.heroPhotoGrayscaleOverrides !== undefined && !validHeroPhotoGrayscaleOverrides(invitation.heroPhotoGrayscaleOverrides)) return json({ error: "HERO 사진 흑백 설정이 올바르지 않아요." }, 400);
   const heroPresetId = invitation.heroPresetId || null;
   if (heroPresetId && !uuidPattern.test(heroPresetId)) return json({ error: "선택한 Hero 정보가 올바르지 않아요." }, 400);
@@ -343,10 +335,19 @@ export async function POST(request) {
     if (Number.isNaN(new Date(startsAt).getTime())) return json({ error: "예식 날짜 또는 시간을 확인해 주세요." }, 400);
   }
 
-  const { data: matches, error: lookupError } = await supabase.from("events").select("owner_id,status,kind,settings,template_id,template_version_id,hero_preset_id,paid_at,published_at,service_started_at,service_expires_at,starts_at,retention_v2,updated_at").eq("slug", slug).limit(1);
+  const { data: matches, error: lookupError } = await supabase.from("events").select("id,owner_id,status,kind,settings,template_id,template_version_id,hero_preset_id,paid_at,published_at,service_started_at,service_expires_at,starts_at,retention_v2,updated_at").eq("slug", slug).limit(1);
   if (lookupError) return json({ error: "기존 초대장을 확인하지 못했어요." }, 500);
   const existing = matches?.[0];
   if (existing && existing.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 수정할 수 없어요." }, 403);
+  // Reserved HERO photos are scoped to the saved event, never to a client-supplied ID.
+  const heroSlotPhotos = invitation.heroSlotPhotos;
+  if (heroSlotPhotos !== undefined) {
+    if (!heroSlotPhotos || typeof heroSlotPhotos !== "object" || Array.isArray(heroSlotPhotos) || Object.keys(heroSlotPhotos).length > 30) return json({error:"HERO 사진 정보가 올바르지 않아요."},400);
+    const expectedPrefix = supabase.storage.from("invitation-photos").getPublicUrl(`${user.id}/`).data.publicUrl;
+    for (const [slotId, photoUrl] of Object.entries(heroSlotPhotos)) {
+      if (!/^[a-zA-Z0-9_-]{1,80}$/.test(slotId) || typeof photoUrl !== "string" || (photoUrl && !isHeroSlotPhotoUrl(photoUrl, expectedPrefix, existing?.id))) return json({error:"HERO 사진 소유권 또는 형식이 올바르지 않아요."},400);
+    }
+  }
   if (isEventReadOnly(existing)) return json({ error: "행사가 종료되어 초대장을 수정할 수 없어요." }, 409);
   if (existing?.retention_v2 && ["published", "suspended"].includes(existing.status) && startsAt && new Date(startsAt).getTime() <= Date.now()) return json({ error: "발행된 초대장의 행사 날짜를 과거 또는 현재 시각으로 변경할 수 없어요." }, 409);
   if (heroPresetId) { const { data: hero, error: heroError } = await supabase.from("hero_presets").select("id,status,is_visible").eq("id", heroPresetId).maybeSingle(); if (heroError) return json({ error: "선택한 Hero를 확인하지 못했어요." }, 500); if (!hero) return json({ error: "선택한 Hero를 찾지 못했어요." }, 409); if (!existing && (hero.status !== "on_sale" || !hero.is_visible)) { const { data: linked, error: linkedError } = await supabase.from("completed_templates").select("id").eq("hero_preset_id", heroPresetId).eq("is_visible", true).limit(1); if (linkedError || !linked?.length) return json({ error: "현재 사용할 수 없는 Hero예요." }, 409); } }
