@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { timingSafeEqual } from "node:crypto";
-import { eventDeletionTime } from "../../../../lib/invitation-retention";
+import { invitationDeletionTime } from "../../../../lib/invitation-retention";
+import { retentionTestScope } from "../../../../lib/retention-test-scope.mjs";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -56,7 +57,8 @@ async function planFiles(db, event, url) {
   return [...paths.values()];
 }
 export async function GET(request) {
-  if (!authorized(request)) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const testEventId = retentionTestScope(request, process.env);
+  if (testEventId === false || (!testEventId && !authorized(request))) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return Response.json({ error: "Configuration missing" }, { status: 503 });
@@ -66,33 +68,39 @@ export async function GET(request) {
   const report = { mode: execute ? "execute" : "dry-run", scanned: 0, eligible: 0, deleted: 0, failed: 0, skipped: 0, abandoned: 0, recovered: 0, errors: [] };
   try {
     // Read-only visibility into expired final-attempt leases.
-    if (execute) {
+    if (execute && testEventId) {
+      report.recovered = await required(db.rpc("expire_scoped_invitation_deletion_lease", { p_event_id: testEventId }));
+    } else if (execute) {
       report.recovered = await required(db.rpc("expire_invitation_deletion_leases", { p_limit: 100 }));
     }
-    const { count: abandoned, error: abandonedError } = await db.from("invitation_deletion_jobs")
+    const abandonedQuery = db.from("invitation_deletion_jobs")
       .select("id", { count: "exact", head: true })
       .eq("status", "processing").gte("attempts", 10)
       .lt("lease_expires_at", new Date().toISOString());
+    const { count: abandoned, error: abandonedError } = await (testEventId ? abandonedQuery.eq("event_id", testEventId) : abandonedQuery);
     if (abandonedError) throw abandonedError;
     report.abandoned = abandoned || 0;
     const now = new Date().toISOString();
-    const jobs = await required(db.from("invitation_deletion_jobs")
-      .select("id,event_id,owner_id,due_at,status,attempts,events!inner(retention_v2,retention_delete_eligible)")
-      .eq("events.retention_v2", true).eq("events.retention_delete_eligible", true)
+    const jobsQuery = db.from("invitation_deletion_jobs")
+      .select("id,event_id,owner_id,due_at,status,attempts,events!inner(status,retention_delete_eligible)")
+      .eq("events.retention_delete_eligible", true)
+      .in("events.status", ["draft", "published", "suspended"])
       .lt("attempts", 10).lte("due_at", now).lte("next_attempt_at", now)
       .or(`status.in.(pending,retry),and(status.eq.processing,lease_expires_at.lt.${now})`)
-      .order("due_at", { ascending: true }).limit(10));
+      .order("due_at", { ascending: true }).limit(10);
+    const jobs = await required(testEventId ? jobsQuery.eq("event_id", testEventId).is("events.paid_at", null) : jobsQuery);
     for (const job of jobs) {
       report.scanned++;
       try {
         const event = await required(db.from("events")
-          .select("id,owner_id,status,starts_at,retention_v2,retention_delete_eligible,cover_image_url,settings")
+          .select("id,owner_id,status,starts_at,updated_at,retention_v2,retention_delete_eligible,cover_image_url,settings")
           .eq("id", job.event_id).maybeSingle());
-        if (event?.retention_v2 !== true || event.retention_delete_eligible !== true || event.owner_id !== job.owner_id ||
-          !["published", "suspended"].includes(event.status) ||
-          eventDeletionTime(event.starts_at) === null ||
-          eventDeletionTime(event.starts_at) > Date.now() ||
-          new Date(job.due_at).getTime() !== eventDeletionTime(event.starts_at)) {
+        // The SQL finalizer repeats these checks under the event row lock.
+        // In particular a draft saved/paid after scheduling must survive.
+        const due = invitationDeletionTime(event);
+        if (event?.retention_delete_eligible !== true || event.owner_id !== job.owner_id ||
+          due === null || due > Date.now() ||
+          new Date(job.due_at).getTime() !== due) {
           report.skipped++;
           continue;
         }
@@ -108,7 +116,8 @@ export async function GET(request) {
           // The RPC checks the current claim, locks the event, writes the file
           // ledger and audit, then deletes the DB event in ONE transaction.
           // Storage deletion is deliberately deferred to a separate, gated worker.
-          const finalized = await required(db.rpc("finalize_invitation_deletion", {
+          const finalized = await required(db.rpc(testEventId ? "finalize_scoped_invitation_deletion" : "finalize_invitation_deletion", {
+            ...(testEventId ? { p_event_id: testEventId } : {}),
             p_job_id: job.id,
             p_claim_token: claimed.claim_token,
             p_files: files,

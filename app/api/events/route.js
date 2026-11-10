@@ -420,7 +420,23 @@ export async function POST(request) {
     ? await saveQuery.eq("status", "paid").select("status,updated_at").maybeSingle()
     : await saveQuery.select("status,updated_at").maybeSingle();
 
-  if (saveError) return json({ error: "초대장을 저장하지 못했어요." }, 500);
+  if (saveError) {
+    // Database messages can include input values. Log only known fixed messages.
+    const safeMessages = [
+      "Storage object path is fenced",
+      "EVENT_EDIT_CLOSED",
+      "EVENT_DATE_MUST_BE_FUTURE",
+      "EVENT_PUBLICATION_CANNOT_BE_RESET",
+    ];
+    console.error("[POST /api/events] Save failed", {
+      operation: publish ? "PUBLISH" : existing ? "UPDATE" : "INSERT",
+      code: typeof saveError.code === "string" && /^[0-9A-Z]{5}$/.test(saveError.code)
+        ? saveError.code
+        : null,
+      message: safeMessages.includes(saveError.message) ? saveError.message : "[redacted]",
+    });
+    return json({ error: "초대장을 저장하지 못했어요." }, 500);
+  }
   if (!saved && publish) {
     const { data: current } = await supabase.from("events").select("status,published_at,service_started_at,updated_at").eq("slug", slug).eq("owner_id", user.id).maybeSingle();
     if (current?.status === "published") return json({ slug, status: current.status, revision: current.updated_at, publishedAt: current.published_at, serviceStartedAt: current.service_started_at });

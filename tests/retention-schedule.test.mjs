@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { runInNewContext } from "node:vm";
+import { retentionTestScope } from "../lib/retention-test-scope.mjs";
 
 const source = await readFile(new URL("../app/api/retention/schedule/route.js", import.meta.url), "utf8");
 const id = index => `00000000-0000-0000-0000-${String(index).padStart(12, "0")}`;
@@ -14,18 +15,20 @@ function mockScheduler(total, pageCap, enroll = false) {
       queries++;
       let after = 0;
       const filters = new Map();
+      let selectedStatuses = null;
       const query = {
         select: () => query, eq: (key, value) => {
           filters.set(key, value);
-          assert.equal(value, true);
+          if (key === "retention_delete_eligible") assert.equal(value, true);
           return query;
-        }, in: () => query, order: () => query, limit: () => query,
+        }, in: (key, values) => { assert.equal(key, "status"); selectedStatuses = values; return query; }, order: () => query, limit: () => query,
         gt: (_, cursor) => { after = Number(cursor.slice(-12)); return query; },
         then: resolve => {
-          assert.deepEqual(filters, new Map([["retention_delete_eligible", true], ["retention_v2", true]]));
+          assert.deepEqual(filters, new Map([["retention_delete_eligible", true]]));
+          assert.deepEqual(Array.from(selectedStatuses), ["draft", "published", "suspended"]);
           return resolve({
             data: Array.from({ length: Math.min(pageCap, total - after) }, (_, index) => ({
-              id: id(after + index + 1), starts_at: "2000-01-01",
+              id: id(after + index + 1), status: "published", starts_at: "2000-01-01", retention_v2: true, updated_at: "2000-01-01T00:00:00Z",
             })),
           });
         },
@@ -36,7 +39,7 @@ function mockScheduler(total, pageCap, enroll = false) {
   const handler = runInNewContext(
     source.replace(/^import .*$/gm, "").replaceAll("export ", "") + "\nGET",
     {
-      Buffer, URL, Response, createClient: () => db, eventDeletionTime: Date.parse,
+      Buffer, URL, Response, createClient: () => db, invitationDeletionTime: event => Date.parse(event.starts_at), retentionTestScope,
       timingSafeEqual: (a, b) => a.equals(b), console: { error() {} },
       process: { env: {
         CRON_SECRET: "test", NEXT_PUBLIC_SUPABASE_URL: "http://mock",

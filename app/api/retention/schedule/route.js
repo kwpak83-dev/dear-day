@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { timingSafeEqual } from "node:crypto";
-import { eventDeletionTime } from "../../../../lib/invitation-retention";
+import { invitationDeletionTime } from "../../../../lib/invitation-retention";
+import { retentionTestScope } from "../../../../lib/retention-test-scope.mjs";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -15,12 +16,14 @@ function authorized(request) {
 }
 
 export async function GET(request) {
-  if (!authorized(request)) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const testEventId = retentionTestScope(request, process.env);
+  if (testEventId === false || (!testEventId && !authorized(request))) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return Response.json({ error: "Configuration missing" }, { status: 503 });
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
   const after = new URL(request.url).searchParams.get("after");
+  if (testEventId && after !== null) return Response.json({ error: "Test scope does not accept a cursor" }, { status: 400 });
   if (after !== null && !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(after)) {
     return Response.json({ error: "Invalid retention cursor" }, { status: 400 });
   }
@@ -37,10 +40,11 @@ export async function GET(request) {
     const MAX_PAGES = 200;
     for (let page = 0; page <= MAX_PAGES; page++) {
       let query = supabase.from("events")
-        .select("id,owner_id,status,starts_at")
-        .eq("retention_delete_eligible", true).eq("retention_v2", true).in("status", ["published", "suspended"])
+        .select("id,owner_id,status,starts_at,updated_at,retention_v2")
+        .eq("retention_delete_eligible", true).in("status", ["draft", "published", "suspended"])
         .order("id", { ascending: true }).limit(PAGE_SIZE);
       if (cursor) query = query.gt("id", cursor);
+      if (testEventId) query = query.eq("id", testEventId).is("paid_at", null);
       const { data: batch, error } = await query;
       if (error) throw error;
       if (!Array.isArray(batch)) throw new Error("Invalid retention scan response");
@@ -51,6 +55,7 @@ export async function GET(request) {
         break;
       }
       events.push(...batch);
+      if (testEventId) break;
       cursor = batch[batch.length - 1].id;
     }
     report.scanned = events.length;
@@ -60,14 +65,15 @@ export async function GET(request) {
     }
     const notices = [];
     for (const event of events) {
-      const due = eventDeletionTime(event.starts_at);
+      const due = invitationDeletionTime(event);
       if (due === null) { report.missingDate++; continue; }
       if (due <= now) {
         report.expired++;
         continue;
       }
       const remaining = Math.ceil((due - now) / DAY);
-      if (remaining === 7 || remaining === 1) {
+      // Keep published-invitation notices unchanged; drafts are not publicly visible.
+      if (event.status !== "draft" && (remaining === 7 || remaining === 1)) {
         report[remaining === 7 ? "d7" : "d1"]++;
         notices.push({
           event_id: event.id, owner_id: event.owner_id,

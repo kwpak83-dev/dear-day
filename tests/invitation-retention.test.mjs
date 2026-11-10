@@ -39,3 +39,31 @@ test("legacy stored expiry and KST edit boundary are preserved", () => {
   assert.equal(retention.isPublicPeriodExpired({ ...event, starts_at: null, service_expires_at: null }), false);
   assert.equal(retention.isPublicPeriodExpired({ ...event, retention_v2: true, starts_at: null }), true);
 });
+
+test("new invitation draft expires 30 days after last save", () => {
+  const due = retention.invitationDeletionTime({
+    status: "draft",
+    retention_v2: false,
+    updated_at: "2026-11-10T12:30:00+09:00",
+    starts_at: null,
+  });
+  assert.equal(due, kst("2026-12-10T12:30:00+09:00"));
+});
+
+test("paid, legacy published, and invalid draft dates cannot be auto-scheduled", () => {
+  assert.equal(retention.invitationDeletionTime({ status: "paid", updated_at: "2026-10-01T00:00:00Z" }), null);
+  assert.equal(retention.invitationDeletionTime({
+    status: "published", retention_v2: false, starts_at: "2026-10-01T18:00:00+09:00",
+  }), null);
+  assert.equal(retention.invitationDeletionTime({ status: "draft", updated_at: "invalid" }), null);
+  assert.equal(retention.invitationDeletionTime(null), null);
+});
+
+test("new published invitations still expire at event-date plus 30 KST days", () => {
+  const event = {
+    status: "published", retention_v2: true,
+    starts_at: "2026-11-10T19:00:00+09:00",
+    updated_at: "2026-01-01T00:00:00Z",
+  };
+  assert.equal(retention.invitationDeletionTime(event), kst("2026-12-10T00:00:00+09:00"));
+});

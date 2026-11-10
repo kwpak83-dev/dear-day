@@ -4,6 +4,7 @@ import { inspectStorageReferences } from "../../../../lib/invitation-storage-ref
 import { cleanupFailureCategory } from "../../../../lib/storage-cleanup-diagnostics";
 import { hasInvitationScopedUpload } from "../../../../lib/invitation-storage-cleanup-scope";
 import { runScopedStorageCleanup } from "../../../../lib/scoped-invitation-storage-worker.mjs";
+import { retentionTestScope } from "../../../../lib/retention-test-scope.mjs";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -23,7 +24,8 @@ function authorized(request) {
 }
 
 export async function GET(request) {
-  if (!authorized(request)) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const testEventId = retentionTestScope(request, process.env);
+  if (testEventId === false || (!testEventId && !authorized(request))) return Response.json({ error: "Unauthorized" }, { status: 401 });
   if (process.env.RETENTION_SCHEMA_READY !== "true") {
     return Response.json({ mode: "disabled", reason: "Schema not enabled", removed: 0 });
   }
@@ -37,7 +39,7 @@ export async function GET(request) {
         process.env.RETENTION_STORAGE_INVENTORY_VERIFIED === "true") {
       // Production-wide cleanup requires a separate explicit rollout gate.
       // A scoped test ID always takes precedence over the global switch.
-      const eventId = process.env.RETENTION_STORAGE_CLEANUP_EVENT_ID;
+      const eventId = testEventId || process.env.RETENTION_STORAGE_CLEANUP_EVENT_ID;
       const validEventId = typeof eventId === "string" &&
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(eventId);
       if (eventId && !validEventId) {
@@ -48,6 +50,7 @@ export async function GET(request) {
       }
       return Response.json(await runScopedStorageCleanup(db, validEventId ? eventId : null), { headers: { "Cache-Control": "no-store" } });
     }
+    if (testEventId) return Response.json({ mode: "disabled", removed: 0 });
     // Count every status, including terminal failures excluded from the 20-item
     // due-work inspection. Head-only exact counts avoid downloading object paths.
     for (const status of ["pending", "retry", "failed", "done"]) {
