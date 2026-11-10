@@ -45,9 +45,10 @@ test("event-scoped worker only claims jobs belonging to the selected event", asy
   assert.equal(result.removed, 1);
 });
 
-test("production cleanup endpoint requires an explicit valid event ID before execution", () => {
+test("production cleanup requires an event ID or a separate global rollout gate", () => {
   const source = readFileSync(new URL("../app/api/retention/storage-cleanup/route.js", import.meta.url), "utf8");
   assert.match(source, /RETENTION_STORAGE_CLEANUP_EVENT_ID/);
-  assert.match(source, /Scoped cleanup event ID required/);
-  assert.match(source, /runScopedStorageCleanup\(db, eventId\)/);
+  assert.match(source, /RETENTION_STORAGE_GLOBAL_ENABLED/);
+  assert.match(source, /Global Storage cleanup not enabled/);
+  assert.ok(source.includes("runScopedStorageCleanup(db, validEventId ? eventId : null)"));
 });
