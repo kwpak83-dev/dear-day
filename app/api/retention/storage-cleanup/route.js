@@ -11,11 +11,15 @@ export const maxDuration = 60;
 // Intentionally read-only. Reference inspection is not an atomic deletion
 // authorization: concurrent writers can create new references after the scan.
 function authorized(request) {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) return false;
-  const a = Buffer.from(request.headers.get("authorization") || "");
-  const b = Buffer.from(`Bearer ${secret}`);
-  return a.length === b.length && timingSafeEqual(a, b);
+  const authorization = Buffer.from(request.headers.get("authorization") || "");
+  // Keep Vercel Cron authentication unchanged. A separate secret permits
+  // manual, event-scoped verification without rotating the shared CRON_SECRET.
+  const secrets = [process.env.CRON_SECRET, process.env.RETENTION_STORAGE_TEST_SECRET];
+  return secrets.some((secret) => {
+    if (!secret) return false;
+    const expected = Buffer.from(`Bearer ${secret}`);
+    return authorization.length === expected.length && timingSafeEqual(authorization, expected);
+  });
 }
 
 export async function GET(request) {
