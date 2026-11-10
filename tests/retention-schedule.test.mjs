@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { runInNewContext } from "node:vm";
+import { retentionTestScope } from "../lib/retention-test-scope.mjs";
 
 const source = await readFile(new URL("../app/api/retention/schedule/route.js", import.meta.url), "utf8");
 const id = index => `00000000-0000-0000-0000-${String(index).padStart(12, "0")}`;
@@ -38,7 +39,7 @@ function mockScheduler(total, pageCap, enroll = false) {
   const handler = runInNewContext(
     source.replace(/^import .*$/gm, "").replaceAll("export ", "") + "\nGET",
     {
-      Buffer, URL, Response, createClient: () => db, invitationDeletionTime: event => Date.parse(event.starts_at),
+      Buffer, URL, Response, createClient: () => db, invitationDeletionTime: event => Date.parse(event.starts_at), retentionTestScope,
       timingSafeEqual: (a, b) => a.equals(b), console: { error() {} },
       process: { env: {
         CRON_SECRET: "test", NEXT_PUBLIC_SUPABASE_URL: "http://mock",
