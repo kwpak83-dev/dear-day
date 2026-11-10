@@ -50,5 +50,5 @@ test("production cleanup requires an event ID or a separate global rollout gate"
   assert.match(source, /RETENTION_STORAGE_CLEANUP_EVENT_ID/);
   assert.match(source, /RETENTION_STORAGE_GLOBAL_ENABLED/);
   assert.match(source, /Global Storage cleanup not enabled/);
-  assert.match(source, /runScopedStorageCleanup\\(db, validEventId \\? eventId : null\\)/);
+  assert.ok(source.includes("runScopedStorageCleanup(db, validEventId ? eventId : null)"));
 });
