@@ -36,7 +36,19 @@ const loadPublicEvent = cache(async (slug) => {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !serviceRoleKey) notFound();
   const supabase = createClient(url, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
-  const { data: events } = await supabase.from("events").select("id,owner_id,updated_at,status,kind,template_id,template_version_id,hero_preset_id,starts_at,service_expires_at,grace_ends_at,retention_v2,cover_image_url,settings").eq("slug", slug).in("status", ["published", "suspended"]).limit(1);
+  const columns = "id,owner_id,updated_at,status,kind,template_id,template_version_id,hero_preset_id,starts_at,service_expires_at,grace_ends_at,cover_image_url,settings";
+  const selectEvent = (fields) => supabase.from("events").select(fields).eq("slug", slug).in("status", ["published", "suspended"]).limit(1);
+  let { data: events, error } = await selectEvent(`${columns},retention_v2`);
+  if (error?.code === "42703" && /\bretention_v2\b/.test(error.message || "")) {
+    console.warn("Public invitation lookup using legacy schema:", error.code);
+    const legacy = await selectEvent(columns);
+    error = legacy.error;
+    events = legacy.data?.map((event) => ({ ...event, retention_v2: false }));
+  }
+  if (error) {
+    console.error("Public invitation lookup failed:", error.code);
+    throw new Error("Public invitation lookup failed");
+  }
   const event = events?.[0];
   return { url, supabase, event };
 });

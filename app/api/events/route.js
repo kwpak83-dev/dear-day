@@ -36,17 +36,6 @@ function ownedCoverPath(value, supabaseUrl, ownerId) {
   }
 }
 
-async function removeUnreferencedCover(supabase, path) {
-  const publicUrl = supabase.storage.from(photoBucket).getPublicUrl(path).data.publicUrl;
-  const [media, cover, settings] = await Promise.all([
-    supabase.from("event_media").select("id").eq("storage_path", path).limit(1),
-    supabase.from("events").select("id").eq("cover_image_url", publicUrl).limit(1),
-    supabase.from("events").select("id").eq("settings->>coverPhotoUrl", publicUrl).limit(1),
-  ]);
-  if (media.error || cover.error || settings.error || media.data.length || cover.data.length || settings.data.length) return false;
-  const { error } = await supabase.storage.from(photoBucket).remove([path]);
-  return !error;
-}
 const bgmBucket = "invitation-bgm";
 
 function collectOwnedStoragePaths(value, supabaseUrl, ownerId, found = { photos: new Set(), bgm: new Set() }) {
@@ -197,10 +186,22 @@ export async function GET(request) {
   const auth = await getAuthenticatedClient(request);
   if (auth.error) return json({ error: auth.error }, auth.status);
   const slug = searchParams.get("slug");
-  let query = auth.supabase.from("events").select(`slug,title,status,kind,template_id,template_version_id,hero_preset_id,starts_at,paid_at,published_at,service_started_at,service_expires_at,grace_ends_at,retention_v2,updated_at,settings${slug ? "" : ",cover_image_url"}`).eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
-  if (slug) query = query.eq("slug", slug).limit(1);
-  const { data, error } = await query;
-  if (error) return json({ error: "초대장을 불러오지 못했어요." }, 500);
+  const selectOwnedEvents = (includeRetention) => {
+    const columns = `slug,title,status,kind,template_id,template_version_id,hero_preset_id,starts_at,paid_at,published_at,service_started_at,service_expires_at,grace_ends_at,updated_at,settings${slug ? "" : ",cover_image_url"}${includeRetention ? ",retention_v2" : ""}`;
+    const query = auth.supabase.from("events").select(columns).eq("owner_id", auth.user.id).order("updated_at", { ascending: false });
+    return slug ? query.eq("slug", slug).limit(1) : query;
+  };
+  let { data, error } = await selectOwnedEvents(true);
+  if (error?.code === "42703" && /\bretention_v2\b/.test(error.message || "")) {
+    console.warn("Event lookup using legacy schema:", error.code);
+    const legacy = await selectOwnedEvents(false);
+    error = legacy.error;
+    data = legacy.data?.map((event) => ({ ...event, retention_v2: false }));
+  }
+  if (error) {
+    console.error("Event lookup failed:", error.code);
+    return json({ error: "초대장을 불러오지 못했어요." }, 500);
+  }
   if (!slug) return json({ events: await addEventCardImages(auth.supabase, data || [], process.env.NEXT_PUBLIC_SUPABASE_URL) });
   const event = data?.[0] || null;
   let renderData = { templateConfig: null, templateAssets: {} };
