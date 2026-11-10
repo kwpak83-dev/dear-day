@@ -75,7 +75,7 @@ test("new draft retention reuses queue and atomic finalization", async () => {
   const simple = await route("app/api/retention/simple/route.js");
 
   assert.match(migration, /not v_event\.retention_delete_eligible/);
-  assert.match(migration, /v_event\.updated_at \+ interval '30 days'/);
+  assert.match(migration, /v_event\.updated_at \+ interval '720 hours'/);
   assert.match(migration, /v_event\.status in \('published','suspended'\)/);
   assert.match(migration, /v_due <> v_job\.due_at/);
   assert.match(migration, /source_status/);
