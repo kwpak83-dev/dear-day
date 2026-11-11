@@ -49,7 +49,7 @@ create or replace function public.credit_issue_admin(
 ) returns uuid language plpgsql security definer set search_path = public as $$
 declare v_grant uuid;
 begin
- if p_quantity is null or p_quantity < 1 or p_quantity > 10000 or p_expires <= now()
+ if p_actor is null or p_quantity is null or p_quantity < 1 or p_quantity > 10000 or p_expires <= now()
     or length(trim(coalesce(p_reason,''))) < 2 then raise exception 'INVALID_CREDIT_GRANT'; end if;
  if not exists (select 1 from auth.users where id=p_user) then raise exception 'USER_NOT_FOUND'; end if;
  insert into public.credit_grants(user_id,quantity,remaining,expires_at,reason,note,issued_by)
@@ -66,7 +66,7 @@ create or replace function public.credit_revoke_admin(
 ) returns integer language plpgsql security definer set search_path = public as $$
 declare v_grant public.credit_grants%rowtype;
 begin
- if p_quantity is null or p_quantity < 1 or length(trim(coalesce(p_reason,''))) < 2 then raise exception 'INVALID_REVOKE'; end if;
+ if p_actor is null or p_quantity is null or p_quantity < 1 or length(trim(coalesce(p_reason,''))) < 2 then raise exception 'INVALID_REVOKE'; end if;
  select * into v_grant from public.credit_grants where id=p_grant for update;
  if not found or v_grant.remaining < p_quantity then raise exception 'INSUFFICIENT_UNUSED_CREDITS'; end if;
  update public.credit_grants set remaining=remaining-p_quantity where id=p_grant;
@@ -88,6 +88,8 @@ begin
  if v_event.status not in ('draft','paid') then raise exception 'INVALID_PUBLISH_STATE'; end if;
  if v_event.published_at is not null then raise exception 'INVALID_PUBLISH_STATE'; end if;
  if v_event.updated_at is distinct from p_expected_updated_at then raise exception 'STALE_EVENT'; end if;
+ -- Serialize spending for one member across simultaneous publication requests.
+ perform pg_advisory_xact_lock(hashtextextended(p_user::text, 8675309));
  select * into v_grant from public.credit_grants
  where user_id=p_user and remaining>0 and expires_at>now()
  order by expires_at,created_at,id for update limit 1;
