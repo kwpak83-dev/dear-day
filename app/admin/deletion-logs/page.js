@@ -47,6 +47,7 @@ export default function DeletionLogsPage(){
    <button type="button" onClick={()=>void load()} disabled={loading} style={{padding:"9px 14px",border:"1px solid #cbd2df",borderRadius:6}}>새로고침</button>
   </div>
   {error&&<p role="alert" style={{color:"#ae3434"}}>{error}</p>}
+  {data?.uploadReservationsEnabled===false&&<p role="alert" style={{padding:"12px 14px",border:"1px solid #e2b77c",borderRadius:8,color:"#8c5a2c",background:"#fff8ec"}}>현재 서버에서 사진·BGM 업로드 예약 기능이 비활성화되어 있습니다. 예약 없이 업로드된 파일은 초대장 삭제 후에도 보존될 수 있습니다. INVITATION_UPLOAD_RESERVATIONS_READY 설정을 확인하세요.</p>}
   <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:10,margin:"18px 0 30px"}}>
    {summary.map(([label,value])=><div key={label} style={{padding:17,border:"1px solid #e1e5ed",borderRadius:12,background:"#fff"}}><div style={{fontSize:12,color:"#6d778a"}}>{label}</div><strong style={{display:"block",fontSize:27,marginTop:6}}>{loading?"…":value??"-"}</strong></div>)}
   </div>
