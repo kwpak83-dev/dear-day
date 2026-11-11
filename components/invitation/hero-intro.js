@@ -26,6 +26,19 @@ function measureLines(node, text) {
 
 export default function HeroIntro({ intro }) {
   const measureRef = useRef(null);
+  const viewportRef = useRef(null);
+  const [canvasScale, setCanvasScale] = useState(1);
+
+  useLayoutEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    const updateScale = () => setCanvasScale(Math.min(1, viewport.clientWidth / 390));
+    updateScale();
+    const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(updateScale) : null;
+    observer?.observe(viewport);
+    if (!observer) window.addEventListener("resize", updateScale);
+    return () => { observer?.disconnect(); if (!observer) window.removeEventListener("resize", updateScale); };
+  }, []);
   const [lines, setLines] = useState(null);
   const fontFamily = getHeroFont(intro.fontId).family;
   const total = intro.writeDuration + intro.holdDuration + intro.fadeDuration;
@@ -96,9 +109,9 @@ export default function HeroIntro({ intro }) {
   }) : null;
 
   return <div className={`dd-hero-intro${ready ? " dd-hero-intro-ready" : ""}`} style={{ backgroundColor:intro.backgroundColor, "--dd-intro-write":`${intro.writeDuration}s`, "--dd-intro-hold":`${intro.holdDuration}s`, "--dd-intro-fade":`${intro.fadeDuration}s`, "--dd-intro-total":`${total}s` }} aria-hidden="true">
-    <span className="dd-hero-intro-text-wrap" style={{ fontFamily, fontSize:`${intro.fontSize}px`, color:intro.textColor }}>
+    <span ref={viewportRef} className="dd-hero-intro-viewport" style={{display:"flex",width:"100%",justifyContent:"center",alignItems:"center"}}><span className="dd-hero-intro-text-wrap" style={{ width:343.2, maxWidth:"none", flex:"none", zoom:canvasScale, fontFamily, fontSize:`${intro.fontSize}px`, color:intro.textColor }}>
       <span ref={measureRef} className="dd-hero-intro-measure">{text}</span>
       {ready && <span className="dd-hero-intro-lines">{animatedLines}</span>}
-    </span>
+    </span></span>
   </div>;
 }
