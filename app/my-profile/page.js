@@ -1,4 +1,5 @@
 "use client";
+import CreditBalance from "../../components/credit-balance";
 
 import { useEffect, useState } from "react";
 import MyPageLayout from "../../components/my-page-layout";
@@ -85,6 +86,7 @@ export default function MyProfile() {
 
   return <MyPageLayout current="profile">
     <section className="my-content profile-content">
+      <CreditBalance />
       <p className="section-kicker">MY PROFILE</p>
       <h1>내 정보</h1>
       <p className="my-intro">가입하신 계정 정보를 확인할 수 있습니다.</p>

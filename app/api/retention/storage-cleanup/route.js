@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { withRetentionRunLog } from "../../../../lib/retention-run-log.mjs";
 import { timingSafeEqual } from "node:crypto";
 import { inspectStorageReferences } from "../../../../lib/invitation-storage-references";
 import { cleanupFailureCategory } from "../../../../lib/storage-cleanup-diagnostics";
@@ -23,7 +24,7 @@ function authorized(request) {
   });
 }
 
-export async function GET(request) {
+async function handleRetentionRequest(request) {
   const testEventId = retentionTestScope(request, process.env);
   if (testEventId === false || (!testEventId && !authorized(request))) return Response.json({ error: "Unauthorized" }, { status: 401 });
   if (process.env.RETENTION_SCHEMA_READY !== "true") {
@@ -143,4 +144,8 @@ export async function GET(request) {
     console.error("Storage cleanup inspection failed", err);
     return Response.json({ error: "Storage cleanup inspection failed" }, { status: 500 });
   }
+}
+
+export async function GET(request) {
+  return withRetentionRunLog("storage-cleanup",request,handleRetentionRequest);
 }

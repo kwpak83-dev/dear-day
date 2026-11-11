@@ -381,7 +381,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .preview-content .classic-001 .classic-hero-copy h2{font-size:17px}
 .preview-content .classic-001 .classic-section,.preview-content .classic-001 .invitation-gallery,.preview-content .classic-001 .public-accounts{padding:43px 15px}
 .preview-content .classic-001 .classic-section-heading h3,.preview-content .classic-001 .invitation-gallery h2,.preview-content .classic-001 .public-accounts h2{font-size:19px}
-.preview-content .classic-001 .classic-message blockquote{font-size:11px}
+/* Invitation message typography is controlled by the template Body settings, not preview-specific font sizes. */
 .preview-content .classic-001 .public-gallery-grid{gap:5px}
 .preview-content .classic-001 .classic-footer{min-height:150px;padding:34px 16px}
 .preview-content .classic-001 .classic-footer>span{font-size:27px}
@@ -4704,8 +4704,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Keep configured invitation message Body typography identical across
    collection, create preview, full preview and published invitation.
    Legacy template/preview rules must not substitute a fixed font size. */
-.full-invitation-renderer .invitation-template.dd-template-typography :is(.romantic-message,.classic-message,.modern-message) blockquote,
-.create-page .preview-content .invitation-template.dd-template-typography :is(.romantic-message,.classic-message,.modern-message) blockquote {
+.invitation-template.dd-template-typography :is(.romantic-message,.classic-message,.modern-message) blockquote {
   font-family:var(--dd-body-font) !important;
   font-size:var(--dd-body-size) !important;
   font-weight:var(--dd-body-weight) !important;
@@ -4847,3 +4846,211 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-body-font-card-sample{display:flex;align-items:center;justify-content:center;flex:1;width:100%;margin-top:9px;font-size:18px;line-height:1.4;color:#42352f;text-align:center;overflow-wrap:anywhere}
 .dd-body-font-card-selected{align-self:flex-end;font-size:10px;color:#a66e60}
 @media(max-width:420px){.dd-body-font-modal-backdrop{padding:10px}.dd-body-font-modal{max-height:calc(100dvh - 20px)}.dd-body-font-modal-scroll{padding:10px}.dd-body-font-modal-grid{gap:8px}.dd-body-font-card{padding:10px 8px}.dd-body-font-card-sample{font-size:16px}}
+
+
+/* Editor preview parity: the published invitation and floating message preview
+   both lay out at 390px. A native scrollbar previously stole ~15px from the
+   editor phone, reflowing greeting lines. Keep the same 390px layout on PC
+   and mobile; scale the entire phone on small screens, never its text. */
+.create-page .preview-phone > .preview-content.full-invitation-renderer{
+  width:390px;
+  max-width:none;
+  box-sizing:border-box;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+.create-page .preview-phone > .preview-content.full-invitation-renderer::-webkit-scrollbar{
+  display:none;
+}
+.create-page .preview-phone > .preview-content.full-invitation-renderer > .invitation-template{
+  width:390px!important;
+  min-width:390px!important;
+  max-width:none!important;
+}
+@media (max-width:760px){
+  .create-page .preview-phone{
+    width:406px;
+    height:650px;
+    box-sizing:border-box;
+    flex-shrink:0;
+    transform:scale(.78);
+    transform-origin:top center;
+    margin-bottom:-130px;
+  }
+  .create-page .preview-phone > .preview-content{
+    height:595px;
+  }
+  .create-page .preview-panel{
+    height:640px;
+  }
+}
+
+/* Full-screen editor preview: render at the same 390px design width as the
+   inline greeting preview and editor phone, then zoom the whole canvas to fit. */
+.dd-editor-full-preview-stage{width:100%;min-width:0}
+.dd-editor-full-preview-stage > .dd-editor-full-preview-canvas{
+  width:390px;
+  max-width:none;
+  margin:0 auto;
+  box-shadow:none;
+}
+.dd-editor-full-preview-canvas > .full-preview-document{
+  width:390px;
+  max-width:none;
+  margin:0;
+  box-shadow:none;
+}
+
+
+/* Dear Day publish flow: shared neutral dialogs across mobile and desktop. */
+.create-page .dd-publish-dialog-backdrop{background:rgba(28,27,26,.42);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:10050}
+.create-page .dd-publish-dialog{width:min(390px,calc(100vw - 36px));max-width:390px;min-width:0;box-sizing:border-box;padding:32px 26px 28px;border:1px solid #e9e7e4;border-radius:22px;background:#fff;color:#292929;text-align:center;box-shadow:0 20px 56px rgba(24,24,24,.17);display:flex;flex-direction:column;align-items:stretch;gap:0}
+.create-page .dd-publish-dialog .dd-publish-dialog-icon{width:58px;height:58px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;background:#f7f4f1;color:#51473f;font-size:30px;font-family:Arial,sans-serif;font-weight:400}
+.create-page .dd-publish-dialog h2{margin:0 0 13px;font-family:inherit;font-size:clamp(21px,5.5vw,24px);font-weight:700;letter-spacing:-.055em;line-height:1.35;color:#292929;word-break:keep-all;overflow-wrap:break-word}
+.create-page .dd-publish-dialog>p:not(.dd-publish-dialog-kicker){margin:0 0 22px;color:#777;font-size:14px;line-height:1.65;word-break:keep-all}
+.create-page .dd-publish-dialog-credit{width:100%;display:flex;justify-content:space-between;align-items:center;padding:15px 16px;margin-bottom:20px;border-radius:12px;background:#f7f7f7;font-size:14px}
+.create-page .dd-publish-dialog-credit span{color:#777}
+.create-page .dd-publish-dialog-credit strong{color:#292929;font-size:15px}
+.create-page .dd-publish-dialog-credit .dd-credit-empty{color:#d66c60}
+.create-page .dd-publish-dialog-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%}
+.create-page .dd-publish-dialog .dd-publish-dialog-action{min-height:49px;width:100%;display:flex;justify-content:center;align-items:center;padding:12px 9px;border:1px solid transparent;border-radius:11px;font-size:14px;font-weight:700;line-height:1.4;text-decoration:none;box-shadow:none;cursor:pointer}
+.create-page .dd-publish-dialog .dd-publish-dialog-primary{background:#292929;color:#fff;border-color:#292929}
+.create-page .dd-publish-dialog .dd-publish-dialog-secondary{background:#f5f5f5;color:#555;border-color:#dedede}
+.create-page .dd-publish-dialog .dd-publish-dialog-action:disabled{opacity:.6;cursor:wait}
+.create-page .dd-publish-dialog .dd-publish-dialog-footnote{margin-top:13px;color:#999;font-size:12px}
+.create-page .dd-publish-dialog .dd-publish-dialog-error{margin:-6px 0 16px!important;color:#c45f55!important;font-size:13px!important}
+.create-page .dd-publish-done .dd-publish-done-icon{background:#f9eee9;color:#d66c60;font-weight:700}
+.create-page .dd-publish-done .dd-publish-dialog-kicker{margin:0 0 12px;color:#a58c7e;font-size:10px;font-weight:700;letter-spacing:.14em}
+.create-page .dd-publish-done .dd-publish-dialog-primary{margin-bottom:10px}
+@media(max-width:380px){.create-page .dd-publish-dialog{padding:28px 20px 24px}}
+
+
+/* Center icon artwork geometrically within the publish dialog's circular badge. */
+.create-page .dd-publish-dialog .dd-publish-dialog-icon{display:flex;align-items:center;justify-content:center;line-height:1}
+.create-page .dd-publish-dialog .dd-publish-dialog-icon svg{display:block;flex:none;transform:translate(1px,1px)}
+
+
+/* Warm beige live preview CTA in body theme editor. */
+.create-page .dd-body-style-heading .dd-body-live-preview-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex-shrink:0;padding:10px 12px;border:1px solid #c7c7c7;border-radius:10px;background:#fff;color:#292929;font-size:12px;font-weight:700;line-height:1.25;white-space:nowrap;box-shadow:0 2px 5px rgba(0,0,0,.09)}
+.create-page .dd-body-style-heading .dd-body-live-preview-button svg{flex:none;display:block}
+.create-page .dd-body-style-heading .dd-body-live-preview-button:hover{background:#f7f7f7;border-color:#aaa}
+.create-page .dd-body-style-heading .dd-body-live-preview-button:focus-visible{outline:2px solid #79533f;outline-offset:2px}
+
+/* Wedding editor: checkbox labels 1px smaller than their 17px section headings. */
+.create-page .dd-parents-intro-editor > .dd-transport-guide-toggle,
+.create-page .dd-growth-timeline-editor > .dd-transport-guide-toggle{font-size:13px}
+
+
+/* Match BGM MP3 picker to the Kakao share image file selection control. */
+.create-page .dd-share-settings input.dd-bgm-file-picker[type="file"]{display:block;width:100%;max-width:100%;min-height:58px;box-sizing:border-box;padding:12px;border:1px solid #dedede;border-radius:12px;background:#fff;color:#333;font-size:12px;line-height:30px;cursor:pointer}
+.create-page .dd-share-settings input.dd-bgm-file-picker[type="file"]::file-selector-button{display:inline-block;appearance:auto;padding:9px 13px;margin-right:12px;border:1px solid #dedede;border-radius:8px;background:#f5f5f5;color:#242424;font-size:12px;font-weight:500;line-height:1.3;cursor:pointer}
+.create-page .dd-share-settings input.dd-bgm-file-picker[type="file"]:disabled{opacity:.55;cursor:not-allowed}
+
+
+/* Give only the program quick-menu sheet a taller reading area in published
+   invitations, landing experiences and collection/editor previews. */
+.invitation-bottom-sheet-layer .invitation-bottom-sheet--program{
+  height:95%;
+  max-height:95%;
+}
+.invitation-bottom-sheet-layer--preview .invitation-bottom-sheet--program{
+  height:95%;
+  max-height:95%;
+}
+
+
+/* Compact RSVP and guestbook form layout inside quick-menu bottom sheets only.
+   Applies equally to published invitations and embedded landing/collection previews. */
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section{
+  padding-top:18px;
+  padding-bottom:24px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp .dd-stationery-heading,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .dd-stationery-heading{
+  margin-bottom:12px;
+  padding-top:0;
+  padding-bottom:0;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp .dd-stationery-heading .dd-stationery-clipart,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .dd-stationery-heading .dd-stationery-clipart{
+  margin-bottom:5px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp .rsvp-intro{
+  margin-bottom:16px;
+  line-height:1.55;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp form{
+  gap:10px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp form>label,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp form>fieldset,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .guestbook-form label{
+  gap:5px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp .rsvp-status-options{
+  gap:8px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp .rsvp-status-options span{
+  display:flex;
+  min-height:42px;
+  box-sizing:border-box;
+  align-items:center;
+  justify-content:center;
+  padding:8px 10px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp :is(input:not([type=radio]),select),
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .guestbook-form input{
+  box-sizing:border-box;
+  height:42px;
+  min-height:42px;
+  padding:9px 12px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .guestbook-form{
+  gap:10px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .guestbook-form textarea{
+  box-sizing:border-box;
+  min-height:80px;
+  height:80px;
+  padding:10px 12px;
+  resize:vertical;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .guestbook-form>button{
+  min-height:44px;
+}
+
+
+/* Guestbook bottom sheet: bring the decorative heading closer to the form. */
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .dd-stationery-heading{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  margin-bottom:12px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .dd-stationery-heading h2{
+  margin-bottom:10px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .dd-stationery-heading .dd-guestbook-intro{
+  margin:8px 0 0;
+  color:#917a6d;
+  font-size:12px;
+  font-weight:400;
+  line-height:1.5;
+  letter-spacing:0;
+  text-align:center;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .dd-stationery-heading::after{
+  margin-top:8px;
+  margin-bottom:0;
+}
+
+
+/* DearDay footer heart-envelope CTA, replacing the old blue arrow. */
+.dearday-brand-footer .dearday-compact-envelope{display:inline-flex;align-items:center;justify-content:center;width:30px;height:28px;flex:none;transition:transform .18s ease}
+.dearday-brand-footer .dearday-compact-envelope svg{display:block;width:100%;height:100%}
+.dearday-brand-footer .dearday-compact-action:hover .dearday-compact-envelope{transform:translateY(-2px)}
+.dearday-brand-footer .dearday-compact-action:focus-visible{outline-color:#ad784f}
+
+/* Smaller footer envelope with three upper-right accent rays. */
+.dearday-brand-footer .dearday-compact-envelope{width:25px;height:23px}

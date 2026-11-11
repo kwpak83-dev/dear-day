@@ -18,7 +18,8 @@ function DrawerIcon({name}) {
   templates:<><rect x="3" y="6" width="15" height="13" rx="1.5"/><path d="m7 6 2-3h11a1 1 0 0 1 1 1v12"/><circle cx="8" cy="10" r="1" fill="#e7b7a4" stroke="none"/><path d="m5 17 4-4 3 2 3-3 3 5"/></>,
   experience:<><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3Z" fill="#e8a79e" stroke="#c78978"/><path d="M7 22h10"/></>,
   ticket:<><path d="M3 7h18v4a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4Z"/><path d="M12 7v2m0 6v3" strokeDasharray="2 2"/><path d="m8 12 2.5-.4L12 9l1.5 2.6 2.5.4-2 2 .5 2.5L12 15l-2.5 1.5L10 14Z" fill="#eec7a3" stroke="none"/></>,
-  inquiry:<><path d="M4 5h16v12H9l-5 4V5Z"/><path d="M9 10h6m-6 4h4"/></>
+  inquiry:<><path d="M4 5h16v12H9l-5 4V5Z"/><path d="M9 10h6m-6 4h4"/></>,
+  admin:<><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M4.9 4.9 7 7m10 10 2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></>
  };
  return <svg {...common}>{shapes[name]}</svg>;
 }
@@ -41,6 +42,7 @@ export default function Home() {
   const [notice, setNotice] = useState("");
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
+  const [canManageAdmin, setCanManageAdmin] = useState(false);
   const [authReturnPath, setAuthReturnPath] = useState(DEFAULT_AUTH_RETURN_PATH);
 
   useEffect(() => {
@@ -51,6 +53,23 @@ export default function Home() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => syncSession(session));
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    let active = true;
+    setCanManageAdmin(false);
+    if (!user?.id) return;
+    (async () => {
+      try {
+        const supabase = getSupabaseBrowserClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session || session.user.id !== user.id) return;
+        const response = await fetch("/api/admin/menu-access", { headers: { Authorization: "Bearer " + session.access_token }, cache: "no-store" });
+        const result = response.ok ? await response.json() : null;
+        if (active) setCanManageAdmin(result?.canManage === true);
+      } catch { if (active) setCanManageAdmin(false); }
+    })();
+    return () => { active = false; };
+  }, [user?.id]);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -144,7 +163,7 @@ export default function Home() {
     <header className="landing-header">
       <a className="landing-brand" href="#top" aria-label="DearDay 홈"><DearDayLogo /></a>
       <nav className="landing-nav"><button onClick={start}>초대장 만들기</button><a href="/templates">템플릿</a><a href="#how">이용안내</a><a href="#story">고객센터</a></nav>
-      <div className="landing-actions">{user ? <><span>{providerLabel}</span><a href="/my-invitations">마이페이지</a><button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={() => window.location.assign("/templates")}>지금, 초대장 만들기 →</button></div>
+      <div className="landing-actions">{user ? <><span>{providerLabel}</span><a href="/my-invitations">마이페이지</a>{canManageAdmin && <a href="/admin/credits" aria-label="관리자 페이지">관리자 페이지</a>}<button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={() => window.location.assign("/templates")}>지금, 초대장 만들기 →</button></div>
       <div className="landing-mobile-actions"><button aria-label="검색" onClick={comingSoon}>⌕</button><button className="landing-menu" aria-label="메뉴 열기" onClick={() => setMenuOpen(!menuOpen)}>☰</button></div>
       <a className="landing-mobile-invitations" href={user ? "/my-invitations" : "/?login=required&returnUrl=%2Fmy-invitations"} aria-label="내 초대장" title="내 초대장"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" aria-hidden="true"><defs><linearGradient id="dd-sealed-envelope" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#fffaf3"/><stop offset="1" stopColor="#e8d7c7"/></linearGradient></defs><rect x="2.5" y="4" width="19" height="16" rx="2.3" fill="url(#dd-sealed-envelope)" stroke="#d5bfae" strokeWidth=".8"/><path d="M3.5 5.5 12 12.2l8.5-6.7M3.5 18.5l6.3-6.1M20.5 18.5l-6.3-6.1" stroke="#c9ad98" strokeWidth=".85" strokeLinejoin="round"/><circle cx="12" cy="12.2" r="2.15" fill="#a87856" stroke="#d6b18d" strokeWidth=".65"/><circle cx="12" cy="12.2" r="1.3" fill="none" stroke="#e8cfb3" strokeWidth=".45"/><path d="M12 11.2v2M11.3 11.8l.7-.6.7.6" stroke="#e8cfb3" strokeWidth=".45" strokeLinecap="round"/></svg></a>
       {menuOpen && <div className="dd-drawer-layer">
@@ -158,6 +177,7 @@ export default function Home() {
           <a className="dd-drawer-link" href="#how" onClick={() => setMenuOpen(false)}><span><DrawerIcon name="experience" /></span>초대장 체험하기 <b>›</b></a>
           <div className="dd-drawer-link dd-drawer-disabled" aria-disabled="true"><span className="dd-drawer-store-icon"><img src="/naver-smartstore-icon.svg" alt="" width="32" height="18" /></span><span>이용권 구매<small>네이버 스마트스토어 · 준비 중</small></span><b>›</b></div>
           <a className="dd-drawer-link" href={user ? "/my-inquiries" : "/?login=required&returnUrl=%2Fmy-inquiries"} onClick={() => setMenuOpen(false)}><span><DrawerIcon name="inquiry" /></span>문의내역 <b>›</b></a>
+          {canManageAdmin && <><div style={{borderTop:"1px solid #e9e2dc",margin:"16px 0 8px"}}/><a className="dd-drawer-link" href="/admin/credits" onClick={() => setMenuOpen(false)}><span><DrawerIcon name="admin" /></span>관리자 페이지 <b>›</b></a></>}
           <div className="dd-drawer-bottom">{user ? <button type="button" onClick={() => {setMenuOpen(false);signOut();}}>로그아웃</button> : <button type="button" onClick={() => {setMenuOpen(false);openLogin();}}>로그인</button>}</div>
         </nav>
       </div>}
