@@ -54,6 +54,7 @@ export async function GET(request) {
     // Deleted invitations cannot be joined to events; use retained owner_id.
     const ownerIds=[...new Set([...auditPage,...(j.data||[])].map(row=>row.owner_id).filter(id=>typeof id==="string" && /^[0-9a-f-]{36}$/i.test(id)))];
     const emailByOwner=new Map();
+    const nameByOwner=new Map();
     await Promise.all(ownerIds.map(async id=>{
       try {
         const {data,error}=await db.auth.admin.getUserById(id);
@@ -64,13 +65,15 @@ export async function GET(request) {
           const isRealEmail=(value)=>typeof value==="string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && !value.toLowerCase().endsWith("@accounts.dear-day.com");
           const realEmail=isRealEmail(profileEmail)?profileEmail:isRealEmail(loginEmail)?loginEmail:null;
           if(realEmail)emailByOwner.set(id,realEmail);
+          const realName=account.user_metadata?.name;
+          if(typeof realName==="string" && realName.trim())nameByOwner.set(id,realName.trim());
         }
       } catch {}
     }));
     return Response.json({
       runs,runLogsAvailable,
-      audits:auditPage.map(x=>({...x,created_at:auditTime(x),loginEmail:emailByOwner.get(x.owner_id)||null})),auditTotal,
-      jobs:(j.data||[]).map(({last_error,...job})=>({...job,loginEmail:emailByOwner.get(job.owner_id)||null,errorFlag:Boolean(last_error)})),
+      audits:auditPage.map(x=>({...x,created_at:auditTime(x),loginEmail:emailByOwner.get(x.owner_id)||null,userName:nameByOwner.get(x.owner_id)||null})),auditTotal,
+      jobs:(j.data||[]).map(({last_error,...job})=>({...job,loginEmail:emailByOwner.get(job.owner_id)||null,userName:nameByOwner.get(job.owner_id)||null,errorFlag:Boolean(last_error)})),
       jobTotal:j.count||0,counts,completed:completedCount,page,auditTruncated:(a.data||[]).length===1000,auditUndated:auditRows.filter(row=>!auditTime(row)).length
     },{headers:{"Cache-Control":"no-store"}});
   }catch(error){
