@@ -9,6 +9,7 @@ import InvitationProgram from "../components/invitation/invitation-program";
 import { PROGRAM_DEFAULTS, normalizeProgram } from "../lib/invitation-program";
 import LandingInvitationExperience from "../components/landing-invitation-experience";
 import LandingConceptCarousel from "../components/landing-concept-carousel";
+import LandingIntroEditorDemo from "../components/landing-intro-editor-demo";
 import "./landing-refresh.css";
 
 
@@ -200,7 +201,7 @@ export default function Home() {
         {[
           ["01", "UNIQUE DESIGN", "흔한 초대장이 아닌, 다채로운 콘셉트의 초대장", "인생네컷, 영화 포스터, 계절 테마까지. 개성 있고 재치 있는 디자인으로 초대장을 받는 분들에게 특별한 즐거움을 선물하세요.", "theme"],
           ["02", "EVENT PROGRAM", "식순지까지 담은 초대장, 준비는 더 간편하게.", "결혼식부터 돌잔치, 칠순, 각종 행사까지. 별도의 식순지를 인쇄하거나 배포할 필요 없이, 모바일 초대장 하나로 행사 순서를 아름답고 편리하게 안내해요.", "program"],
-          ["03", "INSTANT PREVIEW", "작성하면서 바로 확인, 더 쉽고 편리하게.", "인사말부터 표지 문구, 인트로, 행사 식순까지. 전체 미리보기 화면을 오갈 필요 없이, 편집 중인 부분을 팝업 미리보기로 바로 확인하며 완성할 수 있어요.", "preview"],
+          ["03", "INSTANT PREVIEW", "문구를 바꾸면, 미리보기로 바로 확인!", "인트로 문구를 직접 수정하고 미리보기로 확인해 보세요. 초대장을 완성하기 전에도 원하는 분위기를 간편하게 확인할 수 있어요.", "preview"],
           ["04", "SPECIAL EFFECTS", "초대장을 여는 순간, 감동이 시작돼요.", "인트로와 배경음악, 테마에 어울리는 특별한 연출까지. 카페 오픈 초대장에 커피콩이 떨어지는 효과처럼 행사마다 색다른 분위기를 전해요.", "effects"],
           ["05", "SMART RSVP", "참석부터 식사까지, 더 똑똑하게.", "참석 여부와 동반 인원을 간편하게 확인하고 관리해요. 식사 여부와 인원별 통계까지 한눈에 살펴볼 수 있도록 기능을 확장할 예정이에요.", "rsvp"],
           ["06", "ALL OCCASIONS", "인생의 순간부터, 새로운 시작까지.", "결혼 → 돌잔치 → 자녀 생일 → 부모님 칠순, 그리고 모임·행사와 개업·오픈까지. 행사별 맞춤 테마에 어울리는 연출을 제공해요.", "occasions"],
@@ -222,12 +223,12 @@ export default function Home() {
                     </div></div>
                     <p className="dd-landing-program-note">식순 디자인을 전환해 보세요</p>
                   </div> :
-                    kind === "preview" ? <div className="dd-feature-program"><strong>✦ 초대 문구 미리보기</strong><span>인사말을 작성하고</span><span>↗ 필요한 부분만 바로 확인</span><span>♡ 화면 이동 없이 완성해요</span></div> :
+                    kind === "preview" ? <LandingIntroEditorDemo /> :
                     kind === "rsvp" ? <div className="dd-feature-program"><strong>참석 여부 확인</strong><span>○ 참석할게요</span><span>○ 참석이 어려워요</span><span>축하 메시지를 남겨주세요 ♡</span></div> :
                     kind === "occasions" ? <div className="dd-feature-occasion-grid"><span>결혼식</span><span>돌잔치</span><span>생일</span><span>환갑·칠순·팔순</span><span>모임·행사</span><span>개업·오픈</span></div> :
                     <div className="dd-feature-demo-paper"><span>YOUR SPECIAL DAY</span><strong>{kind === "effects" ? "A moment to remember" : kind === "edit" ? "Make it yours" : "Good People, Good Moment."}</strong><i /><small>DEARDAY · MOBILE INVITATION</small></div>}
                 </div>
-                {kind !== "theme" && kind !== "program" && <div className="dd-feature-demo-bottom">미리보기 · 영상 교체 예정</div>}
+                {kind !== "theme" && kind !== "program" && kind !== "preview" && <div className="dd-feature-demo-bottom">미리보기 · 영상 교체 예정</div>}
               </div>
             </div>
             <div className="dd-feature-copy">
@@ -237,13 +238,13 @@ export default function Home() {
               <ul className="dd-feature-checks">
                 {(kind === "theme" ? ["인생네컷·영화 포스터·계절 테마", "개성 넘치는 다채로운 초대장 디자인"] :
                   kind === "program" ? ["행사 유형에 맞춘 식순·일정 안내", "클립아트와 감성 타임라인"] :
-                  kind === "preview" ? ["전체 화면 이동 없이, 필요한 부분만 미리보기", "작성과 동시에 확인하고 바로 수정"] :
+                  kind === "preview" ? ["인트로 문구·글꼴·색상 직접 편집", "애니메이션 미리보기로 즉시 확인"] :
                   kind === "effects" ? ["인트로와 배경음악으로 감성 연출", "행사 테마별 애니메이션·특수효과"] :
                   kind === "rsvp" ? ["참석 여부와 동반 인원 확인", "식사 여부·통계 기능 확장 예정"] :
                   kind === "occasions" ? ["인생의 주요 순간부터 모임·개업까지", "행사별 테마와 맞춤 연출"] :
                   ["발행 후 내용과 사진 수정", "발행 후에도 디자인 변경"]).map((benefit) => <li key={benefit}><span aria-hidden="true">✓</span>{benefit}</li>)}
               </ul>
-              <span className="dd-feature-pill">{kind === "theme" ? "취향에 맞게 고르는 특별한 콘셉트" : kind === "program" ? "감성적인 식순·일정 안내" : kind === "preview" ? "편집 중 바로 확인하는 실시간 미리보기" : kind === "effects" ? "테마마다 다른 특별한 연출" : kind === "rsvp" ? "참석 관리 · 식사 기능 확장 예정" : kind === "occasions" ? "인생의 모든 특별한 날에" : "발행 후에도 유연하게 변경"}</span>
+              <span className="dd-feature-pill">{kind === "theme" ? "취향에 맞게 고르는 특별한 콘셉트" : kind === "program" ? "감성적인 식순·일정 안내" : kind === "preview" ? "직접 편집하고 바로 체험하는 미리보기" : kind === "effects" ? "테마마다 다른 특별한 연출" : kind === "rsvp" ? "참석 관리 · 식사 기능 확장 예정" : kind === "occasions" ? "인생의 모든 특별한 날에" : "발행 후에도 유연하게 변경"}</span>
             </div>
           </article>
         ))}
