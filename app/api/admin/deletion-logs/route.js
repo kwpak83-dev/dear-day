@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 export const dynamic = "force-dynamic";
 const auditTime = (row) => row.deleted_at || row.recorded_at || row.executed_at || row.finished_at || row.completed_at || row.created_at || row.updated_at || row.attempted_at || null;
-const withinPeriod = (row, since) => !since || (auditTime(row) && Date.parse(auditTime(row)) >= Date.parse(since));
+const withinPeriod = (row, since) => !since || !auditTime(row) || Date.parse(auditTime(row)) >= Date.parse(since);
 
 export async function GET(request) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -54,7 +54,7 @@ export async function GET(request) {
       runs,runLogsAvailable,
       audits:auditPage.map(x=>({...x,created_at:auditTime(x)})),auditTotal,
       jobs:(j.data||[]).map(({last_error,...job})=>({...job,errorFlag:Boolean(last_error)})),
-      jobTotal:j.count||0,counts,completed:completedCount,page,auditTruncated:(a.data||[]).length===1000
+      jobTotal:j.count||0,counts,completed:completedCount,page,auditTruncated:(a.data||[]).length===1000,auditUndated:auditRows.filter(row=>!auditTime(row)).length
     },{headers:{"Cache-Control":"no-store"}});
   }catch(error){
     console.error("Deletion logs query failed",{stage:error.queryStage,code:error.dbCode,message:error.dbMessage||error.message});
