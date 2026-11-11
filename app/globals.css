@@ -4923,3 +4923,8 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .dd-publish-done .dd-publish-dialog-kicker{margin:0 0 12px;color:#a58c7e;font-size:10px;font-weight:700;letter-spacing:.14em}
 .create-page .dd-publish-done .dd-publish-dialog-primary{margin-bottom:10px}
 @media(max-width:380px){.create-page .dd-publish-dialog{padding:28px 20px 24px}}
+
+
+/* Center icon artwork geometrically within the publish dialog's circular badge. */
+.create-page .dd-publish-dialog .dd-publish-dialog-icon{display:flex;align-items:center;justify-content:center;line-height:1}
+.create-page .dd-publish-dialog .dd-publish-dialog-icon svg{display:block;flex:none;transform:translate(1px,1px)}
