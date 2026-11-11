@@ -26,7 +26,7 @@ export async function GET(request) {
   const since=days==="all"?null:new Date(Date.now()-Number(days)*86400000).toISOString();
   try{
     let audits=db.from("invitation_deletion_audit").select("*").limit(1000);
-    let jobs=db.from("invitation_storage_cleanup_jobs").select("id,event_id,bucket,status,attempts,last_error,created_at,updated_at,next_attempt_at",{count:"exact"}).order("updated_at",{ascending:false}).range((page-1)*20,page*20-1);
+    let jobs=db.from("invitation_storage_cleanup_jobs").select("id,event_id,owner_id,bucket,status,attempts,last_error,created_at,updated_at,next_attempt_at",{count:"exact"}).order("updated_at",{ascending:false}).range((page-1)*20,page*20-1);
     if(since){jobs=jobs.gte("created_at",since);}
     if(search){audits=audits.eq("event_id",search);jobs=jobs.eq("event_id",search);}
     const [a,j]=await Promise.all([audits,jobs]);
@@ -50,10 +50,20 @@ export async function GET(request) {
     const runLogsAvailable=!runResult.error;
     if(runResult.error && runResult.error.code!=="42P01" && runResult.error.code!=="PGRST205")console.warn("Retention run history unavailable",runResult.error.code);
     const runs=(runResult.data||[]).filter(row=>!since||Date.parse(row.started_at)>=Date.parse(since));
+    // Resolve account emails only after the server-side administrator check.
+    // Deleted invitations cannot be joined to events; use retained owner_id.
+    const ownerIds=[...new Set([...auditPage,...(j.data||[])].map(row=>row.owner_id).filter(id=>typeof id==="string" && /^[0-9a-f-]{36}$/i.test(id)))];
+    const emailByOwner=new Map();
+    await Promise.all(ownerIds.map(async id=>{
+      try {
+        const {data,error}=await db.auth.admin.getUserById(id);
+        if(!error && data?.user?.email)emailByOwner.set(id,data.user.email);
+      } catch {}
+    }));
     return Response.json({
       runs,runLogsAvailable,
-      audits:auditPage.map(x=>({...x,created_at:auditTime(x)})),auditTotal,
-      jobs:(j.data||[]).map(({last_error,...job})=>({...job,errorFlag:Boolean(last_error)})),
+      audits:auditPage.map(x=>({...x,created_at:auditTime(x),loginEmail:emailByOwner.get(x.owner_id)||null})),auditTotal,
+      jobs:(j.data||[]).map(({last_error,...job})=>({...job,loginEmail:emailByOwner.get(job.owner_id)||null,errorFlag:Boolean(last_error)})),
       jobTotal:j.count||0,counts,completed:completedCount,page,auditTruncated:(a.data||[]).length===1000,auditUndated:auditRows.filter(row=>!auditTime(row)).length
     },{headers:{"Cache-Control":"no-store"}});
   }catch(error){
