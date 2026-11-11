@@ -4,15 +4,18 @@ const json=(data,status=200)=>NextResponse.json(data,{status});
 async function context(request){
  const token=request.headers.get("authorization")?.replace(/^Bearer\s+/i,"");
  if(!token) return {error:"로그인이 필요합니다.",status:401};
- const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.SUPABASE_SERVICE_ROLE_KEY;
- if(!url||!key) return {error:"관리자 서비스를 준비하지 못했어요.",status:503};
+ const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.SUPABASE_SERVICE_ROLE_KEY,publishableKey=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+ if(!url||!key||!publishableKey) return {error:"관리자 서비스를 준비하지 못했어요.",status:503};
  const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
  const {data:{user},error}=await db.auth.getUser(token);
  if(error||!user) return {error:"로그인이 만료되었습니다.",status:401};
- // Only explicitly configured super-admin user IDs can change credit balances.
+ const adminDb=createClient(url,publishableKey,{global:{headers:{Authorization:"Bearer "+token}},auth:{persistSession:false,autoRefreshToken:false}});
+ const {data:isAdmin,error:adminError}=await adminDb.rpc("is_admin");
+ if(adminError)return {error:"관리자 권한 확인에 실패했어요.",status:503};
+ if(isAdmin!==true)return {error:"관리자만 이용권을 조회할 수 있어요.",status:403};
  const allowed=(process.env.DEARDAY_SUPER_ADMIN_IDS||"").split(",").map(s=>s.trim()).filter(Boolean);
- if(!allowed.includes(user.id)) return {error:"이용권 관리 권한이 없습니다.",status:403};
- return {db,user};
+ return {db,user,canManage:allowed.includes(user.id)};
+
 }
 export async function GET(request){
  const ctx=await context(request);if(ctx.error)return json({error:ctx.error},ctx.status);
@@ -47,6 +50,7 @@ export async function GET(request){
 }
 export async function POST(request){
  const ctx=await context(request);if(ctx.error)return json({error:ctx.error},ctx.status);
+ if(!ctx.canManage)return json({error:"이용권 지급·회수에는 DEARDAY_SUPER_ADMIN_IDS에 관리자 계정 UUID 등록이 필요해요."},403);
  const b=await request.json().catch(()=>null);
  if(!b||typeof b!=="object")return json({error:"요청 형식이 올바르지 않아요."},400);
  const reason=typeof b.reason==="string"?b.reason.trim():"";
