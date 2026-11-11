@@ -1,0 +1,45 @@
+import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
+const json=(data,status=200)=>NextResponse.json(data,{status});
+async function context(request){
+ const token=request.headers.get("authorization")?.replace(/^Bearer\s+/i,"");
+ if(!token) return {error:"로그인이 필요합니다.",status:401};
+ const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.SUPABASE_SERVICE_ROLE_KEY;
+ if(!url||!key) return {error:"관리자 서비스를 준비하지 못했어요.",status:503};
+ const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
+ const {data:{user},error}=await db.auth.getUser(token);
+ if(error||!user) return {error:"로그인이 만료되었습니다.",status:401};
+ // Only explicitly configured super-admin user IDs can change credit balances.
+ const allowed=(process.env.DEARDAY_SUPER_ADMIN_IDS||"").split(",").map(s=>s.trim()).filter(Boolean);
+ if(!allowed.includes(user.id)) return {error:"이용권 관리 권한이 없습니다.",status:403};
+ return {db,user};
+}
+export async function GET(request){
+ const ctx=await context(request);if(ctx.error)return json({error:ctx.error},ctx.status);
+ const query=new URL(request.url).searchParams.get("userId");
+ if(!query||!/^[0-9a-f-]{36}$/i.test(query))return json({error:"회원 ID를 입력해 주세요."},400);
+ const [grants,ledger]=await Promise.all([
+ ctx.db.from("credit_grants").select("*").eq("user_id",query).order("created_at",{ascending:false}).limit(100),
+ ctx.db.from("credit_ledger").select("*").eq("user_id",query).order("created_at",{ascending:false}).limit(100)
+ ]);
+ if(grants.error||ledger.error)return json({error:"이용권 조회에 실패했어요."},503);
+ return json({grants:grants.data,ledger:ledger.data});
+}
+export async function POST(request){
+ const ctx=await context(request);if(ctx.error)return json({error:ctx.error},ctx.status);
+ const b=await request.json().catch(()=>null);
+ if(!b||typeof b!=="object")return json({error:"요청 형식이 올바르지 않아요."},400);
+ const reason=typeof b.reason==="string"?b.reason.trim():"";
+ if(reason.length<2||reason.length>200)return json({error:"지급/회수 사유를 입력해 주세요."},400);
+ let result;
+ if(b.action==="grant"){
+  const expires=new Date(b.expiresAt);
+  if(!Number.isInteger(b.quantity)||b.quantity<1||b.quantity>10000||!Number.isFinite(expires.getTime())||expires.getTime()<=Date.now())return json({error:"수량 또는 유효기간이 올바르지 않아요."},400);
+  result=await ctx.db.rpc("credit_issue_admin",{p_user:b.userId,p_actor:ctx.user.id,p_quantity:b.quantity,p_expires:expires.toISOString(),p_reason:reason,p_note:typeof b.note==="string"?b.note.slice(0,500):null});
+ }else if(b.action==="revoke"){
+  if(!Number.isInteger(b.quantity)||b.quantity<1||typeof b.grantId!=="string")return json({error:"회수 정보를 확인해 주세요."},400);
+  result=await ctx.db.rpc("credit_revoke_admin",{p_grant:b.grantId,p_actor:ctx.user.id,p_quantity:b.quantity,p_reason:reason});
+ }else return json({error:"지원하지 않는 작업이에요."},400);
+ if(result.error)return json({error:"이용권 처리에 실패했어요.",code:result.error.code},409);
+ return json({ok:true,result:result.data});
+}
