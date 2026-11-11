@@ -14,5 +14,6 @@ export default function AdminDesignNav({ current = "" }) {
       {index>0&&<span aria-hidden="true" style={{color:"#9b8b82"}}>·</span>}
       <a href={href} aria-current={current===key?"page":undefined} style={{fontWeight:current===key?800:500,textDecoration:current===key?"underline":"none"}}>{label} →</a>
     </span>)}
+    <a href="/" aria-label="디어데이 메인페이지로 이동" style={{marginLeft:"auto",display:"inline-flex",alignItems:"center",justifyContent:"center",padding:"9px 14px",border:"1px solid #cbd2df",borderRadius:8,background:"#fff",color:"#263e80",fontSize:13,fontWeight:600,textDecoration:"none",whiteSpace:"nowrap"}}>← 디어데이 홈으로</a>
   </nav>;
 }
