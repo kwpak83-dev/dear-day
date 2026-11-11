@@ -7,7 +7,7 @@ const section={background:"#fff",border:"1px solid #e1e5ed",borderRadius:12,padd
 const input={padding:"10px 12px",border:"1px solid #d6dce7",borderRadius:8,fontSize:14,minWidth:0,flex:1};
 const btn={padding:"10px 16px",border:"1px solid #cbd2df",background:"#fff",borderRadius:8,cursor:"pointer",color:"#263e80"};
 const date=v=>v?new Date(v).toLocaleString("ko-KR",{timeZone:"Asia/Seoul"}):"정보 없음";
-const phone=v=>{const d=(v||"").replace(/\\D/g,"");return d.length===11?d.replace(/(\\d{3})(\\d{4})(\\d{4})/,"$1-$2-$3"):v||"정보 없음";};
+const phone=v=>{const d=(v||"").replace(/\D/g,"");return d.length===11?d.replace(/(\d{3})(\d{4})(\d{4})/,"$1-$2-$3"):v||"정보 없음";};
 export default function MembersAdmin(){
  const [token,setToken]=useState(""),[users,setUsers]=useState([]),[search,setSearch]=useState(""),[query,setQuery]=useState(""),[page,setPage]=useState(1),[hasMore,setHasMore]=useState(false),[selected,setSelected]=useState(null),[detail,setDetail]=useState(null),[busy,setBusy]=useState(false),[message,setMessage]=useState("");
  useEffect(()=>{let active=true;getSupabaseBrowserClient()?.auth.getSession().then(({data})=>{if(active)setToken(data.session?.access_token||"");});return()=>{active=false;};},[]);
@@ -31,7 +31,7 @@ export default function MembersAdmin(){
     <table style={{width:"100%",borderCollapse:"collapse",fontSize:13,textAlign:"left",minWidth:720}}>
      <thead><tr style={{background:"#f4f6fa"}}>{["이름","연락처","이메일","가입일","최근 로그인","상세"].map(h=><th key={h} style={{padding:11}}>{h}</th>)}</tr></thead>
      <tbody>{users.map(u=><tr key={u.id} style={{borderBottom:"1px solid #e8eaf0"}}>
-      <td style={{padding:11,fontWeight:700}}>{u.name}</td><td style={{padding:11}}>{u.mobile?phone(u.mobile).replace(/(\\d{3}-)\\d{3,4}(-\\d{4})/,"$1****$2"):"정보 없음"}</td>
+      <td style={{padding:11,fontWeight:700}}>{u.name}</td><td style={{padding:11}}>{u.mobile?phone(u.mobile).replace(/(\d{3}-)\d{3,4}(-\d{4})/,"$1****$2"):"정보 없음"}</td>
       <td style={{padding:11}}>{u.email||"정보 없음"}</td><td style={{padding:11}}>{date(u.joinedAt)}</td><td style={{padding:11}}>{date(u.lastSignInAt)}</td>
       <td style={{padding:11}}><button style={btn} onClick={()=>openMember(u)}>상세</button></td>
      </tr>)}</tbody>
