@@ -381,7 +381,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .preview-content .classic-001 .classic-hero-copy h2{font-size:17px}
 .preview-content .classic-001 .classic-section,.preview-content .classic-001 .invitation-gallery,.preview-content .classic-001 .public-accounts{padding:43px 15px}
 .preview-content .classic-001 .classic-section-heading h3,.preview-content .classic-001 .invitation-gallery h2,.preview-content .classic-001 .public-accounts h2{font-size:19px}
-.preview-content .classic-001 .classic-message blockquote{font-size:11px}
+/* Invitation message typography is controlled by the template Body settings, not preview-specific font sizes. */
 .preview-content .classic-001 .public-gallery-grid{gap:5px}
 .preview-content .classic-001 .classic-footer{min-height:150px;padding:34px 16px}
 .preview-content .classic-001 .classic-footer>span{font-size:27px}
@@ -4704,8 +4704,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Keep configured invitation message Body typography identical across
    collection, create preview, full preview and published invitation.
    Legacy template/preview rules must not substitute a fixed font size. */
-.full-invitation-renderer .invitation-template.dd-template-typography :is(.romantic-message,.classic-message,.modern-message) blockquote,
-.create-page .preview-content .invitation-template.dd-template-typography :is(.romantic-message,.classic-message,.modern-message) blockquote {
+.invitation-template.dd-template-typography :is(.romantic-message,.classic-message,.modern-message) blockquote {
   font-family:var(--dd-body-font) !important;
   font-size:var(--dd-body-size) !important;
   font-weight:var(--dd-body-weight) !important;
