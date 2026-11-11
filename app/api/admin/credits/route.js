@@ -16,7 +16,27 @@ async function context(request){
 }
 export async function GET(request){
  const ctx=await context(request);if(ctx.error)return json({error:ctx.error},ctx.status);
- const query=new URL(request.url).searchParams.get("userId");
+ const params=new URL(request.url).searchParams;
+ const search=params.get("search")?.trim();
+ if(search){
+  if(search.length<2)return json({error:"검색어는 2자 이상 입력해 주세요."},400);
+  const matches=[];
+  // Server-side privileged search; never expose full member lists to clients.
+  for(let page=1;page<=10;page++){
+   const {data,error}=await ctx.db.auth.admin.listUsers({page,perPage:100});
+   if(error)return json({error:"회원 검색에 실패했어요."},503);
+   for(const u of data.users||[]){
+    const m=u.user_metadata||{};
+    const fields=[u.id,m.name,m.nickname,m.mobile,m.email,u.email];
+    if(fields.some(v=>typeof v==="string"&&v.toLowerCase().includes(search.toLowerCase())))
+      matches.push({id:u.id,name:m.name||m.nickname||"이름 없음",mobile:m.mobile||"",email:m.email||""});
+    if(matches.length>=20)break;
+   }
+   if(matches.length>=20||(data.users||[]).length<100)break;
+  }
+  return json({users:matches});
+ }
+ const query=params.get("userId");
  if(!query||!/^[0-9a-f-]{36}$/i.test(query))return json({error:"회원 ID를 입력해 주세요."},400);
  const [grants,ledger]=await Promise.all([
  ctx.db.from("credit_grants").select("*").eq("user_id",query).order("created_at",{ascending:false}).limit(100),
