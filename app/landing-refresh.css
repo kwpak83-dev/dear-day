@@ -2558,3 +2558,29 @@
 @media(max-width:360px){
  .landing-v2 .dd-feature.dd-feature-program .dd-landing-program-canvas{margin-left:-16.6665%}
 }
+
+
+/* Feature 03: compact, hands-on intro lettering editor */
+.landing-v2 .dd-feature-preview .dd-feature-demo{width:min(100%,440px);max-width:100%}
+.landing-v2 .dd-feature-preview .dd-feature-demo-content{padding:12px;display:block}
+.landing-v2 .dd-feature-preview .dd-feature-demo-kicker{display:none}
+.dd-landing-intro-editor{text-align:left;width:100%;box-sizing:border-box;color:#655448}
+.dd-landing-intro-editor-title{display:flex;justify-content:space-between;align-items:center;margin:4px 0 14px;gap:8px}
+.dd-landing-intro-editor-title strong{font-size:15px}
+.dd-landing-intro-editor-title span{font-size:9px;letter-spacing:.12em;color:#a28e7c}
+.dd-landing-intro-field,.dd-landing-intro-settings label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600}
+.dd-landing-intro-field textarea{width:100%;box-sizing:border-box;resize:vertical;border:1px solid #e3dcd4;border-radius:8px;padding:10px;font:inherit;font-size:13px;line-height:1.5;background:#fff;color:#51453e}
+.dd-landing-intro-settings{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:13px}
+.dd-landing-intro-settings select{min-width:0;width:100%;border:1px solid #e3dcd4;background:#fff;border-radius:8px;padding:8px;font-size:12px;color:#51453e}
+.dd-landing-intro-settings input[type=range]{width:100%;accent-color:#a87e6d}
+.dd-landing-intro-colors{display:flex;gap:20px;margin:14px 0}
+.dd-landing-intro-colors label{display:flex;align-items:center;gap:7px;font-size:12px}
+.dd-landing-intro-colors input{width:30px;height:27px;padding:2px;border:1px solid #e3dcd4;border-radius:6px;background:white;cursor:pointer}
+.dd-landing-intro-stage{height:220px;border:1px solid #eee6dc;border-radius:10px;display:flex;align-items:center;justify-content:center;text-align:center;padding:15px;box-sizing:border-box;overflow:hidden}
+.dd-landing-intro-stage>div{line-height:1.4;overflow-wrap:anywhere;max-width:100%}
+.dd-landing-intro-writing{animation:dd-landing-intro-reveal 4.2s steps(35,end) both}
+@keyframes dd-landing-intro-reveal{from{clip-path:inset(0 100% 0 0);opacity:.25}to{clip-path:inset(0 0 0 0);opacity:1}}
+.dd-landing-intro-play{width:100%;padding:12px;border:0;border-radius:8px;background:#a47d6c;color:#fff;font-size:13px;font-weight:600;margin-top:12px;cursor:pointer}
+.dd-landing-intro-hint{text-align:center;font-size:11px;color:#99887c;margin:10px 0 2px}
+@media(max-width:800px){.landing-v2 .dd-feature-preview .dd-feature-demo{width:100%;max-width:440px}.landing-v2 .dd-feature-preview .dd-feature-demo-content{padding:12px 10px}}
+@media(prefers-reduced-motion:reduce){.dd-landing-intro-writing{animation:none}}
