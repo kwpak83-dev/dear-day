@@ -45,7 +45,13 @@ export async function GET(request) {
     const auditTotal=auditRows.length;
     const auditPage=auditRows.slice((page-1)*20,page*20);
     const completedCount=auditRows.filter(row=>row.outcome==="completed").length;
+    const runQuery=db.from("invitation_retention_run_logs").select("id,task,started_at,finished_at,http_status,result_mode,processed_count,failed_count,result_summary").order("finished_at",{ascending:false}).limit(30);
+    const runResult=await runQuery;
+    const runLogsAvailable=!runResult.error;
+    if(runResult.error && runResult.error.code!=="42P01" && runResult.error.code!=="PGRST205")console.warn("Retention run history unavailable",runResult.error.code);
+    const runs=(runResult.data||[]).filter(row=>!since||Date.parse(row.started_at)>=Date.parse(since));
     return Response.json({
+      runs,runLogsAvailable,
       audits:auditPage.map(x=>({...x,created_at:auditTime(x)})),auditTotal,
       jobs:(j.data||[]).map(({last_error,...job})=>({...job,errorFlag:Boolean(last_error)})),
       jobTotal:j.count||0,counts,completed:completedCount,page,auditTruncated:(a.data||[]).length===1000
