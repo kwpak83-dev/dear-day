@@ -4938,4 +4938,4 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Wedding editor: checkbox labels 1px smaller than their 17px section headings. */
 .create-page .dd-parents-intro-editor > .dd-transport-guide-toggle,
-.create-page .dd-growth-timeline-editor > .dd-transport-guide-toggle{font-size:16px}
+.create-page .dd-growth-timeline-editor > .dd-transport-guide-toggle{font-size:13px}
