@@ -248,29 +248,7 @@ export async function POST(request) {
     return json({ slug, status: changed.status });
   }
 
-  if (action === "mock-payment") {
-    const { data: paymentEvent, error: paymentLookupError } = await supabase.from("events")
-      .select("id,owner_id,status,kind,template_id,settings,paid_at").eq("slug", slug).eq("owner_id", user.id).maybeSingle();
-    if (paymentLookupError) return json({ error: "초대장을 확인하지 못했어요." }, 500);
-    if (!paymentEvent) return json({ error: "초대장을 찾지 못했어요." }, 404);
-    if (paymentEvent.status === "paid") return json({ slug, status: "paid", paidAt: paymentEvent.paid_at });
-    if (paymentEvent.status === "published") return json({ error: "이미 발행된 초대장이에요." }, 409);
-    if (paymentEvent.status !== "draft") return json({ error: "현재 상태에서는 테스트 결제를 진행할 수 없어요." }, 409);
-    const paymentInvitation = { ...(paymentEvent.settings || {}), eventKind: paymentEvent.kind, templateId: paymentEvent.template_id || paymentEvent.settings?.templateId || "" };
-    const paymentEventTypeConfig = await getEventTypeConfig(supabase, paymentEvent.kind);
-    const missingFields = getAllMissingRequiredFields(paymentInvitation, paymentEvent.kind, paymentEventTypeConfig);
-    if (missingFields.length) return json({ error: "발행을 위해 필요한 정보를 확인해 주세요.", missingFields }, 400);
-
-    const paidAt = paymentEvent.paid_at || new Date().toISOString();
-    const { data: paidEvent, error: paymentError } = await supabase.from("events").update({ status: "paid", paid_at: paidAt })
-      .eq("id", paymentEvent.id).eq("owner_id", user.id).eq("status", "draft").select("status,paid_at").maybeSingle();
-    if (paymentError) return json({ error: "테스트 결제를 완료하지 못했어요." }, 500);
-    if (paidEvent) return json({ slug, status: paidEvent.status, paidAt: paidEvent.paid_at });
-
-    const { data: current } = await supabase.from("events").select("status,paid_at").eq("id", paymentEvent.id).eq("owner_id", user.id).maybeSingle();
-    if (current?.status === "paid") return json({ slug, status: current.status, paidAt: current.paid_at });
-    return json({ error: "초대장 상태가 변경되었어요. 새로고침 후 다시 시도해 주세요." }, 409);
-  }
+  if (action === "mock-payment") return json({ error: "테스트 결제는 종료되었어요. 이용권을 사용해 발행해 주세요." }, 410);
 
   if (action !== "save" || !invitation || typeof invitation !== "object" || Array.isArray(invitation)) return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
   if ((invitation.date !== undefined && typeof invitation.date !== "string") || (invitation.time !== undefined && typeof invitation.time !== "string")) return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
@@ -370,19 +348,28 @@ export async function POST(request) {
   };
 
   if (publish && !existing) return json({ error: "초대장을 먼저 임시 저장해 주세요." }, 409);
-  if (publish && existing.status === "draft") return json({ error: "결제 완료 후 초대장을 발행할 수 있어요." }, 409);
-  if (publish && existing.status !== "paid" && existing.status !== "published") return json({ error: "현재 상태에서는 초대장을 발행할 수 없어요." }, 409);
-
-  const firstPublishedAt = existing?.published_at || new Date().toISOString();
-  const publishedEvent = publish && existing.status === "paid"
-    ? { ...event, status: "published", published_at: firstPublishedAt, service_started_at: existing.service_started_at || firstPublishedAt }
-    : event;
+  if (publish && !["draft", "paid", "published"].includes(existing.status)) return json({ error: "현재 상태에서는 초대장을 발행할 수 없어요." }, 409);
+  // First publication consumes a credit and publishes atomically in PostgreSQL.
+  if (publish && existing.status !== "published") {
+    const dates = calculateRetentionDates(startsAt);
+    if (!dates) return json({ error: "행사 날짜와 시간을 확인해 주세요." }, 400);
+    const { data: result, error: publishError } = await supabase.rpc("credit_publish_invitation", {
+      p_user: user.id, p_slug: slug, p_expected_updated_at: existing.updated_at,
+      p_event: { ...event, ...dates },
+    });
+    if (publishError) {
+      if (publishError.message?.includes("NO_CREDITS")) return json({ error: "이용권이 부족해요. 관리자에게 지급받거나 구매 준비 중 안내를 확인해 주세요.", code: "NO_CREDITS" }, 409);
+      if (publishError.message?.includes("STALE_EVENT")) return json({ error: "초대장 정보가 변경되었어요. 다시 확인해 주세요." }, 409);
+      console.error("[POST /api/events] Credit publication failed", { code: publishError.code });
+      return json({ error: "이용권 발행을 완료하지 못했어요." }, 503);
+    }
+    return json({ slug, status: result.status, revision: result.revision });
+  }
+  const publishedEvent = event;
   const saveQuery = existing
     ? supabase.from("events").update(publishedEvent).eq("slug", slug).eq("owner_id", user.id).eq("updated_at", existing.updated_at)
     : supabase.from("events").insert({ ...event, owner_id: user.id, status: "draft", slug });
-  const { data: saved, error: saveError } = publish && existing.status === "paid"
-    ? await saveQuery.eq("status", "paid").select("status,updated_at").maybeSingle()
-    : await saveQuery.select("status,updated_at").maybeSingle();
+  const { data: saved, error: saveError } = await saveQuery.select("status,updated_at").maybeSingle();
 
   if (saveError) {
     // Database messages can include input values. Log only known fixed messages.
