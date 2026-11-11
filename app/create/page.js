@@ -1684,7 +1684,7 @@ export default function CreateInvitation() {
     </div>}
     {publishConfirmOpen && <div className="modal-backdrop dd-publish-dialog-backdrop" role="presentation"><div className="publish-confirm-card dd-publish-dialog" role="dialog" aria-modal="true" aria-labelledby="publish-confirm-title">
       {flowNotice.includes("이용권이 없어요") ? <>
-        <div className="dd-publish-dialog-icon" aria-hidden="true">◇</div>
+        <div className="dd-publish-dialog-icon" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M8 3v5M16 3v5M8 14h8"/></svg></div>
         <h2 id="publish-confirm-title">이용권이 부족해요</h2>
         <p>초대장을 발행하려면 이용권 1개가 필요합니다.</p>
         <div className="dd-publish-dialog-credit"><span>보유 이용권</span><strong className="dd-credit-empty">0개</strong></div>
