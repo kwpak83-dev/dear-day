@@ -1,5 +1,5 @@
-import CreditBalance from "../../components/credit-balance";
 "use client";
+import CreditBalance from "../../components/credit-balance";
 
 import { useEffect, useState } from "react";
 import MyPageLayout from "../../components/my-page-layout";
