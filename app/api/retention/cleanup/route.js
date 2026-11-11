@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { withRetentionRunLog } from "../../../../lib/retention-run-log.mjs";
 import { timingSafeEqual } from "node:crypto";
 import { invitationDeletionTime } from "../../../../lib/invitation-retention";
 import { retentionTestScope } from "../../../../lib/retention-test-scope.mjs";
@@ -56,7 +57,7 @@ async function planFiles(db, event, url) {
   }
   return [...paths.values()];
 }
-export async function GET(request) {
+async function handleRetentionRequest(request) {
   const testEventId = retentionTestScope(request, process.env);
   if (testEventId === false || (!testEventId && !authorized(request))) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -138,4 +139,8 @@ export async function GET(request) {
     console.error("Retention cleanup worker failed", error);
     return Response.json({ error: "Retention cleanup worker failed" }, { status: 500 });
   }
+}
+
+export async function GET(request) {
+  return withRetentionRunLog("cleanup",request,handleRetentionRequest);
 }
