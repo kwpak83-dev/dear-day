@@ -35,6 +35,11 @@ export async function GET(request) {
   const db = createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
   const report = { mode: "dry-run", scanned: 0, referenced: 0, unreferenced: 0, scopedUnreferenced: 0, inFlight: 0, staleReservations: 0, priorErrors: 0, retries: 0, totals: { pending: 0, retry: 0, failed: 0, done: 0 }, failedJobs: [], errors: [], removed: 0 };
   try {
+    if (testEventId && process.env.RETENTION_STORAGE_DELETE_ENABLED === "true") {
+      // Explicitly authenticated test requests are scoped to this single event.
+      // Do not require the production-wide inventory verification flag.
+      return Response.json(await runScopedStorageCleanup(db, testEventId), { headers: { "Cache-Control": "no-store" } });
+    }
     if (process.env.RETENTION_STORAGE_DELETE_ENABLED === "true" &&
         process.env.RETENTION_STORAGE_INVENTORY_VERIFIED === "true") {
       // Production-wide cleanup requires a separate explicit rollout gate.
