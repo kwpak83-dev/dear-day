@@ -4846,3 +4846,41 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-body-font-card-sample{display:flex;align-items:center;justify-content:center;flex:1;width:100%;margin-top:9px;font-size:18px;line-height:1.4;color:#42352f;text-align:center;overflow-wrap:anywhere}
 .dd-body-font-card-selected{align-self:flex-end;font-size:10px;color:#a66e60}
 @media(max-width:420px){.dd-body-font-modal-backdrop{padding:10px}.dd-body-font-modal{max-height:calc(100dvh - 20px)}.dd-body-font-modal-scroll{padding:10px}.dd-body-font-modal-grid{gap:8px}.dd-body-font-card{padding:10px 8px}.dd-body-font-card-sample{font-size:16px}}
+
+
+/* Editor preview parity: the published invitation and floating message preview
+   both lay out at 390px. A native scrollbar previously stole ~15px from the
+   editor phone, reflowing greeting lines. Keep the same 390px layout on PC
+   and mobile; scale the entire phone on small screens, never its text. */
+.create-page .preview-phone > .preview-content.full-invitation-renderer{
+  width:390px;
+  max-width:none;
+  box-sizing:border-box;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+.create-page .preview-phone > .preview-content.full-invitation-renderer::-webkit-scrollbar{
+  display:none;
+}
+.create-page .preview-phone > .preview-content.full-invitation-renderer > .invitation-template{
+  width:390px!important;
+  min-width:390px!important;
+  max-width:none!important;
+}
+@media (max-width:760px){
+  .create-page .preview-phone{
+    width:406px;
+    height:650px;
+    box-sizing:border-box;
+    flex-shrink:0;
+    transform:scale(.78);
+    transform-origin:top center;
+    margin-bottom:-130px;
+  }
+  .create-page .preview-phone > .preview-content{
+    height:595px;
+  }
+  .create-page .preview-panel{
+    height:640px;
+  }
+}
