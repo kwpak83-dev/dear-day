@@ -23,7 +23,7 @@ export async function GET(request) {
   if(!Number.isSafeInteger(page)||page<1||page>1000)return Response.json({error:"잘못된 페이지"},{status:400});
   const since=days==="all"?null:new Date(Date.now()-Number(days)*86400000).toISOString();
   try{
-    let audits=db.from("invitation_deletion_audit").select("event_id,outcome,details,event_kind,source_status,storage_cleanup_eligible,created_at",{count:"exact"}).order("created_at",{ascending:false}).range((page-1)*20,page*20-1);
+    let audits=db.from("invitation_deletion_audit").select("*",{count:"exact"}).order("created_at",{ascending:false}).range((page-1)*20,page*20-1);
     let jobs=db.from("invitation_storage_cleanup_jobs").select("id,event_id,bucket,status,attempts,last_error,created_at,updated_at,next_attempt_at",{count:"exact"}).order("updated_at",{ascending:false}).range((page-1)*20,page*20-1);
     if(since){audits=audits.gte("created_at",since);jobs=jobs.gte("created_at",since);}
     if(search){audits=audits.eq("event_id",search);jobs=jobs.eq("event_id",search);}
@@ -51,6 +51,6 @@ export async function GET(request) {
     },{headers:{"Cache-Control":"no-store"}});
   }catch(error){
     console.error("Deletion logs query failed",{stage:error.queryStage,code:error.dbCode,message:error.dbMessage||error.message});
-    return Response.json({error:"삭제 기록을 조회하지 못했습니다.",stage:error.queryStage||"unknown",code:error.dbCode||"unknown"},{status:500});
+    return Response.json({error:"삭제 기록을 조회하지 못했습니다.",stage:error.queryStage||"unknown",code:error.dbCode||"unknown",detail:error.dbCode==="42703"?error.dbMessage:undefined},{status:500});
   }
 }
