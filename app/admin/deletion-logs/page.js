@@ -18,8 +18,13 @@ export default function DeletionLogsPage(){
      const params=new URLSearchParams({days,page:String(page)});
      if(eventId)params.set("event",eventId);
      const response=await fetch("/api/admin/deletion-logs?"+params,{headers:{Authorization:`Bearer ${token}`},cache:"no-store"});
+     const contentType=response.headers.get("content-type")||"";
+     if(!contentType.includes("application/json")){
+       if(response.status===404)throw new Error("삭제 로그 API(404)를 찾을 수 없습니다. 로컬 dev 브랜치에 app/api/admin/deletion-logs/route.js 파일이 반영됐는지 확인해 주세요.");
+       throw new Error(`삭제 로그 API 응답 오류 (HTTP ${response.status})`);
+     }
      const body=await response.json();
-     if(!response.ok)throw new Error(body.error||"조회에 실패했습니다.");
+     if(!response.ok)throw new Error([body.error,body.stage&&`단계: ${body.stage}`,body.code&&`코드: ${body.code}`].filter(Boolean).join(" / ")||"조회에 실패했습니다.");
      setData(body);
    }catch(e){setError(e.message);setData(null);}finally{setLoading(false);}
  },[days,eventId,page]);
