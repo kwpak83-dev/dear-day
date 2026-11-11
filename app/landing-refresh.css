@@ -2534,3 +2534,16 @@
 .dd-concept-carousel-track{padding-top:20px!important}
 .dd-concept-carousel-image{aspect-ratio:0.56}
 @media(max-width:800px){.dd-concept-carousel-track{padding-top:20px!important}.dd-concept-carousel-image{aspect-ratio:0.56}}
+
+
+/* Feature 02: show more of the full 16-step sample without shrinking its outer frame.
+   Preserve the renderer's design width so timeline columns stay aligned. */
+.landing-v2 .dd-feature.dd-feature-program .dd-landing-program-scroll{height:440px;overflow-y:auto;overflow-x:hidden}
+.landing-v2 .dd-feature.dd-feature-program .dd-landing-program-canvas{width:125%;max-width:none;zoom:.8}
+@media(max-width:800px){
+ .landing-v2 .dd-feature.dd-feature-program .dd-landing-program-scroll{height:420px}
+ .landing-v2 .dd-feature.dd-feature-program .dd-landing-program-canvas{width:125%;max-width:none;zoom:.8}
+}
+@media(max-width:360px){
+ .landing-v2 .dd-feature.dd-feature-program .dd-landing-program-canvas{width:133.333%;max-width:none;zoom:.75}
+}
