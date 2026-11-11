@@ -8,7 +8,7 @@ const pick = u => {
  return {id:u.id,name:m.full_name||m.name||m.nickname||"이름 없음",mobile:m.mobile||"",email:email.endsWith("@accounts.dear-day.com")?"":email,joinedAt:u.created_at,lastSignInAt:u.last_sign_in_at||null,provider:m.provider||u.app_metadata?.provider||""};
 };
 export async function GET(request){
- const token=request.headers.get("authorization")?.replace(/^Bearer\\s+/i,"");
+ const token=request.headers.get("authorization")?.replace(/^Bearer\s+/i,"");
  if(!token)return reply({error:"로그인이 필요합니다."},401);
  const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.SUPABASE_SERVICE_ROLE_KEY,pub=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
  if(!url||!key||!pub)return reply({error:"관리자 설정을 확인해 주세요."},503);
