@@ -1440,13 +1440,23 @@ export default function CreateInvitation() {
       if (firstMissing === galleryMatrix.label) setEditorStep(2);
       else if (firstMissing === noticeMatrix.label) setEditorStep(4);
       else setEditorStep(0);
+      // The required fields live inside collapsed accordions. Open their ancestors
+      // before scrolling, otherwise the target has no visible position to focus.
       if (targetKey) {
         window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
-          const target = document.querySelector(`[data-field-key="${targetKey}"]`);
+          const target = Array.from(document.querySelectorAll("[data-field-key]"))
+            .find(element => element.getAttribute("data-field-key") === targetKey);
           if (!target) return;
+          let ancestor = target.closest("details");
+          while (ancestor) {
+            ancestor.open = true;
+            ancestor = ancestor.parentElement?.closest("details");
+          }
           target.classList.add("dd-required-field-missing");
-          target.scrollIntoView({ behavior: "smooth", block: "center" });
-          target.querySelector("input,select,textarea")?.focus({ preventScroll: true });
+          window.requestAnimationFrame(() => {
+            target.scrollIntoView({ behavior: "smooth", block: "center" });
+            target.querySelector("input:not([disabled]),select:not([disabled]),textarea:not([disabled])")?.focus({ preventScroll: true });
+          });
           window.setTimeout(() => target.classList.remove("dd-required-field-missing"), 2200);
         }));
       }
