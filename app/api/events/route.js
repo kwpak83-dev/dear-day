@@ -37,42 +37,6 @@ function ownedCoverPath(value, supabaseUrl, ownerId) {
   }
 }
 
-const bgmBucket = "invitation-bgm";
-
-function collectOwnedStoragePaths(value, supabaseUrl, ownerId, found = { photos: new Set(), bgm: new Set() }) {
-  if (typeof value === "string") {
-    if (value.startsWith(ownerId + "/") && value.endsWith(".mp3")) found.bgm.add(value);
-    try {
-      const parsed = new URL(value);
-      const project = new URL(supabaseUrl);
-      if (parsed.origin === project.origin) {
-        for (const [bucket, target] of [[photoBucket, found.photos], [bgmBucket, found.bgm]]) {
-          const prefix = `/storage/v1/object/public/${bucket}/`;
-          if (parsed.pathname.startsWith(prefix)) {
-            const path = decodeURIComponent(parsed.pathname.slice(prefix.length));
-            if (path.startsWith(ownerId + "/")) target.add(path);
-          }
-        }
-      }
-    } catch {}
-    return found;
-  }
-  if (Array.isArray(value)) {
-    value.forEach((item) => collectOwnedStoragePaths(item, supabaseUrl, ownerId, found));
-    return found;
-  }
-  if (value && typeof value === "object") {
-    Object.values(value).forEach((item) => collectOwnedStoragePaths(item, supabaseUrl, ownerId, found));
-  }
-  return found;
-}
-
-// Fail closed: reference checks cannot currently prevent cross-account or concurrent
-// references. Keep objects until a durable, globally referenced cleanup worker exists.
-async function removeIfUnreferenced(_supabase, _bucket, _path, _ownerId) {
-  return false;
-}
-
 function json(body, status = 200) {
   return NextResponse.json(body, { status });
 }
@@ -454,90 +418,27 @@ export async function DELETE(request) {
 
   const { supabase, user } = auth;
   const { data: event, error: lookupError } = await supabase.from("events")
-    .select("id,owner_id,status,cover_image_url,settings,updated_at,retention_delete_eligible").eq("slug", slug).maybeSingle();
+    .select("id,owner_id,status,updated_at").eq("slug", slug).maybeSingle();
   if (lookupError) return json({ error: "초대장을 확인하지 못했어요." }, 500);
   if (!event) return json({ error: "초대장을 찾지 못했어요." }, 404);
   if (event.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 삭제할 수 없어요." }, 403);
   if (!["draft", "suspended", "published", "paid"].includes(event.status)) return json({ error: "현재 상태에서는 초대장을 삭제할 수 없어요." }, 409);
 
-  // Capture every event-owned Storage object before the DB cascade removes its rows.
-  const owned = collectOwnedStoragePaths(
-    { coverImageUrl: event.cover_image_url, settings: event.settings },
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    user.id
-  );
-  // Notice images live under an event-specific folder and may no longer be in settings.
-  // Collect them before deleting the event so they are not stranded.
-  const noticePrefix = `${user.id}/notice/${event.id}`;
-  const { data: noticeFiles, error: noticeError } = await supabase.storage.from(photoBucket).list(noticePrefix, { limit: 1000 });
-  if (noticeError) return json({ error: "공지 사진 목록을 확인하지 못했어요. 다시 시도해 주세요." }, 503);
-  if ((noticeFiles || []).length >= 1000) return json({ error: "공지 사진 목록이 조회 한도에 도달해 안전한 삭제를 보류했어요." }, 409);
-  for (const file of noticeFiles || []) {
-    if (file.name && file.id) owned.photos.add(`${noticePrefix}/${file.name}`);
-  }
-  const { data: media, error: mediaError } = await supabase.from("event_media")
-    .select("storage_path").eq("event_id", event.id);
-  if (mediaError) return json({ error: "초대장 파일 정보를 확인하지 못했어요." }, 500);
-  for (const row of media || []) {
-    if (typeof row.storage_path === "string" && row.storage_path.startsWith(user.id + "/")) owned.photos.add(row.storage_path);
-  }
-
-  // Opt-in only after migration 007 is applied and validated. Existing deployments
-  // retain their current behavior until the schema is explicitly enabled.
-  if (event.retention_delete_eligible && process.env.MANUAL_DELETION_ATOMIC_READY === "true") {
-    const manifest = [
-      ...[...owned.photos].map(storage_path => ({ bucket: photoBucket, storage_path })),
-      ...[...owned.bgm].map(storage_path => ({ bucket: bgmBucket, storage_path })),
-    ];
-    if (manifest.length > 1000) return json({ error: "파일 목록이 너무 많아 삭제를 안전하게 진행할 수 없어요." }, 409);
-    // The deletion RPC is service-role-only. Authenticate and verify ownership
-    // above with the user's JWT, then use a server-only privileged client.
-    const serviceUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!serviceUrl || !serviceKey) return json({ error: "안전한 삭제 서비스를 사용할 수 없어요." }, 503);
-    const serviceDb = createClient(serviceUrl, serviceKey, {
-      auth: { persistSession: false, autoRefreshToken: false },
-    });
-    const { data: committed, error: atomicError } = await serviceDb.rpc("delete_invitation_with_cleanup", {
-      p_event: event.id,
-      p_owner: user.id,
-      p_expected_updated_at: event.updated_at,
-      p_files: manifest,
-    });
-    if (atomicError) {
-      console.error("Atomic invitation deletion failed", { code: atomicError.code });
-      return json({ error: "초대장 삭제와 파일 정리 예약을 완료하지 못했어요." }, 503);
-    }
-    if (committed !== true) return json({ error: "초대장 상태가 변경되었어요. 새로고침 후 다시 시도해 주세요." }, 409);
-    return json({ deleted: true, slug, cleanupPending: manifest.length > 0 || (media || []).length > 0, cleanupQueued: true });
-  }
-
-  const deletingStatus = event.status;
-  const { data: deleted, error: deleteError } = await supabase.from("events").delete()
-    .eq("id", event.id).eq("owner_id", user.id).eq("status", deletingStatus).select("id").maybeSingle();
+  const { data: cleanup, error: deleteError } = await supabase.rpc("delete_invitation_and_queue_storage", {
+    p_event: event.id,
+    p_owner: user.id,
+    p_expected_updated_at: event.updated_at,
+  });
   if (deleteError) {
-    console.error("Invitation delete failed", { code: deleteError.code, message: deleteError.message, details: deleteError.details, hint: deleteError.hint });
-    return json({ error: "초대장을 삭제하지 못했어요. 다시 시도해 주세요." }, 500);
+    console.error("Atomic invitation deletion failed", { code: deleteError.code });
+    return json({ error: "초대장 삭제와 파일 정리 예약을 완료하지 못했어요." }, 503);
   }
-  if (!deleted) return json({ error: "초대장 상태가 변경되었어요. 새로고침 후 확인해 주세요." }, 409);
+  if (!cleanup) return json({ error: "초대장 상태가 변경되었어요. 새로고침 후 다시 시도해 주세요." }, 409);
 
-  // DB children (RSVP, guestbook, media, etc.) are removed by FK cascade.
-  // Storage has no FK cascade, so remove captured objects only when no remaining invitation references them.
-  let cleanupPending = false;
-  const failedPhotoPaths = [];
-  for (const path of owned.photos) {
-    try {
-      if (!await removeIfUnreferenced(supabase, photoBucket, path, user.id)) { cleanupPending = true; failedPhotoPaths.push(path); }
-      else await supabase.from("gallery_storage_cleanup").delete().eq("storage_path", path).eq("owner_id", user.id);
-    } catch { cleanupPending = true; failedPhotoPaths.push(path); }
-  }
-  // Do not enqueue these paths into the legacy gallery worker: it has not been
-  // verified to protect references across accounts. cleanupPending remains true.
-  for (const path of owned.bgm) {
-    try {
-      if (!await removeIfUnreferenced(supabase, bgmBucket, path, user.id)) cleanupPending = true;
-    } catch { cleanupPending = true; }
-  }
-
-  return json({ deleted: true, slug, cleanupPending });
+  return json({
+    deleted: true, slug,
+    cleanupPending: cleanup.queued > 0 || cleanup.held > 0,
+    cleanupQueued: cleanup.queued > 0,
+    cleanupHeld: cleanup.held,
+  });
 }
