@@ -42,6 +42,7 @@ export async function GET(request) {
       counts[status]=result.count||0;
     }
     const auditRows=(a.data||[]).filter(row=>withinPeriod(row,since)).sort((left,right)=>Date.parse(auditTime(right)||0)-Date.parse(auditTime(left)||0));
+    const auditByEvent=new Map(auditRows.filter(x=>x.event_id).map(x=>[x.event_id,x]));
     const auditTotal=auditRows.length;
     const auditPage=auditRows.slice((page-1)*20,page*20);
     const completedCount=auditRows.filter(row=>row.outcome==="completed").length;
@@ -73,7 +74,7 @@ export async function GET(request) {
     return Response.json({
       runs,runLogsAvailable,
       audits:auditPage.map(x=>({...x,created_at:auditTime(x),loginEmail:emailByOwner.get(x.owner_id)||null,userName:nameByOwner.get(x.owner_id)||null})),auditTotal,
-      jobs:(j.data||[]).map(({last_error,...job})=>({...job,loginEmail:emailByOwner.get(job.owner_id)||null,userName:nameByOwner.get(job.owner_id)||null,errorFlag:Boolean(last_error)})),
+      jobs:(j.data||[]).map(({last_error,...job})=>({...job,loginEmail:emailByOwner.get(job.owner_id)||null,userName:nameByOwner.get(job.owner_id)||null,event_title:auditByEvent.get(job.event_id)?.event_title||null,event_starts_at:auditByEvent.get(job.event_id)?.event_starts_at||null,errorFlag:Boolean(last_error)})),
       jobTotal:j.count||0,counts,completed:completedCount,page,auditTruncated:(a.data||[]).length===1000,auditUndated:auditRows.filter(row=>!auditTime(row)).length
     },{headers:{"Cache-Control":"no-store"}});
   }catch(error){
