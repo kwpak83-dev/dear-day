@@ -2547,3 +2547,14 @@
 @media(max-width:360px){
  .landing-v2 .dd-feature.dd-feature-program .dd-landing-program-canvas{width:133.333%;max-width:none;zoom:.75}
 }
+
+
+/* Center the zoomed 125%-wide program canvas in the visible scroll viewport.
+   Percentage widths resolve before zoom, so offset by half the excess width. */
+.landing-v2 .dd-feature.dd-feature-program .dd-landing-program-canvas{
+ margin-left:-12.5%;
+ margin-right:0;
+}
+@media(max-width:360px){
+ .landing-v2 .dd-feature.dd-feature-program .dd-landing-program-canvas{margin-left:-16.6665%}
+}
