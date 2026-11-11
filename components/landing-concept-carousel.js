@@ -63,12 +63,11 @@ export default function LandingConceptCarousel() {
   <div className="dd-concept-carousel-header"><strong>다채로운 콘셉트</strong><span>SWIPE TO EXPLORE</span></div>
   {items.length ? <>
    <div className="dd-concept-carousel-track" ref={trackRef} onScroll={sync} aria-label="디어데이 콘셉트 초대장 표지">
-    {items.map(item=><a className="dd-concept-carousel-card" href={`/templates/${encodeURIComponent(item.template_key)}`} key={item.id} aria-label={`${item.label} 초대장 미리보기`}>
+    {items.map(item=><a className={`dd-concept-carousel-card ${active===items.indexOf(item)?"is-active":""}`} href={`/templates/${encodeURIComponent(item.template_key)}`} key={item.id} aria-label={`${item.label} 초대장 미리보기`}>
       <div className="dd-concept-carousel-image">{item.thumbnail_1_url?<img src={item.thumbnail_1_url} alt={`${item.label} 초대장 표지`} loading="lazy" draggable="false"/>:<div className="dd-concept-carousel-empty">DearDay</div>}</div>
-      <span>{item.label}</span>
     </a>)}
    </div>
-   <div className="dd-concept-carousel-controls"><button type="button" aria-label="이전 콘셉트" onClick={()=>goTo(active-1)}>‹</button><span>{active+1} / {items.length}</span><button type="button" aria-label="다음 콘셉트" onClick={()=>goTo(active+1)}>›</button></div>
+   <div className="dd-concept-carousel-controls"><button type="button" aria-label="이전 콘셉트" onClick={()=>goTo(active-1)}>‹</button><div className="dd-concept-carousel-caption"><span>{active+1} / {items.length}</span><strong>{items[active]?.label}</strong></div><button type="button" aria-label="다음 콘셉트" onClick={()=>goTo(active+1)}>›</button></div>
   </> : <div className="dd-concept-carousel-loading">콘셉트 표지를 불러오는 중이에요.</div>}
  </div>;
 }
