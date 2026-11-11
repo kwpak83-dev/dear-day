@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 export const dynamic = "force-dynamic";
+const auditTime = (row) => row.deleted_at || row.recorded_at || row.executed_at || row.finished_at || row.completed_at || row.created_at || row.updated_at || row.attempted_at || null;
+const withinPeriod = (row, since) => !since || (auditTime(row) && Date.parse(auditTime(row)) >= Date.parse(since));
 
 export async function GET(request) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -23,7 +25,7 @@ export async function GET(request) {
   if(!Number.isSafeInteger(page)||page<1||page>1000)return Response.json({error:"잘못된 페이지"},{status:400});
   const since=days==="all"?null:new Date(Date.now()-Number(days)*86400000).toISOString();
   try{
-    let audits=db.from("invitation_deletion_audit").select("*",{count:"exact"}).range((page-1)*20,page*20-1);
+    let audits=db.from("invitation_deletion_audit").select("*").limit(1000);
     let jobs=db.from("invitation_storage_cleanup_jobs").select("id,event_id,bucket,status,attempts,last_error,created_at,updated_at,next_attempt_at",{count:"exact"}).order("updated_at",{ascending:false}).range((page-1)*20,page*20-1);
     if(since){jobs=jobs.gte("created_at",since);}
     if(search){audits=audits.eq("event_id",search);jobs=jobs.eq("event_id",search);}
@@ -39,15 +41,14 @@ export async function GET(request) {
       if(result.error)throw Object.assign(new Error("storage count query failed"),{queryStage:"storage-count",dbCode:result.error.code,dbMessage:result.error.message});
       counts[status]=result.count||0;
     }
-    let completed=db.from("invitation_deletion_audit").select("event_id",{count:"exact",head:true}).eq("outcome","completed");
-    // Audit table has no guaranteed created_at column; avoid an invalid filter.
-    if(search)completed=completed.eq("event_id",search);
-    const completedResult=await completed;
-    if(completedResult.error)throw Object.assign(new Error("audit count query failed"),{queryStage:"audit-count",dbCode:completedResult.error.code,dbMessage:completedResult.error.message});
+    const auditRows=(a.data||[]).filter(row=>withinPeriod(row,since)).sort((left,right)=>Date.parse(auditTime(right)||0)-Date.parse(auditTime(left)||0));
+    const auditTotal=auditRows.length;
+    const auditPage=auditRows.slice((page-1)*20,page*20);
+    const completedCount=auditRows.filter(row=>row.outcome==="completed").length;
     return Response.json({
-      audits:(a.data||[]).map(x=>({...x,created_at:x.created_at||x.deleted_at||x.completed_at||x.updated_at||null})),auditTotal:a.count||0,
+      audits:auditPage.map(x=>({...x,created_at:auditTime(x)})),auditTotal,
       jobs:(j.data||[]).map(({last_error,...job})=>({...job,errorFlag:Boolean(last_error)})),
-      jobTotal:j.count||0,counts,completed:completedResult.count||0,page
+      jobTotal:j.count||0,counts,completed:completedCount,page,auditTruncated:(a.data||[]).length===1000
     },{headers:{"Cache-Control":"no-store"}});
   }catch(error){
     console.error("Deletion logs query failed",{stage:error.queryStage,code:error.dbCode,message:error.dbMessage||error.message});
