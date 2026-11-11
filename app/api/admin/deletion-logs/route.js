@@ -57,7 +57,14 @@ export async function GET(request) {
     await Promise.all(ownerIds.map(async id=>{
       try {
         const {data,error}=await db.auth.admin.getUserById(id);
-        if(!error && data?.user?.email)emailByOwner.set(id,data.user.email);
+        if(!error && data?.user){
+          const account=data.user;
+          const profileEmail=account.user_metadata?.email;
+          const loginEmail=account.email;
+          const isRealEmail=(value)=>typeof value==="string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && !value.toLowerCase().endsWith("@accounts.dear-day.com");
+          const realEmail=isRealEmail(profileEmail)?profileEmail:isRealEmail(loginEmail)?loginEmail:null;
+          if(realEmail)emailByOwner.set(id,realEmail);
+        }
       } catch {}
     }));
     return Response.json({
