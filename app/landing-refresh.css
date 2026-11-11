@@ -2528,3 +2528,9 @@
  .dd-concept-carousel-image{aspect-ratio:0.58}
 }
 @media(prefers-reduced-motion:reduce){.dd-concept-carousel-card{transition:none}}
+
+
+/* A little more headroom for tall cover artwork (including the last template). */
+.dd-concept-carousel-track{padding-top:20px!important}
+.dd-concept-carousel-image{aspect-ratio:0.56}
+@media(max-width:800px){.dd-concept-carousel-track{padding-top:20px!important}.dd-concept-carousel-image{aspect-ratio:0.56}}
