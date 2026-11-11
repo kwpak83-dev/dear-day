@@ -29,7 +29,7 @@ export default function DearDayMobileDrawer({open,onClose,user,canManageAdmin=fa
           <div className="dd-drawer-link dd-drawer-disabled" aria-disabled="true"><span className="dd-drawer-store-icon"><img src="/naver-smartstore-icon.svg" alt="" width="32" height="18" /></span><span>이용권 구매<small>네이버 스마트스토어 · 준비 중</small></span><b>›</b></div>
           <a className="dd-drawer-link" href={user ? "/my-inquiries" : "/?login=required&returnUrl=%2Fmy-inquiries"} onClick={() => onClose()}><span><DrawerIcon name="inquiry" /></span>문의내역 <b>›</b></a>
           {canManageAdmin && <><div style={{borderTop:"1px solid #e9e2dc",margin:"16px 0 8px"}}/><a className="dd-drawer-link" href="/admin/credits" onClick={() => onClose()}><span><DrawerIcon name="admin" /></span>관리자 페이지 <b>›</b></a></>}
-          {user && <><a className="dd-drawer-link" href="/guest-management" aria-current={current === "guests" ? "page" : undefined} onClick={() => onClose()}><span><DrawerIcon name="account" /></span>하객 관리 <b>›</b></a><a className="dd-drawer-link" href="/my-profile" aria-current={current === "profile" ? "page" : undefined} onClick={() => onClose()}><span><DrawerIcon name="account" /></span>내 정보 <b>›</b></a></>}
+          {user && <><a className="dd-drawer-link" href="/guest-management" aria-current={current === "guests" ? "page" : undefined} onClick={() => onClose()}><span><DrawerIcon name="account" /></span>하객 관리 <b>›</b></a></>}
           <div className="dd-drawer-bottom">{user ? <button type="button" onClick={() => {onClose();onSignOut();}}>로그아웃</button> : <button type="button" onClick={() => {onClose();onLogin();}}>로그인</button>}</div>
         </nav>
       </div>}</div>;
