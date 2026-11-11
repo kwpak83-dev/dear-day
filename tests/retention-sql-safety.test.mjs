@@ -43,7 +43,7 @@ test("manual atomic RPC uses server-side credentials only", async () => {
   const deletion = source.slice(source.indexOf("export async function DELETE"));
   const migration = await sql(27, "atomic_manual_invitation_cleanup");
   assert.match(source, /process\.env\.SUPABASE_SERVICE_ROLE_KEY/);
-  assert.match(deletion, /supabase\.rpc\("delete_invitation_and_queue_storage"/);
+  assert.match(deletion, /serviceDb\.rpc\("delete_invitation_and_queue_storage"/);
   assert.doesNotMatch(deletion, /\.delete\(|MANUAL_DELETION_ATOMIC_READY|retention_delete_eligible/);
   assert.match(migration, /auth\.role\(\) IS DISTINCT FROM 'service_role'/);
   assert.match(migration, /invitation\.status NOT IN \('draft', 'paid', 'published', 'suspended'\)/);

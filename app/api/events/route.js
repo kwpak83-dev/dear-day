@@ -424,7 +424,13 @@ export async function DELETE(request) {
   if (event.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 삭제할 수 없어요." }, 403);
   if (!["draft", "suspended", "published", "paid"].includes(event.status)) return json({ error: "현재 상태에서는 초대장을 삭제할 수 없어요." }, 409);
 
-  const { data: cleanup, error: deleteError } = await supabase.rpc("delete_invitation_and_queue_storage", {
+  const serviceUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceUrl || !serviceKey) return json({ error: "안전한 삭제 서비스를 사용할 수 없어요." }, 503);
+  const serviceDb = createClient(serviceUrl, serviceKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  const { data: cleanup, error: deleteError } = await serviceDb.rpc("delete_invitation_and_queue_storage", {
     p_event: event.id,
     p_owner: user.id,
     p_expected_updated_at: event.updated_at,
