@@ -5019,3 +5019,28 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .guestbook-form>button{
   min-height:44px;
 }
+
+
+/* Guestbook bottom sheet: bring the decorative heading closer to the form. */
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .dd-stationery-heading{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  margin-bottom:12px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .dd-stationery-heading h2{
+  margin-bottom:10px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .dd-stationery-heading .dd-guestbook-intro{
+  margin:8px 0 0;
+  color:#917a6d;
+  font-size:12px;
+  font-weight:400;
+  line-height:1.5;
+  letter-spacing:0;
+  text-align:center;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .dd-stationery-heading::after{
+  margin-top:8px;
+  margin-bottom:0;
+}
