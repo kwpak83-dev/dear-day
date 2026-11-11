@@ -56,14 +56,14 @@ export default function DeletionLogsPage(){
   {!!data?.auditUndated&&<p style={{fontSize:12,color:"#a36522"}}>기존 삭제 감사 기록 {data.auditUndated}건은 날짜 정보가 없어 조회 기간과 관계없이 표시됩니다. 날짜를 임의로 추정하지 않았습니다.</p>}
   {data?.auditTruncated&&<p style={{fontSize:12,color:"#a36522"}}>감사 기록이 1,000건을 초과해 일부 기록이 조회되지 않을 수 있습니다.</p>}
   <h2 style={{fontSize:21}}>초대장 삭제 기록 <small style={{fontSize:13,fontWeight:400}}>총 {data?.auditTotal??"-"}건</small></h2>
-  <div style={{overflowX:"auto",marginBottom:28}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:680}}><thead><tr>{["삭제 일시","초대장 ID","구분","결과","파일 정리 대상"].map(x=><th key={x} style={cell}>{x}</th>)}</tr></thead><tbody>
-   {(data?.audits||[]).map((x,i)=><tr key={x.event_id+"-"+i}><td style={cell}>{fmt(x.created_at)}</td><td style={cell} title={x.event_id}>{short(x.event_id)}</td><td style={cell}>{x.details?.startsWith("Owner deletion committed")?"수동 삭제":"자동·기타"}</td><td style={cell}>{x.outcome==="completed"?"완료":x.outcome}</td><td style={cell}>{x.storage_cleanup_eligible?"대상":"비대상"}</td></tr>)}
-   {!loading&&!data?.audits?.length&&<tr><td colSpan={5} style={cell}>조회된 삭제 기록이 없습니다.</td></tr>}
+  <div style={{overflowX:"auto",marginBottom:28}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:680}}><thead><tr>{["삭제 일시","로그인 ID (이메일)","초대장 ID","구분","결과","파일 정리 대상"].map(x=><th key={x} style={cell}>{x}</th>)}</tr></thead><tbody>
+   {(data?.audits||[]).map((x,i)=><tr key={x.event_id+"-"+i}><td style={cell}>{fmt(x.created_at)}</td><td style={cell}>{x.loginEmail||"확인 불가"}</td><td style={cell} title={x.event_id}>{short(x.event_id)}</td><td style={cell}>{x.details?.startsWith("Owner deletion committed")?"수동 삭제":"자동·기타"}</td><td style={cell}>{x.outcome==="completed"?"완료":x.outcome}</td><td style={cell}>{x.storage_cleanup_eligible?"대상":"비대상"}</td></tr>)}
+   {!loading&&!data?.audits?.length&&<tr><td colSpan={6} style={cell}>조회된 삭제 기록이 없습니다.</td></tr>}
   </tbody></table></div>
   <h2 style={{fontSize:21}}>사진·BGM 정리 기록 <small style={{fontSize:13,fontWeight:400}}>총 {data?.jobTotal??"-"}건</small></h2>
-  <div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:750}}><thead><tr>{["갱신 일시","초대장 ID","파일 유형","상태","시도","진단"].map(x=><th key={x} style={cell}>{x}</th>)}</tr></thead><tbody>
-   {(data?.jobs||[]).map(x=><tr key={x.id}><td style={cell}>{fmt(x.updated_at)}</td><td style={cell} title={x.event_id}>{short(x.event_id)}</td><td style={cell}>{x.bucket==="invitation-photos"?"사진":"BGM"}</td><td style={cell}>{statusLabel[x.status]||x.status}</td><td style={cell}>{x.attempts}</td><td style={cell}>{x.errorFlag?"확인 필요":"-"}</td></tr>)}
-   {!loading&&!data?.jobs?.length&&<tr><td colSpan={6} style={cell}>조회된 파일 정리 기록이 없습니다.</td></tr>}
+  <div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:750}}><thead><tr>{["갱신 일시","로그인 ID (이메일)","초대장 ID","파일 유형","상태","시도","진단"].map(x=><th key={x} style={cell}>{x}</th>)}</tr></thead><tbody>
+   {(data?.jobs||[]).map(x=><tr key={x.id}><td style={cell}>{fmt(x.updated_at)}</td><td style={cell}>{x.loginEmail||"확인 불가"}</td><td style={cell} title={x.event_id}>{short(x.event_id)}</td><td style={cell}>{x.bucket==="invitation-photos"?"사진":"BGM"}</td><td style={cell}>{statusLabel[x.status]||x.status}</td><td style={cell}>{x.attempts}</td><td style={cell}>{x.errorFlag?"확인 필요":"-"}</td></tr>)}
+   {!loading&&!data?.jobs?.length&&<tr><td colSpan={7} style={cell}>조회된 파일 정리 기록이 없습니다.</td></tr>}
   </tbody></table></div>
   <div style={{display:"flex",gap:12,alignItems:"center",justifyContent:"center",marginTop:24}}>
    <button disabled={page===1||loading} onClick={()=>setPage(x=>x-1)}>이전</button><span>{page} 페이지</span>
