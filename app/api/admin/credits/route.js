@@ -64,6 +64,17 @@ export async function POST(request){
   if(!Number.isInteger(b.quantity)||b.quantity<1||typeof b.grantId!=="string")return json({error:"회수 정보를 확인해 주세요."},400);
   result=await ctx.db.rpc("credit_revoke_admin",{p_grant:b.grantId,p_actor:ctx.user.id,p_quantity:b.quantity,p_reason:reason});
  }else return json({error:"지원하지 않는 작업이에요."},400);
- if(result.error)return json({error:"이용권 처리에 실패했어요.",code:result.error.code},409);
+ if(result.error){
+  console.error("[admin/credits] credit RPC failed",{action:b.action,code:result.error.code,message:result.error.message,details:result.error.details,hint:result.error.hint});
+  const code=result.error.code;
+  const message=result.error.message||"";
+  if(code==="PGRST202"||code==="42883")return json({error:"이용권 DB 함수가 없습니다. Supabase SQL Editor에서 202611110004_manual_credits.sql 마이그레이션 적용 여부를 확인해 주세요.",code},503);
+  if(code==="42P01")return json({error:"이용권 DB 테이블이 없습니다. Supabase 마이그레이션을 적용해 주세요.",code},503);
+  if(code==="42501")return json({error:"DB 함수 실행 권한이 없습니다. 마이그레이션의 GRANT 설정을 확인해 주세요.",code},503);
+  if(message.includes("INVALID_CREDIT_GRANT"))return json({error:"이용권 수량·만료일·지급 사유를 확인해 주세요.",code},400);
+  if(message.includes("USER_NOT_FOUND"))return json({error:"선택한 회원을 찾을 수 없어요.",code},404);
+  if(message.includes("INSUFFICIENT_UNUSED_CREDITS"))return json({error:"회수할 미사용 이용권이 부족해요.",code},409);
+  return json({error:"이용권 처리에 실패했어요. 서버 로그에서 오류 코드 "+(code||"unknown")+"를 확인해 주세요.",code},500);
+ }
  return json({ok:true,result:result.data});
 }
