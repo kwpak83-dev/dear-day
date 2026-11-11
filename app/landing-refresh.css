@@ -2492,3 +2492,17 @@
 .dd-concept-carousel-controls button{border:1px solid #e8dcd4;background:#fffaf6;border-radius:50%;width:29px;height:29px;font-size:22px;line-height:1;color:#9a7564;cursor:pointer}
 .dd-concept-carousel-loading{padding:100px 15px;text-align:center;font-size:12px;color:#9a867a}
 @media(max-width:800px){.landing-v2 .dd-feature-theme .dd-feature-demo{width:100%;max-width:390px}.landing-v2 .dd-feature-theme .dd-feature-demo-content{padding:8px 0 12px}.dd-concept-carousel-track{gap:10px}}
+
+
+/* Give the featured cover showcase a taller, more immersive viewport. */
+.landing-v2 .dd-feature-theme .dd-feature-visual{min-height:610px;padding:22px 12px}
+.landing-v2 .dd-feature-theme .dd-feature-demo{max-width:420px}
+.landing-v2 .dd-feature-theme .dd-feature-demo-content{width:100%;box-sizing:border-box}
+.dd-concept-carousel-track{padding-left:14%;padding-right:14%}
+.dd-concept-carousel-card{flex-basis:72%}
+.dd-concept-carousel-image{aspect-ratio:3/4.6}
+@media(max-width:800px){
+ .landing-v2 .dd-feature-theme .dd-feature-visual{min-height:570px;padding:18px 10px}
+ .landing-v2 .dd-feature-theme .dd-feature-demo{max-width:390px}
+ .dd-concept-carousel-image{aspect-ratio:3/4.7}
+}
