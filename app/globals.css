@@ -4900,3 +4900,26 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   margin:0;
   box-shadow:none;
 }
+
+
+/* Dear Day publish flow: shared neutral dialogs across mobile and desktop. */
+.create-page .dd-publish-dialog-backdrop{background:rgba(28,27,26,.42);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:10050}
+.create-page .dd-publish-dialog{width:min(390px,calc(100vw - 36px));max-width:390px;min-width:0;box-sizing:border-box;padding:32px 26px 28px;border:1px solid #e9e7e4;border-radius:22px;background:#fff;color:#292929;text-align:center;box-shadow:0 20px 56px rgba(24,24,24,.17);display:flex;flex-direction:column;align-items:stretch;gap:0}
+.create-page .dd-publish-dialog .dd-publish-dialog-icon{width:58px;height:58px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;background:#f7f4f1;color:#51473f;font-size:30px;font-family:Arial,sans-serif;font-weight:400}
+.create-page .dd-publish-dialog h2{margin:0 0 13px;font-family:inherit;font-size:clamp(21px,5.5vw,24px);font-weight:700;letter-spacing:-.055em;line-height:1.35;color:#292929;word-break:keep-all;overflow-wrap:break-word}
+.create-page .dd-publish-dialog>p:not(.dd-publish-dialog-kicker){margin:0 0 22px;color:#777;font-size:14px;line-height:1.65;word-break:keep-all}
+.create-page .dd-publish-dialog-credit{width:100%;display:flex;justify-content:space-between;align-items:center;padding:15px 16px;margin-bottom:20px;border-radius:12px;background:#f7f7f7;font-size:14px}
+.create-page .dd-publish-dialog-credit span{color:#777}
+.create-page .dd-publish-dialog-credit strong{color:#292929;font-size:15px}
+.create-page .dd-publish-dialog-credit .dd-credit-empty{color:#d66c60}
+.create-page .dd-publish-dialog-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%}
+.create-page .dd-publish-dialog .dd-publish-dialog-action{min-height:49px;width:100%;display:flex;justify-content:center;align-items:center;padding:12px 9px;border:1px solid transparent;border-radius:11px;font-size:14px;font-weight:700;line-height:1.4;text-decoration:none;box-shadow:none;cursor:pointer}
+.create-page .dd-publish-dialog .dd-publish-dialog-primary{background:#292929;color:#fff;border-color:#292929}
+.create-page .dd-publish-dialog .dd-publish-dialog-secondary{background:#f5f5f5;color:#555;border-color:#dedede}
+.create-page .dd-publish-dialog .dd-publish-dialog-action:disabled{opacity:.6;cursor:wait}
+.create-page .dd-publish-dialog .dd-publish-dialog-footnote{margin-top:13px;color:#999;font-size:12px}
+.create-page .dd-publish-dialog .dd-publish-dialog-error{margin:-6px 0 16px!important;color:#c45f55!important;font-size:13px!important}
+.create-page .dd-publish-done .dd-publish-done-icon{background:#f9eee9;color:#d66c60;font-weight:700}
+.create-page .dd-publish-done .dd-publish-dialog-kicker{margin:0 0 12px;color:#a58c7e;font-size:10px;font-weight:700;letter-spacing:.14em}
+.create-page .dd-publish-done .dd-publish-dialog-primary{margin-bottom:10px}
+@media(max-width:380px){.create-page .dd-publish-dialog{padding:28px 20px 24px}}
