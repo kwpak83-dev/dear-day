@@ -6,6 +6,7 @@ export default function AdminDesignNav({ current = "" }) {
     ["event-types", "/admin/event-types", "행사 유형 관리"],
     ["bgm", "/admin/bgm", "공용 BGM 관리"],
     ["credits", "/admin/credits", "이용권 관리"],
+    ["members", "/admin/members", "전체 회원 관리"],
     ["deletion-logs", "/admin/deletion-logs", "삭제 로그 관리"],
   ];
   return <nav aria-label="디자인 관리자 이동" style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center",margin:"8px 0 16px"}}>
