@@ -227,7 +227,7 @@ export default function Home() {
                     kind === "occasions" ? <div className="dd-feature-occasion-grid"><span>결혼식</span><span>돌잔치</span><span>생일</span><span>환갑·칠순·팔순</span><span>모임·행사</span><span>개업·오픈</span></div> :
                     <div className="dd-feature-demo-paper"><span>YOUR SPECIAL DAY</span><strong>{kind === "effects" ? "A moment to remember" : kind === "edit" ? "Make it yours" : "Good People, Good Moment."}</strong><i /><small>DEARDAY · MOBILE INVITATION</small></div>}
                 </div>
-                {kind !== "theme" && <div className="dd-feature-demo-bottom">미리보기 · 영상 교체 예정</div>}
+                {kind !== "theme" && kind !== "program" && <div className="dd-feature-demo-bottom">미리보기 · 영상 교체 예정</div>}
               </div>
             </div>
             <div className="dd-feature-copy">
