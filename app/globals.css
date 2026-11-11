@@ -4931,9 +4931,9 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 
 /* Warm beige live preview CTA in body theme editor. */
-.create-page .dd-body-style-heading .dd-body-live-preview-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex-shrink:0;padding:10px 12px;border:1px solid #d7bba8;border-radius:10px;background:#f4e9df;color:#79533f;font-size:12px;font-weight:700;line-height:1.25;white-space:nowrap;box-shadow:0 2px 5px rgba(121,83,63,.07)}
+.create-page .dd-body-style-heading .dd-body-live-preview-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex-shrink:0;padding:10px 12px;border:1px solid #c7c7c7;border-radius:10px;background:#fff;color:#292929;font-size:12px;font-weight:700;line-height:1.25;white-space:nowrap;box-shadow:0 2px 5px rgba(0,0,0,.09)}
 .create-page .dd-body-style-heading .dd-body-live-preview-button svg{flex:none;display:block}
-.create-page .dd-body-style-heading .dd-body-live-preview-button:hover{background:#efe0d2;border-color:#cda88f}
+.create-page .dd-body-style-heading .dd-body-live-preview-button:hover{background:#f7f7f7;border-color:#aaa}
 .create-page .dd-body-style-heading .dd-body-live-preview-button:focus-visible{outline:2px solid #79533f;outline-offset:2px}
 
 /* Wedding editor: checkbox labels 1px smaller than their 17px section headings. */
