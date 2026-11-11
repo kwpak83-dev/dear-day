@@ -1691,7 +1691,7 @@ export default function CreateInvitation() {
         <button type="button" className="dd-publish-dialog-action dd-publish-dialog-primary" onClick={() => {setPublishConfirmOpen(false);setFlowNotice("");}}>확인</button>
         <small className="dd-publish-dialog-footnote">스마트스토어 이용권 구매 기능 준비 중</small>
       </> : <>
-        <div className="dd-publish-dialog-icon" aria-hidden="true">↗</div>
+        <div className="dd-publish-dialog-icon" aria-hidden="true"><svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></div>
         <h2 id="publish-confirm-title">초대장을 발행할까요?</h2>
         <p>발행하면 초대장 링크가 활성화되어 소중한 분들에게 공유할 수 있어요.</p>
         <div className="dd-publish-dialog-credit"><span>사용 이용권</span><strong>1개</strong></div>
