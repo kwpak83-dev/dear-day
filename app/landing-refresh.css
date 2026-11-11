@@ -2450,3 +2450,10 @@
   font-weight: 900 !important;
   font-style: italic !important;
 }
+
+
+/* Shared mobile navigation used by the landing page and member pages. */
+.dd-shared-drawer-root .dd-drawer-credit{margin:12px 0 6px}
+.dd-shared-drawer-root .dd-drawer-credit .credit-balance{max-width:100%}
+.dd-shared-drawer-root .dd-home-drawer [aria-current="page"]{background:#fbf4f0!important;color:#a66e5e!important;border-radius:10px}
+.dd-shared-drawer-root .dd-home-drawer .dd-drawer-shortcuts [aria-current="page"]{border-color:#d9b8aa!important}
