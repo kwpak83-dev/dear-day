@@ -28,29 +28,29 @@ export async function GET(request) {
     if(since){audits=audits.gte("created_at",since);jobs=jobs.gte("created_at",since);}
     if(search){audits=audits.eq("event_id",search);jobs=jobs.eq("event_id",search);}
     const [a,j]=await Promise.all([audits,jobs]);
-    if(a.error)throw a.error;
-    if(j.error)throw j.error;
+    if(a.error)throw Object.assign(new Error("audit query failed"),{queryStage:"audit",dbCode:a.error.code,dbMessage:a.error.message});
+    if(j.error)throw Object.assign(new Error("storage jobs query failed"),{queryStage:"storage-jobs",dbCode:j.error.code,dbMessage:j.error.message});
     const counts={};
     for(const status of ["pending","retry","done","failed"]){
       let q=db.from("invitation_storage_cleanup_jobs").select("id",{count:"exact",head:true}).eq("status",status);
       if(since)q=q.gte("created_at",since);
       if(search)q=q.eq("event_id",search);
       const result=await q;
-      if(result.error)throw result.error;
+      if(result.error)throw Object.assign(new Error("storage count query failed"),{queryStage:"storage-count",dbCode:result.error.code,dbMessage:result.error.message});
       counts[status]=result.count||0;
     }
     let completed=db.from("invitation_deletion_audit").select("event_id",{count:"exact",head:true}).eq("outcome","completed");
     if(since)completed=completed.gte("created_at",since);
     if(search)completed=completed.eq("event_id",search);
     const completedResult=await completed;
-    if(completedResult.error)throw completedResult.error;
+    if(completedResult.error)throw Object.assign(new Error("audit count query failed"),{queryStage:"audit-count",dbCode:completedResult.error.code,dbMessage:completedResult.error.message});
     return Response.json({
       audits:a.data||[],auditTotal:a.count||0,
       jobs:(j.data||[]).map(({last_error,...job})=>({...job,errorFlag:Boolean(last_error)})),
       jobTotal:j.count||0,counts,completed:completedResult.count||0,page
     },{headers:{"Cache-Control":"no-store"}});
   }catch(error){
-    console.error("Deletion logs query failed",error);
-    return Response.json({error:"삭제 기록을 조회하지 못했습니다."},{status:500});
+    console.error("Deletion logs query failed",{stage:error.queryStage,code:error.dbCode,message:error.dbMessage||error.message});
+    return Response.json({error:"삭제 기록을 조회하지 못했습니다.",stage:error.queryStage||"unknown",code:error.dbCode||"unknown"},{status:500});
   }
 }
