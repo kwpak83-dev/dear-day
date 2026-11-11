@@ -4957,3 +4957,65 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   height:95%;
   max-height:95%;
 }
+
+
+/* Compact RSVP and guestbook form layout inside quick-menu bottom sheets only.
+   Applies equally to published invitations and embedded landing/collection previews. */
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section{
+  padding-top:18px;
+  padding-bottom:24px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp .dd-stationery-heading,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .dd-stationery-heading{
+  margin-bottom:12px;
+  padding-top:0;
+  padding-bottom:0;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp .dd-stationery-heading .dd-stationery-clipart,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .dd-stationery-heading .dd-stationery-clipart{
+  margin-bottom:5px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp .rsvp-intro{
+  margin-bottom:16px;
+  line-height:1.55;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp form{
+  gap:10px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp form>label,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp form>fieldset,
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .guestbook-form label{
+  gap:5px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp .rsvp-status-options{
+  gap:8px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp .rsvp-status-options span{
+  display:flex;
+  min-height:42px;
+  box-sizing:border-box;
+  align-items:center;
+  justify-content:center;
+  padding:8px 10px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.public-rsvp :is(input:not([type=radio]),select),
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .guestbook-form input{
+  box-sizing:border-box;
+  height:42px;
+  min-height:42px;
+  padding:9px 12px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .guestbook-form{
+  gap:10px;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .guestbook-form textarea{
+  box-sizing:border-box;
+  min-height:80px;
+  height:80px;
+  padding:10px 12px;
+  resize:vertical;
+}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet-content>.guestbook-section .guestbook-form>button{
+  min-height:44px;
+}
