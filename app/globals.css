@@ -761,7 +761,7 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-decoration-layer-background{z-index:0}
 /* Background decorations are visual background only. Keep every real template
    section above them so large/opaque decoration assets can never wash out content. */
-.dd-template-decorated > :not(.dd-template-decoration-layer-background):not(.dd-template-screen-effect):not(.dd-template-effects-marker){
+.dd-template-decorated > :not(.dd-template-decoration-layer-background):not(.dd-template-screen-effect):not(.dd-template-effects-marker):not(.dd-template-bgm){
   position:relative;
   z-index:2;
 }

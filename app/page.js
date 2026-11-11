@@ -4,25 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../lib/supabase/browser";
 import { DEFAULT_AUTH_RETURN_PATH, getSafeAuthReturnPath } from "../lib/auth-return-url";
 import DearDayLogo from "../components/dearday-logo";
+import DearDayMobileDrawer from "../components/dearday-mobile-drawer";
 import InvitationProgram from "../components/invitation/invitation-program";
 import { PROGRAM_DEFAULTS, normalizeProgram } from "../lib/invitation-program";
 import LandingInvitationExperience from "../components/landing-invitation-experience";
+import LandingConceptCarousel from "../components/landing-concept-carousel";
+import LandingIntroEditorDemo from "../components/landing-intro-editor-demo";
 import "./landing-refresh.css";
 
-function DrawerIcon({name}) {
- const common={width:24,height:24,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:1.6,strokeLinecap:"round",strokeLinejoin:"round","aria-hidden":true};
- const shapes={
-  account:<><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20c.5-4 3-6 6.5-6s6 2 6.5 6"/></>,
-  create:<><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/><path d="M12 12.8s-3-2.2-3-3.7a1.7 1.7 0 0 1 3-1 1.7 1.7 0 0 1 3 1c0 1.5-3 3.7-3 3.7Z" fill="#f2b1aa" stroke="none"/></>,
-  saved:<><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 2v3m6-3v3M8 9h8M8 13h8"/><path d="m12 19-2.3-2.1a1.4 1.4 0 0 1 2.3-1.5 1.4 1.4 0 0 1 2.3 1.5Z" fill="#e9b5ac" stroke="none"/></>,
-  templates:<><rect x="3" y="6" width="15" height="13" rx="1.5"/><path d="m7 6 2-3h11a1 1 0 0 1 1 1v12"/><circle cx="8" cy="10" r="1" fill="#e7b7a4" stroke="none"/><path d="m5 17 4-4 3 2 3-3 3 5"/></>,
-  experience:<><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3Z" fill="#e8a79e" stroke="#c78978"/><path d="M7 22h10"/></>,
-  ticket:<><path d="M3 7h18v4a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4Z"/><path d="M12 7v2m0 6v3" strokeDasharray="2 2"/><path d="m8 12 2.5-.4L12 9l1.5 2.6 2.5.4-2 2 .5 2.5L12 15l-2.5 1.5L10 14Z" fill="#eec7a3" stroke="none"/></>,
-  inquiry:<><path d="M4 5h16v12H9l-5 4V5Z"/><path d="M9 10h6m-6 4h4"/></>,
-  admin:<><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M4.9 4.9 7 7m10 10 2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></>
- };
- return <svg {...common}>{shapes[name]}</svg>;
-}
 
 const steps = [["01", "▧", "템플릿 선택", "마음에 드는 디자인을 골라주세요."], ["02", "✎", "내용 입력", "날짜, 장소, 사진 등 간단히 입력하세요."], ["03", "➤", "완성하고 공유", "카카오톡, 링크로 바로 공유하세요."]];
 
@@ -166,21 +155,7 @@ export default function Home() {
       <div className="landing-actions">{user ? <><span>{providerLabel}</span><a href="/my-invitations">마이페이지</a>{canManageAdmin && <a href="/admin/credits" aria-label="관리자 페이지">관리자 페이지</a>}<button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={() => window.location.assign("/templates")}>지금, 초대장 만들기 →</button></div>
       <div className="landing-mobile-actions"><button aria-label="검색" onClick={comingSoon}>⌕</button><button className="landing-menu" aria-label="메뉴 열기" onClick={() => setMenuOpen(!menuOpen)}>☰</button></div>
       <a className="landing-mobile-invitations" href={user ? "/my-invitations" : "/?login=required&returnUrl=%2Fmy-invitations"} aria-label="내 초대장" title="내 초대장"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" aria-hidden="true"><defs><linearGradient id="dd-sealed-envelope" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#fffaf3"/><stop offset="1" stopColor="#e8d7c7"/></linearGradient></defs><rect x="2.5" y="4" width="19" height="16" rx="2.3" fill="url(#dd-sealed-envelope)" stroke="#d5bfae" strokeWidth=".8"/><path d="M3.5 5.5 12 12.2l8.5-6.7M3.5 18.5l6.3-6.1M20.5 18.5l-6.3-6.1" stroke="#c9ad98" strokeWidth=".85" strokeLinejoin="round"/><circle cx="12" cy="12.2" r="2.15" fill="#a87856" stroke="#d6b18d" strokeWidth=".65"/><circle cx="12" cy="12.2" r="1.3" fill="none" stroke="#e8cfb3" strokeWidth=".45"/><path d="M12 11.2v2M11.3 11.8l.7-.6.7.6" stroke="#e8cfb3" strokeWidth=".45" strokeLinecap="round"/></svg></a>
-      {menuOpen && <div className="dd-drawer-layer">
-        <button className="dd-drawer-backdrop" type="button" aria-label="메뉴 닫기" onClick={() => setMenuOpen(false)} />
-        <nav className="landing-mobile-nav dd-home-drawer" aria-label="DearDay 메뉴">
-          <div className="dd-drawer-head"><span className="dd-drawer-brand"><DearDayLogo /></span><button type="button" aria-label="메뉴 닫기" onClick={() => setMenuOpen(false)}>×</button></div>
-          <a className="dd-drawer-account" href={user ? "/my-profile" : "/?login=required&returnUrl=%2Fmy-profile"} onClick={() => setMenuOpen(false)}><span className="dd-drawer-avatar"><DrawerIcon name="account" /></span><span><strong>{user ? "내 계정" : "로그인하고 시작하기"}</strong><small>{user ? "계정 정보 확인" : "네이버 계정으로 간편하게 시작"}</small></span><span>›</span></a>
-          <div className="dd-drawer-shortcuts"><button type="button" onClick={() => {setMenuOpen(false);start();}}><span><DrawerIcon name="create" /></span>초대장 만들기</button><a href={user ? "/my-invitations" : "/?login=required&returnUrl=%2Fmy-invitations"} onClick={() => setMenuOpen(false)}><span><DrawerIcon name="saved" /></span>내 초대장</a></div>
-          <p className="dd-drawer-label">SERVICE</p>
-          <a className="dd-drawer-link" href="/templates" onClick={() => setMenuOpen(false)}><span><DrawerIcon name="templates" /></span>템플릿 둘러보기 <b>›</b></a>
-          <a className="dd-drawer-link" href="#how" onClick={() => setMenuOpen(false)}><span><DrawerIcon name="experience" /></span>초대장 체험하기 <b>›</b></a>
-          <div className="dd-drawer-link dd-drawer-disabled" aria-disabled="true"><span className="dd-drawer-store-icon"><img src="/naver-smartstore-icon.svg" alt="" width="32" height="18" /></span><span>이용권 구매<small>네이버 스마트스토어 · 준비 중</small></span><b>›</b></div>
-          <a className="dd-drawer-link" href={user ? "/my-inquiries" : "/?login=required&returnUrl=%2Fmy-inquiries"} onClick={() => setMenuOpen(false)}><span><DrawerIcon name="inquiry" /></span>문의내역 <b>›</b></a>
-          {canManageAdmin && <><div style={{borderTop:"1px solid #e9e2dc",margin:"16px 0 8px"}}/><a className="dd-drawer-link" href="/admin/credits" onClick={() => setMenuOpen(false)}><span><DrawerIcon name="admin" /></span>관리자 페이지 <b>›</b></a></>}
-          <div className="dd-drawer-bottom">{user ? <button type="button" onClick={() => {setMenuOpen(false);signOut();}}>로그아웃</button> : <button type="button" onClick={() => {setMenuOpen(false);openLogin();}}>로그인</button>}</div>
-        </nav>
-      </div>}
+      <DearDayMobileDrawer open={menuOpen} onClose={() => setMenuOpen(false)} user={user} canManageAdmin={canManageAdmin} onStart={start} onLogin={() => openLogin()} onSignOut={signOut} />
     </header>
 
     <section className={`landing-hero dd-cinematic-hero dd-hero-variant-${heroVariant}`} id="top">
@@ -224,9 +199,9 @@ export default function Home() {
           <p>소중한 날을 더 아름답고 편리하게 만드는 DearDay의 핵심 기능을 만나보세요.</p>
         </header>
         {[
-          ["01", "THEMED DESIGN", "표지부터 본문, 화면 효과까지 하나의 테마로.", "단순히 배경만 바꾸는 디자인이 아닙니다. 표지와 본문은 물론, 각 테마에 어울리는 흩날림 효과까지 자연스럽게 이어져 초대장 전체를 하나의 분위기로 완성합니다.", "theme"],
+          ["01", "UNIQUE DESIGN", "흔한 초대장이 아닌, 다채로운 콘셉트의 초대장", "인생네컷, 영화 포스터, 계절 테마까지. 개성 있고 재치 있는 디자인으로 초대장을 받는 분들에게 특별한 즐거움을 선물하세요.", "theme"],
           ["02", "EVENT PROGRAM", "식순지까지 담은 초대장, 준비는 더 간편하게.", "결혼식부터 돌잔치, 칠순, 각종 행사까지. 별도의 식순지를 인쇄하거나 배포할 필요 없이, 모바일 초대장 하나로 행사 순서를 아름답고 편리하게 안내해요.", "program"],
-          ["03", "INSTANT PREVIEW", "작성하면서 바로 확인, 더 쉽고 편리하게.", "인사말부터 표지 문구, 인트로, 행사 식순까지. 전체 미리보기 화면을 오갈 필요 없이, 편집 중인 부분을 팝업 미리보기로 바로 확인하며 완성할 수 있어요.", "preview"],
+          ["03", "INSTANT PREVIEW", "모바일에서도, 수정하고 바로 확인하세요.", "작은 모바일 화면에서도 편집은 더 편리하게. 인사말부터 표지 문구, 인트로, 행사 식순까지. 전체 미리보기 화면을 오갈 필요 없이, 편집 중인 부분만 팝업 미리보기로 바로 확인할 수 있어요.", "preview"],
           ["04", "SPECIAL EFFECTS", "초대장을 여는 순간, 감동이 시작돼요.", "인트로와 배경음악, 테마에 어울리는 특별한 연출까지. 카페 오픈 초대장에 커피콩이 떨어지는 효과처럼 행사마다 색다른 분위기를 전해요.", "effects"],
           ["05", "SMART RSVP", "참석부터 식사까지, 더 똑똑하게.", "참석 여부와 동반 인원을 간편하게 확인하고 관리해요. 식사 여부와 인원별 통계까지 한눈에 살펴볼 수 있도록 기능을 확장할 예정이에요.", "rsvp"],
           ["06", "ALL OCCASIONS", "인생의 순간부터, 새로운 시작까지.", "결혼 → 돌잔치 → 자녀 생일 → 부모님 칠순, 그리고 모임·행사와 개업·오픈까지. 행사별 맞춤 테마에 어울리는 연출을 제공해요.", "occasions"],
@@ -238,22 +213,22 @@ export default function Home() {
                 <div className="dd-feature-demo-top"><span>DearDay</span><span>✦</span></div>
                 <div className="dd-feature-demo-content">
                   <span className="dd-feature-demo-kicker">{eyebrow}</span>
-                  {kind === "program" ? <div className="dd-landing-program-demo">
+                  {kind === "theme" ? <LandingConceptCarousel /> : kind === "program" ? <div className="dd-landing-program-demo">
                     <div className="dd-landing-program-switch" role="group" aria-label="식순 디자인 선택">
                       <button type="button" className={landingProgramStyle === "editorial" ? "is-active" : ""} aria-pressed={landingProgramStyle === "editorial"} onClick={() => setLandingProgramStyle("editorial")}>감성 타임라인</button>
                       <button type="button" className={landingProgramStyle === "card" ? "is-active" : ""} aria-pressed={landingProgramStyle === "card"} onClick={() => setLandingProgramStyle("card")}>카드형</button>
                     </div>
                     <div className="dd-landing-program-scroll" aria-label="예식 식순 디자인 미리보기"><div className="dd-landing-program-canvas dd-program-preview-content invitation-bottom-sheet--program invitation-bottom-sheet--program-editorial">
-                      <InvitationProgram eventKind="wedding" program={normalizeProgram({enabled:true,title:PROGRAM_DEFAULTS.wedding.title,displayMode:"number",style:landingProgramStyle,items:PROGRAM_DEFAULTS.wedding.items.slice(0,5).map((item,index)=>({id:`landing-program-${index+1}`,title:item.title,description:item.description||"",time:"",iconId:item.iconId||""}))})} />
+                      <InvitationProgram eventKind="wedding" program={normalizeProgram({enabled:true,title:PROGRAM_DEFAULTS.wedding.title,displayMode:"number",style:landingProgramStyle,items:PROGRAM_DEFAULTS.wedding.items.map((item,index)=>({id:`landing-program-${index+1}`,title:item.title,description:item.description||"",time:"",iconId:item.iconId||""}))})} />
                     </div></div>
                     <p className="dd-landing-program-note">식순 디자인을 전환해 보세요</p>
                   </div> :
-                    kind === "preview" ? <div className="dd-feature-program"><strong>✦ 초대 문구 미리보기</strong><span>인사말을 작성하고</span><span>↗ 필요한 부분만 바로 확인</span><span>♡ 화면 이동 없이 완성해요</span></div> :
+                    kind === "preview" ? <LandingIntroEditorDemo /> :
                     kind === "rsvp" ? <div className="dd-feature-program"><strong>참석 여부 확인</strong><span>○ 참석할게요</span><span>○ 참석이 어려워요</span><span>축하 메시지를 남겨주세요 ♡</span></div> :
                     kind === "occasions" ? <div className="dd-feature-occasion-grid"><span>결혼식</span><span>돌잔치</span><span>생일</span><span>환갑·칠순·팔순</span><span>모임·행사</span><span>개업·오픈</span></div> :
                     <div className="dd-feature-demo-paper"><span>YOUR SPECIAL DAY</span><strong>{kind === "effects" ? "A moment to remember" : kind === "edit" ? "Make it yours" : "Good People, Good Moment."}</strong><i /><small>DEARDAY · MOBILE INVITATION</small></div>}
                 </div>
-                <div className="dd-feature-demo-bottom">미리보기 · 영상 교체 예정</div>
+                {kind !== "theme" && kind !== "program" && kind !== "preview" && <div className="dd-feature-demo-bottom">미리보기 · 영상 교체 예정</div>}
               </div>
             </div>
             <div className="dd-feature-copy">
@@ -261,15 +236,15 @@ export default function Home() {
               <h3>{title}</h3>
               <p>{description}</p>
               <ul className="dd-feature-checks">
-                {(kind === "theme" ? ["표지·본문·화면 효과가 연결되는 테마형 디자인", "처음부터 마지막까지 일관된 분위기"] :
+                {(kind === "theme" ? ["인생네컷·영화 포스터·계절 테마", "개성 넘치는 다채로운 초대장 디자인"] :
                   kind === "program" ? ["행사 유형에 맞춘 식순·일정 안내", "클립아트와 감성 타임라인"] :
-                  kind === "preview" ? ["전체 화면 이동 없이, 필요한 부분만 미리보기", "작성과 동시에 확인하고 바로 수정"] :
+                  kind === "preview" ? ["모바일에서도 화면 이동 없이 간편한 부분 미리보기", "PC에서는 Live Preview로 실시간 확인"] :
                   kind === "effects" ? ["인트로와 배경음악으로 감성 연출", "행사 테마별 애니메이션·특수효과"] :
                   kind === "rsvp" ? ["참석 여부와 동반 인원 확인", "식사 여부·통계 기능 확장 예정"] :
                   kind === "occasions" ? ["인생의 주요 순간부터 모임·개업까지", "행사별 테마와 맞춤 연출"] :
                   ["발행 후 내용과 사진 수정", "발행 후에도 디자인 변경"]).map((benefit) => <li key={benefit}><span aria-hidden="true">✓</span>{benefit}</li>)}
               </ul>
-              <span className="dd-feature-pill">{kind === "theme" ? "표지부터 화면 효과까지, 하나의 테마" : kind === "program" ? "감성적인 식순·일정 안내" : kind === "preview" ? "편집 중 바로 확인하는 실시간 미리보기" : kind === "effects" ? "테마마다 다른 특별한 연출" : kind === "rsvp" ? "참석 관리 · 식사 기능 확장 예정" : kind === "occasions" ? "인생의 모든 특별한 날에" : "발행 후에도 유연하게 변경"}</span>
+              <span className="dd-feature-pill">{kind === "theme" ? "취향에 맞게 고르는 특별한 콘셉트" : kind === "program" ? "감성적인 식순·일정 안내" : kind === "preview" ? "모바일에서도 편리한 부분 미리보기" : kind === "effects" ? "테마마다 다른 특별한 연출" : kind === "rsvp" ? "참석 관리 · 식사 기능 확장 예정" : kind === "occasions" ? "인생의 모든 특별한 날에" : "발행 후에도 유연하게 변경"}</span>
             </div>
           </article>
         ))}
