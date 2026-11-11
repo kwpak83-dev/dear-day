@@ -23,9 +23,9 @@ export async function GET(request) {
   if(!Number.isSafeInteger(page)||page<1||page>1000)return Response.json({error:"잘못된 페이지"},{status:400});
   const since=days==="all"?null:new Date(Date.now()-Number(days)*86400000).toISOString();
   try{
-    let audits=db.from("invitation_deletion_audit").select("*",{count:"exact"}).order("created_at",{ascending:false}).range((page-1)*20,page*20-1);
+    let audits=db.from("invitation_deletion_audit").select("*",{count:"exact"}).range((page-1)*20,page*20-1);
     let jobs=db.from("invitation_storage_cleanup_jobs").select("id,event_id,bucket,status,attempts,last_error,created_at,updated_at,next_attempt_at",{count:"exact"}).order("updated_at",{ascending:false}).range((page-1)*20,page*20-1);
-    if(since){audits=audits.gte("created_at",since);jobs=jobs.gte("created_at",since);}
+    if(since){jobs=jobs.gte("created_at",since);}
     if(search){audits=audits.eq("event_id",search);jobs=jobs.eq("event_id",search);}
     const [a,j]=await Promise.all([audits,jobs]);
     if(a.error)throw Object.assign(new Error("audit query failed"),{queryStage:"audit",dbCode:a.error.code,dbMessage:a.error.message});
@@ -40,12 +40,12 @@ export async function GET(request) {
       counts[status]=result.count||0;
     }
     let completed=db.from("invitation_deletion_audit").select("event_id",{count:"exact",head:true}).eq("outcome","completed");
-    if(since)completed=completed.gte("created_at",since);
+    // Audit table has no guaranteed created_at column; avoid an invalid filter.
     if(search)completed=completed.eq("event_id",search);
     const completedResult=await completed;
     if(completedResult.error)throw Object.assign(new Error("audit count query failed"),{queryStage:"audit-count",dbCode:completedResult.error.code,dbMessage:completedResult.error.message});
     return Response.json({
-      audits:a.data||[],auditTotal:a.count||0,
+      audits:(a.data||[]).map(x=>({...x,created_at:x.created_at||x.deleted_at||x.completed_at||x.updated_at||null})),auditTotal:a.count||0,
       jobs:(j.data||[]).map(({last_error,...job})=>({...job,errorFlag:Boolean(last_error)})),
       jobTotal:j.count||0,counts,completed:completedResult.count||0,page
     },{headers:{"Cache-Control":"no-store"}});
