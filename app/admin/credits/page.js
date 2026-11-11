@@ -10,7 +10,7 @@ const fmt=(d)=>new Date(d).toLocaleString("ko-KR",{timeZone:"Asia/Seoul"});
 
 export default function CreditAdmin(){
  const [search,setSearch]=useState(""),[users,setUsers]=useState([]),[selected,setSelected]=useState(null),[token,setToken]=useState(""),[quantity,setQuantity]=useState(1),[expiresAt,setExpiresAt]=useState(""),[reason,setReason]=useState("테스트"),[note,setNote]=useState(""),[grants,setGrants]=useState([]),[ledger,setLedger]=useState([]),[message,setMessage]=useState(""),[busy,setBusy]=useState(false),[searched,setSearched]=useState(false);
- useEffect(()=>{getSupabaseBrowserClient()?.auth.getSession().then(({data})=>setToken(data.session?.access_token||""));},[]);
+ useEffect(()=>{getSupabaseBrowserClient()?.auth.getSession().then(({data})=>setToken(data.session?.access_token||""));const member=new URLSearchParams(window.location.search).get("member");if(member)setSearch(member);},[]);
  const headers=()=>({Authorization:"Bearer "+token});
  async function findUsers(e){
   e?.preventDefault();if(!token||search.trim().length<2)return;
