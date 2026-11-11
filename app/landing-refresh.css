@@ -2457,3 +2457,17 @@
 .dd-shared-drawer-root .dd-drawer-credit .credit-balance{max-width:100%}
 .dd-shared-drawer-root .dd-home-drawer [aria-current="page"]{background:#fbf4f0!important;color:#a66e5e!important;border-radius:10px}
 .dd-shared-drawer-root .dd-home-drawer .dd-drawer-shortcuts [aria-current="page"]{border-color:#d9b8aa!important}
+
+
+/* Feature stories: explain the benefit first, then show the demo.
+   Mobile stacks copy above demo; desktop keeps a two-column layout. */
+.landing-v2 .dd-features .dd-feature .dd-feature-copy{order:0!important}
+.landing-v2 .dd-features .dd-feature .dd-feature-visual{order:1!important}
+@media (max-width:800px){
+  .landing-v2 .dd-features .dd-feature .dd-feature-copy{
+    padding:8px 7px 20px!important;
+  }
+  .landing-v2 .dd-features .dd-feature .dd-feature-visual{
+    margin-top:0!important;
+  }
+}
