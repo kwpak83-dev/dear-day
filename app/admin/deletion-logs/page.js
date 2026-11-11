@@ -53,6 +53,7 @@ export default function DeletionLogsPage(){
    {(data?.runs||[]).map(x=><tr key={x.id}><td style={cell}>{fmt(x.finished_at)}</td><td style={cell}>{{schedule:"만료 일정 확인",cleanup:"초대장 자동삭제","storage-cleanup":"사진·BGM 정리"}[x.task]||x.task}</td><td style={cell}>{x.http_status>=400?"실패":x.result_mode==="disabled"?"비활성":"정상"} (HTTP {x.http_status})</td><td style={cell}>{x.processed_count}</td><td style={cell}>{x.failed_count}</td></tr>)}
    {!loading&&!data?.runs?.length&&<tr><td colSpan={5} style={cell}>조회된 자동 실행 기록이 없습니다.</td></tr>}
   </tbody></table></div>
+  {!!data?.auditUndated&&<p style={{fontSize:12,color:"#a36522"}}>기존 삭제 감사 기록 {data.auditUndated}건은 날짜 정보가 없어 조회 기간과 관계없이 표시됩니다. 날짜를 임의로 추정하지 않았습니다.</p>}
   {data?.auditTruncated&&<p style={{fontSize:12,color:"#a36522"}}>감사 기록이 1,000건을 초과해 일부 기록이 조회되지 않을 수 있습니다.</p>}
   <h2 style={{fontSize:21}}>초대장 삭제 기록 <small style={{fontSize:13,fontWeight:400}}>총 {data?.auditTotal??"-"}건</small></h2>
   <div style={{overflowX:"auto",marginBottom:28}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:680}}><thead><tr>{["삭제 일시","초대장 ID","구분","결과","파일 정리 대상"].map(x=><th key={x} style={cell}>{x}</th>)}</tr></thead><tbody>
