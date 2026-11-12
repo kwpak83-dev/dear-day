@@ -267,6 +267,12 @@
 }
 
 
+/* Keep the small labels tight to the top-left image corner so names stay visible. */
+.dd-showcase-page .dd-showcase-section-label{
+ top:2px!important;
+ left:2px!important;
+}
+
 /* Refine cover/body badges: 1px smaller, softer gray, minimal height. */
 .dd-showcase-page .dd-showcase-section-label{
  font-size:9px!important;
