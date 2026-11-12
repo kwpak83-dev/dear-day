@@ -164,7 +164,7 @@ export default function Home() {
       <video ref={(node) => { heroVideoRefs.current[0] = node; }} className={`dd-hero-video dd-hero-video-layer${heroVideoIndex === 0 ? " dd-hero-video-active" : ""}`} autoPlay muted playsInline preload="auto" aria-hidden="true" onPlaying={() => setHeroVideoIndex(0)} onEnded={() => advanceHeroVideo(0)}>
         <source src="/landing/dearday-seaside-hero.mp4" type="video/mp4" />
       </video>
-      <video ref={(node) => { heroVideoRefs.current[1] = node; }} className={`dd-hero-video dd-hero-video-layer${heroVideoIndex === 1 ? " dd-hero-video-active" : ""}`} muted playsInline preload="auto" aria-hidden="true" onPlaying={() => setHeroVideoIndex(1)} onEnded={() => advanceHeroVideo(1)} onError={() => handleHeroVideoError(1)}>
+      <video ref={(node) => { heroVideoRefs.current[1] = node; }} className={`dd-hero-video dd-hero-video-layer${heroVideoIndex === 1 ? " dd-hero-video-active" : ""}`} muted playsInline preload="none" aria-hidden="true" onPlaying={() => setHeroVideoIndex(1)} onEnded={() => advanceHeroVideo(1)} onError={() => handleHeroVideoError(1)}>
         <source src="/landing/dearday-seaside-extra.mp4" type="video/mp4" />
       </video>
       <div className="dd-hero-shade" aria-hidden="true" />
