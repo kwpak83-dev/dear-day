@@ -1544,7 +1544,7 @@
    Background stays behind the live seaside video and interactive content. */
 .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
  background-color:#faf7f1!important;
- background-image:url("/landing/dearday-hero-background.png")!important;
+ background-image:url("/landing/dearday-hero-background.webp")!important;
  background-repeat:no-repeat!important;
  background-position:center center!important;
  background-size:cover!important;
@@ -1563,7 +1563,7 @@
 @media(max-width:800px){
  .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
   background-color:#faf7f1!important;
-  background-image:url("/landing/dearday-hero-background.png")!important;
+  background-image:url("/landing/dearday-hero-background.webp")!important;
   background-position:center top!important;
   background-size:100% 100%!important;
   background-repeat:no-repeat!important;
@@ -1810,7 +1810,7 @@
   position:relative!important;
   isolation:isolate!important;
   background-color:#f8f4ed!important;
-  background-image:url("/landing/dearday-hero-background.png")!important;
+  background-image:url("/landing/dearday-hero-background.webp")!important;
   background-size:100% 100%!important;
   background-position:center center!important;
   background-repeat:no-repeat!important;
