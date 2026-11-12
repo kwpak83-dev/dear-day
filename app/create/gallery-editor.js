@@ -69,6 +69,20 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
     catch (error) { setLoaded(false); setNotice(error.message); }
     finally { end(); }
   };
+  const uploadThumbnail = async (blob,id,targetSlug) => {
+    const url=URL.createObjectURL(blob);
+    try {
+      const image=new Image();image.src=url;await image.decode();
+      const scale=Math.min(1,320/Math.max(image.naturalWidth,image.naturalHeight));
+      const canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
+      canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);
+      const thumb=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",0.7));
+      if(!thumb||thumb.type!=="image/webp"||thumb.size>150*1024)return;
+      const supabase=getSupabaseBrowserClient();const {data:{session}}=await supabase.auth.getSession();
+      if(!session)return;
+      await fetch(`/api/gallery/thumbnail?slug=${encodeURIComponent(targetSlug)}&id=${id}`,{method:"PUT",headers:{Authorization:`Bearer ${session.access_token}`,"Content-Type":"image/webp"},body:thumb});
+    } finally {URL.revokeObjectURL(url);}
+  };
   const selectPhotos = async event => {
     const files = Array.from(event.target.files || []);
     event.target.value = "";
@@ -106,6 +120,7 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
             if (!reservation || ["uploading", "deleting"].includes(reservation.state)) throw new Error("이 사진을 처리 중이에요. 잠시 후 새로고침해 주세요.");
             if (reservation.state === "ready") { duplicates++; continue; }
             await request("PUT", photo.blob, reservation.id, targetSlug);
+            try { await uploadThumbnail(photo.blob,reservation.id,targetSlug); } catch { /* Original photo is already saved; thumbnail is optional. */ }
             added++;
           } catch (error) { errors.push(`${photo.name}: ${error.message}`); }
         }
@@ -171,7 +186,7 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
       {pending > 0 && <p>{pending}장 처리 대기 중이에요. 미완료 업로드는 15분 후 새로고침하면 정리돼요.</p>}
       <div className="gallery-editor-grid" ref={grid}>
         {photos.map((photo, index) => <article key={photo.id} data-gallery-id={photo.id} className={`gallery-tile${dragging?.over === photo.id ? " gallery-drop-target" : ""}${dragging?.id === photo.id ? " gallery-dragging" : ""}`}>
-          <img src={photo.url} alt={`갤러리 사진 ${index + 1}`} loading="lazy" decoding="async" width="300" height="300" draggable={false} />
+          <img src={photo.thumbnailUrl||photo.url} alt={`갤러리 사진 ${index + 1}`} loading="lazy" decoding="async" width="300" height="300" draggable={false} />
           <div className="gallery-tile-actions"><button type="button" className="gallery-drag-handle" aria-label={`${index + 1}번 사진 순서 이동 손잡이`} disabled={locked} onPointerDown={event => {
             if (event.button !== 0 || operation.current) return;
             event.currentTarget.setPointerCapture(event.pointerId);
