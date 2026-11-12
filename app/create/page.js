@@ -727,11 +727,8 @@ export default function CreateInvitation() {
       if (!supabase) throw new Error("사진 저장 서비스를 준비하지 못했어요.");
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("로그인 후 이미지를 첨부할 수 있어요.");
-      const photo = await preparePhoto(file);
-      const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": await uploadEventSlug(), "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || !result.url) throw new Error(result.error || "이미지 업로드에 실패했어요.");
-      update("brandImageUrl", result.url);
+      const photoUrl = await uploadEditorPhoto(file, session);
+      update("brandImageUrl", photoUrl);
       setPhotoNotice("로고·대표이미지를 첨부했어요.");
     } catch (error) {
       setPhotoNotice(error.message || "이미지를 업로드하지 못했어요.");
@@ -746,10 +743,8 @@ export default function CreateInvitation() {
     photoBusy.current=true; setUploadingPhoto(true);
     try { const supabase=getSupabaseBrowserClient(); const {data:{session}}=supabase?await supabase.auth.getSession():{data:{}};
       if(!session)throw new Error("로그인 후 사진을 첨부할 수 있어요.");
-      const photo=await preparePhoto(file);
-      const response=await fetch("/api/photos",{method:"POST",headers:{ "X-Event-Slug": await uploadEventSlug(),"Content-Type":"image/jpeg",Authorization:"Bearer "+session.access_token},body:photo});
-      const result=await response.json().catch(()=>({})); if(!response.ok||!result.url)throw new Error(result.error||"사진 업로드에 실패했어요.");
-      update(key,result.url);
+      const photoUrl=await uploadEditorPhoto(file,session);
+      update(key,photoUrl);
     } catch(error){setPhotoNotice(error.message||"부모 소개 사진을 업로드하지 못했어요.");}
     finally{photoBusy.current=false;setUploadingPhoto(false);}
   };
@@ -805,11 +800,8 @@ export default function CreateInvitation() {
       const supabase = getSupabaseBrowserClient();
       const { data: { session } } = supabase ? await supabase.auth.getSession() : { data: {} };
       if (!session) throw new Error("로그인 후 사진을 첨부할 수 있어요.");
-      const photo = await preparePhoto(file);
-      const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": await uploadEventSlug(), "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || !result.url) throw new Error(result.error || "사진 업로드에 실패했어요.");
-      updateTimelineItem(id, { photoUrl: result.url });
+      const photoUrl = await uploadEditorPhoto(file, session);
+      updateTimelineItem(id, { photoUrl });
     } catch (error) { setPhotoNotice(error.message || "성장 기록 사진을 업로드하지 못했어요."); }
     finally { photoBusy.current = false; setUploadingPhoto(false); }
   };
