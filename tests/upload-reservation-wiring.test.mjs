@@ -7,7 +7,7 @@ test("all editor photo/BGM POST calls supply event slug",async()=>{
   const src=await read("app/create/page.js");
   const calls=[...src.matchAll(/fetch\("\/api\/(photos|bgm-upload)"\s*,\s*\{[\s\S]*?\}\)/g)]
     .filter(m=>/method\s*:\s*"POST"/.test(m[0]));
-  assert.equal(calls.length,7,"expected all seven editor upload calls");
+  assert.ok(calls.length >= 3,"expected shared photo upload, HERO upload and BGM upload calls");
   for(const call of calls)assert.match(call[0],/"X-Event-Slug"\s*:\s*await uploadEventSlug\(\)/);
 });
 test("gallery reserves in DB before sending Storage bytes",async()=>{
@@ -50,4 +50,24 @@ test("first upload saves an event when the client opt-in is enabled",async()=>{
   assert.match(editor,/NEXT_PUBLIC_INVITATION_UPLOAD_RESERVATIONS_READY === "true"/);
   assert.match(editor,/saveDraft\(\{ showLoading: false, allowUploadBusy: true \}\)/);
   assert.match(editor,/if \(!slug \|\| slug === "local"\) throw new Error/);
+});
+
+test("shared editor upload helper is used for wedding, parents, timeline and brand images", async () => {
+  const src = await read("app/create/page.js");
+  for (const handler of ["uploadBrandImage", "uploadParentIntroPhoto", "uploadWeddingSectionPhoto", "uploadTimelinePhoto"]) {
+    const start = src.indexOf("const " + handler + " =");
+    assert.ok(start >= 0, handler);
+    const section = src.slice(start, start + 1700);
+    assert.match(section, /uploadEditorPhoto\(file,\s*session\)/, handler);
+  }
+  assert.match(src, /WEBP_UPLOAD_FAILED/);
+});
+test("notice WebP save validation and cleanup scopes stay aligned", async () => {
+  const events = await read("app/api/events/route.js");
+  assert.match(events, /notice\\\/.*?jpg\|webp/);
+  const cleanup = await read("lib/invitation-storage-cleanup-scope.js");
+  assert.match(cleanup, /\["notice", "photo"\]/);
+  const sql = await read("supabase/migrations/202611120001_notice_webp_cleanup_scope.sql");
+  assert.match(sql, /notice\//);
+  assert.match(sql, /\[\.\]\(jpg\|webp\)/);
 });
