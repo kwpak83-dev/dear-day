@@ -27,14 +27,14 @@ async function optimizeTemplateSampleUpload(file) {
   const image = new Image();
   image.src = url;
   await image.decode();
-  const scale = Math.min(1, 1600 / Math.max(image.naturalWidth, image.naturalHeight));
+  const scale = Math.min(1, 1200 / Math.max(image.naturalWidth, image.naturalHeight));
   const canvas = document.createElement("canvas");
   canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
   canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
   const context = canvas.getContext("2d", { alpha: true });
   if (!context) return file;
   context.drawImage(image, 0, 0, canvas.width, canvas.height);
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/webp", 0.85));
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/webp", 0.78));
   if (!blob || blob.type !== "image/webp" || blob.size >= file.size * 0.9) return file;
   return new File([blob], file.name.replace(/\.[^.]+$/, "") + ".webp", { type: "image/webp", lastModified: file.lastModified });
  } catch {
