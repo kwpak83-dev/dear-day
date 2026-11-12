@@ -11,10 +11,19 @@ export default function LandingConceptCarousel() {
  const [items,setItems]=useState([]);
  const [active,setActive]=useState(0);
  const [paused,setPaused]=useState(false);
+ const [visible,setVisible]=useState(false);
+ const rootRef=useRef(null);
  const programmaticRef=useRef(false);
  const releaseRef=useRef(null);
  const trackRef=useRef(null);
  const pauseRef=useRef(false);
+ useEffect(()=>{
+  const root=rootRef.current;
+  if(!root||typeof IntersectionObserver==="undefined")return;
+  const observer=new IntersectionObserver(([entry])=>setVisible(Boolean(entry?.isIntersecting)),{threshold:0.1});
+  observer.observe(root);
+  return()=>observer.disconnect();
+ },[]);
  useEffect(()=>{
   const controller=new AbortController();
   fetch("/api/templates/collection",{signal:controller.signal})
@@ -40,10 +49,10 @@ export default function LandingConceptCarousel() {
   if(card)track.scrollTo({left:card.offsetLeft+card.offsetWidth/2-track.clientWidth/2,behavior:"smooth"});
  };
  useEffect(()=>{
-  if(items.length<2||paused)return;
+  if(items.length<2||paused||!visible)return;
   const timer=setInterval(()=>{if(!pauseRef.current)setActive(previous=>(previous+1)%items.length)},4000);
   return()=>clearInterval(timer);
- },[items.length,paused]);
+ },[items.length,paused,visible]);
  useEffect(()=>{
   const track=trackRef.current;
   const card=track?.children[active];
@@ -59,7 +68,7 @@ export default function LandingConceptCarousel() {
   Array.from(track.children).forEach((card,index)=>{const d=Math.abs(card.offsetLeft+card.offsetWidth/2-center);if(d<dist){best=index;dist=d}});
   setActive(best);
  };
- return <div className="dd-concept-carousel" onFocus={()=>setPaused(true)} onBlur={e=>{if(!e.currentTarget.contains(e.relatedTarget))setPaused(false)}} onTouchStart={()=>{pauseRef.current=true}} onTouchEnd={()=>{pauseRef.current=false}} onTouchCancel={()=>{pauseRef.current=false}}>
+ return <div ref={rootRef} className="dd-concept-carousel" onFocus={()=>setPaused(true)} onBlur={e=>{if(!e.currentTarget.contains(e.relatedTarget))setPaused(false)}} onTouchStart={()=>{pauseRef.current=true}} onTouchEnd={()=>{pauseRef.current=false}} onTouchCancel={()=>{pauseRef.current=false}}>
   <div className="dd-concept-carousel-header"><strong>다채로운 콘셉트</strong><span>SWIPE TO EXPLORE</span></div>
   {items.length ? <>
    <div className="dd-concept-carousel-track" ref={trackRef} onScroll={sync} aria-label="디어데이 콘셉트 초대장 표지">
