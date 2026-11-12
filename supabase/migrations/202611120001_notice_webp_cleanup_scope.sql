@@ -28,7 +28,8 @@ begin
       where id=p_job_id;
     return;
   end if;
-  if not ((v_job.bucket = 'invitation-photos' and v_job.storage_path ~ ('^' || v_job.owner_id || '/gallery/' || v_job.event_id || '/[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}[.]jpg)
+  if not ((v_job.bucket = 'invitation-photos' and v_job.storage_path ~ ('^' || v_job.owner_id || '/gallery/' || v_job.event_id || '/[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}[.]jpg$'))
+    or (v_job.bucket = 'invitation-photos' and v_job.storage_path ~ ('^' || v_job.owner_id || '/notice/' || v_job.event_id || '/[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}[.](jpg|webp)$'))
     or (v_job.bucket = 'invitation-photos' and v_job.storage_path ~ ('^' || v_job.owner_id || '/photo/' || v_job.event_id || '/[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}[.](jpg|webp)$'))
     or (v_job.bucket = 'invitation-bgm' and v_job.storage_path ~ ('^' || v_job.owner_id || '/bgm/' || v_job.event_id || '/[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}[.]mp3$'))) then return; end if;
 
