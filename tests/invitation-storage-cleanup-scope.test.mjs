@@ -12,6 +12,7 @@ test("completed uploads require an event-scoped path and matching bucket", () =>
   assert.equal(hasInvitationScopedUpload(job, reservation), true);
   for (const [bucket, kind, extension] of [
     ["invitation-photos", "photo", "webp"],
+    ["invitation-photos", "notice", "webp"],
     ["invitation-photos", "gallery", "jpg"],
     ["invitation-bgm", "bgm", "mp3"],
   ]) {
@@ -24,6 +25,7 @@ test("completed uploads require an event-scoped path and matching bucket", () =>
     { ...job, storage_path: `${owner}/${name}.jpg` },
     { ...job, storage_path: job.storage_path.replace("/notice/", "/bgm/") },
     { ...job, storage_path: job.storage_path + "/extra" },
+    { ...job, storage_path: `${owner}/gallery/${event}/${name}.webp` },
   ]) assert.equal(hasInvitationScopedUpload(candidate, reservation), false);
   for (const candidate of [null, { ...reservation, status: "reserved" }, { ...reservation, event_id: name }]) {
     assert.equal(hasInvitationScopedUpload(job, candidate), false);
