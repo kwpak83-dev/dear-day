@@ -15,7 +15,8 @@ export async function POST(request) {
   if (!/^[a-z0-9-]{4,80}$/.test(slug)) return fail("초대장을 먼저 임시저장해 주세요.", 400);
   const { data: event } = await supabase.from("events").select("id").eq("slug", slug).eq("owner_id", user.id).maybeSingle();
   if (!event) return fail("초대장 소유자만 이미지를 올릴 수 있어요.", 403);
-  if (request.headers.get("content-type") !== "image/jpeg") return fail("JPG만 지원해요.", 415);
+  const mime = request.headers.get("content-type");
+  if (!["image/jpeg", "image/webp"].includes(mime)) return fail("JPG 또는 WebP만 지원해요.", 415);
   const reader = request.body?.getReader();
   if (!reader) return fail("이미지를 선택해 주세요.", 400);
   let size = 0;
@@ -28,14 +29,16 @@ export async function POST(request) {
     chunks.push(Buffer.from(value));
   }
   const bytes = Buffer.concat(chunks);
-  if (bytes.length < 4 || bytes[0] !== 255 || bytes[1] !== 216 || bytes[2] !== 255) return fail("올바른 JPG 이미지가 아니에요.", 400);
-  const path = `${user.id}/notice/${event.id}/${randomUUID()}.jpg`;
+  const validJpeg = bytes.length >= 4 && bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255;
+  const validWebp = bytes.length >= 12 && bytes.toString("ascii", 0, 4) === "RIFF" && bytes.toString("ascii", 8, 12) === "WEBP";
+  if ((mime === "image/jpeg" && !validJpeg) || (mime === "image/webp" && !validWebp)) return fail("올바른 이미지가 아니에요.", 400);
+  const path = `${user.id}/notice/${event.id}/${randomUUID()}.${mime === "image/webp" ? "webp" : "jpg"}`;
   const reservation = await reserveUploadIfEnabled(supabase, user.id, request, "invitation-photos", path, event.id);
   if (reservation.error) return fail(reservation.error, reservation.status);
-  const { error } = await supabase.storage.from("invitation-photos").upload(path, bytes, { contentType: "image/jpeg", upsert: false });
+  const { error } = await supabase.storage.from("invitation-photos").upload(path, bytes, { contentType: mime, upsert: false });
   if (!(await finishReservedUpload(supabase, user.id, reservation, !error))) {
     return fail("업로드 상태를 확인하지 못했어요. 잠시 후 다시 확인해 주세요.", 503);
   }
-  if (error) return fail("공지 이미지를 업로드하지 못했어요.", 500);
+  if (error) return fail(mime === "image/webp" ? "WEBP_UPLOAD_FAILED" : "공지 이미지를 업로드하지 못했어요.", 500);
   return Response.json({ path, url: supabase.storage.from("invitation-photos").getPublicUrl(path).data.publicUrl });
 }
