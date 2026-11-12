@@ -193,8 +193,10 @@ BEGIN
         AND r.status IN ('reserved', 'uploaded')
     ) AND (
       (c.bucket = 'invitation-photos' AND c.storage_path ~ (
-        '^' || p_owner || '/((notice|gallery)/' || p_event ||
-        '/' || object_uuid || '[.](jpg|webp)|photo/' || p_event || '/' || object_uuid || '[.](jpg|webp))$'))
+        '^' || p_owner || '/(notice/' || p_event ||
+        '/' || object_uuid || '[.](jpg|webp)|gallery/' || p_event ||
+        '/' || object_uuid || '[.]jpg|photo/' || p_event ||
+        '/' || object_uuid || '[.](jpg|webp))$'))
       OR (c.bucket = 'invitation-bgm' AND c.storage_path ~ (
         '^' || p_owner || '/bgm/' || p_event || '/' || object_uuid || '[.]mp3$'))
     ) AS reserved
