@@ -36,7 +36,7 @@ test("isolated PostgreSQL thumbnail migration, fencing, ownership and concurrent
     // Focused fixture: production retention_v2 is defined by SQL 023. This is
     // not a claim that all retention migrations have been integration-tested here.
     sql("alter type event_status add value 'paid'; alter type event_status add value 'suspended'; alter table events add column retention_v2 boolean not null default false;");
-    for (const name of ["202609110001_invitation_gallery.sql", "202611090012_upload_reservations.sql", "202611090017_invitation_storage_object_fence.sql", "202611090018_inventory_invitation_storage_references.sql", "202611120001_gallery_thumbnail_path.sql", "202611120002_gallery_thumbnail_link.sql"]) sql(migration(name));
+    for (const name of ["202609110001_invitation_gallery.sql", "202611090012_upload_reservations.sql", "202611090017_invitation_storage_object_fence.sql", "202611090018_inventory_invitation_storage_references.sql", "202611120001_gallery_thumbnail_path.sql", "202611120002_gallery_thumbnail_link.sql", "202611120003_gallery_active_hash.sql"]) sql(migration(name));
     const owner=randomUUID(), other=randomUUID(), event=randomUUID(), media=randomUUID();
     const original=`${owner}/gallery/${event}/${media}.jpg`, thumb=`${owner}/photo/${event}/${randomUUID()}.webp`, second=`${owner}/photo/${event}/${randomUUID()}.webp`;
     sql(`insert into auth.users(id) values('${owner}'),('${other}'); insert into events(id,owner_id,kind,slug,title) values('${event}','${owner}','wedding','thumbnail-test','Fixture'); insert into event_media(id,event_id,storage_path,gallery_state) values('${media}','${event}','${original}','ready');`);
@@ -62,6 +62,19 @@ test("isolated PostgreSQL thumbnail migration, fencing, ownership and concurrent
     assert.equal(sql(`select count(*) from gallery_storage_cleanup where storage_path in ('${original}','${winner}')`),"2");
     assert.equal(sql(`select count(*) from events where id='${protectedEvent}'`),"1");
     assert.equal(sql(`select has_function_privilege('authenticated','public.link_gallery_thumbnail(uuid,uuid,uuid,text)','execute')`),"f");
+    const hashes = JSON.stringify({hashes:['a'.repeat(64)]});
+    const reserve = `select mutate_invitation_gallery('${event}','${owner}','reserve','${hashes}'::jsonb);`;
+    const reservations = await Promise.all([session(reserve),session(reserve)]);
+    const first = JSON.parse(reservations[0])[0], duplicate = JSON.parse(reservations[1])[0];
+    assert.equal(first.id,duplicate.id);
+    const begin = `select mutate_invitation_gallery('${event}','${owner}','begin','{"id":"${first.id}"}'::jsonb);`;
+    const beginnings = await Promise.allSettled([session(begin),session(begin)]);
+    assert.equal(beginnings.filter(r=>r.status==='fulfilled').length,1);
+    assert.match(beginnings.find(r=>r.status==='rejected').reason.message,/GALLERY_BUSY/);
+    sql(`select mutate_invitation_gallery('${event}','${owner}','finish','{"id":"${first.id}"}'::jsonb); select mutate_invitation_gallery('${event}','${owner}','delete','{"id":"${first.id}"}'::jsonb);`);
+    const replacement = JSON.parse(sql(reserve))[0];
+    assert.notEqual(replacement.id,first.id);assert.notEqual(replacement.storage_path,first.storage_path);
+    assert.equal(sql(`select gallery_state from event_media where id='${first.id}'`),'deleting');
   } finally {
     if (started) run("pg_ctl", ["-D", data, "-m", "fast", "-w", "stop"]);
     if (!dir.startsWith(path.join(os.tmpdir(), "dearday-thumbnail-"))) throw Error("Unsafe cleanup path");
@@ -80,7 +93,7 @@ test("PGlite executes thumbnail migrations, ownership, duplicate linking, rollba
       create function auth.role() returns text language sql stable as $$select coalesce(nullif(current_setting('request.jwt.claim.role',true),''),'service_role')$$;`);
     await db.exec(migration("202609090001_initial_event_platform.sql").replace("create extension if not exists pgcrypto;", ""));
     await db.exec("alter type event_status add value 'paid'; alter type event_status add value 'suspended'; alter table events add column retention_v2 boolean not null default false;");
-    for (const name of ["202609110001_invitation_gallery.sql", "202611090012_upload_reservations.sql", "202611090017_invitation_storage_object_fence.sql", "202611090018_inventory_invitation_storage_references.sql", "202611120001_gallery_thumbnail_path.sql", "202611120002_gallery_thumbnail_link.sql"]) await db.exec(migration(name));
+    for (const name of ["202609110001_invitation_gallery.sql", "202611090012_upload_reservations.sql", "202611090017_invitation_storage_object_fence.sql", "202611090018_inventory_invitation_storage_references.sql", "202611120001_gallery_thumbnail_path.sql", "202611120002_gallery_thumbnail_link.sql", "202611120003_gallery_active_hash.sql"]) await db.exec(migration(name));
     await db.exec(migration("202611120002_gallery_thumbnail_link.sql")); // SQL Editor retry is safe.
     const owner=randomUUID(), other=randomUUID(), event=randomUUID(), media=randomUUID(), protectedEvent=randomUUID();
     const original=`${owner}/gallery/${event}/${media}.jpg`, first=`${owner}/photo/${event}/${randomUUID()}.webp`, second=`${owner}/photo/${event}/${randomUUID()}.webp`;

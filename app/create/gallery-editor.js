@@ -45,7 +45,6 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
     if (slug) request("GET", undefined, undefined, slug).then(result => {
       if (!cancelled) {
         apply(result);
-        if (result.cleanupPending) setNotice("삭제한 사진의 파일 정리를 재시도 중이에요. 잠시 후 새로고침해 주세요.");
       }
     }).catch(error => { if (!cancelled) setNotice(error.message); });
     return () => { cancelled = true; };
@@ -65,7 +64,7 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
   const end = () => { operation.current = false; setBusy(false); onBusyChange(false); setProgress(null); };
   const reload = async () => {
     if (!start()) return;
-    try { const result = apply(await request()); setNotice(result.cleanupPending ? "파일 정리가 아직 완료되지 않았어요. 잠시 후 다시 확인해 주세요." : "갤러리를 새로 불러왔어요."); }
+    try { const result = apply(await request()); setNotice("갤러리를 새로 불러왔어요."); }
     catch (error) { setLoaded(false); setNotice(error.message); }
     finally { end(); }
   };
@@ -152,7 +151,7 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
     if (!start()) return;
     try {
       const result = apply(await request("DELETE", undefined, photo.id));
-      setNotice(result.cleanupPending ? "사진을 갤러리에서 삭제했어요. 파일 정리는 다음 새로고침 때 다시 확인해요." : "사진을 삭제했어요.");
+      setNotice("사진이 갤러리에서 삭제되었습니다.");
     } catch (error) { setNotice(error.message); try { apply(await request()); } catch { setLoaded(false); } }
     finally { end(); }
   };
