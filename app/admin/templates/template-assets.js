@@ -26,6 +26,32 @@ const imageSize = (file) => new Promise((resolve, reject) => {
   image.src = url;
 });
 
+// WebP for new body-template image assets; keep original when conversion is not beneficial.
+async function optimizeBodyAsset(file, type) {
+  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size < 150 * 1024) return file;
+  const url = URL.createObjectURL(file);
+  try {
+    const image = new Image();
+    image.src = url;
+    await image.decode();
+    // Tiled textures and full-resolution design backgrounds must retain their dimensions.
+    const maxSide = ["background", "texture", "screen_effect"].includes(type) ? Infinity : 1600;
+    const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+    const context = canvas.getContext("2d", { alpha: true });
+    if (!context) return file;
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/webp", 0.85));
+    if (!blob || blob.type !== "image/webp" || blob.size >= file.size * 0.9) return file;
+    return new File([blob], file.name.replace(/\.[^.]+$/, "") + ".webp", { type: "image/webp", lastModified: file.lastModified });
+  } catch {
+    return file;
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
 export default function TemplateAssets({ templateId, onOperation, onPermanentDelete, onBusyChange, deletionBlocked }) {
   const [assets, setAssets] = useState([]);
   const [notice, setNotice] = useState("");
@@ -85,8 +111,8 @@ export default function TemplateAssets({ templateId, onOperation, onPermanentDel
         result = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(result.error || "BGM 정보를 저장하지 못했어요.");
       } else {
-        const optimization = type === "background" ? await optimizeHeroImageWithReport(file) : { file, report: null };
-        const uploadFile = optimization.file;
+        const optimization = type === "background" && ["image/png", "image/webp"].includes(file.type) ? await optimizeHeroImageWithReport(file) : { file: await optimizeBodyAsset(file, type), report: null };
+        const uploadFile = await optimizeBodyAsset(optimization.file, type);
         optimizationReport = optimization.report;
         const size = await imageSize(uploadFile);
         const form = new FormData();
