@@ -5079,3 +5079,13 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-message-preview-effect-overlay>.dd-template-screen-effect img{top:-35px;animation-name:dd-inline-screen-fall}
 .dd-message-preview-effect-overlay>.dd-template-screen-effect--flutter img{animation-name:dd-inline-screen-flutter}
 .dd-message-preview-effect-overlay>.dd-template-screen-effect--sparkle img{top:50%;animation-name:dd-screen-sparkle}
+
+/* Keep the effects preview at the same compact width as the greeting preview.
+   Both use InvitationMessagePreview's responsive 390px design canvas. */
+.dd-share-settings .dd-effect-inline-preview{
+  width:304px;
+  max-width:100%;
+  margin-left:auto;
+  margin-right:auto;
+  box-sizing:border-box;
+}
