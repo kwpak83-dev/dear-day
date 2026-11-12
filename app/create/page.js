@@ -873,9 +873,15 @@ export default function CreateInvitation() {
       const supabase = getSupabaseBrowserClient();
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("로그인이 필요해요.");
-      const photo = await preparePhoto(file);
-      const response = await fetch("/api/notice-photo", { method: "POST", headers: { "Content-Type": "image/jpeg", "Authorization": "Bearer " + session.access_token, "X-Event-Slug": eventSlug }, body: photo });
-      const result = await response.json();
+      const prepared = await prepareHeroPhoto(file);
+      const send = async (body, mime) => {
+        const response = await fetch("/api/notice-photo", { method: "POST", headers: { "Content-Type": mime, "Authorization": "Bearer " + session.access_token, "X-Event-Slug": eventSlug }, body });
+        return { response, result: await response.json().catch(() => ({})) };
+      };
+      let { response, result } = await send(prepared.photo, prepared.format === "webp" ? "image/webp" : "image/jpeg");
+      if (!response.ok && prepared.format === "webp" && result.error === "WEBP_UPLOAD_FAILED") {
+        ({ response, result } = await send(prepared.jpeg, "image/jpeg"));
+      }
       if (!response.ok) throw new Error(result.error || "업로드 실패");
       updateNotice("imagePath", result.path);
       if (result.url) setNoticePreviewUrl(result.url);
