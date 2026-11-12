@@ -703,6 +703,18 @@ export default function CreateInvitation() {
       setUploadingPhoto(false);
     }
   };
+  // WebP-first for editor photos, with JPEG fallback for legacy bucket policies.
+  const uploadEditorPhoto = async (file, session) => {
+    const prepared = await prepareHeroPhoto(file);
+    const send = async (body, mime) => {
+      const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": await uploadEventSlug(), "Content-Type": mime, Authorization: "Bearer " + session.access_token }, body });
+      return { response, result: await response.json().catch(() => ({})) };
+    };
+    let { response, result } = await send(prepared.photo, prepared.format === "webp" ? "image/webp" : "image/jpeg");
+    if (!response.ok && prepared.format === "webp" && result.error === "WEBP_UPLOAD_FAILED") ({ response, result } = await send(prepared.jpeg, "image/jpeg"));
+    if (!response.ok || !result.url) throw new Error(result.error || "사진 업로드에 실패했어요.");
+    return result.url;
+  };
   const uploadBrandImage = async (event) => {
     const file = event.target.files?.[0];
     event.target.value = "";
@@ -771,12 +783,9 @@ export default function CreateInvitation() {
       const supabase = getSupabaseBrowserClient();
       const { data: { session } } = supabase ? await supabase.auth.getSession() : { data: {} };
       if (!session) throw new Error("로그인 후 사진을 첨부할 수 있어요.");
-      const photo = await preparePhoto(file);
-      const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": await uploadEventSlug(), "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || !result.url) throw new Error(result.error || "사진 업로드에 실패했어요.");
-      if (roleOrId === "groom" || roleOrId === "bride") updateCouplePerson(roleOrId, { photoUrl: result.url, photoFocusX: 50, photoFocusY: 50, photoZoom: 100 });
-      else updateLoveStoryItem(roleOrId, { photoUrl: result.url });
+      const photoUrl = await uploadEditorPhoto(file, session);
+      if (roleOrId === "groom" || roleOrId === "bride") updateCouplePerson(roleOrId, { photoUrl: photoUrl, photoFocusX: 50, photoFocusY: 50, photoZoom: 100 });
+      else updateLoveStoryItem(roleOrId, { photoUrl: photoUrl });
     } catch (error) { setPhotoNotice(error.message || "사진을 업로드하지 못했어요."); }
     finally { photoBusy.current = false; setUploadingPhoto(false); }
   };
