@@ -28,7 +28,13 @@ const maxSide = Number(flag("--max-side", "1400"));
 if (!(quality > 0 && quality <= 1) || !(maxSide >= 400 && maxSide <= 4000))
   throw new Error("Invalid --quality or --max-side");
 
-const audit = JSON.parse(await fs.readFile(auditFile, "utf8"));
+const auditBytes = await fs.readFile(auditFile);
+const auditText = auditBytes[0] === 0xff && auditBytes[1] === 0xfe
+  ? new TextDecoder("utf-16le").decode(auditBytes.subarray(2))
+  : auditBytes[0] === 0xfe && auditBytes[1] === 0xff
+    ? new TextDecoder("utf-16be").decode(auditBytes.subarray(2))
+    : new TextDecoder("utf-8").decode(auditBytes);
+const audit = JSON.parse(auditText.replace(/^\uFEFF/, ""));
 if (audit.template !== "cherry-blossom-day" || !Array.isArray(audit.images))
   throw new Error("Unexpected audit format or template");
 const origin = new URL(audit.images[0]?.url || "https://invalid.invalid").origin;
