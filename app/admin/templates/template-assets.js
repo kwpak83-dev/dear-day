@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 import { captureBodyThemeThumbnail } from "../../../lib/capture-element";
-import { optimizeHeroImageWithReport } from "../../../lib/optimize-hero-decoration";
 
 const types = [
   ["thumbnail", "판매 목록 썸네일"], ["long_preview", "긴 판매용 미리보기"],
@@ -111,8 +110,8 @@ export default function TemplateAssets({ templateId, onOperation, onPermanentDel
         result = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(result.error || "BGM 정보를 저장하지 못했어요.");
       } else {
-        const optimization = type === "background" && ["image/png", "image/webp"].includes(file.type) ? await optimizeHeroImageWithReport(file) : { file: await optimizeBodyAsset(file, type), report: null };
-        const uploadFile = await optimizeBodyAsset(optimization.file, type);
+        const optimization = { file: await optimizeBodyAsset(file, type), report: null };
+        const uploadFile = optimization.file;
         optimizationReport = optimization.report;
         const size = await imageSize(uploadFile);
         const form = new FormData();
