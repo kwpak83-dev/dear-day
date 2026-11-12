@@ -6,3 +6,7 @@ server-error.log
 .env*.local
 .vercel
 .env*
+
+# Local image migration artifacts and backups
+image-audit.json
+.landing-webp-preview/
