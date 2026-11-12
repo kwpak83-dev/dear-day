@@ -18,12 +18,14 @@ function fakeDb() {
     limit() { return this; },
     eq(column, value) {
       state.filters.push([column, value]);
-      return Promise.resolve({ data: jobs.filter(j => j[column] === value), error: null });
+      this.conditions.push([column, value]);
+      return this;
     },
-    then(resolve, reject) { return Promise.resolve({ data: jobs, error: null }).then(resolve, reject); },
+    maybeSingle() { return Promise.resolve({ data: jobs.find(j => this.conditions.every(([k,v]) => j[k] === v)) || null, error: null }); },
+    then(resolve, reject) { return Promise.resolve({ data: jobs.filter(j => this.conditions.every(([k,v]) => j[k] === v)), error: null }).then(resolve, reject); },
   };
   const db = {
-    from(name) { assert.equal(name, "invitation_storage_cleanup_jobs"); return query; },
+    from(name) { assert.equal(name, "invitation_storage_cleanup_jobs"); return { ...query, conditions: [] }; },
     async rpc(name, args) {
       if (name === "claim_scoped_invitation_storage_cleanup") {
         state.claims.push(args.p_job_id);
@@ -40,7 +42,8 @@ function fakeDb() {
 test("event-scoped worker only claims jobs belonging to the selected event", async () => {
   const { db, state } = fakeDb();
   const result = await runScopedStorageCleanup(db, target);
-  assert.deepEqual(state.filters, [["event_id", target]]);
+  assert.ok(state.filters.some(([key]) => key === "event_id"));
+  assert.ok(state.filters.filter(([key]) => key === "event_id").every(([,value]) => value === target));
   assert.deepEqual(state.claims, [1]);
   assert.equal(result.removed, 1);
 });

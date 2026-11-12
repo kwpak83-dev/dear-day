@@ -75,12 +75,15 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
       const image=new Image();image.src=url;await image.decode();
       const scale=Math.min(1,320/Math.max(image.naturalWidth,image.naturalHeight));
       const canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
-      canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);
+      const context=canvas.getContext("2d");
+      if(!context)throw new Error("썸네일 변환을 지원하지 않는 브라우저예요.");
+      context.drawImage(image,0,0,canvas.width,canvas.height);
       const thumb=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",0.7));
-      if(!thumb||thumb.type!=="image/webp"||thumb.size>150*1024)return;
+      if(!thumb||thumb.type!=="image/webp"||thumb.size>150*1024)throw new Error("WebP 썸네일을 만들지 못했어요.");
       const supabase=getSupabaseBrowserClient();const {data:{session}}=await supabase.auth.getSession();
-      if(!session)return;
-      await fetch(`/api/gallery/thumbnail?slug=${encodeURIComponent(targetSlug)}&id=${id}`,{method:"PUT",headers:{Authorization:`Bearer ${session.access_token}`,"Content-Type":"image/webp"},body:thumb});
+      if(!session)throw new Error("썸네일을 저장하려면 다시 로그인해 주세요.");
+      const response=await fetch(`/api/gallery/thumbnail?slug=${encodeURIComponent(targetSlug)}&id=${id}`,{method:"PUT",headers:{Authorization:`Bearer ${session.access_token}`,"Content-Type":"image/webp"},body:thumb});
+      if(!response.ok)throw new Error("썸네일을 저장하지 못했어요. 원본 사진은 안전하게 저장됐어요.");
     } finally {URL.revokeObjectURL(url);}
   };
   const selectPhotos = async event => {
@@ -96,17 +99,23 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
     const errors = [];
     let added = 0;
     let duplicates = 0;
+    let thumbnailFailures = 0;
     setFailures([]);
     try {
       const prepared = [];
       const known = new Set(photos.map(photo => photo.hash));
+      const missingThumbnails = new Set(photos.filter(photo => !photo.thumbnailUrl).map(photo => photo.hash));
       for (let index = 0; index < files.length; index++) {
         setProgress({ label: "사진 준비 중", done: index, total: files.length });
         try {
           const blob = await preparePhoto(files[index], { maxSide: 1400, quality: 0.78 });
           const digest = await crypto.subtle.digest("SHA-256", await blob.arrayBuffer());
           const hash = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, "0")).join("");
-          if (known.has(hash)) { duplicates++; continue; }
+          if (known.has(hash)) {
+            if(missingThumbnails.delete(hash))prepared.push({blob,hash,name:files[index].name});
+            else duplicates++;
+            continue;
+          }
           known.add(hash); prepared.push({ blob, hash, name: files[index].name });
         } catch (error) { errors.push(`${files[index].name}: ${error.message}`); }
       }
@@ -118,16 +127,20 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
           const reservation = reservations.find(row => row.hash === photo.hash);
           try {
             if (!reservation || ["uploading", "deleting"].includes(reservation.state)) throw new Error("이 사진을 처리 중이에요. 잠시 후 새로고침해 주세요.");
-            if (reservation.state === "ready") { duplicates++; continue; }
+            if (reservation.state === "ready") {
+              duplicates++;
+              try { await uploadThumbnail(photo.blob,reservation.id,targetSlug); } catch { thumbnailFailures++; }
+              continue;
+            }
             await request("PUT", photo.blob, reservation.id, targetSlug);
-            try { await uploadThumbnail(photo.blob,reservation.id,targetSlug); } catch { /* Original photo is already saved; thumbnail is optional. */ }
+            try { await uploadThumbnail(photo.blob,reservation.id,targetSlug); } catch { thumbnailFailures++; }
             added++;
           } catch (error) { errors.push(`${photo.name}: ${error.message}`); }
         }
       }
       if (currentSlug.current === targetSlug) {
         apply(await request("GET", undefined, undefined, targetSlug));
-        setNotice(`${added}장 저장 완료${duplicates ? ` · 중복 ${duplicates}장 제외` : ""}${errors.length ? ` · ${errors.length}장 실패` : ""}`);
+        setNotice(`${added}장 저장 완료${duplicates ? ` · 중복 ${duplicates}장 제외` : ""}${errors.length ? ` · ${errors.length}장 실패` : ""}${thumbnailFailures ? ` · 썸네일 ${thumbnailFailures}장 저장 보류 (원본 유지)` : ""}`);
       }
     } catch (error) {
       setNotice(error.message);

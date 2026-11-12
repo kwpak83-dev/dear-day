@@ -37,7 +37,7 @@ export const PUT = handle(async (request, context) => {
   const storage = context.supabase.storage;
   const { data: bucket } = await storage.getBucket(GALLERY_BUCKET);
   if (!bucket) {
-    const { error: createError } = await storage.createBucket(GALLERY_BUCKET, { public: true, fileSizeLimit: MAX_PHOTO_BYTES, allowedMimeTypes: ["image/jpeg"] });
+    const { error: createError } = await storage.createBucket(GALLERY_BUCKET, { public: true, fileSizeLimit: MAX_PHOTO_BYTES, allowedMimeTypes: ["image/jpeg", "image/webp"] });
     if (createError && !(await storage.getBucket(GALLERY_BUCKET)).data) throw new GalleryError("사진 저장 공간을 준비하지 못했어요.", 503);
   }
   const reservation = await reserveUploadIfEnabled(context.supabase, context.user.id, request,

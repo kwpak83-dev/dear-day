@@ -40,6 +40,7 @@ function mockScheduler(total, pageCap, enroll = false) {
     source.replace(/^import .*$/gm, "").replaceAll("export ", "") + "\nGET",
     {
       Buffer, URL, Response, createClient: () => db, invitationDeletionTime: event => Date.parse(event.starts_at), retentionTestScope,
+      withRetentionRunLog: (_worker, request, handler) => handler(request),
       timingSafeEqual: (a, b) => a.equals(b), console: { error() {} },
       process: { env: {
         CRON_SECRET: "test", NEXT_PUBLIC_SUPABASE_URL: "http://mock",
