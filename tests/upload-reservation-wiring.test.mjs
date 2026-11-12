@@ -57,17 +57,19 @@ test("shared editor upload helper is used for wedding, parents, timeline and bra
   for (const handler of ["uploadBrandImage", "uploadParentIntroPhoto", "uploadWeddingSectionPhoto", "uploadTimelinePhoto"]) {
     const start = src.indexOf("const " + handler + " =");
     assert.ok(start >= 0, handler);
-    const section = src.slice(start, start + 1700);
+    const end = src.indexOf("\n  };", start);
+    assert.ok(end > start, handler + " must have a complete handler body");
+    const section = src.slice(start, end);
     assert.match(section, /uploadEditorPhoto\(file,\s*session\)/, handler);
   }
   assert.match(src, /WEBP_UPLOAD_FAILED/);
 });
 test("notice WebP save validation and cleanup scopes stay aligned", async () => {
   const events = await read("app/api/events/route.js");
-  assert.match(events, /notice\\\/.*?jpg\|webp/);
+  assert.match(events, /isNoticeImagePath\(invitation.notice.imagePath, user.id, existing\?\.id\)/);
   const cleanup = await read("lib/invitation-storage-cleanup-scope.js");
   assert.match(cleanup, /\["notice", "photo"\]/);
-  const sql = await read("supabase/migrations/202611120001_notice_webp_cleanup_scope.sql");
+  const sql = await read("supabase/migrations/202611120004_notice_webp_cleanup_scope.sql");
   assert.match(sql, /notice\//);
   assert.match(sql, /\[\.\]\(jpg\|webp\)/);
 });

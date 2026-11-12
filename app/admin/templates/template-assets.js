@@ -34,7 +34,7 @@ async function optimizeBodyAsset(file, type) {
     image.src = url;
     await image.decode();
     // Tiled textures and full-resolution design backgrounds must retain their dimensions.
-    const maxSide = ["background", "texture", "screen_effect"].includes(type) ? Infinity : 1600;
+    const maxSide = ["background", "hero_frame", "texture", "screen_effect"].includes(type) ? Infinity : 1600;
     const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
     const canvas = document.createElement("canvas");
     canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
