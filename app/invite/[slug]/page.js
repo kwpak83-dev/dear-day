@@ -115,7 +115,7 @@ export default async function InvitationPage({ params, searchParams }) {
       .eq("kind", invitation.eventKind)
       .maybeSingle(),
     supabase.from("event_media")
-      .select("id,storage_path").eq("event_id", event.id).eq("gallery_state", "ready").order("sort_order").order("id").limit(20),
+      .select("id,storage_path,gallery_thumbnail_path").eq("event_id", event.id).eq("gallery_state", "ready").order("sort_order").order("id").limit(20),
     heroPresetId
       ? supabase.from("hero_presets").select("id,config").eq("id", heroPresetId).maybeSingle()
       : null,
@@ -128,7 +128,10 @@ export default async function InvitationPage({ params, searchParams }) {
     versionQuery,
   ]);
   const { data: eventTypeConfig, error: eventTypeConfigError } = eventTypeResult;
-  const { data: galleryRows, error: galleryError } = galleryResult;
+  let { data: galleryRows, error: galleryError } = galleryResult;
+  if (galleryError?.code === "42703" || galleryError?.code === "PGRST204") {
+    ({data:galleryRows,error:galleryError}=await supabase.from("event_media").select("id,storage_path").eq("event_id",event.id).eq("gallery_state","ready").order("sort_order").order("id").limit(20));
+  }
   if (eventTypeConfigError) console.error("Event type config query failed:", eventTypeConfigError.code);
   // Only trust paths that match the decoration UUID and supported file types.
   // Older layers without a path continue using the Storage listing fallback.
@@ -249,7 +252,7 @@ export default async function InvitationPage({ params, searchParams }) {
 
   // A missing migration must not take down an existing published invitation.
   if (galleryError) console.error("Gallery query failed:", galleryError.code);
-  const galleryPhotos = (galleryRows || []).map(row => ({ id: row.id, url: supabase.storage.from("invitation-photos").getPublicUrl(row.storage_path).data.publicUrl }));
+  const galleryPhotos = (galleryRows || []).map(row => ({ id: row.id, url: supabase.storage.from("invitation-photos").getPublicUrl(row.storage_path).data.publicUrl, thumbnailUrl: row.gallery_thumbnail_path ? supabase.storage.from("invitation-photos").getPublicUrl(row.gallery_thumbnail_path).data.publicUrl : null }));
 
   const matrixFields = eventTypeConfig?.fields || {};
   const effectiveNotice = matrixFields.notice?.state === "required" ? { ...(settings.notice || {}), enabled: true } : settings.notice;

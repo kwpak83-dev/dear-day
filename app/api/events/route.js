@@ -2,7 +2,7 @@ import { isHeroSlotPhotoUrl } from "../../../lib/hero-slot-photo-url.mjs";
 import { TERMS_VERSION, PRIVACY_VERSION } from "../../../lib/consent";
 import { normalizeProgram, validateProgram } from "../../../lib/invitation-program";
 import { normalizeCoupleIntro, normalizeLoveStory } from "../../../lib/wedding-story";
-import { prepareNoticeForSave } from "../../../lib/invitation-notice";
+import { prepareNoticeForSave, isNoticeImagePath } from "../../../lib/invitation-notice";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { getInvitationTitle } from "../../../lib/invitation-title";
@@ -253,7 +253,6 @@ export async function POST(request) {
   if (action !== "save" || !invitation || typeof invitation !== "object" || Array.isArray(invitation)) return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
   if ((invitation.date !== undefined && typeof invitation.date !== "string") || (invitation.time !== undefined && typeof invitation.time !== "string")) return json({ error: "초대장 정보가 올바르지 않아요." }, 400);
   if (invitation.notice?.enabled && (!invitation.notice?.title?.trim() || !invitation.notice?.body?.trim())) return json({ error: "공지사항을 켜려면 제목과 내용을 입력해 주세요." }, 400);
-  if (invitation.notice?.imagePath && (typeof invitation.notice.imagePath !== "string" || !/^[0-9a-f-]{36}\/notice\/[0-9a-f-]{36}\/[0-9a-f-]{36}\.jpg$/.test(invitation.notice.imagePath) || !invitation.notice.imagePath.startsWith(user.id + "/notice/"))) return json({ error: "공지 이미지 경로가 올바르지 않아요." }, 400);
   const programError = validateProgram(invitation.program);
   if (programError) return json({ error: programError }, 400);
   const eventKind = invitation.eventKind || "wedding";
@@ -281,6 +280,7 @@ export async function POST(request) {
   if (lookupError) return json({ error: "기존 초대장을 확인하지 못했어요." }, 500);
   const existing = matches?.[0];
   if (existing && existing.owner_id !== user.id) return json({ error: "다른 계정의 초대장은 수정할 수 없어요." }, 403);
+  if (invitation.notice?.imagePath && !isNoticeImagePath(invitation.notice.imagePath, user.id, existing?.id)) return json({ error: "공지 이미지 경로가 올바르지 않아요." }, 400);
   // Reserved HERO photos are scoped to the saved event, never to a client-supplied ID.
   const heroSlotPhotos = invitation.heroSlotPhotos;
   if (heroSlotPhotos !== undefined) {

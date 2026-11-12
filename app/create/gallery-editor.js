@@ -45,7 +45,6 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
     if (slug) request("GET", undefined, undefined, slug).then(result => {
       if (!cancelled) {
         apply(result);
-        if (result.cleanupPending) setNotice("삭제한 사진의 파일 정리를 재시도 중이에요. 잠시 후 새로고침해 주세요.");
       }
     }).catch(error => { if (!cancelled) setNotice(error.message); });
     return () => { cancelled = true; };
@@ -65,9 +64,26 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
   const end = () => { operation.current = false; setBusy(false); onBusyChange(false); setProgress(null); };
   const reload = async () => {
     if (!start()) return;
-    try { const result = apply(await request()); setNotice(result.cleanupPending ? "파일 정리가 아직 완료되지 않았어요. 잠시 후 다시 확인해 주세요." : "갤러리를 새로 불러왔어요."); }
+    try { const result = apply(await request()); setNotice("갤러리를 새로 불러왔어요."); }
     catch (error) { setLoaded(false); setNotice(error.message); }
     finally { end(); }
+  };
+  const uploadThumbnail = async (blob,id,targetSlug) => {
+    const url=URL.createObjectURL(blob);
+    try {
+      const image=new Image();image.src=url;await image.decode();
+      const scale=Math.min(1,320/Math.max(image.naturalWidth,image.naturalHeight));
+      const canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
+      const context=canvas.getContext("2d");
+      if(!context)throw new Error("썸네일 변환을 지원하지 않는 브라우저예요.");
+      context.drawImage(image,0,0,canvas.width,canvas.height);
+      const thumb=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",0.7));
+      if(!thumb||thumb.type!=="image/webp"||thumb.size>150*1024)throw new Error("WebP 썸네일을 만들지 못했어요.");
+      const supabase=getSupabaseBrowserClient();const {data:{session}}=await supabase.auth.getSession();
+      if(!session)throw new Error("썸네일을 저장하려면 다시 로그인해 주세요.");
+      const response=await fetch(`/api/gallery/thumbnail?slug=${encodeURIComponent(targetSlug)}&id=${id}`,{method:"PUT",headers:{Authorization:`Bearer ${session.access_token}`,"Content-Type":"image/webp"},body:thumb});
+      if(!response.ok)throw new Error("썸네일을 저장하지 못했어요. 원본 사진은 안전하게 저장됐어요.");
+    } finally {URL.revokeObjectURL(url);}
   };
   const selectPhotos = async event => {
     const files = Array.from(event.target.files || []);
@@ -82,17 +98,23 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
     const errors = [];
     let added = 0;
     let duplicates = 0;
+    let thumbnailFailures = 0;
     setFailures([]);
     try {
       const prepared = [];
       const known = new Set(photos.map(photo => photo.hash));
+      const missingThumbnails = new Set(photos.filter(photo => !photo.thumbnailUrl).map(photo => photo.hash));
       for (let index = 0; index < files.length; index++) {
         setProgress({ label: "사진 준비 중", done: index, total: files.length });
         try {
-          const blob = await preparePhoto(files[index]);
+          const blob = await preparePhoto(files[index], { maxSide: 1400, quality: 0.78 });
           const digest = await crypto.subtle.digest("SHA-256", await blob.arrayBuffer());
           const hash = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, "0")).join("");
-          if (known.has(hash)) { duplicates++; continue; }
+          if (known.has(hash)) {
+            if(missingThumbnails.delete(hash))prepared.push({blob,hash,name:files[index].name});
+            else duplicates++;
+            continue;
+          }
           known.add(hash); prepared.push({ blob, hash, name: files[index].name });
         } catch (error) { errors.push(`${files[index].name}: ${error.message}`); }
       }
@@ -104,15 +126,20 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
           const reservation = reservations.find(row => row.hash === photo.hash);
           try {
             if (!reservation || ["uploading", "deleting"].includes(reservation.state)) throw new Error("이 사진을 처리 중이에요. 잠시 후 새로고침해 주세요.");
-            if (reservation.state === "ready") { duplicates++; continue; }
+            if (reservation.state === "ready") {
+              duplicates++;
+              try { await uploadThumbnail(photo.blob,reservation.id,targetSlug); } catch { thumbnailFailures++; }
+              continue;
+            }
             await request("PUT", photo.blob, reservation.id, targetSlug);
+            try { await uploadThumbnail(photo.blob,reservation.id,targetSlug); } catch { thumbnailFailures++; }
             added++;
           } catch (error) { errors.push(`${photo.name}: ${error.message}`); }
         }
       }
       if (currentSlug.current === targetSlug) {
         apply(await request("GET", undefined, undefined, targetSlug));
-        setNotice(`${added}장 저장 완료${duplicates ? ` · 중복 ${duplicates}장 제외` : ""}${errors.length ? ` · ${errors.length}장 실패` : ""}`);
+        setNotice(`${added}장 저장 완료${duplicates ? ` · 중복 ${duplicates}장 제외` : ""}${errors.length ? ` · ${errors.length}장 실패` : ""}${thumbnailFailures ? ` · 썸네일 ${thumbnailFailures}장 저장 보류 (원본 유지)` : ""}`);
       }
     } catch (error) {
       setNotice(error.message);
@@ -124,7 +151,7 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
     if (!start()) return;
     try {
       const result = apply(await request("DELETE", undefined, photo.id));
-      setNotice(result.cleanupPending ? "사진을 갤러리에서 삭제했어요. 파일 정리는 다음 새로고침 때 다시 확인해요." : "사진을 삭제했어요.");
+      setNotice("사진이 갤러리에서 삭제되었습니다.");
     } catch (error) { setNotice(error.message); try { apply(await request()); } catch { setLoaded(false); } }
     finally { end(); }
   };
@@ -171,7 +198,7 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
       {pending > 0 && <p>{pending}장 처리 대기 중이에요. 미완료 업로드는 15분 후 새로고침하면 정리돼요.</p>}
       <div className="gallery-editor-grid" ref={grid}>
         {photos.map((photo, index) => <article key={photo.id} data-gallery-id={photo.id} className={`gallery-tile${dragging?.over === photo.id ? " gallery-drop-target" : ""}${dragging?.id === photo.id ? " gallery-dragging" : ""}`}>
-          <img src={photo.url} alt={`갤러리 사진 ${index + 1}`} loading="lazy" decoding="async" width="300" height="300" draggable={false} />
+          <img src={photo.thumbnailUrl||photo.url} alt={`갤러리 사진 ${index + 1}`} loading="lazy" decoding="async" width="300" height="300" draggable={false} />
           <div className="gallery-tile-actions"><button type="button" className="gallery-drag-handle" aria-label={`${index + 1}번 사진 순서 이동 손잡이`} disabled={locked} onPointerDown={event => {
             if (event.button !== 0 || operation.current) return;
             event.currentTarget.setPointerCapture(event.pointerId);

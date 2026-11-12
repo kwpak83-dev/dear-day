@@ -9,6 +9,7 @@ import { matchesCompletedTemplate, findLegacyCompletedTemplate, completedTemplat
 import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import InvitationRenderer, { TEMPLATE_IDS } from "../../components/invitation/invitation-renderer";
+import TemplateScreenEffect from "../../components/invitation/template-screen-effect";
 import { resolveHeroPhotoSlotSamples, TEMPLATE_FONT_OPTIONS } from "../../lib/template-config";
 import { BODY_STYLE_PALETTES, normalizeBodyStyleOverrides } from "../../lib/body-style-overrides";
 import BodyStyleLivePreview from "../../components/invitation/body-style-live-preview";
@@ -703,6 +704,18 @@ export default function CreateInvitation() {
       setUploadingPhoto(false);
     }
   };
+  // WebP-first for editor photos, with JPEG fallback for legacy bucket policies.
+  const uploadEditorPhoto = async (file, session) => {
+    const prepared = await prepareHeroPhoto(file);
+    const send = async (body, mime) => {
+      const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": await uploadEventSlug(), "Content-Type": mime, Authorization: "Bearer " + session.access_token }, body });
+      return { response, result: await response.json().catch(() => ({})) };
+    };
+    let { response, result } = await send(prepared.photo, prepared.format === "webp" ? "image/webp" : "image/jpeg");
+    if (!response.ok && prepared.format === "webp" && result.error === "WEBP_UPLOAD_FAILED") ({ response, result } = await send(prepared.jpeg, "image/jpeg"));
+    if (!response.ok || !result.url) throw new Error(result.error || "사진 업로드에 실패했어요.");
+    return result.url;
+  };
   const uploadBrandImage = async (event) => {
     const file = event.target.files?.[0];
     event.target.value = "";
@@ -715,11 +728,8 @@ export default function CreateInvitation() {
       if (!supabase) throw new Error("사진 저장 서비스를 준비하지 못했어요.");
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("로그인 후 이미지를 첨부할 수 있어요.");
-      const photo = await preparePhoto(file);
-      const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": await uploadEventSlug(), "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || !result.url) throw new Error(result.error || "이미지 업로드에 실패했어요.");
-      update("brandImageUrl", result.url);
+      const photoUrl = await uploadEditorPhoto(file, session);
+      update("brandImageUrl", photoUrl);
       setPhotoNotice("로고·대표이미지를 첨부했어요.");
     } catch (error) {
       setPhotoNotice(error.message || "이미지를 업로드하지 못했어요.");
@@ -734,10 +744,8 @@ export default function CreateInvitation() {
     photoBusy.current=true; setUploadingPhoto(true);
     try { const supabase=getSupabaseBrowserClient(); const {data:{session}}=supabase?await supabase.auth.getSession():{data:{}};
       if(!session)throw new Error("로그인 후 사진을 첨부할 수 있어요.");
-      const photo=await preparePhoto(file);
-      const response=await fetch("/api/photos",{method:"POST",headers:{ "X-Event-Slug": await uploadEventSlug(),"Content-Type":"image/jpeg",Authorization:"Bearer "+session.access_token},body:photo});
-      const result=await response.json().catch(()=>({})); if(!response.ok||!result.url)throw new Error(result.error||"사진 업로드에 실패했어요.");
-      update(key,result.url);
+      const photoUrl=await uploadEditorPhoto(file,session);
+      update(key,photoUrl);
     } catch(error){setPhotoNotice(error.message||"부모 소개 사진을 업로드하지 못했어요.");}
     finally{photoBusy.current=false;setUploadingPhoto(false);}
   };
@@ -771,12 +779,9 @@ export default function CreateInvitation() {
       const supabase = getSupabaseBrowserClient();
       const { data: { session } } = supabase ? await supabase.auth.getSession() : { data: {} };
       if (!session) throw new Error("로그인 후 사진을 첨부할 수 있어요.");
-      const photo = await preparePhoto(file);
-      const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": await uploadEventSlug(), "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || !result.url) throw new Error(result.error || "사진 업로드에 실패했어요.");
-      if (roleOrId === "groom" || roleOrId === "bride") updateCouplePerson(roleOrId, { photoUrl: result.url, photoFocusX: 50, photoFocusY: 50, photoZoom: 100 });
-      else updateLoveStoryItem(roleOrId, { photoUrl: result.url });
+      const photoUrl = await uploadEditorPhoto(file, session);
+      if (roleOrId === "groom" || roleOrId === "bride") updateCouplePerson(roleOrId, { photoUrl: photoUrl, photoFocusX: 50, photoFocusY: 50, photoZoom: 100 });
+      else updateLoveStoryItem(roleOrId, { photoUrl: photoUrl });
     } catch (error) { setPhotoNotice(error.message || "사진을 업로드하지 못했어요."); }
     finally { photoBusy.current = false; setUploadingPhoto(false); }
   };
@@ -796,11 +801,8 @@ export default function CreateInvitation() {
       const supabase = getSupabaseBrowserClient();
       const { data: { session } } = supabase ? await supabase.auth.getSession() : { data: {} };
       if (!session) throw new Error("로그인 후 사진을 첨부할 수 있어요.");
-      const photo = await preparePhoto(file);
-      const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": await uploadEventSlug(), "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token }, body: photo });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || !result.url) throw new Error(result.error || "사진 업로드에 실패했어요.");
-      updateTimelineItem(id, { photoUrl: result.url });
+      const photoUrl = await uploadEditorPhoto(file, session);
+      updateTimelineItem(id, { photoUrl });
     } catch (error) { setPhotoNotice(error.message || "성장 기록 사진을 업로드하지 못했어요."); }
     finally { photoBusy.current = false; setUploadingPhoto(false); }
   };
@@ -872,9 +874,15 @@ export default function CreateInvitation() {
       const supabase = getSupabaseBrowserClient();
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("로그인이 필요해요.");
-      const photo = await preparePhoto(file);
-      const response = await fetch("/api/notice-photo", { method: "POST", headers: { "Content-Type": "image/jpeg", "Authorization": "Bearer " + session.access_token, "X-Event-Slug": eventSlug }, body: photo });
-      const result = await response.json();
+      const prepared = await prepareHeroPhoto(file);
+      const send = async (body, mime) => {
+        const response = await fetch("/api/notice-photo", { method: "POST", headers: { "Content-Type": mime, "Authorization": "Bearer " + session.access_token, "X-Event-Slug": eventSlug }, body });
+        return { response, result: await response.json().catch(() => ({})) };
+      };
+      let { response, result } = await send(prepared.photo, prepared.format === "webp" ? "image/webp" : "image/jpeg");
+      if (!response.ok && prepared.format === "webp" && result.error === "WEBP_UPLOAD_FAILED") {
+        ({ response, result } = await send(prepared.jpeg, "image/jpeg"));
+      }
       if (!response.ok) throw new Error(result.error || "업로드 실패");
       updateNotice("imagePath", result.path);
       if (result.url) setNoticePreviewUrl(result.url);
@@ -1653,7 +1661,15 @@ export default function CreateInvitation() {
         </div>
         <p className="dd-editor-group-label">선택 기능 <small>필요한 기능만 켜서 사용하세요.</small></p><div className="dd-share-settings" >
           <details className="dd-share-card dd-expand-switch-card" open={(invitation.bgmMode ?? "none") !== "none"}><summary className="dd-share-card-heading" onClick={event => { event.preventDefault(); update("bgmMode", (invitation.bgmMode ?? "none") !== "none" ? "none" : "user"); }}><div><h2>🎵 배경음악</h2><p>공용 BGM에서 초대장 음악을 선택해요.</p></div><span className="dd-expand-switch-track" aria-hidden="true" /></summary><div className="form-section"><p className="dd-share-help">🎼 공용 BGM 선택</p>{(invitation.bgmMode ?? "none") !== "none" && <div>{visibleBgmTracks.length ? visibleBgmTracks.map(track => <div key={track.id} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 0"}}><input type="radio" id={`bgm-track-${track.id}`} name="bgmTrack" checked={invitation.userBgmTrackId === track.id} onChange={() => { update("bgmMode", "user"); update("userBgmTrackId", track.id); }} /><label htmlFor={`bgm-track-${track.id}`} style={{flex:1,minWidth:0,cursor:"pointer",fontSize:12,fontWeight:500,lineHeight:1.4,overflowWrap:"break-word"}}>{track.title}</label><audio controls controlsList="nodownload noplaybackrate" preload="none" src={track.url} style={{width:120,height:32}} /><button type="button" aria-label={`${track.title} 원곡 정보`} title="원곡 정보" onClick={() => setBgmInfoTrack(track)} style={{border:0,background:"transparent",padding:"8px",cursor:"pointer",fontSize:20,lineHeight:1}}>⋮</button></div>) : <p className="dd-share-help">이 초대장 유형에 등록된 공용 BGM이 아직 없습니다.</p>}{bgmInfoTrack && <div role="dialog" aria-modal="true" aria-label="원곡 정보" style={{position:"fixed",inset:0,zIndex:1000,background:"rgba(0,0,0,.45)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}} onClick={() => setBgmInfoTrack(null)}><div style={{background:"#fff",color:"#332820",borderRadius:16,padding:20,width:"min(100%,420px)",boxShadow:"0 12px 40px rgba(0,0,0,.18)"}} onClick={event => event.stopPropagation()}><h3 style={{margin:"0 0 12px"}}>♫ 원곡 정보</h3><p style={{fontSize:12,color:"#766b65"}}>선택한 음악의 상세 정보</p><dl style={{display:"grid",gridTemplateColumns:"100px 1fr",gap:"12px 8px",fontSize:14,overflowWrap:"anywhere"}}><dt>표시 제목</dt><dd style={{margin:0}}>{bgmInfoTrack.title}</dd><dt>작곡가 / 곡명</dt><dd style={{margin:0}}>{bgmInfoTrack.composer || "정보 없음"}</dd><dt>라이선스</dt><dd style={{margin:0}}>{bgmInfoTrack.licenseName || "정보 없음"}</dd></dl><button type="button" onClick={() => setBgmInfoTrack(null)} style={{width:"100%",padding:10,marginTop:12,border:"1px solid #ddd",borderRadius:20,background:"#fff",cursor:"pointer"}}>닫기</button></div></div>}</div>}<p className="dd-share-help">{(invitation.bgmMode ?? "none") === "background" ? "관리자가 템플릿에 지정한 기본 음악을 사용합니다." : invitation.bgmMode === "user" ? "저작권 확인이 완료된 공용 BGM 중 한 곡을 선택합니다." : invitation.bgmMode === "upload" ? "직접 업로드한 MP3 한 곡을 사용합니다." : "배경음악을 사용하지 않습니다."}</p></div></details>
-          <details className="dd-share-card dd-expand-switch-card" open={(invitation.screenEffectMode || (invitation.petalEffectEnabled === true ? "legacy-blossom" : "none")) !== "none"}><summary className="dd-share-card-heading" onClick={event => { event.preventDefault(); update("screenEffectMode", (invitation.screenEffectMode || (invitation.petalEffectEnabled === true ? "legacy-blossom" : "none")) !== "none" ? "none" : "background"); }}><div><h2>✨ 화면 효과 설정</h2><p>초대장에 표시할 움직이는 장식을 선택해요.</p></div><span className="dd-expand-switch-track" aria-hidden="true" /></summary><div className="form-section"><Field label="🌸 효과 선택"><select value={invitation.screenEffectMode || (invitation.petalEffectEnabled === true ? "legacy-blossom" : "none")} onChange={event => update("screenEffectMode", event.target.value)}><option value="none">사용 안 함</option><option value="background">배경 템플릿 효과</option><option value="user">사용자 효과 선택</option>{!invitation.screenEffectMode && invitation.petalEffectEnabled === true && <option value="legacy-blossom">기존 벚꽃 효과 유지</option>}</select></Field>{invitation.screenEffectMode === "user" && <Field label="장식 종류"><select value={USER_SCREEN_EFFECTS.some(([id]) => id === invitation.userScreenEffectOrnament) ? invitation.userScreenEffectOrnament : "green"} onChange={event => update("userScreenEffectOrnament", event.target.value)}>{USER_SCREEN_EFFECTS.map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></Field>}<p className="dd-share-help">{invitation.screenEffectMode === "background" ? "관리자가 배경 템플릿에 지정한 Screen Effect 설정을 그대로 사용합니다." : invitation.screenEffectMode === "user" ? "장식 종류만 선택하고 움직임·개수·크기·속도·투명도 등은 선택한 템플릿의 Screen Effect 설정을 그대로 사용합니다." : !invitation.screenEffectMode && invitation.petalEffectEnabled === true ? "기존에 저장한 벚꽃 효과를 유지합니다." : "화면 효과를 표시하지 않습니다."}</p></div></details>
+          <details className="dd-share-card dd-expand-switch-card" open={(invitation.screenEffectMode || (invitation.petalEffectEnabled === true ? "legacy-blossom" : "none")) !== "none"}><summary className="dd-share-card-heading" onClick={event => { event.preventDefault(); update("screenEffectMode", (invitation.screenEffectMode || (invitation.petalEffectEnabled === true ? "legacy-blossom" : "none")) !== "none" ? "none" : "background"); }}><div><h2>✨ 화면 효과 설정</h2><p>초대장에 표시할 움직이는 장식을 선택해요.</p></div><span className="dd-expand-switch-track" aria-hidden="true" /></summary><div className="form-section"><Field label="🌸 효과 선택"><select value={invitation.screenEffectMode || (invitation.petalEffectEnabled === true ? "legacy-blossom" : "none")} onChange={event => update("screenEffectMode", event.target.value)}><option value="none">사용 안 함</option><option value="background">배경 템플릿 효과</option><option value="user">사용자 효과 선택</option>{!invitation.screenEffectMode && invitation.petalEffectEnabled === true && <option value="legacy-blossom">기존 벚꽃 효과 유지</option>}</select></Field>{invitation.screenEffectMode === "user" && <Field label="장식 종류"><select value={USER_SCREEN_EFFECTS.some(([id]) => id === invitation.userScreenEffectOrnament) ? invitation.userScreenEffectOrnament : "green"} onChange={event => update("userScreenEffectOrnament", event.target.value)}>{USER_SCREEN_EFFECTS.map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></Field>}<p className="dd-share-help">{invitation.screenEffectMode === "background" ? "관리자가 배경 템플릿에 지정한 Screen Effect 설정을 그대로 사용합니다." : invitation.screenEffectMode === "user" ? "장식 종류만 선택하고 움직임·개수·크기·속도·투명도 등은 선택한 템플릿의 Screen Effect 설정을 그대로 사용합니다." : !invitation.screenEffectMode && invitation.petalEffectEnabled === true ? "기존에 저장한 벚꽃 효과를 유지합니다." : "화면 효과를 표시하지 않습니다."}</p><div className="dd-effect-inline-preview" aria-label="화면 효과 실시간 미리보기">
+            <div className="dd-effect-inline-preview-heading">실시간 화면 효과 미리보기 · 실제 템플릿 기준</div>
+            {previewReady && <InvitationMessagePreview inline invitation={previewInvitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} templateId={invitation.templateId} templateConfig={composedTemplateRender.config} templateAssets={composedTemplateRender.assets} screenEffectConfig={{ effects: { screenEffect: (() => {
+                const mode = invitation.screenEffectMode || (invitation.petalEffectEnabled === true ? "legacy-blossom" : "none");
+                const templateEffect = composedTemplateRender.config?.effects?.screenEffect;
+                const defaults = { motion: "fall", count: 12, minSize: 18, maxSize: 24, minDuration: 20, maxDuration: 25, sway: 40, rotate: true, opacity: 0.8 };
+                return mode === "background" ? templateEffect : mode === "user" ? { ...defaults, ...(templateEffect || {}), ornament: USER_SCREEN_EFFECTS.some(([id]) => id === invitation.userScreenEffectOrnament) ? invitation.userScreenEffectOrnament : "green" } : mode === "legacy-blossom" ? { ornament: "blossom", motion: "flutter", count: 10, minSize: 14, maxSize: 28, minDuration: 10, maxDuration: 18, sway: 35, rotate: true, opacity: 0.75 } : null;
+              })() } }} />}
+          </div></div></details>
         </div>
         <div className="dd-share-settings" >
           <div className="dd-share-card dd-program-share-card"><div className="dd-share-card-heading"><div><h2>📋 식순·일정 관리</h2><p>행사 순서와 시간을 입력해요.</p></div><label className="dd-share-switch"><input type="checkbox" checked={invitation.program?.enabled === true} onChange={event => updateProgram(toggleProgram(invitation.program, event.target.checked, invitation.eventKind))} aria-label="식순·일정 사용" /><span className="dd-share-switch-track" aria-hidden="true" /></label></div>{invitation.program?.enabled === true && <ProgramEditor value={invitation.program} eventKind={invitation.eventKind} onChange={updateProgram} />}</div>

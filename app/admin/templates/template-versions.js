@@ -175,12 +175,15 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
     setBgm((previous) => preservePlacements ? previous : fromConfig(bgmDefaults, versions.draft?.bgm));
     setSafeArea((previous) => preservePlacements ? previous : ({ ...safeAreaDefaults, ...versions.draft?.safeArea, sections: { ...initialSectionSafeArea(), ...(versions.draft?.safeArea?.sections || {}) } }));
     setPlacements((previous) => {
-      const local=active.filter((asset) => asset.asset_type === "decoration").map((asset) =>
-        placementFor(asset.id, (preservePlacements ? previous.find((item) => item.assetId === asset.id) : null) ||
-          versions.draft?.decorations?.find((item) => item.assetId === asset.id)));
+      const saved = preservePlacements ? previous : versions.draft?.decorations || [];
+      // An explicit empty list is a saved deletion; only legacy configs default to all local assets.
+      const local=active.filter((asset) => asset.asset_type === "decoration" && (
+        saved.some(item => item.assetId === asset.id) ||
+        (preservePlacements ? !state.assets.some(item => item.id === asset.id) : versions.draft?.decorationsConfigured === false)
+      )).map((asset) => placementFor(asset.id, saved.find(item => item.assetId === asset.id)));
       const localIds=new Set(local.map(item=>item.assetId));
       const sharedIds=new Set((shared.assets||[]).map(item=>item.id));
-      const savedShared=(versions.draft?.decorations||[]).filter(item=>sharedIds.has(item.assetId)&&!localIds.has(item.assetId)).map(item=>placementFor(item.assetId,preservePlacements?previous.find(p=>p.assetId===item.assetId)||item:item));
+      const savedShared=saved.filter(item=>sharedIds.has(item.assetId)&&!localIds.has(item.assetId)).map(item=>placementFor(item.assetId,item));
       return [...local,...savedShared];
     });
     setState({ loading: false, template: versions.template, current: versions.current, draft: versions.draft, assets: active, allAssets: assets.assets || [], error: "" });
@@ -305,7 +308,7 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
   const update = (assetId, key, value) => setPlacements((current) =>
     current.map((item) => item.assetId === assetId ? { ...item, [key]: value } : item));
   const addSharedDecoration=(assetId)=>setPlacements(current=>current.some(item=>item.assetId===assetId)?current:[...current,defaults(assetId)]);
-  const removeSharedDecoration=(assetId)=>setPlacements(current=>current.filter(item=>item.assetId!==assetId));
+  const removeDecoration=(assetId)=>setPlacements(current=>current.filter(item=>item.assetId!==assetId));
   const saveDecorations = async (event) => {
     event.preventDefault();
     if (saving || !state.draft) return;
@@ -570,15 +573,17 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
         ]} /></div>
             </details>
         <div style={{border:"1px solid #eadfd8",borderRadius:10,padding:10,margin:"12px 0",background:"#fffaf7"}}><button type="button" className="save-button" onClick={()=>setSharedDecorOpen(v=>!v)}>{sharedDecorOpen?"공용 라이브러리 닫기":"+ 공용 장식 라이브러리에서 추가"}</button>{sharedDecorOpen&&<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(90px,1fr))",gap:8,marginTop:10}}>{sharedDecorations.map(asset=>{const used=placements.some(item=>item.assetId===asset.id);return <button key={asset.id} type="button" disabled={used} onClick={()=>addSharedDecoration(asset.id)} style={{border:"1px solid #eadfd8",borderRadius:8,padding:6,background:"#fff",cursor:used?"default":"pointer",opacity:used?.55:1}}><img src={asset.url} alt="" style={{width:"100%",height:68,objectFit:"contain"}}/><small>{used?"사용 중":"+ 본문에 추가"}</small></button>})}</div>}<p style={{...guideNote,margin:"8px 0 0"}}>Hero와 같은 공용 라이브러리입니다. 기존 템플릿 전용 Asset은 아래 방식 그대로 사용할 수 있습니다.</p></div>
-          {!(decorationAssets.length||placements.some(item=>sharedDecorations.some(asset=>asset.id===item.assetId))) ? <p>배치할 장식이 없습니다. 공용 라이브러리에서 선택하거나 아래 Asset 영역에서 장식을 등록해 주세요.</p> :
+          {decorationAssets.some(asset=>!placements.some(item=>item.assetId===asset.id))&&<div style={{display:"flex",gap:8,flexWrap:"wrap",margin:"12px 0"}}>{decorationAssets.filter(asset=>!placements.some(item=>item.assetId===asset.id)).map(asset=><button key={asset.id} type="button" onClick={()=>addSharedDecoration(asset.id)}>+ {asset.name||asset.id} 배치에 추가</button>)}</div>}
+          {!placements.length&&<p>배치된 장식이 없습니다. 공용 라이브러리 또는 등록한 Asset에서 추가해 주세요.</p>}
           <form onSubmit={saveDecorations} style={{ display: "grid", gap: 16 }}>
-            {[...decorationAssets,...sharedDecorations.filter(asset=>placements.some(item=>item.assetId===asset.id)&&!decorationAssets.some(local=>local.id===asset.id))].map((asset) => {
+            {[...decorationAssets,...sharedDecorations.filter(asset=>!decorationAssets.some(local=>local.id===asset.id))].filter(asset=>placements.some(item=>item.assetId===asset.id)).map((asset) => {
               const placement = placements.find((item) => item.assetId === asset.id) || defaults(asset.id);
               const shared=sharedDecorations.some(item=>item.id===asset.id)&&!decorationAssets.some(local=>local.id===asset.id);
               return <div key={asset.id} style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: 12, minWidth: 0 }}>
                 <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
                   {asset.url && <img src={asset.url} alt="" style={{ width: 64, height: 64, objectFit: "contain" }} />}
-                  <strong style={{ overflowWrap: "anywhere" }}>{asset.name || asset.id}{shared?" · 공용":""}</strong>{shared&&<button type="button" onClick={()=>removeSharedDecoration(asset.id)}>현재 본문에서 제거</button>}
+                  <strong style={{ overflowWrap: "anywhere", flex:"1 1 120px", minWidth:0 }}>{asset.name || asset.id}{shared?" · 공용":""}</strong>
+                  <button type="button" disabled={saving} aria-label={`${asset.name || asset.id} 장식 배치 삭제`} onClick={()=>removeDecoration(asset.id)} style={{marginLeft:"auto",padding:"6px 10px",flexShrink:0,cursor:"pointer"}}>삭제</button>
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10, marginTop: 12 }}>
                   <label style={field}>Slot<select style={input} value={placement.slot} onChange={(event) => update(asset.id, "slot", event.target.value)}>{slots.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
@@ -594,7 +599,7 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
             })}
             
             <button type="submit" className="save-button" disabled={saving}>{saving ? "저장 중..." : "Draft 장식 배치 저장"}</button>
-          </form>}</section>
+          </form></section>
         <section style={{ border: "1px solid #eadfd8", borderRadius: 10, padding: 12, marginTop: 28, minWidth: 0 }}>
           <h3>Effects / BGM / Safe Area Config</h3>
           <p style={guideNote}>스크롤 등장 효과, 화면 장식 효과, 배경음악과 콘텐츠 안전 여백을 설정합니다.</p>

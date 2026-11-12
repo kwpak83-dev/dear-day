@@ -40,6 +40,11 @@ export default function TemplateCollectionPage(){
    .finally(()=>{if(!controller.signal.aborted)setLoading(false);});
   return()=>controller.abort();
  },[ready]);
+ const rememberPreviewPosition=()=>{
+  const item=items[active];
+  if(!item)return;
+  try{window.sessionStorage.setItem("dear-day-collection-preview-return",item.template_key);}catch{}
+ };
  const selectCategory=(v)=>{
   setCategory(v);
   const url=new URL(window.location.href);
@@ -60,7 +65,15 @@ export default function TemplateCollectionPage(){
  useEffect(()=>{
   if(!items.length||initialPositioned.current)return;
   initialPositioned.current=true;
-  const index=category?items.findIndex(item=>item.category===category):0;
+  let index=category?items.findIndex(item=>item.category===category):0;
+  try{
+   const returnKey=window.sessionStorage.getItem("dear-day-collection-preview-return");
+   if(returnKey){
+    const restored=items.findIndex(item=>item.template_key===returnKey);
+    if(restored>=0)index=restored;
+    window.sessionStorage.removeItem("dear-day-collection-preview-return");
+   }
+  }catch{}
   const frame=requestAnimationFrame(()=>goTo(Math.max(0,index)));
   return()=>cancelAnimationFrame(frame);
  },[items,goTo,category]);
@@ -121,7 +134,7 @@ export default function TemplateCollectionPage(){
          <div className="dd-showcase-preview-body"><span className="dd-showcase-section-label">초대장 본문</span>{x.thumbnail_2_url?<img src={x.thumbnail_2_url} alt={`${x.name} 본문 디자인`} draggable={false} loading="lazy"/>:<div className="dd-showcase-preview-body-fallback"><span>DEARDAY INVITATION</span><strong>{x.name}</strong><small>소중한 순간을 위한 초대장</small></div>}</div>
         </div>
        </div>
-       <a href={`/templates/${encodeURIComponent(x.template_key)}`} className="dd-showcase-eye" aria-label={`${x.name} 전체 샘플 보기`}><EyeIcon/></a>
+       <a href={`/templates/${encodeURIComponent(x.template_key)}`} className="dd-showcase-eye" onClick={rememberPreviewPosition} aria-label={`${x.name} 전체 샘플 보기`}><EyeIcon/></a>
       </div>
      </article>)}
     </div>
@@ -130,7 +143,7 @@ export default function TemplateCollectionPage(){
    <div className="dd-showcase-selected" aria-live="polite">
     <p className="dd-showcase-counter">{active+1} / {items.length}</p>
     <h2>{selected?.name}</h2>
-    <div className="dd-showcase-actions"><a href={previewUrl} className="dd-showcase-secondary">샘플 보기 <EyeIcon/></a><button type="button" onClick={makeSelected} className="dd-showcase-primary">이 디자인으로 만들기 <ExternalLinkIcon/></button></div>
+    <div className="dd-showcase-actions"><a href={previewUrl} className="dd-showcase-secondary" onClick={rememberPreviewPosition}>샘플 보기 <EyeIcon/></a><button type="button" onClick={makeSelected} className="dd-showcase-primary">이 디자인으로 만들기 <ExternalLinkIcon/></button></div>
     <div className="dd-showcase-hint dd-showcase-hint-pill" aria-label="위아래로 본문 디자인 확인, 좌우로 다른 템플릿 보기"><span className="dd-showcase-hint-part"><span aria-hidden="true">↕</span> 위아래로 본문 디자인 확인</span><span className="dd-showcase-hint-divider" aria-hidden="true">│</span><span className="dd-showcase-hint-part"><span aria-hidden="true">↔</span> 좌우로 다른 템플릿 보기</span></div>
    </div>
   </>}
