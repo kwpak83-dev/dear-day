@@ -2,13 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import InvitationRenderer from "./invitation-renderer";
+import TemplateScreenEffect from "./template-screen-effect";
 
 /**
  * Real invitation section preview: uses the same renderer and template config
  * as the user's invitation, but displays only INVITATION at a 390px layout
  * width. The modal never persists edits or sends RSVP/guestbook requests.
  */
-export default function InvitationMessagePreview({ invitation, eventKind, eventTypeConfig, templateId, templateConfig, templateAssets, onClose, inline = false }) {
+export default function InvitationMessagePreview({ invitation, eventKind, eventTypeConfig, templateId, templateConfig, templateAssets, onClose, inline = false, screenEffectConfig = null }) {
   const stageRef = useRef(null);
   const [scale, setScale] = useState(1);
   const DESIGN_WIDTH = 390;
@@ -37,6 +38,7 @@ export default function InvitationMessagePreview({ invitation, eventKind, eventT
   const previewContent = <div className="dd-message-preview-stage" ref={stageRef}>
     <div className="dd-message-preview-canvas full-invitation-renderer dd-bgm-public-style" style={{ zoom: scale, width: DESIGN_WIDTH, "--dd-message-preview-layout-width": `${DESIGN_WIDTH}px` }}>
       <InvitationRenderer invitation={{ ...invitation, bgmMode: "none", screenEffectMode: "none" }} eventKind={eventKind} eventTypeConfig={eventTypeConfig} templateId={templateId} templateConfig={{ ...templateConfig, effects: { ...templateConfig?.effects, scrollReveal: "none", screenEffect: null }, bgm: { mode: "none" } }} templateAssets={templateAssets} />
+      {screenEffectConfig && <div className="dd-message-preview-effect-overlay"><TemplateScreenEffect config={screenEffectConfig} assets={templateAssets} /></div>}
     </div>
   </div>;
 
