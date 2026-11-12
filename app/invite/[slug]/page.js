@@ -115,7 +115,7 @@ export default async function InvitationPage({ params, searchParams }) {
       .eq("kind", invitation.eventKind)
       .maybeSingle(),
     supabase.from("event_media")
-      .select("id,storage_path,gallery_thumbnail_path").eq("event_id", event.id).eq("gallery_state", "ready").order("sort_order").order("id").limit(20),
+      .select("id,storage_path").eq("event_id", event.id).eq("gallery_state", "ready").order("sort_order").order("id").limit(20),
     heroPresetId
       ? supabase.from("hero_presets").select("id,config").eq("id", heroPresetId).maybeSingle()
       : null,
