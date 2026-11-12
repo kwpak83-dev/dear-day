@@ -89,7 +89,7 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
       for (let index = 0; index < files.length; index++) {
         setProgress({ label: "사진 준비 중", done: index, total: files.length });
         try {
-          const blob = await preparePhoto(files[index]);
+          const blob = await preparePhoto(files[index], { maxSide: 1400, quality: 0.78 });
           const digest = await crypto.subtle.digest("SHA-256", await blob.arrayBuffer());
           const hash = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, "0")).join("");
           if (known.has(hash)) { duplicates++; continue; }
