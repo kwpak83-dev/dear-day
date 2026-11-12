@@ -5054,3 +5054,18 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Smaller footer envelope with three upper-right accent rays. */
 .dearday-brand-footer .dearday-compact-envelope{width:25px;height:23px}
+
+/* User editor: inline screen-effect preview, isolated from full-page animation. */
+.dd-effect-inline-preview{margin-top:16px;border:1px solid #eadfd9;border-radius:12px;overflow:hidden;background:#fff}
+.dd-effect-inline-preview-heading{padding:11px 12px 9px;color:#9e7468;text-align:center;font-size:11px;letter-spacing:.035em}
+.dd-effect-inline-preview-stage{position:relative;height:260px;overflow:hidden;isolation:isolate;background:#fffaf8}
+.dd-effect-inline-preview-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:20px 28px;box-sizing:border-box;text-align:center;pointer-events:none}
+.dd-effect-inline-preview-content span{font-size:9px;letter-spacing:.22em;color:#b29b92}
+.dd-effect-inline-preview-content strong{margin-top:16px;color:#b77f85;font-size:13px;font-weight:400}
+.dd-effect-inline-preview-content p{margin:18px 0 0;color:#655c59;font-size:12px;line-height:1.85;white-space:pre-line;overflow:hidden;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical}
+.dd-effect-inline-preview-stage>.dd-template-screen-effect{position:absolute;inset:0;top:0;width:100%;height:100%;overflow:hidden;z-index:2;pointer-events:none}
+.dd-effect-inline-preview-stage>.dd-template-screen-effect img{top:-35px;animation-name:dd-inline-screen-fall}
+.dd-effect-inline-preview-stage>.dd-template-screen-effect--flutter img{animation-name:dd-inline-screen-flutter}
+.dd-effect-inline-preview-stage>.dd-template-screen-effect--sparkle img{top:50%;animation-name:dd-screen-sparkle}
+@keyframes dd-inline-screen-fall{from{transform:translate3d(0,-35px,0) rotate(0deg)}to{transform:translate3d(var(--dd-screen-sway),310px,0) rotate(var(--dd-screen-rotation))}}
+@keyframes dd-inline-screen-flutter{0%{transform:translate3d(0,-35px,0) rotate(0deg)}25%{transform:translate3d(var(--dd-screen-sway),70px,0) rotate(35deg)}50%{transform:translate3d(0,155px,0) rotate(-25deg)}75%{transform:translate3d(var(--dd-screen-sway),235px,0) rotate(25deg)}100%{transform:translate3d(0,310px,0) rotate(var(--dd-screen-rotation))}}
