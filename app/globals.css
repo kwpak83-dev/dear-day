@@ -5089,3 +5089,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   margin-right:auto;
   box-sizing:border-box;
 }
+
+/* Editor-only screen-effect preview: play falling ornaments 1.5x faster.
+   Scale the negative stagger delay too, preserving the original distribution.
+   Published invitations and full-screen previews are unaffected. */
+.dd-effect-inline-preview .dd-message-preview-effect-overlay .dd-template-screen-effect img{
+  animation-duration:calc(var(--dd-screen-duration) * 0.6666667);
+  animation-delay:calc(var(--dd-screen-delay) * 0.6666667);
+}
