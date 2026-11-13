@@ -3059,3 +3059,9 @@
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group:not(.dd-hero-headline-ready) > h1.dd-hero-script-title{visibility:visible!important}
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{margin-top:8px!important}
 }
+
+/* HERO C fine-tuning: raise only the eyebrow and enlarge Good People by 3px. */
+@media(max-width:800px){
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-eyebrow{transform:translateY(-6px)}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{font-size:clamp(47px,calc(12.1vw + 3px),65px)!important}
+}
