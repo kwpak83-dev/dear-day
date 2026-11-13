@@ -1,33 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import InvitationRenderer from "./invitation-renderer";
 import TemplateScreenEffect from "./template-screen-effect";
+import TemplatePreviewCanvas from "./template-preview-canvas";
 
 /**
  * Real invitation section preview: uses the same renderer and template config
- * as the user's invitation, but displays only INVITATION at a 390px layout
- * width. The modal never persists edits or sends RSVP/guestbook requests.
+ * as the user's invitation, but displays only INVITATION at the public
+ * viewport layout width (capped at 540px). The modal never persists edits or sends RSVP/guestbook requests.
  */
 export default function InvitationMessagePreview({ invitation, eventKind, eventTypeConfig, templateId, templateConfig, templateAssets, onClose, inline = false, screenEffectConfig = null }) {
-  const stageRef = useRef(null);
-  const [scale, setScale] = useState(1);
-  const DESIGN_WIDTH = 390;
-  useEffect(() => {
-    const stage = stageRef.current;
-    if (!stage) return;
-    // Match the 390px invitation preview canvas. Only scale the entire
-    // canvas to fit the available space; do not reflow the message text.
-    const measure = () => setScale(Math.min(1, stage.clientWidth / DESIGN_WIDTH));
-    measure();
-    const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
-    observer?.observe(stage);
-    if (!observer) window.addEventListener("resize", measure);
-    return () => {
-      observer?.disconnect();
-      if (!observer) window.removeEventListener("resize", measure);
-    };
-  }, []);
   useEffect(() => {
     if (inline || !onClose) return;
     const onKey = (event) => { if (event.key === "Escape") onClose(); };
@@ -35,12 +18,10 @@ export default function InvitationMessagePreview({ invitation, eventKind, eventT
     return () => window.removeEventListener("keydown", onKey);
   }, [inline, onClose]);
 
-  const previewContent = <div className="dd-message-preview-stage" ref={stageRef}>
-    <div className="dd-message-preview-canvas full-invitation-renderer dd-bgm-public-style" style={{ zoom: scale, width: DESIGN_WIDTH, "--dd-message-preview-layout-width": `${DESIGN_WIDTH}px` }}>
+  const previewContent = <TemplatePreviewCanvas matchPublicViewport stageClassName="dd-message-preview-stage" canvasClassName="dd-message-preview-canvas">
       <InvitationRenderer invitation={{ ...invitation, bgmMode: "none", screenEffectMode: "none" }} eventKind={eventKind} eventTypeConfig={eventTypeConfig} templateId={templateId} templateConfig={{ ...templateConfig, effects: { ...templateConfig?.effects, scrollReveal: "none", screenEffect: null }, bgm: { mode: "none" } }} templateAssets={templateAssets} />
       {screenEffectConfig && <div className="dd-message-preview-effect-overlay"><TemplateScreenEffect config={screenEffectConfig} assets={templateAssets} /></div>}
-    </div>
-  </div>;
+  </TemplatePreviewCanvas>;
 
   if (inline) return <div className="dd-message-preview-inline" aria-label="실시간 초대 문구 미리보기">
     <p className="dd-message-preview-inline-label">실시간 초대 문구 미리보기 · 실제 템플릿 기준</p>
