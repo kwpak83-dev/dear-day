@@ -66,7 +66,7 @@ export default function LandingSpecialEffectsDemo(){
  const intro=introDefaults?.enabled===true?introDefaults:null;
  const introFontId=intro?.fontId||"";
  useEffect(()=>{
-  if(!introFontId){setIntroFontReady(false);return;}
+  if(tab!=="intro"||!introFontId){setIntroFontReady(false);return;}
   let cancelled=false;
   setIntroFontReady(false);
   const font=getHeroFont(introFontId);
@@ -89,7 +89,7 @@ export default function LandingSpecialEffectsDemo(){
   };
   load();
   return()=>{cancelled=true;};
- },[introFontId]);
+ },[introFontId,tab]);
  return <div ref={demoRef} className="dd-landing-effects-demo">
   <div className="dd-landing-effects-tabs" role="group" aria-label="초대장 연출 미리보기">
    {TABS.map(([id,label])=><button key={id} type="button" className={tab===id?"is-active":""} aria-pressed={tab===id} onClick={()=>{setTab(id);if(id==="intro")setIntroReplay(value=>value+1);if(id==="cover")setCoverReplay(value=>value+1)}}>{label}</button>)}
