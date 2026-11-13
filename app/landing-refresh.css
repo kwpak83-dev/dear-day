@@ -2513,8 +2513,8 @@
 .landing-v2 .dd-feature-theme .dd-feature-demo{width:100%;max-width:520px;min-height:0;overflow:hidden}
 .landing-v2 .dd-feature-theme .dd-feature-demo-content{padding:8px 0 18px}
 .dd-concept-carousel-track{gap:13px;padding:6px 12.5% 14px;scroll-padding-inline:12.5%;align-items:center;touch-action:pan-x pan-y}
-.dd-concept-carousel-card{flex:0 0 75%;transform:scale(.9);opacity:.65;transition:transform .3s ease,opacity .3s ease}
-.dd-concept-carousel-card.is-active{transform:scale(1);opacity:1}
+.dd-concept-carousel-card{flex:0 0 75%;opacity:.65;transition:opacity .3s ease}
+.dd-concept-carousel-card.is-active{opacity:1}
 .dd-concept-carousel-image{aspect-ratio:0.58;border-radius:10px}
 .dd-concept-carousel-controls{gap:20px;margin:2px 0 6px}
 .dd-concept-carousel-caption{min-width:160px;display:flex;flex-direction:column;align-items:center;gap:4px}
