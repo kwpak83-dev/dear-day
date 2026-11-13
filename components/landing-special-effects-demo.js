@@ -5,6 +5,7 @@ import TemplateScreenEffect from "./invitation/template-screen-effect";
 import HeroIntro from "./invitation/hero-intro";
 import { HERO_FONT_STYLESHEET, getHeroFont } from "../lib/hero-fonts";
 import { invitationFontStylesheets } from "../lib/invitation-local-fonts";
+import { getTemplateConfigRenderProps, TemplateConfigHeroLayers } from "./invitation/template-config-render";
 
 const KEY = "cherry-blossom-day";
 const TABS = [["intro","인트로"],["cover","표지"],["effect","배경 및 효과"]];
@@ -12,6 +13,7 @@ export default function LandingSpecialEffectsDemo(){
  const [tab,setTab]=useState("intro");
  const [enabled,setEnabled]=useState(true);
  const [introReplay,setIntroReplay]=useState(0);
+ const [coverReplay,setCoverReplay]=useState(0);
  const introStageRef=useRef(null);
  const [introStageWidth,setIntroStageWidth]=useState(310);
  const [data,setData]=useState(null);
@@ -35,6 +37,10 @@ export default function LandingSpecialEffectsDemo(){
   return()=>observer?.disconnect();
  },[]);
  const cover=data?.item?.thumbnail_1_url;
+ const heroConfig=data?.templateConfig;
+ const heroAssets=data?.templateAssets||{};
+ const heroRender=heroConfig?getTemplateConfigRenderProps(heroConfig,heroAssets):null;
+ const coverPresentation={eventKind:"wedding",title:"박정우 & 김수지",heroTitle:"박정우 & 김수지",heroName:"박정우 & 김수지",heroFullName:"박정우 & 김수지"};
  const body=data?.item?.thumbnail_2_url;
  const screenEffect=data?.templateConfig?.effects?.screenEffect;
  const sample=data?.item?.sample_content||{};
@@ -69,7 +75,7 @@ export default function LandingSpecialEffectsDemo(){
  },[introFontId]);
  return <div className="dd-landing-effects-demo">
   <div className="dd-landing-effects-tabs" role="group" aria-label="초대장 연출 미리보기">
-   {TABS.map(([id,label])=><button key={id} type="button" className={tab===id?"is-active":""} aria-pressed={tab===id} onClick={()=>{setTab(id);if(id==="intro")setIntroReplay(value=>value+1)}}>{label}</button>)}
+   {TABS.map(([id,label])=><button key={id} type="button" className={tab===id?"is-active":""} aria-pressed={tab===id} onClick={()=>{setTab(id);if(id==="intro")setIntroReplay(value=>value+1);if(id==="cover")setCoverReplay(value=>value+1)}}>{label}</button>)}
   </div>
   <div ref={introStageRef} className={`dd-landing-effects-stage dd-landing-effects-stage--${tab}`} aria-live="polite">
    {tab==="intro" ? intro && introFontReady ? <div className="dd-landing-effects-intro-real" style={{backgroundColor:intro.backgroundColor}}>
@@ -82,7 +88,7 @@ export default function LandingSpecialEffectsDemo(){
       <HeroIntro intro={intro}/>
      </div>
     </div>
-   </div> : <div className="dd-landing-effects-placeholder">{failed?"템플릿을 불러오지 못했어요.":"인트로 글꼴을 불러오는 중이에요."}</div> : (tab==="cover" ? cover : body) ? <img className="dd-landing-effects-photo" src={tab==="cover"?cover:body} alt={tab==="cover"?"Spring Blossom Day 초대장 표지":"Spring Blossom Day 초대장 본문"} loading="lazy"/> :
+   </div> : <div className="dd-landing-effects-placeholder">{failed?"템플릿을 불러오지 못했어요.":"인트로 글꼴을 불러오는 중이에요."}</div> : tab==="cover" && heroConfig && heroRender ? <div className="dd-landing-effects-cover-live" key={coverReplay}><section className="classic-hero dd-template-hero-configured" style={{...heroRender.heroStyle,aspectRatio:(heroConfig.hero?.aspectRatio||"9:16").replace(":"," / "),width:"100%",height:"100%","--dd-hero-design-unit":"calc(100cqw / 390)"}}>{invitationFontStylesheets(heroConfig).map(href=><link key={href} rel="stylesheet" href={href}/>)}<TemplateConfigHeroLayers config={heroConfig} assets={heroAssets} presentation={coverPresentation}/></section></div> : (tab==="cover" ? cover : body) ? <img className="dd-landing-effects-photo" src={tab==="cover"?cover:body} alt={tab==="cover"?"Spring Blossom Day 초대장 표지":"Spring Blossom Day 초대장 본문"} loading="lazy"/> :
     <div className="dd-landing-effects-placeholder">{failed?"템플릿을 불러오지 못했어요.":"Spring Blossom Day 미리보기를 준비하고 있어요."}</div>}
    {showEffect&&screenEffect&&<div className="dd-landing-effects-overlay"><TemplateScreenEffect config={{effects:{screenEffect}}} assets={data?.templateAssets||{}}/></div>}
   </div>
