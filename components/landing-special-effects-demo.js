@@ -7,7 +7,7 @@ import { HERO_FONT_STYLESHEET, getHeroFont } from "../lib/hero-fonts";
 import { invitationFontStylesheets } from "../lib/invitation-local-fonts";
 
 const KEY = "cherry-blossom-day";
-const TABS = [["intro","인트로"],["cover","표지"],["background","배경"],["effect","효과"]];
+const TABS = [["intro","인트로"],["cover","표지"],["effect","배경 및 효과"]];
 export default function LandingSpecialEffectsDemo(){
  const [tab,setTab]=useState("intro");
  const [enabled,setEnabled]=useState(true);
