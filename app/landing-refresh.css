@@ -2833,3 +2833,45 @@
 .landing-v2 .dd-landing-rsvp-scroll{width:100%;height:300px;overflow-y:auto;overscroll-behavior:contain;border:1px solid #eee8e3;border-radius:12px;background:#f7f8fa;scrollbar-width:thin}
 .landing-v2 .dd-landing-rsvp-scroll img{display:block;width:100%;height:auto}
 .landing-v2 .dd-landing-rsvp-note{margin:0;color:#94877e;font-size:10px;text-align:center}
+
+
+/* SMART RSVP vector/text demo: crisp at every device pixel ratio. */
+.landing-v2 .dd-landing-rsvp-scroll{height:330px;text-align:left;background:#f5f7fa;font-size:11px;color:#192c43}
+.landing-v2 .dd-rsvp-live,.landing-v2 .dd-rsvp-guestbook{padding:10px 9px 16px;min-width:0}
+.landing-v2 .dd-rsvp-live-status{color:#ae806b;font-size:10px;margin:0 0 8px}
+.landing-v2 .dd-rsvp-live-summary{padding:13px 11px;border-radius:15px;background:white;box-shadow:0 1px 12px #1b2b4010}
+.landing-v2 .dd-rsvp-live-total{display:flex;justify-content:space-between;align-items:center;color:#8291a5;font-size:12px}
+.landing-v2 .dd-rsvp-live-total strong{font-size:26px;color:#111}
+.landing-v2 .dd-rsvp-live-total small{font-size:11px}
+.landing-v2 .dd-rsvp-live-progress{height:7px;background:#e7e8eb;border-radius:10px;overflow:hidden;margin-top:8px}
+.landing-v2 .dd-rsvp-live-progress span{display:block;width:67%;height:100%;background:#1499e9;border-radius:10px}
+.landing-v2 .dd-rsvp-live-summary p{font-size:10px;color:#8291a5;margin:6px 0 12px}
+.landing-v2 .dd-rsvp-live-stats{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.landing-v2 .dd-rsvp-live-stats>div{display:flex;align-items:center;justify-content:space-between;gap:4px;background:#f7f7f8;border-radius:10px;padding:10px 6px;font-size:10px}
+.landing-v2 .dd-rsvp-live-stats strong{color:#111;white-space:nowrap}
+.landing-v2 .dd-rsvp-live-sides{display:flex;gap:16px;margin-top:12px;padding-top:10px;border-top:1px solid #eee;color:#6e7b8b}
+.landing-v2 .dd-rsvp-live-sides b{color:#142b48}
+.landing-v2 .dd-rsvp-live-filters{display:flex;align-items:center;gap:5px;margin:12px 0 9px}
+.landing-v2 .dd-rsvp-live-filters button{border:1px solid #e1e5eb;background:white;color:#657487;border-radius:999px;padding:6px 9px;font-size:10px;cursor:pointer}
+.landing-v2 .dd-rsvp-live-filters button.is-active{background:#199fe9;border-color:#199fe9;color:white}
+.landing-v2 .dd-rsvp-live-filters>span{margin-left:auto;color:#7688a3}
+.landing-v2 .dd-rsvp-live-table{background:white;border-radius:13px;padding:5px 7px;min-width:0}
+.landing-v2 .dd-rsvp-live-tr{display:grid;grid-template-columns:minmax(0,2.4fr) .65fr .65fr .65fr .65fr;align-items:center;gap:3px;padding:10px 2px;border-bottom:1px solid #f0f1f3;font-size:9px;text-align:center}
+.landing-v2 .dd-rsvp-live-tr:last-child{border:0}
+.landing-v2 .dd-rsvp-live-tr>span:first-child{text-align:left;overflow-wrap:anywhere}
+.landing-v2 .dd-rsvp-live-th{color:#8793a5;font-size:9px}
+.landing-v2 .dd-rsvp-live-tr b.groom,.landing-v2 .dd-rsvp-live-tr b.bride{display:inline-block;color:white;font-size:9px;padding:2px 3px;border-radius:3px;background:#526b8b}
+.landing-v2 .dd-rsvp-live-tr b.bride{background:#d8819b}
+.landing-v2 .dd-rsvp-live-tr .yes{color:#168af2;font-weight:700}
+.landing-v2 .dd-rsvp-live-tr .no{color:#a6b2c2;font-weight:700}
+.landing-v2 .dd-rsvp-live-export{display:inline-block;margin-top:10px;padding:8px 11px;background:white;border:1px solid #e7e7e7;border-radius:9px;font-weight:600}
+.landing-v2 .dd-rsvp-guestbook-heading{display:flex;justify-content:space-between;align-items:center;margin:0 0 11px;font-size:12px}
+.landing-v2 .dd-rsvp-guestbook-heading strong{font-size:16px;color:#101010}
+.landing-v2 .dd-rsvp-guestbook-heading strong span{color:#a5b2c3;font-size:12px}
+.landing-v2 .dd-rsvp-guestbook-heading>span{color:#9a7e6e}
+.landing-v2 .dd-rsvp-guestbook-card{padding:13px 12px 10px;background:white;border:1px solid #e0eafa;border-radius:14px;margin-bottom:9px;box-shadow:0 3px 9px #20324b0a}
+.landing-v2 .dd-rsvp-guestbook-meta{display:flex;align-items:center;justify-content:space-between;gap:5px}
+.landing-v2 .dd-rsvp-guestbook-meta strong{color:#101010;font-size:12px}
+.landing-v2 .dd-rsvp-guestbook-meta time{font-size:9px;color:#8794a9;text-align:right}
+.landing-v2 .dd-rsvp-guestbook-card p{margin:12px 0 8px;font-size:11px;line-height:1.6;color:#52617b;overflow-wrap:anywhere}
+.landing-v2 .dd-rsvp-guestbook-delete{display:block;width:max-content;margin-left:auto;border:1px solid #f1d7d7;border-radius:7px;padding:5px 8px;color:#d68f8f;font-size:10px}
