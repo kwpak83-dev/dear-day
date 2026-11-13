@@ -92,13 +92,15 @@ export default function CompletedTemplatesPage(){
   const url=URL.createObjectURL(file);
   try{
    const image=new Image();image.src=url;await image.decode();
-   const scale=Math.min(1,1200/Math.max(image.naturalWidth,image.naturalHeight));
+   const scale=Math.min(1,1600/Math.max(image.naturalWidth,image.naturalHeight));
    const canvas=document.createElement("canvas");
    canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));
    canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
    const context=canvas.getContext("2d");if(!context)return file;
+   context.imageSmoothingEnabled=true;
+   context.imageSmoothingQuality="high";
    context.drawImage(image,0,0,canvas.width,canvas.height);
-   const webp=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",0.84));
+   const webp=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",0.9));
    if(webp?.type!=="image/webp"||webp.size>=file.size*0.9)return file;
    return new File([webp],file.name.replace(/\\.[^.]+$/,"")+".webp",{type:"image/webp"});
   }catch{return file;}finally{URL.revokeObjectURL(url);}
