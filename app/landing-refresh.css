@@ -2985,3 +2985,22 @@
  .dd-flex-edit-title{padding-top:18px}
  .dd-flex-edit-title>strong{font-size:21px}
 }
+
+/* Feature 07: colorful illustration treatment matching approved visual direction. */
+.dd-flex-edit{background:linear-gradient(145deg,#fffdfb,#fff8f5 65%,#fdf4ef)}
+.dd-flex-edit-invite{background:linear-gradient(165deg,#e8f5ff 0%,#fff3f3 45%,#fce9dd 100%);border-color:#fff;box-shadow:0 9px 25px #75553b26}
+.dd-flex-edit-flower{font-size:15px;letter-spacing:0;white-space:nowrap}
+.dd-flex-edit-flower span{font-size:20px;color:#ed7887;margin:0 7px}
+.dd-flex-edit-invite small{font-size:13px;color:#563e37}
+.dd-flex-edit-invite b{font-size:14px}
+.dd-flex-edit-scenery{width:calc(100% + 12px);margin-top:auto;display:flex;align-items:flex-end;justify-content:center;gap:0;letter-spacing:0;line-height:1;white-space:nowrap;font-size:19px;filter:drop-shadow(0 2px 2px #a76c6c22)}
+.dd-flex-edit-scenery .dd-flex-edit-couple{font-size:29px;letter-spacing:-7px;margin-right:7px}
+.dd-flex-edit-invite i{background:#f3eaff;border-color:#d8c4f8;font-size:17px}
+.dd-flex-edit-options>div:nth-child(1){background:#fff1f0}
+.dd-flex-edit-options>div:nth-child(2){background:#fff3f5}
+.dd-flex-edit-options>div:nth-child(3){background:#fff4ed}
+.dd-flex-edit-options>div:nth-child(4){background:#f7f0ff}
+.dd-flex-edit-options span{font-size:23px;line-height:1.2;filter:drop-shadow(0 2px 2px #69452b17)}
+.dd-flex-edit-note{background:#eef8f2;color:#4e685a}
+.dd-flex-edit-note strong{color:#3c7256}
+.dd-flex-edit-note span{font-size:14px}
