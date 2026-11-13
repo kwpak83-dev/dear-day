@@ -3019,3 +3019,15 @@
 @media(max-width:800px){
  .landing-v2 .dd-feature-rsvp .dd-rsvp-live-stats>div{padding:5px 6px}
 }
+
+/* Reduce the transition gap between the last feature (07) and Explore DearDay. */
+@media(max-width:800px){
+ .landing-v2 .dd-features{padding-bottom:22px}
+ .landing-v2 .dd-features .dd-feature:last-child{margin-bottom:0!important}
+ .landing-v2 .dd-detail-section.dd-experience{padding-top:20px}
+}
+@media(min-width:801px){
+ .landing-v2 .dd-features{padding-bottom:45px}
+ .landing-v2 .dd-features .dd-feature:last-child{margin-bottom:0!important}
+ .landing-v2 .dd-detail-section.dd-experience{padding-top:32px}
+}
