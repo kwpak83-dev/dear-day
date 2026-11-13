@@ -2661,3 +2661,28 @@
  min-height:100%;
  align-items:center;
 }
+
+/* Mobile HERO C: restore the original bold editorial headline.
+   Intentionally leave CTA button typography untouched. */
+@media (max-width:800px){
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group h1{
+  font-family:"Roboto Condensed",Arial,sans-serif!important;
+  font-size:clamp(33px,9vw,40px)!important;
+  font-weight:900!important;
+  font-style:italic!important;
+  line-height:1.04!important;
+  letter-spacing:-.035em!important;
+  text-align:left!important;
+  white-space:nowrap!important;
+ }
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group h1 em{
+  font-family:inherit!important;
+  font-size:inherit!important;
+  font-weight:inherit!important;
+  font-style:inherit!important;
+  line-height:inherit!important;
+  letter-spacing:inherit!important;
+  color:#858585!important;
+  display:inline!important;
+ }
+}
