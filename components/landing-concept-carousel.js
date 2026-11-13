@@ -64,7 +64,7 @@ export default function LandingConceptCarousel() {
    const next=(activeRef.current+1)%items.length;
    activeRef.current=next;
    setActive(next);
-  },4000);
+  },3000);
   return()=>clearInterval(timer);
  },[items.length,paused,visible]);
  useEffect(()=>{
