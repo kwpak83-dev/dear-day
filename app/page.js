@@ -234,7 +234,6 @@ export default function Home() {
           <article className={`dd-feature dd-feature-${kind}`} key={number}>
             <div className="dd-feature-visual" aria-label={`${title} 기능 시연 화면 자리`}>
               <div className="dd-feature-demo">
-                <div className="dd-feature-demo-top"><span>DearDay</span><span>✦</span></div>
                 <div className="dd-feature-demo-content">
                   <span className="dd-feature-demo-kicker">{eyebrow}</span>
                   {kind === "theme" ? <LandingConceptCarousel /> : kind === "program" ? <div className="dd-landing-program-demo">
