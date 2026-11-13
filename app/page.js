@@ -198,7 +198,7 @@ export default function Home() {
         <button type="button" className={heroVariant === "c" ? "active" : ""} aria-pressed={heroVariant === "c"} onClick={() => switchHero("c")}>C · Split</button>
       </div>
       <div className="landing-shell dd-hero-content">
-        <div className={`dd-hero-copy-group${headlineFontReady ? " dd-hero-headline-ready" : ""}${eyebrowFontReady ? " dd-hero-eyebrow-ready" : ""}}`}>
+        <div className={`dd-hero-copy-group${headlineFontReady ? " dd-hero-headline-ready" : ""}${eyebrowFontReady ? " dd-hero-eyebrow-ready" : ""}`}>
         <p className="dd-hero-eyebrow">DEARDAY · MOBILE INVITATION</p>
         {heroVariant === "a" ? <h1>Good<br />People,<br />Good Moment.</h1> : heroVariant === "b" ? <h1>Good People<br />Good Moment.</h1> : <h1>Good People,<br /><em>Good Moment.</em></h1>}
         <p className="dd-hero-description">{"마음을 전하는 특별한 초대장"}</p>
