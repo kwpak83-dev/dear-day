@@ -2790,3 +2790,9 @@
   white-space:nowrap!important;
  }
 }
+
+/* Feature 04 cover: render the saved HERO layers (including fade-up) rather than a baked thumbnail. */
+.dd-landing-effects-stage--cover{container-type:inline-size}
+.dd-landing-effects-cover-live{position:relative;width:100%;height:100%;overflow:hidden}
+.dd-landing-effects-cover-live .classic-hero{position:relative;overflow:hidden;isolation:isolate;max-width:none;min-height:0}
+.dd-landing-effects-cover-live .dd-template-hero-text-layers{position:absolute;inset:0;pointer-events:none}
