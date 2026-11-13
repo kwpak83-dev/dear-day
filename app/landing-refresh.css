@@ -2830,3 +2830,12 @@
   visibility:visible!important;
  }
 }
+
+/* Mobile landing HERO CTA: restore the former bold Korean sans-serif appearance.
+   Avoid loading an additional webfont just for the two buttons. */
+@media(max-width:800px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-buttons .dd-hero-button{
+  font-family:"Malgun Gothic","Apple SD Gothic Neo",Arial,sans-serif!important;
+  font-weight:700!important;
+ }
+}
