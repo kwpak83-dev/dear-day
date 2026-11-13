@@ -13,6 +13,7 @@ import LandingOccasionCarousel from "../components/landing-occasion-carousel";
 import LandingIntroEditorDemo from "../components/landing-intro-editor-demo";
 import LandingSpecialEffectsDemo from "../components/landing-special-effects-demo";
 import LandingSmartRsvpDemo from "../components/landing-smart-rsvp-demo";
+import LandingFlexibleEditingDemo from "../components/landing-flexible-editing-demo";
 import "./landing-refresh.css";
 
 
@@ -251,9 +252,10 @@ export default function Home() {
                     kind === "effects" ? <LandingSpecialEffectsDemo /> :
                     kind === "rsvp" ? <LandingSmartRsvpDemo /> :
                     kind === "occasions" ? <LandingOccasionCarousel /> :
+                    kind === "edit" ? <LandingFlexibleEditingDemo /> :
                     <div className="dd-feature-demo-paper"><span>YOUR SPECIAL DAY</span><strong>{kind === "effects" ? "A moment to remember" : kind === "edit" ? "Make it yours" : "Good People, Good Moment."}</strong><i /><small>DEARDAY · MOBILE INVITATION</small></div>}
                 </div>
-                {kind !== "theme" && kind !== "program" && kind !== "preview" && kind !== "effects" && kind !== "rsvp" && kind !== "occasions" && <div className="dd-feature-demo-bottom">미리보기 · 영상 교체 예정</div>}
+                {kind !== "theme" && kind !== "program" && kind !== "preview" && kind !== "effects" && kind !== "rsvp" && kind !== "occasions" && kind !== "edit" && <div className="dd-feature-demo-bottom">미리보기 · 영상 교체 예정</div>}
               </div>
             </div>
             <div className="dd-feature-copy">
