@@ -82,7 +82,7 @@ export default function Gallery({ photos, idPrefix = "public-gallery", title = "
       if (event.key === "ArrowRight") { event.preventDefault(); step(1); }
     }}>
       {open && <div className="gallery-viewer">
-        <div className="gallery-viewer-bar"><span aria-live="polite">{active + 1} / {photos.length}</span></div>
+        <div className="gallery-viewer-bar"><span aria-live="polite">{active + 1} / {photos.length}</span><button type="button" aria-label="사진 전체보기 닫기" onClick={close} style={{ position: "absolute", top: "max(12px, env(safe-area-inset-top))", right: "12px", zIndex: 10, display: "grid", placeItems: "center", width: "36px", height: "36px", border: "1px solid rgba(255,255,255,.25)", borderRadius: "50%", background: "rgba(0,0,0,.45)", color: "#fff", fontSize: "24px", lineHeight: 1, cursor: "pointer" }}>×</button></div>
         <div className="gallery-viewer-image" onTouchStart={event => beginSwipe(event, "lightbox")} onTouchEnd={finishSwipe} onTouchCancel={() => { swipeStart.current = null; }}>
           <img key={photos[active].id} src={photos[active].url} alt={`초대장의 소중한 순간 ${active + 1}`} decoding="async" draggable={false} />
         </div>
