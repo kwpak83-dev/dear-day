@@ -2890,3 +2890,14 @@
  .landing-v2 .dd-feature-rsvp .dd-rsvp-live-stats>div{padding:10px 8px;font-size:10px}
  .landing-v2 .dd-feature-rsvp .dd-rsvp-live-stats>div>span{white-space:nowrap}
 }
+
+
+/* Feature 05: reclaim another 20px on mobile without changing features 01–04. */
+@media(max-width:800px){
+ .landing-v2 .dd-feature-rsvp .dd-feature-visual{width:calc(100% + 20px);margin-left:-10px;margin-right:-10px;padding:10px 6px;box-sizing:border-box}
+ .landing-v2 .dd-feature-rsvp .dd-feature-demo-content{padding:9px 6px 11px}
+ .landing-v2 .dd-feature-rsvp .dd-rsvp-live{padding:9px 6px 14px}
+ .landing-v2 .dd-feature-rsvp .dd-rsvp-live-tr{grid-template-columns:minmax(0,2.7fr) .55fr .6fr .55fr .55fr;gap:2px}
+ .landing-v2 .dd-feature-rsvp .dd-rsvp-live-tr>span:first-child{word-break:keep-all;overflow-wrap:normal}
+ .landing-v2 .dd-feature-rsvp .dd-rsvp-live-tr>span:first-child b{white-space:nowrap}
+}
