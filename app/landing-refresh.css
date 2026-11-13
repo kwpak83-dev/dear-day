@@ -3004,3 +3004,6 @@
 .dd-flex-edit-note{background:#eef8f2;color:#4e685a}
 .dd-flex-edit-note strong{color:#3c7256}
 .dd-flex-edit-note span{font-size:14px}
+
+/* Feature 03: content-height greeting field without manual resize handle. */
+.landing-v2 .dd-feature-preview .dd-landing-greeting-editor .dd-landing-intro-field textarea{resize:none;min-height:0;height:auto;overflow-y:hidden}
