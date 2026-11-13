@@ -97,7 +97,7 @@ export default function LandingOccasionCarousel() {
   if(best!==activeRef.current){activeRef.current=best;setActive(best)}
  };
  return <div ref={rootRef} className="dd-concept-carousel" onFocus={()=>setPaused(true)} onBlur={e=>{if(!e.currentTarget.contains(e.relatedTarget))setPaused(false)}} onTouchStart={()=>{pauseRef.current=true}} onTouchEnd={()=>{pauseRef.current=false}} onTouchCancel={()=>{pauseRef.current=false}}>
-  <div className="dd-concept-carousel-header"><strong>다양한 날을 위한 초대장</strong><span>ALL OCCASIONS</span></div>
+  <div className="dd-concept-carousel-header"><strong>다양한 날을 위한 초대장</strong></div>
   {items.length ? <>
    <div className="dd-concept-carousel-track" ref={trackRef} onScroll={sync} aria-label="디어데이 행사별 초대장 표지">
     {items.map((item,index)=><a className={`dd-concept-carousel-card ${active===index?"is-active":""}`} href={`/templates/${encodeURIComponent(item.template_key)}`} key={item.id} aria-label={`${item.label} 초대장 미리보기`}>
