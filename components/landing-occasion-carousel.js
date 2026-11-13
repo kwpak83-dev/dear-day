@@ -96,15 +96,15 @@ export default function LandingOccasionCarousel() {
   });
   if(best!==activeRef.current){activeRef.current=best;setActive(best)}
  };
- return <div ref={rootRef} className="dd-occasion-carousel" onFocus={()=>setPaused(true)} onBlur={e=>{if(!e.currentTarget.contains(e.relatedTarget))setPaused(false)}} onTouchStart={()=>{pauseRef.current=true}} onTouchEnd={()=>{pauseRef.current=false}} onTouchCancel={()=>{pauseRef.current=false}}>
-  <div className="dd-occasion-carousel-header"><strong>다양한 날을 위한 초대장</strong><span>ALL OCCASIONS</span></div>
+ return <div ref={rootRef} className="dd-concept-carousel" onFocus={()=>setPaused(true)} onBlur={e=>{if(!e.currentTarget.contains(e.relatedTarget))setPaused(false)}} onTouchStart={()=>{pauseRef.current=true}} onTouchEnd={()=>{pauseRef.current=false}} onTouchCancel={()=>{pauseRef.current=false}}>
+  <div className="dd-concept-carousel-header"><strong>다양한 날을 위한 초대장</strong><span>ALL OCCASIONS</span></div>
   {items.length ? <>
-   <div className="dd-occasion-carousel-track" ref={trackRef} onScroll={sync} aria-label="디어데이 행사별 초대장 표지">
-    {items.map((item,index)=><a className={`dd-occasion-carousel-card ${active===index?"is-active":""}`} href={`/templates/${encodeURIComponent(item.template_key)}`} key={item.id} aria-label={`${item.label} 초대장 미리보기`}>
-      <div className="dd-occasion-carousel-image">{item.thumbnail_1_url?<img src={item.thumbnail_1_url} alt={`${item.label} 초대장 표지`} loading="lazy" draggable="false"/>:<div className="dd-occasion-carousel-empty">DearDay</div>}</div>
+   <div className="dd-concept-carousel-track" ref={trackRef} onScroll={sync} aria-label="디어데이 행사별 초대장 표지">
+    {items.map((item,index)=><a className={`dd-concept-carousel-card ${active===index?"is-active":""}`} href={`/templates/${encodeURIComponent(item.template_key)}`} key={item.id} aria-label={`${item.label} 초대장 미리보기`}>
+      <div className="dd-concept-carousel-image">{item.thumbnail_1_url?<img src={item.thumbnail_1_url} alt={`${item.label} 초대장 표지`} loading="lazy" draggable="false"/>:<div className="dd-concept-carousel-empty">DearDay</div>}</div>
     </a>)}
    </div>
-   <div className="dd-occasion-carousel-controls"><button type="button" aria-label="이전 행사" onClick={()=>goTo(active-1)}>‹</button><div className="dd-occasion-carousel-caption"><span>{active+1} / {items.length}</span><strong>{items[active]?.label}</strong></div><button type="button" aria-label="다음 행사" onClick={()=>goTo(active+1)}>›</button></div>
-  </> : <div className="dd-occasion-carousel-loading">행사별 초대장 표지를 불러오는 중이에요.</div>}
+   <div className="dd-concept-carousel-controls"><button type="button" aria-label="이전 행사" onClick={()=>goTo(active-1)}>‹</button><div className="dd-concept-carousel-caption"><span>{active+1} / {items.length}</span><strong>{items[active]?.label}</strong></div><button type="button" aria-label="다음 행사" onClick={()=>goTo(active+1)}>›</button></div>
+  </> : <div className="dd-concept-carousel-loading">행사별 초대장 표지를 불러오는 중이에요.</div>}
  </div>;
 }
