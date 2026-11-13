@@ -2910,3 +2910,11 @@
 .landing-v2 .dd-feature.dd-feature-program .dd-landing-program-canvas:has(.invitation-program:not(.invitation-program--editorial)){
   margin-left:0;
 }
+
+/* Landing features 01–07: use the former decorative brand-header space for content. */
+.landing-v2 .dd-feature .dd-feature-demo-content{min-height:0}
+.landing-v2 .dd-feature-theme .dd-feature-demo-content{padding-top:0}
+.landing-v2 .dd-feature-program .dd-feature-demo-content{padding-top:8px}
+.landing-v2 .dd-feature-preview .dd-feature-demo-content,
+.landing-v2 .dd-feature-effects .dd-feature-demo-content,
+.landing-v2 .dd-feature-rsvp .dd-feature-demo-content{padding-top:8px}
