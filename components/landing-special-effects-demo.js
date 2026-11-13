@@ -37,7 +37,7 @@ export default function LandingSpecialEffectsDemo(){
  const screenEffect=data?.templateConfig?.effects?.screenEffect;
  const sample=data?.item?.sample_content||{};
  const showEffect=tab==="effect"&&enabled;
- const introDefaults=data?.templateConfig?.hero?.intro;
+ const introDefaults=data?.heroIntro ?? data?.templateConfig?.hero?.intro;
  const intro=introDefaults?.enabled===true?introDefaults:null;
  return <div className="dd-landing-effects-demo">
   <div className="dd-landing-effects-tabs" role="group" aria-label="초대장 연출 미리보기">
@@ -46,7 +46,7 @@ export default function LandingSpecialEffectsDemo(){
   <div ref={introStageRef} className={`dd-landing-effects-stage dd-landing-effects-stage--${tab}`} aria-live="polite">
    {tab==="intro" ? intro ? <div className="dd-landing-effects-intro-real" style={{backgroundColor:intro.backgroundColor}}>
     <link rel="stylesheet" href={HERO_FONT_STYLESHEET}/>
-    <div className="dd-landing-effects-intro-canvas" style={{width:390,height:390,zoom:Math.min(1,introStageWidth/390)}}><HeroIntro key={introReplay} intro={intro}/></div>
+    <div className="dd-landing-effects-intro-canvas" style={{width:390,height:210,flex:"none",zoom:Math.min(1,introStageWidth/390)}}><HeroIntro key={introReplay} intro={intro}/></div>
    </div> : <div className="dd-landing-effects-placeholder">{failed?"템플릿을 불러오지 못했어요.":"템플릿 인트로 설정을 불러오는 중이에요."}</div> : (tab==="cover" ? cover : body) ? <img className="dd-landing-effects-photo" src={tab==="cover"?cover:body} alt={tab==="cover"?"Spring Blossom Day 초대장 표지":"Spring Blossom Day 초대장 본문"} loading="lazy"/> :
     <div className="dd-landing-effects-placeholder">{failed?"템플릿을 불러오지 못했어요.":"Spring Blossom Day 미리보기를 준비하고 있어요."}</div>}
    {showEffect&&screenEffect&&<div className="dd-landing-effects-overlay"><TemplateScreenEffect config={{effects:{screenEffect}}} assets={data?.templateAssets||{}}/></div>}
