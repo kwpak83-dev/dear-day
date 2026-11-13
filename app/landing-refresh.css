@@ -2807,3 +2807,11 @@
  letter-spacing:-.035em;text-align:center;white-space:nowrap;
  pointer-events:none;
 }
+
+/* Prevent Georgia -> Playfair FOUT on the mobile landing headline.
+   visibility preserves the headline box and CTA positions during font loading. */
+@media (max-width:800px){
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group:not(.dd-hero-headline-ready) > h1{
+  visibility:hidden!important;
+ }
+}
