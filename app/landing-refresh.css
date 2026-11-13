@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Gowun+Dodum&family=Roboto+Condensed:ital,wght@1,900&family=Montserrat:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Cormorant+Garamond:ital,wght@0,600;1,400&family=Gowun+Dodum&family=Roboto+Condensed:ital,wght@1,900&family=Montserrat:wght@500&family=Alex+Brush&display=swap");
 /* DearDay landing refresh: isolated styles for cinematic homepage. */
 .landing-v2{background:#fff;color:#282624}
 .landing-v2 .landing-header{position:relative;z-index:20;background:#fff;color:#292725}
@@ -3030,4 +3030,32 @@
  .landing-v2 .dd-features{padding-bottom:45px}
  .landing-v2 .dd-features .dd-feature:last-child{margin-bottom:0!important}
  .landing-v2 .dd-detail-section.dd-experience{padding-top:32px}
+}
+
+/* Homepage hero C: Alex Brush calligraphy with editable two-tone lettering and vector heart. */
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > h1.dd-hero-script-title{
+ font-family:"Alex Brush","Brush Script MT",cursive!important;
+ font-weight:400!important;font-style:normal!important;
+ letter-spacing:0!important;line-height:1!important;
+ white-space:normal!important;overflow:visible!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;
+ width:100%!important;max-width:100%!important;
+}
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{
+ display:block;color:#42291e;font-size:clamp(48px,12.2vw,76px);
+ white-space:nowrap;line-height:1.04;
+}
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{
+ position:relative;display:block;color:#bd722d;font-size:clamp(38px,9.4vw,60px);
+ white-space:nowrap;line-height:1.04;margin-top:-3px;padding-bottom:23px;
+}
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-flourish{
+ position:absolute;left:0;bottom:0;width:100%;height:27px;overflow:visible;
+}
+@media(max-width:800px){
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > h1.dd-hero-script-title{font-size:initial!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{font-size:clamp(44px,12.1vw,62px)!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{font-size:clamp(36px,9.7vw,50px)!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group:not(.dd-hero-headline-ready) > h1.dd-hero-script-title{visibility:visible!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{margin-top:8px!important}
 }
