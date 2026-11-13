@@ -3007,3 +3007,15 @@
 
 /* Feature 03: content-height greeting field without manual resize handle. */
 .landing-v2 .dd-feature-preview .dd-landing-greeting-editor .dd-landing-intro-field textarea{resize:none;min-height:0;height:auto;overflow-y:hidden}
+
+/* Feature 05: compact RSVP statistics to reveal more of the response table. */
+.landing-v2 .dd-feature-rsvp .dd-rsvp-live-summary{padding:9px 10px 8px}
+.landing-v2 .dd-feature-rsvp .dd-rsvp-live-summary p{margin:3px 0 7px}
+.landing-v2 .dd-feature-rsvp .dd-rsvp-live-progress{margin-top:5px}
+.landing-v2 .dd-feature-rsvp .dd-rsvp-live-stats{gap:4px}
+.landing-v2 .dd-feature-rsvp .dd-rsvp-live-stats>div{padding:5px 6px;min-height:0;border-radius:7px;line-height:1.35}
+.landing-v2 .dd-feature-rsvp .dd-rsvp-live-sides{gap:12px;margin-top:6px;padding-top:6px;font-size:10px}
+.landing-v2 .dd-feature-rsvp .dd-rsvp-live-filters{margin:7px 0 6px}
+@media(max-width:800px){
+ .landing-v2 .dd-feature-rsvp .dd-rsvp-live-stats>div{padding:5px 6px}
+}
