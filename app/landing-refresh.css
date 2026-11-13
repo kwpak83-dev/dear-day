@@ -3065,3 +3065,9 @@
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-eyebrow{transform:translateY(-6px)}
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{font-size:clamp(47px,calc(12.1vw + 3px),65px)!important}
 }
+
+/* Mobile HERO C: tighten the subtitle and raise both CTA buttons together. */
+@media(max-width:800px){
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{margin-top:-3px!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group{margin-bottom:18px!important}
+}
