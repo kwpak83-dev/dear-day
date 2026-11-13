@@ -67,7 +67,7 @@ export default function LandingOccasionCarousel() {
    const next=(activeRef.current+1)%items.length;
    activeRef.current=next;
    setActive(next);
-  },3000);
+  },2000);
   return()=>clearInterval(timer);
  },[items.length,paused,visible]);
  useEffect(()=>{

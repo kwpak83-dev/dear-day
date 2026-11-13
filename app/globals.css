@@ -4889,13 +4889,13 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
    inline greeting preview and editor phone, then zoom the whole canvas to fit. */
 .dd-editor-full-preview-stage{width:100%;min-width:0}
 .dd-editor-full-preview-stage > .dd-editor-full-preview-canvas{
-  width:390px;
+  width:var(--dd-template-preview-layout-width,390px);
   max-width:none;
   margin:0 auto;
   box-shadow:none;
 }
 .dd-editor-full-preview-canvas > .full-preview-document{
-  width:390px;
+  width:var(--dd-template-preview-layout-width,390px);
   max-width:none;
   margin:0;
   box-shadow:none;
