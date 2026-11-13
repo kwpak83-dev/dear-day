@@ -3071,3 +3071,13 @@
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{margin-top:-3px!important}
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group{margin-bottom:18px!important}
 }
+
+/* HERO C finishing touches: subtle faux-bold Alex Brush and a refined heart flourish. */
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{
+ -webkit-text-stroke:.42px currentColor;
+ paint-order:stroke fill;
+}
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-flourish{height:30px}
+@media(max-width:800px){
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{font-size:12px!important}
+}
