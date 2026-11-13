@@ -5,7 +5,9 @@ const INITIAL="서로의 소중함을 알아본 두 사람이\n이제 하나의 
 export default function LandingIntroEditorDemo(){
  const [greeting,setGreeting]=useState(INITIAL);
  const [previewOpen,setPreviewOpen]=useState(false);
+ const textareaRef=useRef(null);
  const closeRef=useRef(null);
+ useEffect(()=>{const el=textareaRef.current;if(!el)return;el.style.height="auto";el.style.height=`${el.scrollHeight}px`;},[greeting]);
  const openerRef=useRef(null);
  useEffect(()=>{
   if(!previewOpen)return;
@@ -16,7 +18,7 @@ export default function LandingIntroEditorDemo(){
  },[previewOpen]);
  return <div className="dd-landing-greeting-editor">
   <div className="dd-landing-intro-editor-title"><strong>초대글 편집</strong><span>DEARDAY EDITOR</span></div>
-  <label className="dd-landing-intro-field">초대글 내용<textarea rows={7} maxLength={600} value={greeting} onChange={e=>setGreeting(e.target.value)} placeholder="초대글을 입력하세요"/></label>
+  <label className="dd-landing-intro-field">초대글 내용<textarea ref={textareaRef} rows={1} maxLength={600} value={greeting} onChange={e=>setGreeting(e.target.value)} placeholder="초대글을 입력하세요"/></label>
   <p className="dd-landing-greeting-help">초대글을 수정하고 아래 버튼으로 바로 확인해 보세요.</p>
   <button ref={openerRef} className="dd-landing-intro-play" type="button" onClick={()=>setPreviewOpen(true)}>◉ 초대글 미리보기</button>
   {previewOpen&&<div className="dd-landing-greeting-overlay" onMouseDown={e=>{if(e.target===e.currentTarget)setPreviewOpen(false)}}>
