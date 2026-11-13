@@ -2901,3 +2901,7 @@
  .landing-v2 .dd-feature-rsvp .dd-rsvp-live-tr>span:first-child{word-break:keep-all;overflow-wrap:normal}
  .landing-v2 .dd-feature-rsvp .dd-rsvp-live-tr>span:first-child b{white-space:nowrap}
 }
+
+/* Excel icon alignment in feature 05 demo. */
+.landing-v2 .dd-rsvp-live-export{display:inline-flex;align-items:center;gap:5px}
+.landing-v2 .dd-rsvp-live-export svg{display:block;flex:none}
