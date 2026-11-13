@@ -2617,3 +2617,33 @@
   pointer-events:none;
  }
 }
+
+/* Feature 04: interactive Spring Blossom Day showcase. */
+.landing-v2 .dd-feature-effects .dd-feature-demo{width:min(100%,440px);max-width:100%;min-height:0}
+.landing-v2 .dd-feature-effects .dd-feature-demo-content{padding:12px 12px 14px;min-width:0}
+.landing-v2 .dd-feature-effects .dd-feature-demo-kicker{display:none}
+.dd-landing-effects-demo{width:100%;min-width:0}
+.dd-landing-effects-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;padding:4px;border-radius:24px;background:#f4f0ec;margin:0 0 12px}
+.dd-landing-effects-tabs button{border:0;background:transparent;border-radius:20px;padding:11px 2px;color:#87776c;font-size:12px;font-weight:500;cursor:pointer}
+.dd-landing-effects-tabs button.is-active{background:#fff;color:#493d37;font-weight:700;box-shadow:0 2px 7px #5b46331c}
+.dd-landing-effects-stage{position:relative;isolation:isolate;width:min(100%,310px);height:390px;margin:auto;border-radius:12px;overflow:hidden;background:#fffaf8;border:1px solid #f0e8e2}
+.dd-landing-effects-photo{display:block;width:100%;height:100%;object-fit:contain;object-position:top center}
+.dd-landing-effects-stage--background .dd-landing-effects-photo,.dd-landing-effects-stage--effect .dd-landing-effects-photo{object-fit:cover;object-position:top center}
+.dd-landing-effects-intro{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:25px;height:100%;padding:22px;text-align:center;background:radial-gradient(ellipse at 20% 15%,#fce8ec 0,transparent 48%),radial-gradient(ellipse at 95% 85%,#f9dce6 0,transparent 48%),#fffaf8;color:#846c6d}
+.dd-landing-effects-intro>span{font:italic 17px Georgia,serif;color:#b48b96}
+.dd-landing-effects-intro>strong{font-size:21px;line-height:2;font-weight:500;letter-spacing:.07em;animation:dd-landing-effects-appear 1.1s ease both}
+.dd-landing-effects-intro>small{font:10px Georgia,serif;letter-spacing:.22em;color:#bda4aa}
+@keyframes dd-landing-effects-appear{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.dd-landing-effects-placeholder{display:grid;place-items:center;height:100%;padding:20px;color:#a18a7f;font-size:12px;text-align:center}
+.dd-landing-effects-overlay{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden}
+.dd-landing-effects-overlay>.dd-template-screen-effect{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
+.dd-landing-effects-overlay .dd-template-screen-effect img{top:-35px;animation-name:dd-landing-effects-fall;animation-duration:calc(var(--dd-screen-duration) / 1.7);animation-delay:calc(var(--dd-screen-delay) / 1.7)}
+.dd-landing-effects-overlay .dd-template-screen-effect--flutter img{animation-name:dd-landing-effects-flutter}
+.dd-landing-effects-overlay .dd-template-screen-effect--sparkle img{top:50%;animation-name:dd-screen-sparkle}
+@keyframes dd-landing-effects-fall{from{transform:translate3d(0,-35px,0) rotate(0)}to{transform:translate3d(var(--dd-screen-sway),435px,0) rotate(var(--dd-screen-rotation))}}
+@keyframes dd-landing-effects-flutter{0%{transform:translate3d(0,-35px,0) rotate(0)}50%{transform:translate3d(var(--dd-screen-sway),190px,0) rotate(90deg)}100%{transform:translate3d(0,435px,0) rotate(var(--dd-screen-rotation))}}
+.dd-landing-effects-footer{display:flex;align-items:center;justify-content:center;min-height:35px;color:#99867a;font-size:12px}
+.dd-landing-effects-toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.dd-landing-effects-toggle input{accent-color:#ae8b83;width:16px;height:16px}
+@media(max-width:800px){.landing-v2 .dd-feature-effects .dd-feature-demo-content{padding:10px}.dd-landing-effects-stage{height:350px;width:min(100%,280px)}}
+@media(prefers-reduced-motion:reduce){.dd-landing-effects-intro>strong{animation:none}}
