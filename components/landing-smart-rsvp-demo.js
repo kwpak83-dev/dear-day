@@ -35,7 +35,7 @@ function AttendanceDemo() {
       <div className="dd-rsvp-live-tr dd-rsvp-live-th" role="row"><span>작성자</span><span>참석</span><span>인원</span><span>식사</span><span>버스</span></div>
       {filtered.map(row=><div className="dd-rsvp-live-tr" role="row" key={row.name}><span><b className={row.role==="신부"?"bride":"groom"}>{row.role}</b> {row.name}</span><span className={row.attending?"yes":"no"}>{row.attending?"○":"×"}</span><span>{row.count}</span><span className={row.meal===true?"yes":"no"}>{row.meal===true?"○":"—"}</span><span className={row.bus===true?"yes":"no"}>{row.bus===true?"○":row.bus===false?"×":"—"}</span></div>)}
     </div>
-    <div className="dd-rsvp-live-export">▤ Excel 다운로드</div>
+    <div className="dd-rsvp-live-export"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 3h9l4 4v14H8z" fill="#E7F4EC" stroke="#16834B" strokeWidth="1.3"/><path d="M17 3v4h4" stroke="#16834B" strokeWidth="1.3"/><path d="M3 7l11-2v14L3 17z" fill="#16834B"/><path d="m6 10 4 5m0-5-4 5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/></svg><span>Excel 다운로드</span></div>
   </div>;
 }
 function GuestbookDemo() {
