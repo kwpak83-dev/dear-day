@@ -39,6 +39,8 @@ export default function LandingSpecialEffectsDemo(){
  const cover=data?.item?.thumbnail_1_url;
  const heroConfig=data?.templateConfig;
  const heroAssets=data?.templateAssets||{};
+ // The cover demo skips the intro sequence, so do not wait for its lettering/hold/fade timeline.
+ const coverHeroConfig=heroConfig?.hero?.intro?{...heroConfig,hero:{...heroConfig.hero,intro:{...heroConfig.hero.intro,writeDuration:0,holdDuration:0,fadeDuration:0}}}:heroConfig;
  const heroRender=heroConfig?getTemplateConfigRenderProps(heroConfig,heroAssets):null;
  const coverPresentation={eventKind:"wedding",title:"박정우 & 김수지",heroTitle:"박정우 & 김수지",heroName:"박정우 & 김수지",heroFullName:"박정우 & 김수지"};
  const body=data?.item?.thumbnail_2_url;
@@ -88,7 +90,7 @@ export default function LandingSpecialEffectsDemo(){
       <HeroIntro intro={intro}/>
      </div>
     </div>
-   </div> : <div className="dd-landing-effects-placeholder">{failed?"템플릿을 불러오지 못했어요.":"인트로 글꼴을 불러오는 중이에요."}</div> : tab==="cover" && heroConfig && heroRender ? <div className="dd-landing-effects-cover-live" key={coverReplay}><section className="classic-hero dd-template-hero-configured" style={{...heroRender.heroStyle,aspectRatio:(heroConfig.hero?.aspectRatio||"9:16").replace(":"," / "),width:"100%",height:"100%","--dd-hero-design-unit":"calc(100cqw / 390)"}}>{invitationFontStylesheets(heroConfig).map(href=><link key={href} rel="stylesheet" href={href}/>)}{(heroAssets.heroPhotoUrl||cover)&&<figure style={{...heroRender.heroMediaStyle,margin:0}}><img src={heroAssets.heroPhotoUrl||cover} alt="" loading="eager" style={{...heroRender.heroImageStyle,width:"100%",height:"100%",objectFit:"cover"}}/></figure>}<TemplateConfigHeroLayers config={heroConfig} assets={heroAssets} presentation={coverPresentation}/></section></div> : (tab==="cover" ? cover : body) ? <img className="dd-landing-effects-photo" src={tab==="cover"?cover:body} alt={tab==="cover"?"Spring Blossom Day 초대장 표지":"Spring Blossom Day 초대장 본문"} loading="lazy"/> :
+   </div> : <div className="dd-landing-effects-placeholder">{failed?"템플릿을 불러오지 못했어요.":"인트로 글꼴을 불러오는 중이에요."}</div> : tab==="cover" && heroConfig && heroRender ? <div className="dd-landing-effects-cover-live" key={coverReplay}><section className="classic-hero dd-template-hero-configured" style={{...heroRender.heroStyle,aspectRatio:(heroConfig.hero?.aspectRatio||"9:16").replace(":"," / "),width:"100%",height:"100%","--dd-hero-design-unit":"calc(100cqw / 390)"}}>{invitationFontStylesheets(heroConfig).map(href=><link key={href} rel="stylesheet" href={href}/>)}{(heroAssets.heroPhotoUrl||cover)&&<figure style={{...heroRender.heroMediaStyle,margin:0}}><img src={heroAssets.heroPhotoUrl||cover} alt="" loading="eager" style={{...heroRender.heroImageStyle,width:"100%",height:"100%",objectFit:"cover"}}/></figure>}<TemplateConfigHeroLayers config={coverHeroConfig} assets={heroAssets} presentation={coverPresentation}/></section></div> : (tab==="cover" ? cover : body) ? <img className="dd-landing-effects-photo" src={tab==="cover"?cover:body} alt={tab==="cover"?"Spring Blossom Day 초대장 표지":"Spring Blossom Day 초대장 본문"} loading="lazy"/> :
     <div className="dd-landing-effects-placeholder">{failed?"템플릿을 불러오지 못했어요.":"Spring Blossom Day 미리보기를 준비하고 있어요."}</div>}
    {showEffect&&screenEffect&&<div className="dd-landing-effects-overlay"><TemplateScreenEffect config={{effects:{screenEffect}}} assets={data?.templateAssets||{}}/></div>}
   </div>
