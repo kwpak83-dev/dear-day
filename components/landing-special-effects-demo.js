@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import TemplateScreenEffect from "./invitation/template-screen-effect";
 import HeroIntro from "./invitation/hero-intro";
-import { HERO_FONT_STYLESHEET } from "../lib/hero-fonts";
+import { HERO_FONT_STYLESHEET, getHeroFont } from "../lib/hero-fonts";
 
 const KEY = "cherry-blossom-day";
 const TABS = [["intro","인트로"],["cover","표지"],["background","배경"],["effect","효과"]];
@@ -46,7 +46,14 @@ export default function LandingSpecialEffectsDemo(){
   <div ref={introStageRef} className={`dd-landing-effects-stage dd-landing-effects-stage--${tab}`} aria-live="polite">
    {tab==="intro" ? intro ? <div className="dd-landing-effects-intro-real" style={{backgroundColor:intro.backgroundColor}}>
     <link rel="stylesheet" href={HERO_FONT_STYLESHEET}/>
-    <div className="dd-landing-effects-intro-canvas" style={{position:"relative",width:390,height:210,flex:"none",transform:`scale(${Math.min(1,introStageWidth/390)})`,transformOrigin:"center center"}}><HeroIntro key={introReplay} intro={intro}/></div>
+    <div className="dd-landing-effects-intro-canvas" style={{position:"relative",width:390,height:210,flex:"none",transform:`scale(${Math.min(1,introStageWidth/390)})`,transformOrigin:"center center"}}>
+     <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <span style={{display:"block",width:"88%",maxWidth:390,minWidth:0,fontFamily:getHeroFont(intro.fontId).family,fontSize:`${intro.fontSize}px`,lineHeight:1.35,color:intro.textColor,whiteSpace:"pre-wrap",overflowWrap:"break-word",wordBreak:"normal",textAlign:"center"}}>{intro.text}</span>
+     </div>
+     <div className="dd-landing-effects-intro-animation classic-hero" key={introReplay} style={{position:"absolute",inset:0,width:"100%",height:"100%"}}>
+      <HeroIntro intro={intro}/>
+     </div>
+    </div>
    </div> : <div className="dd-landing-effects-placeholder">{failed?"템플릿을 불러오지 못했어요.":"템플릿 인트로 설정을 불러오는 중이에요."}</div> : (tab==="cover" ? cover : body) ? <img className="dd-landing-effects-photo" src={tab==="cover"?cover:body} alt={tab==="cover"?"Spring Blossom Day 초대장 표지":"Spring Blossom Day 초대장 본문"} loading="lazy"/> :
     <div className="dd-landing-effects-placeholder">{failed?"템플릿을 불러오지 못했어요.":"Spring Blossom Day 미리보기를 준비하고 있어요."}</div>}
    {showEffect&&screenEffect&&<div className="dd-landing-effects-overlay"><TemplateScreenEffect config={{effects:{screenEffect}}} assets={data?.templateAssets||{}}/></div>}
