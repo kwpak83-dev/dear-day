@@ -1,7 +1,5 @@
 import { Alex_Brush } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
-import { introDebugScript } from "../lib/intro-debug";
 
 const alexBrush = Alex_Brush({
   weight: "400",
@@ -24,7 +22,6 @@ export default function RootLayout({ children }) {
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" />
       </head>
       <body>
-        {process.env.NODE_ENV === "development" && <Script id="dearday-intro-debug" strategy="beforeInteractive">{introDebugScript}</Script>}
         {children}
       </body>
     </html>
