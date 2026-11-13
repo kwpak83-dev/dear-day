@@ -10,6 +10,7 @@ import { PROGRAM_DEFAULTS, normalizeProgram } from "../lib/invitation-program";
 import LandingInvitationExperience from "../components/landing-invitation-experience";
 import LandingConceptCarousel from "../components/landing-concept-carousel";
 import LandingIntroEditorDemo from "../components/landing-intro-editor-demo";
+import LandingSpecialEffectsDemo from "../components/landing-special-effects-demo";
 import "./landing-refresh.css";
 
 
@@ -224,11 +225,12 @@ export default function Home() {
                     <p className="dd-landing-program-note">식순 디자인을 전환해 보세요</p>
                   </div> :
                     kind === "preview" ? <LandingIntroEditorDemo /> :
+                    kind === "effects" ? <LandingSpecialEffectsDemo /> :
                     kind === "rsvp" ? <div className="dd-feature-program"><strong>참석 여부 확인</strong><span>○ 참석할게요</span><span>○ 참석이 어려워요</span><span>축하 메시지를 남겨주세요 ♡</span></div> :
                     kind === "occasions" ? <div className="dd-feature-occasion-grid"><span>결혼식</span><span>돌잔치</span><span>생일</span><span>환갑·칠순·팔순</span><span>모임·행사</span><span>개업·오픈</span></div> :
                     <div className="dd-feature-demo-paper"><span>YOUR SPECIAL DAY</span><strong>{kind === "effects" ? "A moment to remember" : kind === "edit" ? "Make it yours" : "Good People, Good Moment."}</strong><i /><small>DEARDAY · MOBILE INVITATION</small></div>}
                 </div>
-                {kind !== "theme" && kind !== "program" && kind !== "preview" && <div className="dd-feature-demo-bottom">미리보기 · 영상 교체 예정</div>}
+                {kind !== "theme" && kind !== "program" && kind !== "preview" && kind !== "effects" && <div className="dd-feature-demo-bottom">미리보기 · 영상 교체 예정</div>}
               </div>
             </div>
             <div className="dd-feature-copy">
