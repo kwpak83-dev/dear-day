@@ -2649,8 +2649,8 @@
 @media(prefers-reduced-motion:reduce){.dd-landing-effects-intro>strong{animation:none}}
 
 /* Feature 04 intro reuses the actual invitation HeroIntro lettering renderer. */
-.dd-landing-effects-intro-real{position:absolute;inset:0;overflow:hidden}
-.dd-landing-effects-intro-canvas{position:relative;width:100%;height:100%;overflow:hidden}
+.dd-landing-effects-intro-real{position:absolute;inset:0;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.dd-landing-effects-intro-canvas{position:relative;overflow:hidden}
 .dd-landing-effects-intro-canvas .dd-hero-intro{position:absolute;inset:0;width:100%;height:100%}
 .dd-landing-effects-replay{border:0;background:transparent;color:#8f7169;font:inherit;font-weight:600;cursor:pointer;padding:7px 12px}
 .dd-landing-effects-replay:hover{text-decoration:underline}
