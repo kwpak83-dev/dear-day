@@ -2933,3 +2933,18 @@
  .landing-v2 .dd-feature-occasions .dd-concept-carousel-track{gap:10px;padding:6px 9% 12px}
  .landing-v2 .dd-feature-occasions .dd-concept-carousel-card{flex-basis:82%}
 }
+
+/* Feature 06: compact the two-line heading area and preserve complete portrait covers. */
+.landing-v2 .dd-feature-occasions .dd-feature-demo-content{gap:3px;padding-top:3px;padding-bottom:7px}
+.landing-v2 .dd-feature-occasions .dd-feature-demo-kicker{font-size:8px;line-height:1.2}
+.landing-v2 .dd-feature-occasions .dd-concept-carousel-header{padding:1px 4px 3px}
+.landing-v2 .dd-feature-occasions .dd-concept-carousel-header strong{font-size:12px;line-height:1.25}
+.landing-v2 .dd-feature-occasions .dd-concept-carousel-track{padding-top:3px!important;padding-bottom:6px}
+.landing-v2 .dd-feature-occasions .dd-concept-carousel-image{aspect-ratio:0.56}
+.landing-v2 .dd-feature-occasions .dd-concept-carousel-image img{object-fit:contain}
+.landing-v2 .dd-feature-occasions .dd-concept-carousel-controls{margin:0}
+@media(max-width:800px){
+ .landing-v2 .dd-feature-occasions .dd-feature-demo-content{gap:3px;padding-top:3px;padding-bottom:7px}
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-track{padding-top:3px!important;padding-bottom:6px}
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-image{aspect-ratio:0.56}
+}
