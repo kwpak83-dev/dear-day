@@ -2918,3 +2918,18 @@
 .landing-v2 .dd-feature-preview .dd-feature-demo-content,
 .landing-v2 .dd-feature-effects .dd-feature-demo-content,
 .landing-v2 .dd-feature-rsvp .dd-feature-demo-content{padding-top:8px}
+
+/* Feature 06: one-line heading and larger occasion covers; leave feature 01 unchanged. */
+.landing-v2 .dd-feature-occasions .dd-feature-demo-content{width:100%;min-width:0;box-sizing:border-box;padding:8px 0 12px;gap:8px;justify-content:flex-start}
+.landing-v2 .dd-feature-occasions .dd-concept-carousel{width:100%}
+.landing-v2 .dd-feature-occasions .dd-concept-carousel-header{justify-content:center;padding:4px 4px 6px}
+.landing-v2 .dd-feature-occasions .dd-concept-carousel-header strong{font-size:13px;white-space:nowrap}
+.landing-v2 .dd-feature-occasions .dd-concept-carousel-track{gap:10px;padding:6px 9% 12px;scroll-padding-inline:9%}
+.landing-v2 .dd-feature-occasions .dd-concept-carousel-card{flex:0 0 82%}
+.landing-v2 .dd-feature-occasions .dd-concept-carousel-image{aspect-ratio:0.64}
+.landing-v2 .dd-feature-occasions .dd-concept-carousel-controls{margin:0 0 2px}
+@media(max-width:800px){
+ .landing-v2 .dd-feature-occasions .dd-feature-demo-content{padding:6px 0 10px}
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-track{gap:10px;padding:6px 9% 12px}
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-card{flex-basis:82%}
+}
