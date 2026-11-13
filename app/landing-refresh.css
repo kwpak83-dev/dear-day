@@ -2600,3 +2600,20 @@
 .dd-landing-greeting-preview p{white-space:pre-wrap;overflow-wrap:anywhere;line-height:2;font-size:13px;margin:0;max-width:100%}
 .dd-landing-greeting-preview small{font-size:20px;color:#b58e81}
 .dd-landing-greeting-close{display:block;width:100%;border:1px solid #d7c8be;background:#fffaf6;color:#7b6255;border-radius:8px;padding:11px;margin-top:12px;font-weight:600;cursor:pointer}
+
+/* Desktop concept carousel: give first/last cards enough room to center.
+   Use flex spacers rather than percentage padding, which shrinks card widths. */
+@media(min-width:801px){
+ .landing-v2 .dd-feature-theme .dd-concept-carousel-track{
+  padding-left:0;
+  padding-right:0;
+  scroll-padding-inline:0;
+ }
+ .landing-v2 .dd-feature-theme .dd-concept-carousel-track::before,
+ .landing-v2 .dd-feature-theme .dd-concept-carousel-track::after{
+  content:"";
+  display:block;
+  flex:0 0 calc(12.5% - 13px);
+  pointer-events:none;
+ }
+}
