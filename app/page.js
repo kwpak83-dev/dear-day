@@ -24,6 +24,17 @@ export default function Home() {
   const [showLandingTop, setShowLandingTop] = useState(false);
   const [heroVariant, setHeroVariant] = useState("c");
   const [headlineFontReady, setHeadlineFontReady] = useState(false);
+  const [eyebrowFontReady, setEyebrowFontReady] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    const font = '500 10px "Montserrat"';
+    document.fonts.load(font, "DEARDAY · MOBILE INVITATION").then((faces) => {
+      if (!cancelled && faces.length > 0 && document.fonts.check(font, "DEARDAY · MOBILE INVITATION")) {
+        setEyebrowFontReady(true);
+      }
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
   useEffect(() => {
     let cancelled = false;
     const font = '600 36px "Playfair Display"';
@@ -187,7 +198,7 @@ export default function Home() {
         <button type="button" className={heroVariant === "c" ? "active" : ""} aria-pressed={heroVariant === "c"} onClick={() => switchHero("c")}>C · Split</button>
       </div>
       <div className="landing-shell dd-hero-content">
-        <div className={`dd-hero-copy-group${headlineFontReady ? " dd-hero-headline-ready" : ""}`}>
+        <div className={`dd-hero-copy-group${headlineFontReady ? " dd-hero-headline-ready" : ""}${eyebrowFontReady ? " dd-hero-eyebrow-ready" : ""}}`}>
         <p className="dd-hero-eyebrow">DEARDAY · MOBILE INVITATION</p>
         {heroVariant === "a" ? <h1>Good<br />People,<br />Good Moment.</h1> : heroVariant === "b" ? <h1>Good People<br />Good Moment.</h1> : <h1>Good People,<br /><em>Good Moment.</em></h1>}
         <p className="dd-hero-description">{"마음을 전하는 특별한 초대장"}</p>
