@@ -15,18 +15,31 @@ export default function LandingSpecialEffectsDemo(){
  const [introReplay,setIntroReplay]=useState(0);
  const [coverReplay,setCoverReplay]=useState(0);
  const introStageRef=useRef(null);
+ const demoRef=useRef(null);
+ const [nearViewport,setNearViewport]=useState(false);
  const [introStageWidth,setIntroStageWidth]=useState(310);
  const [data,setData]=useState(null);
  const [failed,setFailed]=useState(false);
  const [introFontReady,setIntroFontReady]=useState(false);
  useEffect(()=>{
+  const node=demoRef.current;
+  if(!node)return;
+  if(typeof IntersectionObserver==="undefined"){setNearViewport(true);return;}
+  const observer=new IntersectionObserver(entries=>{
+   if(entries.some(entry=>entry.isIntersecting)){setNearViewport(true);observer.disconnect();}
+  },{rootMargin:"700px 0px",threshold:0});
+  observer.observe(node);
+  return()=>observer.disconnect();
+ },[]);
+ useEffect(()=>{
+  if(!nearViewport)return;
   const controller=new AbortController();
   fetch(`/api/templates/collection/${KEY}`,{signal:controller.signal})
    .then(response=>{if(!response.ok)throw Error("sample unavailable");return response.json()})
    .then(result=>{if(!controller.signal.aborted)setData(result)})
    .catch(()=>{if(!controller.signal.aborted)setFailed(true)});
   return()=>controller.abort();
- },[]);
+ },[nearViewport]);
  useEffect(()=>{
   const node=introStageRef.current;
   if(!node)return;
@@ -77,7 +90,7 @@ export default function LandingSpecialEffectsDemo(){
   load();
   return()=>{cancelled=true;};
  },[introFontId]);
- return <div className="dd-landing-effects-demo">
+ return <div ref={demoRef} className="dd-landing-effects-demo">
   <div className="dd-landing-effects-tabs" role="group" aria-label="초대장 연출 미리보기">
    {TABS.map(([id,label])=><button key={id} type="button" className={tab===id?"is-active":""} aria-pressed={tab===id} onClick={()=>{setTab(id);if(id==="intro")setIntroReplay(value=>value+1);if(id==="cover")setCoverReplay(value=>value+1)}}>{label}</button>)}
   </div>
