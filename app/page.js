@@ -203,7 +203,7 @@ export default function Home() {
       <div className="landing-shell dd-hero-content">
         <div className={`dd-hero-copy-group${headlineFontReady ? " dd-hero-headline-ready" : ""}${eyebrowFontReady ? " dd-hero-eyebrow-ready" : ""}`}>
         <p className="dd-hero-eyebrow">DEARDAY · MOBILE INVITATION</p>
-        {heroVariant === "a" ? <h1>Good<br />People,<br />Good Moment.</h1> : heroVariant === "b" ? <h1>Good People<br />Good Moment.</h1> : <h1 className="dd-hero-script-title"><span className="dd-hero-script-first">Good People,</span><span className="dd-hero-script-second">Good Moment.<svg className="dd-hero-script-flourish" viewBox="0 0 270 38" preserveAspectRatio="none" fill="none" aria-hidden="true"><path d="M2 20 C64 5 125 11 177 19 S237 27 252 13 C244 7 244 1 250 2 C257 3 258 11 252 13 C262 1 270 5 267 13 C263 23 251 18 252 13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg></span></h1>}
+        {heroVariant === "a" ? <h1>Good<br />People,<br />Good Moment.</h1> : heroVariant === "b" ? <h1>Good People<br />Good Moment.</h1> : <h1 className="dd-hero-script-title"><span className="dd-hero-script-first">Good People,</span><span className="dd-hero-script-second">Good Moment.<svg className="dd-hero-script-flourish" viewBox="0 0 270 38" preserveAspectRatio="none" fill="none" aria-hidden="true"><path d="M2 24 C57 12 109 11 157 19 C192 25 221 28 241 19 C247 16 249 13 251 11 C245 3 236 4 237 12 C238 18 246 21 251 25 C256 21 266 15 266 9 C266 2 256 3 251 11" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg></span></h1>}
         <p className="dd-hero-description">{"마음을 전하는 특별한 초대장"}</p>
         </div>
         <div className="dd-hero-buttons" ref={heroButtonsRef}>
