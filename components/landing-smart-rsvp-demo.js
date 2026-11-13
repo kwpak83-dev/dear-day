@@ -4,9 +4,9 @@ import { useState } from "react";
 
 // Static promotional examples only: no visitor information, database calls or admin actions.
 const responses = [
-  { role: "신랑", name: "김철", attending: false, count: "—", meal: "—", bus: "—" },
   { role: "신부", name: "김현아 외 부서원", attending: true, count: "3명", meal: true, bus: false },
   { role: "신랑", name: "박경 및 마케팅팀", attending: true, count: "5명", meal: true, bus: true },
+  { role: "신랑", name: "김철", attending: false, count: "—", meal: "—", bus: "—" },
 ];
 const messages = [
   { name: "최기철", time: "2026. 11. 13. 오후 2:43", message: "정우 드디어 장가가네 ㅋㅋ 결혼식날 보자~!" },
