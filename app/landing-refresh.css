@@ -2905,3 +2905,8 @@
 /* Excel icon alignment in feature 05 demo. */
 .landing-v2 .dd-rsvp-live-export{display:inline-flex;align-items:center;gap:5px}
 .landing-v2 .dd-rsvp-live-export svg{display:block;flex:none}
+
+/* Feature 02: card rows start at the left edge; keep the timeline centering offset only for editorial. */
+.landing-v2 .dd-feature.dd-feature-program .dd-landing-program-canvas:has(.invitation-program:not(.invitation-program--editorial)){
+  margin-left:0;
+}
