@@ -2875,3 +2875,18 @@
 .landing-v2 .dd-rsvp-guestbook-meta time{font-size:9px;color:#8794a9;text-align:right}
 .landing-v2 .dd-rsvp-guestbook-card p{margin:12px 0 8px;font-size:11px;line-height:1.6;color:#52617b;overflow-wrap:anywhere}
 .landing-v2 .dd-rsvp-guestbook-delete{display:block;width:max-content;margin-left:auto;border:1px solid #f1d7d7;border-radius:7px;padding:5px 8px;color:#d68f8f;font-size:10px}
+
+
+/* SMART RSVP: use the available mobile feature width, not the legacy 235px demo cap. */
+.landing-v2 .dd-feature-rsvp .dd-feature-demo{width:100%;max-width:440px;min-width:0;box-sizing:border-box}
+.landing-v2 .dd-feature-rsvp .dd-feature-demo-content{width:100%;min-width:0;box-sizing:border-box;padding:12px 10px 14px;gap:12px}
+.landing-v2 .dd-feature-rsvp .dd-feature-visual{min-width:0}
+.landing-v2 .dd-feature-rsvp .dd-rsvp-live-stats>div{min-width:0}
+.landing-v2 .dd-feature-rsvp .dd-rsvp-live-stats>div>span{min-width:0}
+@media(max-width:800px){
+ .landing-v2 .dd-feature-rsvp .dd-feature-visual{padding:14px 10px}
+ .landing-v2 .dd-feature-rsvp .dd-feature-demo{width:100%;max-width:440px}
+ .landing-v2 .dd-feature-rsvp .dd-feature-demo-content{padding:10px 8px 12px}
+ .landing-v2 .dd-feature-rsvp .dd-rsvp-live-stats>div{padding:10px 8px;font-size:10px}
+ .landing-v2 .dd-feature-rsvp .dd-rsvp-live-stats>div>span{white-space:nowrap}
+}
