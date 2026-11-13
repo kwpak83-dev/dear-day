@@ -2686,3 +2686,13 @@
   display:inline!important;
  }
 }
+
+/* Mobile HERO C: inset the full text block from its left vertical rule. */
+@media (max-width:800px){
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-eyebrow,
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > h1,
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{
+  position:relative;
+  left:12px;
+ }
+}
