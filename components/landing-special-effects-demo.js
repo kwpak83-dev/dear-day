@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import TemplateScreenEffect from "./invitation/template-screen-effect";
 import HeroIntro from "./invitation/hero-intro";
 import { HERO_FONT_STYLESHEET, getHeroFont } from "../lib/hero-fonts";
+import { invitationFontStylesheets } from "../lib/invitation-local-fonts";
 
 const KEY = "cherry-blossom-day";
 const TABS = [["intro","인트로"],["cover","표지"],["background","배경"],["effect","효과"]];
@@ -15,6 +16,7 @@ export default function LandingSpecialEffectsDemo(){
  const [introStageWidth,setIntroStageWidth]=useState(310);
  const [data,setData]=useState(null);
  const [failed,setFailed]=useState(false);
+ const [introFontReady,setIntroFontReady]=useState(false);
  useEffect(()=>{
   const controller=new AbortController();
   fetch(`/api/templates/collection/${KEY}`,{signal:controller.signal})
@@ -39,12 +41,38 @@ export default function LandingSpecialEffectsDemo(){
  const showEffect=tab==="effect"&&enabled;
  const introDefaults=data?.heroIntro ?? data?.templateConfig?.hero?.intro;
  const intro=introDefaults?.enabled===true?introDefaults:null;
+ const introFontId=intro?.fontId||"";
+ useEffect(()=>{
+  if(!introFontId){setIntroFontReady(false);return;}
+  let cancelled=false;
+  setIntroFontReady(false);
+  const font=getHeroFont(introFontId);
+  const hrefs=invitationFontStylesheets({hero:{intro:{enabled:true,text:"preview",fontId:introFontId}}});
+  const load=async()=>{
+   try{
+    await Promise.all(hrefs.map(href=>new Promise((resolve,reject)=>{
+     const absolute=new URL(href,document.baseURI).href;
+     const existing=Array.from(document.querySelectorAll('link[rel="stylesheet"]')).find(link=>link.href===absolute);
+     if(existing){resolve();return;}
+     const link=document.createElement("link");
+     link.rel="stylesheet";link.href=href;
+     link.onload=()=>resolve();link.onerror=()=>reject(new Error("Intro font stylesheet failed"));
+     document.head.appendChild(link);
+    })));
+    await document.fonts.load("36px "+font.family);
+    if(!document.fonts.check("36px "+font.family))throw new Error("Intro font not available");
+    if(!cancelled)setIntroFontReady(true);
+   }catch(error){if(!cancelled)console.warn("Intro preview font load failed",error)}
+  };
+  load();
+  return()=>{cancelled=true;};
+ },[introFontId]);
  return <div className="dd-landing-effects-demo">
   <div className="dd-landing-effects-tabs" role="group" aria-label="초대장 연출 미리보기">
    {TABS.map(([id,label])=><button key={id} type="button" className={tab===id?"is-active":""} aria-pressed={tab===id} onClick={()=>{setTab(id);if(id==="intro")setIntroReplay(value=>value+1)}}>{label}</button>)}
   </div>
   <div ref={introStageRef} className={`dd-landing-effects-stage dd-landing-effects-stage--${tab}`} aria-live="polite">
-   {tab==="intro" ? intro ? <div className="dd-landing-effects-intro-real" style={{backgroundColor:intro.backgroundColor}}>
+   {tab==="intro" ? intro && introFontReady ? <div className="dd-landing-effects-intro-real" style={{backgroundColor:intro.backgroundColor}}>
     <link rel="stylesheet" href={HERO_FONT_STYLESHEET}/>
     <div className="dd-landing-effects-intro-canvas" style={{position:"relative",width:390,height:210,flex:"none",transform:`scale(${Math.min(1,introStageWidth/390)})`,transformOrigin:"center center"}}>
      <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
@@ -54,7 +82,7 @@ export default function LandingSpecialEffectsDemo(){
       <HeroIntro intro={intro}/>
      </div>
     </div>
-   </div> : <div className="dd-landing-effects-placeholder">{failed?"템플릿을 불러오지 못했어요.":"템플릿 인트로 설정을 불러오는 중이에요."}</div> : (tab==="cover" ? cover : body) ? <img className="dd-landing-effects-photo" src={tab==="cover"?cover:body} alt={tab==="cover"?"Spring Blossom Day 초대장 표지":"Spring Blossom Day 초대장 본문"} loading="lazy"/> :
+   </div> : <div className="dd-landing-effects-placeholder">{failed?"템플릿을 불러오지 못했어요.":"인트로 글꼴을 불러오는 중이에요."}</div> : (tab==="cover" ? cover : body) ? <img className="dd-landing-effects-photo" src={tab==="cover"?cover:body} alt={tab==="cover"?"Spring Blossom Day 초대장 표지":"Spring Blossom Day 초대장 본문"} loading="lazy"/> :
     <div className="dd-landing-effects-placeholder">{failed?"템플릿을 불러오지 못했어요.":"Spring Blossom Day 미리보기를 준비하고 있어요."}</div>}
    {showEffect&&screenEffect&&<div className="dd-landing-effects-overlay"><TemplateScreenEffect config={{effects:{screenEffect}}} assets={data?.templateAssets||{}}/></div>}
   </div>
