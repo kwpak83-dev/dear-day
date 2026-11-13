@@ -27,7 +27,7 @@ export default function LandingSpecialEffectsDemo(){
  const sample=data?.item?.sample_content||{};
  const showEffect=tab==="effect"&&enabled;
  const introDefaults=data?.templateConfig?.hero?.intro||{};
- const intro={...introDefaults,enabled:true,text:"벚꽃피는 봄날의\\n결혼식에 초대합니다.",fontId:introDefaults.fontId||"nanum-brush-script",fontSize:43,textColor:"#413F3E",backgroundColor:"#F7F3F3",writeDuration:Math.max(1,Number(introDefaults.writeDuration||3)*1.5),holdDuration:Number(introDefaults.holdDuration??0.8),fadeDuration:Number(introDefaults.fadeDuration??0.6)};
+ const intro={...introDefaults,enabled:true,text:"벚꽃피는 봄날의\n결혼식에 초대합니다.",fontId:introDefaults.fontId||"nanum-brush-script",fontSize:43,textColor:"#413F3E",backgroundColor:"#F7F3F3",writeDuration:Math.max(1,Number(introDefaults.writeDuration||3)*1.5),holdDuration:Number(introDefaults.holdDuration??0.8),fadeDuration:Number(introDefaults.fadeDuration??0.6)};
  return <div className="dd-landing-effects-demo">
   <div className="dd-landing-effects-tabs" role="group" aria-label="초대장 연출 미리보기">
    {TABS.map(([id,label])=><button key={id} type="button" className={tab===id?"is-active":""} aria-pressed={tab===id} onClick={()=>{setTab(id);if(id==="intro")setIntroReplay(value=>value+1)}}>{label}</button>)}
