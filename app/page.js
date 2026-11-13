@@ -9,7 +9,11 @@ import InvitationProgram from "../components/invitation/invitation-program";
 import { PROGRAM_DEFAULTS, normalizeProgram } from "../lib/invitation-program";
 import LandingInvitationExperience from "../components/landing-invitation-experience";
 import LandingConceptCarousel from "../components/landing-concept-carousel";
+import LandingOccasionCarousel from "../components/landing-occasion-carousel";
 import LandingIntroEditorDemo from "../components/landing-intro-editor-demo";
+import LandingSpecialEffectsDemo from "../components/landing-special-effects-demo";
+import LandingSmartRsvpDemo from "../components/landing-smart-rsvp-demo";
+import LandingFlexibleEditingDemo from "../components/landing-flexible-editing-demo";
 import "./landing-refresh.css";
 
 
@@ -22,6 +26,28 @@ export default function Home() {
   const [showQuickButtons, setShowQuickButtons] = useState(false);
   const [showLandingTop, setShowLandingTop] = useState(false);
   const [heroVariant, setHeroVariant] = useState("c");
+  const [headlineFontReady, setHeadlineFontReady] = useState(false);
+  const [eyebrowFontReady, setEyebrowFontReady] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    const font = '500 10px "Montserrat"';
+    document.fonts.load(font, "DEARDAY · MOBILE INVITATION").then((faces) => {
+      if (!cancelled && faces.length > 0 && document.fonts.check(font, "DEARDAY · MOBILE INVITATION")) {
+        setEyebrowFontReady(true);
+      }
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+  useEffect(() => {
+    let cancelled = false;
+    const font = '400 48px "Alex Brush"';
+    document.fonts.load(font, "Good People, Good Moment.").then((faces) => {
+      if (!cancelled && faces.length > 0 && document.fonts.check(font, "Good People, Good Moment.")) {
+        setHeadlineFontReady(true);
+      }
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
   const heroVideoRefs = useRef([null, null]);
   const [heroVideoIndex, setHeroVideoIndex] = useState(0);
   const [heroExtraVideoAvailable, setHeroExtraVideoAvailable] = useState(true);
@@ -175,9 +201,9 @@ export default function Home() {
         <button type="button" className={heroVariant === "c" ? "active" : ""} aria-pressed={heroVariant === "c"} onClick={() => switchHero("c")}>C · Split</button>
       </div>
       <div className="landing-shell dd-hero-content">
-        <div className="dd-hero-copy-group">
+        <div className={`dd-hero-copy-group${headlineFontReady ? " dd-hero-headline-ready" : ""}${eyebrowFontReady ? " dd-hero-eyebrow-ready" : ""}`}>
         <p className="dd-hero-eyebrow">DEARDAY · MOBILE INVITATION</p>
-        {heroVariant === "a" ? <h1>Good<br />People,<br />Good Moment.</h1> : heroVariant === "b" ? <h1>Good People<br />Good Moment.</h1> : <h1>Good People,<br /><em>Good Moment.</em></h1>}
+        {heroVariant === "a" ? <h1>Good<br />People,<br />Good Moment.</h1> : heroVariant === "b" ? <h1>Good People<br />Good Moment.</h1> : <h1 className="dd-hero-script-title"><span className="dd-hero-script-first">Good People,</span><span className="dd-hero-script-second">Good Moment.<svg className="dd-hero-script-flourish" viewBox="0 0 270 38" preserveAspectRatio="none" fill="none" aria-hidden="true"><path d="M2 24 C57 12 109 11 157 19 C192 25 221 28 241 19 C247 16 249 13 251 11 C245 3 236 4 237 12 C238 18 246 21 251 25 C256 21 266 15 266 9 C266 2 256 3 251 11" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg></span></h1>}
         <p className="dd-hero-description">{"마음을 전하는 특별한 초대장"}</p>
         </div>
         <div className="dd-hero-buttons" ref={heroButtonsRef}>
@@ -203,14 +229,13 @@ export default function Home() {
           ["02", "EVENT PROGRAM", "식순지까지 담은 초대장, 준비는 더 간편하게.", "결혼식부터 돌잔치, 칠순, 각종 행사까지. 별도의 식순지를 인쇄하거나 배포할 필요 없이, 모바일 초대장 하나로 행사 순서를 아름답고 편리하게 안내해요.", "program"],
           ["03", "INSTANT PREVIEW", "모바일에서도, 수정하고 바로 확인하세요.", "작은 모바일 화면에서도 편집은 더 편리하게. 인사말부터 표지 문구, 인트로, 행사 식순까지. 전체 미리보기 화면을 오갈 필요 없이, 편집 중인 부분만 팝업 미리보기로 바로 확인할 수 있어요.", "preview"],
           ["04", "SPECIAL EFFECTS", "초대장을 여는 순간, 감동이 시작돼요.", "인트로와 배경음악, 테마에 어울리는 특별한 연출까지. 카페 오픈 초대장에 커피콩이 떨어지는 효과처럼 행사마다 색다른 분위기를 전해요.", "effects"],
-          ["05", "SMART RSVP", "참석부터 식사까지, 더 똑똑하게.", "참석 여부와 동반 인원을 간편하게 확인하고 관리해요. 식사 여부와 인원별 통계까지 한눈에 살펴볼 수 있도록 기능을 확장할 예정이에요.", "rsvp"],
+          ["05", "SMART RSVP", "참석부터 방명록까지, 더 스마트하게.", "참석 여부와 동반 인원, 식사 및 셔틀버스 이용 현황부터 소중한 축하 메시지까지. 모든 정보를 실시간으로 확인하고 간편하게 관리하세요.", "rsvp"],
           ["06", "ALL OCCASIONS", "인생의 순간부터, 새로운 시작까지.", "결혼 → 돌잔치 → 자녀 생일 → 부모님 칠순, 그리고 모임·행사와 개업·오픈까지. 행사별 맞춤 테마에 어울리는 연출을 제공해요.", "occasions"],
           ["07", "FLEXIBLE EDITING", "발행한 뒤에도, 마음껏 바꿔보세요.", "초대장을 발행한 뒤에도 사진과 문구, 행사 정보를 수정하고 디자인까지 변경할 수 있어요. 변화하는 일정에도 편리하게 대응하세요.", "edit"]
         ].map(([number, eyebrow, title, description, kind]) => (
           <article className={`dd-feature dd-feature-${kind}`} key={number}>
             <div className="dd-feature-visual" aria-label={`${title} 기능 시연 화면 자리`}>
               <div className="dd-feature-demo">
-                <div className="dd-feature-demo-top"><span>DearDay</span><span>✦</span></div>
                 <div className="dd-feature-demo-content">
                   <span className="dd-feature-demo-kicker">{eyebrow}</span>
                   {kind === "theme" ? <LandingConceptCarousel /> : kind === "program" ? <div className="dd-landing-program-demo">
@@ -224,11 +249,13 @@ export default function Home() {
                     <p className="dd-landing-program-note">식순 디자인을 전환해 보세요</p>
                   </div> :
                     kind === "preview" ? <LandingIntroEditorDemo /> :
-                    kind === "rsvp" ? <div className="dd-feature-program"><strong>참석 여부 확인</strong><span>○ 참석할게요</span><span>○ 참석이 어려워요</span><span>축하 메시지를 남겨주세요 ♡</span></div> :
-                    kind === "occasions" ? <div className="dd-feature-occasion-grid"><span>결혼식</span><span>돌잔치</span><span>생일</span><span>환갑·칠순·팔순</span><span>모임·행사</span><span>개업·오픈</span></div> :
+                    kind === "effects" ? <LandingSpecialEffectsDemo /> :
+                    kind === "rsvp" ? <LandingSmartRsvpDemo /> :
+                    kind === "occasions" ? <LandingOccasionCarousel /> :
+                    kind === "edit" ? <LandingFlexibleEditingDemo /> :
                     <div className="dd-feature-demo-paper"><span>YOUR SPECIAL DAY</span><strong>{kind === "effects" ? "A moment to remember" : kind === "edit" ? "Make it yours" : "Good People, Good Moment."}</strong><i /><small>DEARDAY · MOBILE INVITATION</small></div>}
                 </div>
-                {kind !== "theme" && kind !== "program" && kind !== "preview" && <div className="dd-feature-demo-bottom">미리보기 · 영상 교체 예정</div>}
+                {kind !== "theme" && kind !== "program" && kind !== "preview" && kind !== "effects" && kind !== "rsvp" && kind !== "occasions" && kind !== "edit" && <div className="dd-feature-demo-bottom">미리보기 · 영상 교체 예정</div>}
               </div>
             </div>
             <div className="dd-feature-copy">
@@ -240,11 +267,11 @@ export default function Home() {
                   kind === "program" ? ["행사 유형에 맞춘 식순·일정 안내", "클립아트와 감성 타임라인"] :
                   kind === "preview" ? ["모바일에서도 화면 이동 없이 간편한 부분 미리보기", "PC에서는 Live Preview로 실시간 확인"] :
                   kind === "effects" ? ["인트로와 배경음악으로 감성 연출", "행사 테마별 애니메이션·특수효과"] :
-                  kind === "rsvp" ? ["참석 여부와 동반 인원 확인", "식사 여부·통계 기능 확장 예정"] :
+                  kind === "rsvp" ? ["참석·식사·셔틀버스 이용 현황 실시간 확인", "방명록과 축하 메시지 간편 관리"] :
                   kind === "occasions" ? ["인생의 주요 순간부터 모임·개업까지", "행사별 테마와 맞춤 연출"] :
                   ["발행 후 내용과 사진 수정", "발행 후에도 디자인 변경"]).map((benefit) => <li key={benefit}><span aria-hidden="true">✓</span>{benefit}</li>)}
               </ul>
-              <span className="dd-feature-pill">{kind === "theme" ? "취향에 맞게 고르는 특별한 콘셉트" : kind === "program" ? "감성적인 식순·일정 안내" : kind === "preview" ? "모바일에서도 편리한 부분 미리보기" : kind === "effects" ? "테마마다 다른 특별한 연출" : kind === "rsvp" ? "참석 관리 · 식사 기능 확장 예정" : kind === "occasions" ? "인생의 모든 특별한 날에" : "발행 후에도 유연하게 변경"}</span>
+              <span className="dd-feature-pill">{kind === "theme" ? "취향에 맞게 고르는 특별한 콘셉트" : kind === "program" ? "감성적인 식순·일정 안내" : kind === "preview" ? "모바일에서도 편리한 부분 미리보기" : kind === "effects" ? "테마마다 다른 특별한 연출" : kind === "rsvp" ? "실시간 참석 관리 · 방명록" : kind === "occasions" ? "인생의 모든 특별한 날에" : "발행 후에도 유연하게 변경"}</span>
             </div>
           </article>
         ))}

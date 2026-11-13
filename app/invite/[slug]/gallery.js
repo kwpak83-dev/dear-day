@@ -76,13 +76,13 @@ export default function Gallery({ photos, idPrefix = "public-gallery", title = "
       </div>
       <span className="public-gallery-count" aria-live="polite">{current + 1} / {photos.length}</span>
     </div>
-    {photos.length > 1 && <div className="public-gallery-thumbs" aria-label="갤러리 사진 선택">{photos.map((photo,index)=><div role="button" tabIndex={0} key={photo.id} className={`public-gallery-thumb${index===current?" is-active":""}`} aria-label={`${index+1}번 사진 보기`} aria-current={index===current?"true":undefined} onClick={()=>setCurrent(index)} onKeyDown={event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();setCurrent(index);}}}>{(Math.abs(index-current)<=2 || (current<=1&&index>=photos.length-2) || (current>=photos.length-2&&index<=1)) && <img src={photo.thumbnailUrl||photo.url} alt="" loading="lazy" fetchPriority="low" decoding="async" width="100" height="100"/>}</div>)}</div>}
+    {photos.length > 1 && <div className="public-gallery-thumbs" aria-label="갤러리 사진 선택">{photos.map((photo,index)=><div role="button" tabIndex={0} key={photo.id} className={`public-gallery-thumb${index===current?" is-active":""}`} aria-label={`${index+1}번 사진 보기`} aria-current={index===current?"true":undefined} onClick={()=>setCurrent(index)} onKeyDown={event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();setCurrent(index);}}}><img src={photo.thumbnailUrl||photo.url} alt="" loading="lazy" fetchPriority="low" decoding="async" width="100" height="100"/></div>)}</div>}
     <dialog ref={dialog} className="gallery-lightbox" aria-label="갤러리 사진 전체보기" onCancel={event => { event.preventDefault(); close(); }} onClose={() => setActive(null)} onKeyDown={event => {
       if (event.key === "ArrowLeft") { event.preventDefault(); step(-1); }
       if (event.key === "ArrowRight") { event.preventDefault(); step(1); }
     }}>
       {open && <div className="gallery-viewer">
-        <div className="gallery-viewer-bar"><span aria-live="polite">{active + 1} / {photos.length}</span></div>
+        <div className="gallery-viewer-bar"><span aria-live="polite">{active + 1} / {photos.length}</span><button type="button" aria-label="사진 전체보기 닫기" onClick={close} style={{ position: "absolute", top: "max(12px, env(safe-area-inset-top))", right: "12px", zIndex: 10, display: "grid", placeItems: "center", width: "36px", height: "36px", border: "none", background: "transparent", padding: 0, color: "#fff", fontSize: "24px", lineHeight: 1, cursor: "pointer" }}>×</button></div>
         <div className="gallery-viewer-image" onTouchStart={event => beginSwipe(event, "lightbox")} onTouchEnd={finishSwipe} onTouchCancel={() => { swipeStart.current = null; }}>
           <img key={photos[active].id} src={photos[active].url} alt={`초대장의 소중한 순간 ${active + 1}`} decoding="async" draggable={false} />
         </div>

@@ -9,6 +9,7 @@ import ParentsIntro from "../../../components/invitation/parents-intro";
 import GrowthTimeline from "../../../components/invitation/growth-timeline";
 import ExtendedEventInfo from "../../../components/invitation/extended-event-info";
 import DearDayBrandFooter from "../../../components/invitation/dearday-brand-footer";
+import ShareActions from "../../../components/share-actions";
 import Gallery from "../../invite/[slug]/gallery";
 import AccountCopy from "../../invite/[slug]/account-copy";
 import OptionalInvitationSections from "../../invite/[slug]/optional-invitation-sections";
@@ -148,6 +149,7 @@ export default function WeddingExperience() {
         {fields.transport?.state !== "none" && <TransportGuide invitation={invitation} title={fields.transport?.label || "교통·주차"} />}
         <AccountCopy invitation={invitation} eventKind="wedding" eventTypeConfig={eventTypeConfig} />
         <OptionalInvitationSections invitation={invitation} eventTypeConfig={eventTypeConfig} previewMode="landing-experience" sheetRequest={sheetRequest} />
+        <div className="dd-public-share-section"><ShareActions path="/experience/wedding" previewOnly className="public-share-copy" /></div>
         <DearDayBrandFooter />
       </div>
     </InvitationRenderer></TemplatePreviewCanvas>
