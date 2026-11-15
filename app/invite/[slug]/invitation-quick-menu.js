@@ -49,7 +49,7 @@ function BottomSheet({ title, onClose, children, portalTarget = null, preview = 
     <button className="invitation-bottom-sheet-backdrop" type="button" aria-label="닫기" onClick={onClose} />
     <section className={`invitation-bottom-sheet${className ? ` ${className}` : ""}`} role="dialog" aria-modal="true" aria-label={title}>
       <i className="invitation-bottom-sheet-handle" aria-hidden="true" />
-      <header><h2>{title}</h2><button type="button" onClick={onClose} aria-label={title + " 닫기"}>×</button></header>
+      <header>{!className.includes("invitation-bottom-sheet--stationery") && <h2>{title}</h2>}<button type="button" onClick={onClose} aria-label={title + " 닫기"}>×</button></header>
       <div className="invitation-bottom-sheet-content">{children}</div>
     </section>
   </div>;

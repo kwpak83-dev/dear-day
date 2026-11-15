@@ -3034,7 +3034,7 @@
 
 /* Homepage hero C: Alex Brush calligraphy with editable two-tone lettering and vector heart. */
 .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > h1.dd-hero-script-title{
- font-family:"Alex Brush","Brush Script MT",cursive!important;
+ font-family:var(--font-cinzel),"Cinzel",serif!important;
  font-weight:400!important;font-style:normal!important;
  letter-spacing:0!important;line-height:1!important;
  white-space:normal!important;overflow:visible!important;
@@ -3042,20 +3042,20 @@
  width:100%!important;max-width:100%!important;
 }
 .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{
- display:block;color:#42291e;font-size:clamp(48px,12.2vw,76px);
+ display:block;color:#42291e;font-size:clamp(34.425px,calc((12.2vw - 3px) * .765),55.845px);
  white-space:nowrap;line-height:1.04;
 }
 .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{
- position:relative;display:block;color:#bd722d;font-size:clamp(38px,9.4vw,60px);
- white-space:nowrap;line-height:1.04;margin-top:-3px;padding-bottom:23px;
+ position:relative;display:block;color:#bd722d;font-size:clamp(26.775px,calc((9.4vw - 3px) * .765),43.605px);
+ white-space:nowrap;line-height:1.04;margin-top:3px;padding-bottom:23px;
 }
 .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-flourish{
  position:absolute;left:0;bottom:0;width:100%;height:27px;overflow:visible;
 }
 @media(max-width:800px){
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > h1.dd-hero-script-title{font-size:initial!important}
- .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{font-size:clamp(44px,12.1vw,62px)!important}
- .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{font-size:clamp(36px,9.7vw,50px)!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{font-size:clamp(31.365px,calc((12.1vw - 3px) * .765),45.135px)!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{font-size:clamp(25.245px,calc((9.7vw - 3px) * .765),35.955px)!important}
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group:not(.dd-hero-headline-ready) > h1.dd-hero-script-title{visibility:visible!important}
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{margin-top:8px!important}
 }
@@ -3063,18 +3063,18 @@
 /* HERO C fine-tuning: raise only the eyebrow and enlarge Good People by 3px. */
 @media(max-width:800px){
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-eyebrow{transform:translateY(-6px)}
- .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{font-size:clamp(47px,calc(12.1vw + 3px),65px)!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{font-size:clamp(33.66px,9.2565vw,47.43px)!important}
 }
 
 /* Mobile HERO C: tighten the subtitle and raise both CTA buttons together. */
 @media(max-width:800px){
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{margin-top:-3px!important}
- .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group{margin-bottom:18px!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group{margin-bottom:40px!important}
 }
 
 /* HERO C finishing touches: subtle faux-bold Alex Brush and a refined heart flourish. */
 .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{
- -webkit-text-stroke:.42px currentColor;
+ -webkit-text-stroke:0 currentColor;
  paint-order:stroke fill;
 }
 .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-flourish{height:30px}
