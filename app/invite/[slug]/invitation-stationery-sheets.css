@@ -78,3 +78,8 @@
 .invitation-bottom-sheet-layer .invitation-bottom-sheet--stationery .invitation-bottom-sheet-content .public-rsvp .rsvp-edit-actions>a{background:#c99487!important;border:1px solid #c99487!important;color:#fff!important;border-radius:9px!important;text-decoration:none!important}
 .invitation-bottom-sheet-layer .invitation-bottom-sheet--stationery .invitation-bottom-sheet-content .public-rsvp .rsvp-edit-actions>button{background:#fffdfb!important;border:1px solid #dfcfc3!important;color:#62483c!important;border-radius:9px!important}
 .invitation-bottom-sheet-layer .invitation-bottom-sheet--stationery .invitation-bottom-sheet-content .public-rsvp .rsvp-copy-notice{color:#62483c!important}
+
+/* Stationery RSVP/guestbook sheets: right-aligned close control and seamless header. */
+.invitation-bottom-sheet-layer .invitation-bottom-sheet.invitation-bottom-sheet--stationery{background:#faf7f1!important}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet.invitation-bottom-sheet--stationery>header{display:flex!important;justify-content:flex-end!important;align-items:center!important;background:#faf7f1!important;border-bottom:0!important;padding:8px 18px 8px!important;min-height:36px;box-sizing:border-box}
+.invitation-bottom-sheet-layer .invitation-bottom-sheet.invitation-bottom-sheet--stationery>header>button{margin-left:auto!important;color:#62483c!important}
