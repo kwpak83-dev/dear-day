@@ -3034,8 +3034,8 @@
 
 /* Homepage hero C: Alex Brush calligraphy with editable two-tone lettering and vector heart. */
 .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > h1.dd-hero-script-title{
- font-family:"Alex Brush","Brush Script MT",cursive!important;
- font-weight:400!important;font-style:normal!important;
+ font-family:var(--font-kalam-bold),"Kalam",cursive!important;
+ font-weight:700!important;font-style:normal!important;
  letter-spacing:0!important;line-height:1!important;
  white-space:normal!important;overflow:visible!important;
  display:flex!important;flex-direction:column!important;align-items:center!important;
@@ -3074,7 +3074,7 @@
 
 /* HERO C finishing touches: subtle faux-bold Alex Brush and a refined heart flourish. */
 .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{
- -webkit-text-stroke:.42px currentColor;
+ -webkit-text-stroke:0 currentColor;
  paint-order:stroke fill;
 }
 .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-flourish{height:30px}
