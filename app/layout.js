@@ -1,4 +1,4 @@
-import { Alex_Brush } from "next/font/google";
+import { Alex_Brush, Kalam } from "next/font/google";
 import "./globals.css";
 
 const alexBrush = Alex_Brush({
@@ -6,6 +6,8 @@ const alexBrush = Alex_Brush({
   subsets: ["latin"],
   variable: "--font-alex-brush",
 });
+
+const kalamBold = Kalam({ weight: "700", subsets: ["latin"], variable: "--font-kalam-bold" });
 
 export const metadata = {
   title: "디어데이 | 감성 모바일 초대장",
@@ -15,7 +17,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="ko" className={alexBrush.variable}>
+    <html lang="ko" className={`${alexBrush.variable} ${kalamBold.variable}`}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
