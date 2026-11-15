@@ -7,7 +7,7 @@ const alexBrush = Alex_Brush({
   variable: "--font-alex-brush",
 });
 
-const kalamBold = Kalam({ weight: "700", subsets: ["latin"], variable: "--font-kalam-bold" });
+const kalamBold = Kalam({ weight: "400", subsets: ["latin"], variable: "--font-kalam-bold" });
 
 export const metadata = {
   title: "디어데이 | 감성 모바일 초대장",
