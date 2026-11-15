@@ -3069,7 +3069,7 @@
 /* Mobile HERO C: tighten the subtitle and raise both CTA buttons together. */
 @media(max-width:800px){
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{margin-top:-3px!important}
- .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group{margin-bottom:18px!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group{margin-bottom:28px!important}
 }
 
 /* HERO C finishing touches: subtle faux-bold Alex Brush and a refined heart flourish. */
