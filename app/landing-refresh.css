@@ -3042,11 +3042,11 @@
  width:100%!important;max-width:100%!important;
 }
 .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{
- display:block;color:#42291e;font-size:clamp(48px,12.2vw,76px);
+ display:block;color:#42291e;font-size:clamp(45px,calc(12.2vw - 3px),73px);
  white-space:nowrap;line-height:1.04;
 }
 .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{
- position:relative;display:block;color:#bd722d;font-size:clamp(38px,9.4vw,60px);
+ position:relative;display:block;color:#bd722d;font-size:clamp(35px,calc(9.4vw - 3px),57px);
  white-space:nowrap;line-height:1.04;margin-top:-3px;padding-bottom:23px;
 }
 .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-flourish{
@@ -3054,8 +3054,8 @@
 }
 @media(max-width:800px){
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > h1.dd-hero-script-title{font-size:initial!important}
- .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{font-size:clamp(44px,12.1vw,62px)!important}
- .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{font-size:clamp(36px,9.7vw,50px)!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{font-size:clamp(41px,calc(12.1vw - 3px),59px)!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{font-size:clamp(33px,calc(9.7vw - 3px),47px)!important}
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group:not(.dd-hero-headline-ready) > h1.dd-hero-script-title{visibility:visible!important}
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{margin-top:8px!important}
 }
@@ -3063,7 +3063,7 @@
 /* HERO C fine-tuning: raise only the eyebrow and enlarge Good People by 3px. */
 @media(max-width:800px){
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-eyebrow{transform:translateY(-6px)}
- .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{font-size:clamp(47px,calc(12.1vw + 3px),65px)!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{font-size:clamp(44px,12.1vw,62px)!important}
 }
 
 /* Mobile HERO C: tighten the subtitle and raise both CTA buttons together. */
