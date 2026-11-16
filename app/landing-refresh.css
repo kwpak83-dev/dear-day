@@ -2949,6 +2949,17 @@
  .landing-v2 .dd-feature-occasions .dd-concept-carousel-image{aspect-ratio:0.56}
 }
 
+/* Desktop feature 06: match feature 01 carousel canvas and card dimensions.
+   Keep the occasion-specific heading, imagery and mobile layout unchanged. */
+@media(min-width:801px){
+ .landing-v2 .dd-feature-occasions .dd-feature-demo{width:100%;max-width:520px;min-height:0;overflow:hidden}
+ .landing-v2 .dd-feature-occasions .dd-feature-demo-content{width:100%;min-width:0;box-sizing:border-box}
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-track{gap:13px;padding-left:0;padding-right:0;scroll-padding-inline:0}
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-track::before,
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-track::after{content:"";display:block;flex:0 0 calc(12.5% - 13px);pointer-events:none}
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-card{flex:0 0 75%}
+}
+
 /* Feature 07: CSS-only, responsive illustration; no extra image or font downloads. */
 .landing-v2 .dd-feature-edit .dd-feature-demo-content{width:100%;min-width:0;box-sizing:border-box;padding:8px;gap:0}
 .landing-v2 .dd-feature-edit .dd-feature-demo-kicker{display:none}
