@@ -3132,3 +3132,11 @@
 
 /* All 7 feature eyebrow labels: bright blue capsule on desktop and mobile. */
 .landing-v2 .dd-features .dd-feature .dd-feature-labels .dd-feature-eyebrow{background:#16aef5!important;border:1px solid #0798e4!important;color:#fff!important;font-weight:700!important;letter-spacing:.01em!important;padding:2px 9px!important;line-height:1.15!important;min-height:0!important;box-shadow:none!important}
+
+/* Enlarge both Cormorant Garamond hero headline lines by 15%, all viewports. */
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{font-size:clamp(39.58875px,calc((12.2vw - 3px) * .87975),64.22175px)!important}
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{font-size:clamp(30.79125px,calc((9.4vw - 3px) * .87975),50.14575px)!important}
+@media(max-width:800px){
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{font-size:clamp(38.709px,10.645vw,54.5445px)!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{font-size:clamp(29.03175px,calc((9.7vw - 3px) * .87975),41.34825px)!important}
+}
