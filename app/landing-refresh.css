@@ -3167,3 +3167,7 @@
 /* Section 05 RSVP: same restrained highlight and inline emphasis as sections 01–04. */
 .landing-v2 .dd-feature-rsvp .dd-feature-title-highlight{background:linear-gradient(to top,#ffe88a 0 24%,transparent 24% 100%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .landing-v2 .dd-feature-rsvp .dd-feature-description-accent{color:#191919!important;font-weight:700!important;font-size:inherit!important;line-height:inherit!important;display:inline!important;margin:0!important}
+
+/* Section 06: consistent restrained highlight across desktop and mobile. */
+.landing-v2 .dd-feature-occasions .dd-feature-title-highlight{background:linear-gradient(to top,#ffe88a 0 24%,transparent 24% 100%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.landing-v2 .dd-feature-occasions .dd-feature-description-accent{color:#191919!important;font-weight:700!important;font-size:inherit!important;line-height:inherit!important;display:inline!important;margin:0!important}
