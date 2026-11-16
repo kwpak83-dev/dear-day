@@ -3140,3 +3140,15 @@
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{font-size:clamp(38.709px,10.645vw,54.5445px)!important}
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{font-size:clamp(29.03175px,calc((9.7vw - 3px) * .87975),41.34825px)!important}
 }
+
+/* Desktop HERO copy: match the centered, rule-free mobile composition. */
+@media(min-width:801px){
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group{border-left:0!important;border:0!important;padding-left:0!important;padding:0!important;align-items:center!important;text-align:center!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-eyebrow,
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > h1,
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{align-self:center!important;text-align:center!important;margin-left:auto!important;margin-right:auto!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-eyebrow{display:flex!important;align-items:center!important;justify-content:center!important;gap:12px!important;width:100%!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-eyebrow::before,
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-eyebrow::after{content:""!important;display:block!important;width:28px!important;height:1px!important;flex:0 0 28px!important;background:#b78f75!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-content::before{content:none!important;display:none!important}
+}
