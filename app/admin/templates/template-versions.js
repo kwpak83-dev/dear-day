@@ -57,6 +57,7 @@ const screenOrnamentCategories = [
   ["party", "파티", [["heart","하트"],["gold-confetti","골드 컨페티"],["color-confetti","컬러 컨페티"],["balloon","파스텔 풍선"],["blue-balloon","하늘색 풍선"],["ribbon","리본"]]],
   ["cafe", "카페", [["coffee-bean", "커피콩"]]],
   ["light", "빛", [["star","별빛"],["bubble","비눗방울"],["moon","초승달"]]],
+  ["cinema", "영화", [["popcorn","팝콘 낱알"]]],
   ["theme", "테마", [["music","음표"]]],
 ];
 const screenOrnamentOptions = screenOrnamentCategories.flatMap(([, , options]) => options);
