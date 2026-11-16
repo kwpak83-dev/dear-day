@@ -228,7 +228,7 @@ export default function Home() {
           ["01", "UNIQUE DESIGN", "흔한 초대장이 아닌, 다채로운 콘셉트의 초대장", "인생네컷, 영화 포스터, 계절 테마까지. 개성 있고 재치 있는 디자인으로 초대장을 받는 분들에게 특별한 즐거움을 선물하세요.", "theme"],
           ["02", "EVENT PROGRAM", "식순지까지 담은 초대장, 준비는 더 간편하게.", "결혼식부터 돌잔치, 칠순, 각종 행사까지. 별도의 식순지를 인쇄하거나 배포할 필요 없이, 모바일 초대장 하나로 행사 순서를 아름답고 편리하게 안내해요.", "program"],
           ["03", "INSTANT PREVIEW", "모바일에서도, 수정하고 바로 확인하세요.", "작은 모바일 화면에서도 편집은 더 편리하게. 인사말부터 표지 문구, 인트로, 행사 식순까지. 전체 미리보기 화면을 오갈 필요 없이, 편집 중인 부분만 팝업 미리보기로 바로 확인할 수 있어요.", "preview"],
-          ["04", "SPECIAL EFFECTS", "초대장을 여는 순간, 감동이 시작돼요.", "인트로와 배경음악, 테마에 어울리는 특별한 연출까지. 카페 오픈 초대장에 커피콩이 떨어지는 효과처럼 행사마다 색다른 분위기를 전해요.", "effects"],
+          ["04", "SPECIAL EFFECTS", "초대장을 여는 순간, 감동이 시작돼요.", "다양한 테마별 인트로, 배경 및 효과까지 특별한 연출. 행사마다 색다른 분위기를 전해요.", "effects"],
           ["05", "SMART RSVP", "참석부터 방명록까지, 더 스마트하게.", "참석 여부와 동반 인원, 식사 및 셔틀버스 이용 현황부터 소중한 축하 메시지까지. 모든 정보를 실시간으로 확인하고 간편하게 관리하세요.", "rsvp"],
           ["06", "ALL OCCASIONS", "인생의 순간부터, 새로운 시작까지.", "결혼 → 돌잔치 → 자녀 생일 → 부모님 칠순, 그리고 모임·행사와 개업·오픈까지. 행사별 맞춤 테마에 어울리는 연출을 제공해요.", "occasions"],
           ["07", "FLEXIBLE EDITING", "발행한 뒤에도, 마음껏 바꿔보세요.", "초대장을 발행한 뒤에도 사진과 문구, 행사 정보를 수정하고 디자인까지 변경할 수 있어요. 변화하는 일정에도 편리하게 대응하세요.", "edit"]
@@ -260,8 +260,8 @@ export default function Home() {
             </div>
             <div className="dd-feature-copy">
               <div className="dd-feature-labels"><span className="dd-feature-number">{number} <span>/ 07</span></span><span className="dd-feature-eyebrow">{eyebrow}</span></div>
-              <h3>{kind === "theme" ? <>흔한 초대장이 아닌, <span className="dd-feature-title-highlight">다채로운 콘셉트</span>의 초대장</> : kind === "program" ? <><span className="dd-feature-title-highlight">식순지까지 담은 초대장</span>, 준비는 더 간편하게.</> : kind === "preview" ? <>모바일에서도, <span className="dd-feature-title-highlight">수정하고 바로 확인하세요.</span></> : title}</h3>
-              <p>{kind === "theme" ? <>인생네컷, 영화 포스터, 계절 테마까지. 개성 있고 재치 있는 디자인으로 초대장을 받는 분들에게 <strong className="dd-feature-description-accent">특별한 즐거움</strong>을 선물하세요.</> : kind === "program" ? <>결혼식부터 돌잔치, 칠순, 각종 행사까지. 별도의 <strong className="dd-feature-description-accent">식순지를 인쇄하거나 배포할 필요 없이</strong>, 모바일 초대장 하나로 행사 순서를 아름답고 편리하게 안내해요.</> : kind === "preview" ? <>작은 모바일 화면에서도 편집은 더 편리하게. 인사말부터 표지 문구, 인트로, 행사 식순까지. 전체 미리보기 화면을 오갈 필요 없이, <strong className="dd-feature-description-accent">편집 중인 부분만 팝업 미리보기로 바로 확인</strong>할 수 있어요.</> : description}</p>
+              <h3>{kind === "theme" ? <>흔한 초대장이 아닌, <span className="dd-feature-title-highlight">다채로운 콘셉트</span>의 초대장</> : kind === "program" ? <><span className="dd-feature-title-highlight">식순지까지 담은 초대장</span>, 준비는 더 간편하게.</> : kind === "preview" ? <>모바일에서도, <span className="dd-feature-title-highlight">수정하고 바로 확인하세요.</span></> : kind === "effects" ? <>초대장을 여는 순간, <span className="dd-feature-title-highlight">감동이 시작돼요.</span></> : title}</h3>
+              <p>{kind === "theme" ? <>인생네컷, 영화 포스터, 계절 테마까지. 개성 있고 재치 있는 디자인으로 초대장을 받는 분들에게 <strong className="dd-feature-description-accent">특별한 즐거움</strong>을 선물하세요.</> : kind === "program" ? <>결혼식부터 돌잔치, 칠순, 각종 행사까지. 별도의 <strong className="dd-feature-description-accent">식순지를 인쇄하거나 배포할 필요 없이</strong>, 모바일 초대장 하나로 행사 순서를 아름답고 편리하게 안내해요.</> : kind === "preview" ? <>작은 모바일 화면에서도 편집은 더 편리하게. 인사말부터 표지 문구, 인트로, 행사 식순까지. 전체 미리보기 화면을 오갈 필요 없이, <strong className="dd-feature-description-accent">편집 중인 부분만 팝업 미리보기로 바로 확인</strong>할 수 있어요.</> : kind === "effects" ? <>다양한 테마별 인트로, 배경 및 효과까지 <strong className="dd-feature-description-accent">특별한 연출</strong>. 행사마다 색다른 분위기를 전해요.</> : description}</p>
               <ul className="dd-feature-checks">
                 {(kind === "theme" ? ["인생네컷·영화 포스터·계절 테마", "개성 넘치는 다채로운 초대장 디자인"] :
                   kind === "program" ? ["행사 유형에 맞춘 식순·일정 안내", "클립아트와 감성 타임라인"] :
