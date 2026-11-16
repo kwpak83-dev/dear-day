@@ -3125,3 +3125,7 @@
  .landing-v2 .dd-experience .dd-experience-phone{width:100%!important;max-width:300px!important;height:min(570px,calc(100dvh - 76px))!important;min-height:420px;aspect-ratio:auto;margin-inline:auto!important}
  .landing-v2 .dd-experience .dd-experience-phone iframe{width:100%!important;max-width:100%!important}
 }
+
+/* Feature 01–07 accents shared by desktop and mobile. */
+.landing-v2 .dd-features .dd-feature .dd-feature-checks li span{color:#22c55e!important}
+.landing-v2 .dd-features .dd-feature .dd-feature-pill::before{background:#e12b32!important}
