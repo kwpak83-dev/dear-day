@@ -606,3 +606,11 @@
  .dd-showcase-page .dd-showcase-track{scroll-padding-inline:calc((100% - min(19.2vw,272px))/2)!important;padding-left:calc((100% - min(19.2vw,272px))/2)!important;padding-right:calc((100% - min(19.2vw,272px))/2)!important}
  .dd-showcase-page .dd-showcase-selected h2{font-size:10.5px!important}
 }
+
+/* Desktop collection: smaller category pills and tighter gap above previews. */
+@media (min-width:801px){
+ .dd-showcase-page .dd-showcase-categories{margin-bottom:0!important;padding-top:2px!important;padding-bottom:2px!important}
+ .dd-showcase-page .dd-showcase-categories button{font-size:10.4px!important;padding:8px 14px!important;line-height:1.2!important;min-height:0!important}
+ .dd-showcase-page .dd-showcase-track{padding-top:0!important}
+ .dd-showcase-page .dd-showcase-intro{padding-bottom:12px!important}
+}
