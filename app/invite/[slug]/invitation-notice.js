@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { normalizeNotice } from "../../../lib/invitation-notice";
 
-export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, preview = false, autoOpen = true, onClose }) {
+export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, preview = false, autoOpen = true, onClose, pagePortal = false }) {
   const notice = normalizeNotice(rawNotice);
   // Render the notice in the initial HTML; do not wait for client hydration.
   const [open, setOpen] = useState(() => autoOpen && notice.enabled && Boolean(notice.title) && Boolean(notice.body));
@@ -25,6 +25,7 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
   }, [notice.enabled, storageKey, preview, autoOpen]);
   useEffect(() => {
     if (!preview) { setPreviewPortal(null); setPreviewTriggerStyle(undefined); return; }
+    if (pagePortal) { setPreviewPortal(document.body); setPreviewTriggerStyle(undefined); return; }
     const marker = previewMarkerRef.current;
     const device = marker?.closest(".admin-draft-preview-device, .admin-draft-full-preview-device, .full-preview-document, .preview-phone, .full-invitation-renderer");
     const adminViewport = device?.closest(".admin-draft-preview-scroll, .admin-draft-full-preview") || null;
@@ -54,7 +55,7 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
       window.removeEventListener("resize", positionTrigger);
       resizeObserver.disconnect();
     };
-  }, [preview, slug]);
+  }, [preview, slug, pagePortal]);
   if (!notice.enabled || !notice.title || !notice.body) return null;
   const close = () => {
     if (skipToday) {
@@ -74,7 +75,7 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
     <span ref={previewMarkerRef} data-dd-notice-preview={preview ? slug : undefined} style={{display:"none"}} />
     {preview ? (previewPortal ? createPortal(trigger, previewPortal) : null) : trigger}
     {!preview && autoOpen && <script dangerouslySetInnerHTML={{ __html: `(function(){try{var key=${JSON.stringify(storageKey).replace(/</g, "\\u003c")};var today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Seoul",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());var css='.shared-public-invitation .dd-notice-overlay{display:none!important}.shared-public-invitation.dd-hero-intro-waits-for-notice>.full-invitation-renderer{visibility:visible!important}.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-mask,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-text{animation-play-state:running!important}';function hideEarly(){var old=document.getElementById("dd-notice-early-style");if(old)old.remove();var style=document.createElement("style");style.id="dd-notice-early-style";style.textContent=css;document.head.appendChild(style)}if(localStorage.getItem(key)===today)hideEarly();document.addEventListener("click",function(e){var root=document.querySelector(".shared-public-invitation");if(!root||window.__ddNoticeClosedEarly===true)return;var overlay=root.querySelector(".dd-notice-overlay");if(!overlay||!overlay.contains(e.target))return;var button=e.target.closest("button");if(!(button&&(button.getAttribute("aria-label")==="공지사항 닫기"||button.textContent.trim()==="닫기"))&&e.target!==overlay)return;var checkbox=overlay.querySelector("input[type=checkbox]");if(checkbox&&checkbox.checked){try{localStorage.setItem(key,today)}catch(err){}}window.__ddNoticeClosedEarly=true;hideEarly()},true)}catch(e){}})();` }} />}
-    {open && <div className="dd-notice-overlay" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) close(); }}>
+    {open && (pagePortal && preview && previewPortal ? createPortal(<div className="dd-notice-overlay" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) close(); }}>
       <section className="dd-notice-dialog" role="dialog" aria-modal="true" aria-labelledby="dd-notice-title">
         <div className="dd-notice-top"><span>NOTICE</span><button type="button" aria-label="공지사항 닫기" onClick={close}>×</button></div>
         <h2 id="dd-notice-title">{notice.title}</h2>
@@ -82,6 +83,14 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
         <p>{notice.body}</p>
         <div className="dd-notice-bottom"><label><input type="checkbox" checked={skipToday} onChange={event => setSkipToday(event.target.checked)} /> 오늘 하루 보지 않기</label><button type="button" onClick={close}>닫기</button></div>
       </section>
-    </div>}
+    </div>, previewPortal) : <div className="dd-notice-overlay" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) close(); }}>
+      <section className="dd-notice-dialog" role="dialog" aria-modal="true" aria-labelledby="dd-notice-title">
+        <div className="dd-notice-top"><span>NOTICE</span><button type="button" aria-label="공지사항 닫기" onClick={close}>×</button></div>
+        <h2 id="dd-notice-title">{notice.title}</h2>
+        {imageUrl && <img src={imageUrl} alt="공지사항 첨부 이미지" />}
+        <p>{notice.body}</p>
+        <div className="dd-notice-bottom"><label><input type="checkbox" checked={skipToday} onChange={event => setSkipToday(event.target.checked)} /> 오늘 하루 보지 않기</label><button type="button" onClick={close}>닫기</button></div>
+      </section>
+    </div>)}
   </>;
 }
