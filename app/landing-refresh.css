@@ -3117,3 +3117,11 @@
  .landing-v2 .dd-features .dd-feature.dd-feature-effects .dd-feature-copy,
  .landing-v2 .dd-features .dd-feature.dd-feature-occasions .dd-feature-copy{order:1!important}
 }
+
+/* Desktop live invitation demo: keep a phone-sized viewport, like mobile. */
+@media (min-width:801px){
+ .landing-v2 .dd-experience .dd-experience-stack{width:min(390px,100%)!important;max-width:390px!important;margin-inline:auto!important}
+ .landing-v2 .dd-experience .dd-experience-controls{width:100%!important}
+ .landing-v2 .dd-experience .dd-experience-phone{width:100%!important;max-width:390px!important;height:min(740px,calc(100dvh - 76px))!important;min-height:560px;aspect-ratio:auto;margin-inline:auto!important}
+ .landing-v2 .dd-experience .dd-experience-phone iframe{width:100%!important;max-width:100%!important}
+}
