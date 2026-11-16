@@ -3152,3 +3152,7 @@
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-eyebrow::after{content:""!important;display:block!important;width:28px!important;height:1px!important;flex:0 0 28px!important;background:#b78f75!important}
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-content::before{content:none!important;display:none!important}
 }
+
+/* Section 01: restrained headline accent and stronger supporting copy (desktop + mobile). */
+.landing-v2 .dd-feature-theme .dd-feature-title-highlight{background:linear-gradient(to top,#ffe88a 0 24%,transparent 24% 100%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.landing-v2 .dd-feature-theme .dd-feature-description-bold{font-weight:700!important}
