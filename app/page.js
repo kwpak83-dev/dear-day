@@ -40,7 +40,7 @@ export default function Home() {
   }, []);
   useEffect(() => {
     let cancelled = false;
-    const font = '400 48px "Cinzel"';
+    const font = '400 48px "Cormorant Garamond"';
     document.fonts.load(font, "Good People, Good Moment.").then((faces) => {
       if (!cancelled && faces.length > 0 && document.fonts.check(font, "Good People, Good Moment.")) {
         setHeadlineFontReady(true);
