@@ -1,4 +1,4 @@
-const ORNAMENTS = new Set(["blossom","green","autumn","autumn-maple","autumn-mixed","snow","star","heart","rose","lavender","daisy","ginkgo","feather","gold-confetti","color-confetti","balloon","blue-balloon","bubble","ribbon","music","butterfly","moon","blossom-flower","blue-hydrangea","coffee-bean","popcorn","gold-silver-confetti","cherry-petal-real","palm-leaf"]);
+const ORNAMENTS = new Set(["blossom","green","autumn","autumn-maple","autumn-mixed","snow","star","heart","rose","lavender","daisy","ginkgo","feather","gold-confetti","color-confetti","balloon","blue-balloon","bubble","ribbon","music","butterfly","moon","blossom-flower","blue-hydrangea","coffee-bean","popcorn","gold-silver-confetti","cherry-petal-real","palm-leaf","snowman"]);
 
 export default function TemplateScreenEffect({ config, assets = {} }) {
   const effect = config?.effects?.screenEffect;
