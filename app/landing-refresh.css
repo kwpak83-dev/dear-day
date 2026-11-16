@@ -3109,3 +3109,11 @@
  .landing-v2 .dd-feature-theme .dd-feature-visual,
  .landing-v2 .dd-feature-occasions .dd-feature-visual{min-height:0;padding-top:12px;padding-bottom:12px}
 }
+
+/* Desktop feature 04/06: demo on left, description on right. */
+@media (min-width:801px){
+ .landing-v2 .dd-features .dd-feature.dd-feature-effects .dd-feature-visual,
+ .landing-v2 .dd-features .dd-feature.dd-feature-occasions .dd-feature-visual{order:0!important}
+ .landing-v2 .dd-features .dd-feature.dd-feature-effects .dd-feature-copy,
+ .landing-v2 .dd-features .dd-feature.dd-feature-occasions .dd-feature-copy{order:1!important}
+}
