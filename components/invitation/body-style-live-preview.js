@@ -37,10 +37,27 @@ export default function BodyStyleLivePreview({ invitation, eventKind, templateId
     const article = content?.querySelector(".invitation-template");
     const target = content?.querySelector(SELECTORS[tab]);
     if (showMessagePlaceholder) { setOffset(0); return; }
-    if (!article || !target) return;
-    // Compare rects inside the same scaled tree; translation cancels out.
-    const distance = (target.getBoundingClientRect().top - article.getBoundingClientRect().top) / layout.scale;
-    setOffset(Math.max(0, Math.round(distance)));
+    if (!article || !target || !layout.scale) { setOffset(0); return; }
+    const measure = () => {
+      // Both rects share the same transform; dividing by scale restores logical pixels.
+      const distance = (target.getBoundingClientRect().top - article.getBoundingClientRect().top) / layout.scale;
+      const next = Math.max(0, Math.round(distance));
+      setOffset(current => current === next ? current : next);
+    };
+    measure();
+    // Fonts and images can change section positions after the initial render.
+    const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
+    if (observer) {
+      observer.observe(article);
+      for (const section of article.children) observer.observe(section);
+    }
+    const fonts = typeof document !== "undefined" ? document.fonts : null;
+    fonts?.addEventListener?.("loadingdone", measure);
+    fonts?.ready?.then(measure).catch(() => {});
+    return () => {
+      observer?.disconnect();
+      fonts?.removeEventListener?.("loadingdone", measure);
+    };
   }, [tab, invitation, templateId, templateConfig, templateAssets, showMessagePlaceholder, layout]);
   return <div className="dd-body-style-live">
     <div className="dd-body-style-live-tabs" role="tablist" aria-label="본문 미리보기 구간">
