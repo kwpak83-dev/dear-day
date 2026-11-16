@@ -3092,3 +3092,12 @@
 @media(max-width:800px){
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{font-size:12px!important}
 }
+
+/* Desktop header: keep all four navigation labels on one line. */
+@media (min-width:801px){
+ .landing-v2 .landing-header{gap:clamp(10px,1.2vw,20px)!important}
+ .landing-v2 .landing-header .landing-brand{min-width:155px}
+ .landing-v2 .landing-nav{gap:clamp(12px,1.45vw,26px)!important;min-width:0;flex:1 1 auto}
+ .landing-v2 .landing-nav a,.landing-v2 .landing-nav button,.landing-v2 .landing-nav span{font-size:12px!important;white-space:nowrap;word-break:keep-all;flex-shrink:0}
+ .landing-v2 .landing-actions{gap:clamp(6px,.7vw,12px)!important;flex-shrink:0}
+}
