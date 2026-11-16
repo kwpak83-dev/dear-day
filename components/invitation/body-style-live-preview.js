@@ -39,8 +39,14 @@ export default function BodyStyleLivePreview({ invitation, eventKind, templateId
     if (showMessagePlaceholder) { setOffset(0); return; }
     if (!article || !target || !layout.scale) { setOffset(0); return; }
     const measure = () => {
-      // Both rects share the same transform; dividing by scale restores logical pixels.
-      const distance = (target.getBoundingClientRect().top - article.getBoundingClientRect().top) / layout.scale;
+      // offsetTop follows layout coordinates, excluding fade-up transforms and animations.
+      // Subtract offsets from the same document origin even if offsetParent differs.
+      const layoutTop = (element) => {
+        let top = 0;
+        for (let node = element; node; node = node.offsetParent) top += node.offsetTop;
+        return top;
+      };
+      const distance = layoutTop(target) - layoutTop(article);
       const next = Math.max(0, Math.round(distance));
       setOffset(current => current === next ? current : next);
     };
