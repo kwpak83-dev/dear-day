@@ -140,7 +140,7 @@ export default function WeddingExperience() {
   const gallery = (invitation.galleryImages || []).map((url, index) => ({ id: `experience-${index}`, url }));
   return <main ref={rootRef} className="public-invitation shared-public-invitation dd-landing-experience-document">
     {notice && <p className="dd-experience-page-notice" role="status">{notice}</p>}
-    <TemplatePreviewCanvas stageClassName="dd-experience-preview-stage" canvasClassName="dd-experience-preview-canvas"><InvitationRenderer invitation={invitation} eventKind="wedding" eventTypeConfig={eventTypeConfig} templateId={item.body_template_id} templateConfig={config} templateAssets={templateAssets} placeActions={<InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView deferUntilVisible />}>
+    <TemplatePreviewCanvas matchPublicViewport stageClassName="dd-experience-preview-stage" canvasClassName="dd-experience-preview-canvas"><InvitationRenderer invitation={invitation} eventKind="wedding" eventTypeConfig={eventTypeConfig} templateId={item.body_template_id} templateConfig={config} templateAssets={templateAssets} placeActions={<InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView deferUntilVisible />}>
       <div className="public-invitation-sections">
         <ParentsIntro invitation={invitation} eventKind="wedding" eventTypeConfig={eventTypeConfig} />
         <GrowthTimeline invitation={invitation} eventKind="wedding" eventTypeConfig={eventTypeConfig} />
