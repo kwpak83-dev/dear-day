@@ -3156,3 +3156,6 @@
 /* Section 01: restrained headline accent and stronger supporting copy (desktop + mobile). */
 .landing-v2 .dd-feature-theme .dd-feature-title-highlight,.landing-v2 .dd-feature-program .dd-feature-title-highlight{background:linear-gradient(to top,#ffe88a 0 24%,transparent 24% 100%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .landing-v2 .dd-feature-theme .dd-feature-description-accent,.landing-v2 .dd-feature-program .dd-feature-description-accent{font-weight:700!important;color:#191919!important}
+
+/* Keep section 02 inline emphasis the same size and baseline as section 01. */
+.landing-v2 .dd-feature.dd-feature-program .dd-feature-copy p strong.dd-feature-description-accent{font-size:inherit!important;line-height:inherit!important;margin:0!important;display:inline!important}
