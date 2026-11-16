@@ -261,7 +261,7 @@ export default function Home() {
             <div className="dd-feature-copy">
               <div className="dd-feature-labels"><span className="dd-feature-number">{number} <span>/ 07</span></span><span className="dd-feature-eyebrow">{eyebrow}</span></div>
               <h3>{kind === "theme" ? <>흔한 초대장이 아닌, <span className="dd-feature-title-highlight">다채로운 콘셉트</span>의 초대장</> : title}</h3>
-              <p className={kind === "theme" ? "dd-feature-description-bold" : undefined}>{description}</p>
+              <p>{kind === "theme" ? <>인생네컷, 영화 포스터, 계절 테마까지. 개성 있고 재치 있는 디자인으로 초대장을 받는 분들에게 <strong className="dd-feature-description-accent">특별한 즐거움</strong>을 선물하세요.</> : description}</p>
               <ul className="dd-feature-checks">
                 {(kind === "theme" ? ["인생네컷·영화 포스터·계절 테마", "개성 넘치는 다채로운 초대장 디자인"] :
                   kind === "program" ? ["행사 유형에 맞춘 식순·일정 안내", "클립아트와 감성 타임라인"] :
