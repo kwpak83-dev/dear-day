@@ -43,7 +43,10 @@ export default function BodyStyleLivePreview({ invitation, eventKind, templateId
       // Subtract offsets from the same document origin even if offsetParent differs.
       const layoutTop = (element) => {
         let top = 0;
-        for (let node = element; node; node = node.offsetParent) top += node.offsetTop;
+        for (let node = element; node; node = node.offsetParent) {
+          top += node.offsetTop;
+          if (node.offsetParent) top += node.offsetParent.clientTop;
+        }
         return top;
       };
       const distance = layoutTop(target) - layoutTop(article);
