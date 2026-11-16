@@ -3101,3 +3101,11 @@
  .landing-v2 .landing-nav a,.landing-v2 .landing-nav button,.landing-v2 .landing-nav span{font-size:12px!important;white-space:nowrap;word-break:keep-all;flex-shrink:0}
  .landing-v2 .landing-actions{gap:clamp(6px,.7vw,12px)!important;flex-shrink:0}
 }
+
+/* Desktop only: keep feature 01/06 portrait carousels within a typical viewport. */
+@media (min-width:801px){
+ .landing-v2 .dd-feature-theme .dd-feature-demo,
+ .landing-v2 .dd-feature-occasions .dd-feature-demo{width:100%;max-width:440px}
+ .landing-v2 .dd-feature-theme .dd-feature-visual,
+ .landing-v2 .dd-feature-occasions .dd-feature-visual{min-height:0;padding-top:12px;padding-bottom:12px}
+}
