@@ -1535,6 +1535,10 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-notice-bottom{border-top:1px solid #eee;padding-top:16px;font-size:12px}
 .dd-notice-bottom label{display:flex;align-items:center;gap:5px}
 .dd-notice-bottom button{border:0;border-radius:8px;background:#453b36;color:white;padding:10px 20px;cursor:pointer}
+/* Collection preview notice stays viewport-fixed outside the scaled canvas. */
+.dd-collection-notice-trigger{top:25%;transform:translateY(-50%)}
+.dd-collection-notice-overlay .dd-notice-dialog h2{font-size:20px}
+.dd-collection-notice-overlay .dd-notice-dialog>p{font-size:13px}
 
 
 /* Footer share controls are intentionally independent of the generic template buttons. */
