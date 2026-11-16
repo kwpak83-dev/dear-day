@@ -70,12 +70,12 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
     setSkipToday(false);
     document.querySelector(".shared-public-invitation")?.classList.remove("dd-hero-intro-waits-for-notice");
   };
-  const trigger = <button type="button" className={`dd-notice-trigger${preview && previewPortal ? " dd-notice-trigger-preview" : ""}`} style={previewTriggerStyle} onClick={() => { document.getElementById("dd-notice-early-style")?.remove(); setOpen(true); }}>공지사항</button>;
+  const trigger = <button type="button" className={`dd-notice-trigger${preview && previewPortal ? " dd-notice-trigger-preview" : ""}${pagePortal ? " dd-collection-notice-trigger" : ""}`} style={previewTriggerStyle} onClick={() => { document.getElementById("dd-notice-early-style")?.remove(); setOpen(true); }}>공지사항</button>;
   return <>
     <span ref={previewMarkerRef} data-dd-notice-preview={preview ? slug : undefined} style={{display:"none"}} />
     {preview ? (previewPortal ? createPortal(trigger, previewPortal) : null) : trigger}
     {!preview && autoOpen && <script dangerouslySetInnerHTML={{ __html: `(function(){try{var key=${JSON.stringify(storageKey).replace(/</g, "\\u003c")};var today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Seoul",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());var css='.shared-public-invitation .dd-notice-overlay{display:none!important}.shared-public-invitation.dd-hero-intro-waits-for-notice>.full-invitation-renderer{visibility:visible!important}.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-mask,.shared-public-invitation.dd-hero-intro-waits-for-notice .dd-hero-intro-text{animation-play-state:running!important}';function hideEarly(){var old=document.getElementById("dd-notice-early-style");if(old)old.remove();var style=document.createElement("style");style.id="dd-notice-early-style";style.textContent=css;document.head.appendChild(style)}if(localStorage.getItem(key)===today)hideEarly();document.addEventListener("click",function(e){var root=document.querySelector(".shared-public-invitation");if(!root||window.__ddNoticeClosedEarly===true)return;var overlay=root.querySelector(".dd-notice-overlay");if(!overlay||!overlay.contains(e.target))return;var button=e.target.closest("button");if(!(button&&(button.getAttribute("aria-label")==="공지사항 닫기"||button.textContent.trim()==="닫기"))&&e.target!==overlay)return;var checkbox=overlay.querySelector("input[type=checkbox]");if(checkbox&&checkbox.checked){try{localStorage.setItem(key,today)}catch(err){}}window.__ddNoticeClosedEarly=true;hideEarly()},true)}catch(e){}})();` }} />}
-    {open && (pagePortal && preview && previewPortal ? createPortal(<div className="dd-notice-overlay" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) close(); }}>
+    {open && (pagePortal && preview && previewPortal ? createPortal(<div className={`dd-notice-overlay${pagePortal ? " dd-collection-notice-overlay" : ""}`} role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) close(); }}>
       <section className="dd-notice-dialog" role="dialog" aria-modal="true" aria-labelledby="dd-notice-title">
         <div className="dd-notice-top"><span>NOTICE</span><button type="button" aria-label="공지사항 닫기" onClick={close}>×</button></div>
         <h2 id="dd-notice-title">{notice.title}</h2>
@@ -83,7 +83,7 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
         <p>{notice.body}</p>
         <div className="dd-notice-bottom"><label><input type="checkbox" checked={skipToday} onChange={event => setSkipToday(event.target.checked)} /> 오늘 하루 보지 않기</label><button type="button" onClick={close}>닫기</button></div>
       </section>
-    </div>, previewPortal) : <div className="dd-notice-overlay" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) close(); }}>
+    </div>, previewPortal) : <div className={`dd-notice-overlay${pagePortal ? " dd-collection-notice-overlay" : ""}`} role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) close(); }}>
       <section className="dd-notice-dialog" role="dialog" aria-modal="true" aria-labelledby="dd-notice-title">
         <div className="dd-notice-top"><span>NOTICE</span><button type="button" aria-label="공지사항 닫기" onClick={close}>×</button></div>
         <h2 id="dd-notice-title">{notice.title}</h2>
