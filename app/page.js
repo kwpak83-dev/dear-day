@@ -40,7 +40,7 @@ export default function Home() {
   }, []);
   useEffect(() => {
     let cancelled = false;
-    const font = '400 48px "Cinzel"';
+    const font = '400 48px "Cormorant Garamond"';
     document.fonts.load(font, "Good People, Good Moment.").then((faces) => {
       if (!cancelled && faces.length > 0 && document.fonts.check(font, "Good People, Good Moment.")) {
         setHeadlineFontReady(true);
@@ -177,7 +177,7 @@ export default function Home() {
   return <main className="landing-v2">
     <header className="landing-header">
       <a className="landing-brand" href="#top" aria-label="DearDay 홈"><DearDayLogo /></a>
-      <nav className="landing-nav"><button onClick={start}>초대장 만들기</button><a href="/templates">템플릿</a><a href="#how">이용안내</a><a href="#story">고객센터</a></nav>
+      <nav className="landing-nav" aria-label="주요 메뉴"><a href="/templates">템플릿 둘러보기</a><a href="#how">초대장 체험하기</a><span aria-disabled="true" title="네이버 스마트스토어 준비 중" style={{cursor:"not-allowed",opacity:.55}}>이용권 구매</span><a href={user ? "/my-inquiries" : "/?login=required&returnUrl=%2Fmy-inquiries"}>문의하기</a></nav>
       <div className="landing-actions">{user ? <><span>{providerLabel}</span><a href="/my-invitations">마이페이지</a>{canManageAdmin && <a href="/admin/credits" aria-label="관리자 페이지">관리자 페이지</a>}<button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={() => window.location.assign("/templates")}>지금, 초대장 만들기 →</button></div>
       <div className="landing-mobile-actions"><button aria-label="검색" onClick={comingSoon}>⌕</button><button className="landing-menu" aria-label="메뉴 열기" onClick={() => setMenuOpen(!menuOpen)}>☰</button></div>
       <a className="landing-mobile-invitations" href={user ? "/my-invitations" : "/?login=required&returnUrl=%2Fmy-invitations"} aria-label="내 초대장" title="내 초대장"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" aria-hidden="true"><defs><linearGradient id="dd-sealed-envelope" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#fffaf3"/><stop offset="1" stopColor="#e8d7c7"/></linearGradient></defs><rect x="2.5" y="4" width="19" height="16" rx="2.3" fill="url(#dd-sealed-envelope)" stroke="#d5bfae" strokeWidth=".8"/><path d="M3.5 5.5 12 12.2l8.5-6.7M3.5 18.5l6.3-6.1M20.5 18.5l-6.3-6.1" stroke="#c9ad98" strokeWidth=".85" strokeLinejoin="round"/><circle cx="12" cy="12.2" r="2.15" fill="#a87856" stroke="#d6b18d" strokeWidth=".65"/><circle cx="12" cy="12.2" r="1.3" fill="none" stroke="#e8cfb3" strokeWidth=".45"/><path d="M12 11.2v2M11.3 11.8l.7-.6.7.6" stroke="#e8cfb3" strokeWidth=".45" strokeLinecap="round"/></svg></a>
@@ -228,7 +228,7 @@ export default function Home() {
           ["01", "UNIQUE DESIGN", "흔한 초대장이 아닌, 다채로운 콘셉트의 초대장", "인생네컷, 영화 포스터, 계절 테마까지. 개성 있고 재치 있는 디자인으로 초대장을 받는 분들에게 특별한 즐거움을 선물하세요.", "theme"],
           ["02", "EVENT PROGRAM", "식순지까지 담은 초대장, 준비는 더 간편하게.", "결혼식부터 돌잔치, 칠순, 각종 행사까지. 별도의 식순지를 인쇄하거나 배포할 필요 없이, 모바일 초대장 하나로 행사 순서를 아름답고 편리하게 안내해요.", "program"],
           ["03", "INSTANT PREVIEW", "모바일에서도, 수정하고 바로 확인하세요.", "작은 모바일 화면에서도 편집은 더 편리하게. 인사말부터 표지 문구, 인트로, 행사 식순까지. 전체 미리보기 화면을 오갈 필요 없이, 편집 중인 부분만 팝업 미리보기로 바로 확인할 수 있어요.", "preview"],
-          ["04", "SPECIAL EFFECTS", "초대장을 여는 순간, 감동이 시작돼요.", "인트로와 배경음악, 테마에 어울리는 특별한 연출까지. 카페 오픈 초대장에 커피콩이 떨어지는 효과처럼 행사마다 색다른 분위기를 전해요.", "effects"],
+          ["04", "SPECIAL EFFECTS", "초대장을 여는 순간, 감동이 시작돼요.", "다양한 테마별 인트로, 배경 및 효과까지 특별한 연출. 행사마다 색다른 분위기를 전해요.", "effects"],
           ["05", "SMART RSVP", "참석부터 방명록까지, 더 스마트하게.", "참석 여부와 동반 인원, 식사 및 셔틀버스 이용 현황부터 소중한 축하 메시지까지. 모든 정보를 실시간으로 확인하고 간편하게 관리하세요.", "rsvp"],
           ["06", "ALL OCCASIONS", "인생의 순간부터, 새로운 시작까지.", "결혼 → 돌잔치 → 자녀 생일 → 부모님 칠순, 그리고 모임·행사와 개업·오픈까지. 행사별 맞춤 테마에 어울리는 연출을 제공해요.", "occasions"],
           ["07", "FLEXIBLE EDITING", "발행한 뒤에도, 마음껏 바꿔보세요.", "초대장을 발행한 뒤에도 사진과 문구, 행사 정보를 수정하고 디자인까지 변경할 수 있어요. 변화하는 일정에도 편리하게 대응하세요.", "edit"]
@@ -260,8 +260,8 @@ export default function Home() {
             </div>
             <div className="dd-feature-copy">
               <div className="dd-feature-labels"><span className="dd-feature-number">{number} <span>/ 07</span></span><span className="dd-feature-eyebrow">{eyebrow}</span></div>
-              <h3>{title}</h3>
-              <p>{description}</p>
+              <h3>{kind === "theme" ? <>흔한 초대장이 아닌, <span className="dd-feature-title-highlight">다채로운 콘셉트</span>의 초대장</> : kind === "program" ? <><span className="dd-feature-title-highlight">식순지까지 담은 초대장</span>, 준비는 더 간편하게.</> : kind === "preview" ? <>모바일에서도, <span className="dd-feature-title-highlight">수정하고 바로 확인하세요.</span></> : kind === "effects" ? <>초대장을 여는 순간, <span className="dd-feature-title-highlight">감동이 시작돼요.</span></> : kind === "rsvp" ? <>참석부터 방명록까지, <span className="dd-feature-title-highlight">더 스마트하게.</span></> : kind === "occasions" ? <>인생의 순간부터, <span className="dd-feature-title-highlight">새로운 시작까지.</span></> : kind === "edit" ? <>발행한 뒤에도, <span className="dd-feature-title-highlight">마음껏 바꿔보세요.</span></> : title}</h3>
+              <p>{kind === "theme" ? <>인생네컷, 영화 포스터, 계절 테마까지. 개성 있고 재치 있는 디자인으로 초대장을 받는 분들에게 <strong className="dd-feature-description-accent">특별한 즐거움</strong>을 선물하세요.</> : kind === "program" ? <>결혼식부터 돌잔치, 칠순, 각종 행사까지. 별도의 <strong className="dd-feature-description-accent">식순지를 인쇄하거나 배포할 필요 없이</strong>, 모바일 초대장 하나로 행사 순서를 아름답고 편리하게 안내해요.</> : kind === "preview" ? <>작은 모바일 화면에서도 편집은 더 편리하게. 인사말부터 표지 문구, 인트로, 행사 식순까지. 전체 미리보기 화면을 오갈 필요 없이, <strong className="dd-feature-description-accent">편집 중인 부분만 팝업 미리보기로 바로 확인</strong>할 수 있어요.</> : kind === "effects" ? <>다양한 테마별 인트로, 배경 및 효과까지 <strong className="dd-feature-description-accent">특별한 연출</strong>. 행사마다 색다른 분위기를 전해요.</> : kind === "rsvp" ? <>참석 여부와 동반 인원, 식사 및 셔틀버스 이용 현황부터 소중한 축하 메시지까지. 모든 정보를 <strong className="dd-feature-description-accent">실시간으로 확인하고 간편하게 관리</strong>하세요.</> : kind === "occasions" ? <>결혼부터 돌잔치, 생일, 환갑·칠순·팔순, 모임·행사와 개업·오픈까지. <strong className="dd-feature-description-accent">다양한 행사에 어울리는 맞춤 테마</strong>로 특별한 순간을 더욱 빛내보세요.</> : kind === "edit" ? <>초대장을 발행한 뒤에도 사진과 문구, 행사 정보를 수정하고 디자인까지 변경할 수 있어요. <strong className="dd-feature-description-accent">발행 후에도 자유로운 수정</strong>으로 변화하는 일정에 편리하게 대응하세요.</> : description}</p>
               <ul className="dd-feature-checks">
                 {(kind === "theme" ? ["인생네컷·영화 포스터·계절 테마", "개성 넘치는 다채로운 초대장 디자인"] :
                   kind === "program" ? ["행사 유형에 맞춘 식순·일정 안내", "클립아트와 감성 타임라인"] :

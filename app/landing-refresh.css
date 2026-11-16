@@ -2949,6 +2949,17 @@
  .landing-v2 .dd-feature-occasions .dd-concept-carousel-image{aspect-ratio:0.56}
 }
 
+/* Desktop feature 06: match feature 01 carousel canvas and card dimensions.
+   Keep the occasion-specific heading, imagery and mobile layout unchanged. */
+@media(min-width:801px){
+ .landing-v2 .dd-feature-occasions .dd-feature-demo{width:100%;max-width:520px;min-height:0;overflow:hidden}
+ .landing-v2 .dd-feature-occasions .dd-feature-demo-content{width:100%;min-width:0;box-sizing:border-box}
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-track{gap:13px;padding-left:0;padding-right:0;scroll-padding-inline:0}
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-track::before,
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-track::after{content:"";display:block;flex:0 0 calc(12.5% - 13px);pointer-events:none}
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-card{flex:0 0 75%}
+}
+
 /* Feature 07: CSS-only, responsive illustration; no extra image or font downloads. */
 .landing-v2 .dd-feature-edit .dd-feature-demo-content{width:100%;min-width:0;box-sizing:border-box;padding:8px;gap:0}
 .landing-v2 .dd-feature-edit .dd-feature-demo-kicker{display:none}
@@ -3034,7 +3045,7 @@
 
 /* Homepage hero C: Alex Brush calligraphy with editable two-tone lettering and vector heart. */
 .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > h1.dd-hero-script-title{
- font-family:var(--font-cinzel),"Cinzel",serif!important;
+ font-family:"Cormorant Garamond",Georgia,serif!important;
  font-weight:400!important;font-style:normal!important;
  letter-spacing:0!important;line-height:1!important;
  white-space:normal!important;overflow:visible!important;
@@ -3081,3 +3092,86 @@
 @media(max-width:800px){
  .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{font-size:12px!important}
 }
+
+/* Desktop header: keep all four navigation labels on one line. */
+@media (min-width:801px){
+ .landing-v2 .landing-header{gap:clamp(10px,1.2vw,20px)!important}
+ .landing-v2 .landing-header .landing-brand{min-width:155px}
+ .landing-v2 .landing-nav{gap:clamp(12px,1.45vw,26px)!important;min-width:0;flex:1 1 auto}
+ .landing-v2 .landing-nav a,.landing-v2 .landing-nav button,.landing-v2 .landing-nav span{font-size:12px!important;white-space:nowrap;word-break:keep-all;flex-shrink:0}
+ .landing-v2 .landing-actions{gap:clamp(6px,.7vw,12px)!important;flex-shrink:0}
+}
+
+/* Desktop only: keep feature 01/06 portrait carousels within a typical viewport. */
+@media (min-width:801px){
+ .landing-v2 .dd-feature-theme .dd-feature-demo,
+ .landing-v2 .dd-feature-occasions .dd-feature-demo{width:100%;max-width:316.8px}
+ .landing-v2 .dd-feature-theme .dd-feature-visual,
+ .landing-v2 .dd-feature-occasions .dd-feature-visual{min-height:0;padding-top:12px;padding-bottom:12px}
+}
+
+/* Desktop feature 04/06: demo on left, description on right. */
+@media (min-width:801px){
+ .landing-v2 .dd-features .dd-feature.dd-feature-effects .dd-feature-visual,
+ .landing-v2 .dd-features .dd-feature.dd-feature-occasions .dd-feature-visual{order:0!important}
+ .landing-v2 .dd-features .dd-feature.dd-feature-effects .dd-feature-copy,
+ .landing-v2 .dd-features .dd-feature.dd-feature-occasions .dd-feature-copy{order:1!important}
+}
+
+/* Desktop live invitation demo: keep a phone-sized viewport, like mobile. */
+@media (min-width:801px){
+ .landing-v2 .dd-experience .dd-experience-stack{width:min(300px,100%)!important;max-width:300px!important;margin-inline:auto!important}
+ .landing-v2 .dd-experience .dd-experience-controls{width:100%!important}
+ .landing-v2 .dd-experience .dd-experience-phone{width:100%!important;max-width:300px!important;height:min(570px,calc(100dvh - 76px))!important;min-height:420px;aspect-ratio:auto;margin-inline:auto!important}
+ .landing-v2 .dd-experience .dd-experience-phone iframe{width:100%!important;max-width:100%!important}
+}
+
+/* Feature 01–07 accents shared by desktop and mobile. */
+.landing-v2 .dd-features .dd-feature .dd-feature-checks li span{color:#22c55e!important}
+.landing-v2 .dd-features .dd-feature .dd-feature-pill::before{background:#e12b32!important}
+
+/* All 7 feature eyebrow labels: bright blue capsule on desktop and mobile. */
+.landing-v2 .dd-features .dd-feature .dd-feature-labels .dd-feature-eyebrow{background:#16aef5!important;border:1px solid #0798e4!important;color:#fff!important;font-weight:700!important;letter-spacing:.01em!important;padding:2px 9px!important;line-height:1.15!important;min-height:0!important;box-shadow:none!important}
+
+/* Enlarge both Cormorant Garamond hero headline lines by 15%, all viewports. */
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{font-size:clamp(39.58875px,calc((12.2vw - 3px) * .87975),64.22175px)!important}
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{font-size:clamp(30.79125px,calc((9.4vw - 3px) * .87975),50.14575px)!important}
+@media(max-width:800px){
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{font-size:clamp(38.709px,10.645vw,54.5445px)!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{font-size:clamp(29.03175px,calc((9.7vw - 3px) * .87975),41.34825px)!important}
+}
+
+/* Desktop HERO copy: match the centered, rule-free mobile composition. */
+@media(min-width:801px){
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group{border-left:0!important;border:0!important;padding-left:0!important;padding:0!important;align-items:center!important;text-align:center!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-eyebrow,
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > h1,
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{align-self:center!important;text-align:center!important;margin-left:auto!important;margin-right:auto!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-eyebrow{display:flex!important;align-items:center!important;justify-content:center!important;gap:12px!important;width:100%!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-eyebrow::before,
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-eyebrow::after{content:""!important;display:block!important;width:28px!important;height:1px!important;flex:0 0 28px!important;background:#b78f75!important}
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-content::before{content:none!important;display:none!important}
+}
+
+/* Section 01: restrained headline accent and stronger supporting copy (desktop + mobile). */
+.landing-v2 .dd-feature-theme .dd-feature-title-highlight,.landing-v2 .dd-feature-program .dd-feature-title-highlight,.landing-v2 .dd-feature-preview .dd-feature-title-highlight{background:linear-gradient(to top,#ffe88a 0 24%,transparent 24% 100%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.landing-v2 .dd-feature-theme .dd-feature-description-accent,.landing-v2 .dd-feature-program .dd-feature-description-accent,.landing-v2 .dd-feature-preview .dd-feature-description-accent{font-weight:700!important;color:#191919!important}
+
+/* Keep section 02 inline emphasis the same size and baseline as section 01. */
+.landing-v2 .dd-feature.dd-feature-program .dd-feature-copy p strong.dd-feature-description-accent{font-size:inherit!important;line-height:inherit!important;margin:0!important;display:inline!important}
+
+/* Section 04: match the shared heading underline and inline bold treatment. */
+.landing-v2 .dd-feature-effects .dd-feature-title-highlight{background:linear-gradient(transparent 65%,#ffe88a 65%,#ffe88a 90%,transparent 90%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.landing-v2 .dd-feature-effects .dd-feature-description-accent{font-weight:700!important;color:#191919!important;font-size:inherit!important;line-height:inherit!important;display:inline!important;margin:0!important}
+
+/* Section 05 RSVP: same restrained highlight and inline emphasis as sections 01–04. */
+.landing-v2 .dd-feature-rsvp .dd-feature-title-highlight{background:linear-gradient(to top,#ffe88a 0 24%,transparent 24% 100%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.landing-v2 .dd-feature-rsvp .dd-feature-description-accent{color:#191919!important;font-weight:700!important;font-size:inherit!important;line-height:inherit!important;display:inline!important;margin:0!important}
+
+/* Section 06: consistent restrained highlight across desktop and mobile. */
+.landing-v2 .dd-feature-occasions .dd-feature-title-highlight{background:linear-gradient(to top,#ffe88a 0 24%,transparent 24% 100%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.landing-v2 .dd-feature-occasions .dd-feature-description-accent{color:#191919!important;font-weight:700!important;font-size:inherit!important;line-height:inherit!important;display:inline!important;margin:0!important}
+
+/* Section 07: consistent heading highlight and inline description emphasis. */
+.landing-v2 .dd-feature-edit .dd-feature-title-highlight{background:linear-gradient(to top,#ffe88a 0 24%,transparent 24% 100%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.landing-v2 .dd-feature-edit .dd-feature-description-accent{color:#191919!important;font-weight:700!important;font-size:inherit!important;line-height:inherit!important;display:inline!important;margin:0!important}
