@@ -596,3 +596,13 @@
   height:23.4px!important;
  }
 }
+
+/* Desktop collection sizing only; preserve mobile/tablet layouts at 800px and below. */
+@media (min-width:801px){
+ .dd-showcase-page .dd-showcase-intro .dd-showcase-kicker{font-size:clamp(7px,.85vw,10.5px)!important}
+ .dd-showcase-page .dd-showcase-categories{display:flex!important;flex-wrap:nowrap!important;justify-content:center!important;align-items:center!important;gap:9px!important;overflow-x:auto!important;max-width:100%!important}
+ .dd-showcase-page .dd-showcase-categories button{white-space:nowrap!important;flex-shrink:0!important}
+ .dd-showcase-page .dd-showcase-slide{flex:0 0 min(19.2vw,272px)!important}
+ .dd-showcase-page .dd-showcase-track{scroll-padding-inline:calc((100% - min(19.2vw,272px))/2)!important;padding-left:calc((100% - min(19.2vw,272px))/2)!important;padding-right:calc((100% - min(19.2vw,272px))/2)!important}
+ .dd-showcase-page .dd-showcase-selected h2{font-size:10.5px!important}
+}
