@@ -3105,7 +3105,7 @@
 /* Desktop only: keep feature 01/06 portrait carousels within a typical viewport. */
 @media (min-width:801px){
  .landing-v2 .dd-feature-theme .dd-feature-demo,
- .landing-v2 .dd-feature-occasions .dd-feature-demo{width:100%;max-width:440px}
+ .landing-v2 .dd-feature-occasions .dd-feature-demo{width:100%;max-width:396px}
  .landing-v2 .dd-feature-theme .dd-feature-visual,
  .landing-v2 .dd-feature-occasions .dd-feature-visual{min-height:0;padding-top:12px;padding-bottom:12px}
 }
