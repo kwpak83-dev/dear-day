@@ -21,7 +21,8 @@
     "qrcode": "^1.5.4",
     "react": "latest",
     "react-dom": "latest",
-    "@sparticuz/chromium": "153.0.0"
+    "@sparticuz/chromium": "153.0.0",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "latest",
