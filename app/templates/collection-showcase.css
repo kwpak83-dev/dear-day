@@ -614,3 +614,8 @@
  .dd-showcase-page .dd-showcase-track{padding-top:0!important}
  .dd-showcase-page .dd-showcase-intro{padding-top:9px!important;padding-bottom:8px!important}
 }
+
+/* Desktop: show more of each template before its internal scroll; mobile unchanged. */
+@media(min-width:801px){
+ .dd-showcase-page .dd-showcase-poster{aspect-ratio:3/5.25!important;height:auto!important}
+}
