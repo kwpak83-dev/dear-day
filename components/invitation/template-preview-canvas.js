@@ -16,6 +16,8 @@ export default function TemplatePreviewCanvas({
   stageClassName = "",
   canvasClassName = "",
   matchPublicViewport = false,
+  fixedDesignWidth = false,
+  desktopFixedWidth = false,
 }) {
   const stageRef = useRef(null);
   const canvasRef = useRef(null);
@@ -27,11 +29,11 @@ export default function TemplatePreviewCanvas({
     const stage = stageRef.current;
     if (!stage) return;
     const measure = () => {
-      const width = matchPublicViewport ? invitationPreviewWidth(window.innerWidth) : DESIGN_WIDTH;
+      const width = (fixedDesignWidth || (desktopFixedWidth && window.innerWidth >= 801)) ? DESIGN_WIDTH : matchPublicViewport ? invitationPreviewWidth(window.innerWidth) : DESIGN_WIDTH;
       const nextScale = Math.min(1, stage.clientWidth / width);
       setLayoutWidth(width);
       setScale(nextScale);
-      if (matchPublicViewport && canvasRef.current) setHeight(canvasRef.current.offsetHeight * nextScale);
+      if ((matchPublicViewport || fixedDesignWidth) && canvasRef.current) setHeight(canvasRef.current.offsetHeight * nextScale);
     };
     measure();
     window.addEventListener("resize", measure);
@@ -40,16 +42,16 @@ export default function TemplatePreviewCanvas({
     }
     const observer = new ResizeObserver(measure);
     observer.observe(stage);
-    if (matchPublicViewport && canvasRef.current) observer.observe(canvasRef.current);
+    if ((matchPublicViewport || fixedDesignWidth) && canvasRef.current) observer.observe(canvasRef.current);
     return () => { observer.disconnect(); window.removeEventListener("resize", measure); };
-  }, [matchPublicViewport]);
+  }, [matchPublicViewport, fixedDesignWidth, desktopFixedWidth]);
 
   return (
-    <div className={`dd-template-preview-stage ${stageClassName}`.trim()} ref={stageRef} style={matchPublicViewport ? { height } : undefined}>
+    <div className={`dd-template-preview-stage ${stageClassName}`.trim()} ref={stageRef} style={{ ...(matchPublicViewport || fixedDesignWidth ? { height } : {}), ...(desktopFixedWidth ? { maxWidth: DESIGN_WIDTH, marginInline: "auto" } : {}) }}>
       <div
         ref={canvasRef}
         className={`dd-template-preview-canvas full-invitation-renderer dd-bgm-public-style ${canvasClassName}`.trim()}
-        style={{ ...(matchPublicViewport ? { position:"relative", left:"50%", margin:0, transform:`translateX(-50%) scale(${scale})`, transformOrigin:"top center" } : { zoom:scale }), width: layoutWidth, "--dd-template-preview-layout-width": `${layoutWidth}px`, "--dd-message-preview-layout-width": `${layoutWidth}px` }}
+        style={{ ...(matchPublicViewport || fixedDesignWidth ? { position:"relative", left:"50%", margin:0, transform:`translateX(-50%) scale(${scale})`, transformOrigin:"top center" } : { zoom:scale }), width: layoutWidth, "--dd-template-preview-layout-width": `${layoutWidth}px`, "--dd-message-preview-layout-width": `${layoutWidth}px` }}
       >
         {children}
       </div>

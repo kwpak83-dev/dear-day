@@ -38,6 +38,20 @@ export async function GET(request){
    creditsIssued:grants.data.reduce((n,g)=>n+g.quantity,0)
   }});
  }
+ if(p.get("invitationsFor")){
+  const ownerId=p.get("invitationsFor");
+  if(!/^[0-9a-f-]{36}$/i.test(ownerId))return reply({error:"잘못된 회원 ID입니다."},400);
+  const {data:owner,error:ownerError}=await db.auth.admin.getUserById(ownerId);
+  if(ownerError||!owner?.user)return reply({error:"회원을 찾을 수 없습니다."},404);
+  const {data:invitations,error:listError}=await db.from("events")
+   .select("id,slug,kind,status,updated_at,created_at,published_at,settings")
+   .eq("owner_id",ownerId).order("updated_at",{ascending:false}).limit(100);
+  if(listError)return reply({error:"회원 초대장 목록 조회에 실패했습니다."},503);
+  return reply({invitations:(invitations||[]).map(e=>({
+   id:e.id,slug:e.slug,kind:e.kind,status:e.status,updatedAt:e.updated_at,createdAt:e.created_at,publishedAt:e.published_at,
+   title:typeof e.settings?.title==="string"?e.settings.title.slice(0,120):typeof e.settings?.eventTitle==="string"?e.settings.eventTitle.slice(0,120):"제목 없음"
+  }))});
+ }
  const page=Math.max(1,Math.min(10000,Number.parseInt(p.get("page")||"1",10)||1));
  const search=(p.get("search")||"").trim().toLowerCase();
  if(search.length>100)return reply({error:"검색어가 너무 깁니다."},400);
