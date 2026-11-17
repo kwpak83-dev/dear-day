@@ -2,6 +2,7 @@
 import {useEffect,useState} from "react";
 import {getSupabaseBrowserClient} from "../../../lib/supabase/browser";
 import AdminDesignNav from "../admin-design-nav";
+import MemberInvitations from "./member-invitations";
 
 const section={background:"#fff",border:"1px solid #e1e5ed",borderRadius:12,padding:20,marginTop:18};
 const input={padding:"10px 12px",border:"1px solid #d6dce7",borderRadius:8,fontSize:14,minWidth:0,flex:1};
@@ -52,6 +53,7 @@ export default function MembersAdmin(){
     <a href={"/admin/credits?member="+encodeURIComponent(detail.user.name)} style={{...btn,display:"inline-block",textDecoration:"none",marginTop:10}}>이 회원 이용권 관리 →</a>
    </>}
   </section>}
+  {selected&&detail&&<MemberInvitations key={selected.id} member={selected} token={token}/>}
   {message&&<p role="alert" style={{color:"#9b3e32"}}>{message}</p>}
  </main>;
 }
