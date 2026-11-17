@@ -17,6 +17,7 @@ export default function TemplatePreviewCanvas({
   canvasClassName = "",
   matchPublicViewport = false,
   fixedDesignWidth = false,
+  desktopFixedWidth = false,
 }) {
   const stageRef = useRef(null);
   const canvasRef = useRef(null);
@@ -28,7 +29,7 @@ export default function TemplatePreviewCanvas({
     const stage = stageRef.current;
     if (!stage) return;
     const measure = () => {
-      const width = matchPublicViewport && !fixedDesignWidth ? invitationPreviewWidth(window.innerWidth) : DESIGN_WIDTH;
+      const width = (fixedDesignWidth || (desktopFixedWidth && window.innerWidth >= 801)) ? DESIGN_WIDTH : matchPublicViewport ? invitationPreviewWidth(window.innerWidth) : DESIGN_WIDTH;
       const nextScale = Math.min(1, stage.clientWidth / width);
       setLayoutWidth(width);
       setScale(nextScale);
@@ -43,10 +44,10 @@ export default function TemplatePreviewCanvas({
     observer.observe(stage);
     if ((matchPublicViewport || fixedDesignWidth) && canvasRef.current) observer.observe(canvasRef.current);
     return () => { observer.disconnect(); window.removeEventListener("resize", measure); };
-  }, [matchPublicViewport, fixedDesignWidth]);
+  }, [matchPublicViewport, fixedDesignWidth, desktopFixedWidth]);
 
   return (
-    <div className={`dd-template-preview-stage ${stageClassName}`.trim()} ref={stageRef} style={matchPublicViewport || fixedDesignWidth ? { height } : undefined}>
+    <div className={`dd-template-preview-stage ${stageClassName}`.trim()} ref={stageRef} style={{ ...(matchPublicViewport || fixedDesignWidth ? { height } : {}), ...(desktopFixedWidth ? { maxWidth: DESIGN_WIDTH, marginInline: "auto" } : {}) }}>
       <div
         ref={canvasRef}
         className={`dd-template-preview-canvas full-invitation-renderer dd-bgm-public-style ${canvasClassName}`.trim()}
