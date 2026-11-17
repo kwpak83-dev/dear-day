@@ -24,11 +24,12 @@ import { selectCardShareImage } from "../../../lib/card-share-image";
 
 
 
-function withTopAlignedHeroFallback(selected, settings, hero, slug) {
+function withTopAlignedHeroFallback(selected, settings, hero, slug, updatedAt) {
   if (settings?.kakaoShareImageUrl || hero?.mode === "illustration" || !selected?.imageUrl) return selected;
-  const host = process.env.VERCEL_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL;
-  if (!host) return selected;
-  return { ...selected, fallbackImageUrl: selected.imageUrl, imageUrl: `https://${host}/invite/${encodeURIComponent(slug)}/share-fallback.png`, imageWidth: 1200, imageHeight: 630 };
+  // Use the stable public production domain, not a deployment-specific VERCEL_URL.
+  const origin = "https://dear-day-seven.vercel.app";
+  const version = updatedAt ? `?v=${encodeURIComponent(new Date(updatedAt).getTime())}` : "";
+  return { ...selected, fallbackImageUrl: selected.imageUrl, imageUrl: `${origin}/invite/${encodeURIComponent(slug)}/share-fallback.png${version}`, imageWidth: 1200, imageHeight: 630 };
 }
 
 const loadPublicEvent = cache(async (slug) => {
@@ -67,7 +68,7 @@ export async function generateMetadata({ params }) {
   ]);
   const config = versionResult?.data?.config;
   const hero = { ...config?.hero, ...heroResult?.data?.config };
-  const image = withTopAlignedHeroFallback(selectCardShareImage(settings, { hero }, event.cover_image_url || settings.heroImageUrl || settings.hero_image_url), settings, hero, slug);
+  const image = withTopAlignedHeroFallback(selectCardShareImage(settings, { hero }, event.cover_image_url || settings.heroImageUrl || settings.hero_image_url), settings, hero, slug, event.updated_at);
   const title = getInvitationTitle(settings, event.kind);
   const presentation = getInvitationPresentation({ ...settings, eventKind: event.kind }, event.kind);
   const description = [presentation.heroSchedule, presentation.venue].filter(Boolean).join(" · ") || "초대장을 확인해 주세요.";
@@ -259,7 +260,7 @@ export default async function InvitationPage({ params, searchParams }) {
   const publicNotice = matrixFields.notice?.state === "none" ? normalizeNotice(null) : normalizeNotice(effectiveNotice);
   const waitForNoticeBeforeHeroIntro = publicNotice.enabled && Boolean(publicNotice.title) && Boolean(publicNotice.body);
   const existingShareFallback = event.cover_image_url || invitation.heroImageUrl || invitation.hero_image_url || galleryPhotos[0]?.url || "";
-  const shareImage = withTopAlignedHeroFallback(selectCardShareImage(settings, templateConfig, existingShareFallback), settings, templateConfig?.hero, slug);
+  const shareImage = withTopAlignedHeroFallback(selectCardShareImage(settings, templateConfig, existingShareFallback), settings, templateConfig?.hero, slug, event.updated_at);
 
   return <main className={`public-invitation shared-public-invitation${waitForNoticeBeforeHeroIntro ? " dd-hero-intro-waits-for-notice" : ""}`}>
     {ownerView && <nav className="owner-return-nav" aria-label="DearDay 관리 화면으로 돌아가기"><a href="/my-invitations">내 초대장</a><a href="/">DearDay 홈</a></nav>}
