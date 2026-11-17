@@ -39,8 +39,10 @@ export async function GET(_request, { params }) {
   const mime = response.headers.get("content-type").split(";")[0];
   const src = `data:${mime};base64,${Buffer.from(bytes).toString("base64")}`;
   return new ImageResponse(
-    <div style={{ display: "flex", width: "100%", height: "100%", background: "#fff" }}>
-      <img src={src} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+    <div style={{ display: "flex", position: "relative", width: "100%", height: "100%", overflow: "hidden", background: "#eae7e3", alignItems: "center", justifyContent: "center" }}>
+      {/* Fill the card with a soft version of the same photo, without cropping the foreground portrait. */}
+      <img src={src} alt="" style={{ position: "absolute", left: "-8%", top: "-8%", width: "116%", height: "116%", objectFit: "cover", objectPosition: "center", filter: "blur(28px) brightness(0.82)" }} />
+      <img src={src} alt="" style={{ position: "relative", width: "100%", height: "100%", objectFit: "contain", objectPosition: "center" }} />
     </div>,
     { width: 1200, height: 630, headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600" } },
   );
