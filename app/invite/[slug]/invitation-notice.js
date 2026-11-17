@@ -34,7 +34,7 @@ export default function InvitationNotice({ notice: rawNotice, slug, imageUrl, pr
     const phone = marker?.closest(".preview-phone");
     if (phone) {
       setPreviewPortal(phone);
-      setOverlayPortal(document.body);
+      setOverlayPortal(null);
       setPreviewTriggerStyle({ position: "absolute", top: "25%", right: 0, left: "auto", transform: "translateY(-50%)" });
       return;
     }
