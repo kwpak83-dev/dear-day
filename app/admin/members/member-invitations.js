@@ -33,16 +33,16 @@ export default function MemberInvitations({member,token}){
    <button type="button" style={{...button,position:"fixed",top:12,right:16,zIndex:20002}} onClick={()=>{setPreview(null);setToast("");}}>미리보기 닫기 ✕</button>
    <div style={{width:"min(390px,100%)",margin:"0 auto",background:"#fff",overflow:"hidden"}} onClickCapture={blockAction} onKeyDownCapture={e=>{if(e.key==="Enter"||e.key===" ")blockAction(e);}}>
     <TemplatePreviewCanvas fixedDesignWidth>
-     <InvitationRenderer invitation={invitation} eventKind={preview.event.kind} templateId={preview.event.templateId} templateConfig={preview.templateConfig} templateAssets={preview.templateAssets}>
+     <InvitationRenderer invitation={invitation} eventKind={preview.event.kind} eventTypeConfig={preview.eventTypeConfig} templateId={preview.event.templateId} templateConfig={preview.templateConfig} templateAssets={preview.templateAssets}>
       <div className="public-invitation-sections">
        <ParentsIntro invitation={invitation} eventKind={preview.event.kind}/>
        <GrowthTimeline invitation={invitation} eventKind={preview.event.kind}/>
-       <Gallery photos={(invitation.galleryImages||[]).map((url,i)=>({id:"admin-gallery-"+i,url}))} idPrefix="admin-member-preview-gallery"/>
+       <Gallery photos={preview.galleryPhotos||[]} idPrefix="admin-member-preview-gallery" title={preview.eventTypeConfig?.fields?.gallery?.label||"우리의 순간들"}/>
        <TransportGuide invitation={invitation}/>
-       <InvitationMap invitation={invitation}/>
-       <AccountCopy invitation={invitation} eventKind={preview.event.kind}/>
-       <ExtendedEventInfo invitation={invitation} eventKind={preview.event.kind}/>
-       <OptionalInvitationSections invitation={invitation} previewMode="admin-member-preview"/>
+       <InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView/>
+       <AccountCopy invitation={invitation} eventKind={preview.event.kind} eventTypeConfig={preview.eventTypeConfig}/>
+       <ExtendedEventInfo invitation={invitation} eventTypeConfig={preview.eventTypeConfig}/>
+       <OptionalInvitationSections invitation={invitation} eventTypeConfig={preview.eventTypeConfig} previewMode="admin-member-preview"/>
        <DearDayBrandFooter/>
       </div>
      </InvitationRenderer>
