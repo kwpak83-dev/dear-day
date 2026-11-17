@@ -29,6 +29,9 @@ importers:
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
+      sharp:
+        specifier: 0.35.4
+        version: 0.35.4(@types/node@14.18.63)
       react:
         specifier: latest
         version: 19.2.8
