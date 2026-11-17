@@ -1,4 +1,4 @@
-import { ImageResponse } from "next/og";
+import sharp from "sharp";
 import { createClient } from "@supabase/supabase-js";
 import { firstHeroSlotPhoto } from "../../../../lib/card-share-image";
 
@@ -36,14 +36,18 @@ export async function GET(_request, { params }) {
   if (!response.ok || !response.headers.get("content-type")?.startsWith("image/")) return new Response(null, { status: 404 });
   const bytes = await response.arrayBuffer();
   if (bytes.byteLength > 10 * 1024 * 1024) return new Response(null, { status: 413 });
-  const mime = response.headers.get("content-type").split(";")[0];
-  const src = `data:${mime};base64,${Buffer.from(bytes).toString("base64")}`;
-  return new ImageResponse(
-    <div style={{ display: "flex", position: "relative", width: "100%", height: "100%", overflow: "hidden", background: "#eae7e3", alignItems: "center", justifyContent: "center" }}>
-      {/* Fill the card with a soft version of the same photo, without cropping the foreground portrait. */}
-      <img src={src} alt="" style={{ position: "absolute", left: "-8%", top: "-8%", width: "116%", height: "116%", objectFit: "cover", objectPosition: "center", opacity: 0.22 }} />
-      <img src={src} alt="" style={{ position: "relative", width: "100%", height: "100%", objectFit: "contain", objectPosition: "center" }} />
-    </div>,
-    { width: 1200, height: 630, headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600" } },
-  );
+  // Sharp decodes WebP/JPEG/PNG reliably and generates an actual PNG.
+  // The full portrait is preserved; blurred edges fill the 1200x630 card.
+  try {
+    const source = Buffer.from(bytes);
+    const background = await sharp(source).rotate().resize(1200, 630, { fit: "cover", position: "centre" }).blur(22).modulate({ brightness: 0.82 }).png().toBuffer();
+    const foreground = await sharp(source).rotate().resize(1200, 630, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
+    const png = await sharp(background).composite([{ input: foreground, left: 0, top: 0 }]).png().toBuffer();
+    return new Response(png, {
+      headers: { "Content-Type": "image/png", "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600" },
+    });
+  } catch (error) {
+    console.error("[share-fallback] image processing failed", error);
+    return new Response(null, { status: 500 });
+  }
 }
