@@ -11,6 +11,7 @@ import ParentsIntro from "../../../components/invitation/parents-intro";
 import GrowthTimeline from "../../../components/invitation/growth-timeline";
 import ExtendedEventInfo from "../../../components/invitation/extended-event-info";
 import InvitationMap from "../../../components/invitation/invitation-map";
+import AddressCopy from "../../invite/[slug]/address-copy";
 
 const button={padding:"8px 12px",border:"1px solid #cbd2df",borderRadius:8,background:"#fff",color:"#263e80",cursor:"pointer"};
 const date=v=>v?new Date(v).toLocaleString("ko-KR",{timeZone:"Asia/Seoul"}):"-";
@@ -33,15 +34,14 @@ export default function MemberInvitations({member,token}){
    <button type="button" style={{...button,position:"fixed",top:12,right:16,zIndex:20002}} onClick={()=>{setPreview(null);setToast("");}}>미리보기 닫기 ✕</button>
    <div style={{width:"min(390px,100%)",margin:"0 auto",background:"#fff",overflow:"hidden"}} onClickCapture={blockAction} onKeyDownCapture={e=>{if(e.key==="Enter"||e.key===" ")blockAction(e);}}>
     <TemplatePreviewCanvas fixedDesignWidth>
-     <InvitationRenderer invitation={invitation} eventKind={preview.event.kind} eventTypeConfig={preview.eventTypeConfig} templateId={preview.event.templateId} templateConfig={preview.templateConfig} templateAssets={preview.templateAssets}>
+     <InvitationRenderer invitation={invitation} eventKind={preview.event.kind} eventTypeConfig={preview.eventTypeConfig} templateId={preview.event.templateId} templateConfig={preview.templateConfig} templateAssets={preview.templateAssets} placeActions={<><AddressCopy invitation={invitation}/><InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView deferUntilVisible/></>}>
       <div className="public-invitation-sections">
        <ParentsIntro invitation={invitation} eventKind={preview.event.kind}/>
        <GrowthTimeline invitation={invitation} eventKind={preview.event.kind}/>
-       <Gallery photos={preview.galleryPhotos||[]} idPrefix="admin-member-preview-gallery" title={preview.eventTypeConfig?.fields?.gallery?.label||"우리의 순간들"}/>
-       <TransportGuide invitation={invitation}/>
-       <InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView/>
-       <AccountCopy invitation={invitation} eventKind={preview.event.kind} eventTypeConfig={preview.eventTypeConfig}/>
        <ExtendedEventInfo invitation={invitation} eventTypeConfig={preview.eventTypeConfig}/>
+       {preview.eventTypeConfig?.fields?.gallery?.state!=="none"&&<Gallery photos={preview.galleryPhotos||[]} idPrefix="admin-member-preview-gallery" title={preview.eventTypeConfig?.fields?.gallery?.label||"우리의 순간들"}/>}
+       {preview.eventTypeConfig?.fields?.transport?.state!=="none"&&<TransportGuide invitation={invitation} title={preview.eventTypeConfig?.fields?.transport?.label||"교통 안내"} required={preview.eventTypeConfig?.fields?.transport?.state==="required"}/>}
+       <AccountCopy invitation={invitation} eventKind={preview.event.kind} eventTypeConfig={preview.eventTypeConfig}/>
        <OptionalInvitationSections invitation={invitation} eventTypeConfig={preview.eventTypeConfig} previewMode="admin-member-preview"/>
        <DearDayBrandFooter/>
       </div>
