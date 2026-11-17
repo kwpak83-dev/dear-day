@@ -1537,6 +1537,8 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-notice-bottom button{border:0;border-radius:8px;background:#453b36;color:white;padding:10px 20px;cursor:pointer}
 /* Collection preview notice stays viewport-fixed outside the scaled canvas. */
 .dd-collection-notice-trigger{top:25%;transform:translateY(-50%)}
+/* Keep the PC live notice attached to its phone frame, not scrolling content. */
+.create-page .preview-phone>.dd-notice-trigger-phone{position:absolute;top:25%;right:0;left:auto;transform:translateY(-50%);width:24px;min-width:24px;max-width:24px;min-height:0;padding:4px 3px;font:600 8px/1.25 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:.08em;writing-mode:vertical-rl;text-orientation:upright}
 .dd-collection-notice-overlay .dd-notice-dialog h2{font-size:20px}
 .dd-collection-notice-overlay .dd-notice-dialog>p{font-size:13px}
 
