@@ -5113,3 +5113,13 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-parent-intro-card .dd-parent-photo-frame img{display:block;width:100%;height:100%;aspect-ratio:1/1;object-fit:cover;border-radius:0;margin:0}
 .dd-couple-photo-editor-frame.dd-parent-editor-square{aspect-ratio:1/1}
 .dd-couple-photo-editor-frame.dd-parent-editor-square img{width:100%;height:100%;object-fit:cover}
+
+/* Opt-in first-birthday Safe Areas. Disabled sections retain their original spacing. */
+.dd-template-section-safe-area.dd-safe-enabled-parentsIntro .dd-parents-intro{
+  padding:var(--dd-section-parentsIntro-top,0px) var(--dd-section-parentsIntro-right,0px) var(--dd-section-parentsIntro-bottom,0px) var(--dd-section-parentsIntro-left,0px);
+  box-sizing:border-box;
+}
+.dd-template-section-safe-area.dd-safe-enabled-growthTimeline .dd-growth-timeline{
+  padding:var(--dd-section-growthTimeline-top,0px) var(--dd-section-growthTimeline-right,0px) var(--dd-section-growthTimeline-bottom,0px) var(--dd-section-growthTimeline-left,0px);
+  box-sizing:border-box;
+}
