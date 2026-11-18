@@ -3175,3 +3175,22 @@
 /* Section 07: consistent heading highlight and inline description emphasis. */
 .landing-v2 .dd-feature-edit .dd-feature-title-highlight{background:linear-gradient(to top,#ffe88a 0 24%,transparent 24% 100%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .landing-v2 .dd-feature-edit .dd-feature-description-accent{color:#191919!important;font-weight:700!important;font-size:inherit!important;line-height:inherit!important;display:inline!important;margin:0!important}
+
+/* DearDay Korean hero copy: typography only, preserve existing image and layout. */
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > h1.dd-hero-script-title{
+ font-family:"Noto Serif KR","Nanum Myeongjo","Batang",serif!important;
+ font-weight:500!important;letter-spacing:-.055em!important;line-height:1.2!important;
+}
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{
+ font-size:clamp(35px,3.1vw,51px)!important;line-height:1.22!important;
+}
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{
+ font-size:clamp(35px,3.1vw,51px)!important;line-height:1.22!important;
+ color:#a46c43!important;
+}
+@media(max-width:800px){
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first,
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{
+  font-size:clamp(29px,8vw,38px)!important;white-space:nowrap!important;
+ }
+}
