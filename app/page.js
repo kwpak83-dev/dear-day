@@ -41,8 +41,8 @@ export default function Home() {
   useEffect(() => {
     let cancelled = false;
     const font = '400 48px "Cormorant Garamond"';
-    document.fonts.load(font, "Good People, Good Moment.").then((faces) => {
-      if (!cancelled && faces.length > 0 && document.fonts.check(font, "Good People, Good Moment.")) {
+    document.fonts.load(font, "소중한 날을, 더 특별하게.").then((faces) => {
+      if (!cancelled && faces.length > 0 && document.fonts.check(font, "소중한 날을, 더 특별하게.")) {
         setHeadlineFontReady(true);
       }
     }).catch(() => {});
@@ -203,8 +203,8 @@ export default function Home() {
       <div className="landing-shell dd-hero-content">
         <div className={`dd-hero-copy-group${headlineFontReady ? " dd-hero-headline-ready" : ""}${eyebrowFontReady ? " dd-hero-eyebrow-ready" : ""}`}>
         <p className="dd-hero-eyebrow">DEARDAY · MOBILE INVITATION</p>
-        {heroVariant === "a" ? <h1>Good<br />People,<br />Good Moment.</h1> : heroVariant === "b" ? <h1>Good People<br />Good Moment.</h1> : <h1 className="dd-hero-script-title"><span className="dd-hero-script-first">Good People,</span><span className="dd-hero-script-second">Good Moment.<svg className="dd-hero-script-flourish" viewBox="0 0 270 38" preserveAspectRatio="none" fill="none" aria-hidden="true"><path d="M2 24 C57 12 109 11 157 19 C192 25 221 28 241 19 C247 16 249 13 251 11 C245 3 236 4 237 12 C238 18 246 21 251 25 C256 21 266 15 266 9 C266 2 256 3 251 11" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg></span></h1>}
-        <p className="dd-hero-description">{"마음을 전하는 특별한 초대장"}</p>
+        {heroVariant === "a" ? <h1>소중한 날을,<br />더 특별하게.</h1> : heroVariant === "b" ? <h1>소중한 날을,<br />더 특별하게.</h1> : <h1 className="dd-hero-script-title"><span className="dd-hero-script-first">소중한 날을,</span><span className="dd-hero-script-second">더 특별하게.<svg className="dd-hero-script-flourish" viewBox="0 0 270 38" preserveAspectRatio="none" fill="none" aria-hidden="true"><path d="M2 24 C57 12 109 11 157 19 C192 25 221 28 241 19 C247 16 249 13 251 11 C245 3 236 4 237 12 C238 18 246 21 251 25 C256 21 266 15 266 9 C266 2 256 3 251 11" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg></span></h1>}
+        <p className="dd-hero-description">{"우리의 마음을 담아 전하는 초대장"}</p>
         </div>
         <div className="dd-hero-buttons" ref={heroButtonsRef}>
           <button type="button" onClick={start} className="dd-hero-button dd-hero-button-primary">무료 시안 만들기 <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M12 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-6"/><path d="M16 4h4v4"/><path d="m10 14 10-10"/></svg></button>
@@ -253,7 +253,7 @@ export default function Home() {
                     kind === "rsvp" ? <LandingSmartRsvpDemo /> :
                     kind === "occasions" ? <LandingOccasionCarousel /> :
                     kind === "edit" ? <LandingFlexibleEditingDemo /> :
-                    <div className="dd-feature-demo-paper"><span>YOUR SPECIAL DAY</span><strong>{kind === "effects" ? "A moment to remember" : kind === "edit" ? "Make it yours" : "Good People, Good Moment."}</strong><i /><small>DEARDAY · MOBILE INVITATION</small></div>}
+                    <div className="dd-feature-demo-paper"><span>YOUR SPECIAL DAY</span><strong>{kind === "effects" ? "A moment to remember" : kind === "edit" ? "Make it yours" : "소중한 날을, 더 특별하게."}</strong><i /><small>DEARDAY · MOBILE INVITATION</small></div>}
                 </div>
                 {kind !== "theme" && kind !== "program" && kind !== "preview" && kind !== "effects" && kind !== "rsvp" && kind !== "occasions" && kind !== "edit" && <div className="dd-feature-demo-bottom">미리보기 · 영상 교체 예정</div>}
               </div>
