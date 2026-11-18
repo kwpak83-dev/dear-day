@@ -3194,3 +3194,17 @@
   font-size:clamp(29px,8vw,38px)!important;white-space:nowrap!important;
  }
 }
+
+/* Desktop first-screen HERO: align the Polaroid and copy to the header's centered content width.
+   Keep the full-bleed background and all mobile/tablet layouts unchanged. */
+@media (min-width:1101px){
+ .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
+  grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)!important;
+  column-gap:clamp(28px,3vw,52px)!important;
+  padding-left:max(24px,calc((100% - 1320px)/2))!important;
+  padding-right:max(24px,calc((100% - 1320px)/2))!important;
+ }
+ .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c .dd-hero-media{
+  width:min(100%,620px)!important;
+ }
+}
