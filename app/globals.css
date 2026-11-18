@@ -327,6 +327,10 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .classic-hero.no-photo::before,.classic-hero.no-photo::after{content:"";position:absolute;width:72px;height:110px;border:1px solid rgba(126,143,106,.2);border-radius:50%;transform:rotate(35deg)}
 .classic-hero.no-photo::before{top:34px;left:-35px}
 .classic-hero.no-photo::after{right:-38px;bottom:30px;transform:rotate(-35deg)}
+/* Configured HERO presets must not inherit the classic no-photo ornamental ovals.
+   The legacy ::before oval also leaves a 0-width vertical seam when no center panel is enabled. */
+.dd-template-hero-configured .classic-hero.no-photo::after{display:none!important}
+.dd-template-hero-configured .classic-hero.no-photo:not(.has-hero-center-panel)::before{display:none!important}
 .classic-hero-copy>small{display:block;font:10px/1.6 Arial,"Apple SD Gothic Neo",sans-serif;letter-spacing:.16em}
 .classic-hero-copy>p{margin:17px 0 0;color:var(--classic-gold);font:italic 43px/1.05 Georgia,"Times New Roman",serif;letter-spacing:-.04em}
 .classic-hero-copy>i{display:block;width:1px;height:32px;margin:22px auto;background:currentColor;opacity:.45}
@@ -5102,4 +5106,20 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-effect-inline-preview .dd-message-preview-effect-overlay .dd-template-screen-effect img{
   animation-duration:calc(var(--dd-screen-duration) / 1.7);
   animation-delay:calc(var(--dd-screen-delay) / 1.7);
+}
+
+/* First-birthday parent photos: retain the original square layout while clipping zoom. */
+.dd-parent-photo-frame{display:block;width:100%;aspect-ratio:1/1;overflow:hidden;border-radius:14px;margin-bottom:13px}
+.dd-parent-intro-card .dd-parent-photo-frame img{display:block;width:100%;height:100%;aspect-ratio:1/1;object-fit:cover;border-radius:0;margin:0}
+.dd-couple-photo-editor-frame.dd-parent-editor-square{aspect-ratio:1/1}
+.dd-couple-photo-editor-frame.dd-parent-editor-square img{width:100%;height:100%;object-fit:cover}
+
+/* Opt-in first-birthday Safe Areas. Disabled sections retain their original spacing. */
+.dd-template-section-safe-area.dd-safe-enabled-parentsIntro .dd-parents-intro{
+  padding:var(--dd-section-parentsIntro-top,0px) var(--dd-section-parentsIntro-right,0px) var(--dd-section-parentsIntro-bottom,0px) var(--dd-section-parentsIntro-left,0px);
+  box-sizing:border-box;
+}
+.dd-template-section-safe-area.dd-safe-enabled-growthTimeline .dd-growth-timeline{
+  padding:var(--dd-section-growthTimeline-top,0px) var(--dd-section-growthTimeline-right,0px) var(--dd-section-growthTimeline-bottom,0px) var(--dd-section-growthTimeline-left,0px);
+  box-sizing:border-box;
 }
