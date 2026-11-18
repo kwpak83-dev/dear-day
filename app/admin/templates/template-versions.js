@@ -63,7 +63,7 @@ const screenOrnamentCategories = [
 const screenOrnamentOptions = screenOrnamentCategories.flatMap(([, , options]) => options);
 const bgmDefaults = { mode: "none", assetId: null };
 const safeAreaDefaults = { top: 24, right: 16, bottom: 24, left: 16, messageWidth: 280 };
-const safeAreaSectionLabels = [["invitation","INVITATION · 초대 문구"],["date","DATE · 날짜 및 시간"],["place","PLACE · 오시는 길"],["gallery","GALLERY · 갤러리"],["account","ACCOUNT · 마음 전하실 곳"],["coupleIntro","COUPLE · 신랑·신부 소개"],["loveStory","STORY · 우리의 이야기"]];
+const safeAreaSectionLabels = [["invitation","INVITATION · 초대 문구"],["date","DATE · 날짜 및 시간"],["place","PLACE · 오시는 길"],["gallery","GALLERY · 갤러리"],["account","ACCOUNT · 마음 전하실 곳"],["coupleIntro","COUPLE · 신랑·신부 소개"],["loveStory","STORY · 우리의 이야기"],["parentsIntro","PARENTS · 부모 소개"],["growthTimeline","GROWTH · 성장 기록"]];
 const initialSectionSafeArea = () => Object.fromEntries(safeAreaSectionLabels.map(([key])=>[key,{enabled:key==="invitation",top:24,right:16,bottom:24,left:16,...(key==="invitation"?{messageWidth:280}:{})}]));
 
 const colorValue = (value) => /^#[0-9a-fA-F]{6}$/.test(value) ? value : "#000000";
@@ -656,7 +656,7 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
             <fieldset style={{minWidth:0,border:"1px solid #eadfd8",borderRadius:10,padding:12}}>
               <legend>영역별 Safe Area</legend>
               <small style={guideNote}>체크한 영역에만 여백을 적용합니다. 이름을 누르면 슬라이더가 펼쳐지고 오른쪽 미리보기에 즉시 반영됩니다. 저장 전까지 실제 초대장에는 반영되지 않습니다.</small>
-              {safeAreaSectionLabels.map(([key,label])=>{
+              {safeAreaSectionLabels.filter(([key])=>eventKind==="first_birthday"?!["coupleIntro","loveStory"].includes(key):!["parentsIntro","growthTimeline"].includes(key)).map(([key,label])=>{
                 const section=safeArea.sections?.[key] || initialSectionSafeArea()[key];
                 const change=(field,value)=>setSafeArea(current=>({...current,sections:{...current.sections,[key]:{...current.sections?.[key],...section,[field]:value}}}));
                 return <div key={key} style={{border:"1px solid #eadfd8",borderRadius:8,marginTop:8,padding:9}}>
