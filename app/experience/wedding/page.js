@@ -110,7 +110,14 @@ export default function WeddingExperience() {
       }
       requestAnimationFrame(() => {
         if (lastCommand.current !== message.id) return;
-        window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+        const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth";
+        // These wedding sections are nested inside the scaled preview canvas.
+        // Scroll the actual section into view rather than calculating a page offset.
+        if (message.feature === "coupleIntro" || message.feature === "loveStory") {
+          target.scrollIntoView({ behavior, block: "start" });
+          return;
+        }
+        window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY, behavior });
       });
     };
     window.addEventListener("message", receive);
