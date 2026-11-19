@@ -9,7 +9,7 @@ function ClassicHeading({ eyebrow, children }) {
   return <header className="classic-section-heading"><p>{eyebrow}</p><h3>{children}</h3></header>;
 }
 
-function ClassicDateSection({ eventDate, eventTime, title, wedding }) {
+function ClassicDateSection({ eventDate, eventTime, title, wedding, eventKind }) {
   if (!eventDate) return null;
   const date = new Date(`${eventDate}T12:00:00`);
   if (Number.isNaN(date.getTime())) return null;
@@ -31,7 +31,7 @@ function ClassicDateSection({ eventDate, eventTime, title, wedding }) {
   }
 
   const names = title || "";
-  const eventText = wedding && names ? `${names.replace(" & ", " ♡ ")}의 결혼식` : names;
+  const eventText = eventKind === "first_birthday" ? "돌잔치" : wedding && names ? `${names.replace(" & ", " ♡ ")}의 결혼식` : names;
   const targetDateTime = `${eventDate}T${timeMatch ? eventTime : "00:00"}:00`;
 
   return <section className="classic-section classic-date">
@@ -128,7 +128,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
 
     {weddingContacts}
 
-    <ClassicDateSection eventDate={eventDate} eventTime={eventTime} title={title} wedding={wedding} />
+    <ClassicDateSection eventDate={eventDate} eventTime={eventTime} title={title} wedding={wedding} eventKind={eventKind} />
 
     {hasInformation && <section className="classic-section classic-information">
       <ClassicHeading eyebrow="PLACE">{wedding ? "오시는 길" : "오시는 길"}</ClassicHeading>
