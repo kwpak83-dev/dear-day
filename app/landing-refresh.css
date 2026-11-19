@@ -3312,3 +3312,11 @@
   aspect-ratio:0.535!important;
  }
 }
+
+/* Mobile landing CTAs: keep their original Pretendard appearance, independent of the headline font. */
+@media (max-width:800px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-button{
+  font-family:"Pretendard","Pretendard Variable","Noto Sans KR",sans-serif!important;
+  font-weight:600!important;
+ }
+}
