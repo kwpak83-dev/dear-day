@@ -32,6 +32,21 @@ export default function WeddingExperience() {
     noticeTimerRef.current = setTimeout(() => setNotice(""), 2500);
   };
   useEffect(() => () => clearTimeout(noticeTimerRef.current), []);
+  // Only the desktop landing-page iframe gets a compact program sheet.
+  // The actual invitation and mobile landing experience retain their sizing.
+  useEffect(() => {
+    const parentWindow = window.parent;
+    const update = () => {
+      const desktop = parentWindow !== window && parentWindow.matchMedia("(min-width: 801px)").matches;
+      document.documentElement.classList.toggle("dd-experience-desktop-embed", desktop);
+    };
+    update();
+    if (parentWindow !== window) parentWindow.addEventListener("resize", update);
+    return () => {
+      if (parentWindow !== window) parentWindow.removeEventListener("resize", update);
+      document.documentElement.classList.remove("dd-experience-desktop-embed");
+    };
+  }, []);
   const lastCommand = useRef(0);
   const data = state.data;
   const reply = (type, extra = {}) => {
