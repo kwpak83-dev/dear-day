@@ -382,7 +382,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><span className="dd-quick-icon-bubble"><QuickMenuIcon kind="guestbook" /></span><span className="invitation-quick-copy"><strong>{guestbookLabel}</strong></span></button>}
 
       {program.enabled && <button className="invitation-quick-program" type="button" onClick={() => openSheet("program")} title={program.title} aria-label={program.title}><span className="dd-quick-icon-bubble"><QuickMenuIcon kind="program" /></span><span className="invitation-quick-copy"><strong>{programButtonLabel}</strong></span></button>}
-    </nav>))}
+    </nav>)}
     {sheet === "program" && program.enabled && <BottomSheet title={program.title} className={`invitation-bottom-sheet--program${program.style === "editorial" ? " invitation-bottom-sheet--program-editorial" : ""}`} onClose={closeSheet} portalTarget={usesPreviewPortal ? (isDesktopLivePreview ? previewSheetPortal : desktopLivePortal) : (typeof document !== "undefined" ? document.body : null)} preview={usesPreviewPortal} layerStyle={{ ...desktopLiveStyle, ...(isDesktopLivePreview ? previewSheetStyle : {}) }}>
       <InvitationProgram program={invitation.program} eventKind={invitation.eventKind} />
     </BottomSheet>}
