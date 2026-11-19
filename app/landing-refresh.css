@@ -3285,3 +3285,30 @@
   margin-right:auto!important;
  }
 }
+
+/* Mobile features 01 & 06: wider (+~10%) and taller (+~15%) portrait showcases.
+   Keep the carousel track, partial neighboring cards and desktop untouched. */
+@media(max-width:800px){
+ .landing-v2 .dd-feature-theme .dd-concept-carousel-card{
+  flex:0 0 82.5%!important;
+ }
+ .landing-v2 .dd-feature-theme .dd-concept-carousel-track{
+  padding-left:8.75%!important;
+  padding-right:8.75%!important;
+  scroll-padding-inline:8.75%!important;
+ }
+ .landing-v2 .dd-feature-theme .dd-concept-carousel-image{
+  aspect-ratio:0.535!important;
+ }
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-card{
+  flex:0 0 88%!important;
+ }
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-track{
+  padding-left:6%!important;
+  padding-right:6%!important;
+  scroll-padding-inline:6%!important;
+ }
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-image{
+  aspect-ratio:0.535!important;
+ }
+}
