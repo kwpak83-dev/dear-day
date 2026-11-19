@@ -23,6 +23,7 @@ export default function TemplateScreenEffect({ config, assets = {} }) {
     const hero = article?.querySelector("[data-share-hero]");
     const photo = hero?.querySelector("figure");
     if (!photo) return;
+    layer.classList.add("dd-template-screen-effect--cover-origin");
     let frame = 0;
     const update = () => {
       frame = 0;
@@ -41,6 +42,7 @@ export default function TemplateScreenEffect({ config, assets = {} }) {
     window.addEventListener("resize", schedule);
     return () => {
       if (frame) cancelAnimationFrame(frame);
+      layer.classList.remove("dd-template-screen-effect--cover-origin");
       observer?.disconnect();
       window.removeEventListener("scroll", schedule, true);
       window.removeEventListener("resize", schedule);
@@ -59,6 +61,7 @@ export default function TemplateScreenEffect({ config, assets = {} }) {
         "--dd-screen-size": `${size}px`,
         "--dd-screen-duration": `${duration}s`,
         "--dd-screen-delay": `-${range(0, duration, index, 71)}s`,
+        "--dd-screen-start-delay": `${index === 0 ? 0 : range(0.5, duration, index, 71)}s`,
         "--dd-screen-sway": `${index % 2 ? effect.sway ?? 30 : -(effect.sway ?? 30)}px`,
         "--dd-screen-rotation": effect.rotate ? `${180 + (index % 5) * 72}deg` : "0deg",
         "--dd-screen-opacity": effect.opacity ?? 0.8,
