@@ -3376,3 +3376,8 @@
   color:#5B4D43!important;
   border-color:#F6F6F6!important;
 }
+
+/* Subtle separation for the light floating quick-action button on PC and mobile. */
+.landing-v2 .dd-floating-quick .dd-floating-quick-secondary{
+  box-shadow:0 2px 6px rgba(91,77,67,.12);
+}
