@@ -3118,6 +3118,12 @@
  .landing-v2 .dd-features .dd-feature.dd-feature-occasions .dd-feature-copy{order:1!important}
 }
 
+/* Feature 05 (instant preview): desktop demo left, description right. */
+@media (min-width:801px){
+  .landing-v2 .dd-features .dd-feature.dd-feature-preview .dd-feature-visual{order:0!important}
+  .landing-v2 .dd-features .dd-feature.dd-feature-preview .dd-feature-copy{order:1!important}
+}
+
 /* Desktop live invitation demo: keep a phone-sized viewport, like mobile. */
 @media (min-width:801px){
  .landing-v2 .dd-experience .dd-experience-stack{width:min(300px,100%)!important;max-width:300px!important;margin-inline:auto!important}
