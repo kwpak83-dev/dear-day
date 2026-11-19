@@ -254,15 +254,34 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   useEffect(() => {
     if (!menuEnabled || visible || previewMode === "admin-live" || previewMode === "admin-full") return;
 
+    if (previewMode === "landing-experience") {
+      // The landing sample scrolls inside its iframe window, not a preview-content
+      // scroller. Resolve the directions section from the document (the quick-menu
+      // marker is rendered after the template, so closest(".invitation-template")
+      // can be null). Never show the menu merely because a target is missing.
+      const findDirections = () => document.querySelector(
+        ".classic-information, .modern-information, .romantic-information, .dd-transport-guide"
+      );
+      const onScroll = () => {
+        const directions = findDirections();
+        if (!directions) return;
+        const rect = directions.getBoundingClientRect();
+        if (rect.top <= window.innerHeight * 0.85) setVisible(true);
+      };
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll);
+      return () => {
+        window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("resize", onScroll);
+      };
+    }
+
     const menuRoot = markerRef.current?.closest(".invitation-template");
     const scrollRoot = (previewMode === "admin-live" || previewMode === "admin-full")
       ? markerRef.current?.closest(".admin-draft-preview-scroll") || null
       : markerRef.current?.closest(".preview-content, .full-preview-scroll, .admin-template-editor-preview, .admin-draft-full-preview") || null;
-    // In the landing demo, reveal quick actions when the visitor reaches
-    // the directions/transport section, not the account section at the bottom.
-    const trigger = previewMode === "landing-experience"
-      ? menuRoot?.querySelector(".dd-transport-guide, .classic-information, .romantic-information, .modern-information")
-      : menuRoot?.querySelector(".classic-information, .romantic-information, .modern-information, .public-accounts");
+    const trigger = menuRoot?.querySelector(".classic-information, .romantic-information, .modern-information, .public-accounts");
 
     if (isDesktopLivePreview && scrollRoot && !desktopLiveStartedAtTopRef.current) {
       scrollRoot.scrollTop = 0;
