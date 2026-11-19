@@ -61,7 +61,7 @@ export default function TemplateScreenEffect({ config, assets = {} }) {
         "--dd-screen-size": `${size}px`,
         "--dd-screen-duration": `${duration}s`,
         "--dd-screen-delay": `-${range(0, duration, index, 71)}s`,
-        "--dd-screen-start-delay": `${index === 0 ? 0 : range(0.5, duration, index, 71)}s`,
+        "--dd-screen-start-delay": `${(index % 8) * 0.12}s`,
         "--dd-screen-sway": `${index % 2 ? effect.sway ?? 30 : -(effect.sway ?? 30)}px`,
         "--dd-screen-rotation": effect.rotate ? `${180 + (index % 5) * 72}deg` : "0deg",
         "--dd-screen-opacity": effect.opacity ?? 0.8,
