@@ -3208,3 +3208,12 @@
   width:min(100%,620px)!important;
  }
 }
+
+/* Main landing headline font: Gowun Dodum (PC and mobile). */
+
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > h1.dd-hero-script-title,
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first,
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{
+ font-family:"Gowun Dodum",sans-serif!important;
+ font-weight:400!important;
+}
