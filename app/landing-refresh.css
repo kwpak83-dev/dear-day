@@ -3407,3 +3407,19 @@
     font-size:18px;
   }
 }
+
+
+/* Desktop hero: compact the first fold without cropping the Polaroid or CTAs.
+   The following section keeps its own light background; mobile is unchanged. */
+@media (min-width:1101px){
+  .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
+    height:clamp(650px,44vw,740px)!important;
+    min-height:650px!important;
+    max-height:740px!important;
+    column-gap:clamp(16px,2vw,36px)!important;
+    grid-template-columns:minmax(0,1.22fr) minmax(0,1fr)!important;
+  }
+  .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c .dd-hero-media{
+    width:min(100%,690px)!important;
+  }
+}
