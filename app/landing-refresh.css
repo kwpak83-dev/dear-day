@@ -3408,13 +3408,13 @@
   }
 }
 
-/* Desktop hero width only: center the stationery scene within the page,
-   leaving white side margins like the header and feature sections. */
+/* Desktop stationery background follows the header content width.
+   Match the side gutters to the following feature section, not pure white. */
 @media (min-width:1101px){
-  .landing-v2{background:#fff}
+  .landing-v2{background:#faf9f7}
   .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
-    width:min(100%,1400px)!important;
-    max-width:1400px!important;
+    width:min(100%,1360px)!important;
+    max-width:1360px!important;
     margin-inline:auto!important;
     grid-template-columns:minmax(0,1.22fr) minmax(0,1fr)!important;
     column-gap:clamp(16px,2vw,36px)!important;
