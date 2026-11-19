@@ -22,25 +22,25 @@ export default function TemplateScreenEffect({ config, assets = {} }) {
     const article = layer.parentElement;
     if (!article?.matches(".invitation-template")) return;
     const hero = article.querySelector(":scope > [data-share-hero]");
-    const photo = hero?.querySelector(":scope > figure");
-    if (!photo) return;
+    if (!hero) return;
+
     let frame = 0;
     const update = () => {
       frame = 0;
-      const layerRect = layer.getBoundingClientRect();
-      const photoRect = photo.getBoundingClientRect();
-      // Preview canvases can scale the viewport rectangles. CSS top uses layout pixels.
-      const scale = layer.offsetWidth ? layerRect.width / layer.offsetWidth : 1;
-      if (!scale || !photoRect.height) return;
-      const offset = Math.max(0, photoRect.top - layerRect.top) / scale;
-      const coverRemaining = Math.min(1, Math.max(0, (photoRect.bottom - layerRect.top) / photoRect.height));
-      layer.style.setProperty("--dd-screen-cover-offset", `${offset}px`);
-      layer.style.setProperty("--dd-screen-cover-remaining", String(coverRemaining));
+      // Keep the existing particle animation intact, but only reveal it
+      // after the cover has scrolled past the top of this preview/viewport.
+      const layerTop = layer.getBoundingClientRect().top;
+      const heroBottom = hero.getBoundingClientRect().bottom;
+      layer.classList.toggle("dd-template-screen-effect--body-hidden", heroBottom > layerTop + 1);
     };
-    const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    // Hide before the first paint; update synchronously for the initial view.
+    layer.classList.add("dd-template-screen-effect--body-hidden");
     update();
     const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(schedule) : null;
-    observer?.observe(photo);
+    observer?.observe(hero);
     observer?.observe(layer);
     window.addEventListener("scroll", schedule, true);
     window.addEventListener("resize", schedule);
@@ -49,8 +49,7 @@ export default function TemplateScreenEffect({ config, assets = {} }) {
       observer?.disconnect();
       window.removeEventListener("scroll", schedule, true);
       window.removeEventListener("resize", schedule);
-      layer.style.removeProperty("--dd-screen-cover-offset");
-      layer.style.removeProperty("--dd-screen-cover-remaining");
+      layer.classList.remove("dd-template-screen-effect--body-hidden");
     };
   }, [hasEffect, motion]);
   if (!hasEffect) return null;
