@@ -1,77 +1,84 @@
-[
-  {
-    "file": "Makgeolli-00.woff2",
-    "bytes": 254940,
-    "characters": 1200
-  },
-  {
-    "file": "Makgeolli-01.woff2",
-    "bytes": 114324,
-    "characters": 790
-  },
-  {
-    "file": "Makgeolli-02.woff2",
-    "bytes": 101976,
-    "characters": 790
-  },
-  {
-    "file": "Makgeolli-03.woff2",
-    "bytes": 100172,
-    "characters": 790
-  },
-  {
-    "file": "Makgeolli-04.woff2",
-    "bytes": 87672,
-    "characters": 790
-  },
-  {
-    "file": "Makgeolli-05.woff2",
-    "bytes": 92308,
-    "characters": 790
-  },
-  {
-    "file": "Makgeolli-06.woff2",
-    "bytes": 100716,
-    "characters": 790
-  },
-  {
-    "file": "Makgeolli-07.woff2",
-    "bytes": 88168,
-    "characters": 790
-  },
-  {
-    "file": "Makgeolli-08.woff2",
-    "bytes": 86856,
-    "characters": 790
-  },
-  {
-    "file": "Makgeolli-09.woff2",
-    "bytes": 126692,
-    "characters": 790
-  },
-  {
-    "file": "Makgeolli-10.woff2",
-    "bytes": 95768,
-    "characters": 790
-  },
-  {
-    "file": "Makgeolli-11.woff2",
-    "bytes": 78572,
-    "characters": 790
-  },
-  {
-    "file": "Makgeolli-12.woff2",
-    "bytes": 96112,
-    "characters": 790
-  },
-  {
-    "file": "Makgeolli-13.woff2",
-    "bytes": 78600,
-    "characters": 790
-  },
-  {
-    "file": "Makgeolli-14.woff2",
-    "bytes": 100120,
-    "characters": 790
-  }
-]
+{
+  "source_characters": 12260,
+  "css_coverage": 12260,
+  "missing": 0,
+  "overlap": 0,
+  "priority_includes_저희": true,
+  "files": [
+    {
+      "name": "Makgeolli-00.woff2",
+      "size_bytes": 256364,
+      "css_codepoints": 1202
+    },
+    {
+      "name": "Makgeolli-01.woff2",
+      "size_bytes": 114324,
+      "css_codepoints": 790
+    },
+    {
+      "name": "Makgeolli-02.woff2",
+      "size_bytes": 101976,
+      "css_codepoints": 790
+    },
+    {
+      "name": "Makgeolli-03.woff2",
+      "size_bytes": 100172,
+      "css_codepoints": 790
+    },
+    {
+      "name": "Makgeolli-04.woff2",
+      "size_bytes": 87672,
+      "css_codepoints": 790
+    },
+    {
+      "name": "Makgeolli-05.woff2",
+      "size_bytes": 92308,
+      "css_codepoints": 790
+    },
+    {
+      "name": "Makgeolli-06.woff2",
+      "size_bytes": 100716,
+      "css_codepoints": 790
+    },
+    {
+      "name": "Makgeolli-07.woff2",
+      "size_bytes": 88168,
+      "css_codepoints": 790
+    },
+    {
+      "name": "Makgeolli-08.woff2",
+      "size_bytes": 86856,
+      "css_codepoints": 790
+    },
+    {
+      "name": "Makgeolli-09.woff2",
+      "size_bytes": 126692,
+      "css_codepoints": 789
+    },
+    {
+      "name": "Makgeolli-10.woff2",
+      "size_bytes": 95768,
+      "css_codepoints": 790
+    },
+    {
+      "name": "Makgeolli-11.woff2",
+      "size_bytes": 78572,
+      "css_codepoints": 790
+    },
+    {
+      "name": "Makgeolli-12.woff2",
+      "size_bytes": 96112,
+      "css_codepoints": 790
+    },
+    {
+      "name": "Makgeolli-13.woff2",
+      "size_bytes": 78600,
+      "css_codepoints": 790
+    },
+    {
+      "name": "Makgeolli-14.woff2",
+      "size_bytes": 100120,
+      "css_codepoints": 789
+    }
+  ]
+}

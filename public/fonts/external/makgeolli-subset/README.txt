@@ -1,0 +1,1 @@
+PRIVATE LOCAL TEST ONLY. Back up and empty public/fonts/external/makgeolli-subset then copy all files from this folder. Keep pocheon-makgeolli.css importing ./makgeolli-subset/font.css. Hard refresh. Do not commit or deploy without font license clearance.
