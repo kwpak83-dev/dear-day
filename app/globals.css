@@ -5123,3 +5123,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   padding:var(--dd-section-growthTimeline-top,0px) var(--dd-section-growthTimeline-right,0px) var(--dd-section-growthTimeline-bottom,0px) var(--dd-section-growthTimeline-left,0px);
   box-sizing:border-box;
 }
+
+/* Countdown caption watercolor stroke, linked to calendar accent. */
+.classic-001 .classic-countdown-title{position:relative;z-index:0;width:fit-content;max-width:100%;margin:0 auto 18px;isolation:isolate}
+.classic-001 .classic-countdown-title::before{content:"";position:absolute;z-index:-1;pointer-events:none;left:-2%;right:-2%;bottom:12%;height:36%;background:linear-gradient(90deg,transparent 0%,color-mix(in srgb,var(--dd-color-accent,#b78b72) 22%,transparent) 9%,color-mix(in srgb,var(--dd-color-accent,#b78b72) 29%,transparent) 40%,color-mix(in srgb,var(--dd-color-accent,#b78b72) 26%,transparent) 76%,transparent 100%);border-radius:48% 42% 52% 40% / 46% 54% 40% 55%;transform:rotate(-.6deg);filter:blur(1.4px)}
