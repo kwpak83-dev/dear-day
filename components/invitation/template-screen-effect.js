@@ -22,25 +22,25 @@ export default function TemplateScreenEffect({ config, assets = {} }) {
     const article = layer.parentElement;
     if (!article?.matches(".invitation-template")) return;
     const hero = article.querySelector(":scope > [data-share-hero]");
-    const photo = hero?.querySelector(":scope > figure");
-    if (!photo) return;
+    if (!hero) return;
     let frame = 0;
     const update = () => {
       frame = 0;
       const layerRect = layer.getBoundingClientRect();
-      const photoRect = photo.getBoundingClientRect();
+      const heroRect = hero.getBoundingClientRect();
       // Preview canvases can scale the viewport rectangles. CSS top uses layout pixels.
       const scale = layer.offsetWidth ? layerRect.width / layer.offsetWidth : 1;
-      if (!scale || !photoRect.height) return;
-      const offset = Math.max(0, photoRect.top - layerRect.top) / scale;
-      const coverRemaining = Math.min(1, Math.max(0, (photoRect.bottom - layerRect.top) / photoRect.height));
-      layer.style.setProperty("--dd-screen-cover-offset", `${offset}px`);
-      layer.style.setProperty("--dd-screen-cover-remaining", String(coverRemaining));
+      if (!scale) return;
+      const bodyStart = Math.max(0, (heroRect.bottom - layerRect.top) / scale);
+      // The sticky layer has zero layout height. Extend the clip into the
+      // falling path but never paint above the cover's bottom edge.
+      layer.style.setProperty("--dd-screen-body-clip", `inset(${bodyStart}px -100vw -150vh -100vw)`);
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
     update();
     const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(schedule) : null;
-    observer?.observe(photo);
+    observer?.observe(hero);
+    observer?.observe(article);
     observer?.observe(layer);
     window.addEventListener("scroll", schedule, true);
     window.addEventListener("resize", schedule);
@@ -49,8 +49,7 @@ export default function TemplateScreenEffect({ config, assets = {} }) {
       observer?.disconnect();
       window.removeEventListener("scroll", schedule, true);
       window.removeEventListener("resize", schedule);
-      layer.style.removeProperty("--dd-screen-cover-offset");
-      layer.style.removeProperty("--dd-screen-cover-remaining");
+      layer.style.removeProperty("--dd-screen-body-clip");
     };
   }, [hasEffect, motion]);
   if (!hasEffect) return null;
