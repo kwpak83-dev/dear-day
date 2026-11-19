@@ -138,7 +138,7 @@ export default function HeroIntro({ intro }) {
       frames.push("100%{clip-path:inset(-1em -1em -1em -1em)}");
       return `@keyframes dd-intro-letter-${index}{${frames.join("")}}`;
     });
-    const next = styles.every(Boolean) ? styles.join("\\n") : null;
+    const next = styles.every(Boolean) ? styles.join("\n") : null;
     setWritingFrames(current => current === next ? current : next);
   }, [lines, fontFamily, intro.fontSize, canvasScale]);
 
