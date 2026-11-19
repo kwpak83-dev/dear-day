@@ -3408,18 +3408,16 @@
   }
 }
 
-
-/* Desktop hero: compact the first fold without cropping the Polaroid or CTAs.
-   The following section keeps its own light background; mobile is unchanged. */
+/* Desktop hero width only: center the stationery scene within the page,
+   leaving white side margins like the header and feature sections. */
 @media (min-width:1101px){
+  .landing-v2{background:#fff}
   .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
-    height:clamp(650px,44vw,740px)!important;
-    min-height:650px!important;
-    max-height:740px!important;
-    column-gap:clamp(16px,2vw,36px)!important;
+    width:min(100%,1400px)!important;
+    max-width:1400px!important;
+    margin-inline:auto!important;
     grid-template-columns:minmax(0,1.22fr) minmax(0,1fr)!important;
-  }
-  .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c .dd-hero-media{
-    width:min(100%,690px)!important;
+    column-gap:clamp(16px,2vw,36px)!important;
+    padding-inline:clamp(28px,3vw,48px)!important;
   }
 }
