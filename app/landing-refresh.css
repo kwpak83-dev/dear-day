@@ -3326,3 +3326,26 @@
   font-weight:600!important;
  }
 }
+
+
+/* Landing invitation experience: desktop side-by-side controls, mobile dropdown. */
+.landing-v2 .dd-experience-desktop-controls{display:none}
+@media(min-width:801px){
+ .landing-v2 .dd-experience .dd-experience-stack{display:grid;grid-template-columns:300px minmax(0,1fr);column-gap:clamp(36px,6vw,92px);align-items:center;width:min(100%,850px)!important;max-width:850px!important;margin-inline:auto!important}
+ .landing-v2 .dd-experience .dd-experience-controls{display:none}
+ .landing-v2 .dd-experience .dd-experience-phone{grid-column:1;grid-row:1;width:300px!important;max-width:300px!important;margin:0!important}
+ .landing-v2 .dd-experience-desktop-controls{display:block;grid-column:2;grid-row:1;min-width:0}
+ .landing-v2 .dd-experience-desktop-controls h3{margin:0 0 10px;font-size:23px;line-height:1.35;font-weight:700;letter-spacing:-.04em}
+ .landing-v2 .dd-experience-desktop-controls>p{margin:0 0 26px;font-size:13px;line-height:1.7;color:#777;word-break:keep-all}
+ .landing-v2 .dd-experience-feature-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .landing-v2 .dd-experience-feature-button{display:flex;align-items:center;justify-content:flex-start;gap:9px;min-height:45px;padding:10px 13px;border:1px solid #e6e6e6;border-radius:999px;background:#fff;color:#666;font:inherit;font-size:13px;text-align:left;white-space:nowrap;cursor:pointer;transition:border-color .18s,background-color .18s,color .18s}
+ .landing-v2 .dd-experience-feature-button svg{flex:none}
+ .landing-v2 .dd-experience-feature-button:hover{border-color:#aaa;color:#222}
+ .landing-v2 .dd-experience-feature-button.is-active{border-color:#e26b4c;background:#fff7f3;color:#c84f31;font-weight:650}
+ .landing-v2 .dd-experience-feature-button:focus-visible{outline:2px solid #555;outline-offset:3px}
+}
+@media(min-width:801px) and (max-width:980px){
+ .landing-v2 .dd-experience .dd-experience-stack{column-gap:32px}
+ .landing-v2 .dd-experience-feature-buttons{gap:9px}
+ .landing-v2 .dd-experience-feature-button{font-size:12px;padding:9px 10px}
+}
