@@ -86,7 +86,6 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
     <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="background" />
     <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} trigger={templateConfig?.effects?.scrollRevealTrigger} />
     {bgmControl}
-    {screenEffect}
     {(showHeader || showMastheadText) && <header className={`classic-masthead${!showHeader && showMastheadText ? " event-only" : ""}`}>{showHeader && <b>DearDay</b>}{showMastheadText && <span>{mastheadText}</span>}</header>}
 
     <section data-share-hero className={`classic-hero${hasHeroVisual ? " has-photo" : " no-photo"}${templateConfig?.hero?.heroCenterPanel?.enabled ? " has-hero-center-panel" : ""}`} style={renderConfig.heroStyle}>
@@ -113,6 +112,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
         {showHero("venue") && venue && <strong>{venue}</strong>}
       </HeroFontGate>
     </section>
+    {screenEffect}
 
     {message && <section className="classic-section classic-message">
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="section" />
