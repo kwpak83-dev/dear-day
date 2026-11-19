@@ -12,25 +12,30 @@ export default function TemplateScreenEffect({ config, assets = {} }) {
     ? blueBalloonSrc
     : effect?.ornament === "cherry-petal-real" ? "/screen-effects/cherry-petal-real.webp"
     : ORNAMENTS.has(effect?.ornament) ? `/screen-effects/${effect.ornament}.svg` : effect?.assetId ? assets[effect.assetId] : null;
-  if (!effect || !src) return null;
-  const motion = ["fall", "flutter", "sparkle"].includes(effect.motion) ? effect.motion : "fall";
+  const hasEffect = Boolean(effect && src);
+  const motion = ["fall", "flutter", "sparkle"].includes(effect?.motion) ? effect.motion : "fall";
   const range = (min, max, index, factor) => min + ((index * factor) % 101) / 100 * (max - min);
 
   useEffect(() => {
     const layer = effectRef.current;
     if (!layer || motion === "sparkle") return;
-    const article = layer.closest(".invitation-template");
-    const hero = article?.querySelector("[data-share-hero]");
-    const photo = hero?.querySelector("figure");
+    const article = layer.parentElement;
+    if (!article?.matches(".invitation-template")) return;
+    const hero = article.querySelector(":scope > [data-share-hero]");
+    const photo = hero?.querySelector(":scope > figure");
     if (!photo) return;
     let frame = 0;
     const update = () => {
       frame = 0;
       const layerRect = layer.getBoundingClientRect();
       const photoRect = photo.getBoundingClientRect();
-      // Align the initial falling path to the cover without changing the sticky body effect.
-      const offset = Math.max(0, photoRect.top - layerRect.top);
+      // Preview canvases can scale the viewport rectangles. CSS top uses layout pixels.
+      const scale = layer.offsetWidth ? layerRect.width / layer.offsetWidth : 1;
+      if (!scale || !photoRect.height) return;
+      const offset = Math.max(0, photoRect.top - layerRect.top) / scale;
+      const coverRemaining = Math.min(1, Math.max(0, (photoRect.bottom - layerRect.top) / photoRect.height));
       layer.style.setProperty("--dd-screen-cover-offset", `${offset}px`);
+      layer.style.setProperty("--dd-screen-cover-remaining", String(coverRemaining));
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
     update();
@@ -44,8 +49,11 @@ export default function TemplateScreenEffect({ config, assets = {} }) {
       observer?.disconnect();
       window.removeEventListener("scroll", schedule, true);
       window.removeEventListener("resize", schedule);
+      layer.style.removeProperty("--dd-screen-cover-offset");
+      layer.style.removeProperty("--dd-screen-cover-remaining");
     };
-  }, [motion]);
+  }, [hasEffect, motion]);
+  if (!hasEffect) return null;
   return <div ref={effectRef} className={`dd-template-screen-effect dd-template-screen-effect--${motion}`} aria-hidden="true">
     {Array.from({ length: Math.min(24, effect.count || 8) }, (_, index) => {
       const leafSrc = effect.ornament === "autumn-mixed"
