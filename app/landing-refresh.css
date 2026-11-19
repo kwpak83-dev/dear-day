@@ -3274,3 +3274,14 @@
 .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{
  color:#d8a87a!important;
 }
+
+/* PC only: reduce both hero CTA widths by 20% (330px -> 264px). */
+@media(min-width:801px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-buttons{
+  width:min(100%,264px)!important;
+  max-width:264px!important;
+  min-width:0!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+ }
+}
