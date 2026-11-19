@@ -258,7 +258,11 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
     const scrollRoot = (previewMode === "admin-live" || previewMode === "admin-full")
       ? markerRef.current?.closest(".admin-draft-preview-scroll") || null
       : markerRef.current?.closest(".preview-content, .full-preview-scroll, .admin-template-editor-preview, .admin-draft-full-preview") || null;
-    const trigger = menuRoot?.querySelector(".classic-information, .romantic-information, .modern-information, .public-accounts");
+    // In the landing demo, reveal quick actions when the visitor reaches
+    // the directions/transport section, not the account section at the bottom.
+    const trigger = previewMode === "landing-experience"
+      ? menuRoot?.querySelector(".dd-transport-guide, .classic-information, .romantic-information, .modern-information")
+      : menuRoot?.querySelector(".classic-information, .romantic-information, .modern-information, .public-accounts");
 
     if (isDesktopLivePreview && scrollRoot && !desktopLiveStartedAtTopRef.current) {
       scrollRoot.scrollTop = 0;
