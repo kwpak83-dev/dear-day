@@ -3413,11 +3413,13 @@
 @media (min-width:1101px){
   .landing-v2{background:#faf9f7}
   .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
-    width:min(100%,1360px)!important;
-    max-width:1360px!important;
+    width:min(100%,1120px)!important;
+    max-width:1120px!important;
     margin-inline:auto!important;
-    grid-template-columns:minmax(0,1.22fr) minmax(0,1fr)!important;
-    column-gap:clamp(16px,2vw,36px)!important;
-    padding-inline:clamp(28px,3vw,48px)!important;
+    grid-template-columns:minmax(0,1.12fr) minmax(0,1fr)!important;
+    column-gap:clamp(8px,1vw,16px)!important;
+    padding-inline:clamp(16px,1.6vw,24px)!important;
+    padding-left:clamp(16px,1.6vw,24px)!important;
+    padding-right:clamp(16px,1.6vw,24px)!important;
   }
 }
