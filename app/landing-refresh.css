@@ -3217,3 +3217,16 @@
  font-family:"Gowun Dodum",sans-serif!important;
  font-weight:400!important;
 }
+
+/* Landing tagline: option 2, warm clean Pretendard Medium. */
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{
+ font-family:"Pretendard","Pretendard Variable","Noto Sans KR",sans-serif!important;
+ font-weight:500!important;
+ font-size:15px!important;
+ letter-spacing:-.035em!important;
+}
+@media(max-width:800px){
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{
+  font-size:15px!important;
+ }
+}
