@@ -874,32 +874,6 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .dd-template-screen-effect img{position:absolute;top:calc(-80px + var(--dd-screen-cover-offset, 0px));left:var(--dd-screen-x);width:var(--dd-screen-size);height:auto;opacity:var(--dd-screen-opacity);pointer-events:none;will-change:transform;animation:dd-screen-fall var(--dd-screen-duration) linear var(--dd-screen-delay) infinite}
 @keyframes dd-screen-fall{from{transform:translate3d(0,-10vh,0) rotate(0deg)}to{transform:translate3d(var(--dd-screen-sway),110vh,0) rotate(var(--dd-screen-rotation))}}
 
-/* Full invitations: begin each falling particle at the cover's top edge.
-   Keep the sticky layer so particles continue over body sections; leave the
-   separate inline editor preview and sparkle effect untouched. */
-.dd-template-screen-effect--cover-origin:not(.dd-template-screen-effect--sparkle) img{
-  top:calc(var(--dd-screen-cover-offset, 0px) - 12px);
-  animation-delay:var(--dd-screen-start-delay, 0s);
-  animation-fill-mode:backwards;
-  animation-name:dd-screen-cover-fall;
-}
-.dd-template-screen-effect--cover-origin.dd-template-screen-effect--flutter img{
-  animation-name:dd-screen-cover-flutter;
-}
-@keyframes dd-screen-cover-fall{
-  0%{opacity:0;transform:translate3d(0,0,0) rotate(0deg)}
-  1%{opacity:var(--dd-screen-opacity);transform:translate3d(0,0,0) rotate(0deg)}
-  100%{opacity:var(--dd-screen-opacity);transform:translate3d(var(--dd-screen-sway),calc(100vh + 36px),0) rotate(var(--dd-screen-rotation))}
-}
-@keyframes dd-screen-cover-flutter{
-  0%{opacity:0;transform:translate3d(0,0,0) rotate(0deg)}
-  1%{opacity:var(--dd-screen-opacity)}
-  25%{transform:translate3d(var(--dd-screen-sway),25vh,0) rotate(35deg)}
-  50%{transform:translate3d(0,55vh,0) rotate(-25deg)}
-  75%{transform:translate3d(var(--dd-screen-sway),85vh,0) rotate(25deg)}
-  100%{opacity:var(--dd-screen-opacity);transform:translate3d(0,calc(100vh + 36px),0) rotate(var(--dd-screen-rotation))}
-}
-
 @media(prefers-reduced-motion:reduce){.dd-template-screen-effect{display:none}}
 .admin-draft-full-preview{position:fixed;z-index:100;inset:0;overflow:auto;background:#e9e1dc;padding:18px 10px 40px}
 .admin-draft-full-preview-toolbar{position:sticky;z-index:101;top:0;display:flex;justify-content:space-between;align-items:center;width:min(390px,100%);box-sizing:border-box;margin:0 auto 12px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.96);box-shadow:0 5px 18px rgba(70,43,35,.15);transform:translateX(20px)}
