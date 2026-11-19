@@ -3246,3 +3246,8 @@
   white-space:nowrap!important;
  }
 }
+
+/* Landing tagline option 1: warm brown handwritten text. */
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{
+ color:#85654e!important;
+}
