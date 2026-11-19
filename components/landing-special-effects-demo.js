@@ -110,7 +110,7 @@ export default function LandingSpecialEffectsDemo(){
    {showEffect&&screenEffect&&<div className="dd-landing-effects-overlay"><TemplateScreenEffect config={{effects:{screenEffect:previewScreenEffect}}} assets={data?.templateAssets||{}}/></div>}
   </div>
   <div className="dd-landing-effects-footer">
-   {tab==="effect" ? <label className="dd-landing-effects-toggle"><input type="checkbox" checked={enabled} onChange={event=>setEnabled(event.target.checked)}/> 배경 효과 {enabled?"ON":"OFF"}</label> :
+   {tab==="effect" ? <label className="dd-landing-effects-toggle"><input type="checkbox" checked={enabled} onChange={event=>setEnabled(event.target.checked)}/> 배경 효과(팝콘) {enabled?"ON":"OFF"}</label> :
     <span>{tab==="intro" ? <button className="dd-landing-effects-replay" type="button" onClick={()=>setIntroReplay(value=>value+1)}>▶ 레터링 다시 보기</button> : tab==="cover"?"초대장 표지":"본문 배경과 인사말"}</span>}
   </div>
  </div>;
