@@ -3349,3 +3349,12 @@
  .landing-v2 .dd-experience-feature-buttons{gap:9px}
  .landing-v2 .dd-experience-feature-button{font-size:12px;padding:9px 10px}
 }
+
+/* Desktop feature 03: give the 9:16 movie poster cover its full vertical space.
+   Keep intro/effect preview sizes and mobile layout unchanged. */
+@media (min-width:801px){
+ .landing-v2 .dd-feature-effects .dd-landing-effects-stage--cover{
+  height:auto;
+  aspect-ratio:9 / 16;
+ }
+}
