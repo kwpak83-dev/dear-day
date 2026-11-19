@@ -5144,3 +5144,10 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   to{-webkit-mask-position:0% 0;mask-position:0% 0}
  }
 }
+
+/* Phase 2: measured letter-paced clipping takes precedence over phase-1 soft mask. */
+.dd-hero-intro-line.dd-hero-intro-letter-write{
+ -webkit-mask-image:none;mask-image:none;
+ clip-path:inset(-1em calc(100% + 1em) -1em -1em);
+ animation-timing-function:linear;
+}
