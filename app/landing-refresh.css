@@ -3175,3 +3175,148 @@
 /* Section 07: consistent heading highlight and inline description emphasis. */
 .landing-v2 .dd-feature-edit .dd-feature-title-highlight{background:linear-gradient(to top,#ffe88a 0 24%,transparent 24% 100%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .landing-v2 .dd-feature-edit .dd-feature-description-accent{color:#191919!important;font-weight:700!important;font-size:inherit!important;line-height:inherit!important;display:inline!important;margin:0!important}
+
+/* DearDay Korean hero copy: typography only, preserve existing image and layout. */
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > h1.dd-hero-script-title{
+ font-family:"Noto Serif KR","Nanum Myeongjo","Batang",serif!important;
+ font-weight:500!important;letter-spacing:-.055em!important;line-height:1.2!important;
+}
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first{
+ font-size:clamp(35px,3.1vw,51px)!important;line-height:1.22!important;
+}
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{
+ font-size:clamp(35px,3.1vw,51px)!important;line-height:1.22!important;
+ color:#a46c43!important;
+}
+@media(max-width:800px){
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first,
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{
+  font-size:clamp(29px,8vw,38px)!important;white-space:nowrap!important;
+ }
+}
+
+/* Desktop first-screen HERO: align the Polaroid and copy to the header's centered content width.
+   Keep the full-bleed background and all mobile/tablet layouts unchanged. */
+@media (min-width:1101px){
+ .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
+  grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)!important;
+  column-gap:clamp(28px,3vw,52px)!important;
+  padding-left:max(24px,calc((100% - 1320px)/2))!important;
+  padding-right:max(24px,calc((100% - 1320px)/2))!important;
+ }
+ .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c .dd-hero-media{
+  width:min(100%,620px)!important;
+ }
+}
+
+/* Main landing headline font: Gowun Dodum (PC and mobile). */
+
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > h1.dd-hero-script-title,
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-first,
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{
+ font-family:"Gowun Dodum",sans-serif!important;
+ font-weight:400!important;
+}
+
+/* Landing tagline: option 2, warm clean Pretendard Medium. */
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{
+ font-family:"Pretendard","Pretendard Variable","Noto Sans KR",sans-serif!important;
+ font-weight:500!important;
+ font-size:15px!important;
+ letter-spacing:-.035em!important;
+}
+@media(max-width:800px){
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{
+  font-size:15px!important;
+ }
+}
+
+/* Landing tagline: option 5, handwritten warmth. */
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{
+ font-family:"Nanum Pen Script",cursive!important;
+ font-weight:400!important;
+ font-size:clamp(24px,2.3vw,31px)!important;
+ letter-spacing:-.015em!important;
+ color:#4a3027!important;
+ line-height:1.15!important;
+}
+@media(max-width:800px){
+ .landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{
+  font-size:clamp(22px,5.8vw,26px)!important;
+  white-space:nowrap!important;
+ }
+}
+
+/* Landing tagline option 1: warm brown handwritten text. */
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{
+ color:#85654e!important;
+}
+
+/* Soft peach watercolor-like highlight behind the handwritten landing tagline. */
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description{
+ position:relative!important;
+ z-index:0!important;
+ isolation:isolate;
+}
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-copy-group > .dd-hero-description::before{
+ content:"";
+ position:absolute;
+ z-index:-1;
+ pointer-events:none;
+ left:-3%;right:-3%;bottom:8%;height:37%;
+ background:linear-gradient(90deg,rgba(239,184,149,0) 0%,rgba(239,184,149,.28) 7%,rgba(244,191,157,.42) 26%,rgba(244,191,157,.38) 73%,rgba(239,184,149,.22) 94%,rgba(239,184,149,0) 100%);
+ border-radius:48% 42% 51% 38% / 44% 55% 38% 52%;
+ transform:rotate(-.6deg);
+ filter:blur(1.5px);
+}
+
+/* Hero headline option 1: light warm brown, including inherited SVG flourish. */
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{
+ color:#d8a87a!important;
+}
+
+/* PC only: reduce both hero CTA widths by 20% (330px -> 264px). */
+@media(min-width:801px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-buttons{
+  width:min(100%,264px)!important;
+  max-width:264px!important;
+  min-width:0!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+ }
+}
+
+/* Mobile features 01 & 06: wider (+~10%) and taller (+~15%) portrait showcases.
+   Keep the carousel track, partial neighboring cards and desktop untouched. */
+@media(max-width:800px){
+ .landing-v2 .dd-feature-theme .dd-concept-carousel-card{
+  flex:0 0 82.5%!important;
+ }
+ .landing-v2 .dd-feature-theme .dd-concept-carousel-track{
+  padding-left:8.75%!important;
+  padding-right:8.75%!important;
+  scroll-padding-inline:8.75%!important;
+ }
+ .landing-v2 .dd-feature-theme .dd-concept-carousel-image{
+  aspect-ratio:0.535!important;
+ }
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-card{
+  flex:0 0 88%!important;
+ }
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-track{
+  padding-left:6%!important;
+  padding-right:6%!important;
+  scroll-padding-inline:6%!important;
+ }
+ .landing-v2 .dd-feature-occasions .dd-concept-carousel-image{
+  aspect-ratio:0.535!important;
+ }
+}
+
+/* Mobile landing CTAs: keep their original Pretendard appearance, independent of the headline font. */
+@media (max-width:800px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-button{
+  font-family:"Pretendard","Pretendard Variable","Noto Sans KR",sans-serif!important;
+  font-weight:600!important;
+ }
+}
