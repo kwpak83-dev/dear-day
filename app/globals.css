@@ -5128,3 +5128,19 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .classic-001 .classic-countdown-title{position:relative;z-index:0;width:fit-content;max-width:100%;margin:0 auto 18px;isolation:isolate}
 .classic-001 .classic-countdown-title>span{position:relative;z-index:1}
 .classic-001 .classic-countdown-title::before{content:"";position:absolute;z-index:0;pointer-events:none;left:-2%;right:-2%;bottom:10%;height:39%;background:linear-gradient(90deg,transparent 0%,color-mix(in srgb,var(--dd-color-accent,#b78b72) 35%,transparent) 9%,color-mix(in srgb,var(--dd-color-accent,#b78b72) 40%,transparent) 40%,color-mix(in srgb,var(--dd-color-accent,#b78b72) 37%,transparent) 76%,transparent 100%);border-radius:48% 42% 52% 40% / 46% 54% 40% 55%;transform:rotate(-.6deg);filter:blur(.7px)}
+
+/* Intro lettering phase 1: soft moving ink edge; preserve existing line timing and DOM. */
+@supports ((mask-image:linear-gradient(to right,#000,transparent)) or (-webkit-mask-image:linear-gradient(to right,#000,transparent))){
+ .dd-hero-intro-line{
+  clip-path:none;
+  -webkit-mask-image:linear-gradient(to right,#000 0%,#000 46%,transparent 54%,transparent 100%);
+  mask-image:linear-gradient(to right,#000 0%,#000 46%,transparent 54%,transparent 100%);
+  -webkit-mask-size:200% 100%;mask-size:200% 100%;
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  animation:dd-hero-intro-soft-write var(--dd-intro-line-duration) cubic-bezier(.38,.04,.62,.96) var(--dd-intro-line-delay) both;
+ }
+ @keyframes dd-hero-intro-soft-write{
+  from{-webkit-mask-position:100% 0;mask-position:100% 0}
+  to{-webkit-mask-position:0% 0;mask-position:0% 0}
+ }
+}
