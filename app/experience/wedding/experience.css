@@ -36,5 +36,5 @@ html:has(.dd-landing-experience-document) body::-webkit-scrollbar {
 /* Desktop landing demo only: render the program bottom-sheet content at 80%.
    Keep the sheet frame, handle, close control and scrolling behavior unchanged. */
 html.dd-experience-desktop-embed .invitation-bottom-sheet--program .invitation-bottom-sheet-content {
-  zoom: .8;
+  zoom: .7;
 }
