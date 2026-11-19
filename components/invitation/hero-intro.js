@@ -114,7 +114,7 @@ export default function HeroIntro({ intro }) {
       if (!full.width) return "";
       const range = document.createRange();
       const chars = Array.from(line);
-      const weights = chars.map(ch => /\\s/u.test(ch) ? 0.35 : 1);
+      const weights = chars.map(ch => /\s/u.test(ch) ? 0.35 : 1);
       const totalWeight = weights.reduce((a, b) => a + b, 0);
       let offset = 0;
       let progress = 0;
