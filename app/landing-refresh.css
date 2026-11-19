@@ -3381,3 +3381,29 @@
 .landing-v2 .dd-floating-quick .dd-floating-quick-secondary{
   box-shadow:0 2px 6px rgba(91,77,67,.12);
 }
+
+
+/* Desktop only: balance typography of all seven feature descriptions with their previews. */
+@media (min-width:801px){
+  .landing-v2 .dd-features .dd-feature .dd-feature-copy h3{
+    font-size:30px!important;
+    line-height:1.38!important;
+  }
+  .landing-v2 .dd-features .dd-feature .dd-feature-copy>h3+p{
+    font-size:17px!important;
+    line-height:1.75!important;
+  }
+  .landing-v2 .dd-features .dd-feature .dd-feature-checks li{
+    font-size:17px!important;
+    line-height:1.55;
+  }
+  .landing-v2 .dd-features .dd-feature .dd-feature-checks li span{
+    font-size:18px;
+  }
+  .landing-v2 .dd-features .dd-feature .dd-feature-pill{
+    font-size:13px;
+  }
+  .landing-v2 .dd-features .dd-feature .dd-feature-number{
+    font-size:18px;
+  }
+}
