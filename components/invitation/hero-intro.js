@@ -40,6 +40,8 @@ export default function HeroIntro({ intro }) {
     return () => { observer?.disconnect(); if (!observer) window.removeEventListener("resize", updateScale); };
   }, []);
   const [lines, setLines] = useState(null);
+  const [writingFrames, setWritingFrames] = useState(null);
+  const linesRef = useRef(null);
   const fontFamily = getHeroFont(intro.fontId).family;
   const total = intro.writeDuration + intro.holdDuration + intro.fadeDuration;
   const text = intro.text || "";
@@ -90,6 +92,7 @@ export default function HeroIntro({ intro }) {
       observer?.observe(node);
     };
     setLines(null);
+    setWritingFrames(null);
     waitForFont();
     return () => {
       active = false;
@@ -98,6 +101,47 @@ export default function HeroIntro({ intro }) {
     };
   }, [text, fontFamily, intro.fontSize]);
 
+  // Measure character boundaries on the intact rendered line, preserving cursive joins.
+  // Each line keeps its original DOM text; only its reveal mask gains a writing rhythm.
+  useLayoutEffect(() => {
+    if (!lines?.length || !linesRef.current) return;
+    const elements = [...linesRef.current.querySelectorAll(".dd-hero-intro-line")];
+    const styles = elements.map((element, index) => {
+      const node = element.firstChild;
+      const line = lines[index];
+      if (!node || !line) return "";
+      const full = element.getBoundingClientRect();
+      if (!full.width) return "";
+      const range = document.createRange();
+      const chars = Array.from(line);
+      const weights = chars.map(ch => /\\s/u.test(ch) ? 0.35 : 1);
+      const totalWeight = weights.reduce((a, b) => a + b, 0);
+      let offset = 0;
+      let progress = 0;
+      const frames = ["0%{clip-path:inset(-1em calc(100% + 1em) -1em -1em)}"];
+      chars.forEach((ch, i) => {
+        offset += ch.length;
+        range.setStart(node, 0);
+        range.setEnd(node, offset);
+        const rect = range.getBoundingClientRect();
+        const visible = Math.max(0, Math.min(100, (rect.right - full.left) / full.width * 100));
+        const remaining = Math.max(-1, 100 - visible);
+        const share = weights[i] / totalWeight * 100;
+        const start = progress;
+        progress += share;
+        // A short settling moment between letters, without changing the total duration.
+        const movingEnd = Math.max(start, progress - Math.min(share * 0.12, 0.65));
+        frames.push(`${movingEnd.toFixed(3)}%{clip-path:inset(-1em calc(${remaining.toFixed(3)}% + 0em) -1em -1em)}`);
+        if (i < chars.length - 1) frames.push(`${progress.toFixed(3)}%{clip-path:inset(-1em calc(${remaining.toFixed(3)}% + 0em) -1em -1em)}`);
+      });
+      range.detach?.();
+      frames.push("100%{clip-path:inset(-1em -1em -1em -1em)}");
+      return `@keyframes dd-intro-letter-${index}{${frames.join("")}}`;
+    });
+    const next = styles.every(Boolean) ? styles.join("\\n") : null;
+    setWritingFrames(current => current === next ? current : next);
+  }, [lines, fontFamily, intro.fontSize, canvasScale]);
+
   const ready = Array.isArray(lines) && lines.length > 0;
   const count = ready ? lines.reduce((sum, line) => sum + Array.from(line).length, 0) : 0;
   let elapsed = 0;
@@ -105,13 +149,14 @@ export default function HeroIntro({ intro }) {
     const duration = intro.writeDuration * Array.from(line).length / count;
     const delay = elapsed;
     elapsed += duration;
-    return <span key={index} className="dd-hero-intro-line" style={{ "--dd-intro-line-delay": `${delay}s`, "--dd-intro-line-duration": `${duration}s` }}>{line}</span>;
+    return <span key={index} className={`dd-hero-intro-line${writingFrames ? " dd-hero-intro-letter-write" : ""}`} style={{ ...(writingFrames ? { animationName: `dd-intro-letter-${index}` } : {}), "--dd-intro-line-delay": `${delay}s`, "--dd-intro-line-duration": `${duration}s` }}>{line}</span>;
   }) : null;
 
   return <div className={`dd-hero-intro${ready ? " dd-hero-intro-ready" : ""}`} style={{ backgroundColor:intro.backgroundColor, "--dd-intro-write":`${intro.writeDuration}s`, "--dd-intro-hold":`${intro.holdDuration}s`, "--dd-intro-fade":`${intro.fadeDuration}s`, "--dd-intro-total":`${total}s` }} aria-hidden="true">
     <span ref={viewportRef} className="dd-hero-intro-viewport" style={{display:"flex",width:"100%",justifyContent:"center",alignItems:"center"}}><span className="dd-hero-intro-text-wrap" style={{ width:343.2, maxWidth:"none", flex:"none", zoom:canvasScale, fontFamily, fontSize:`${intro.fontSize}px`, color:intro.textColor }}>
       <span ref={measureRef} className="dd-hero-intro-measure">{text}</span>
-      {ready && <span className="dd-hero-intro-lines">{animatedLines}</span>}
+      {writingFrames && <style>{writingFrames}</style>}
+      {ready && <span ref={linesRef} className="dd-hero-intro-lines">{animatedLines}</span>}
     </span></span>
   </div>;
 }
