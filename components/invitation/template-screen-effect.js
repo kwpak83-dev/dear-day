@@ -1,6 +1,11 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
 const ORNAMENTS = new Set(["blossom","green","autumn","autumn-maple","autumn-mixed","snow","star","heart","rose","lavender","daisy","ginkgo","feather","gold-confetti","color-confetti","balloon","blue-balloon","bubble","ribbon","music","butterfly","moon","blossom-flower","blue-hydrangea","coffee-bean","popcorn","gold-silver-confetti","cherry-petal-real","palm-leaf","snowman"]);
 
 export default function TemplateScreenEffect({ config, assets = {} }) {
+  const effectRef = useRef(null);
   const effect = config?.effects?.screenEffect;
   const blueBalloonSrc = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill='none'%3E%3Cpath d='M32 8C19 8 14 19 17 32c2 8 9 14 15 17 7-4 13-10 15-18 3-13-3-23-15-23Z' fill='%23b9dff2'/%3E%3Cpath d='m32 49-4 5h8Z' fill='%238fc5df'/%3E%3Cpath d='M32 54q-6 4 0 8' stroke='%2391aebc' stroke-width='1.5' fill='none'/%3E%3Cellipse cx='24' cy='23' rx='3' ry='8' transform='rotate(25 24 23)' fill='%23e8f7ff' opacity='.75'/%3E%3C/svg%3E";
   const src = effect?.ornament === "blue-balloon"
@@ -10,7 +15,38 @@ export default function TemplateScreenEffect({ config, assets = {} }) {
   if (!effect || !src) return null;
   const motion = ["fall", "flutter", "sparkle"].includes(effect.motion) ? effect.motion : "fall";
   const range = (min, max, index, factor) => min + ((index * factor) % 101) / 100 * (max - min);
-  return <div className={`dd-template-screen-effect dd-template-screen-effect--${motion}`} aria-hidden="true">
+
+  useEffect(() => {
+    const layer = effectRef.current;
+    if (!layer || motion === "sparkle") return;
+    const article = layer.closest(".invitation-template");
+    const hero = article?.querySelector("[data-share-hero]");
+    const photo = hero?.querySelector("figure");
+    if (!photo) return;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const layerRect = layer.getBoundingClientRect();
+      const photoRect = photo.getBoundingClientRect();
+      // Align the initial falling path to the cover without changing the sticky body effect.
+      const offset = Math.max(0, photoRect.top - layerRect.top);
+      layer.style.setProperty("--dd-screen-cover-offset", `${offset}px`);
+    };
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+    update();
+    const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(schedule) : null;
+    observer?.observe(photo);
+    observer?.observe(layer);
+    window.addEventListener("scroll", schedule, true);
+    window.addEventListener("resize", schedule);
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      observer?.disconnect();
+      window.removeEventListener("scroll", schedule, true);
+      window.removeEventListener("resize", schedule);
+    };
+  }, [motion]);
+  return <div ref={effectRef} className={`dd-template-screen-effect dd-template-screen-effect--${motion}`} aria-hidden="true">
     {Array.from({ length: Math.min(24, effect.count || 8) }, (_, index) => {
       const leafSrc = effect.ornament === "autumn-mixed"
         ? ["/screen-effects/autumn-maple.svg", "/screen-effects/autumn-mixed-ginkgo.svg", "/screen-effects/autumn-mixed-brown.svg"][index % 3]
