@@ -2628,7 +2628,7 @@
 .dd-landing-effects-tabs button.is-active{background:#fff;color:#493d37;font-weight:700;box-shadow:0 2px 7px #5b46331c}
 .dd-landing-effects-stage{position:relative;isolation:isolate;width:min(100%,310px);height:390px;margin:auto;border-radius:12px;overflow:hidden;background:#fffaf8;border:1px solid #f0e8e2}
 .dd-landing-effects-photo{display:block;width:100%;height:100%;object-fit:contain;object-position:top center}
-.dd-landing-effects-stage--background .dd-landing-effects-photo,.dd-landing-effects-stage--effect .dd-landing-effects-photo{object-fit:cover;object-position:top center}
+.dd-landing-effects-stage--background .dd-landing-effects-photo,.dd-landing-effects-stage--effect .dd-landing-effects-photo{height:auto;object-fit:contain;object-position:top center}
 .dd-landing-effects-intro{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:25px;height:100%;padding:22px;text-align:center;background:radial-gradient(ellipse at 20% 15%,#fce8ec 0,transparent 48%),radial-gradient(ellipse at 95% 85%,#f9dce6 0,transparent 48%),#fffaf8;color:#846c6d}
 .dd-landing-effects-intro>span{font:italic 17px Georgia,serif;color:#b48b96}
 .dd-landing-effects-intro>strong{font-size:21px;line-height:2;font-weight:500;letter-spacing:.07em;animation:dd-landing-effects-appear 1.1s ease both}
@@ -2645,7 +2645,7 @@
 .dd-landing-effects-footer{display:flex;align-items:center;justify-content:center;min-height:35px;color:#99867a;font-size:12px}
 .dd-landing-effects-toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
 .dd-landing-effects-toggle input{accent-color:#ae8b83;width:16px;height:16px}
-@media(max-width:800px){.landing-v2 .dd-feature-effects .dd-feature-demo-content{padding:10px}.dd-landing-effects-stage{height:350px;width:min(100%,280px)}}
+@media(max-width:800px){.landing-v2 .dd-feature-effects .dd-feature-demo-content{padding:8px}.dd-landing-effects-stage{height:350px;width:min(100%,300px)}}
 @media(prefers-reduced-motion:reduce){.dd-landing-effects-intro>strong{animation:none}}
 
 /* Feature 04 intro reuses the actual invitation HeroIntro lettering renderer. */
@@ -3118,6 +3118,12 @@
  .landing-v2 .dd-features .dd-feature.dd-feature-occasions .dd-feature-copy{order:1!important}
 }
 
+/* Feature 05 (instant preview): desktop demo left, description right. */
+@media (min-width:801px){
+  .landing-v2 .dd-features .dd-feature.dd-feature-preview .dd-feature-visual{order:0!important}
+  .landing-v2 .dd-features .dd-feature.dd-feature-preview .dd-feature-copy{order:1!important}
+}
+
 /* Desktop live invitation demo: keep a phone-sized viewport, like mobile. */
 @media (min-width:801px){
  .landing-v2 .dd-experience .dd-experience-stack{width:min(300px,100%)!important;max-width:300px!important;margin-inline:auto!important}
@@ -3318,5 +3324,37 @@
  .landing-v2 .dd-hero-variant-c .dd-hero-button{
   font-family:"Pretendard","Pretendard Variable","Noto Sans KR",sans-serif!important;
   font-weight:600!important;
+ }
+}
+
+
+/* Landing invitation experience: desktop side-by-side controls, mobile dropdown. */
+.landing-v2 .dd-experience-desktop-controls{display:none}
+@media(min-width:801px){
+ .landing-v2 .dd-experience .dd-experience-stack{display:grid;grid-template-columns:300px minmax(0,1fr);column-gap:clamp(36px,6vw,92px);align-items:center;width:min(100%,850px)!important;max-width:850px!important;margin-inline:auto!important}
+ .landing-v2 .dd-experience .dd-experience-controls{display:none}
+ .landing-v2 .dd-experience .dd-experience-phone{grid-column:1;grid-row:1;width:300px!important;max-width:300px!important;margin:0!important}
+ .landing-v2 .dd-experience-desktop-controls{display:block;grid-column:2;grid-row:1;min-width:0}
+ .landing-v2 .dd-experience-desktop-controls h3{margin:0 0 10px;font-size:23px;line-height:1.35;font-weight:700;letter-spacing:-.04em}
+ .landing-v2 .dd-experience-desktop-controls>p{margin:0 0 26px;font-size:13px;line-height:1.7;color:#777;word-break:keep-all}
+ .landing-v2 .dd-experience-feature-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .landing-v2 .dd-experience-feature-button{display:flex;align-items:center;justify-content:flex-start;gap:9px;min-height:45px;padding:10px 13px;border:1px solid #e6e6e6;border-radius:999px;background:#fff;color:#666;font:inherit;font-size:13px;text-align:left;white-space:nowrap;cursor:pointer;transition:border-color .18s,background-color .18s,color .18s}
+ .landing-v2 .dd-experience-feature-button svg{flex:none}
+ .landing-v2 .dd-experience-feature-button:hover{border-color:#aaa;color:#222}
+ .landing-v2 .dd-experience-feature-button.is-active{border-color:#e26b4c;background:#fff7f3;color:#c84f31;font-weight:650}
+ .landing-v2 .dd-experience-feature-button:focus-visible{outline:2px solid #555;outline-offset:3px}
+}
+@media(min-width:801px) and (max-width:980px){
+ .landing-v2 .dd-experience .dd-experience-stack{column-gap:32px}
+ .landing-v2 .dd-experience-feature-buttons{gap:9px}
+ .landing-v2 .dd-experience-feature-button{font-size:12px;padding:9px 10px}
+}
+
+/* Desktop feature 03: give the 9:16 movie poster cover its full vertical space.
+   Keep intro/effect preview sizes and mobile layout unchanged. */
+@media (min-width:801px){
+ .landing-v2 .dd-feature-effects .dd-landing-effects-stage--cover{
+  height:auto;
+  aspect-ratio:9 / 16;
  }
 }
