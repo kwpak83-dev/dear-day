@@ -74,6 +74,7 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const [visible, setVisible] = useState(false);
   const [sheet, setSheet] = useState(null);
   const [desktopLivePortal, setDesktopLivePortal] = useState(null);
+  const [landingMenuPortal, setLandingMenuPortal] = useState(null);
   const [desktopLiveStyle, setDesktopLiveStyle] = useState(undefined);
   const [previewSheetPortal, setPreviewSheetPortal] = useState(null);
   const [previewSheetStyle, setPreviewSheetStyle] = useState(undefined);
@@ -132,9 +133,16 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   const isSalesPreview = previewMode === "sales-preview";
   const isDesktopLivePreview = previewMode === "desktop-live" || previewMode === "admin-live" || previewMode === "admin-full" || isEditorFullPreview;
   const usesPreviewPortal = isDesktopLivePreview || isSalesPreview;
+  // Only the landing demo quick menu escapes the transformed preview canvas.
+  // Keep the sheet portal/scroll-lock behavior unchanged.
+  useEffect(() => {
+    if (previewMode !== "landing-experience") return;
+    setLandingMenuPortal(document.body);
+    return () => setLandingMenuPortal(null);
+  }, [previewMode]);
 
   useEffect(() => {
-    const templateRoot = markerRef.current?.closest(".invitation-template");
+    const templateRoot = markerRef.current?.closest(".invitation-template") || (previewMode === "landing-experience" ? document.querySelector(".invitation-template") : null);
     if (!templateRoot) return;
     const phone = (previewMode === "admin-live" || previewMode === "admin-full")
       ? markerRef.current?.closest(".admin-draft-preview-device, .admin-draft-full-preview-device") || null
@@ -254,6 +262,29 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
   useEffect(() => {
     if (!menuEnabled || visible || previewMode === "admin-live" || previewMode === "admin-full") return;
 
+    if (previewMode === "landing-experience") {
+      // The landing sample scrolls inside its iframe window, not a preview-content
+      // scroller. Resolve the directions section from the document (the quick-menu
+      // marker is rendered after the template, so closest(".invitation-template")
+      // can be null). Never show the menu merely because a target is missing.
+      const findDirections = () => document.querySelector(
+        ".classic-information, .modern-information, .romantic-information, .dd-transport-guide"
+      );
+      const onScroll = () => {
+        const directions = findDirections();
+        if (!directions) return;
+        const rect = directions.getBoundingClientRect();
+        if (rect.top <= window.innerHeight * 0.85) setVisible(true);
+      };
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll);
+      return () => {
+        window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("resize", onScroll);
+      };
+    }
+
     const menuRoot = markerRef.current?.closest(".invitation-template");
     const scrollRoot = (previewMode === "admin-live" || previewMode === "admin-full")
       ? markerRef.current?.closest(".admin-draft-preview-scroll") || null
@@ -339,13 +370,13 @@ export default function InvitationQuickMenu({ invitation, slug, startsAt, previe
 
   return <>
     <span ref={markerRef} className="invitation-quick-menu-trigger" aria-hidden="true" />
-    {visible && (usesPreviewPortal && desktopLivePortal ? createPortal(<nav className={`invitation-quick-menu invitation-quick-menu--minimal invitation-quick-menu--pills invitation-quick-menu--modern${program.enabled ? " invitation-quick-menu--program" : ""}${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}${isEditorFullPreview ? " invitation-quick-menu--editor-full" : ""}${isSalesPreview ? " invitation-quick-menu--sales-preview" : ""}`} data-program-menu={program.enabled ? "" : undefined} style={program.enabled ? { ...desktopLiveStyle, "--dd-quick-menu-count": menuCount, "--dd-program-menu-width": `${menuCount * 166 + 16}px` } : desktopLiveStyle} aria-label="초대장 빠른 메뉴">
+    {visible && (((usesPreviewPortal && desktopLivePortal) || (previewMode === "landing-experience" && landingMenuPortal)) ? createPortal(<nav className={`invitation-quick-menu invitation-quick-menu--minimal invitation-quick-menu--pills invitation-quick-menu--modern${program.enabled ? " invitation-quick-menu--program" : ""}${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}${isEditorFullPreview ? " invitation-quick-menu--editor-full" : ""}${isSalesPreview ? " invitation-quick-menu--sales-preview" : ""}`} data-program-menu={program.enabled ? "" : undefined} style={program.enabled ? { ...desktopLiveStyle, "--dd-quick-menu-count": menuCount, "--dd-program-menu-width": `${menuCount * 166 + 16}px` } : desktopLiveStyle} aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => openSheet("rsvp")}><span className="dd-quick-icon-bubble"><QuickMenuIcon kind="rsvp" /></span><span className="invitation-quick-copy"><strong>{rsvpLabel}</strong></span></button>}
       
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><span className="dd-quick-icon-bubble"><QuickMenuIcon kind="guestbook" /></span><span className="invitation-quick-copy"><strong>{guestbookLabel}</strong></span></button>}
 
       {program.enabled && <button className="invitation-quick-program" type="button" onClick={() => openSheet("program")} title={program.title} aria-label={program.title}><span className="dd-quick-icon-bubble"><QuickMenuIcon kind="program" /></span><span className="invitation-quick-copy"><strong>{programButtonLabel}</strong></span></button>}
-    </nav>, desktopLivePortal) : <nav className={`invitation-quick-menu invitation-quick-menu--minimal invitation-quick-menu--pills invitation-quick-menu--modern${program.enabled ? " invitation-quick-menu--program" : ""}${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} data-program-menu={program.enabled ? "" : undefined} style={program.enabled ? { ...desktopLiveStyle, "--dd-quick-menu-count": menuCount, "--dd-program-menu-width": `${menuCount * 166 + 16}px` } : desktopLiveStyle} aria-label="초대장 빠른 메뉴">
+    </nav>, previewMode === "landing-experience" ? landingMenuPortal : desktopLivePortal) : <nav className={`invitation-quick-menu invitation-quick-menu--minimal invitation-quick-menu--pills invitation-quick-menu--modern${program.enabled ? " invitation-quick-menu--program" : ""}${isDesktopLivePreview ? " invitation-quick-menu--desktop-live" : ""}`} data-program-menu={program.enabled ? "" : undefined} style={program.enabled ? { ...desktopLiveStyle, "--dd-quick-menu-count": menuCount, "--dd-program-menu-width": `${menuCount * 166 + 16}px` } : desktopLiveStyle} aria-label="초대장 빠른 메뉴">
       {rsvpEnabled && <button className="invitation-quick-rsvp" type="button" onClick={() => openSheet("rsvp")}><span className="dd-quick-icon-bubble"><QuickMenuIcon kind="rsvp" /></span><span className="invitation-quick-copy"><strong>{rsvpLabel}</strong></span></button>}
       
       {guestbookEnabled && <button className="invitation-quick-guestbook" type="button" onClick={() => openSheet("guestbook")}><span className="dd-quick-icon-bubble"><QuickMenuIcon kind="guestbook" /></span><span className="invitation-quick-copy"><strong>{guestbookLabel}</strong></span></button>}

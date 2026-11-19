@@ -3358,3 +3358,83 @@
   aspect-ratio:9 / 16;
  }
 }
+
+
+/* Unified landing CTA colors — desktop/mobile hero buttons and floating quick actions.
+   Visual overrides only; preserve layout and click behavior. */
+.landing-v2 .dd-cinematic-hero .dd-hero-button-primary,
+.landing-v2 .dd-hero-variant-c .dd-hero-button-primary,
+.landing-v2 .dd-floating-quick .dd-floating-quick-primary{
+  background:#5B4D43!important;
+  color:#FFFFFF!important;
+  border-color:#5B4D43!important;
+}
+.landing-v2 .dd-cinematic-hero .dd-hero-button-outline,
+.landing-v2 .dd-hero-variant-c .dd-hero-button-outline,
+.landing-v2 .dd-floating-quick .dd-floating-quick-secondary{
+  background:#F6F6F6!important;
+  color:#5B4D43!important;
+  border-color:#F6F6F6!important;
+}
+
+/* Subtle separation for the light floating quick-action button on PC and mobile. */
+.landing-v2 .dd-floating-quick .dd-floating-quick-secondary{
+  box-shadow:0 2px 6px rgba(91,77,67,.12);
+}
+
+
+/* Desktop only: balance typography of all seven feature descriptions with their previews. */
+@media (min-width:801px){
+  .landing-v2 .dd-features .dd-feature .dd-feature-copy h3{
+    font-size:30px!important;
+    line-height:1.38!important;
+  }
+  .landing-v2 .dd-features .dd-feature .dd-feature-copy>h3+p{
+    font-size:17px!important;
+    line-height:1.75!important;
+  }
+  .landing-v2 .dd-features .dd-feature .dd-feature-checks li{
+    font-size:17px!important;
+    line-height:1.55;
+  }
+  .landing-v2 .dd-features .dd-feature .dd-feature-checks li span{
+    font-size:18px;
+  }
+  .landing-v2 .dd-features .dd-feature .dd-feature-pill{
+    font-size:13px;
+  }
+  .landing-v2 .dd-features .dd-feature .dd-feature-number{
+    font-size:18px;
+  }
+}
+
+/* Desktop stationery background follows the header content width.
+   Match the side gutters to the following feature section, not pure white. */
+@media (min-width:1101px){
+  .landing-v2{background:#faf9f7}
+  .landing-v2 .landing-hero.dd-cinematic-hero.dd-hero-variant-c{
+    width:min(100%,1120px)!important;
+    max-width:1120px!important;
+    margin-inline:auto!important;
+    grid-template-columns:minmax(0,1.12fr) minmax(0,1fr)!important;
+    column-gap:clamp(8px,1vw,16px)!important;
+    padding-inline:clamp(16px,1.6vw,24px)!important;
+    padding-left:clamp(16px,1.6vw,24px)!important;
+    padding-right:clamp(16px,1.6vw,24px)!important;
+  }
+}
+
+
+/* Match the desktop experience heading to the feature-section badge/highlight style. */
+@media (min-width:801px){
+ .landing-v2 .dd-experience-desktop-controls .dd-experience-eyebrow{
+  display:inline-flex;align-items:center;width:max-content;
+  margin:0 0 14px;padding:2px 9px;border:1px solid #0798e4;
+  border-radius:999px;background:#16aef5;color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:.01em;line-height:1.15;
+ }
+ .landing-v2 .dd-experience-desktop-controls .dd-experience-title-highlight{
+  background:linear-gradient(to top,#ffe88a 0 24%,transparent 24% 100%);
+  box-decoration-break:clone;-webkit-box-decoration-break:clone;
+ }
+}
