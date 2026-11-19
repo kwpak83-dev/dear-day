@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { getHeroFont } from "../../lib/hero-fonts";
 
 function measureLines(node, text) {
@@ -25,6 +25,7 @@ function measureLines(node, text) {
 }
 
 export default function HeroIntro({ intro }) {
+  const instanceId = useId().replace(/[^a-zA-Z0-9_-]/g, "_");
   const measureRef = useRef(null);
   const viewportRef = useRef(null);
   const [canvasScale, setCanvasScale] = useState(1);
@@ -136,11 +137,11 @@ export default function HeroIntro({ intro }) {
       });
       range.detach?.();
       frames.push("100%{clip-path:inset(-1em -1em -1em -1em)}");
-      return `@keyframes dd-intro-letter-${index}{${frames.join("")}}`;
+      return `@keyframes dd-intro-${instanceId}-letter-${index}{${frames.join("")}}`;
     });
     const next = styles.every(Boolean) ? styles.join("\n") : null;
     setWritingFrames(current => current === next ? current : next);
-  }, [lines, fontFamily, intro.fontSize, canvasScale]);
+  }, [lines, fontFamily, intro.fontSize, canvasScale, instanceId]);
 
   const ready = Array.isArray(lines) && lines.length > 0;
   const count = ready ? lines.reduce((sum, line) => sum + Array.from(line).length, 0) : 0;
@@ -149,7 +150,7 @@ export default function HeroIntro({ intro }) {
     const duration = intro.writeDuration * Array.from(line).length / count;
     const delay = elapsed;
     elapsed += duration;
-    return <span key={index} className={`dd-hero-intro-line${writingFrames ? " dd-hero-intro-letter-write" : ""}`} style={{ ...(writingFrames ? { animationName: `dd-intro-letter-${index}` } : {}), "--dd-intro-line-delay": `${delay}s`, "--dd-intro-line-duration": `${duration}s` }}>{line}</span>;
+    return <span key={index} className={`dd-hero-intro-line${writingFrames ? " dd-hero-intro-letter-write" : ""}`} style={{ ...(writingFrames ? { animationName: `dd-intro-${instanceId}-letter-${index}` } : {}), "--dd-intro-line-delay": `${delay}s`, "--dd-intro-line-duration": `${duration}s` }}>{line}</span>;
   }) : null;
 
   return <div className={`dd-hero-intro${ready ? " dd-hero-intro-ready" : ""}`} style={{ backgroundColor:intro.backgroundColor, "--dd-intro-write":`${intro.writeDuration}s`, "--dd-intro-hold":`${intro.holdDuration}s`, "--dd-intro-fade":`${intro.fadeDuration}s`, "--dd-intro-total":`${total}s` }} aria-hidden="true">
