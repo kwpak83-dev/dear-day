@@ -3269,3 +3269,8 @@
  transform:rotate(-.6deg);
  filter:blur(1.5px);
 }
+
+/* Hero headline option 1: light warm brown, including inherited SVG flourish. */
+.landing-v2 .landing-hero.dd-hero-variant-c .dd-hero-script-title .dd-hero-script-second{
+ color:#d8a87a!important;
+}
