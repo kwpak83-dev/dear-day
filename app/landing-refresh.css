@@ -3423,3 +3423,18 @@
     padding-right:clamp(16px,1.6vw,24px)!important;
   }
 }
+
+
+/* Match the desktop experience heading to the feature-section badge/highlight style. */
+@media (min-width:801px){
+ .landing-v2 .dd-experience-desktop-controls .dd-experience-eyebrow{
+  display:inline-flex;align-items:center;width:max-content;
+  margin:0 0 14px;padding:2px 9px;border:1px solid #0798e4;
+  border-radius:999px;background:#16aef5;color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:.01em;line-height:1.15;
+ }
+ .landing-v2 .dd-experience-desktop-controls .dd-experience-title-highlight{
+  background:linear-gradient(to top,#ffe88a 0 24%,transparent 24% 100%);
+  box-decoration-break:clone;-webkit-box-decoration-break:clone;
+ }
+}
