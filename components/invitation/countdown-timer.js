@@ -25,7 +25,7 @@ export default function CountdownTimer({ targetDateTime, eventText }) {
   const values = remaining(target, now ?? target);
   const finished = now !== null && now >= target;
   return <div className="classic-countdown" aria-label={eventText ? `${eventText}까지 남은 시간` : "행사까지 남은 시간"}>
-    {eventText && <p className="classic-countdown-title">{eventText}까지</p>}
+    {eventText && <p className="classic-countdown-title"><span>{eventText}까지</span></p>}
     <div className="classic-countdown-grid">
       {[
         ["Days", values.days],
