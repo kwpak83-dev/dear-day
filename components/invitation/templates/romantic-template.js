@@ -44,7 +44,6 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
     <TemplateConfigHeroIntro config={templateConfig} />
     <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} trigger={templateConfig?.effects?.scrollRevealTrigger} />
     {bgmControl}
-    {screenEffect}
     {showMastheadText && <header className="romantic-masthead">
       <p>{mastheadText}</p>
       <span aria-hidden="true">· ♡ ·</span>
@@ -68,6 +67,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
         {showHero("schedule") && heroSchedule && <time>{heroSchedule}</time>}
       </HeroFontGate>
     </section>
+    {screenEffect}
 
     {message && <section className="romantic-section romantic-message">
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="section" />
