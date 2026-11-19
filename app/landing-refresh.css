@@ -3358,3 +3358,21 @@
   aspect-ratio:9 / 16;
  }
 }
+
+
+/* Unified landing CTA colors — desktop/mobile hero buttons and floating quick actions.
+   Visual overrides only; preserve layout and click behavior. */
+.landing-v2 .dd-cinematic-hero .dd-hero-button-primary,
+.landing-v2 .dd-hero-variant-c .dd-hero-button-primary,
+.landing-v2 .dd-floating-quick .dd-floating-quick-primary{
+  background:#5B4D43!important;
+  color:#FFFFFF!important;
+  border-color:#5B4D43!important;
+}
+.landing-v2 .dd-cinematic-hero .dd-hero-button-outline,
+.landing-v2 .dd-hero-variant-c .dd-hero-button-outline,
+.landing-v2 .dd-floating-quick .dd-floating-quick-secondary{
+  background:#F6F6F6!important;
+  color:#5B4D43!important;
+  border-color:#F6F6F6!important;
+}
