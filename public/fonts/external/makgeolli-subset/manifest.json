@@ -1,77 +1,77 @@
 [
   {
+    "file": "Makgeolli-00.woff2",
+    "bytes": 254940,
+    "characters": 1200
+  },
+  {
     "file": "Makgeolli-01.woff2",
-    "bytes": 148044,
-    "codepoints": 850
+    "bytes": 114324,
+    "characters": 790
   },
   {
     "file": "Makgeolli-02.woff2",
-    "bytes": 155852,
-    "codepoints": 850
+    "bytes": 101976,
+    "characters": 790
   },
   {
     "file": "Makgeolli-03.woff2",
-    "bytes": 110712,
-    "codepoints": 850
+    "bytes": 100172,
+    "characters": 790
   },
   {
     "file": "Makgeolli-04.woff2",
-    "bytes": 107132,
-    "codepoints": 850
+    "bytes": 87672,
+    "characters": 790
   },
   {
     "file": "Makgeolli-05.woff2",
-    "bytes": 93328,
-    "codepoints": 850
+    "bytes": 92308,
+    "characters": 790
   },
   {
     "file": "Makgeolli-06.woff2",
-    "bytes": 97124,
-    "codepoints": 850
+    "bytes": 100716,
+    "characters": 790
   },
   {
     "file": "Makgeolli-07.woff2",
-    "bytes": 104296,
-    "codepoints": 850
+    "bytes": 88168,
+    "characters": 790
   },
   {
     "file": "Makgeolli-08.woff2",
-    "bytes": 107056,
-    "codepoints": 850
+    "bytes": 86856,
+    "characters": 790
   },
   {
     "file": "Makgeolli-09.woff2",
-    "bytes": 109120,
-    "codepoints": 850
+    "bytes": 126692,
+    "characters": 790
   },
   {
     "file": "Makgeolli-10.woff2",
-    "bytes": 120036,
-    "codepoints": 850
+    "bytes": 95768,
+    "characters": 790
   },
   {
     "file": "Makgeolli-11.woff2",
-    "bytes": 94012,
-    "codepoints": 850
+    "bytes": 78572,
+    "characters": 790
   },
   {
     "file": "Makgeolli-12.woff2",
-    "bytes": 95772,
-    "codepoints": 850
+    "bytes": 96112,
+    "characters": 790
   },
   {
     "file": "Makgeolli-13.woff2",
-    "bytes": 94820,
-    "codepoints": 850
+    "bytes": 78600,
+    "characters": 790
   },
   {
     "file": "Makgeolli-14.woff2",
-    "bytes": 99752,
-    "codepoints": 850
-  },
-  {
-    "file": "Makgeolli-15.woff2",
-    "bytes": 69136,
-    "codepoints": 360
+    "bytes": 100120,
+    "characters": 790
   }
 ]
