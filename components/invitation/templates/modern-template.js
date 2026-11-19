@@ -44,7 +44,6 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
     <TemplateConfigHeroIntro config={templateConfig} />
     <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} trigger={templateConfig?.effects?.scrollRevealTrigger} />
     {bgmControl}
-    {screenEffect}
     {(showHeader || showMastheadText) && <header className={`modern-masthead${!showHeader && showMastheadText ? " event-only" : ""}`}>
       {showHeader && <b>DearDay</b>}
       {showMastheadText && <span>{mastheadText}</span>}
@@ -67,6 +66,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
         {showHero("schedule") && heroSchedule && <time>{heroSchedule}</time>}
       </HeroFontGate>
     </section>
+    {screenEffect}
 
     {message && <section className="modern-section modern-message">
       <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="section" />
