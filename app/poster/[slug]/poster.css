@@ -48,6 +48,54 @@
 .dd-poster-page-3{align-items:center;text-align:center}
 .dd-poster-message{white-space:pre-wrap;line-height:1.4;width:100%;min-height:0;overflow:auto}
 .dd-poster-qr{display:block;flex:none;width:31cqw;aspect-ratio:1;object-fit:contain;background:#fff;image-rendering:pixelated}
+
+.dd-poster-event,.dd-poster-accounts,.dd-poster-message,.dd-poster-polaroids figcaption{
+  word-break:keep-all;
+  overflow-wrap:anywhere;
+}
+.dd-poster-message{text-wrap:pretty}
+.dd-poster-event .dd-poster-english-names{margin-block-end:1cqw}
+.dd-poster-signature{font-size:3cqw}
+
+.dd-poster-playful-pop{
+  background:radial-gradient(circle at 12% 9%,#ff9caa 0 1.3cqw,transparent 1.45cqw),
+    radial-gradient(circle at 90% 92%,#f87d69 0 2cqw,transparent 2.15cqw),var(--paper);
+}
+.dd-poster-playful-pop .dd-poster-event{
+  align-self:center;width:84%;padding:3cqw 4cqw;box-sizing:border-box;background:#fff9eb;
+  box-shadow:.9cqw 1cqw #f59aa2;border:.3cqw solid #241512;
+}
+.dd-poster-playful-pop .dd-poster-polaroids figure:nth-child(even)::before{background:#f59aa2}
+.dd-poster-playful-pop .dd-poster-message{
+  box-sizing:border-box;padding:3cqw 5cqw;background:#fff;
+  border:.3cqw solid #241512;box-shadow:1cqw 1cqw #f59aa2;
+}
+.dd-poster-heart{
+  position:absolute;top:-10cqw;right:0;width:8cqw;height:8cqw;
+  fill:none;stroke:#c63966;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;transform:rotate(12deg);
+}
+
+.dd-poster-bold-pop-art{
+  background:radial-gradient(circle,#ff52ac 0 .45cqw,transparent .55cqw) right 7cqw bottom 5cqw / 3cqw 3cqw repeat-x,var(--paper);
+}
+.dd-poster-bold-pop-art h2{
+  text-decoration:underline;text-decoration-color:var(--accent);
+  text-decoration-thickness:.9cqw;text-underline-offset:1.2cqw;margin-bottom:1cqw;
+}
+.dd-poster-bold-pop-art .dd-poster-image{border-color:var(--accent)}
+.dd-poster-bold-pop-art .dd-poster-message{border-block:.6cqw solid var(--accent);padding-block:3cqw}
+.dd-poster-bold-pop-art .dd-poster-qr{outline:.8cqw solid var(--accent);outline-offset:.6cqw}
+
+.dd-poster-modern-editorial h2{letter-spacing:-.045em}
+.dd-poster-modern-editorial .dd-poster-event{border-inline-start:1.1cqw solid var(--accent);padding:3cqw}
+.dd-poster-modern-editorial .dd-poster-polaroids figure{transform:none;box-shadow:0 .5cqw 1.4cqw #25262d22}
+.dd-poster-modern-editorial .dd-poster-polaroids figure::before{content:none}
+.dd-poster-modern-editorial .dd-poster-main-caption{font-style:italic}
+.dd-poster-modern-editorial .dd-poster-message{padding-block:3cqw;border-block:.35cqw solid #b88875}
+.dd-poster-modern-editorial .dd-poster-signature{letter-spacing:.08em}
+
+.dd-poster-paper .dd-poster-message[data-dense=true]{padding-block:1.4cqw;line-height:1.25}
+
 @media(max-width:700px){
   .dd-poster-editor{padding-inline:14px}
   .dd-poster-workspace{display:flex;flex-direction:column;gap:18px}

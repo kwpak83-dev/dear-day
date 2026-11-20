@@ -25,6 +25,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
   const accounts = source.accounts?.[settings.accountSide];
   const names = [source.names.groom, source.names.bride].filter(Boolean).join(" · ");
   const english = [settings.englishNames.groom.trim(), settings.englishNames.bride.trim()].filter(Boolean).join(" & ");
+  const schedule = [source.date, source.time].filter(Boolean).join(" · ");
   const messageLines = settings.message.split("\n").length;
   const messageSize = messageLines > 18 || settings.message.length > 400
     ? Math.max(1.85, Math.min(2.8, 78 / messageLines)) : undefined;
@@ -34,9 +35,13 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
     {page === 1 && <>
       <h2>{designKey === "playful-pop" ? "OUR WEDDING DAY!" : "The Wedding"}</h2>
       <Photo key={cover} url={cover} crop={settings.cover.crop} grayscale={settings.cover.grayscale} capture={capture} />
-      <div className="dd-poster-event"><h3>{names}</h3>{english && <p>{english}</p>}
-        <p>{[source.date, source.time].filter(Boolean).join(" · ")}</p>
-        <p>{source.venue}</p>{source.venueAddress && <p>{source.venueAddress}</p>}</div>
+      <div className="dd-poster-event">
+        {names && <h3>{names}</h3>}
+        {english && <p className="dd-poster-english-names">{english}</p>}
+        {schedule && <p className="dd-poster-schedule">{schedule}</p>}
+        {source.venue && <p>{source.venue}</p>}
+        {source.venueAddress && <p>{source.venueAddress}</p>}
+      </div>
       {accounts?.rows?.length > 0 && <div className="dd-poster-accounts"><strong>{accounts.label}</strong>
         {accounts.rows.map(row => <p key={row.label}>{row.bank} {row.number} {row.holder}</p>)}</div>}
     </>}
@@ -51,11 +56,16 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
       })}</div>
     </>}
     {page === 3 && <>
-      <h2>You're Invited</h2>
-      <p className="dd-poster-message" style={messageSize && { fontSize: `${messageSize}cqw` }}>{settings.message}</p>
+      <h2>You're Invited{designKey === "playful-pop" && (
+        <svg className="dd-poster-heart" viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M24 40C19 34 3 25 5 14 7 4 19 7 24 16 28 4 42 5 43 15 44 25 31 36 24 40Z" />
+        </svg>
+      )}</h2>
+      <p className="dd-poster-message" data-dense={messageSize !== undefined}
+        style={messageSize && { fontSize: `${messageSize}cqw` }}>{settings.message}</p>
       {qrUrl ? <img className="dd-poster-qr" src={qrUrl} alt="발행 초대장 QR 코드" />
         : <p>QR 코드를 표시할 수 없어요.</p>}
-      <p>{names}</p>
+      {names && <p className="dd-poster-signature">{names}</p>}
     </>}
   </article>;
 }
