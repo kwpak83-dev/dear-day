@@ -98,15 +98,11 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
       })}</div>
     </>)}
     {page === 3 && <>
-      <h2>You're Invited{designKey === "playful-pop" && (
-        <svg className="dd-poster-heart" viewBox="0 0 48 48" aria-hidden="true">
-          <path d="M24 40C19 34 3 25 5 14 7 4 19 7 24 16 28 4 42 5 43 15 44 25 31 36 24 40Z" />
-        </svg>
-      )}</h2>
+      {designKey !== "playful-pop" && <h2>You're Invited</h2>}
       <div className="dd-poster-message-card"><p className="dd-poster-message" data-dense={messageSize !== undefined}
         style={messageSize && { fontSize: `${messageSize}cqw` }}>{settings.message}</p></div>
       {qrUrl ? <img className="dd-poster-qr" src={qrUrl} alt="발행 초대장 QR 코드" />
-        : <p>QR 코드를 표시할 수 없어요.</p>}
+        : <p className="dd-poster-qr-unavailable">QR 코드를 표시할 수 없어요.</p>}
       {names && <p className="dd-poster-signature">{names}</p>}
     </>}
   </article>;
