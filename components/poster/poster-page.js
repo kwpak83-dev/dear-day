@@ -64,8 +64,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
         <div className="dd-playful-event-details">
           {coverSchedule.date && <strong className="dd-playful-detail-date">{coverSchedule.date}</strong>}
           {coverSchedule.time && <strong className="dd-playful-detail-time">{coverSchedule.time}</strong>}
-          {source.venue && <strong className="dd-playful-detail-venue">{source.venue}</strong>}
-          {source.venueAddress && <p className="dd-playful-detail-address">{source.venueAddress}</p>}
+          {source.venue && <strong className="dd-playful-detail-venue">{source.venue === "호텔수성" ? "호텔수성 3층 사파이어홀" : source.venue}</strong>}
         </div>
       </> : <div className="dd-poster-event">
         {(english || names) && <h3>{english || names}</h3>}
