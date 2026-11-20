@@ -260,3 +260,36 @@
 .dd-poster-playful-pop.dd-poster-page-1 .dd-poster-accounts{position:absolute;left:18%;bottom:1.1%;width:75%;max-width:none;margin:0;font-size:2cqw;line-height:1.15;text-align:center}
 .dd-poster-playful-pop.dd-poster-page-1::after{bottom:-14cqw;right:-13cqw;width:42cqw;height:43cqw}
 .dd-poster-playful-pop.dd-poster-page-1::before{bottom:-15cqw}
+
+
+/* Playful Pop: illustrated paper name label and reference-style event pictograms. */
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-name-tag{
+  isolation:isolate;
+  background:#fffdf6;
+  border:0;
+  box-shadow:0 .45cqw .8cqw #9b73432b;
+  clip-path:polygon(0% 10%,2% 6%,4% 8%,6% 3%,9% 6%,12% 1%,15% 5%,18% 2%,22% 5%,26% 1%,30% 5%,34% 2%,38% 5%,42% 2%,46% 5%,50% 1%,54% 5%,58% 2%,62% 5%,66% 2%,70% 5%,74% 1%,78% 5%,82% 2%,86% 5%,90% 1%,94% 6%,97% 5%,100% 11%,97% 17%,100% 24%,97% 31%,100% 38%,97% 45%,100% 52%,97% 59%,100% 66%,97% 73%,100% 80%,97% 88%,100% 94%,96% 98%,92% 95%,88% 100%,84% 96%,80% 99%,76% 95%,72% 100%,68% 96%,64% 99%,60% 95%,56% 99%,52% 96%,48% 100%,44% 96%,40% 99%,36% 95%,32% 99%,28% 96%,24% 100%,20% 95%,16% 99%,12% 96%,8% 99%,4% 94%,0% 91%,3% 83%,0% 75%,3% 67%,0% 59%,3% 51%,0% 43%,3% 35%,0% 27%,3% 19%);
+}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-name-tag::before{
+  content:"";position:absolute;inset:1.2cqw 2cqw;z-index:-1;
+  border-top:.25cqw dashed #f1e3ca;border-bottom:.25cqw dashed #f1e3ca;
+  pointer-events:none;
+}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-name-tag::after{
+  content:"♥";position:absolute;right:5cqw;bottom:1cqw;
+  color:#ff8081;font-size:3.1cqw;transform:rotate(12deg);
+}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-name-tag strong{font-weight:900;letter-spacing:-.055em}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-name-tag span{font-family:Georgia,serif;font-weight:600}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-info-icon{
+  border:0;border-radius:0;display:grid;place-items:center;width:6cqw;height:6cqw;
+  font-size:inherit;
+}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-info-icon svg{
+  display:block;width:5.6cqw;height:5.6cqw;stroke:#25231b;overflow:visible;
+}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-event-details{
+  font-family:Arial,"Malgun Gothic",sans-serif;font-weight:700;
+}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-event-details>div{gap:2.7cqw}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-event-details p{padding-left:8.7cqw}
