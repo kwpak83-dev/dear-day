@@ -75,7 +75,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
       </div>}
       {accountGroups.length > 0 && <div className="dd-poster-accounts">
         {accountGroups.flatMap((group, groupIndex) => group.rows.map((row, index) =>
-          <p key={`${groupIndex}-${index}-${row.number}`}>{playfulCover && <span className="dd-playful-account-side">{groupIndex === 0 && settings.accountSide === "both" ? "신랑측" : groupIndex === 1 ? "신부측" : settings.accountSide === "bride" ? "신부측" : "신랑측"}</span>}<span>{row.bank}</span><span>{row.number}</span><span>{row.holder}</span></p>))}</div>}
+          <p key={`${groupIndex}-${index}-${row.number}`}><span>{row.bank}</span><span>{row.number}</span><span>{row.holder}</span></p>))}</div>}
     </>}
     {page === 2 && (playfulGallery ? <>
       <div className="dd-playful-gallery-main-photo"><Photo key={photos.get(main?.mediaId)} url={photos.get(main?.mediaId)} crop={main?.crop} grayscale={false} capture={capture}>{main ? "사진을 다시 선택해 주세요" : "메인 사진을 지정해 주세요"}</Photo></div>
