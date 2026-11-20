@@ -130,14 +130,14 @@ async function embeddedPosterFonts(page) {
   }
   if (!rules.length) throw new Error("포스터 자체 호스팅 폰트를 찾지 못했어요.");
   return (await Promise.all(rules.map(async css => {
-    const urls = [...new Set([...css.matchAll(/url\\(([^)]+)\\)/g)].map(match => match[1].trim().replace(/^["']|["']$/g, "")))];
+    const urls = [...new Set([...css.matchAll(/url\(([^)]+)\)/g)].map(match => match[1].trim().replace(/^["']|["']$/g, "")))];
     for (const path of urls) {
       const url = new URL(path, location.href);
       if (url.origin !== location.origin) throw new Error("포스터 폰트 주소가 올바르지 않아요.");
       css = css.replaceAll(path, await fontDataUrl(url.href));
     }
     return css;
-  }))).join("\\n");
+  }))).join("\n");
 }
 
 // html-to-image 1.11.x rounds cloned font-size. Force the measured size with
@@ -176,7 +176,7 @@ export async function renderPosterPng(pages) {
         unfreeze = freezePosterLayout(page);
         try {
           canvas = await toCanvas(page, { width: WIDTH, height: HEIGHT, pixelRatio: SCALE,
-            skipFonts: true, ...(embeddedFonts[index] ? { fontEmbedCSS: embeddedFonts[index] } : {}) });
+            skipFonts: !embeddedFonts[index], ...(embeddedFonts[index] ? { fontEmbedCSS: embeddedFonts[index] } : {}) });
           if (canvas.width !== WIDTH * SCALE || canvas.height !== HEIGHT * SCALE ||
               canvasContext(canvas).getImageData(0, 0, 1, 1).data[3] !== 255) throw new Error(CANVAS_ERROR);
           context.drawImage(canvas, 0, index * HEIGHT * SCALE);
