@@ -36,8 +36,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
       <h2>{designKey === "playful-pop" ? "OUR WEDDING DAY!" : "The Wedding"}</h2>
       <Photo key={cover} url={cover} crop={settings.cover.crop} grayscale={settings.cover.grayscale} capture={capture} />
       <div className="dd-poster-event">
-        {names && <h3>{names}</h3>}
-        {english && <p className="dd-poster-english-names">{english}</p>}
+        {(english || names) && <h3>{english || names}</h3>}
         {schedule && <p className="dd-poster-schedule">{schedule}</p>}
         {source.venue && <p>{source.venue}</p>}
         {source.venueAddress && <p>{source.venueAddress}</p>}
