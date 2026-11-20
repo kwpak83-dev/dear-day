@@ -96,21 +96,58 @@ function checkLayout(page) {
   }
 }
 
-// html-to-image renders inside an SVG foreignObject where container-query units
-// can be recalculated differently. Freeze the measured layout before capture.
+// Read only same-origin next/font @font-face rules. Never request Google stylesheets.
+const fontDataCache = new Map();
+async function fontDataUrl(url) {
+  if (!fontDataCache.has(url)) fontDataCache.set(url, (async () => {
+    const response = await fetch(url, { credentials: "same-origin" });
+    if (!response.ok) throw new Error("포스터 폰트 파일을 읽지 못했어요.");
+    const blob = await response.blob();
+    return await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  })().catch(error => { fontDataCache.delete(url); throw error; }));
+  return fontDataCache.get(url);
+}
+
+async function embeddedPosterFonts(page) {
+  if (!page.classList.contains("dd-poster-playful-pop")) return undefined;
+  const family = getComputedStyle(page.querySelector(
+    page.dataset.posterPage === "2" ? ".dd-playful-gallery-main-caption" :
+    page.dataset.posterPage === "3" ? ".dd-poster-message" : ".dd-playful-name-tag strong"
+  ) || page).fontFamily.split(",")[0].replaceAll('"', "").trim();
+  const rules = [];
+  for (const sheet of document.styleSheets) {
+    if (sheet.href && new URL(sheet.href, location.href).origin !== location.origin) continue;
+    try {
+      for (const rule of sheet.cssRules) {
+        if (rule.type === CSSRule.FONT_FACE_RULE && rule.style.fontFamily.replaceAll('"', "").replaceAll("'", "").trim() === family) rules.push(rule.cssText);
+      }
+    } catch { /* inaccessible stylesheets are not needed for next/font */ }
+  }
+  if (!rules.length) throw new Error("포스터 자체 호스팅 폰트를 찾지 못했어요.");
+  return (await Promise.all(rules.map(async css => {
+    const urls = [...new Set([...css.matchAll(/url\\(([^)]+)\\)/g)].map(match => match[1].trim().replace(/^["']|["']$/g, "")))];
+    for (const path of urls) {
+      const url = new URL(path, location.href);
+      if (url.origin !== location.origin) throw new Error("포스터 폰트 주소가 올바르지 않아요.");
+      css = css.replaceAll(path, await fontDataUrl(url.href));
+    }
+    return css;
+  }))).join("\\n");
+}
+
+// html-to-image 1.11.x rounds cloned font-size. Force the measured size with
+// !important, preserving original inline styles after conversion.
 function freezePosterLayout(page) {
   const restore = [];
-  const properties = ["fontSize", "lineHeight", "letterSpacing", "wordSpacing", "rowGap", "columnGap",
-    "paddingTop", "paddingRight", "paddingBottom", "paddingLeft",
-    "marginTop", "marginRight", "marginBottom", "marginLeft",
-    "borderTopWidth", "borderRightWidth", "borderBottomWidth", "borderLeftWidth"];
   for (const element of [page, ...page.querySelectorAll("*")]) {
-    const computed = getComputedStyle(element);
+    const size = getComputedStyle(element).fontSize;
     const original = element.getAttribute("style");
-    for (const property of properties) {
-      const value = computed[property];
-      if (value && (value.endsWith("px") || value === "normal")) element.style[property] = value;
-    }
+    element.style.setProperty("font-size", size, "important");
     restore.push(() => original === null ? element.removeAttribute("style") : element.setAttribute("style", original));
   }
   return () => { for (const reset of restore) reset(); };
@@ -123,6 +160,7 @@ export async function renderPosterPng(pages) {
   try {
     await document.fonts.ready;
     for (const page of pages) checkLayout(page);
+    const embeddedFonts = await Promise.all([...pages].map(embeddedPosterFonts));
     const { toCanvas } = await import("html-to-image");
     result.width = WIDTH * SCALE;
     result.height = HEIGHT * SCALE * pages.length;
@@ -135,9 +173,10 @@ export async function renderPosterPng(pages) {
         for (const image of images) await preparePhoto(image, photos);
         const qr = page.querySelector(".dd-poster-qr");
         if (qr) await qr.decode();
+        unfreeze = freezePosterLayout(page);
         try {
-          // Use embedded Google font data for Playful Pop; skip cross-origin CSS inspection.
-          canvas = await toCanvas(page, { width: WIDTH, height: HEIGHT, pixelRatio: SCALE, skipFonts: true });
+          canvas = await toCanvas(page, { width: WIDTH, height: HEIGHT, pixelRatio: SCALE,
+            skipFonts: true, ...(embeddedFonts[index] ? { fontEmbedCSS: embeddedFonts[index] } : {}) });
           if (canvas.width !== WIDTH * SCALE || canvas.height !== HEIGHT * SCALE ||
               canvasContext(canvas).getImageData(0, 0, 1, 1).data[3] !== 255) throw new Error(CANVAS_ERROR);
           context.drawImage(canvas, 0, index * HEIGHT * SCALE);
