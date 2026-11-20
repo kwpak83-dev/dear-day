@@ -344,3 +344,12 @@
 /* All poster overlay cqw units must track the actual paper width, not its wider preview wrapper.
    Sticky desktop previews may shrink the paper by viewport height while the wrapper stays 540px. */
 .dd-poster-paper{container-type:inline-size}
+
+/* Playful Pop dynamic text uses the same Google font families as the invitation editors. */
+.dd-poster-playful-pop.dd-poster-page-1 :is(.dd-playful-name-tag,.dd-playful-name-tag strong,.dd-playful-name-tag span,.dd-playful-event-details,.dd-poster-accounts,.dd-poster-accounts p),
+.dd-poster-playful-pop.dd-poster-page-3 :is(.dd-poster-message-card .dd-poster-message,.dd-poster-signature,.dd-poster-qr-unavailable){
+  font-family:"Gowun Dodum","Malgun Gothic",sans-serif;
+}
+.dd-poster-playful-pop.dd-poster-page-2 :is(.dd-playful-gallery-main-caption,.dd-playful-gallery-small-photo figcaption){
+  font-family:"Hi Melody","Malgun Gothic",cursive;
+}
