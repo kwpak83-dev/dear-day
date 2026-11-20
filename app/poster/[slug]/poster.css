@@ -314,3 +314,11 @@
   stroke:#2b2420;stroke-width:5;
   filter:drop-shadow(2px 2px 0 #f77c75);
 }
+
+
+/* Reference DAY! marker: broad irregular coral highlight BEHIND the letters. */
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-title-doodles{z-index:1}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-title-doodles .dd-playful-marker{
+  fill:#ff8582;stroke:none;opacity:.95;
+}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:nth-child(3){z-index:2}
