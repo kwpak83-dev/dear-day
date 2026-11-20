@@ -322,3 +322,10 @@
   fill:#ff8582;stroke:none;opacity:.95;
 }
 .dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:nth-child(3){z-index:2}
+
+
+/* Small illustrated party hat perched over the O in OUR. */
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title .dd-playful-party-hat{
+  position:absolute;z-index:5;left:-1cqw;top:-8cqw;width:13cqw;height:16cqw;
+  transform:rotate(-17deg);overflow:visible;pointer-events:none;
+}
