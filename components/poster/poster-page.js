@@ -34,9 +34,11 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
 
   return <article className={`dd-poster-paper dd-poster-${designKey} dd-poster-page-${page}`} data-poster-page={page}>
     {designKey === "bold-pop-art" && <span className="dd-poster-number" aria-hidden="true">0{page}</span>}
+    {designKey === "playful-pop" && <span className="dd-poster-deco-heart" aria-hidden="true">♡</span>}
+    {designKey === "modern-editorial" && <span className="dd-poster-editorial-mark" aria-hidden="true">OUR WEDDING DAY</span>}
     {page === 1 && <>
       <h2>{designKey === "playful-pop" ? "OUR WEDDING DAY!" : "The Wedding"}</h2>
-      <Photo key={cover} url={cover} crop={settings.cover.crop} grayscale={settings.cover.grayscale} capture={capture} />
+      <div className="dd-poster-cover-frame"><Photo key={cover} url={cover} crop={settings.cover.crop} grayscale={settings.cover.grayscale} capture={capture} /></div>
       <div className="dd-poster-event">
         {(english || names) && <h3>{english || names}</h3>}
         {schedule && <p className="dd-poster-schedule">{schedule}</p>}
@@ -49,12 +51,12 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
     </>}
     {page === 2 && <>
       <h2>Wedding Photos</h2>
-      <Photo key={photos.get(main?.mediaId)} url={photos.get(main?.mediaId)} crop={main?.crop} grayscale={monochrome} capture={capture}>{main ? "사진을 다시 선택해 주세요" : "메인 사진을 지정해 주세요"}</Photo>
-      {main?.caption && <p className="dd-poster-main-caption">{main.caption}</p>}
+      <div className="dd-poster-main-frame"><Photo key={photos.get(main?.mediaId)} url={photos.get(main?.mediaId)} crop={main?.crop} grayscale={monochrome} capture={capture}>{main ? "사진을 다시 선택해 주세요" : "메인 사진을 지정해 주세요"}</Photo></div>
+      <p className="dd-poster-main-caption">{main?.caption || "함께 맞은 봄"}</p>
       <div className="dd-poster-polaroids">{Array.from({ length: 3 }, (_, index) => {
         const photo = others[index];
         return <figure key={photo?.mediaId || index}><Photo key={photos.get(photo?.mediaId)} url={photos.get(photo?.mediaId)} crop={photo?.crop} grayscale={monochrome} capture={capture}>{photo && "사진을 다시 선택해 주세요"}</Photo>
-          {photo?.caption && <figcaption>{photo.caption}</figcaption>}</figure>;
+          <figcaption>{photo?.caption || (photo ? ["기쁜 날의 약속", "꽃으로 채운 자리", "소중한 순간들"][index] : "")}</figcaption></figure>;
       })}</div>
     </>}
     {page === 3 && <>
@@ -63,8 +65,8 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
           <path d="M24 40C19 34 3 25 5 14 7 4 19 7 24 16 28 4 42 5 43 15 44 25 31 36 24 40Z" />
         </svg>
       )}</h2>
-      <p className="dd-poster-message" data-dense={messageSize !== undefined}
-        style={messageSize && { fontSize: `${messageSize}cqw` }}>{settings.message}</p>
+      <div className="dd-poster-message-card"><p className="dd-poster-message" data-dense={messageSize !== undefined}
+        style={messageSize && { fontSize: `${messageSize}cqw` }}>{settings.message}</p></div>
       {qrUrl ? <img className="dd-poster-qr" src={qrUrl} alt="발행 초대장 QR 코드" />
         : <p>QR 코드를 표시할 수 없어요.</p>}
       {names && <p className="dd-poster-signature">{names}</p>}
