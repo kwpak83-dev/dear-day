@@ -69,8 +69,9 @@ async function preparePhoto(image, photos) {
     image.style.objectFit = "fill";
     image.src = raster;
     await image.decode();
-  } catch {
-    throw new Error(CANVAS_ERROR);
+  } catch (error) {
+    console.error("[poster PNG] photo rasterization failed", error);
+    throw new Error("사진 변환 중 오류가 발생했어요. 개발자 도구 Console에서 [poster PNG] 오류를 확인해 주세요.");
   } finally {
     releaseCanvas(canvas);
     URL.revokeObjectURL(url);
@@ -79,7 +80,9 @@ async function preparePhoto(image, photos) {
 
 function checkLayout(page) {
   const { width, height, top, bottom } = page.getBoundingClientRect();
-  if (width !== WIDTH || height !== HEIGHT) throw new Error(CANVAS_ERROR);
+  if (Math.abs(width - WIDTH) > 0.5 || Math.abs(height - HEIGHT) > 0.5) {
+    throw new Error(`PNG 출력 크기 오류: ${width.toFixed(1)}×${height.toFixed(1)} (예상 ${WIDTH}×${HEIGHT}).`);
+  }
   const message = page.querySelector(".dd-poster-message");
   if (message && message.scrollHeight > message.clientHeight) {
     throw new Error("초대 문구가 한 페이지에 들어가지 않아요. 문구나 줄바꿈을 줄여 주세요.");
@@ -88,8 +91,8 @@ function checkLayout(page) {
   if (accounts && (accounts.top < top || accounts.bottom > bottom)) {
     throw new Error("계좌정보가 한 페이지에 들어가지 않아요. 계좌정보를 숨긴 뒤 다시 시도해 주세요.");
   }
-  if (page.scrollHeight > HEIGHT || page.scrollWidth > WIDTH) {
-    throw new Error("포스터 내용이 한 페이지에 들어가지 않아요. 입력 내용을 확인해 주세요.");
+  if (page.scrollHeight > HEIGHT + 1 || page.scrollWidth > WIDTH + 1) {
+    throw new Error(`포스터 내용이 페이지를 벗어났어요. 실제 ${page.scrollWidth}×${page.scrollHeight}, 허용 ${WIDTH}×${HEIGHT}.`);
   }
 }
 
@@ -118,8 +121,12 @@ export async function renderPosterPng(pages) {
           if (canvas.width !== WIDTH * SCALE || canvas.height !== HEIGHT * SCALE ||
               canvasContext(canvas).getImageData(0, 0, 1, 1).data[3] !== 255) throw new Error(CANVAS_ERROR);
           context.drawImage(canvas, 0, index * HEIGHT * SCALE);
-        } catch {
-          throw new Error(CANVAS_ERROR);
+        } catch (error) {
+          console.error(`[poster PNG] page ${index + 1} canvas conversion failed`, error);
+          if (error instanceof Error && error.message !== CANVAS_ERROR) {
+            throw new Error(`${index + 1}페이지 PNG 변환 오류: ${error.message}`);
+          }
+          throw new Error(`${index + 1}페이지 PNG 변환에 실패했어요. 개발자 도구 Console에서 [poster PNG] 오류를 확인해 주세요.`);
         }
       } finally {
         releaseCanvas(canvas);
