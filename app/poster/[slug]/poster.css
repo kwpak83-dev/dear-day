@@ -4,7 +4,7 @@
 .dd-poster-editor button,.dd-poster-editor select,.dd-poster-editor input:not([type=range],[type=checkbox],[type=radio]),.dd-poster-editor textarea{font:inherit;padding:8px 12px;border:1px solid #cec6d2;border-radius:8px;background:white;color:inherit}
 .dd-poster-editor button{cursor:pointer}.dd-poster-editor button:disabled{opacity:.45;cursor:default}
 .dd-poster-editor .dd-poster-save,.dd-poster-tabs button[aria-pressed=true]{background:#241e2a;color:white;border-color:#241e2a}
-.dd-poster-tabs,.dd-poster-photo-actions{display:flex;flex-wrap:wrap;gap:8px}
+.dd-poster-tabs,.dd-poster-photo-actions,.dd-poster-downloads{display:flex;flex-wrap:wrap;gap:8px}
 .dd-poster-tabs{margin:12px 0 18px}
 .dd-poster-notice{margin:8px 0;color:#584475}
 .dd-poster-workspace{display:grid;grid-template-columns:minmax(240px,1fr) minmax(0,1.25fr);align-items:start;gap:24px}
@@ -20,6 +20,7 @@
 .dd-poster-picker img{width:100%;height:100%;object-fit:cover}
 .dd-poster-selection{display:grid;gap:8px;border-top:1px solid #e3dde5;padding-top:12px}
 .dd-poster-preview{width:min(100%,540px);margin-inline:auto;container-type:inline-size}
+.dd-poster-capture{position:fixed;top:0;left:-600px;width:540px;container-type:inline-size;pointer-events:none}
 .dd-poster-paper{box-sizing:border-box;position:relative;isolation:isolate;width:100%;aspect-ratio:9/16;display:flex;flex-direction:column;justify-content:center;gap:3cqw;padding:7cqw;overflow:hidden;background:var(--paper);color:var(--ink);font:600 3.4cqw/1.22 Arial,sans-serif;overflow-wrap:anywhere;text-align:center}
 .dd-poster-paper h2{font-size:10cqw;line-height:.98;margin:0;font-weight:900;position:relative}
 .dd-poster-paper h3{font-size:6.6cqw;margin:0 0 1cqw}
@@ -45,7 +46,8 @@
 .dd-poster-polaroids .dd-poster-image{aspect-ratio:1;border:0}
 .dd-poster-page-3{align-items:center;text-align:center}
 .dd-poster-message{white-space:pre-wrap;line-height:1.4;width:100%;min-height:0;overflow:auto}
-.dd-poster-qr{display:block;width:31cqw;aspect-ratio:1;object-fit:contain;background:#fff;image-rendering:pixelated}
+.dd-poster-message[data-long-message=true]{font-size:2.8cqw}
+.dd-poster-qr{display:block;flex:none;width:31cqw;aspect-ratio:1;object-fit:contain;background:#fff;image-rendering:pixelated}
 @media(max-width:700px){
   .dd-poster-editor{padding-inline:14px}
   .dd-poster-workspace{display:flex;flex-direction:column;gap:18px}

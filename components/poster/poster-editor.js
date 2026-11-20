@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import PosterPage, { DESIGNS } from "./poster-page";
+import { downloadPosterPng, posterQr, renderPosterPng } from "./poster-export";
 
 const DEFAULT_CROP = { x: 50, y: 50, zoom: 1 };
 const PAGES = ["표지", "사진 콜라주", "초대 문구"];
@@ -14,13 +16,16 @@ const errors = {
   revision_conflict: "다른 화면에서 먼저 저장했어요. 현재 입력을 확인한 뒤 새로고침해 주세요.",
   media_unavailable: "선택한 사진을 사용할 수 없어요. 사진 목록을 다시 확인해 주세요.",
   invalid_settings: "입력값과 사진 선택을 확인해 주세요.",
+  cover_required: "출력 전에 사용할 수 있는 표지 사진을 선택해 주세요.",
+  four_gallery_photos_required: "콜라주를 출력하려면 사용할 수 있는 사진 4장과 메인 사진이 필요해요.",
+  public_origin_unavailable: "발행 초대장 주소를 확인할 수 없어 QR을 출력할 수 없어요.",
 };
 
-async function request(slug, options = {}) {
+async function request(slug, options = {}, endpoint = "") {
   const client = getSupabaseBrowserClient();
   const session = client && (await client.auth.getSession()).data.session;
   if (!session) throw Object.assign(new Error(errors.login_required), { code: "login_required" });
-  const response = await fetch(`/api/posters/${encodeURIComponent(slug)}`, {
+  const response = await fetch(`/api/posters/${encodeURIComponent(slug)}${endpoint}`, {
     ...options, cache: "no-store",
     headers: { Authorization: `Bearer ${session.access_token}`, "Content-Type": "application/json" },
   });
@@ -45,6 +50,10 @@ export default function PosterEditor({ slug }) {
   const [notice, setNotice] = useState("");
   const [failure, setFailure] = useState(null);
   const [qr, setQr] = useState(null);
+  const [exporting, setExporting] = useState(false);
+  const [capture, setCapture] = useState(null);
+  const captureRoot = useRef(null);
+  const exportLock = useRef(false);
   useEffect(() => {
     const controller = new AbortController();
     request(slug, { signal: controller.signal }).then(result => {
@@ -56,11 +65,9 @@ export default function PosterEditor({ slug }) {
   useEffect(() => {
     if (!publicUrl) return;
     let active = true;
-    import("qrcode").then(module => (module.default || module).toDataURL(publicUrl, {
-      width: 480, margin: 4, errorCorrectionLevel: "M",
-    })).then(url => { if (active) setQr({ publicUrl, url }); }).catch(() => {});
+    posterQr(publicUrl, slug).then(url => { if (active) setQr({ publicUrl, url }); }).catch(() => {});
     return () => { active = false; };
-  }, [publicUrl]);
+  }, [publicUrl, slug]);
 
   const update = (key, value) => setDraft(current => ({ ...current, settings: { ...current.settings, [key]: value } }));
   const save = async () => {
@@ -76,6 +83,31 @@ export default function PosterEditor({ slug }) {
       if (["unavailable", "expired", "not_found", "login_required"].includes(error.code)) setFailure(error);
       else setNotice(error.message);
     } finally { setSaving(false); }
+  };
+
+  const exportPng = async scope => {
+    if (exportLock.current || saving) return;
+    exportLock.current = true;
+    setExporting(true);
+    setNotice("PNG를 만드는 중이에요…");
+    try {
+      const result = await request(slug, { method: "POST", body: JSON.stringify({
+        scope, designKey: draft.designKey, settings: draft.settings,
+      }) }, "/export-preflight");
+      const pages = scope === "all" ? [1, 2, 3] : [Number(scope.at(-1))];
+      const qrUrl = pages.includes(3) ? await posterQr(result.source.publicUrl, slug) : null;
+      flushSync(() => setCapture({ ...result, pages, qrUrl }));
+      const blob = await renderPosterPng(captureRoot.current.querySelectorAll("[data-poster-page]"));
+      downloadPosterPng(blob, slug, scope);
+      setNotice("PNG 다운로드를 시작했어요.");
+    } catch (error) {
+      setNotice(error instanceof TypeError ? "PNG를 만들지 못했어요. 연결 상태를 확인하고 다시 시도해 주세요."
+        : error.message || "PNG를 만들지 못했어요. 다시 시도해 주세요.");
+    } finally {
+      setCapture(null);
+      setExporting(false);
+      exportLock.current = false;
+    }
   };
 
   if (failure || !draft) return <main className="dd-poster-editor"><a href="/my-invitations">← 내 초대장</a>
@@ -104,12 +136,18 @@ export default function PosterEditor({ slug }) {
 
   return <main className="dd-poster-editor">
     <header className="dd-poster-top"><div><a href="/my-invitations">← 내 초대장</a><h1>게시용 초대장</h1></div>
-      <button type="button" className="dd-poster-save" onClick={save} disabled={saving}>{saving ? "저장 중…" : "저장하기"}</button></header>
+      <button type="button" className="dd-poster-save" onClick={save} disabled={saving || exporting}>{saving ? "저장 중…" : "저장하기"}</button></header>
+    <div className="dd-poster-downloads" aria-busy={exporting}>
+      {[1, 2, 3].map(number => <button key={number} type="button" disabled={saving || exporting}
+        onClick={() => exportPng(`page${number}`)}>{number}페이지 PNG</button>)}
+      <button type="button" disabled={saving || exporting} onClick={() => exportPng("all")}>전체 3페이지 PNG</button>
+    </div>
+    <p>저장하지 않은 편집 내용도 PNG에 반영돼요. 다운로드해도 설정은 저장되지 않아요.</p>
     {notice && <p className="dd-poster-notice" role="status">{notice}</p>}
     <nav className="dd-poster-tabs" aria-label="포스터 페이지">{PAGES.map((label, index) =>
       <button key={label} type="button" aria-pressed={page === index + 1} onClick={() => setPage(index + 1)}>{index + 1}. {label}</button>)}</nav>
     <div className="dd-poster-workspace">
-      <fieldset className="dd-poster-tools" disabled={saving} aria-label="포스터 편집">
+      <fieldset className="dd-poster-tools" disabled={saving || exporting} aria-label="포스터 편집">
         <label>디자인<select value={draft.designKey} onChange={event => setDraft({ ...draft, designKey: event.target.value })}>
           {Object.entries(DESIGNS).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>
         {page === 1 && <>
@@ -157,5 +195,9 @@ export default function PosterEditor({ slug }) {
           qrUrl={qr?.publicUrl === publicUrl ? qr?.url : null} />
       </div>
     </div>
+    {capture && <div className="dd-poster-capture" ref={captureRoot} aria-hidden="true">
+      {capture.pages.map(number => <PosterPage key={number} page={number} {...capture.poster}
+        source={capture.source} gallery={capture.gallery} qrUrl={capture.qrUrl} />)}
+    </div>}
   </main>;
 }

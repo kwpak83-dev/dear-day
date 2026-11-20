@@ -46,7 +46,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
     </>}
     {page === 3 && <>
       <h2>You're Invited</h2>
-      <p className="dd-poster-message">{settings.message}</p>
+      <p className="dd-poster-message" data-long-message={settings.message.length > 400 || settings.message.split("\n").length > 18}>{settings.message}</p>
       {qrUrl ? <img className="dd-poster-qr" src={qrUrl} alt="발행 초대장 QR 코드" />
         : <p>QR 코드를 표시할 수 없어요.</p>}
       <p>{names}</p>
