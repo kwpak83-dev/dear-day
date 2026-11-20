@@ -22,7 +22,9 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
   const main = settings.gallery.photos.find(photo => photo.mediaId === settings.gallery.mainMediaId);
   const others = settings.gallery.photos.filter(photo => photo !== main);
   const monochrome = designKey === "bold-pop-art";
-  const accounts = source.accounts?.[settings.accountSide];
+  const accountGroups = settings.accountSide === "both"
+    ? [source.accounts?.groom, source.accounts?.bride].filter(Boolean)
+    : [source.accounts?.[settings.accountSide]].filter(Boolean);
   const names = [source.names.groom, source.names.bride].filter(Boolean).join(" · ");
   const english = [settings.englishNames.groom.trim(), settings.englishNames.bride.trim()].filter(Boolean).join(" & ");
   const schedule = [source.date, source.time].filter(Boolean).join(" · ");
@@ -41,8 +43,9 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
         {source.venue && <p>{source.venue}</p>}
         {source.venueAddress && <p>{source.venueAddress}</p>}
       </div>
-      {accounts?.rows?.length > 0 && <div className="dd-poster-accounts"><strong>{accounts.label}</strong>
-        {accounts.rows.map(row => <p key={row.label}>{row.bank} {row.number} {row.holder}</p>)}</div>}
+      {accountGroups.length > 0 && <div className="dd-poster-accounts">
+        {accountGroups.flatMap(group => group.rows).map((row, index) =>
+          <p key={`${row.label}-${index}`}>{row.bank} {row.number} {row.holder}</p>)}</div>}
     </>}
     {page === 2 && <>
       <h2>Wedding Photos</h2>
