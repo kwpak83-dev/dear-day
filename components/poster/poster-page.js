@@ -38,7 +38,12 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
     {designKey === "modern-editorial" && <span className="dd-poster-editorial-mark" aria-hidden="true">OUR WEDDING DAY</span>}
     {page === 1 && <>
       {designKey === "playful-pop"
-        ? <h2 className="dd-playful-cover-title"><span>OUR</span><span>WEDDING</span><span>DAY!</span><svg className="dd-playful-title-doodles" viewBox="0 0 360 170" preserveAspectRatio="none" aria-hidden="true">
+        ? <h2 className="dd-playful-cover-title"><svg className="dd-playful-party-hat" viewBox="0 0 70 86" aria-hidden="true" focusable="false">
+          <path d="M13 63 35 10 61 63Z" fill="#ff8b98" stroke="#632c31" strokeWidth="4" strokeLinejoin="round"/>
+          <path d="M23 40 44 57 M31 24 55 49 M17 55 30 63" stroke="#fff8ef" strokeWidth="6" strokeLinecap="round"/>
+          <path d="M12 63 Q21 57 29 64 Q37 57 45 64 Q54 58 62 65 Q65 76 54 77 L17 77 Q6 73 12 63Z" fill="#fffdf8" stroke="#632c31" strokeWidth="3.5"/>
+          <circle cx="35" cy="9" r="8" fill="#fffdf8" stroke="#632c31" strokeWidth="3"/>
+        </svg><span>OUR</span><span>WEDDING</span><span>DAY!</span><svg className="dd-playful-title-doodles" viewBox="0 0 360 170" preserveAspectRatio="none" aria-hidden="true">
           <path className="dd-playful-marker" d="M193 132 Q213 129 235 126 L309 118 L316 151 Q275 158 235 164 L196 166 Z" />
           <path className="dd-playful-swish-top" d="M150 30 Q177 16 197 24 T245 19" />
           <path className="dd-playful-swish-bottom" d="M53 143 Q87 132 111 137 T153 128" />
