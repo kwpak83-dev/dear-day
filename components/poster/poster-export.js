@@ -113,26 +113,41 @@ async function fontDataUrl(url) {
   return fontDataCache.get(url);
 }
 
+function collectFontFaces(rules, output, source) {
+  for (const rule of rules) {
+    if (rule.type === CSSRule.FONT_FACE_RULE) {
+      output.push({ css: rule.cssText, family: rule.style.fontFamily.replace(/["']/g, "").trim(), source });
+    } else if (rule.cssRules) {
+      collectFontFaces(rule.cssRules, output, source);
+    }
+  }
+}
+
 async function embeddedPosterFonts(page) {
   if (!page.classList.contains("dd-poster-playful-pop")) return undefined;
-  const family = getComputedStyle(page.querySelector(
-    page.dataset.posterPage === "2" ? ".dd-playful-gallery-main-caption" :
-    page.dataset.posterPage === "3" ? ".dd-poster-message" : ".dd-playful-name-tag strong"
-  ) || page).fontFamily.split(",")[0].replaceAll('"', "").trim();
-  const rules = [];
+  // Font-family is resolved from the real text, not the poster wrapper.
+  const text = page.querySelector(".dd-playful-gallery-main-caption, .dd-poster-message, .dd-playful-name-tag strong");
+  const family = getComputedStyle(text || page).fontFamily.split(",")[0].replace(/["']/g, "").trim();
+  const faces = [];
   for (const sheet of document.styleSheets) {
     if (sheet.href && new URL(sheet.href, location.href).origin !== location.origin) continue;
-    try {
-      for (const rule of sheet.cssRules) {
-        if (rule.type === CSSRule.FONT_FACE_RULE && rule.style.fontFamily.replaceAll('"', "").replaceAll("'", "").trim() === family) rules.push(rule.cssText);
-      }
-    } catch { /* inaccessible stylesheets are not needed for next/font */ }
+    try { collectFontFaces(sheet.cssRules, faces, sheet.href || location.href); }
+    catch { /* Ignore third-party and inaccessible CSS. */ }
   }
-  if (!rules.length) throw new Error("포스터 자체 호스팅 폰트를 찾지 못했어요.");
-  return (await Promise.all(rules.map(async css => {
-    const urls = [...new Set([...css.matchAll(/url\(([^)]+)\)/g)].map(match => match[1].trim().replace(/^["']|["']$/g, "")))];
+  const matched = faces.filter(face => face.family === family);
+  if (!matched.length) {
+    console.error("[poster PNG] self-hosted font not found", {
+      family, availableFonts: [...new Set(faces.map(face => face.family))],
+      computedFont: getComputedStyle(text || page).fontFamily
+    });
+    throw new Error("포스터 자체 호스팅 폰트를 찾지 못했어요. Console의 [poster PNG] 로그를 확인해 주세요.");
+  }
+  return (await Promise.all(matched.map(async face => {
+    let css = face.css;
+    const urls = [...new Set([...css.matchAll(/url\\(([^)]+)\\)/g)]
+      .map(match => match[1].trim().replace(/^["']|["']$/g, "")))];
     for (const path of urls) {
-      const url = new URL(path, location.href);
+      const url = new URL(path, face.source);
       if (url.origin !== location.origin) throw new Error("포스터 폰트 주소가 올바르지 않아요.");
       css = css.replaceAll(path, await fontDataUrl(url.href));
     }
