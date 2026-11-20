@@ -162,7 +162,7 @@ export default function PosterEditor({ slug }) {
           <Crop value={cover.crop} onChange={crop => patchCover({ crop })} />
           <label><input type="checkbox" checked={cover.grayscale} onChange={event => patchCover({ grayscale: event.target.checked })} /> 흑백 사진</label>
           <label>계좌정보<select value={settings.accountSide} onChange={event => update("accountSide", event.target.value)}>
-            <option value="none">숨김</option><option value="groom">신랑 측</option><option value="bride">신부 측</option>
+            <option value="none">숨김</option><option value="groom">신랑 측</option><option value="bride">신부 측</option><option value="both">양측 모두</option>
           </select></label>
         </>}
         {page === 2 && <>
