@@ -93,7 +93,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
       <p className="dd-poster-main-caption">{main?.caption || "함께 맞은 봄"}</p>
       <div className="dd-poster-polaroids">{Array.from({ length: 3 }, (_, index) => {
         const photo = others[index];
-        return <figure key={photo?.mediaId || index}><Photo key={photos.get(photo?.mediaId)} url={photos.get(photo?.mediaId)} crop={photo?.crop} grayscale={monochrome} capture={capture}>{photo && "사진을 다시 선택해 주세요" : ""}</Photo>
+        return <figure key={photo?.mediaId || index}><Photo key={photos.get(photo?.mediaId)} url={photos.get(photo?.mediaId)} crop={photo?.crop} grayscale={monochrome} capture={capture}>{photo ? "사진을 다시 선택해 주세요" : ""}</Photo>
           <figcaption>{photo?.caption || (photo ? ["기쁜 날의 약속", "꽃으로 채운 자리", "소중한 순간들"][index] : "")}</figcaption></figure>;
       })}</div>
     </>)}
