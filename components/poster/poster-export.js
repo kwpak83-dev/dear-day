@@ -144,13 +144,15 @@ async function embeddedPosterFonts(page) {
   }
   return (await Promise.all(matched.map(async face => {
     let css = face.css;
-    const urls = [...new Set([...css.matchAll(/url\\(([^)]+)\\)/g)]
+    const urls = [...new Set([...css.matchAll(/url\(([^)]+)\)/g)]
       .map(match => match[1].trim().replace(/^["']|["']$/g, "")))];
+    if (!urls.length) throw new Error("포스터 폰트 CSS에 파일 주소가 없어요.");
     for (const path of urls) {
       const url = new URL(path, face.source);
       if (url.origin !== location.origin) throw new Error("포스터 폰트 주소가 올바르지 않아요.");
       css = css.replaceAll(path, await fontDataUrl(url.href));
     }
+    if (/url\(/.test(css)) throw new Error("포스터 폰트가 PNG에 포함되지 않았어요.");
     return css;
   }))).join("\n");
 }
