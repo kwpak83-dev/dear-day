@@ -293,3 +293,24 @@
 }
 .dd-poster-playful-pop.dd-poster-page-1 .dd-playful-event-details>div{gap:2.7cqw}
 .dd-poster-playful-pop.dd-poster-page-1 .dd-playful-event-details p{padding-left:8.7cqw}
+
+
+/* Playful Pop headline hand-drawn doodles, based on approved reference. */
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title{isolation:isolate}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title>span{position:relative;z-index:2}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-title-doodles{
+  position:absolute;inset:-2cqw -4cqw auto -5cqw;width:calc(100% + 9cqw);height:100%;
+  z-index:3;overflow:visible;pointer-events:none;fill:none;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-title-doodles .dd-playful-underline{
+  stroke:#ff8275;stroke-width:7;opacity:.92;
+}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-title-doodles .dd-playful-swish-top,
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-title-doodles .dd-playful-swish-bottom{
+  stroke:#f68d74;stroke-width:4;opacity:.9;
+}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-title-doodles .dd-playful-rays{
+  stroke:#2b2420;stroke-width:5;
+  filter:drop-shadow(2px 2px 0 #f77c75);
+}
