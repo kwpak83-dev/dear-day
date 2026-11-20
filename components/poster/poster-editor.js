@@ -7,6 +7,7 @@ import PosterPage, { DESIGNS } from "./poster-page";
 import { downloadPosterPng, posterQr, renderPosterPng } from "./poster-export";
 
 const DEFAULT_CROP = { x: 50, y: 50, zoom: 1 };
+const PHOTO_CAPTION_EXAMPLES = ["함께라서 행복한 순간", "기쁜 날의 약속", "꽃으로 채운 자리", "소중한 순간들"];
 const PAGES = ["표지", "사진 콜라주", "초대 문구"];
 const MESSAGE_EXAMPLES = [
   {
@@ -149,7 +150,7 @@ export default function PosterEditor({ slug }) {
   const togglePhoto = id => update("gallery", selected.has(id) ? { ...selection,
     photos: selection.photos.filter(photo => photo.mediaId !== id),
     mainMediaId: selection.mainMediaId === id ? null : selection.mainMediaId,
-  } : { ...selection, photos: [...selection.photos, { mediaId: id, caption: "", crop: DEFAULT_CROP }] });
+  } : { ...selection, photos: [...selection.photos, { mediaId: id, caption: PHOTO_CAPTION_EXAMPLES[selection.photos.length] || "", crop: DEFAULT_CROP }] });
   const move = (index, direction) => {
     const photos = [...selection.photos];
     [photos[index], photos[index + direction]] = [photos[index + direction], photos[index]];
