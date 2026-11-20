@@ -104,7 +104,7 @@ async function posterFontCss() {
     const stylesheet = await fetch("https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Hi+Melody&display=swap");
     if (!stylesheet.ok) throw new Error("포스터 웹폰트를 불러오지 못했어요.");
     let css = await stylesheet.text();
-    const urls = [...new Set([...css.matchAll(/url\\((?:["']?)(https:\\/\\/[^)"']+)(?:["']?)\\)/g)].map(match => match[1]))];
+    const urls = [...new Set([...css.matchAll(/url\(["\']?(https:\/\/[^)"\']+)["\']?\)/g)].map(match => match[1]))];
     for (const url of urls) {
       const response = await fetch(url);
       if (!response.ok) throw new Error("포스터 웹폰트 파일을 불러오지 못했어요.");
@@ -146,8 +146,7 @@ export async function renderPosterPng(pages) {
         const qr = page.querySelector(".dd-poster-qr");
         if (qr) await qr.decode();
         try {
-          // The poster uses system fonts. Skip html-to-image font CSS inspection,
-          // which throws SecurityError for cross-origin stylesheets in the editor.
+          // Use embedded Google font data for Playful Pop; skip cross-origin CSS inspection.
           canvas = await toCanvas(page, { width: WIDTH, height: HEIGHT, pixelRatio: SCALE, skipFonts: !usesPlayfulFonts, ...(embeddedFonts ? { fontEmbedCSS: embeddedFonts } : {}) });
           if (canvas.width !== WIDTH * SCALE || canvas.height !== HEIGHT * SCALE ||
               canvasContext(canvas).getImageData(0, 0, 1, 1).data[3] !== 255) throw new Error(CANVAS_ERROR);
