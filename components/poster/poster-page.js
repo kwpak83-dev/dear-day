@@ -37,14 +37,27 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
     {designKey === "playful-pop" && <span className="dd-poster-deco-heart" aria-hidden="true">♡</span>}
     {designKey === "modern-editorial" && <span className="dd-poster-editorial-mark" aria-hidden="true">OUR WEDDING DAY</span>}
     {page === 1 && <>
-      <h2>{designKey === "playful-pop" ? "OUR WEDDING DAY!" : "The Wedding"}</h2>
+      {designKey === "playful-pop"
+        ? <h2 className="dd-playful-cover-title"><span>OUR</span><span>WEDDING</span><span>DAY!</span><i aria-hidden="true" className="dd-playful-scribble">〰</i><i aria-hidden="true" className="dd-playful-sparks">✦</i></h2>
+        : <h2>The Wedding</h2>}
       <div className="dd-poster-cover-frame"><Photo key={cover} url={cover} crop={settings.cover.crop} grayscale={settings.cover.grayscale} capture={capture} /></div>
-      <div className="dd-poster-event">
+      {designKey === "playful-pop" ? <>
+        <div className="dd-playful-name-tag">
+          {names && <strong>{names}</strong>}
+          {english && <span>{english}</span>}
+        </div>
+        <div className="dd-playful-event-details">
+          {source.date && <div><span className="dd-playful-info-icon" aria-hidden="true">▦</span><strong>{source.date}</strong></div>}
+          {source.time && <div><span className="dd-playful-info-icon" aria-hidden="true">◷</span><strong>{source.time}</strong></div>}
+          {source.venue && <div><span className="dd-playful-info-icon" aria-hidden="true">♧</span><strong>{source.venue}</strong></div>}
+          {source.venueAddress && <p>{source.venueAddress}</p>}
+        </div>
+      </> : <div className="dd-poster-event">
         {(english || names) && <h3>{english || names}</h3>}
         {schedule && <p className="dd-poster-schedule">{schedule}</p>}
         {source.venue && <p>{source.venue}</p>}
         {source.venueAddress && <p>{source.venueAddress}</p>}
-      </div>
+      </div>}
       {accountGroups.length > 0 && <div className="dd-poster-accounts">
         {accountGroups.flatMap(group => group.rows).map((row, index) =>
           <p key={`${row.label}-${index}`}>{row.bank} {row.number} {row.holder}</p>)}</div>}
