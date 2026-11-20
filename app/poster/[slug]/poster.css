@@ -218,3 +218,22 @@
 .dd-playful-info-icon{display:inline-grid;place-items:center;flex:none;width:5cqw;height:5cqw;border:.5cqw solid currentColor;border-radius:50%;font-size:3.6cqw;line-height:1}
 .dd-playful-event-details p{padding-left:8cqw;font-size:2.7cqw;line-height:1.3;font-weight:500}
 .dd-poster-playful-pop.dd-poster-page-1 .dd-poster-accounts{position:relative;z-index:3;align-self:center;max-width:88%;margin-top:1.5cqw;font-size:2.1cqw;line-height:1.2}
+
+
+/* Playful Pop cover reference alignment — second visual pass. */
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title{height:31cqw;flex:none;margin-bottom:2cqw;font-size:10.2cqw;line-height:.82;transform:rotate(-6deg)}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:first-child{transform:translate(-16cqw,1cqw) rotate(-4deg)}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:nth-child(2){transform:translate(-2cqw,-.6cqw) rotate(2deg)}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:nth-child(3){transform:translate(18cqw,-2cqw) rotate(-3deg)}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title .dd-playful-scribble{top:0;left:56%;font-size:7cqw}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title .dd-playful-sparks{right:0;top:8cqw}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-poster-cover-frame{width:96%;height:76cqw;flex:none;margin-top:0}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-name-tag{width:76%;min-height:13.5cqw;flex:none;margin-top:-1.8cqw;padding:1.3cqw 2cqw 1.5cqw}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-name-tag strong{font-size:6.4cqw}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-name-tag span{font-size:2.9cqw}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-event-details{align-self:center;width:78%;margin-top:4cqw;font-size:3.9cqw;line-height:1.22}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-event-details>div{gap:3.4cqw;margin-bottom:2.1cqw}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-info-icon{width:5.5cqw;height:5.5cqw;font-size:4cqw}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-event-details p{padding-left:8.9cqw;font-size:3cqw}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-poster-accounts{max-width:84%;margin-top:2cqw;font-size:2.35cqw;overflow-wrap:anywhere}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-poster-deco-heart{top:88cqw;right:2cqw}
