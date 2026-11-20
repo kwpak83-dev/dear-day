@@ -1,0 +1,54 @@
+.dd-poster-editor{max-width:1160px;margin:0 auto;padding:28px 20px 56px;color:#241e2a}
+.dd-poster-top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.dd-poster-top h1{margin:6px 0 14px;font-size:clamp(24px,4vw,38px)}
+.dd-poster-editor button,.dd-poster-editor select,.dd-poster-editor input:not([type=range],[type=checkbox],[type=radio]),.dd-poster-editor textarea{font:inherit;padding:8px 12px;border:1px solid #cec6d2;border-radius:8px;background:white;color:inherit}
+.dd-poster-editor button{cursor:pointer}.dd-poster-editor button:disabled{opacity:.45;cursor:default}
+.dd-poster-editor .dd-poster-save,.dd-poster-tabs button[aria-pressed=true]{background:#241e2a;color:white;border-color:#241e2a}
+.dd-poster-tabs,.dd-poster-photo-actions{display:flex;flex-wrap:wrap;gap:8px}
+.dd-poster-tabs{margin:12px 0 18px}
+.dd-poster-notice{margin:8px 0;color:#584475}
+.dd-poster-workspace{display:grid;grid-template-columns:minmax(240px,1fr) minmax(0,1.25fr);align-items:start;gap:24px}
+.dd-poster-tools{display:grid;gap:14px;min-width:0;padding:20px;border:1px solid #e3dde5;border-radius:14px;background:#fff}
+.dd-poster-tools label{display:block;font-weight:600;font-size:14px}
+.dd-poster-tools label :is(select,input:not([type=checkbox],[type=radio]),textarea){display:block;width:100%;margin-top:5px}
+.dd-poster-tools output{float:right}
+.dd-poster-crop{display:grid;gap:6px}
+.dd-poster-crop input{min-height:24px;accent-color:#584475}
+.dd-poster-picker{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.dd-poster-picker button{padding:2px;aspect-ratio:1;overflow:hidden}
+.dd-poster-picker button[aria-pressed=true]{border:3px solid #584475}
+.dd-poster-picker img{width:100%;height:100%;object-fit:cover}
+.dd-poster-selection{display:grid;gap:8px;border-top:1px solid #e3dde5;padding-top:12px}
+.dd-poster-preview{width:min(100%,540px);margin-inline:auto;container-type:inline-size}
+.dd-poster-paper{box-sizing:border-box;position:relative;isolation:isolate;width:100%;aspect-ratio:9/16;display:flex;flex-direction:column;justify-content:center;gap:3cqw;padding:7cqw;overflow:hidden;background:var(--paper);color:var(--ink);font:600 3.4cqw/1.22 Arial,sans-serif;overflow-wrap:anywhere;text-align:center}
+.dd-poster-paper h2{font-size:10cqw;line-height:.98;margin:0;font-weight:900;position:relative}
+.dd-poster-paper h3{font-size:6.6cqw;margin:0 0 1cqw}
+.dd-poster-paper :is(p,figure){margin:0}
+.dd-poster-playful-pop{--paper:#fff0af;--ink:#241512;--accent:#f87d69}
+.dd-poster-playful-pop h2{transform:rotate(-4deg);text-shadow:1cqw 1cqw var(--accent)}
+.dd-poster-bold-pop-art{--paper:#153bc9;--ink:#fff;--accent:#ff52ac;text-align:left}
+.dd-poster-bold-pop-art h2{font-family:Arial,sans-serif;text-transform:uppercase}
+.dd-poster-number{position:absolute;inset:2cqw 4cqw auto auto;z-index:-1;font:bold 30cqw/.9 Arial,sans-serif;color:var(--accent)}
+.dd-poster-modern-editorial{--paper:#dceaf5;--ink:#25262d;--accent:#ffd5bc;font-family:Georgia,serif;text-align:left}
+.dd-poster-modern-editorial h2{font-weight:500;font-style:italic}
+.dd-poster-modern-editorial .dd-poster-event{align-self:flex-end;width:76%;background:#fff6e8;padding:2cqw}
+.dd-poster-modern-editorial .dd-poster-image{border-width:1cqw}
+.dd-poster-image{width:100%;aspect-ratio:6/5;overflow:hidden;background:var(--accent);display:grid;place-items:center;border:.7cqw solid var(--accent);box-sizing:border-box}
+.dd-poster-image img{width:100%;height:100%;object-fit:cover;display:block;min-height:0}
+.dd-poster-paper>.dd-poster-image{min-height:0;flex-shrink:1}
+.dd-poster-accounts{font-size:2.6cqw;line-height:1.3}
+.dd-poster-polaroids{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2cqw}
+.dd-poster-polaroids figure{position:relative;transform:rotate(-4deg);padding:1.3cqw 1.3cqw 2cqw;background:#fff8ed;color:#201823;box-shadow:0 1cqw 2cqw #15101a33}
+.dd-poster-polaroids figure:nth-child(2){transform:translateY(2cqw) rotate(4deg)}
+.dd-poster-polaroids figure::before{content:"";position:absolute;z-index:1;left:27%;width:46%;height:3cqw;top:-1.5cqw;background:var(--accent);opacity:.82;transform:rotate(-6deg)}
+.dd-poster-polaroids figcaption{font-family:"Segoe Print",cursive;font-size:2.4cqw;line-height:1.2;margin-top:1cqw}
+.dd-poster-polaroids .dd-poster-image{aspect-ratio:1;border:0}
+.dd-poster-page-3{align-items:center;text-align:center}
+.dd-poster-message{white-space:pre-wrap;line-height:1.4;width:100%;min-height:0;overflow:auto}
+.dd-poster-qr{display:block;width:31cqw;aspect-ratio:1;object-fit:contain;background:#fff;image-rendering:pixelated}
+@media(max-width:700px){
+  .dd-poster-editor{padding-inline:14px}
+  .dd-poster-workspace{display:flex;flex-direction:column;gap:18px}
+  .dd-poster-preview{order:-1}
+  .dd-poster-tools{width:100%;box-sizing:border-box}
+}
