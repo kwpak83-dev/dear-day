@@ -38,6 +38,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
   const others = settings.gallery.photos.filter(photo => photo !== main);
   const monochrome = designKey === "bold-pop-art";
   const playfulCover = designKey === "playful-pop" && page === 1;
+  const playfulGallery = designKey === "playful-pop" && page === 2;
   const accountGroups = settings.accountSide === "both"
     ? [source.accounts?.groom, source.accounts?.bride].filter(Boolean)
     : [source.accounts?.[settings.accountSide]].filter(Boolean);
@@ -51,7 +52,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
 
   return <article className={`dd-poster-paper dd-poster-${designKey} dd-poster-page-${page}`} data-poster-page={page}>
     {designKey === "bold-pop-art" && <span className="dd-poster-number" aria-hidden="true">0{page}</span>}
-    {designKey === "playful-pop" && !playfulCover && <span className="dd-poster-deco-heart" aria-hidden="true">♡</span>}
+    {designKey === "playful-pop" && !playfulCover && !playfulGallery && <span className="dd-poster-deco-heart" aria-hidden="true">♡</span>}
     {designKey === "modern-editorial" && <span className="dd-poster-editorial-mark" aria-hidden="true">OUR WEDDING DAY</span>}
     {page === 1 && <>
       {!playfulCover && (designKey === "playful-pop" ? <h2>Our Wedding Day!</h2> : <h2>The Wedding</h2>)}
@@ -76,16 +77,26 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
         {accountGroups.flatMap((group, groupIndex) => group.rows.map((row, index) =>
           <p key={`${groupIndex}-${index}-${row.number}`}>{playfulCover && <span className="dd-playful-account-side">{groupIndex === 0 && settings.accountSide === "both" ? "신랑측" : groupIndex === 1 ? "신부측" : settings.accountSide === "bride" ? "신부측" : "신랑측"}</span>}<span>{row.bank}</span><span>{row.number}</span><span>{row.holder}</span></p>))}</div>}
     </>}
-    {page === 2 && <>
+    {page === 2 && (playfulGallery ? <>
+      <div className="dd-playful-gallery-main-photo"><Photo key={photos.get(main?.mediaId)} url={photos.get(main?.mediaId)} crop={main?.crop} grayscale={false} capture={capture}>{main ? "사진을 다시 선택해 주세요" : "메인 사진을 지정해 주세요"}</Photo></div>
+      {main?.caption?.trim() && <p className="dd-playful-gallery-main-caption"><span>{main.caption}</span></p>}
+      <div className="dd-playful-gallery-small-photos">{Array.from({ length: 3 }, (_, index) => {
+        const photo = others[index];
+        return <div className={`dd-playful-gallery-small-photo dd-playful-gallery-small-photo-${index + 1}`} key={photo?.mediaId || index}>
+          <Photo key={photos.get(photo?.mediaId)} url={photos.get(photo?.mediaId)} crop={photo?.crop} grayscale={false} capture={capture}>{photo && "사진을 다시 선택해 주세요"}</Photo>
+          {photo?.caption?.trim() && <figcaption>{photo.caption}</figcaption>}
+        </div>;
+      })}</div>
+    </> : <>
       <h2>Wedding Photos</h2>
       <div className="dd-poster-main-frame"><Photo key={photos.get(main?.mediaId)} url={photos.get(main?.mediaId)} crop={main?.crop} grayscale={monochrome} capture={capture}>{main ? "사진을 다시 선택해 주세요" : "메인 사진을 지정해 주세요"}</Photo></div>
       <p className="dd-poster-main-caption">{main?.caption || "함께 맞은 봄"}</p>
       <div className="dd-poster-polaroids">{Array.from({ length: 3 }, (_, index) => {
         const photo = others[index];
-        return <figure key={photo?.mediaId || index}><Photo key={photos.get(photo?.mediaId)} url={photos.get(photo?.mediaId)} crop={photo?.crop} grayscale={monochrome} capture={capture}>{photo && "사진을 다시 선택해 주세요"}</Photo>
+        return <figure key={photo?.mediaId || index}><Photo key={photos.get(photo?.mediaId)} url={photos.get(photo?.mediaId)} crop={photo?.crop} grayscale={monochrome} capture={capture}>{photo && "사진을 다시 선택해 주세요" : ""}</Photo>
           <figcaption>{photo?.caption || (photo ? ["기쁜 날의 약속", "꽃으로 채운 자리", "소중한 순간들"][index] : "")}</figcaption></figure>;
       })}</div>
-    </>}
+    </>)}
     {page === 3 && <>
       <h2>You're Invited{designKey === "playful-pop" && (
         <svg className="dd-poster-heart" viewBox="0 0 48 48" aria-hidden="true">
