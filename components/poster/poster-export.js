@@ -152,7 +152,10 @@ async function embeddedPosterFonts(page) {
       if (url.origin !== location.origin) throw new Error("포스터 폰트 주소가 올바르지 않아요.");
       css = css.replaceAll(path, await fontDataUrl(url.href));
     }
-    if (/url\(/.test(css)) throw new Error("포스터 폰트가 PNG에 포함되지 않았어요.");
+    const remaining = [...css.matchAll(/url\(([^)]+)\)/g)];
+    if (remaining.some(match => !/^["\']?data:font\/|^["\']?data:application\/|^["\']?data:binary\//.test(match[1].trim()))) {
+      throw new Error("포스터 폰트가 PNG에 포함되지 않았어요.");
+    }
     return css;
   }))).join("\n");
 }
