@@ -54,32 +54,18 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
     {designKey === "playful-pop" && !playfulCover && <span className="dd-poster-deco-heart" aria-hidden="true">♡</span>}
     {designKey === "modern-editorial" && <span className="dd-poster-editorial-mark" aria-hidden="true">OUR WEDDING DAY</span>}
     {page === 1 && <>
-      {designKey === "playful-pop"
-        ? <h2 className="dd-playful-cover-title" aria-label="Our Wedding Day!"><svg className="dd-playful-party-hat" viewBox="0 0 70 86" aria-hidden="true" focusable="false">
-          <path d="M13 63 35 10 61 63Z" fill="#ff8b98" stroke="#632c31" strokeWidth="4" strokeLinejoin="round"/>
-          <path d="M23 40 44 57 M31 24 55 49 M17 55 30 63" stroke="#fff8ef" strokeWidth="6" strokeLinecap="round"/>
-          <path d="M12 63 Q21 57 29 64 Q37 57 45 64 Q54 58 62 65 Q65 76 54 77 L17 77 Q6 73 12 63Z" fill="#fffdf8" stroke="#632c31" strokeWidth="3.5"/>
-          <circle cx="35" cy="9" r="8" fill="#fffdf8" stroke="#632c31" strokeWidth="3"/>
-        </svg><span className="dd-playful-word dd-playful-word-our">OUR</span><span className="dd-playful-word dd-playful-word-wedding">WEDDING</span><span className="dd-playful-word dd-playful-word-day">DAY!</span><svg className="dd-playful-title-doodles" viewBox="0 0 360 150" preserveAspectRatio="none" aria-hidden="true">
-          <path className="dd-playful-marker" d="M181 128 L190 121 216 119 246 111 274 109 302 94 309 100 305 111 306 124 300 129 269 129 240 137 208 141 184 147 180 141Z" />
-          <path className="dd-playful-swish-top" d="M154 50l11-6 7-1 8-4 10-1 7-3 8 2 8-1 10 3 9 4m11-5 1 .4" />
-          <path className="dd-playful-swish-bottom" d="M81 134l10-3 10 2 7-1 10 2 10-3 11-1 8-4 8-1 10-5" />
-          <path className="dd-playful-rays" d="M40 96L26 88 M40 109L20 112 M45 116L34 130 M308 53L321 38 M311 63L333 61 M308 72L322 83" />
-        </svg></h2>
-        : <h2>The Wedding</h2>}
+      {!playfulCover && (designKey === "playful-pop" ? <h2>Our Wedding Day!</h2> : <h2>The Wedding</h2>)}
       <div className="dd-poster-cover-frame"><Photo key={cover} url={cover} crop={settings.cover.crop} grayscale={settings.cover.grayscale} capture={capture} /></div>
       {playfulCover ? <>
-        <svg className="dd-playful-photo-heart" viewBox="0 0 62 57" aria-hidden="true"><path d="M31 51C23 46 5 35 4 22 2 12 8 7 15 8 22 8 25 14 28 22 29 12 34 3 41 5 47 7 47 13 45 18 50 9 55 7 58 12 65 22 49 42 31 51Z"/></svg>
-        <svg className="dd-playful-bottom-waves" viewBox="0 0 360 90" preserveAspectRatio="none" aria-hidden="true"><path fill="#ffdb77" d="M0 56C28 80 35 85 60 84 76 84 87 89 94 90H0Z"/><path fill="#ffca7c" d="M221 90C261 64 292 67 315 48 336 31 339 12 360 0V90Z"/></svg>
         <div className="dd-playful-name-tag">
           {names && <strong>{names}</strong>}
           {english && <span>{english}</span>}
         </div>
         <div className="dd-playful-event-details">
-          {coverSchedule.date && <div><span className="dd-playful-info-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="16" rx="1.5"/><path d="M7 3v4M17 3v4M3 10h18M7 14h2M12 14h2M17 14h.1M7 18h2M12 18h2"/></svg></span><strong>{coverSchedule.date}</strong></div>}
-          {coverSchedule.time && <div><span className="dd-playful-info-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 6.5V12l4 2.5"/></svg></span><strong>{coverSchedule.time}</strong></div>}
-          {source.venue && <div><span className="dd-playful-info-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 5.4-8 11-8 11S4 15.4 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.6"/></svg></span><strong>{source.venue}</strong></div>}
-          {source.venueAddress && <p>{source.venueAddress}</p>}
+          {coverSchedule.date && <strong className="dd-playful-detail-date">{coverSchedule.date}</strong>}
+          {coverSchedule.time && <strong className="dd-playful-detail-time">{coverSchedule.time}</strong>}
+          {source.venue && <strong className="dd-playful-detail-venue">{source.venue}</strong>}
+          {source.venueAddress && <p className="dd-playful-detail-address">{source.venueAddress}</p>}
         </div>
       </> : <div className="dd-poster-event">
         {(english || names) && <h3>{english || names}</h3>}
@@ -88,8 +74,8 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
         {source.venueAddress && <p>{source.venueAddress}</p>}
       </div>}
       {accountGroups.length > 0 && <div className="dd-poster-accounts">
-        {accountGroups.flatMap(group => group.rows).map((row, index) =>
-          <p key={`${row.label}-${index}`}>{row.bank} {row.number} {row.holder}</p>)}</div>}
+        {accountGroups.flatMap((group, groupIndex) => group.rows.map((row, index) =>
+          <p key={`${groupIndex}-${index}-${row.number}`}>{playfulCover && <span className="dd-playful-account-side">{groupIndex === 0 && settings.accountSide === "both" ? "신랑측" : groupIndex === 1 ? "신부측" : settings.accountSide === "bride" ? "신부측" : "신랑측"}</span>}<span>{row.bank}</span><span>{row.number}</span><span>{row.holder}</span></p>))}</div>}
     </>}
     {page === 2 && <>
       <h2>Wedding Photos</h2>
