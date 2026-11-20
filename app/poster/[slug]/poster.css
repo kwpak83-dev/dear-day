@@ -299,3 +299,10 @@
   font:800 2.6cqw/1.1 Arial,"Malgun Gothic",sans-serif;
   color:#241512;text-align:center;overflow-wrap:anywhere;
 }
+
+/* Desktop poster preview stays visible while editing photos further down the page. */
+@media (min-width:701px){
+  .dd-poster-workspace{align-items:start}
+  .dd-poster-preview{position:sticky;top:20px;align-self:start;max-height:calc(100vh - 40px);overflow:visible}
+  .dd-poster-preview>.dd-poster-paper{max-height:calc(100vh - 40px);width:auto;max-width:100%;margin-inline:auto;aspect-ratio:9/16}
+}
