@@ -38,7 +38,12 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
     {designKey === "modern-editorial" && <span className="dd-poster-editorial-mark" aria-hidden="true">OUR WEDDING DAY</span>}
     {page === 1 && <>
       {designKey === "playful-pop"
-        ? <h2 className="dd-playful-cover-title"><span>OUR</span><span>WEDDING</span><span>DAY!</span><i aria-hidden="true" className="dd-playful-scribble">〰</i><i aria-hidden="true" className="dd-playful-sparks">✦</i></h2>
+        ? <h2 className="dd-playful-cover-title"><span>OUR</span><span>WEDDING</span><span>DAY!</span><svg className="dd-playful-title-doodles" viewBox="0 0 360 170" preserveAspectRatio="none" aria-hidden="true">
+          <path className="dd-playful-underline" d="M173 150 Q212 155 257 145 Q282 141 312 146" />
+          <path className="dd-playful-swish-top" d="M150 30 Q177 16 197 24 T245 19" />
+          <path className="dd-playful-swish-bottom" d="M53 143 Q87 132 111 137 T153 128" />
+          <path className="dd-playful-rays" d="M23 74 L4 64 M20 91 L1 93 M28 108 L11 121 M322 44 L340 26 M331 59 L354 55 M329 77 L351 89" />
+        </svg></h2>
         : <h2>The Wedding</h2>}
       <div className="dd-poster-cover-frame"><Photo key={cover} url={cover} crop={settings.cover.crop} grayscale={settings.cover.grayscale} capture={capture} /></div>
       {designKey === "playful-pop" ? <>
