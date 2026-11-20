@@ -112,7 +112,9 @@ export async function renderPosterPng(pages) {
         const qr = page.querySelector(".dd-poster-qr");
         if (qr) await qr.decode();
         try {
-          canvas = await toCanvas(page, { width: WIDTH, height: HEIGHT, pixelRatio: SCALE });
+          // The poster uses system fonts. Skip html-to-image font CSS inspection,
+          // which throws SecurityError for cross-origin stylesheets in the editor.
+          canvas = await toCanvas(page, { width: WIDTH, height: HEIGHT, pixelRatio: SCALE, skipFonts: true });
           if (canvas.width !== WIDTH * SCALE || canvas.height !== HEIGHT * SCALE ||
               canvasContext(canvas).getImageData(0, 0, 1, 1).data[3] !== 255) throw new Error(CANVAS_ERROR);
           context.drawImage(canvas, 0, index * HEIGHT * SCALE);
