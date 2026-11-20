@@ -47,9 +47,9 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
           {english && <span>{english}</span>}
         </div>
         <div className="dd-playful-event-details">
-          {source.date && <div><span className="dd-playful-info-icon" aria-hidden="true">▦</span><strong>{source.date}</strong></div>}
-          {source.time && <div><span className="dd-playful-info-icon" aria-hidden="true">◷</span><strong>{source.time}</strong></div>}
-          {source.venue && <div><span className="dd-playful-info-icon" aria-hidden="true">♧</span><strong>{source.venue}</strong></div>}
+          {source.date && <div><span className="dd-playful-info-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="16" rx="1.5"/><path d="M7 3v4M17 3v4M3 10h18M7 14h2M12 14h2M17 14h.1M7 18h2M12 18h2"/></svg></span><strong>{source.date}</strong></div>}
+          {source.time && <div><span className="dd-playful-info-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 6.5V12l4 2.5"/></svg></span><strong>{source.time}</strong></div>}
+          {source.venue && <div><span className="dd-playful-info-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 5.4-8 11-8 11S4 15.4 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.6"/></svg></span><strong>{source.venue}</strong></div>}
           {source.venueAddress && <p>{source.venueAddress}</p>}
         </div>
       </> : <div className="dd-poster-event">
