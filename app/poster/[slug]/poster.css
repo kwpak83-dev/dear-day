@@ -200,9 +200,9 @@
 .dd-poster-playful-pop.dd-poster-page-1::before{content:"";position:absolute;z-index:0;left:-9cqw;bottom:-14cqw;width:43cqw;height:23cqw;border-radius:60% 60% 0 0;background:#ffdc75;transform:rotate(15deg)}
 .dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title{position:relative;z-index:3;align-self:center;width:96%;max-width:none;margin:0 0 2cqw;font:italic 1000 10.5cqw/.86 Arial,sans-serif;letter-spacing:-.08em;transform:rotate(-5deg);text-align:center;text-shadow:.8cqw .9cqw #ff8087}
 .dd-playful-cover-title span{display:block}
-.dd-playful-cover-title span:first-child{transform:translateX(-14cqw)}
-.dd-playful-cover-title span:nth-child(2){font-size:1.15em;transform:translateX(-1cqw)}
-.dd-playful-cover-title span:nth-child(3){transform:translateX(15cqw)}
+.dd-playful-cover-title span:first-of-type{transform:translateX(-14cqw)}
+.dd-playful-cover-title span:nth-of-type(2){font-size:1.15em;transform:translateX(-1cqw)}
+.dd-playful-cover-title span:nth-of-type(3){transform:translateX(15cqw)}
 .dd-playful-cover-title .dd-playful-scribble{position:absolute;top:0;left:54%;font:normal 9cqw/1 Arial,sans-serif;color:#ff7777;text-shadow:none;transform:rotate(12deg)}
 .dd-playful-cover-title .dd-playful-sparks{position:absolute;right:-1cqw;top:9cqw;font:normal 10cqw/1 Arial,sans-serif;color:#f67a62;text-shadow:none}
 .dd-poster-playful-pop.dd-poster-page-1 .dd-poster-cover-frame{z-index:2;box-sizing:border-box;align-self:center;width:95%;height:78cqw;padding:1.6cqw 1.6cqw 3.2cqw;margin:0;background:#fff;transform:rotate(-3deg);box-shadow:0 1.6cqw 2cqw #6349273b}
@@ -222,9 +222,9 @@
 
 /* Playful Pop cover reference alignment — second visual pass. */
 .dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title{height:31cqw;flex:none;margin-bottom:2cqw;font-size:10.2cqw;line-height:.82;transform:rotate(-6deg)}
-.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:first-child{transform:translate(-16cqw,1cqw) rotate(-4deg)}
-.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:nth-child(2){transform:translate(-2cqw,-.6cqw) rotate(2deg)}
-.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:nth-child(3){transform:translate(18cqw,-2cqw) rotate(-3deg)}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:first-of-type{transform:translate(-16cqw,1cqw) rotate(-4deg)}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:nth-of-type(2){transform:translate(-2cqw,-.6cqw) rotate(2deg)}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:nth-of-type(3){transform:translate(18cqw,-2cqw) rotate(-3deg)}
 .dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title .dd-playful-scribble{top:0;left:56%;font-size:7cqw}
 .dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title .dd-playful-sparks{right:0;top:8cqw}
 .dd-poster-playful-pop.dd-poster-page-1 .dd-poster-cover-frame{width:96%;height:76cqw;flex:none;margin-top:0}
@@ -242,9 +242,9 @@
 /* Reference image 438×761: fixed cover geometry, scaled with the poster width. */
 .dd-poster-playful-pop.dd-poster-page-1{padding:0;display:block;text-align:left;background:radial-gradient(ellipse at 52% 43%,#fff9c8 0%,#fff4a6 64%,#ffe878 100%)}
 .dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title{position:absolute;left:11%;top:4.1%;width:79%;height:19%;margin:0;max-width:none;display:block;font:italic 1000 11.5cqw/.86 Arial,Helvetica,sans-serif;letter-spacing:-.08em;text-align:left;transform:rotate(-7deg);text-shadow:.8cqw .9cqw #fff,.95cqw 1.25cqw #ff8080}
-.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:first-child{transform:translate(0,0) rotate(-2deg)}
-.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:nth-child(2){font-size:1.13em;transform:translate(7cqw,-.8cqw) rotate(1deg)}
-.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:nth-child(3){transform:translate(41cqw,-2cqw) rotate(-2deg)}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:first-of-type{transform:translate(0,0) rotate(-2deg)}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:nth-of-type(2){font-size:1.13em;transform:translate(7cqw,-.8cqw) rotate(1deg)}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:nth-of-type(3){transform:translate(41cqw,-2cqw) rotate(-2deg)}
 .dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title .dd-playful-scribble{top:0;left:45%;font-size:8cqw}
 .dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title .dd-playful-sparks{top:9cqw;right:-1cqw;font-size:8cqw}
 .dd-poster-playful-pop.dd-poster-page-1 .dd-poster-cover-frame{position:absolute;left:6%;top:24.5%;width:88%;height:41.2%;margin:0;padding:1.5cqw 1.5cqw 2.6cqw;transform:rotate(-3deg);box-shadow:0 1.5cqw 2.5cqw #59422345}
@@ -321,7 +321,7 @@
 .dd-poster-playful-pop.dd-poster-page-1 .dd-playful-title-doodles .dd-playful-marker{
   fill:#ff8582;stroke:none;opacity:.95;
 }
-.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:nth-child(3){z-index:2}
+.dd-poster-playful-pop.dd-poster-page-1 .dd-playful-cover-title span:nth-of-type(3){z-index:2}
 
 
 /* Small illustrated party hat perched over the O in OUR. */
