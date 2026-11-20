@@ -96,12 +96,43 @@ function checkLayout(page) {
   }
 }
 
+// html-to-image cannot reliably read cross-origin Google Fonts stylesheets.
+// Embed the two poster font families as data URLs so SVG/PNG uses the preview fonts.
+let posterFontCssPromise;
+async function posterFontCss() {
+  if (!posterFontCssPromise) posterFontCssPromise = (async () => {
+    const stylesheet = await fetch("https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Hi+Melody&display=swap");
+    if (!stylesheet.ok) throw new Error("포스터 웹폰트를 불러오지 못했어요.");
+    let css = await stylesheet.text();
+    const urls = [...new Set([...css.matchAll(/url\\((?:["']?)(https:\\/\\/[^)"']+)(?:["']?)\\)/g)].map(match => match[1]))];
+    for (const url of urls) {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("포스터 웹폰트 파일을 불러오지 못했어요.");
+      const blob = await response.blob();
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+      css = css.split(url).join(dataUrl);
+    }
+    return css;
+  })().catch(error => { posterFontCssPromise = null; throw error; });
+  return posterFontCssPromise;
+}
+
 export async function renderPosterPng(pages) {
   if (!pages.length) throw new Error(CANVAS_ERROR);
   const result = document.createElement("canvas");
   const photos = new Map();
   try {
     await document.fonts.ready;
+    const usesPlayfulFonts = pages.some(page => page.classList.contains("dd-poster-playful-pop"));
+    const embeddedFonts = usesPlayfulFonts ? await posterFontCss() : undefined;
+    if (usesPlayfulFonts) {
+      await Promise.all([document.fonts.load('16px "Gowun Dodum"'), document.fonts.load('16px "Hi Melody"')]);
+    }
     for (const page of pages) checkLayout(page);
     const { toCanvas } = await import("html-to-image");
     result.width = WIDTH * SCALE;
@@ -117,7 +148,7 @@ export async function renderPosterPng(pages) {
         try {
           // The poster uses system fonts. Skip html-to-image font CSS inspection,
           // which throws SecurityError for cross-origin stylesheets in the editor.
-          canvas = await toCanvas(page, { width: WIDTH, height: HEIGHT, pixelRatio: SCALE, skipFonts: true });
+          canvas = await toCanvas(page, { width: WIDTH, height: HEIGHT, pixelRatio: SCALE, skipFonts: !usesPlayfulFonts, ...(embeddedFonts ? { fontEmbedCSS: embeddedFonts } : {}) });
           if (canvas.width !== WIDTH * SCALE || canvas.height !== HEIGHT * SCALE ||
               canvasContext(canvas).getImageData(0, 0, 1, 1).data[3] !== 255) throw new Error(CANVAS_ERROR);
           context.drawImage(canvas, 0, index * HEIGHT * SCALE);
