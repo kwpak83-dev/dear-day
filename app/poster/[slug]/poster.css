@@ -340,3 +340,7 @@
   position:absolute;z-index:3;left:15%;top:90%;width:70%;margin:0;
   font:800 3.5cqw/1.2 Arial,"Malgun Gothic",sans-serif;color:#30211b;
 }
+
+/* All poster overlay cqw units must track the actual paper width, not its wider preview wrapper.
+   Sticky desktop previews may shrink the paper by viewport height while the wrapper stays 540px. */
+.dd-poster-paper{container-type:inline-size}
