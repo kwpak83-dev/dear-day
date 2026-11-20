@@ -47,6 +47,7 @@ test("untrusted cover URLs cannot select another event or escape the event folde
     const path = `${ids[0]}/photo/${ids[1]}/${ids[2]}.webp`;
     const url = base + "/storage/v1/object/public/invitation-photos/" + path;
     assert.equal(eventPhotoPath(url, base, event), path);
+    assert.equal(eventPhotoPath(url.replace(`/photo/${ids[1]}`, ""), base, event), `${ids[0]}/${ids[2]}.webp`);
     for (const value of [url.replace(ids[1], ids[3]), url + "?x=1", url.replace(base, "https://other.test"), url.replace(ids[2], "%2e%2e")]) {
       assert.equal(eventPhotoPath(value, base, event), null);
     }
@@ -71,6 +72,7 @@ test("API enforces owner and expiry, maps revision conflicts and returns missing
     if (url.pathname.endsWith("/events")) return Response.json(url.searchParams.get("owner_id") === `eq.${event.owner_id}` ? event : null);
     if (url.pathname.endsWith("/invitation_posters")) return Response.json({ design_key: "playful-pop", settings: input.settings, revision: 1 });
     if (url.pathname.endsWith("/event_media")) return Response.json([]);
+    if (url.pathname.endsWith("/event_type_configs")) return Response.json(null);
     if (url.pathname.endsWith("/rpc/save_invitation_poster")) {
       const args = JSON.parse(options.body);
       assert.equal(args.p_owner, ids[0]);
@@ -107,4 +109,66 @@ test("API enforces owner and expiry, maps revision conflicts and returns missing
       else process.env[key] = value;
     }
   }
+});
+
+test("wedding account groups match the invitation's couple and parent rows", async () => {
+  const { posterAccounts } = await import("../lib/poster-server.js");
+  const settings = { groom: "신랑 이름", groomAccount: " 123 ", groomFatherAccount: "456",
+    groomFatherName: "아버지 이름", groomMotherAccount: " ", brideAccount: "789" };
+  const groups = [{ key: "groom", label: "신랑 가족" }, { key: "bride", label: "신부 가족" }];
+  const config = state => ({ fields: { accounts: { state, groups } } });
+  assert.deepEqual(posterAccounts(settings, config("optional"), "groom"), {
+    groom: { label: "신랑 가족", rows: [
+      { label: "신랑", number: "123", bank: "", holder: "신랑 이름" },
+      { label: "신랑 아버지", number: "456", bank: "", holder: "아버지 이름" },
+    ] },
+  });
+  assert.equal(posterAccounts(settings, null, "bride").bride.rows.length, 1);
+  assert.deepEqual(posterAccounts(settings, config("optional"), "none"), {});
+  assert.deepEqual(posterAccounts(settings, config("none")), {});
+});
+
+test("auto cover prefers an existing representative photo and then verified HERO slots", async () => {
+  const { autoCover } = await import("../lib/poster-server.js");
+  const url = "https://storage.example.test";
+  const prefix = url + "/storage/v1/object/public/invitation-photos/";
+  const legacy = `${ids[0]}/${ids[2]}.jpg`;
+  const cover = `${ids[0]}/photo/${ids[1]}/${ids[2]}.jpg`;
+  const slot = `${ids[0]}/photo/${ids[1]}/${ids[3]}.webp`;
+  const event = { id: ids[1], owner_id: ids[0], hero_preset_id: ids[2], settings: {
+    coverPhotoUrl: prefix + cover, coverPhoto: prefix + legacy,
+    heroSlotPhotos: { hidden: prefix + cover, unrelated: prefix + slot.replace(ids[1], ids[2]), valid: prefix + slot },
+  } };
+  const existing = new Set([cover, slot, legacy]);
+  let reservation = false;
+  const calls = [];
+  const supabase = {
+    storage: { from: () => ({
+      exists: async path => { calls.push(path); return { data: existing.has(path) }; },
+      getPublicUrl: path => ({ data: { publicUrl: prefix + path } }),
+    }) },
+    from: table => {
+      const filters = {};
+      const q = { select: () => q, eq: (key, value) => { filters[key] = value; return q; },
+        maybeSingle: async () => {
+          if (table === "hero_presets") return { data: { config: {
+            photoLayers: [{ id: "hidden", visible: false }, { id: "unrelated" }, { id: "valid" }],
+          } } };
+          assert.equal(table, "invitation_upload_reservations");
+          assert.deepEqual(filters, { bucket: "invitation-photos", storage_path: legacy,
+            event_id: ids[1], owner_id: ids[0], status: "uploaded" });
+          return { data: reservation ? { id: ids[2] } : null };
+        } };
+      return q;
+    },
+  };
+  assert.equal(await autoCover({ supabase, event, url }), prefix + cover);
+  existing.delete(cover);
+  assert.equal(await autoCover({ supabase, event, url }), prefix + slot);
+  assert.deepEqual(calls, [cover, cover, slot]);
+  reservation = true;
+  assert.equal(await autoCover({ supabase, event, url }), prefix + legacy);
+  reservation = false;
+  existing.delete(slot);
+  assert.equal(await autoCover({ supabase, event, url }), null);
 });
