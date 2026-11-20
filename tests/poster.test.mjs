@@ -62,7 +62,10 @@ test("API enforces owner and expiry, maps revision conflicts and returns missing
   Object.assign(process.env, { NEXT_PUBLIC_SUPABASE_URL: "https://mock.invalid", SUPABASE_SERVICE_ROLE_KEY: "fixture",
     POSTER_PUBLIC_ORIGIN: "https://invitations.example.test" });
   const event = { id: ids[1], owner_id: ids[0], slug: "fixture-event", kind: "wedding",
-    status: "published", retention_v2: false, service_expires_at: "2099-01-01T00:00:00Z", settings: {} };
+    status: "published", retention_v2: false, service_expires_at: "2099-01-01T00:00:00Z", settings: {
+      groomLastName: "김", groomFirstName: "도윤", bride: "이서연", date: "2027-05-22", time: "14:00",
+      venue: "웨딩홀", venueAddress: "서울숲길 24", venueBuilding: "본관", venueDetail: "3층 하늘홀",
+    } };
   const calls = [];
   globalThis.fetch = async (resource, options) => {
     const url = new URL(resource);
@@ -96,7 +99,18 @@ test("API enforces owner and expiry, maps revision conflicts and returns missing
     event.status = "published";
     const got = await getPoster(req("GET"), ctx);
     assert.equal(got.headers.get("cache-control"), "no-store");
-    assert.deepEqual((await got.json()).missingMediaIds, ids.slice(0, 2));
+    const original = await got.json();
+    assert.deepEqual(original.missingMediaIds, ids.slice(0, 2));
+    assert.deepEqual(original.source.names, { groom: "김도윤", bride: "이서연" });
+    assert.equal(original.source.venueAddress, "서울숲길 24 본관 3층 하늘홀");
+    assert.equal(original.source.date, "2027-05-22");
+    assert.equal(original.source.time, "14:00");
+    event.settings = { venue: "변경된 웨딩홀" };
+    const refreshed = await (await getPoster(req("GET"), ctx)).json();
+    assert.equal(refreshed.source.venue, "변경된 웨딩홀");
+    assert.equal(refreshed.source.venueAddress, "");
+    assert.equal(refreshed.source.time, "");
+    assert.deepEqual(refreshed.poster, original.poster);
     assert.equal((await putPoster(req("PUT", { ...input, expectedRevision: 0 }), ctx)).status, 409);
     const exportResult = await exportPosterPreflight(req("POST", { ...input, scope: "page3" }), ctx);
     assert.equal((await exportResult.json()).source.publicUrl, "https://invitations.example.test/invite/fixture-event");

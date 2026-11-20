@@ -196,7 +196,7 @@ export default function PosterEditor({ slug }) {
       </div>
     </div>
     {capture && <div className="dd-poster-capture" ref={captureRoot} aria-hidden="true">
-      {capture.pages.map(number => <PosterPage key={number} page={number} {...capture.poster}
+      {capture.pages.map(number => <PosterPage key={number} page={number} {...capture.poster} capture
         source={capture.source} gallery={capture.gallery} qrUrl={capture.qrUrl} />)}
     </div>}
   </main>;
