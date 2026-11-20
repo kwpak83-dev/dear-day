@@ -1261,7 +1261,7 @@ export default function CreateInvitation() {
     setTemplateNotice("");
     setTemplateRevision(current => current + 1);
   };
-  const validateDraftMinimum = () => {
+  const validateDraftMinimum = ({ dismissExitConfirm = false } = {}) => {
     // Existing published invitations retain their established update behavior.
     if (eventStatus === "published" || eventStatus === "paid") return true;
     const present = (key) => String(invitation[key] ?? "").trim().length > 0;
@@ -1276,6 +1276,9 @@ export default function CreateInvitation() {
       : [];
     const firstMissing = missing.find(([, valid]) => !valid);
     if (!firstMissing) return true;
+    // Close the exit dialog before focusing the missing field; otherwise the
+    // modal stays over the editor (and the mobile keyboard opens behind it).
+    if (dismissExitConfirm) setExitConfirmOpen(false);
     const message = `임시저장하려면 ${firstMissing[0]}을(를) 입력해 주세요.`;
     setSaveNotice(message);
     showSavedToast(message, { validation: true });
@@ -1293,14 +1296,14 @@ export default function CreateInvitation() {
     }));
     return false;
   };
-  const saveDraft = async ({ showLoading = true, showSuccessToast = false, allowLocalSuccess = false, allowUploadBusy = false } = {}) => {
+  const saveDraft = async ({ showLoading = true, showSuccessToast = false, allowLocalSuccess = false, allowUploadBusy = false, dismissExitOnValidationFailure = false } = {}) => {
     if (eventReadOnly) { setSaveNotice("행사가 종료되어 초대장을 수정할 수 없어요."); return; }
     if (!eventReady) {
       setSaveNotice("기존 초대장 정보를 불러오는 중이에요. 잠시 후 다시 시도해 주세요.");
       return;
     }
     if (galleryBusy || (!allowUploadBusy && photoBusy.current) || (showLoading && submitting)) return;
-    if (!validateDraftMinimum()) return;
+    if (!validateDraftMinimum({ dismissExitConfirm: dismissExitOnValidationFailure })) return;
     const draftToSave = latestInvitation.current;
     const savingSnapshot = JSON.stringify(draftToSave);
     if (showSuccessToast) { window.clearTimeout(saveToastTimer.current); setSaveToastVisible(false); }
@@ -1386,7 +1389,7 @@ export default function CreateInvitation() {
     if (exitSaving) return;
     setExitSaving(true);
     try {
-      const result = await saveDraft({ showSuccessToast: true });
+      const result = await saveDraft({ showSuccessToast: true, dismissExitOnValidationFailure: true });
       if (result && result !== "local" && !hasUnsavedChanges()) completeEditorExit();
     } catch (error) {
       setSaveNotice(error?.message || "저장에 실패했어요. 다시 시도해 주세요.");

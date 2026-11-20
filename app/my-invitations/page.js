@@ -194,8 +194,13 @@ export default function MyInvitations() {
             {!isEventReadOnly(event) && <a href={`/create?slug=${event.slug}`}>편집하기</a>}
             {event.status === "paid" && <a href={`/create?slug=${event.slug}&publish=ready`}>초대장 발행하기</a>}
             {event.status === "published" && <a href={`/invite/${event.slug}?from=owner`}>초대장 보기</a>}
+            {event.kind === "wedding" && event.status === "published" && getRetentionState(event).phase === "active" &&
+              <a href={`/poster/${encodeURIComponent(event.slug)}`}>게시용 초대장 만들기</a>}
             {event.status === "suspended" && !isEventReadOnly(event) && <button type="button" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>다시 발행하기</button>}
           </div>
+          {event.kind === "wedding" && (event.status === "suspended" ||
+            (event.status === "published" && getRetentionState(event).phase !== "active")) &&
+            <p className="dd-my-card-retention">이용기간이 남아 있는 발행 중 초대장에서 게시용 초대장을 만들 수 있어요.</p>}
           {["published", "suspended", "draft", "paid"].includes(event.status) && <div className="dd-my-card-management" ref={openMenu === event.slug ? menuRef : null}>
             <button type="button" className="dd-my-card-more" aria-expanded={openMenu === event.slug} aria-controls={`dd-my-card-menu-${event.slug}`} onClick={eventClick => { menuTriggerRef.current = eventClick.currentTarget; setOpenMenu(current => current === event.slug ? null : event.slug); }}>··· 더보기</button>
             <div className="dd-my-card-menu" id={`dd-my-card-menu-${event.slug}`} role="group" aria-label="초대장 관리 메뉴" hidden={openMenu !== event.slug}>
