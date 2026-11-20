@@ -96,6 +96,26 @@ function checkLayout(page) {
   }
 }
 
+// html-to-image renders inside an SVG foreignObject where container-query units
+// can be recalculated differently. Freeze the measured layout before capture.
+function freezePosterLayout(page) {
+  const restore = [];
+  const properties = ["fontSize", "lineHeight", "letterSpacing", "wordSpacing", "rowGap", "columnGap",
+    "paddingTop", "paddingRight", "paddingBottom", "paddingLeft",
+    "marginTop", "marginRight", "marginBottom", "marginLeft",
+    "borderTopWidth", "borderRightWidth", "borderBottomWidth", "borderLeftWidth"];
+  for (const element of [page, ...page.querySelectorAll("*")]) {
+    const computed = getComputedStyle(element);
+    const original = element.getAttribute("style");
+    for (const property of properties) {
+      const value = computed[property];
+      if (value && (value.endsWith("px") || value === "normal")) element.style[property] = value;
+    }
+    restore.push(() => original === null ? element.removeAttribute("style") : element.setAttribute("style", original));
+  }
+  return () => { for (const reset of restore) reset(); };
+}
+
 export async function renderPosterPng(pages) {
   if (!pages.length) throw new Error(CANVAS_ERROR);
   const result = document.createElement("canvas");
@@ -109,6 +129,7 @@ export async function renderPosterPng(pages) {
     const context = canvasContext(result);
     for (const [index, page] of pages.entries()) {
       let canvas;
+      let unfreeze = () => {};
       const images = page.querySelectorAll(".dd-poster-image img");
       try {
         for (const image of images) await preparePhoto(image, photos);
@@ -128,6 +149,7 @@ export async function renderPosterPng(pages) {
           throw new Error(`${index + 1}페이지 PNG 변환에 실패했어요. 개발자 도구 Console에서 [poster PNG] 오류를 확인해 주세요.`);
         }
       } finally {
+        unfreeze();
         releaseCanvas(canvas);
         for (const image of images) image.removeAttribute("src");
       }
