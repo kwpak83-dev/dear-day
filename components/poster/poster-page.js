@@ -22,6 +22,9 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
   const accounts = source.accounts?.[settings.accountSide];
   const names = [source.names.groom, source.names.bride].filter(Boolean).join(" · ");
   const english = [settings.englishNames.groom.trim(), settings.englishNames.bride.trim()].filter(Boolean).join(" & ");
+  const messageLines = settings.message.split("\n").length;
+  const messageSize = messageLines > 18 || settings.message.length > 400
+    ? Math.max(1.85, Math.min(2.8, 78 / messageLines)) : undefined;
 
   return <article className={`dd-poster-paper dd-poster-${designKey} dd-poster-page-${page}`} data-poster-page={page}>
     {designKey === "bold-pop-art" && <span className="dd-poster-number" aria-hidden="true">0{page}</span>}
@@ -46,7 +49,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
     </>}
     {page === 3 && <>
       <h2>You're Invited</h2>
-      <p className="dd-poster-message" data-long-message={settings.message.length > 400 || settings.message.split("\n").length > 18}>{settings.message}</p>
+      <p className="dd-poster-message" style={messageSize && { fontSize: `${messageSize}cqw` }}>{settings.message}</p>
       {qrUrl ? <img className="dd-poster-qr" src={qrUrl} alt="발행 초대장 QR 코드" />
         : <p>QR 코드를 표시할 수 없어요.</p>}
       <p>{names}</p>
