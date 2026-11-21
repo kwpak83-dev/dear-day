@@ -866,3 +866,7 @@
 .dd-poster-editor .dd-poster-page-navigation>span:first-child,
 .dd-poster-editor .dd-poster-page-navigation>span:last-child{min-width:58px}
 @media(max-width:600px){.dd-poster-editor .dd-poster-page-navigation>button{font-size:11px;padding:6px 9px;min-width:58px}}
+
+/* Optional English-name inputs: compact secondary labels and helper copy. */
+.dd-poster-editor .dd-poster-optional{font-size:11px;font-weight:400;color:#918a96}
+.dd-poster-editor .dd-poster-english-help{display:block;margin-top:6px;font-family:Pretendard,sans-serif;font-size:11px;font-weight:400;line-height:1.5;color:#88838d;word-break:keep-all}
