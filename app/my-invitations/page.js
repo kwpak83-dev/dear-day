@@ -195,7 +195,7 @@ export default function MyInvitations() {
             {event.status === "paid" && <a href={`/create?slug=${event.slug}&publish=ready`}>초대장 발행하기</a>}
             {event.status === "published" && <a href={`/invite/${event.slug}?from=owner`}>초대장 보기</a>}
             {event.kind === "wedding" && event.status === "published" && getRetentionState(event).phase === "active" &&
-              <a href={`/poster/${encodeURIComponent(event.slug)}`}>게시용 초대장 만들기</a>}
+              <a className="dd-my-card-poster-action" href={`/poster/${encodeURIComponent(event.slug)}`}>회사 게시판 포스팅용 초대장 만들기</a>}
             {event.status === "suspended" && !isEventReadOnly(event) && <button type="button" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>다시 발행하기</button>}
           </div>
           {event.kind === "wedding" && (event.status === "suspended" ||
