@@ -69,6 +69,7 @@ export default function PosterEditor({ slug }) {
   const [data, setData] = useState(null);
   const [draft, setDraft] = useState(null);
   const [page, setPage] = useState(1);
+  const [floatingPreviewOpen, setFloatingPreviewOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
   const [failure, setFailure] = useState(null);
@@ -227,6 +228,17 @@ export default function PosterEditor({ slug }) {
         <PosterPage page={page} designKey={draft.designKey} settings={settings} source={source} gallery={gallery}
           qrUrl={qr?.publicUrl === publicUrl ? qr?.url : null} />
       </div>
+    </div>
+    <div className="dd-poster-mobile-preview" aria-label="모바일 플로팅 미리보기">
+      {floatingPreviewOpen && <section className="dd-poster-mobile-preview-panel" aria-label={PAGES[page - 1] + " 실시간 미리보기"}>
+        <div className="dd-poster-mobile-preview-head"><span>{page}. {PAGES[page - 1]} · 실시간 미리보기</span>
+          <button type="button" onClick={() => setFloatingPreviewOpen(false)} aria-label="미리보기 접기">✕</button></div>
+        <div className="dd-poster-mobile-preview-paper"><PosterPage page={page} designKey={draft.designKey}
+          settings={settings} source={source} gallery={gallery}
+          qrUrl={qr?.publicUrl === publicUrl ? qr?.url : null} /></div>
+      </section>}
+      {!floatingPreviewOpen && <button type="button" className="dd-poster-mobile-preview-toggle"
+        onClick={() => setFloatingPreviewOpen(true)} aria-expanded={false}>◉ 미리보기</button>}
     </div>
     {capture && <div className="dd-poster-capture" ref={captureRoot} aria-hidden="true">
       {capture.pages.map(number => <PosterPage key={number} page={number} {...capture.poster} capture
