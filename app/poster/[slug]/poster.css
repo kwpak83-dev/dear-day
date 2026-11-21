@@ -816,3 +816,8 @@
 /* Brief guidance directly beneath the company poster editor title. */
 .dd-poster-editor .dd-poster-header-description{margin:-5px 0 14px;color:#867989;font-family:Pretendard,sans-serif;font-size:12px;font-weight:400;line-height:1.5;word-break:keep-all}
 @media(max-width:600px){.dd-poster-editor .dd-poster-header-description{font-size:10px;line-height:1.5;margin:-4px 0 12px}}
+
+/* Compact pictograms before poster editor field headings. */
+.dd-poster-field-title{display:inline-flex;align-items:center;gap:6px;line-height:1.5}
+.dd-poster-field-title>span[aria-hidden]{display:inline-block;font-size:15px;line-height:1;flex:none}
+@media(max-width:600px){.dd-poster-field-title>span[aria-hidden]{font-size:14px}}
