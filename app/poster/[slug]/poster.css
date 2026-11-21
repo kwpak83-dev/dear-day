@@ -812,3 +812,7 @@
 .dd-poster-editor .dd-poster-download-menu>summary{font-size:10.4px;padding:7px 10px;gap:5px;border-radius:8px}
 .dd-poster-editor .dd-poster-download-menu>summary svg{width:13px;height:13px;flex:none}
 @media(max-width:800px){.dd-poster-editor .dd-poster-download-menu>summary{font-size:9.6px;padding:6px 9px;gap:5px}}
+
+/* Brief guidance directly beneath the company poster editor title. */
+.dd-poster-editor .dd-poster-header-description{margin:-5px 0 14px;color:#867989;font-family:Pretendard,sans-serif;font-size:12px;font-weight:400;line-height:1.5;word-break:keep-all}
+@media(max-width:600px){.dd-poster-editor .dd-poster-header-description{font-size:10px;line-height:1.5;margin:-4px 0 12px}}
