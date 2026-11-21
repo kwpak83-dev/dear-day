@@ -214,7 +214,8 @@ export default function PosterEditor({ slug }) {
           })}><option value="">자동 선택</option>
             {cover.mediaId && !available.has(cover.mediaId) && <option value={cover.mediaId}>사용할 수 없는 사진</option>}
             {gallery.map((item, i) => <option key={item.id} value={item.id}>갤러리 사진 {i + 1}</option>)}</select></label>
-          {!(cover.source === "auto" ? source.autoCoverUrl : available.has(cover.mediaId)) && <p>표지에 사용할 사진을 갤러리에서 선택해 주세요.</p>}
+          <p className="dd-poster-cover-help">사진이 2장 이상 들어가는 표지는 갤러리에서 직접 선택해 주세요. 다른 표지도 원하는 사진으로 변경할 수 있어요.</p>
+          {!(cover.source === "auto" ? source.autoCoverUrl : available.has(cover.mediaId)) && <p className="dd-poster-cover-warning">현재 표지 사진이 없어 갤러리에서 선택해야 해요.</p>}
           <Crop value={cover.crop} onChange={crop => patchCover({ crop })} />
           <label><input type="checkbox" checked={cover.grayscale} onChange={event => patchCover({ grayscale: event.target.checked })} /> 흑백 사진</label>
           <label><span className="dd-poster-field-title"><span aria-hidden="true">💌</span>계좌정보</span><select value={settings.accountSide} onChange={event => update("accountSide", event.target.value)}>
