@@ -162,7 +162,7 @@ export default function PosterEditor({ slug }) {
       <button type="button" className="dd-poster-save" onClick={save} disabled={saving || exporting}>{saving ? "저장 중…" : "저장하기"}</button></header>
     <div className="dd-poster-downloads" aria-busy={exporting}>
       {[1, 2, 3].map(number => <button key={number} type="button" disabled={saving || exporting}
-        onClick={() => exportPng(`page${number}`)}><span>{number}. {PAGES[number - 1]}</span>{icon}<span>다운로드</span></button>)}
+        onClick={() => exportPng(`page${number}`)}><span>{number}. {PAGES[number - 1]}</span><svg aria-hidden="true" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span>다운로드</span></button>)}
       <button type="button" disabled={saving || exporting} onClick={() => exportPng("all")}><span>전체 3페이지</span><svg aria-hidden="true" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span>다운로드</span></button>
     </div>
     <p>저장하지 않은 편집 내용도 PNG에 반영돼요. 다운로드해도 설정은 저장되지 않아요.</p>
