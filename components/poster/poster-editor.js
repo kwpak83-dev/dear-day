@@ -231,7 +231,7 @@ export default function PosterEditor({ slug }) {
     </div>
     <div className="dd-poster-mobile-preview" aria-label="모바일 플로팅 미리보기">
       {floatingPreviewOpen && <section className="dd-poster-mobile-preview-panel" aria-label={PAGES[page - 1] + " 실시간 미리보기"}>
-        <div className="dd-poster-mobile-preview-head"><span>{page}. {PAGES[page - 1]} · 실시간 미리보기</span>
+        <div className="dd-poster-mobile-preview-head"><span className="dd-poster-mobile-preview-heading"><strong>{page}. {PAGES[page - 1]}</strong><small>보면서 편집하세요</small></span>
           <button type="button" onClick={() => setFloatingPreviewOpen(false)} aria-label="미리보기 접기">✕</button></div>
         <div className="dd-poster-mobile-preview-paper"><PosterPage page={page} designKey={draft.designKey}
           settings={settings} source={source} gallery={gallery}
