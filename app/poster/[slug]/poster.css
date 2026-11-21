@@ -729,3 +729,9 @@
   .dd-poster-editor .dd-poster-tabs button{flex:1;min-width:0;padding:10px 6px;font-size:12px}
   .dd-poster-editor .dd-poster-downloads button{flex:1}
 }
+
+/* Compact image download actions in the editor toolbar. */
+.dd-poster-editor .dd-poster-downloads{gap:7px;align-items:center}
+.dd-poster-editor .dd-poster-downloads button{display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:7px 9px;font-size:11px;line-height:1.25;white-space:nowrap;font-weight:600}
+.dd-poster-editor .dd-poster-downloads button svg{width:12px;height:12px;flex:none}
+@media(max-width:600px){.dd-poster-editor .dd-poster-downloads button{flex:0 1 auto;font-size:10px;padding:7px 8px}}
