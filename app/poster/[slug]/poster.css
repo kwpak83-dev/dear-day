@@ -513,3 +513,51 @@
   position:absolute;z-index:3;left:12%;top:86%;width:76%;margin:0;
   color:#fff;text-align:center;font:700 3.1cqw/1.3 Arial,"Malgun Gothic",sans-serif;
 }
+
+
+/* Modern Editorial cover: artwork provides all static typography, rules and icons.
+   Only the cover photo and invitation-specific values are rendered as overlays. */
+.dd-poster-modern-editorial.dd-poster-page-1{
+  display:block;padding:0;text-align:left;color:#17191d;
+  background:#eaf3fc url("/images/poster/modern-editorial/page1-background.png") center / 100% 100% no-repeat;
+}
+.dd-poster-modern-editorial.dd-poster-page-1::after{content:none}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-cover-frame{
+  position:absolute;z-index:2;left:7.9%;top:22.55%;width:84.2%;height:35.8%;
+  margin:0;padding:0;border:0;background:transparent;box-shadow:none;transform:none;
+}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-cover-frame::before,
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-cover-frame::after{content:none;display:none}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-cover-frame .dd-poster-image{
+  width:100%;height:100%;aspect-ratio:auto;border:0;background:transparent;
+  overflow:hidden;clip-path:inset(0);
+}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-playful-name-tag{
+  position:absolute;z-index:3;left:11%;top:58.6%;width:78%;height:5.3%;
+  display:flex;align-items:center;justify-content:center;padding:0 2cqw;
+  box-sizing:border-box;background:none;border:0;box-shadow:none;transform:none;
+  color:#17191d;text-align:center;
+}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-playful-name-tag strong{
+  max-width:100%;font:700 4.5cqw/1.15 var(--font-poster-gowun),"Malgun Gothic",sans-serif;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-playful-event-details{
+  position:absolute;z-index:3;left:25%;top:66.6%;width:67%;height:15%;
+  display:grid;grid-template-rows:repeat(3,minmax(0,1fr));align-items:center;
+  color:#17191d;text-align:left;font:700 3.05cqw/1.2 var(--font-poster-gowun),"Malgun Gothic",sans-serif;
+}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-playful-event-details>strong{
+  display:block;font:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-accounts{
+  position:absolute;z-index:3;left:14%;top:85.3%;width:72%;height:5%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  margin:0;padding:0;border:0;background:none;box-shadow:none;
+  color:#17191d;text-align:center;
+  font:600 2.65cqw/1.15 var(--font-poster-gowun),"Malgun Gothic",sans-serif;
+}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-accounts p{
+  display:flex;justify-content:center;gap:1cqw;max-width:100%;margin:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
