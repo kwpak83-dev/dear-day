@@ -143,7 +143,7 @@ export default function PosterEditor({ slug }) {
 
   if (!failure && !draft) return <DearDayLoading message="초대장을 불러오고 있어요" />;
   if (failure) return <main className="dd-poster-editor"><a href="/my-invitations">← 내 초대장</a>
-    <h1>게시용 초대장</h1><p role="alert">{failure.message}</p>
+    <h1>회사 게시용 초대장</h1><p role="alert">{failure.message}</p>
     {failure.code === "login_required" && <a href={`/?login=required&returnUrl=${encodeURIComponent("/poster/" + slug)}`}>로그인하기</a>}
   </main>;
 
@@ -167,7 +167,7 @@ export default function PosterEditor({ slug }) {
   };
 
   return <main className="dd-poster-editor">
-    <header className="dd-poster-top"><div><a href="/my-invitations">← 내 초대장</a><h1>게시용 초대장</h1></div>
+    <header className="dd-poster-top"><div><a href="/my-invitations">← 내 초대장</a><h1>회사 게시용 초대장</h1></div>
       <button type="button" className="dd-poster-save" onClick={save} disabled={saving || exporting}>{saving ? "저장 중…" : "저장하기"}</button></header>
     {notice && <p className="dd-poster-notice" role="status">{notice}</p>}
     <nav className="dd-poster-steps" aria-label="포스터 편집 단계">
