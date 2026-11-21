@@ -572,7 +572,7 @@
 .dd-poster-modern-editorial.dd-poster-page-2::after{content:none}
 .dd-poster-modern-editorial.dd-poster-page-2 .dd-poster-editorial-mark{display:none}
 .dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-main-photo{
-  position:absolute;z-index:2;left:5.8%;top:21.5%;width:88.4%;height:37.2%;
+  position:absolute;z-index:2;left:5.8%;top:21.1%;width:88.4%;height:37.6%;
   padding:0;margin:0;transform:none;overflow:hidden;background:transparent;border:0;box-shadow:none;
 }
 .dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-main-photo .dd-poster-image{
@@ -604,11 +604,11 @@
   left:68%;top:70.8%;transform:rotate(-3deg);
 }
 .dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-small-photo .dd-poster-image{
-  position:absolute;left:4%;top:4%;width:92%;height:83%;
+  position:absolute;left:4%;top:4%;width:92%;height:101%;
   margin:0;border:0;background:transparent;transform:none;clip-path:inset(0);
 }
 .dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-small-photo figcaption{
-  position:absolute;left:0;top:87%;width:100%;height:12%;margin:0;padding:0 .5cqw;
+  position:absolute;left:0;top:105%;width:100%;height:12%;margin:0;padding:0 .5cqw;
   display:flex;align-items:center;justify-content:center;box-sizing:border-box;
   color:#252329;text-align:center;font:600 2.15cqw/1.05 "Gowun Dodum","Malgun Gothic",sans-serif;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
