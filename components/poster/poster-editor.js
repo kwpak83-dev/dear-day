@@ -167,7 +167,7 @@ export default function PosterEditor({ slug }) {
   };
 
   return <main className="dd-poster-editor">
-    <header className="dd-poster-top"><div><a href="/my-invitations">← 내 초대장</a><h1>회사 게시용 초대장</h1></div>
+    <header className="dd-poster-top"><div><a href="/my-invitations">← 내 초대장</a><h1>회사 게시용 초대장</h1><p className="dd-poster-header-description">편집을 완료후 이미지를 다운받아 회사 게시판에 바로 업로드 해주세요</p></div>
       <button type="button" className="dd-poster-save" onClick={save} disabled={saving || exporting}>{saving ? "저장 중…" : "저장하기"}</button></header>
     {notice && <p className="dd-poster-notice" role="status">{notice}</p>}
     <nav className="dd-poster-steps" aria-label="포스터 편집 단계">
