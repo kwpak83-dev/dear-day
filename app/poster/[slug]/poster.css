@@ -788,3 +788,22 @@
 .dd-poster-editor .dd-poster-top>div>a{font-family:Pretendard,sans-serif;font-size:12px;font-weight:500;line-height:1.5;color:#292929;text-decoration:none;white-space:nowrap}
 .dd-poster-editor .dd-poster-top .dd-poster-save{font-family:Pretendard,sans-serif;font-size:12px;font-weight:500;line-height:1.5;color:#dc7885;background:none;border:0;box-shadow:none;padding:8px 0;white-space:nowrap}
 @media(max-width:760px){.dd-poster-editor .dd-poster-top>div>a,.dd-poster-editor .dd-poster-top .dd-poster-save{font-size:11px}}
+
+/* Three-stage poster editor navigation; replaces the former button tabs. */
+.dd-poster-steps{margin:20px 0 16px;padding:8px 2px 0}
+.dd-poster-step-list{display:flex;align-items:flex-start;width:100%}
+.dd-poster-step-item{display:flex;align-items:flex-start;flex:1;min-width:0}
+.dd-poster-step-item:last-child{flex:0 0 29%}
+.dd-poster-editor .dd-poster-step{display:flex;flex-direction:column;align-items:center;gap:7px;flex:0 0 auto;min-width:75px;padding:0;border:0;background:transparent;color:#5b4d62;font:inherit;cursor:pointer}
+.dd-poster-step-circle{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#f0edf2;color:#574a60;font-family:Pretendard,sans-serif;font-size:15px;font-weight:650;transition:background .15s,color .15s}
+.dd-poster-step[aria-current=step] .dd-poster-step-circle{background:#302437;color:#fff}
+.dd-poster-step-item:has(.dd-poster-step-connector.is-past) .dd-poster-step-circle{background:#ede6f0;color:#5f4871}
+.dd-poster-step-label{font-family:Pretendard,sans-serif;font-size:12px;font-weight:500;white-space:nowrap}
+.dd-poster-step[aria-current=step] .dd-poster-step-label{font-weight:700;color:#302437}
+.dd-poster-step-connector{height:2px;flex:1;min-width:8px;margin:19px 4px 0;background:#e1dce5;border-radius:2px}
+.dd-poster-step-connector.is-past{background:#a48dae}
+.dd-poster-step-track{height:5px;margin:15px 4px 8px;background:#eeebf0;border-radius:99px;overflow:hidden}
+.dd-poster-step-track>span{display:block;height:100%;background:#6b507c;border-radius:inherit;transition:width .2s ease}
+.dd-poster-step-caption{display:flex;justify-content:space-between;gap:10px;padding:0 4px;color:#766b7c;font-family:Pretendard,sans-serif;font-size:11px}
+.dd-poster-editor .dd-poster-step:focus-visible{outline:2px solid #6b507c;outline-offset:5px;border-radius:6px}
+@media(max-width:600px){.dd-poster-steps{margin:18px 0 12px}.dd-poster-step-item:last-child{flex-basis:30%}.dd-poster-editor .dd-poster-step{min-width:70px}.dd-poster-step-circle{width:36px;height:36px;font-size:14px}.dd-poster-step-connector{margin-top:17px}.dd-poster-step-label{font-size:11px}.dd-poster-step-caption{font-size:10px}}
