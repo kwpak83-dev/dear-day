@@ -682,3 +682,9 @@
 .dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-main-caption span{
   font-size:3.97cqw;white-space:nowrap;overflow:visible;text-overflow:clip;
 }
+
+/* Playful Pop cover account: plain text only, no pill or dashed outline. */
+.dd-poster-playful-pop.dd-poster-page-1 .dd-poster-accounts p{
+  border:0;border-radius:0;background:transparent;box-shadow:none;
+  padding:0;min-height:0;
+}
