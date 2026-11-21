@@ -41,6 +41,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
   const boldCover = designKey === "bold-pop-art" && page === 1;
   const artCover = playfulCover || boldCover;
   const playfulGallery = designKey === "playful-pop" && page === 2;
+  const artGallery = page === 2 && (playfulGallery || designKey === "bold-pop-art");
   const accountGroups = settings.accountSide === "both"
     ? [source.accounts?.groom, source.accounts?.bride].filter(Boolean)
     : [source.accounts?.[settings.accountSide]].filter(Boolean);
@@ -53,7 +54,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
     ? Math.max(1.85, Math.min(2.8, 78 / messageLines)) : undefined;
 
   return <article className={`dd-poster-paper dd-poster-${designKey} dd-poster-page-${page}`} data-poster-page={page}>
-    {designKey === "bold-pop-art" && page !== 1 && <span className="dd-poster-number" aria-hidden="true">0{page}</span>}
+    {designKey === "bold-pop-art" && page === 3 && <span className="dd-poster-number" aria-hidden="true">0{page}</span>}
     {designKey === "playful-pop" && page !== 3 && !playfulCover && !playfulGallery && <span className="dd-poster-deco-heart" aria-hidden="true">♡</span>}
     {designKey === "modern-editorial" && <span className="dd-poster-editorial-mark" aria-hidden="true">OUR WEDDING DAY</span>}
     {page === 1 && <>
@@ -78,7 +79,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
         {accountGroups.flatMap((group, groupIndex) => group.rows.map((row, index) =>
           <p key={`${groupIndex}-${index}-${row.number}`}><span>{row.bank}</span><span>{row.number}</span><span>{row.holder}</span></p>))}</div>}
     </>}
-    {page === 2 && (playfulGallery ? <>
+    {page === 2 && (artGallery ? <>
       <div className="dd-playful-gallery-main-photo"><Photo key={photos.get(main?.mediaId)} url={photos.get(main?.mediaId)} crop={main?.crop} grayscale={false} capture={capture}>{main ? "사진을 다시 선택해 주세요" : "메인 사진을 지정해 주세요"}</Photo></div>
       {main?.caption?.trim() && <p className="dd-playful-gallery-main-caption"><span>{main.caption}</span></p>}
       <div className="dd-playful-gallery-small-photos">{Array.from({ length: 3 }, (_, index) => {
