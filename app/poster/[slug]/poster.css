@@ -783,3 +783,8 @@
 .dd-poster-editor .dd-poster-top .dd-poster-save{background:transparent;border:0;border-radius:0;box-shadow:none;padding:6px 0;color:#e46c70;font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:13px;font-weight:500;line-height:1.5;white-space:nowrap}
 .dd-poster-editor .dd-poster-top .dd-poster-save:hover:not(:disabled){text-decoration:underline}
 .dd-poster-editor .dd-poster-top .dd-poster-save:focus-visible{outline:2px solid #e46c70;outline-offset:4px}
+
+/* Exact type scale and font family from the main invitation editor header. */
+.dd-poster-editor .dd-poster-top>div>a{font-family:Pretendard,sans-serif;font-size:12px;font-weight:500;line-height:1.5;color:#292929;text-decoration:none;white-space:nowrap}
+.dd-poster-editor .dd-poster-top .dd-poster-save{font-family:Pretendard,sans-serif;font-size:12px;font-weight:500;line-height:1.5;color:#dc7885;background:none;border:0;box-shadow:none;padding:8px 0;white-space:nowrap}
+@media(max-width:760px){.dd-poster-editor .dd-poster-top>div>a,.dd-poster-editor .dd-poster-top .dd-poster-save{font-size:11px}}
