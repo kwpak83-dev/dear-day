@@ -3498,3 +3498,11 @@
  .landing-v2 .dd-features .dd-feature.dd-feature-occasions .dd-feature-copy{order:0!important}
  .landing-v2 .dd-features .dd-feature.dd-feature-occasions .dd-feature-visual{order:1!important}
 }
+
+
+/* Feature 07 desktop: taller scrolling viewport; keep mobile dimensions unchanged. */
+@media(min-width:801px){
+ .landing-v2 .dd-features .dd-feature-office .dd-feature-visual{
+  height:640px;max-height:640px;
+ }
+}
