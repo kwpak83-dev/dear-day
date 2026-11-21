@@ -763,3 +763,16 @@
 .dd-poster-page-navigation>button,.dd-poster-page-navigation>span:first-child,.dd-poster-page-navigation>span:last-child{min-width:82px}
 .dd-poster-editor .dd-poster-page-navigation>button:last-child{background:#241e2a;color:#fff;border-color:#241e2a}
 .dd-poster-page-progress{font-size:12px;color:#766a7c;text-align:center;white-space:nowrap}
+
+/* Compact download menu below the poster page tabs. */
+.dd-poster-editor .dd-poster-tabs{margin-bottom:10px}
+.dd-poster-download-bar{display:flex;justify-content:flex-end;margin:0 0 18px;position:relative;z-index:5}
+.dd-poster-download-menu{position:relative}
+.dd-poster-download-menu>summary{display:flex;align-items:center;justify-content:center;gap:7px;list-style:none;cursor:pointer;padding:9px 13px;border:1px solid #ded6df;border-radius:10px;background:#fff;color:#302536;font-size:13px;font-weight:650;user-select:none}
+.dd-poster-download-menu>summary::-webkit-details-marker{display:none}
+.dd-poster-download-menu>summary[aria-disabled=true]{opacity:.45;cursor:default}
+.dd-poster-download-options{position:absolute;right:0;top:calc(100% + 6px);width:max-content;min-width:215px;max-width:calc(100vw - 32px);padding:6px;border:1px solid #e3dde5;border-radius:12px;background:#fff;box-shadow:0 12px 30px #241e2a22;display:grid;gap:2px}
+.dd-poster-editor .dd-poster-download-options button{width:100%;padding:11px 12px;text-align:left;border:0;border-radius:7px;background:transparent;font-size:13px;font-weight:500}
+.dd-poster-editor .dd-poster-download-options button:hover:not(:disabled),.dd-poster-editor .dd-poster-download-options button:focus-visible{background:#f2ecf4}
+.dd-poster-editor .dd-poster-download-options button:last-child{border-top:1px solid #eee8f0;border-radius:0 0 7px 7px;font-weight:700}
+@media(max-width:800px){.dd-poster-editor .dd-poster-download-menu>summary{font-size:12px;padding:8px 11px}.dd-poster-editor .dd-poster-download-options button{font-size:12px}}
