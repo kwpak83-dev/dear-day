@@ -860,3 +860,9 @@
 /* Cover photo guidance: small, muted text under the selection field. */
 .dd-poster-editor .dd-poster-cover-help{margin:0;color:#88838d;font-family:Pretendard,sans-serif;font-size:11px;font-weight:400;line-height:1.55;word-break:keep-all}
 .dd-poster-editor .dd-poster-cover-warning{margin:0;color:#9b6874;font-family:Pretendard,sans-serif;font-size:11px;line-height:1.5;word-break:keep-all}
+
+/* Smaller previous/next controls without changing their behavior. */
+.dd-poster-editor .dd-poster-page-navigation>button{font-size:11px;padding:6px 9px;min-width:58px;line-height:1.4}
+.dd-poster-editor .dd-poster-page-navigation>span:first-child,
+.dd-poster-editor .dd-poster-page-navigation>span:last-child{min-width:58px}
+@media(max-width:600px){.dd-poster-editor .dd-poster-page-navigation>button{font-size:11px;padding:6px 9px;min-width:58px}}
