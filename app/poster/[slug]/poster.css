@@ -523,7 +523,7 @@
 }
 .dd-poster-modern-editorial.dd-poster-page-1::after{content:none}
 .dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-cover-frame{
-  position:absolute;z-index:2;left:7.9%;top:22.55%;width:84.2%;height:35.8%;
+  position:absolute;z-index:2;left:7.75862%;top:22.94985%;width:84.48276%;height:36.51917%;
   margin:0;padding:0;border:0;background:transparent;box-shadow:none;transform:none;
 }
 .dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-cover-frame::before,
@@ -572,7 +572,7 @@
 .dd-poster-modern-editorial.dd-poster-page-2::after{content:none}
 .dd-poster-modern-editorial.dd-poster-page-2 .dd-poster-editorial-mark{display:none}
 .dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-main-photo{
-  position:absolute;z-index:2;left:5.8%;top:21.1%;width:88.4%;height:37.6%;
+  position:absolute;z-index:2;left:5.73419%;top:20.99644%;width:88.31726%;height:36.6548%;
   padding:0;margin:0;transform:none;overflow:hidden;background:transparent;border:0;box-shadow:none;
 }
 .dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-main-photo .dd-poster-image{
@@ -604,8 +604,24 @@
   left:68%;top:73.0%;transform:rotate(-3deg);
 }
 .dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-small-photo .dd-poster-image{
-  position:absolute;left:4%;top:4%;width:92%;height:101%;
-  margin:0;border:0;background:transparent;transform:none;clip-path:inset(0);
+  position:absolute;margin:0;border:0;background:transparent;transform-origin:0 0;
+}
+/* Keep the caption wrappers in place. Each photo follows its measured opening,
+   with a notch in the top edge for the tape baked into the artwork. */
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-small-photo-1 .dd-poster-image{
+  left:2.2672%;top:5.32603%;width:94.23136%;height:93.64793%;
+  transform:matrix(1.00417,-0.02469,0.02447,1.00415,0,0);
+  clip-path:polygon(0% 0%, 23.17398% -0.22127%, 21.95721% 4.4255%, 57.584% 1.14595%, 59.30673% 0.02159%, 97.08738% 0%, 97.89262% 98.12197%, 0% 98.03922%);
+}
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-small-photo-2 .dd-poster-image{
+  left:3.58236%;top:5.85238%;width:97.38555%;height:95.30542%;
+  transform:matrix(1.00113,-0.00461,-0.01387,1.0021,0,0);
+  clip-path:polygon(0% 0%, 18.07505% -0.09978%, 18.25393% 2.8746%, 66.6017% 2.8849%, 66.4228% -0.0895%, 97.08738% 0%, 97.87103% 97.99793%, 0% 98.03922%);
+}
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-small-photo-3 .dd-poster-image{
+  left:0.37877%;top:5.75839%;width:96.597%;height:94.47667%;
+  transform:matrix(1.00304,-0.03187,0.01445,1.00213,0,0);
+  clip-path:polygon(0% 0%, 21.80253% -0.12217%, 21.12331% 4.54462%, 58.97313% 1.18502%, 61.02117% 0.08552%, 97.08738% 0%, 98.26954% 98.14917%, 0% 98.03922%);
 }
 .dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-small-photo figcaption{
   position:absolute;left:0;top:105%;width:100%;height:12%;margin:0;padding:0 .5cqw;
