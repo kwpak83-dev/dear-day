@@ -59,8 +59,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
       <div className="dd-poster-cover-frame"><Photo key={cover} url={cover} crop={settings.cover.crop} grayscale={settings.cover.grayscale} capture={capture} /></div>
       {playfulCover ? <>
         <div className="dd-playful-name-tag">
-          {names && <strong>{names}</strong>}
-          {english && <span>{english}</span>}
+          {(english || names) && <strong>{english || names}</strong>}
         </div>
         <div className="dd-playful-event-details">
           {coverSchedule.date && <strong className="dd-playful-detail-date">{coverSchedule.date}</strong>}
