@@ -57,7 +57,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
   return <article className={`dd-poster-paper dd-poster-${designKey} dd-poster-page-${page}`} data-poster-page={page}>
     
     {designKey === "playful-pop" && page !== 3 && !playfulCover && !playfulGallery && <span className="dd-poster-deco-heart" aria-hidden="true">♡</span>}
-    {designKey === "modern-editorial" && page === 3 && <span className="dd-poster-editorial-mark" aria-hidden="true">OUR WEDDING DAY</span>}
+    {designKey === "modern-editorial" && false && <span className="dd-poster-editorial-mark" aria-hidden="true">OUR WEDDING DAY</span>}
     {page === 1 && <>
       {!artCover && (designKey === "playful-pop" ? <h2>Our Wedding Day!</h2> : <h2>The Wedding</h2>)}
       <div className="dd-poster-cover-frame"><Photo key={cover} url={cover} crop={settings.cover.crop} grayscale={settings.cover.grayscale} capture={capture} /></div>
@@ -101,7 +101,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
       })}</div>
     </>)}
     {page === 3 && <>
-      {designKey !== "playful-pop" && designKey !== "bold-pop-art" && <h2>You're Invited</h2>}
+      {designKey !== "playful-pop" && designKey !== "bold-pop-art" && designKey !== "modern-editorial" && <h2>You're Invited</h2>}
       <div className="dd-poster-message-card"><p className="dd-poster-message" data-dense={messageSize !== undefined}
         style={messageSize && { fontSize: `${messageSize}cqw` }}>{settings.message}</p></div>
       {qrUrl ? <img className="dd-poster-qr" src={qrUrl} alt="발행 초대장 QR 코드" />
