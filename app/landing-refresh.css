@@ -3486,3 +3486,15 @@
 @media(max-width:800px){
  .landing-v2 .dd-features .dd-feature-office .dd-feature-visual{height:480px;max-height:480px;min-height:0!important;padding:8px}
 }
+
+
+/* Feature 07: match the yellow underline used by feature 08. */
+.landing-v2 .dd-feature-office .dd-feature-title-highlight{background:linear-gradient(to top,#ffe88a 0 24%,transparent 24% 100%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+
+/* Desktop only: reverse the content positions of features 07 and 08. */
+@media(min-width:801px){
+ .landing-v2 .dd-features .dd-feature.dd-feature-office .dd-feature-visual{order:0!important}
+ .landing-v2 .dd-features .dd-feature.dd-feature-office .dd-feature-copy{order:1!important}
+ .landing-v2 .dd-features .dd-feature.dd-feature-occasions .dd-feature-copy{order:0!important}
+ .landing-v2 .dd-features .dd-feature.dd-feature-occasions .dd-feature-visual{order:1!important}
+}
