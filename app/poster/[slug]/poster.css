@@ -807,3 +807,8 @@
 .dd-poster-step-caption{display:flex;justify-content:space-between;gap:10px;padding:0 4px;color:#766b7c;font-family:Pretendard,sans-serif;font-size:11px}
 .dd-poster-editor .dd-poster-step:focus-visible{outline:2px solid #6b507c;outline-offset:5px;border-radius:6px}
 @media(max-width:600px){.dd-poster-steps{margin:18px 0 12px}.dd-poster-step-item:last-child{flex-basis:30%}.dd-poster-editor .dd-poster-step{min-width:70px}.dd-poster-step-circle{width:36px;height:36px;font-size:14px}.dd-poster-step-connector{margin-top:17px}.dd-poster-step-label{font-size:11px}.dd-poster-step-caption{font-size:10px}}
+
+/* Compact image download trigger: approximately 20% smaller typography and padding. */
+.dd-poster-editor .dd-poster-download-menu>summary{font-size:10.4px;padding:7px 10px;gap:5px;border-radius:8px}
+.dd-poster-editor .dd-poster-download-menu>summary svg{width:13px;height:13px;flex:none}
+@media(max-width:800px){.dd-poster-editor .dd-poster-download-menu>summary{font-size:9.6px;padding:6px 9px;gap:5px}}
