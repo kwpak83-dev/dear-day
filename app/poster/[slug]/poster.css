@@ -688,3 +688,44 @@
   border:0;border-radius:0;background:transparent;box-shadow:none;
   padding:0;min-height:0;
 }
+
+
+/* Poster editor workspace: visually align with the Dear Day invitation editor.
+   Scoped to editor controls only; poster artwork and export capture stay untouched. */
+.dd-poster-editor{max-width:1320px;padding:36px 24px 72px;color:#302735}
+.dd-poster-editor:not(.dd-poster-capture) .dd-poster-top{padding-bottom:16px;border-bottom:1px solid #e9e4e9}
+.dd-poster-editor .dd-poster-top h1{font-size:clamp(24px,3vw,32px);letter-spacing:-.035em;margin:7px 0 0}
+.dd-poster-editor .dd-poster-top a{color:#796c7c;text-decoration:none;font-size:13px}
+.dd-poster-editor .dd-poster-save{padding:11px 22px;border-radius:10px;background:#352a38;border-color:#352a38;color:white;font-weight:700}
+.dd-poster-editor .dd-poster-downloads{margin-top:20px;gap:9px}
+.dd-poster-editor .dd-poster-downloads button{padding:10px 15px;border:1px solid #d8cfd9;border-radius:10px;background:white;font-size:13px;font-weight:600}
+.dd-poster-editor .dd-poster-downloads button:last-child{background:#f2ecf4;border-color:#ded1e3;color:#46354d}
+.dd-poster-editor .dd-poster-tabs{margin:24px 0 18px;gap:8px}
+.dd-poster-editor .dd-poster-tabs button{padding:11px 17px;border:1px solid #ded6df;border-radius:10px;background:#fff;font-weight:700;font-size:14px;transition:background-color .15s,border-color .15s}
+.dd-poster-editor .dd-poster-tabs button[aria-pressed=true]{background:#302536;border-color:#302536;color:#fff}
+.dd-poster-editor .dd-poster-workspace{grid-template-columns:minmax(320px,1fr) minmax(0,1.05fr);gap:28px}
+.dd-poster-editor .dd-poster-tools{padding:22px;border:1px solid #e6dfe7;border-radius:17px;background:#fff;gap:18px;box-shadow:0 3px 16px #36253a08}
+.dd-poster-editor .dd-poster-tools>label{font-size:13px;line-height:1.5;color:#3a303c}
+.dd-poster-editor .dd-poster-tools label :is(select,input:not([type=checkbox],[type=radio]),textarea){margin-top:8px;min-height:43px;border:1px solid #dcd5df;border-radius:10px;background:#fff;padding:10px 12px;box-sizing:border-box;outline-offset:2px}
+.dd-poster-editor .dd-poster-tools textarea{line-height:1.65;resize:vertical}
+.dd-poster-editor .dd-poster-tools label :is(select,input,textarea):focus-visible{outline:2px solid #725b86;outline-offset:1px}
+.dd-poster-editor .dd-poster-tools input[type=checkbox],.dd-poster-editor .dd-poster-tools input[type=radio]{accent-color:#5e4773}
+.dd-poster-editor .dd-poster-tools .dd-poster-crop{padding:14px 16px;border:1px solid #eee7ee;border-radius:12px;background:#faf8fb;gap:10px}
+.dd-poster-editor .dd-poster-crop input[type=range]{width:100%;accent-color:#654c78}
+.dd-poster-editor .dd-poster-picker{gap:9px}
+.dd-poster-editor .dd-poster-picker button{border:1px solid #e5dee5;border-radius:9px;background:#fff;padding:3px}
+.dd-poster-editor .dd-poster-picker button[aria-pressed=true]{border:3px solid #654c78;box-shadow:0 0 0 2px #e8dfee}
+.dd-poster-editor .dd-poster-picker img{border-radius:5px}
+.dd-poster-editor .dd-poster-selection{padding:17px;border:1px solid #e8e1e9;border-radius:13px;background:#fcfbfd;gap:12px}
+.dd-poster-editor .dd-poster-selection>strong{font-size:14px}
+.dd-poster-editor .dd-poster-photo-actions button{padding:7px 12px;border-radius:8px;border-color:#dcd4df;font-size:12px}
+.dd-poster-editor .dd-poster-preview{width:min(100%,540px);padding:0;position:sticky;top:20px;align-self:start;border-radius:12px;box-shadow:0 10px 35px #3b30421c}
+.dd-poster-editor .dd-poster-notice{padding:10px 14px;border-radius:9px;background:#f5f0f7;font-size:13px}
+@media(max-width:800px){
+  .dd-poster-editor{padding:20px 14px 44px}
+  .dd-poster-editor .dd-poster-workspace{grid-template-columns:minmax(0,1fr);gap:22px}
+  .dd-poster-editor .dd-poster-tools{padding:16px;gap:15px}
+  .dd-poster-editor .dd-poster-preview{position:static;top:auto}
+  .dd-poster-editor .dd-poster-tabs button{flex:1;min-width:0;padding:10px 6px;font-size:12px}
+  .dd-poster-editor .dd-poster-downloads button{flex:1}
+}
