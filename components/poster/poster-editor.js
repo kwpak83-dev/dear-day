@@ -203,12 +203,12 @@ export default function PosterEditor({ slug }) {
     </div>
     <div className="dd-poster-workspace">
       <fieldset ref={toolsRoot} className="dd-poster-tools" disabled={saving || exporting} aria-label="포스터 편집">
-        {page === 1 && <label>디자인<select value={draft.designKey} onChange={event => setDraft({ ...draft, designKey: event.target.value })}>
+        {page === 1 && <label><span className="dd-poster-field-title"><span aria-hidden="true">🎨</span>디자인</span><select value={draft.designKey} onChange={event => setDraft({ ...draft, designKey: event.target.value })}>
           {Object.entries(DESIGNS).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>}
         {page === 1 && <>
-          {["groom", "bride"].map((side, i) => <label key={side}>{i ? "신부" : "신랑"} 영문 이름
+          {["groom", "bride"].map((side, i) => <label key={side}><span className="dd-poster-field-title"><span aria-hidden="true">{i ? "👰" : "🤵"}</span>{i ? "신부" : "신랑"} 영문 이름</span>
             <input value={settings.englishNames[side]} maxLength={80} onChange={event => update("englishNames", { ...settings.englishNames, [side]: event.target.value })} /></label>)}
-          <label>표지 사진<select value={cover.source === "auto" ? "" : cover.mediaId} onChange={event => patchCover({
+          <label><span className="dd-poster-field-title"><span aria-hidden="true">🖼️</span>표지 사진</span><select value={cover.source === "auto" ? "" : cover.mediaId} onChange={event => patchCover({
             source: event.target.value ? "gallery" : "auto", mediaId: event.target.value || null,
           })}><option value="">자동 선택</option>
             {cover.mediaId && !available.has(cover.mediaId) && <option value={cover.mediaId}>사용할 수 없는 사진</option>}
@@ -216,18 +216,18 @@ export default function PosterEditor({ slug }) {
           {!(cover.source === "auto" ? source.autoCoverUrl : available.has(cover.mediaId)) && <p>표지에 사용할 사진을 갤러리에서 선택해 주세요.</p>}
           <Crop value={cover.crop} onChange={crop => patchCover({ crop })} />
           <label><input type="checkbox" checked={cover.grayscale} onChange={event => patchCover({ grayscale: event.target.checked })} /> 흑백 사진</label>
-          <label>계좌정보<select value={settings.accountSide} onChange={event => update("accountSide", event.target.value)}>
+          <label><span className="dd-poster-field-title"><span aria-hidden="true">💌</span>계좌정보</span><select value={settings.accountSide} onChange={event => update("accountSide", event.target.value)}>
             <option value="none">숨김</option><option value="groom">신랑 측</option><option value="bride">신부 측</option><option value="both">양측 모두</option>
           </select></label>
         </>}
         {page === 2 && <>
-          <p>사용 가능한 선택 사진 {validCount}/4장. {validCount < 4 && "콜라주를 완성하려면 사진 4장이 필요해요."}</p>
+          <p><span aria-hidden="true">📸 </span>사용 가능한 선택 사진 {validCount}/4장. {validCount < 4 && "콜라주를 완성하려면 사진 4장이 필요해요."}</p>
           <div className="dd-poster-picker">{gallery.map((item, i) => <button type="button" key={item.id}
             aria-label={`갤러리 사진 ${i + 1}`} aria-pressed={selected.has(item.id)}
             disabled={!selected.has(item.id) && selection.photos.length >= 4} onClick={() => togglePhoto(item.id)}>
             <img src={item.thumbnailUrl || item.url} alt="" loading="lazy" /></button>)}</div>
           {selection.photos.map((photo, index) => <section className="dd-poster-selection" key={photo.mediaId}>
-            <strong>{index + 1}번째 사진 {available.has(photo.mediaId) ? "" : "· 사용할 수 없음"}</strong>
+            <strong><span aria-hidden="true">📸 </span>{index + 1}번째 사진 {available.has(photo.mediaId) ? "" : "· 사용할 수 없음"}</strong>
             <div className="dd-poster-photo-actions">
               <button type="button" disabled={index === 0} onClick={() => move(index, -1)}>앞으로</button>
               <button type="button" disabled={index === selection.photos.length - 1} onClick={() => move(index, 1)}>뒤로</button>
@@ -235,12 +235,12 @@ export default function PosterEditor({ slug }) {
             </div>
             <label><input type="radio" name="poster-main-photo" disabled={!available.has(photo.mediaId)}
               checked={selection.mainMediaId === photo.mediaId} onChange={() => update("gallery", { ...selection, mainMediaId: photo.mediaId })} /> 메인 사진</label>
-            <label>사진 캡션<input maxLength={80} value={photo.caption} onChange={event => patchPhoto(photo.mediaId, { caption: event.target.value })} /></label>
+            <label><span className="dd-poster-field-title"><span aria-hidden="true">✏️</span>사진 캡션</span><input maxLength={80} value={photo.caption} onChange={event => patchPhoto(photo.mediaId, { caption: event.target.value })} /></label>
             <Crop value={photo.crop} onChange={crop => patchPhoto(photo.mediaId, { crop })} />
           </section>)}
         </>}
         {page === 3 && <>
-          <label>초대 문구 예시
+          <label><span className="dd-poster-field-title"><span aria-hidden="true">📋</span>초대 문구 예시</span>
             <select value="" onChange={event => {
               const example = MESSAGE_EXAMPLES[Number(event.target.value)];
               if (example) update("message", example.text);
@@ -250,7 +250,7 @@ export default function PosterEditor({ slug }) {
                 <option key={example.label} value={index}>{example.label}</option>)}
             </select>
           </label>
-          <label>초대 문구<textarea rows={7} maxLength={1000} value={settings.message} onChange={event => update("message", event.target.value)} /></label>
+          <label><span className="dd-poster-field-title"><span aria-hidden="true">💌</span>초대 문구</span><textarea rows={7} maxLength={1000} value={settings.message} onChange={event => update("message", event.target.value)} /></label>
           <p>예시를 선택하면 아래 문구에 적용돼요. 적용 후 자유롭게 수정할 수 있어요.</p>
           {publicUrl ? <a href={publicUrl} target="_blank" rel="noreferrer">발행 초대장 주소 확인</a>
             : <p>발행 주소 설정을 확인할 수 없어 QR 코드를 표시하지 못해요.</p>}
