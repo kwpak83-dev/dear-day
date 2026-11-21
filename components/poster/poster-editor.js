@@ -251,7 +251,7 @@ export default function PosterEditor({ slug }) {
             </select>
           </label>
           <label><span className="dd-poster-field-title"><span aria-hidden="true">💌</span>초대 문구</span><textarea rows={7} maxLength={1000} value={settings.message} onChange={event => update("message", event.target.value)} /></label>
-          <p>예시를 선택하면 아래 문구에 적용돼요. 적용 후 자유롭게 수정할 수 있어요.</p>
+          <p className="dd-poster-message-help">예시 문구를 선택한 후, 원하는 모양으로 줄바꿈하여 자유롭게 편집해 보세요.</p>
         </>}
         <div className="dd-poster-page-navigation" aria-label="편집 페이지 이동">
           {page > 1 ? <button type="button" onClick={() => goToPage(page - 1)}>← 이전</button> : <span />}
