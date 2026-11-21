@@ -38,6 +38,8 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
   const others = settings.gallery.photos.filter(photo => photo !== main);
   const monochrome = designKey === "bold-pop-art";
   const playfulCover = designKey === "playful-pop" && page === 1;
+  const boldCover = designKey === "bold-pop-art" && page === 1;
+  const artCover = playfulCover || boldCover;
   const playfulGallery = designKey === "playful-pop" && page === 2;
   const accountGroups = settings.accountSide === "both"
     ? [source.accounts?.groom, source.accounts?.bride].filter(Boolean)
@@ -45,19 +47,19 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
   const names = [source.names.groom, source.names.bride].filter(Boolean).join(" · ");
   const english = [settings.englishNames.groom.trim(), settings.englishNames.bride.trim()].filter(Boolean).join(" & ");
   const schedule = [source.date, source.time].filter(Boolean).join(" · ");
-  const coverSchedule = playfulCover ? playfulCoverSchedule(source.date, source.time) : null;
+  const coverSchedule = artCover ? playfulCoverSchedule(source.date, source.time) : null;
   const messageLines = settings.message.split("\n").length;
   const messageSize = messageLines > 18 || settings.message.length > 400
     ? Math.max(1.85, Math.min(2.8, 78 / messageLines)) : undefined;
 
   return <article className={`dd-poster-paper dd-poster-${designKey} dd-poster-page-${page}`} data-poster-page={page}>
-    {designKey === "bold-pop-art" && <span className="dd-poster-number" aria-hidden="true">0{page}</span>}
+    {designKey === "bold-pop-art" && page !== 1 && <span className="dd-poster-number" aria-hidden="true">0{page}</span>}
     {designKey === "playful-pop" && page !== 3 && !playfulCover && !playfulGallery && <span className="dd-poster-deco-heart" aria-hidden="true">♡</span>}
     {designKey === "modern-editorial" && <span className="dd-poster-editorial-mark" aria-hidden="true">OUR WEDDING DAY</span>}
     {page === 1 && <>
-      {!playfulCover && (designKey === "playful-pop" ? <h2>Our Wedding Day!</h2> : <h2>The Wedding</h2>)}
+      {!artCover && (designKey === "playful-pop" ? <h2>Our Wedding Day!</h2> : <h2>The Wedding</h2>)}
       <div className="dd-poster-cover-frame"><Photo key={cover} url={cover} crop={settings.cover.crop} grayscale={settings.cover.grayscale} capture={capture} /></div>
-      {playfulCover ? <>
+      {artCover ? <>
         <div className="dd-playful-name-tag">
           {(english || names) && <strong>{english || names}</strong>}
         </div>
