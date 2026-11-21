@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import PosterPage, { DESIGNS } from "./poster-page";
+import DearDayLoading from "../dearday-loading";
 import { downloadPosterPng, posterQr, renderPosterPng } from "./poster-export";
 
 const DEFAULT_CROP = { x: 50, y: 50, zoom: 1 };
@@ -140,9 +141,10 @@ export default function PosterEditor({ slug }) {
     }
   };
 
-  if (failure || !draft) return <main className="dd-poster-editor"><a href="/my-invitations">← 내 초대장</a>
-    <h1>게시용 초대장</h1><p role={failure ? "alert" : "status"}>{failure?.message || "초대장을 불러오고 있어요."}</p>
-    {failure?.code === "login_required" && <a href={`/?login=required&returnUrl=${encodeURIComponent("/poster/" + slug)}`}>로그인하기</a>}
+  if (!failure && !draft) return <DearDayLoading message="초대장을 불러오고 있어요" />;
+  if (failure) return <main className="dd-poster-editor"><a href="/my-invitations">← 내 초대장</a>
+    <h1>게시용 초대장</h1><p role="alert">{failure.message}</p>
+    {failure.code === "login_required" && <a href={`/?login=required&returnUrl=${encodeURIComponent("/poster/" + slug)}`}>로그인하기</a>}
   </main>;
 
   const { settings } = draft;
