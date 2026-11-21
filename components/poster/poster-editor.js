@@ -238,7 +238,7 @@ export default function PosterEditor({ slug }) {
           qrUrl={qr?.publicUrl === publicUrl ? qr?.url : null} /></div>
       </section>}
       {!floatingPreviewOpen && <button type="button" className="dd-poster-mobile-preview-toggle"
-        onClick={() => setFloatingPreviewOpen(true)} aria-expanded={false}>◉ 미리보기</button>}
+        onClick={() => setFloatingPreviewOpen(true)} aria-expanded={false}>◉ 실시간 미리보기</button>}
     </div>
     {capture && <div className="dd-poster-capture" ref={captureRoot} aria-hidden="true">
       {capture.pages.map(number => <PosterPage key={number} page={number} {...capture.poster} capture
