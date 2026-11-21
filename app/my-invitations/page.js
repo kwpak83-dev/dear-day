@@ -9,6 +9,8 @@ import { getRetentionState, isEventReadOnly } from "../../lib/invitation-retenti
 
 function MenuIcon({ name }) {
  const shapes = {
+ building:<><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h2m4 0h2M8 11h2m4 0h2M8 15h2m4 0h2M10 21v-4h4v4"/></>,
+
  users:<><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2M17 4a4 4 0 0 1 0 7m2 4a5 5 0 0 1 3 5v1"/></>,
  link:<><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7L12 5M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7L12 19"/></>,
  share:<><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 11 6-4m-6 7 6 4"/></>,
@@ -195,7 +197,7 @@ export default function MyInvitations() {
             {event.status === "paid" && <a href={`/create?slug=${event.slug}&publish=ready`}>초대장 발행하기</a>}
             {event.status === "published" && <a href={`/invite/${event.slug}?from=owner`}>초대장 보기</a>}
             {event.kind === "wedding" && event.status === "published" && getRetentionState(event).phase === "active" &&
-              <a className="dd-my-card-poster-action" href={`/poster/${encodeURIComponent(event.slug)}`}>회사 게시판 포스팅용 초대장 만들기</a>}
+              <a className="dd-my-card-poster-action" href={`/poster/${encodeURIComponent(event.slug)}`}><MenuIcon name="building" />회사 게시판 포스팅용 초대장 만들기</a>}
             {event.status === "suspended" && !isEventReadOnly(event) && <button type="button" onClick={() => { setPublicationError(""); setPublicationTarget(event); }}>다시 발행하기</button>}
           </div>
           {event.kind === "wedding" && (event.status === "suspended" ||
