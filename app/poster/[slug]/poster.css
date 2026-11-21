@@ -523,7 +523,7 @@
 }
 .dd-poster-modern-editorial.dd-poster-page-1::after{content:none}
 .dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-cover-frame{
-  position:absolute;z-index:2;left:7.9%;top:22.55%;width:84.2%;height:35.8%;
+  position:absolute;z-index:2;left:7.9%;top:25.05%;width:84.2%;height:35.8%;
   margin:0;padding:0;border:0;background:transparent;box-shadow:none;transform:none;
 }
 .dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-cover-frame::before,
@@ -533,7 +533,7 @@
   overflow:hidden;clip-path:inset(0);
 }
 .dd-poster-modern-editorial.dd-poster-page-1 .dd-playful-name-tag{
-  position:absolute;z-index:3;left:11%;top:58.6%;width:78%;height:5.3%;
+  position:absolute;z-index:3;left:11%;top:61.1%;width:78%;height:5.3%;
   display:flex;align-items:center;justify-content:center;padding:0 2cqw;
   box-sizing:border-box;background:none;border:0;box-shadow:none;transform:none;
   color:#17191d;text-align:center;
@@ -543,7 +543,7 @@
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .dd-poster-modern-editorial.dd-poster-page-1 .dd-playful-event-details{
-  position:absolute;z-index:3;left:25%;top:66.6%;width:67%;height:15%;
+  position:absolute;z-index:3;left:25%;top:69.1%;width:67%;height:15%;
   display:grid;grid-template-rows:repeat(3,minmax(0,1fr));align-items:center;
   color:#17191d;text-align:left;font:700 3.05cqw/1.2 var(--font-poster-gowun),"Malgun Gothic",sans-serif;
 }
@@ -551,7 +551,7 @@
   display:block;font:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-accounts{
-  position:absolute;z-index:3;left:14%;top:85.3%;width:72%;height:5%;
+  position:absolute;z-index:3;left:14%;top:87.8%;width:72%;height:5%;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   margin:0;padding:0;border:0;background:none;box-shadow:none;
   color:#17191d;text-align:center;
