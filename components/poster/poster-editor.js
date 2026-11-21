@@ -171,8 +171,8 @@ export default function PosterEditor({ slug }) {
       <button key={label} type="button" aria-pressed={page === index + 1} onClick={() => setPage(index + 1)}>{index + 1}. {label}</button>)}</nav>
     <div className="dd-poster-workspace">
       <fieldset className="dd-poster-tools" disabled={saving || exporting} aria-label="포스터 편집">
-        <label>디자인<select value={draft.designKey} onChange={event => setDraft({ ...draft, designKey: event.target.value })}>
-          {Object.entries(DESIGNS).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>
+        {page === 1 && <label>디자인<select value={draft.designKey} onChange={event => setDraft({ ...draft, designKey: event.target.value })}>
+          {Object.entries(DESIGNS).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>}
         {page === 1 && <>
           {["groom", "bride"].map((side, i) => <label key={side}>{i ? "신부" : "신랑"} 영문 이름
             <input value={settings.englishNames[side]} maxLength={80} onChange={event => update("englishNames", { ...settings.englishNames, [side]: event.target.value })} /></label>)}
