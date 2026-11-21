@@ -207,8 +207,8 @@ export default function PosterEditor({ slug }) {
         {page === 1 && <label><span className="dd-poster-field-title"><span aria-hidden="true">🎨</span>디자인</span><select value={draft.designKey} onChange={event => setDraft({ ...draft, designKey: event.target.value })}>
           {Object.entries(DESIGNS).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>}
         {page === 1 && <>
-          {["groom", "bride"].map((side, i) => <label key={side}><span className="dd-poster-field-title"><span aria-hidden="true">{i ? "👰" : "🤵"}</span>{i ? "신부" : "신랑"} 영문 이름</span>
-            <input value={settings.englishNames[side]} maxLength={80} onChange={event => update("englishNames", { ...settings.englishNames, [side]: event.target.value })} /></label>)}
+          {["groom", "bride"].map((side, i) => <label key={side}><span className="dd-poster-field-title"><span aria-hidden="true">{i ? "👰" : "🤵"}</span>{i ? "신부" : "신랑"} 영문 이름 <span className="dd-poster-optional">(선택)</span></span>
+            <input value={settings.englishNames[side]} maxLength={80} onChange={event => update("englishNames", { ...settings.englishNames, [side]: event.target.value })} /><span className="dd-poster-english-help">입력하면 한글 이름 대신 영문 이름으로 표시됩니다.</span></label>)}
           <label><span className="dd-poster-field-title"><span aria-hidden="true">🖼️</span>표지 사진</span><select value={cover.source === "auto" ? "" : cover.mediaId} onChange={event => patchCover({
             source: event.target.value ? "gallery" : "auto", mediaId: event.target.value || null,
           })}><option value="">자동 선택</option>
