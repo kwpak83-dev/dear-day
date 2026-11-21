@@ -274,7 +274,7 @@
 .dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-small-photo-1 .dd-poster-image{
   position:absolute;left:3.143%;top:0.316%;width:101.271%;height:95.958%;
   transform-origin:0 0;transform:matrix(1.004276,-0.005217,0.012645,1.004926,0,0);
-  --photo-mask:polygon(0.000% 0.000%,25.236% 0.000%,25.150% 2.6%,47.970% 2.6%,68.824% 2.1%,69.684% 1.8%,68.621% 0.126%,98.814% 0.000%,98.773% 99.263%,0.000% 98.814%);
+  --photo-mask:polygon(0.000% 0.000%,25.236% 0.000%,25.150% 1.1%,47.970% 1.1%,68.824% 0.9%,69.684% 0.7%,68.621% 0.126%,98.814% 0.000%,98.773% 99.263%,0.000% 98.814%);
 }
 .dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-small-photo-2 .dd-poster-image{
   position:absolute;left:-0.681%;top:0.860%;width:105.085%;height:100.360%;
@@ -284,7 +284,7 @@
 .dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-small-photo-3 .dd-poster-image{
   position:absolute;left:0.114%;top:-2.765%;width:102.119%;height:99.480%;
   transform-origin:0 0;transform:matrix(1.001141,-0.015228,0.017779,1.00123,0,0);
-  --photo-mask:polygon(0.000% 0.000%,23.783% 0.000%,24.319% 2.4%,44.444% 2.4%,66.248% 2.1%,66.012% 0.007%,98.814% 0.000%,99.632% 98.858%,0.000% 98.814%);
+  --photo-mask:polygon(0.000% 0.000%,23.783% 0.000%,24.319% 1.0%,44.444% 1.0%,66.248% 0.8%,66.012% 0.007%,98.814% 0.000%,99.632% 98.858%,0.000% 98.814%);
 }
 .dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-main-caption{
   position:absolute;z-index:3;top:66.6%;left:9%;width:82%;
