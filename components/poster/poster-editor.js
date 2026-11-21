@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import PosterPage, { DESIGNS } from "./poster-page";
+import DearDayLoading from "../dearday-loading";
 import { downloadPosterPng, posterQr, renderPosterPng } from "./poster-export";
 
 const DEFAULT_CROP = { x: 50, y: 50, zoom: 1 };
@@ -12,23 +13,23 @@ const PAGES = ["표지", "사진 콜라주", "초대 문구"];
 const MESSAGE_EXAMPLES = [
   {
     label: "따뜻하고 정중한 초대",
-    text: "서로의 하루에 가장 따뜻한 사람이 되어\n이제 평생을 함께 걸어가려 합니다.\n\n저희 두 사람이 시작하는 소중한 날,\n귀한 걸음으로 함께해 주시면 감사하겠습니다.",
+    text: "서로의 하루에\n가장 따뜻한 사람이 되어\n이제 평생을 함께\n걸어가려 합니다.\n\n저희 두 사람이 시작하는 소중한 날,\n귀한 걸음으로 함께해 주시면 감사하겠습니다.",
   },
   {
     label: "짧고 담백한 초대",
-    text: "저희 두 사람이 하나의 길을 시작합니다.\n소중한 분들과 기쁨을 나누고 싶습니다.\n오셔서 따뜻한 축복을 전해 주세요.",
+    text: "저희 두 사람이\n하나의 길을 시작합니다.\n소중한 분들과\n기쁨을 나누고 싶습니다.\n오셔서 따뜻한\n축복을 전해 주세요.",
   },
   {
     label: "감성적인 초대",
-    text: "수많은 날들 속에서 서로를 만나\n평범한 하루가 특별한 이야기가 되었습니다.\n\n이제 같은 곳을 바라보며 걸어가려 합니다.\n저희의 새로운 시작을 함께 빛내 주세요.",
+    text: "수많은 날들 속에서\n서로를 만나\n평범한 하루가\n특별한 이야기가 되었습니다.\n\n이제 같은 곳을 바라보며 걸어가려 합니다.\n저희의 새로운 시작을 함께 빛내 주세요.",
   },
   {
     label: "밝고 경쾌한 초대",
-    text: "우리, 결혼합니다!\n함께 웃고 사랑하며 살아가기로 약속했어요.\n\n행복한 시작의 순간에 오셔서\n많이 웃고 마음껏 축하해 주세요!",
+    text: "우리, 결혼합니다!\n함께 웃고 사랑하며\n살아가기로 약속했어요.\n\n행복한 시작의 순간에\n오셔서 많이 웃고\n마음껏 축하해 주세요!",
   },
   {
     label: "격식 있는 초대",
-    text: "두 사람이 사랑과 믿음으로\n한 가정을 이루고자 합니다.\n\n바쁘시더라도 귀한 걸음 하시어\n앞날을 축복해 주시면 큰 기쁨이겠습니다.",
+    text: "두 사람이\n사랑과 믿음으로\n한 가정을 이루고자 합니다.\n\n바쁘시더라도\n귀한 걸음 하시어\n앞날을 축복해 주시면 큰 기쁨이겠습니다.",
   },
 ];
 const errors = {
@@ -69,6 +70,7 @@ export default function PosterEditor({ slug }) {
   const [data, setData] = useState(null);
   const [draft, setDraft] = useState(null);
   const [page, setPage] = useState(1);
+  const [floatingPreviewOpen, setFloatingPreviewOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
   const [failure, setFailure] = useState(null);
@@ -76,6 +78,8 @@ export default function PosterEditor({ slug }) {
   const [exporting, setExporting] = useState(false);
   const [capture, setCapture] = useState(null);
   const captureRoot = useRef(null);
+  const toolsRoot = useRef(null);
+  const downloadMenuRoot = useRef(null);
   const exportLock = useRef(false);
   useEffect(() => {
     const controller = new AbortController();
@@ -84,6 +88,10 @@ export default function PosterEditor({ slug }) {
     }).catch(error => { if (!controller.signal.aborted) setFailure(error); });
     return () => controller.abort();
   }, [slug]);
+  const goToPage = nextPage => {
+    setPage(nextPage);
+    toolsRoot.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
   const publicUrl = data?.source.publicUrl;
   useEffect(() => {
     if (!publicUrl) return;
@@ -133,9 +141,10 @@ export default function PosterEditor({ slug }) {
     }
   };
 
-  if (failure || !draft) return <main className="dd-poster-editor"><a href="/my-invitations">← 내 초대장</a>
-    <h1>게시용 초대장</h1><p role={failure ? "alert" : "status"}>{failure?.message || "초대장을 불러오고 있어요."}</p>
-    {failure?.code === "login_required" && <a href={`/?login=required&returnUrl=${encodeURIComponent("/poster/" + slug)}`}>로그인하기</a>}
+  if (!failure && !draft) return <DearDayLoading message="초대장을 불러오고 있어요" />;
+  if (failure) return <main className="dd-poster-editor"><a href="/my-invitations">← 내 초대장</a>
+    <h1>회사 게시용 초대장</h1><p role="alert">{failure.message}</p>
+    {failure.code === "login_required" && <a href={`/?login=required&returnUrl=${encodeURIComponent("/poster/" + slug)}`}>로그인하기</a>}
   </main>;
 
   const { settings } = draft;
@@ -158,44 +167,69 @@ export default function PosterEditor({ slug }) {
   };
 
   return <main className="dd-poster-editor">
-    <header className="dd-poster-top"><div><a href="/my-invitations">← 내 초대장</a><h1>게시용 초대장</h1></div>
+    <header className="dd-poster-top"><div><a href="/my-invitations">← 내 초대장</a></div>
       <button type="button" className="dd-poster-save" onClick={save} disabled={saving || exporting}>{saving ? "저장 중…" : "저장하기"}</button></header>
-    <div className="dd-poster-downloads" aria-busy={exporting}>
-      {[1, 2, 3].map(number => <button key={number} type="button" disabled={saving || exporting}
-        onClick={() => exportPng(`page${number}`)}>{number}페이지 PNG</button>)}
-      <button type="button" disabled={saving || exporting} onClick={() => exportPng("all")}>전체 3페이지 PNG</button>
-    </div>
-    <p>저장하지 않은 편집 내용도 PNG에 반영돼요. 다운로드해도 설정은 저장되지 않아요.</p>
+    <div className="dd-poster-heading"><h1>회사 게시용 초대장</h1><p className="dd-poster-header-description">편집을 완료후 이미지를 다운받아 회사 게시판에 바로 업로드 해주세요</p></div>
     {notice && <p className="dd-poster-notice" role="status">{notice}</p>}
-    <nav className="dd-poster-tabs" aria-label="포스터 페이지">{PAGES.map((label, index) =>
-      <button key={label} type="button" aria-pressed={page === index + 1} onClick={() => setPage(index + 1)}>{index + 1}. {label}</button>)}</nav>
+    <nav className="dd-poster-steps" aria-label="포스터 편집 단계">
+      <div className="dd-poster-step-list">{PAGES.map((label, index) => {
+        const stepNumber = index + 1;
+        return <div className="dd-poster-step-item" key={label}>
+          <button type="button" className="dd-poster-step" aria-current={page === stepNumber ? "step" : undefined}
+            aria-label={`${stepNumber}단계 ${label}`} onClick={() => setPage(stepNumber)}>
+            <span className="dd-poster-step-circle" aria-hidden="true">{page > stepNumber ? "✓" : stepNumber}</span>
+            <span className="dd-poster-step-label">{label}</span>
+          </button>
+          {index < PAGES.length - 1 && <span className={`dd-poster-step-connector${page > stepNumber ? " is-past" : ""}`} aria-hidden="true" />}
+        </div>;
+      })}</div>
+      <div className="dd-poster-step-track" role="progressbar" aria-label="편집 단계" aria-valuemin={1} aria-valuemax={3} aria-valuenow={page}>
+        <span style={{ width: `${(page / PAGES.length) * 100}%` }} />
+      </div>
+      <div className="dd-poster-step-caption"><span>현재 편집: {PAGES[page - 1]}</span><span>{page} / {PAGES.length} 단계</span></div>
+    </nav>
+    <div className="dd-poster-download-bar" aria-busy={exporting}>
+      <details className="dd-poster-download-menu" ref={downloadMenuRoot}>
+        <summary aria-disabled={saving || exporting} onClick={event => { if (saving || exporting) event.preventDefault(); }}>
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3"/></svg>
+          {exporting ? "다운로드 중…" : "이미지 다운로드"} <span aria-hidden="true">⌄</span>
+        </summary>
+        <div className="dd-poster-download-options">
+          {[1, 2, 3].map(number => <button key={number} type="button" disabled={saving || exporting}
+            onClick={() => { downloadMenuRoot.current?.removeAttribute("open"); exportPng(`page${number}`); }}>{number}. {PAGES[number - 1]} PNG</button>)}
+          <button type="button" disabled={saving || exporting}
+            onClick={() => { downloadMenuRoot.current?.removeAttribute("open"); exportPng("all"); }}>전체 3페이지 PNG</button>
+        </div>
+      </details>
+    </div>
     <div className="dd-poster-workspace">
-      <fieldset className="dd-poster-tools" disabled={saving || exporting} aria-label="포스터 편집">
-        <label>디자인<select value={draft.designKey} onChange={event => setDraft({ ...draft, designKey: event.target.value })}>
-          {Object.entries(DESIGNS).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>
+      <fieldset ref={toolsRoot} className="dd-poster-tools" disabled={saving || exporting} aria-label="포스터 편집">
+        {page === 1 && <label><span className="dd-poster-field-title"><span aria-hidden="true">🎨</span>디자인</span><select value={draft.designKey} onChange={event => setDraft({ ...draft, designKey: event.target.value })}>
+          {Object.entries(DESIGNS).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>}
         {page === 1 && <>
-          {["groom", "bride"].map((side, i) => <label key={side}>{i ? "신부" : "신랑"} 영문 이름
-            <input value={settings.englishNames[side]} maxLength={80} onChange={event => update("englishNames", { ...settings.englishNames, [side]: event.target.value })} /></label>)}
-          <label>표지 사진<select value={cover.source === "auto" ? "" : cover.mediaId} onChange={event => patchCover({
+          {["groom", "bride"].map((side, i) => <label key={side}><span className="dd-poster-field-title"><span aria-hidden="true">{i ? "👰" : "🤵"}</span>{i ? "신부" : "신랑"} 영문 이름 <span className="dd-poster-optional">(선택)</span></span>
+            <input value={settings.englishNames[side]} maxLength={80} onChange={event => update("englishNames", { ...settings.englishNames, [side]: event.target.value })} /><span className="dd-poster-english-help">입력하면 한글 이름 대신 영문 이름으로 표시됩니다.</span></label>)}
+          <label><span className="dd-poster-field-title"><span aria-hidden="true">🖼️</span>표지 사진</span><select value={cover.source === "auto" ? "" : cover.mediaId} onChange={event => patchCover({
             source: event.target.value ? "gallery" : "auto", mediaId: event.target.value || null,
           })}><option value="">자동 선택</option>
             {cover.mediaId && !available.has(cover.mediaId) && <option value={cover.mediaId}>사용할 수 없는 사진</option>}
             {gallery.map((item, i) => <option key={item.id} value={item.id}>갤러리 사진 {i + 1}</option>)}</select></label>
-          {!(cover.source === "auto" ? source.autoCoverUrl : available.has(cover.mediaId)) && <p>표지에 사용할 사진을 갤러리에서 선택해 주세요.</p>}
+          <p className="dd-poster-cover-help">사진이 2장 이상 들어가는 표지는 갤러리에서 직접 선택해 주세요. 다른 표지도 원하는 사진으로 변경할 수 있어요.</p>
+          {!(cover.source === "auto" ? source.autoCoverUrl : available.has(cover.mediaId)) && <p className="dd-poster-cover-warning">현재 표지 사진이 없어 갤러리에서 선택해야 해요.</p>}
           <Crop value={cover.crop} onChange={crop => patchCover({ crop })} />
           <label><input type="checkbox" checked={cover.grayscale} onChange={event => patchCover({ grayscale: event.target.checked })} /> 흑백 사진</label>
-          <label>계좌정보<select value={settings.accountSide} onChange={event => update("accountSide", event.target.value)}>
+          <label><span className="dd-poster-field-title"><span aria-hidden="true">💌</span>계좌정보</span><select value={settings.accountSide} onChange={event => update("accountSide", event.target.value)}>
             <option value="none">숨김</option><option value="groom">신랑 측</option><option value="bride">신부 측</option><option value="both">양측 모두</option>
           </select></label>
         </>}
         {page === 2 && <>
-          <p>사용 가능한 선택 사진 {validCount}/4장. {validCount < 4 && "콜라주를 완성하려면 사진 4장이 필요해요."}</p>
+          <p><span aria-hidden="true">📸 </span>사용 가능한 선택 사진 {validCount}/4장. {validCount < 4 && "콜라주를 완성하려면 사진 4장이 필요해요."}</p>
           <div className="dd-poster-picker">{gallery.map((item, i) => <button type="button" key={item.id}
             aria-label={`갤러리 사진 ${i + 1}`} aria-pressed={selected.has(item.id)}
             disabled={!selected.has(item.id) && selection.photos.length >= 4} onClick={() => togglePhoto(item.id)}>
             <img src={item.thumbnailUrl || item.url} alt="" loading="lazy" /></button>)}</div>
           {selection.photos.map((photo, index) => <section className="dd-poster-selection" key={photo.mediaId}>
-            <strong>{index + 1}번째 사진 {available.has(photo.mediaId) ? "" : "· 사용할 수 없음"}</strong>
+            <strong><span aria-hidden="true">📸 </span>{index + 1}번째 사진 {available.has(photo.mediaId) ? "" : "· 사용할 수 없음"}</strong>
             <div className="dd-poster-photo-actions">
               <button type="button" disabled={index === 0} onClick={() => move(index, -1)}>앞으로</button>
               <button type="button" disabled={index === selection.photos.length - 1} onClick={() => move(index, 1)}>뒤로</button>
@@ -203,12 +237,12 @@ export default function PosterEditor({ slug }) {
             </div>
             <label><input type="radio" name="poster-main-photo" disabled={!available.has(photo.mediaId)}
               checked={selection.mainMediaId === photo.mediaId} onChange={() => update("gallery", { ...selection, mainMediaId: photo.mediaId })} /> 메인 사진</label>
-            <label>사진 캡션<input maxLength={80} value={photo.caption} onChange={event => patchPhoto(photo.mediaId, { caption: event.target.value })} /></label>
+            <label><span className="dd-poster-field-title"><span aria-hidden="true">✏️</span>사진 캡션</span><input maxLength={80} value={photo.caption} onChange={event => patchPhoto(photo.mediaId, { caption: event.target.value })} /></label>
             <Crop value={photo.crop} onChange={crop => patchPhoto(photo.mediaId, { crop })} />
           </section>)}
         </>}
         {page === 3 && <>
-          <label>초대 문구 예시
+          <label><span className="dd-poster-field-title"><span aria-hidden="true">📋</span>초대 문구 예시</span>
             <select value="" onChange={event => {
               const example = MESSAGE_EXAMPLES[Number(event.target.value)];
               if (example) update("message", example.text);
@@ -218,16 +252,30 @@ export default function PosterEditor({ slug }) {
                 <option key={example.label} value={index}>{example.label}</option>)}
             </select>
           </label>
-          <label>초대 문구<textarea rows={7} maxLength={1000} value={settings.message} onChange={event => update("message", event.target.value)} /></label>
-          <p>예시를 선택하면 아래 문구에 적용돼요. 적용 후 자유롭게 수정할 수 있어요.</p>
-          {publicUrl ? <a href={publicUrl} target="_blank" rel="noreferrer">발행 초대장 주소 확인</a>
-            : <p>발행 주소 설정을 확인할 수 없어 QR 코드를 표시하지 못해요.</p>}
+          <label><span className="dd-poster-field-title"><span aria-hidden="true">💌</span>초대 문구</span><textarea rows={7} maxLength={1000} value={settings.message} onChange={event => update("message", event.target.value)} /></label>
+          <p className="dd-poster-message-help">예시 문구를 선택한 후, 원하는 모양으로 줄바꿈하여 자유롭게 편집해 보세요.</p>
         </>}
+        <div className="dd-poster-page-navigation" aria-label="편집 페이지 이동">
+          {page > 1 ? <button type="button" onClick={() => goToPage(page - 1)}>← 이전</button> : <span />}
+          <span className="dd-poster-page-progress">{page} / 3</span>
+          {page < 3 ? <button type="button" onClick={() => goToPage(page + 1)}>다음 →</button> : <span />}
+        </div>
       </fieldset>
       <div className="dd-poster-preview" aria-label={PAGES[page - 1] + " 미리보기"}>
         <PosterPage page={page} designKey={draft.designKey} settings={settings} source={source} gallery={gallery}
           qrUrl={qr?.publicUrl === publicUrl ? qr?.url : null} />
       </div>
+    </div>
+    <div className="dd-poster-mobile-preview" aria-label="모바일 플로팅 미리보기">
+      {floatingPreviewOpen && <section className="dd-poster-mobile-preview-panel" aria-label={PAGES[page - 1] + " 편집용 미리보기"}>
+        <div className="dd-poster-mobile-preview-head"><span className="dd-poster-mobile-preview-heading"><strong>{page}. {PAGES[page - 1]}</strong><small>보면서 편집하세요</small></span>
+          <button type="button" onClick={() => setFloatingPreviewOpen(false)} aria-label="미리보기 접기">✕</button></div>
+        <div className="dd-poster-mobile-preview-paper"><PosterPage page={page} designKey={draft.designKey}
+          settings={settings} source={source} gallery={gallery}
+          qrUrl={qr?.publicUrl === publicUrl ? qr?.url : null} /></div>
+      </section>}
+      {!floatingPreviewOpen && <button type="button" className="dd-poster-mobile-preview-toggle"
+        onClick={() => setFloatingPreviewOpen(true)} aria-expanded={false}>◉ 편집용 미리보기</button>}
     </div>
     {capture && <div className="dd-poster-capture" ref={captureRoot} aria-hidden="true">
       {capture.pages.map(number => <PosterPage key={number} page={number} {...capture.poster} capture

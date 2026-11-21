@@ -3438,3 +3438,71 @@
   box-decoration-break:clone;-webkit-box-decoration-break:clone;
  }
 }
+
+
+/* Office bulletin board invitation demo — feature 07 */
+.dd-feature-office .dd-feature-demo-content{width:100%;height:100%;min-height:0}
+.dd-office-demo{width:100%;height:100%;min-height:0;display:flex;justify-content:center;align-items:center;padding:14px 12px;overflow:hidden;font-family:Pretendard,sans-serif}
+.dd-office-demo-board{display:flex;flex-direction:column;width:min(100%,410px);height:100%;min-height:310px;max-height:540px;overflow:hidden;background:#fff;border:1px solid #e6e8ee;border-radius:12px;box-shadow:0 10px 32px rgba(20,28,58,.12)}
+.dd-office-demo-topbar{display:flex;align-items:center;gap:8px;padding:11px 14px;background:#f6f8fc;border-bottom:1px solid #e8eaf0;flex-shrink:0;color:#293347;font-size:12px}
+.dd-office-demo-mark{display:grid;place-items:center;width:22px;height:22px;background:#304e83;border-radius:5px;color:white;font-size:13px;font-weight:800}
+.dd-office-demo-topbar>span:last-child{margin-left:auto;font-size:10px;color:#81889a}
+.dd-office-demo-heading{flex-shrink:0;padding:15px 16px 13px;border-bottom:1px solid #eef0f4;background:white;color:#262b39}
+.dd-office-demo-heading strong{display:block;font-size:15px;line-height:1.5}
+.dd-office-demo-heading p{margin:6px 0 0;font-size:12px;line-height:1.55;color:#60697a}
+.dd-office-demo-viewport{position:relative;flex:1;min-height:0;overflow:hidden;background:#f5f6fa;text-align:center}
+.dd-office-demo-poster{display:block;width:100%;height:auto;max-width:none;will-change:transform}
+.dd-office-demo-fallback{display:grid;place-items:center;min-height:100%;padding:40px 12px;color:#808899;font-size:13px;line-height:1.9}
+@media(max-width:600px){.dd-office-demo{padding:10px}.dd-office-demo-board{min-height:290px;max-height:460px}.dd-office-demo-heading{padding:11px 13px}.dd-office-demo-heading strong{font-size:13px}.dd-office-demo-heading p{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.dd-office-demo-poster{transform:none!important;will-change:auto}}
+
+
+/* Feature 07: use the available visual area instead of a narrow nested card. */
+.landing-v2 .dd-feature-office .dd-feature-demo{width:100%;max-width:none;min-width:0;min-height:0;overflow:hidden}
+.landing-v2 .dd-feature-office .dd-feature-demo-content{display:flex;flex-direction:column;align-items:stretch;justify-content:stretch;box-sizing:border-box;width:100%;height:100%;min-height:0;padding:0;gap:0}
+.landing-v2 .dd-feature-office .dd-feature-demo-kicker{display:none}
+.landing-v2 .dd-feature-office .dd-office-demo{box-sizing:border-box;width:100%;height:100%;min-height:420px;padding:6px;align-items:stretch}
+.landing-v2 .dd-feature-office .dd-office-demo-board{box-sizing:border-box;width:100%;max-width:none;height:100%;min-height:410px;max-height:none;border-radius:12px}
+.landing-v2 .dd-feature-office .dd-office-demo-viewport{width:100%}
+@media(min-width:801px){
+ .landing-v2 .dd-feature-office .dd-office-demo{min-height:470px}
+ .landing-v2 .dd-feature-office .dd-office-demo-board{min-height:460px}
+}
+@media(max-width:800px){
+ .landing-v2 .dd-feature-office .dd-feature-visual{padding:8px}
+ .landing-v2 .dd-feature-office .dd-office-demo{padding:2px;min-height:440px}
+ .landing-v2 .dd-feature-office .dd-office-demo-board{min-height:435px}
+}
+
+
+/* Feature 07: constrain the long poster to a viewport so it scrolls, not stretches the feature. */
+.landing-v2 .dd-features .dd-feature-office .dd-feature-visual{height:520px;min-height:0!important;max-height:520px;align-items:stretch;padding:12px;overflow:hidden}
+.landing-v2 .dd-features .dd-feature-office .dd-feature-demo{height:100%;min-height:0!important;max-height:100%;flex:1}
+.landing-v2 .dd-features .dd-feature-office .dd-feature-demo-content{height:100%;min-height:0!important;max-height:100%;flex:1;overflow:hidden}
+.landing-v2 .dd-features .dd-feature-office .dd-office-demo{height:100%;min-height:0!important;max-height:100%;overflow:hidden}
+.landing-v2 .dd-features .dd-feature-office .dd-office-demo-board{height:100%;min-height:0!important;max-height:100%;overflow:hidden;flex:1}
+.landing-v2 .dd-features .dd-feature-office .dd-office-demo-viewport{flex:1 1 0;min-height:0;max-height:100%;overflow:hidden}
+.landing-v2 .dd-features .dd-feature-office .dd-office-demo-poster{height:auto;max-height:none;flex:none}
+@media(max-width:800px){
+ .landing-v2 .dd-features .dd-feature-office .dd-feature-visual{height:480px;max-height:480px;min-height:0!important;padding:8px}
+}
+
+
+/* Feature 07: match the yellow underline used by feature 08. */
+.landing-v2 .dd-feature-office .dd-feature-title-highlight{background:linear-gradient(to top,#ffe88a 0 24%,transparent 24% 100%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+
+/* Desktop only: reverse the content positions of features 07 and 08. */
+@media(min-width:801px){
+ .landing-v2 .dd-features .dd-feature.dd-feature-office .dd-feature-visual{order:0!important}
+ .landing-v2 .dd-features .dd-feature.dd-feature-office .dd-feature-copy{order:1!important}
+ .landing-v2 .dd-features .dd-feature.dd-feature-occasions .dd-feature-copy{order:0!important}
+ .landing-v2 .dd-features .dd-feature.dd-feature-occasions .dd-feature-visual{order:1!important}
+}
+
+
+/* Feature 07 desktop: taller scrolling viewport; keep mobile dimensions unchanged. */
+@media(min-width:801px){
+ .landing-v2 .dd-features .dd-feature-office .dd-feature-visual{
+  height:640px;max-height:640px;
+ }
+}

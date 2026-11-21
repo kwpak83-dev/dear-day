@@ -5153,3 +5153,12 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  clip-path:inset(-1em calc(100% + 1em) -1em -1em);
  animation-timing-function:linear;
 }
+
+/* Keep the company bulletin-board poster action on its own full-width row on all screens. */
+.my-page .dd-my-card-actions:has(>.dd-my-card-poster-action){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.my-page .dd-my-card-actions>.dd-my-card-poster-action{grid-column:1/-1;width:100%;font-size:clamp(10px,2.7vw,12px);line-height:1.35;word-break:keep-all;padding:10px 8px}
+
+/* Company poster action: subtle building line icon, centered with the label. */
+.my-page .dd-my-card-actions>.dd-my-card-poster-action{gap:6px;white-space:nowrap;overflow-wrap:normal}
+.my-page .dd-my-card-poster-action .dd-my-menu-icon{display:block;flex:none;width:16px;height:16px;color:currentColor}
+@media(max-width:380px){.my-page .dd-my-card-actions>.dd-my-card-poster-action{font-size:10px;gap:4px;padding-inline:5px}.my-page .dd-my-card-poster-action .dd-my-menu-icon{width:14px;height:14px}}

@@ -38,29 +38,31 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
   const others = settings.gallery.photos.filter(photo => photo !== main);
   const monochrome = designKey === "bold-pop-art";
   const playfulCover = designKey === "playful-pop" && page === 1;
+  const boldCover = designKey === "bold-pop-art" && page === 1;
+  const modernCover = designKey === "modern-editorial" && page === 1;
+  const artCover = playfulCover || boldCover || modernCover;
   const playfulGallery = designKey === "playful-pop" && page === 2;
+  const artGallery = page === 2 && (playfulGallery || designKey === "bold-pop-art" || designKey === "modern-editorial");
   const accountGroups = settings.accountSide === "both"
     ? [source.accounts?.groom, source.accounts?.bride].filter(Boolean)
     : [source.accounts?.[settings.accountSide]].filter(Boolean);
   const names = [source.names.groom, source.names.bride].filter(Boolean).join(" · ");
   const english = [settings.englishNames.groom.trim(), settings.englishNames.bride.trim()].filter(Boolean).join(" & ");
   const schedule = [source.date, source.time].filter(Boolean).join(" · ");
-  const coverSchedule = playfulCover ? playfulCoverSchedule(source.date, source.time) : null;
+  const coverSchedule = artCover ? playfulCoverSchedule(source.date, source.time) : null;
   const messageLines = settings.message.split("\n").length;
   const messageSize = messageLines > 18 || settings.message.length > 400
     ? Math.max(1.85, Math.min(2.8, 78 / messageLines)) : undefined;
 
   return <article className={`dd-poster-paper dd-poster-${designKey} dd-poster-page-${page}`} data-poster-page={page}>
-    {designKey === "bold-pop-art" && <span className="dd-poster-number" aria-hidden="true">0{page}</span>}
+    
     {designKey === "playful-pop" && page !== 3 && !playfulCover && !playfulGallery && <span className="dd-poster-deco-heart" aria-hidden="true">♡</span>}
-    {designKey === "modern-editorial" && <span className="dd-poster-editorial-mark" aria-hidden="true">OUR WEDDING DAY</span>}
     {page === 1 && <>
-      {!playfulCover && (designKey === "playful-pop" ? <h2>Our Wedding Day!</h2> : <h2>The Wedding</h2>)}
+      {!artCover && (designKey === "playful-pop" ? <h2>Our Wedding Day!</h2> : <h2>The Wedding</h2>)}
       <div className="dd-poster-cover-frame"><Photo key={cover} url={cover} crop={settings.cover.crop} grayscale={settings.cover.grayscale} capture={capture} /></div>
-      {playfulCover ? <>
+      {artCover ? <>
         <div className="dd-playful-name-tag">
-          {names && <strong>{names}</strong>}
-          {english && <span>{english}</span>}
+          {(english || names) && <strong>{english || names}</strong>}
         </div>
         <div className="dd-playful-event-details">
           {coverSchedule.date && <strong className="dd-playful-detail-date">{coverSchedule.date}</strong>}
@@ -77,7 +79,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
         {accountGroups.flatMap((group, groupIndex) => group.rows.map((row, index) =>
           <p key={`${groupIndex}-${index}-${row.number}`}><span>{row.bank}</span><span>{row.number}</span><span>{row.holder}</span></p>))}</div>}
     </>}
-    {page === 2 && (playfulGallery ? <>
+    {page === 2 && (artGallery ? <>
       <div className="dd-playful-gallery-main-photo"><Photo key={photos.get(main?.mediaId)} url={photos.get(main?.mediaId)} crop={main?.crop} grayscale={false} capture={capture}>{main ? "사진을 다시 선택해 주세요" : "메인 사진을 지정해 주세요"}</Photo></div>
       {main?.caption?.trim() && <p className="dd-playful-gallery-main-caption"><span>{main.caption}</span></p>}
       <div className="dd-playful-gallery-small-photos">{Array.from({ length: 3 }, (_, index) => {
@@ -98,12 +100,12 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
       })}</div>
     </>)}
     {page === 3 && <>
-      {designKey !== "playful-pop" && <h2>You're Invited</h2>}
+      {designKey !== "playful-pop" && designKey !== "bold-pop-art" && designKey !== "modern-editorial" && <h2>You're Invited</h2>}
       <div className="dd-poster-message-card"><p className="dd-poster-message" data-dense={messageSize !== undefined}
         style={messageSize && { fontSize: `${messageSize}cqw` }}>{settings.message}</p></div>
       {qrUrl ? <img className="dd-poster-qr" src={qrUrl} alt="발행 초대장 QR 코드" />
         : <p className="dd-poster-qr-unavailable">QR 코드를 표시할 수 없어요.</p>}
-      {names && <p className="dd-poster-signature">{names}</p>}
+      <p className="dd-poster-signature dd-poster-qr-guide">휴대폰 카메라로 스캔하면<br />모바일 청첩장이 열려요<svg className="dd-poster-qr-heart" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21.2 10.55 19.9C5.4 15.25 2 12.17 2 8.4 2 5.32 4.42 2.9 7.5 2.9c1.74 0 3.41.81 4.5 2.09a5.98 5.98 0 0 1 4.5-2.09C19.58 2.9 22 5.32 22 8.4c0 3.77-3.4 6.85-8.55 11.51L12 21.2Z"/></svg></p>
     </>}
   </article>;
 }

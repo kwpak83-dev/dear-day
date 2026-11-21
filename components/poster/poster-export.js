@@ -124,7 +124,12 @@ function collectFontFaces(rules, output, source) {
 }
 
 async function embeddedPosterFonts(page) {
-  if (!page.classList.contains("dd-poster-playful-pop")) return undefined;
+  // Playful Pop and Bold Pop Art use the same self-hosted poster fonts
+  // on all three pages (Gowun Dodum on cover/message; Hi Melody on captions).
+  const usesPosterFont = page.classList.contains("dd-poster-playful-pop") ||
+    page.classList.contains("dd-poster-bold-pop-art") ||
+    page.classList.contains("dd-poster-modern-editorial");
+  if (!usesPosterFont) return undefined;
   // Font-family is resolved from the real text, not the poster wrapper.
   const text = page.querySelector(".dd-playful-gallery-main-caption, .dd-poster-message, .dd-playful-name-tag strong");
   const family = getComputedStyle(text || page).fontFamily.split(",")[0].replace(/["']/g, "").trim();

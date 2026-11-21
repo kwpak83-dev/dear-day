@@ -198,17 +198,19 @@
 /* The source PNG includes a checkerboard placeholder, not actual alpha transparency.
    Position the user's photo directly over that placeholder, within its printed white frame. */
 .dd-poster-playful-pop.dd-poster-page-1 .dd-poster-cover-frame{
-  position:absolute;z-index:2;left:12.2%;top:21.4%;width:74.8%;height:25.8%;
-  padding:0;border:0;background:transparent;box-shadow:none;transform:rotate(-3.8deg);
-  overflow:hidden;
+  position:absolute;z-index:2;left:11.230%;top:32.747%;width:74.121%;height:24.615%;
+  transform-origin:0 0;transform:matrix(1,-0.069531,0.050579,1,0,0);
+  --photo-mask:polygon(0.000% 8.199%,10.256% 0.679%,10.805% 0.000%,98.814% 0.000%,99.670% 99.284%,0.000% 97.067%);
+  padding:0;border:0;background:transparent;box-shadow:none;
 }
 .dd-poster-playful-pop.dd-poster-page-1 .dd-poster-cover-frame::before,
 .dd-poster-playful-pop.dd-poster-page-1 .dd-poster-cover-frame::after{content:none;display:none}
 .dd-poster-playful-pop.dd-poster-page-1 .dd-poster-cover-frame .dd-poster-image{
   width:100%;height:100%;aspect-ratio:auto;border:0;background:#f9e7d9;
+  overflow:hidden;clip-path:var(--photo-mask);
 }
 .dd-poster-playful-pop.dd-poster-page-1 .dd-playful-name-tag{
-  position:absolute;z-index:3;left:17%;top:49.7%;width:66%;height:8.7%;
+  position:absolute;z-index:3;left:17%;top:58.7%;width:66%;height:8.7%;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:.5cqw;padding:0 3cqw;box-sizing:border-box;transform:rotate(-1.5deg);
   filter:none;color:#442319;
@@ -224,7 +226,7 @@
   margin:0;font:700 2.9cqw/1.1 Georgia,serif;
 }
 .dd-poster-playful-pop.dd-poster-page-1 .dd-playful-event-details{
-  position:absolute;z-index:3;left:30.1%;top:61.9%;width:59%;height:13%;
+  position:absolute;z-index:3;left:27.5%;top:71.0%;width:61.6%;height:13%;
   display:grid;grid-template-rows:repeat(3,3.9cqw);row-gap:3.8cqw;
   font:700 3.05cqw/1.15 Arial,"Malgun Gothic",sans-serif;text-align:left;color:#3b241b;
 }
@@ -236,7 +238,7 @@
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .dd-poster-playful-pop.dd-poster-page-1 .dd-poster-accounts{
-  position:absolute;z-index:3;left:12.5%;top:82.5%;width:75%;height:10%;
+  position:absolute;z-index:3;left:12.5%;top:89.5%;width:75%;height:8%;
   display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;
   gap:1.2cqw;margin:0;font:600 2.65cqw/1.15 Arial,"Malgun Gothic",sans-serif;
   color:#52291c;text-align:center;
@@ -259,12 +261,30 @@
 }
 .dd-poster-playful-pop.dd-poster-page-2::after{content:none}
 .dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-main-photo{
-  position:absolute;z-index:2;left:7.5%;top:26.7%;width:82.1%;height:35.4%;
-  overflow:hidden;transform:rotate(-3deg);background:#fff2d7;
+  position:absolute;z-index:2;left:6.356%;top:27.911%;width:83.404%;height:35.900%;
+  transform-origin:0 0;transform:matrix(1,-0.062149,0.052071,1,0,0);
+  --photo-mask:polygon(0.000% 0.000%,67.064% 0.000%,67.398% 2.1%,74.268% 2.1%,85.708% 2.1%,97.382% 2.1%,97.769% 2.1%,97.668% 0.074%,98.814% 0.000%,99.041% 99.501%,0.000% 98.814%);
 }
 .dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-main-photo .dd-poster-image,
 .dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-small-photo .dd-poster-image{
   width:100%;height:100%;aspect-ratio:auto;border:0;background:#f7e5d8;
+  overflow:hidden;clip-path:var(--photo-mask);
+}
+/* Keep the rotated outer wrappers so the existing captions retain their geometry. */
+.dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-small-photo-1 .dd-poster-image{
+  position:absolute;left:3.143%;top:0.316%;width:101.271%;height:95.958%;
+  transform-origin:0 0;transform:matrix(1.004276,-0.005217,0.012645,1.004926,0,0);
+  --photo-mask:polygon(0.000% 0.000%,25.236% 0.000%,25.150% 1.1%,47.970% 1.1%,68.824% 0.9%,69.684% 0.7%,68.621% 0.126%,98.814% 0.000%,98.773% 99.263%,0.000% 98.814%);
+}
+.dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-small-photo-2 .dd-poster-image{
+  position:absolute;left:-0.681%;top:0.860%;width:105.085%;height:100.360%;
+  transform-origin:0 0;transform:matrix(1.002456,0.020677,-0.012885,1.002048,0,0);
+  --photo-mask:polygon(0.000% 0.000%,17.527% 0.000%,17.892% 2.5%,47.764% 2.5%,66.480% 2.5%,66.459% 0.000%,73.701% 0.000%,98.814% 0.000%,99.185% 98.352%,0.000% 98.814%);
+}
+.dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-small-photo-3 .dd-poster-image{
+  position:absolute;left:0.114%;top:-2.765%;width:102.119%;height:99.480%;
+  transform-origin:0 0;transform:matrix(1.001141,-0.015228,0.017779,1.00123,0,0);
+  --photo-mask:polygon(0.000% 0.000%,23.783% 0.000%,24.319% 1.0%,44.444% 1.0%,66.248% 0.8%,66.012% 0.007%,98.814% 0.000%,99.632% 98.858%,0.000% 98.814%);
 }
 .dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-main-caption{
   position:absolute;z-index:3;top:66.6%;left:9%;width:82%;
@@ -352,4 +372,522 @@
 }
 .dd-poster-playful-pop.dd-poster-page-2 :is(.dd-playful-gallery-main-caption,.dd-playful-gallery-small-photo figcaption){
   font-family:var(--font-poster-hi-melody),"Malgun Gothic",cursive;
+}
+
+/* Bold Pop Art page 1: fixed user-uploaded artwork, shared data-only overlays. */
+.dd-poster-bold-pop-art.dd-poster-page-1{
+  display:block;padding:0;text-align:left;color:#fff;
+  background:#0733bd url("/images/poster/bold-pop-art/page1-background.png") center / 100% 100% no-repeat;
+}
+.dd-poster-bold-pop-art.dd-poster-page-1::after{content:none}
+.dd-poster-bold-pop-art.dd-poster-page-1 .dd-poster-cover-frame{
+  position:absolute;z-index:2;left:13.965%;top:27.148%;width:71.057%;height:31.054%;
+  transform-origin:0 0;transform:matrix(1,-0.135167,0.045559,1,0,0);
+  --photo-mask:polygon(0.000% 5.660%,5.124% 2.778%,10.167% 0.091%,98.814% 0.000%,99.006% 99.407%,82.660% 99.07%,82.630% 96.138%,13.770% 96.318%,13.733% 97.360%,0.000% 97.067%);
+  margin:0;padding:0;border:0;box-shadow:none;background:transparent;
+}
+.dd-poster-bold-pop-art.dd-poster-page-1 .dd-poster-cover-frame::before,
+.dd-poster-bold-pop-art.dd-poster-page-1 .dd-poster-cover-frame::after{content:none;display:none}
+.dd-poster-bold-pop-art.dd-poster-page-1 .dd-poster-cover-frame .dd-poster-image{
+  width:100%;height:100%;box-sizing:border-box;
+  border:0;background:transparent;overflow:hidden;clip-path:var(--photo-mask);
+}
+.dd-poster-bold-pop-art.dd-poster-page-1 .dd-playful-name-tag{
+  position:absolute;z-index:3;left:26%;top:54.8%;width:48%;height:6.5%;
+  display:flex;align-items:center;justify-content:center;padding:0 1cqw;
+  box-sizing:border-box;transform:rotate(-4deg);color:#fff;text-align:center;
+}
+.dd-poster-bold-pop-art.dd-poster-page-1 .dd-playful-name-tag strong{
+  font:900 5cqw/1.1 var(--font-poster-gowun),"Malgun Gothic",sans-serif;letter-spacing:-.04em;
+  white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;
+}
+.dd-poster-bold-pop-art.dd-poster-page-1 .dd-playful-event-details{
+  position:absolute;z-index:3;left:33.5%;top:65.1%;width:56%;height:13%;
+  display:grid;grid-template-rows:repeat(3,1fr);align-items:center;
+  text-align:left;color:#fff;font:700 3.05cqw/1.15 var(--font-poster-gowun),"Malgun Gothic",sans-serif;
+}
+.dd-poster-bold-pop-art.dd-poster-page-1 .dd-playful-event-details>strong{
+  display:block;font:inherit;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+}
+.dd-poster-bold-pop-art.dd-poster-page-1 .dd-poster-accounts{
+  position:absolute;z-index:3;left:14%;top:89.1%;width:72%;height:5%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  margin:0;padding:0;background:none;border:0;box-shadow:none;
+  color:#fff;text-align:center;font:600 2.65cqw/1.15 var(--font-poster-gowun),"Malgun Gothic",sans-serif;
+}
+.dd-poster-bold-pop-art.dd-poster-page-1 .dd-poster-accounts p{
+  display:flex;justify-content:center;gap:1cqw;max-width:100%;margin:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* Bold Pop Art page 2: artwork owns the title, number, frames and tape.
+   Only editable photos and captions are layered on top. */
+.dd-poster-bold-pop-art.dd-poster-page-2{
+  display:block;padding:0;text-align:left;
+  background:#0733bd url("/images/poster/bold-pop-art/page2-background.png") center / 100% 100% no-repeat;
+}
+.dd-poster-bold-pop-art.dd-poster-page-2::after{content:none}
+.dd-poster-bold-pop-art.dd-poster-page-2 .dd-playful-gallery-main-photo{
+  /* Interior corners measured on the 972 × 1618 artwork, mapped onto the 9:16 paper. */
+  position:absolute;z-index:2;left:12.243%;top:27.689%;width:80.144%;height:33.931%;
+  transform-origin:0 0;transform:matrix(1,-.050726,-.040933,1,0,0);
+  --photo-mask:polygon(0 0,100% 0,99.737% 99.8%,0 100%);
+}
+.dd-poster-bold-pop-art.dd-poster-page-2 .dd-playful-gallery-main-photo .dd-poster-image,
+.dd-poster-bold-pop-art.dd-poster-page-2 .dd-playful-gallery-small-photo .dd-poster-image{
+  display:block;width:100%;height:100%;aspect-ratio:auto;border:0;background:transparent;
+  overflow:hidden;clip-path:var(--photo-mask);
+}
+.dd-poster-bold-pop-art.dd-poster-page-2 .dd-playful-gallery-main-caption{
+  position:absolute;z-index:3;left:29.75%;top:62.8%;width:43%;height:5.5%;
+  display:flex;align-items:center;justify-content:center;margin:0;
+  color:#fff;text-align:center;transform:rotate(-2deg);
+  font:900 4.2cqw/1.2 var(--font-poster-hi-melody),"Malgun Gothic",cursive;
+}
+.dd-poster-bold-pop-art.dd-poster-page-2 .dd-playful-gallery-main-caption span{
+  max-width:100%;overflow:hidden;overflow-wrap:anywhere;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+}
+.dd-poster-bold-pop-art.dd-poster-page-2 .dd-playful-gallery-small-photos{
+  position:absolute;inset:0;pointer-events:none;
+}
+.dd-poster-bold-pop-art.dd-poster-page-2 .dd-playful-gallery-small-photo{
+  position:absolute;z-index:2;transform-origin:0 0;pointer-events:auto;
+}
+.dd-poster-bold-pop-art.dd-poster-page-2 .dd-playful-gallery-small-photo-1{
+  left:6.173%;top:72.868%;width:25.617%;height:14.339%;
+  transform:matrix(1,-.085782,.068611,1,0,0);
+  --photo-mask:polygon(0 0,26.497% .129%,26.292% 3.129%,44.464% 1.678%,63.833% .33%,68.653% .315%,100% 0,99.63% 99.537%,0 100%);
+  --caption-top:102.8%;
+}
+.dd-poster-bold-pop-art.dd-poster-page-2 .dd-playful-gallery-small-photo-2{
+  left:39.198%;top:73.053%;width:26.132%;height:14.586%;
+  transform:matrix(1,.046251,-.051578,1,0,0);
+  --photo-mask:polygon(0 0,23.238% .188%,23.674% 1.015%,37.835% .779%,60.309% 1.426%,72.528% 1.704%,73.227% 0,100% 0,99.629% 100%,0 100%);
+  --caption-top:103.3%;
+}
+.dd-poster-bold-pop-art.dd-poster-page-2 .dd-playful-gallery-small-photo-3{
+  left:68.827%;top:72.25%;width:25%;height:14.277%;
+  transform:matrix(1,-.09669,.072962,1,0,0);
+  --photo-mask:polygon(0 0,24.678% .186%,25.24% 3.703%,42.626% 2.328%,58.786% .837%,71.172% .285%,100% 0,100% 100%,0 100%);
+  --caption-top:102.2%;
+}
+.dd-poster-bold-pop-art.dd-poster-page-2 .dd-playful-gallery-small-photo figcaption{
+  position:absolute;top:var(--caption-top);left:4%;width:92%;height:23%;margin:0;
+  display:grid;place-items:center;align-content:safe center;
+  color:#19151b;text-align:center;font:800 2.6cqw/1.1 var(--font-poster-hi-melody),"Malgun Gothic",cursive;
+  overflow:auto;overflow-wrap:anywhere;
+}
+
+/* Bold Pop Art page 3: artwork-only background with live message, QR and names. */
+.dd-poster-bold-pop-art.dd-poster-page-3{
+  display:block;padding:0;text-align:center;
+  background:#0733bd url("/images/poster/bold-pop-art/page3-background.png") center / 100% 100% no-repeat;
+}
+.dd-poster-bold-pop-art.dd-poster-page-3::after{content:none}
+.dd-poster-bold-pop-art.dd-poster-page-3 .dd-poster-message-card{
+  position:absolute;z-index:2;left:12%;top:32%;width:76%;height:31%;
+  min-height:0;margin:0;padding:0;display:flex;align-items:center;justify-content:center;
+  border:0;background:none;box-shadow:none;transform:none;
+}
+.dd-poster-bold-pop-art.dd-poster-page-3 .dd-poster-message-card .dd-poster-message{
+  width:100%;max-height:100%;min-height:0;margin:0;padding:0;overflow:hidden;
+  border:0;background:none;box-shadow:none;
+  font:600 4.2cqw/1.5 var(--font-poster-gowun),"Malgun Gothic",sans-serif;
+  white-space:pre-wrap;overflow-wrap:anywhere;color:#fff;text-align:center;
+}
+.dd-poster-bold-pop-art.dd-poster-page-3 .dd-poster-message-card .dd-poster-message[data-dense=true]{
+  font-size:2.5cqw;line-height:1.3;
+}
+.dd-poster-bold-pop-art.dd-poster-page-3 .dd-poster-qr{
+  position:absolute;z-index:3;left:37%;top:67%;width:26%;height:auto;
+  aspect-ratio:1;margin:0;padding:1.2%;box-sizing:border-box;
+  background:#fff;outline:.7cqw solid #ff399a;outline-offset:0;
+  object-fit:contain;image-rendering:pixelated;
+}
+.dd-poster-bold-pop-art.dd-poster-page-3 .dd-poster-qr-unavailable{
+  position:absolute;z-index:3;left:28%;top:73%;width:44%;
+  color:#fff;text-align:center;font-size:2.5cqw;
+}
+.dd-poster-bold-pop-art.dd-poster-page-3 .dd-poster-signature{
+  position:absolute;z-index:3;left:12%;top:86%;width:76%;margin:0;
+  color:#fff;text-align:center;font:700 3.1cqw/1.3 Arial,"Malgun Gothic",sans-serif;
+}
+
+
+/* Modern Editorial cover: artwork provides all static typography, rules and icons.
+   Only the cover photo and invitation-specific values are rendered as overlays. */
+.dd-poster-modern-editorial.dd-poster-page-1{
+  display:block;padding:0;text-align:left;color:#17191d;
+  background:#eaf3fc url("/images/poster/modern-editorial/page1-background.png") center / 100% 100% no-repeat;
+}
+.dd-poster-modern-editorial.dd-poster-page-1::after{content:none}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-cover-frame{
+  position:absolute;z-index:2;left:7.75862%;top:22.94985%;width:84.48276%;height:36.51917%;
+  margin:0;padding:0;border:0;background:transparent;box-shadow:none;transform:none;
+}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-cover-frame::before,
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-cover-frame::after{content:none;display:none}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-cover-frame .dd-poster-image{
+  width:100%;height:100%;aspect-ratio:auto;border:0;background:transparent;
+  overflow:hidden;clip-path:inset(0);
+}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-playful-name-tag{
+  position:absolute;z-index:3;left:11%;top:61.1%;width:78%;height:5.3%;
+  display:flex;align-items:center;justify-content:center;padding:0 2cqw;
+  box-sizing:border-box;background:none;border:0;box-shadow:none;transform:none;
+  color:#17191d;text-align:center;
+}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-playful-name-tag strong{
+  max-width:100%;font:700 4.5cqw/1.15 var(--font-poster-gowun),"Malgun Gothic",sans-serif;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-playful-event-details{
+  position:absolute;z-index:3;left:25%;top:67.6%;width:67%;height:15%;
+  display:grid;grid-template-rows:repeat(3,minmax(0,1fr));align-items:center;
+  color:#17191d;text-align:left;font:700 3.05cqw/1.2 var(--font-poster-gowun),"Malgun Gothic",sans-serif;
+}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-playful-event-details>strong{
+  display:block;font:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-accounts{
+  position:absolute;z-index:3;left:14%;top:86.3%;width:72%;height:5%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  margin:0;padding:0;border:0;background:none;box-shadow:none;
+  color:#17191d;text-align:center;
+  font:600 2.65cqw/1.15 var(--font-poster-gowun),"Malgun Gothic",sans-serif;
+}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-accounts p{
+  display:flex;justify-content:center;gap:1cqw;max-width:100%;margin:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+
+/* Modern Editorial page 2: photo cutouts follow the uploaded artwork.
+   Static heading and SPECIAL MOMENTS lettering belong to the background. */
+.dd-poster-modern-editorial.dd-poster-page-2{
+  display:block;padding:0;text-align:left;color:#17191d;
+  background:#eaf3fc url("/images/poster/modern-editorial/page2-background.png") center / 100% 100% no-repeat;
+}
+.dd-poster-modern-editorial.dd-poster-page-2::after{content:none}
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-poster-editorial-mark{display:none}
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-main-photo{
+  position:absolute;z-index:2;left:5.73419%;top:20.99644%;width:88.31726%;height:36.6548%;
+  padding:0;margin:0;transform:none;overflow:hidden;background:transparent;border:0;box-shadow:none;
+}
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-main-photo .dd-poster-image{
+  width:100%;height:100%;border:0;transform:none;clip-path:inset(0);
+}
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-main-caption{
+  position:absolute;z-index:3;left:9%;top:64%;width:82%;height:3%;
+  display:flex;align-items:center;justify-content:center;margin:0;
+  color:#252329;text-align:center;font:600 3.6cqw/1.1 var(--font-poster-hi-melody),"Malgun Gothic",cursive;
+}
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-main-caption span{
+  display:block;max-width:100%;padding:0 .5cqw;background:rgba(234,243,252,.94);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-small-photos{
+  position:absolute;inset:0;display:block;margin:0;padding:0;
+}
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-small-photo{
+  position:absolute;z-index:2;width:28%;height:14.6%;margin:0;padding:0;
+  background:transparent;border:0;box-shadow:none;
+}
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-small-photo-1{
+  left:4%;top:73.0%;transform:rotate(-4deg);
+}
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-small-photo-2{
+  left:36%;top:73.6%;transform:rotate(3deg);
+}
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-small-photo-3{
+  left:68%;top:73.0%;transform:rotate(-3deg);
+}
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-small-photo .dd-poster-image{
+  position:absolute;margin:0;border:0;background:transparent;transform-origin:0 0;
+}
+/* Keep the caption wrappers in place. Each photo follows its measured opening,
+   with a notch in the top edge for the tape baked into the artwork. */
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-small-photo-1 .dd-poster-image{
+  left:2.2672%;top:5.32603%;width:94.23136%;height:93.64793%;
+  transform:matrix(1.00417,-0.02469,0.02447,1.00415,0,0);
+  clip-path:polygon(0% 0%, 23.17398% -0.22127%, 21.95721% 4.4255%, 57.584% 1.14595%, 59.30673% 0.02159%, 97.08738% 0%, 97.89262% 98.12197%, 0% 98.03922%);
+}
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-small-photo-2 .dd-poster-image{
+  left:3.58236%;top:5.85238%;width:97.38555%;height:95.30542%;
+  transform:matrix(1.00113,-0.00461,-0.01387,1.0021,0,0);
+  clip-path:polygon(0% 0%, 18.07505% -0.09978%, 18.25393% 2.8746%, 66.6017% 2.8849%, 66.4228% -0.0895%, 97.08738% 0%, 97.87103% 97.99793%, 0% 98.03922%);
+}
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-small-photo-3 .dd-poster-image{
+  left:0.37877%;top:5.75839%;width:96.597%;height:94.47667%;
+  transform:matrix(1.00304,-0.03187,0.01445,1.00213,0,0);
+  clip-path:polygon(0% 0%, 21.80253% -0.12217%, 21.12331% 4.54462%, 58.97313% 1.18502%, 61.02117% 0.08552%, 97.08738% 0%, 98.26954% 98.14917%, 0% 98.03922%);
+}
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-small-photo figcaption{
+  position:absolute;left:0;top:105%;width:100%;height:12%;margin:0;padding:0 .5cqw;
+  display:flex;align-items:center;justify-content:center;box-sizing:border-box;
+  color:#252329;text-align:center;font:600 2.8cqw/1.05 var(--font-poster-hi-melody),"Malgun Gothic",cursive;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+
+/* Modern Editorial invitation: title and underline are part of the background artwork. */
+.dd-poster-modern-editorial.dd-poster-page-3{
+  display:block;padding:0;text-align:center;color:#22252a;
+  background:#eaf3fc url("/images/poster/modern-editorial/page3-background.png") center / 100% 100% no-repeat;
+}
+.dd-poster-modern-editorial.dd-poster-page-3::after{content:none;display:none}
+.dd-poster-modern-editorial.dd-poster-page-3 .dd-poster-editorial-mark,
+.dd-poster-modern-editorial.dd-poster-page-3 h2{display:none}
+.dd-poster-modern-editorial.dd-poster-page-3 .dd-poster-message-card{
+  position:absolute;z-index:2;left:11%;top:24%;width:78%;height:32%;
+  min-height:0;margin:0;padding:0;display:flex;align-items:center;justify-content:center;
+  background:none;border:0;box-shadow:none;transform:none;
+}
+.dd-poster-modern-editorial.dd-poster-page-3 .dd-poster-message-card .dd-poster-message{
+  width:100%;max-height:100%;margin:0;padding:0;overflow:hidden;
+  border:0;background:none;box-shadow:none;transform:none;
+  font:600 4.2cqw/1.5 "Gowun Dodum","Malgun Gothic",sans-serif;
+  white-space:pre-wrap;overflow-wrap:anywhere;color:#22252a;text-align:center;
+}
+.dd-poster-modern-editorial.dd-poster-page-3 .dd-poster-message-card .dd-poster-message[data-dense=true]{
+  font-size:2.5cqw;line-height:1.3;
+}
+.dd-poster-modern-editorial.dd-poster-page-3 .dd-poster-qr{
+  position:absolute;z-index:3;left:37%;top:60%;width:26%;height:auto;
+  aspect-ratio:1;margin:0;padding:1%;box-sizing:border-box;
+  background:#fff;outline:none;object-fit:contain;image-rendering:pixelated;
+}
+.dd-poster-modern-editorial.dd-poster-page-3 .dd-poster-qr-unavailable{
+  position:absolute;z-index:3;left:24%;top:65%;width:52%;margin:0;
+  font:500 2.5cqw/1.3 "Gowun Dodum","Malgun Gothic",sans-serif;
+  color:#22252a;text-align:center;
+}
+.dd-poster-modern-editorial.dd-poster-page-3 .dd-poster-signature{
+  position:absolute;z-index:3;left:12%;top:81%;width:76%;margin:0;
+  color:#22252a;text-align:center;
+  font:700 3.5cqw/1.3 "Gowun Dodum","Malgun Gothic",sans-serif;
+}
+
+/* Modern Editorial: keep text on one line without export-time ellipsis. */
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-playful-name-tag{left:7%;width:86%;padding:0 1cqw}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-playful-name-tag strong{
+  font-size:3.6cqw;max-width:100%;white-space:nowrap;overflow:visible;text-overflow:clip;
+}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-accounts{left:5%;width:90%;font-size:2.70cqw}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-accounts p{
+  display:flex;flex-wrap:nowrap;gap:.6cqw;white-space:nowrap;overflow:visible;text-overflow:clip;
+}
+.dd-poster-modern-editorial.dd-poster-page-1 .dd-poster-accounts p span{white-space:nowrap;flex-shrink:0}
+.dd-poster-modern-editorial.dd-poster-page-2 .dd-playful-gallery-main-caption span{
+  font-size:3.97cqw;white-space:nowrap;overflow:visible;text-overflow:clip;
+}
+
+/* Playful Pop cover account: plain text only, no pill or dashed outline. */
+.dd-poster-playful-pop.dd-poster-page-1 .dd-poster-accounts p{
+  border:0;border-radius:0;background:transparent;box-shadow:none;
+  padding:0;min-height:0;
+}
+
+
+/* Poster editor workspace: visually align with the Dear Day invitation editor.
+   Scoped to editor controls only; poster artwork and export capture stay untouched. */
+.dd-poster-editor{max-width:1320px;padding:36px 24px 72px;color:#302735}
+.dd-poster-editor:not(.dd-poster-capture) .dd-poster-top{padding-bottom:16px;border-bottom:1px solid #e9e4e9}
+.dd-poster-editor .dd-poster-top h1{font-size:clamp(24px,3vw,32px);letter-spacing:-.035em;margin:7px 0 0}
+.dd-poster-editor .dd-poster-top a{color:#796c7c;text-decoration:none;font-size:13px}
+.dd-poster-editor .dd-poster-save{padding:11px 22px;border-radius:10px;background:#352a38;border-color:#352a38;color:white;font-weight:700}
+.dd-poster-editor .dd-poster-downloads{margin-top:20px;gap:9px}
+.dd-poster-editor .dd-poster-downloads button{padding:10px 15px;border:1px solid #d8cfd9;border-radius:10px;background:white;font-size:13px;font-weight:600}
+.dd-poster-editor .dd-poster-downloads button:last-child{background:#f2ecf4;border-color:#ded1e3;color:#46354d}
+.dd-poster-editor .dd-poster-tabs{margin:24px 0 18px;gap:8px}
+.dd-poster-editor .dd-poster-tabs button{padding:11px 17px;border:1px solid #ded6df;border-radius:10px;background:#fff;font-weight:700;font-size:14px;transition:background-color .15s,border-color .15s}
+.dd-poster-editor .dd-poster-tabs button[aria-pressed=true]{background:#302536;border-color:#302536;color:#fff}
+.dd-poster-editor .dd-poster-workspace{grid-template-columns:minmax(320px,1fr) minmax(0,1.05fr);gap:28px}
+.dd-poster-editor .dd-poster-tools{padding:22px;border:1px solid #e6dfe7;border-radius:17px;background:#fff;gap:18px;box-shadow:0 3px 16px #36253a08}
+.dd-poster-editor .dd-poster-tools>label{font-size:13px;line-height:1.5;color:#3a303c}
+.dd-poster-editor .dd-poster-tools label :is(select,input:not([type=checkbox],[type=radio]),textarea){margin-top:8px;min-height:43px;border:1px solid #dcd5df;border-radius:10px;background:#fff;padding:10px 12px;box-sizing:border-box;outline-offset:2px}
+.dd-poster-editor .dd-poster-tools textarea{line-height:1.65;resize:vertical}
+.dd-poster-editor .dd-poster-tools label :is(select,input,textarea):focus-visible{outline:2px solid #725b86;outline-offset:1px}
+.dd-poster-editor .dd-poster-tools input[type=checkbox],.dd-poster-editor .dd-poster-tools input[type=radio]{accent-color:#5e4773}
+.dd-poster-editor .dd-poster-tools .dd-poster-crop{padding:14px 16px;border:1px solid #eee7ee;border-radius:12px;background:#faf8fb;gap:10px}
+.dd-poster-editor .dd-poster-crop input[type=range]{width:100%;accent-color:#654c78}
+.dd-poster-editor .dd-poster-picker{gap:9px}
+.dd-poster-editor .dd-poster-picker button{border:1px solid #e5dee5;border-radius:9px;background:#fff;padding:3px}
+.dd-poster-editor .dd-poster-picker button[aria-pressed=true]{border:3px solid #654c78;box-shadow:0 0 0 2px #e8dfee}
+.dd-poster-editor .dd-poster-picker img{border-radius:5px}
+.dd-poster-editor .dd-poster-selection{padding:17px;border:1px solid #e8e1e9;border-radius:13px;background:#fcfbfd;gap:12px}
+.dd-poster-editor .dd-poster-selection>strong{font-size:14px}
+.dd-poster-editor .dd-poster-photo-actions button{padding:7px 12px;border-radius:8px;border-color:#dcd4df;font-size:12px}
+.dd-poster-editor .dd-poster-preview{width:min(100%,540px);padding:0;position:sticky;top:20px;align-self:start;border-radius:12px;box-shadow:0 10px 35px #3b30421c}
+.dd-poster-editor .dd-poster-notice{padding:10px 14px;border-radius:9px;background:#f5f0f7;font-size:13px}
+@media(max-width:800px){
+  .dd-poster-editor{padding:20px 14px 44px}
+  .dd-poster-editor .dd-poster-workspace{grid-template-columns:minmax(0,1fr);gap:22px}
+  .dd-poster-editor .dd-poster-tools{padding:16px;gap:15px}
+  .dd-poster-editor .dd-poster-preview{position:static;top:auto}
+  .dd-poster-editor .dd-poster-tabs button{flex:1;min-width:0;padding:10px 6px;font-size:12px}
+  .dd-poster-editor .dd-poster-downloads button{flex:1}
+}
+
+/* Compact image download actions in the editor toolbar. */
+.dd-poster-editor .dd-poster-downloads{gap:7px;align-items:center}
+.dd-poster-editor .dd-poster-downloads button{display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:7px 9px;font-size:11px;line-height:1.25;white-space:nowrap;font-weight:600}
+.dd-poster-editor .dd-poster-downloads button svg{width:12px;height:12px;flex:none}
+@media(max-width:600px){.dd-poster-editor .dd-poster-downloads button{flex:0 1 auto;font-size:10px;padding:7px 8px}}
+
+/* Mobile-only live floating poster preview. Does not affect the export capture. */
+.dd-poster-mobile-preview{display:none}
+@media(max-width:800px){
+  .dd-poster-mobile-preview{display:block;position:fixed;right:14px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:100;pointer-events:none}
+  .dd-poster-mobile-preview button,.dd-poster-mobile-preview-panel{pointer-events:auto}
+  .dd-poster-editor .dd-poster-mobile-preview-toggle{display:flex;align-items:center;justify-content:center;border:1px solid #3d3046;border-radius:999px;padding:12px 17px;background:#332638;color:#fff;font-size:11px;font-weight:700;box-shadow:0 5px 18px #21162640}
+  .dd-poster-mobile-preview-panel{width:min(43vw,185px);padding:7px;background:#fff;border:1px solid #ded7e0;border-radius:13px;box-shadow:0 8px 30px #21162645}
+  .dd-poster-mobile-preview-head{display:flex;align-items:center;justify-content:space-between;gap:3px;margin-bottom:6px;font-size:10px;font-weight:700;color:#3b3040}
+  .dd-poster-editor .dd-poster-mobile-preview-head button{flex:none;padding:3px 6px;border:0;background:transparent;font-size:14px;line-height:1}
+  .dd-poster-mobile-preview-paper{width:100%;container-type:inline-size;overflow:hidden;border-radius:5px;box-shadow:0 1px 5px #0002;pointer-events:none}
+  .dd-poster-mobile-preview-paper>.dd-poster-paper{width:100%}
+  .dd-poster-editor{padding-bottom:90px}
+}
+
+/* Floating preview heading: page name and editing guidance on separate lines. */
+@media(max-width:800px){
+  .dd-poster-mobile-preview-heading{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0}
+  .dd-poster-mobile-preview-heading strong{font-size:10px;line-height:1.3;font-weight:700}
+  .dd-poster-mobile-preview-heading small{font-size:9px;line-height:1.3;font-weight:400;color:#74687a}
+  .dd-poster-mobile-preview-head{align-items:flex-start}
+}
+
+/* Page navigation stays at the bottom of the active editor panel. */
+.dd-poster-page-navigation{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;padding-top:16px;border-top:1px solid #e3dde5}
+.dd-poster-page-navigation>button,.dd-poster-page-navigation>span:first-child,.dd-poster-page-navigation>span:last-child{min-width:82px}
+.dd-poster-editor .dd-poster-page-navigation>button:last-child{background:#241e2a;color:#fff;border-color:#241e2a}
+.dd-poster-page-progress{font-size:12px;color:#766a7c;text-align:center;white-space:nowrap}
+
+/* Compact download menu below the poster page tabs. */
+.dd-poster-editor .dd-poster-tabs{margin-bottom:10px}
+.dd-poster-download-bar{display:flex;justify-content:flex-end;margin:0 0 18px;position:relative;z-index:5}
+.dd-poster-download-menu{position:relative}
+.dd-poster-download-menu>summary{display:flex;align-items:center;justify-content:center;gap:7px;list-style:none;cursor:pointer;padding:9px 13px;border:1px solid #ded6df;border-radius:10px;background:#fff;color:#302536;font-size:13px;font-weight:650;user-select:none}
+.dd-poster-download-menu>summary::-webkit-details-marker{display:none}
+.dd-poster-download-menu>summary[aria-disabled=true]{opacity:.45;cursor:default}
+.dd-poster-download-options{position:absolute;right:0;top:calc(100% + 6px);width:max-content;min-width:215px;max-width:calc(100vw - 32px);padding:6px;border:1px solid #e3dde5;border-radius:12px;background:#fff;box-shadow:0 12px 30px #241e2a22;display:grid;gap:2px}
+.dd-poster-editor .dd-poster-download-options button{width:100%;padding:11px 12px;text-align:left;border:0;border-radius:7px;background:transparent;font-size:13px;font-weight:500}
+.dd-poster-editor .dd-poster-download-options button:hover:not(:disabled),.dd-poster-editor .dd-poster-download-options button:focus-visible{background:#f2ecf4}
+.dd-poster-editor .dd-poster-download-options button:last-child{border-top:1px solid #eee8f0;border-radius:0 0 7px 7px;font-weight:700}
+@media(max-width:800px){.dd-poster-editor .dd-poster-download-menu>summary{font-size:12px;padding:8px 11px}.dd-poster-editor .dd-poster-download-options button{font-size:12px}}
+
+/* Match the lightweight text actions in the main invitation editor header. */
+.dd-poster-editor .dd-poster-top>a,
+.dd-poster-editor .dd-poster-top>div>a{font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:13px;font-weight:400;line-height:1.5;color:#746879;text-decoration:none}
+.dd-poster-editor .dd-poster-top .dd-poster-save{background:transparent;border:0;border-radius:0;box-shadow:none;padding:6px 0;color:#e46c70;font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:13px;font-weight:500;line-height:1.5;white-space:nowrap}
+.dd-poster-editor .dd-poster-top .dd-poster-save:hover:not(:disabled){text-decoration:underline}
+.dd-poster-editor .dd-poster-top .dd-poster-save:focus-visible{outline:2px solid #e46c70;outline-offset:4px}
+
+/* Exact type scale and font family from the main invitation editor header. */
+.dd-poster-editor .dd-poster-top>div>a{font-family:Pretendard,sans-serif;font-size:12px;font-weight:500;line-height:1.5;color:#292929;text-decoration:none;white-space:nowrap}
+.dd-poster-editor .dd-poster-top .dd-poster-save{font-family:Pretendard,sans-serif;font-size:12px;font-weight:500;line-height:1.5;color:#dc7885;background:none;border:0;box-shadow:none;padding:8px 0;white-space:nowrap}
+@media(max-width:760px){.dd-poster-editor .dd-poster-top>div>a,.dd-poster-editor .dd-poster-top .dd-poster-save{font-size:11px}}
+
+/* Three-stage poster editor navigation; replaces the former button tabs. */
+.dd-poster-steps{margin:20px 0 16px;padding:8px 2px 0}
+.dd-poster-step-list{display:flex;align-items:flex-start;width:100%}
+.dd-poster-step-item{display:flex;align-items:flex-start;flex:1;min-width:0}
+.dd-poster-step-item:last-child{flex:0 0 29%}
+.dd-poster-editor .dd-poster-step{display:flex;flex-direction:column;align-items:center;gap:7px;flex:0 0 auto;min-width:75px;padding:0;border:0;background:transparent;color:#5b4d62;font:inherit;cursor:pointer}
+.dd-poster-step-circle{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#f0edf2;color:#574a60;font-family:Pretendard,sans-serif;font-size:15px;font-weight:650;transition:background .15s,color .15s}
+.dd-poster-step[aria-current=step] .dd-poster-step-circle{background:#302437;color:#fff}
+.dd-poster-step-item:has(.dd-poster-step-connector.is-past) .dd-poster-step-circle{background:#ede6f0;color:#5f4871}
+.dd-poster-step-label{font-family:Pretendard,sans-serif;font-size:12px;font-weight:500;white-space:nowrap}
+.dd-poster-step[aria-current=step] .dd-poster-step-label{font-weight:700;color:#302437}
+.dd-poster-step-connector{height:2px;flex:1;min-width:8px;margin:19px 4px 0;background:#e1dce5;border-radius:2px}
+.dd-poster-step-connector.is-past{background:#a48dae}
+.dd-poster-step-track{height:5px;margin:15px 4px 8px;background:#eeebf0;border-radius:99px;overflow:hidden}
+.dd-poster-step-track>span{display:block;height:100%;background:#6b507c;border-radius:inherit;transition:width .2s ease}
+.dd-poster-step-caption{display:flex;justify-content:space-between;gap:10px;padding:0 4px;color:#766b7c;font-family:Pretendard,sans-serif;font-size:11px}
+.dd-poster-editor .dd-poster-step:focus-visible{outline:2px solid #6b507c;outline-offset:5px;border-radius:6px}
+@media(max-width:600px){.dd-poster-steps{margin:18px 0 12px}.dd-poster-step-item:last-child{flex-basis:30%}.dd-poster-editor .dd-poster-step{min-width:70px}.dd-poster-step-circle{width:36px;height:36px;font-size:14px}.dd-poster-step-connector{margin-top:17px}.dd-poster-step-label{font-size:11px}.dd-poster-step-caption{font-size:10px}}
+
+/* Compact image download trigger: approximately 20% smaller typography and padding. */
+.dd-poster-editor .dd-poster-download-menu>summary{font-size:10.4px;padding:7px 10px;gap:5px;border-radius:8px}
+.dd-poster-editor .dd-poster-download-menu>summary svg{width:13px;height:13px;flex:none}
+@media(max-width:800px){.dd-poster-editor .dd-poster-download-menu>summary{font-size:9.6px;padding:6px 9px;gap:5px}}
+
+/* Brief guidance directly beneath the company poster editor title. */
+.dd-poster-editor .dd-poster-header-description{margin:-5px 0 14px;color:#867989;font-family:Pretendard,sans-serif;font-size:12px;font-weight:400;line-height:1.5;word-break:keep-all}
+@media(max-width:600px){.dd-poster-editor .dd-poster-header-description{font-size:10px;line-height:1.5;margin:-4px 0 12px}}
+
+/* Compact pictograms before poster editor field headings. */
+.dd-poster-field-title{display:inline-flex;align-items:center;gap:6px;line-height:1.5}
+.dd-poster-field-title>span[aria-hidden]{display:inline-block;font-size:15px;line-height:1;flex:none}
+@media(max-width:600px){.dd-poster-field-title>span[aria-hidden]{font-size:14px}}
+
+/* Subtle helper text below invitation message editor. */
+.dd-poster-editor .dd-poster-message-help{font-family:Pretendard,sans-serif;font-size:11px;font-weight:400;line-height:1.55;color:#88838d;word-break:keep-all}
+@media(max-width:600px){.dd-poster-editor .dd-poster-message-help{font-size:11px}}
+
+/* Keep the editor header actions visible while scrolling, with save aligned to the back link. */
+.dd-poster-editor:not(.dd-poster-capture) .dd-poster-top{
+  position:sticky;
+  top:0;
+  z-index:30;
+  align-items:flex-start;
+  background:#fffaf5;
+}
+.dd-poster-editor .dd-poster-top .dd-poster-save{
+  align-self:flex-start;
+  margin:0;
+  padding:0;
+  line-height:1.5;
+}
+.dd-poster-editor .dd-poster-tools textarea{
+  resize:none;
+  overflow-y:auto;
+}
+
+/* Only the back/save action row stays sticky; title and description scroll normally. */
+.dd-poster-editor:not(.dd-poster-capture) .dd-poster-top{
+  padding:8px 0 10px;
+  border-bottom:0;
+  align-items:center;
+}
+.dd-poster-editor .dd-poster-top .dd-poster-save{align-self:center}
+.dd-poster-editor .dd-poster-heading{padding:4px 0 16px;border-bottom:1px solid #e9e4e9}
+.dd-poster-editor .dd-poster-heading h1{font-size:clamp(24px,3vw,32px);letter-spacing:-.035em;margin:4px 0 0}
+.dd-poster-editor .dd-poster-heading .dd-poster-header-description{margin:2px 0 0}
+@media(max-width:600px){.dd-poster-editor .dd-poster-heading{padding-bottom:14px}}
+
+/* Cover photo guidance: small, muted text under the selection field. */
+.dd-poster-editor .dd-poster-cover-help{margin:0;color:#88838d;font-family:Pretendard,sans-serif;font-size:11px;font-weight:400;line-height:1.55;word-break:keep-all}
+.dd-poster-editor .dd-poster-cover-warning{margin:0;color:#9b6874;font-family:Pretendard,sans-serif;font-size:11px;line-height:1.5;word-break:keep-all}
+
+/* Smaller previous/next controls without changing their behavior. */
+.dd-poster-editor .dd-poster-page-navigation>button{font-size:11px;padding:6px 9px;min-width:58px;line-height:1.4}
+.dd-poster-editor .dd-poster-page-navigation>span:first-child,
+.dd-poster-editor .dd-poster-page-navigation>span:last-child{min-width:58px}
+@media(max-width:600px){.dd-poster-editor .dd-poster-page-navigation>button{font-size:11px;padding:6px 9px;min-width:58px}}
+
+/* Optional English-name inputs: compact secondary labels and helper copy. */
+.dd-poster-editor .dd-poster-optional{font-size:11px;font-weight:400;color:#918a96}
+.dd-poster-editor .dd-poster-english-help{display:block;margin-top:6px;font-family:Pretendard,sans-serif;font-size:11px;font-weight:400;line-height:1.5;color:#88838d;word-break:keep-all}
+
+
+/* Page 3 QR scanning guidance: shared across all three poster designs and PNG export. */
+.dd-poster-page-3 .dd-poster-qr-guide{
+  white-space:pre-line;display:block;box-sizing:border-box;
+  font-size:2.75cqw;line-height:1.5;font-weight:600;
+  overflow:visible;word-break:keep-all;
+}
+.dd-poster-page-3 .dd-poster-qr-heart{
+  display:inline-block;width:1em;height:1em;vertical-align:-.12em;
+  margin-left:.15em;color:#ff4b91;
+}
+.dd-poster-playful-pop.dd-poster-page-3 .dd-poster-qr-guide{
+  top:89%;font-size:2.65cqw;line-height:1.4;
+}
+.dd-poster-bold-pop-art.dd-poster-page-3 .dd-poster-qr-guide{
+  top:84%;font-size:2.65cqw;line-height:1.45;
+}
+.dd-poster-modern-editorial.dd-poster-page-3 .dd-poster-qr-guide{
+  top:78%;font-size:2.7cqw;line-height:1.5;
 }
