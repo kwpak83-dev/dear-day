@@ -170,8 +170,23 @@ export default function PosterEditor({ slug }) {
     <header className="dd-poster-top"><div><a href="/my-invitations">← 내 초대장</a><h1>게시용 초대장</h1></div>
       <button type="button" className="dd-poster-save" onClick={save} disabled={saving || exporting}>{saving ? "저장 중…" : "저장하기"}</button></header>
     {notice && <p className="dd-poster-notice" role="status">{notice}</p>}
-    <nav className="dd-poster-tabs" aria-label="포스터 페이지">{PAGES.map((label, index) =>
-      <button key={label} type="button" aria-pressed={page === index + 1} onClick={() => setPage(index + 1)}>{index + 1}. {label}</button>)}</nav>
+    <nav className="dd-poster-steps" aria-label="포스터 편집 단계">
+      <div className="dd-poster-step-list">{PAGES.map((label, index) => {
+        const stepNumber = index + 1;
+        return <div className="dd-poster-step-item" key={label}>
+          <button type="button" className="dd-poster-step" aria-current={page === stepNumber ? "step" : undefined}
+            aria-label={`${stepNumber}단계 ${label}`} onClick={() => setPage(stepNumber)}>
+            <span className="dd-poster-step-circle" aria-hidden="true">{page > stepNumber ? "✓" : stepNumber}</span>
+            <span className="dd-poster-step-label">{label}</span>
+          </button>
+          {index < PAGES.length - 1 && <span className={`dd-poster-step-connector${page > stepNumber ? " is-past" : ""}`} aria-hidden="true" />}
+        </div>;
+      })}</div>
+      <div className="dd-poster-step-track" role="progressbar" aria-label="편집 단계" aria-valuemin={1} aria-valuemax={3} aria-valuenow={page}>
+        <span style={{ width: `${(page / PAGES.length) * 100}%` }} />
+      </div>
+      <div className="dd-poster-step-caption"><span>현재 편집: {PAGES[page - 1]}</span><span>{page} / {PAGES.length} 단계</span></div>
+    </nav>
     <div className="dd-poster-download-bar" aria-busy={exporting}>
       <details className="dd-poster-download-menu" ref={downloadMenuRoot}>
         <summary aria-disabled={saving || exporting} onClick={event => { if (saving || exporting) event.preventDefault(); }}>
