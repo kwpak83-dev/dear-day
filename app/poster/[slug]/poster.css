@@ -749,3 +749,11 @@
   .dd-poster-mobile-preview-paper>.dd-poster-paper{width:100%}
   .dd-poster-editor{padding-bottom:90px}
 }
+
+/* Floating preview heading: page name and editing guidance on separate lines. */
+@media(max-width:800px){
+  .dd-poster-mobile-preview-heading{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0}
+  .dd-poster-mobile-preview-heading strong{font-size:10px;line-height:1.3;font-weight:700}
+  .dd-poster-mobile-preview-heading small{font-size:9px;line-height:1.3;font-weight:400;color:#74687a}
+  .dd-poster-mobile-preview-head{align-items:flex-start}
+}
