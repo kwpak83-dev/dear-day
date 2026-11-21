@@ -124,10 +124,10 @@ function collectFontFaces(rules, output, source) {
 }
 
 async function embeddedPosterFonts(page) {
-  // Only pages that use the self-hosted poster fonts need SVG font embedding.
-  // Bold Pop Art page 3 shares Gowun Dodum with Playful Pop.
+  // Playful Pop and Bold Pop Art use the same self-hosted poster fonts
+  // on all three pages (Gowun Dodum on cover/message; Hi Melody on captions).
   const usesPosterFont = page.classList.contains("dd-poster-playful-pop") ||
-    (page.classList.contains("dd-poster-bold-pop-art") && page.classList.contains("dd-poster-page-3"));
+    page.classList.contains("dd-poster-bold-pop-art");
   if (!usesPosterFont) return undefined;
   // Font-family is resolved from the real text, not the poster wrapper.
   const text = page.querySelector(".dd-playful-gallery-main-caption, .dd-poster-message, .dd-playful-name-tag strong");
