@@ -844,3 +844,15 @@
   resize:none;
   overflow-y:auto;
 }
+
+/* Only the back/save action row stays sticky; title and description scroll normally. */
+.dd-poster-editor:not(.dd-poster-capture) .dd-poster-top{
+  padding:8px 0 10px;
+  border-bottom:0;
+  align-items:center;
+}
+.dd-poster-editor .dd-poster-top .dd-poster-save{align-self:center}
+.dd-poster-editor .dd-poster-heading{padding:4px 0 16px;border-bottom:1px solid #e9e4e9}
+.dd-poster-editor .dd-poster-heading h1{font-size:clamp(24px,3vw,32px);letter-spacing:-.035em;margin:4px 0 0}
+.dd-poster-editor .dd-poster-heading .dd-poster-header-description{margin:2px 0 0}
+@media(max-width:600px){.dd-poster-editor .dd-poster-heading{padding-bottom:14px}}
