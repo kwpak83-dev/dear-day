@@ -825,3 +825,22 @@
 /* Subtle helper text below invitation message editor. */
 .dd-poster-editor .dd-poster-message-help{font-family:Pretendard,sans-serif;font-size:11px;font-weight:400;line-height:1.55;color:#88838d;word-break:keep-all}
 @media(max-width:600px){.dd-poster-editor .dd-poster-message-help{font-size:11px}}
+
+/* Keep the editor header actions visible while scrolling, with save aligned to the back link. */
+.dd-poster-editor:not(.dd-poster-capture) .dd-poster-top{
+  position:sticky;
+  top:0;
+  z-index:30;
+  align-items:flex-start;
+  background:#fffaf5;
+}
+.dd-poster-editor .dd-poster-top .dd-poster-save{
+  align-self:flex-start;
+  margin:0;
+  padding:0;
+  line-height:1.5;
+}
+.dd-poster-editor .dd-poster-tools textarea{
+  resize:none;
+  overflow-y:auto;
+}
