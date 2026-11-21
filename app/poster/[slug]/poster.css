@@ -735,3 +735,17 @@
 .dd-poster-editor .dd-poster-downloads button{display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:7px 9px;font-size:11px;line-height:1.25;white-space:nowrap;font-weight:600}
 .dd-poster-editor .dd-poster-downloads button svg{width:12px;height:12px;flex:none}
 @media(max-width:600px){.dd-poster-editor .dd-poster-downloads button{flex:0 1 auto;font-size:10px;padding:7px 8px}}
+
+/* Mobile-only live floating poster preview. Does not affect the export capture. */
+.dd-poster-mobile-preview{display:none}
+@media(max-width:800px){
+  .dd-poster-mobile-preview{display:block;position:fixed;right:14px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:100;pointer-events:none}
+  .dd-poster-mobile-preview button,.dd-poster-mobile-preview-panel{pointer-events:auto}
+  .dd-poster-editor .dd-poster-mobile-preview-toggle{display:flex;align-items:center;justify-content:center;border:1px solid #3d3046;border-radius:999px;padding:12px 17px;background:#332638;color:#fff;font-size:13px;font-weight:700;box-shadow:0 5px 18px #21162640}
+  .dd-poster-mobile-preview-panel{width:min(43vw,185px);padding:7px;background:#fff;border:1px solid #ded7e0;border-radius:13px;box-shadow:0 8px 30px #21162645}
+  .dd-poster-mobile-preview-head{display:flex;align-items:center;justify-content:space-between;gap:3px;margin-bottom:6px;font-size:10px;font-weight:700;color:#3b3040}
+  .dd-poster-editor .dd-poster-mobile-preview-head button{flex:none;padding:3px 6px;border:0;background:transparent;font-size:14px;line-height:1}
+  .dd-poster-mobile-preview-paper{width:100%;container-type:inline-size;overflow:hidden;border-radius:5px;box-shadow:0 1px 5px #0002;pointer-events:none}
+  .dd-poster-mobile-preview-paper>.dd-poster-paper{width:100%}
+  .dd-poster-editor{padding-bottom:90px}
+}
