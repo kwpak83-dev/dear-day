@@ -367,7 +367,8 @@
 .dd-poster-bold-pop-art.dd-poster-page-1 .dd-poster-cover-frame::before,
 .dd-poster-bold-pop-art.dd-poster-page-1 .dd-poster-cover-frame::after{content:none;display:none}
 .dd-poster-bold-pop-art.dd-poster-page-1 .dd-poster-cover-frame .dd-poster-image{
-  width:100%;height:100%;border:0;background:transparent;overflow:hidden;
+  width:100%;height:100%;box-sizing:border-box;
+  border:0.9cqw solid #fff;background:transparent;overflow:hidden;
 }
 .dd-poster-bold-pop-art.dd-poster-page-1 .dd-playful-name-tag{
   position:absolute;z-index:3;left:26%;top:54.8%;width:48%;height:6.5%;
