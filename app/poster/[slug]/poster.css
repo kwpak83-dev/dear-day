@@ -776,3 +776,10 @@
 .dd-poster-editor .dd-poster-download-options button:hover:not(:disabled),.dd-poster-editor .dd-poster-download-options button:focus-visible{background:#f2ecf4}
 .dd-poster-editor .dd-poster-download-options button:last-child{border-top:1px solid #eee8f0;border-radius:0 0 7px 7px;font-weight:700}
 @media(max-width:800px){.dd-poster-editor .dd-poster-download-menu>summary{font-size:12px;padding:8px 11px}.dd-poster-editor .dd-poster-download-options button{font-size:12px}}
+
+/* Match the lightweight text actions in the main invitation editor header. */
+.dd-poster-editor .dd-poster-top>a,
+.dd-poster-editor .dd-poster-top>div>a{font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:13px;font-weight:400;line-height:1.5;color:#746879;text-decoration:none}
+.dd-poster-editor .dd-poster-top .dd-poster-save{background:transparent;border:0;border-radius:0;box-shadow:none;padding:6px 0;color:#e46c70;font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:13px;font-weight:500;line-height:1.5;white-space:nowrap}
+.dd-poster-editor .dd-poster-top .dd-poster-save:hover:not(:disabled){text-decoration:underline}
+.dd-poster-editor .dd-poster-top .dd-poster-save:focus-visible{outline:2px solid #e46c70;outline-offset:4px}
