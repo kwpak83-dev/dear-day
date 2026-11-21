@@ -3438,3 +3438,20 @@
   box-decoration-break:clone;-webkit-box-decoration-break:clone;
  }
 }
+
+
+/* Office bulletin board invitation demo — feature 07 */
+.dd-feature-office .dd-feature-demo-content{width:100%;height:100%;min-height:0}
+.dd-office-demo{width:100%;height:100%;min-height:0;display:flex;justify-content:center;align-items:center;padding:14px 12px;overflow:hidden;font-family:Pretendard,sans-serif}
+.dd-office-demo-board{display:flex;flex-direction:column;width:min(100%,410px);height:100%;min-height:310px;max-height:540px;overflow:hidden;background:#fff;border:1px solid #e6e8ee;border-radius:12px;box-shadow:0 10px 32px rgba(20,28,58,.12)}
+.dd-office-demo-topbar{display:flex;align-items:center;gap:8px;padding:11px 14px;background:#f6f8fc;border-bottom:1px solid #e8eaf0;flex-shrink:0;color:#293347;font-size:12px}
+.dd-office-demo-mark{display:grid;place-items:center;width:22px;height:22px;background:#304e83;border-radius:5px;color:white;font-size:13px;font-weight:800}
+.dd-office-demo-topbar>span:last-child{margin-left:auto;font-size:10px;color:#81889a}
+.dd-office-demo-heading{flex-shrink:0;padding:15px 16px 13px;border-bottom:1px solid #eef0f4;background:white;color:#262b39}
+.dd-office-demo-heading strong{display:block;font-size:15px;line-height:1.5}
+.dd-office-demo-heading p{margin:6px 0 0;font-size:12px;line-height:1.55;color:#60697a}
+.dd-office-demo-viewport{position:relative;flex:1;min-height:0;overflow:hidden;background:#f5f6fa;text-align:center}
+.dd-office-demo-poster{display:block;width:100%;height:auto;max-width:none;will-change:transform}
+.dd-office-demo-fallback{display:grid;place-items:center;min-height:100%;padding:40px 12px;color:#808899;font-size:13px;line-height:1.9}
+@media(max-width:600px){.dd-office-demo{padding:10px}.dd-office-demo-board{min-height:290px;max-height:460px}.dd-office-demo-heading{padding:11px 13px}.dd-office-demo-heading strong{font-size:13px}.dd-office-demo-heading p{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.dd-office-demo-poster{transform:none!important;will-change:auto}}
