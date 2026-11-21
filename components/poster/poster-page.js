@@ -39,7 +39,8 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
   const monochrome = designKey === "bold-pop-art";
   const playfulCover = designKey === "playful-pop" && page === 1;
   const boldCover = designKey === "bold-pop-art" && page === 1;
-  const artCover = playfulCover || boldCover;
+  const modernCover = designKey === "modern-editorial" && page === 1;
+  const artCover = playfulCover || boldCover || modernCover;
   const playfulGallery = designKey === "playful-pop" && page === 2;
   const artGallery = page === 2 && (playfulGallery || designKey === "bold-pop-art");
   const accountGroups = settings.accountSide === "both"
@@ -56,7 +57,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
   return <article className={`dd-poster-paper dd-poster-${designKey} dd-poster-page-${page}`} data-poster-page={page}>
     
     {designKey === "playful-pop" && page !== 3 && !playfulCover && !playfulGallery && <span className="dd-poster-deco-heart" aria-hidden="true">♡</span>}
-    {designKey === "modern-editorial" && <span className="dd-poster-editorial-mark" aria-hidden="true">OUR WEDDING DAY</span>}
+    {designKey === "modern-editorial" && page !== 1 && <span className="dd-poster-editorial-mark" aria-hidden="true">OUR WEDDING DAY</span>}
     {page === 1 && <>
       {!artCover && (designKey === "playful-pop" ? <h2>Our Wedding Day!</h2> : <h2>The Wedding</h2>)}
       <div className="dd-poster-cover-frame"><Photo key={cover} url={cover} crop={settings.cover.crop} grayscale={settings.cover.grayscale} capture={capture} /></div>
