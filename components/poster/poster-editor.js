@@ -252,8 +252,6 @@ export default function PosterEditor({ slug }) {
           </label>
           <label><span className="dd-poster-field-title"><span aria-hidden="true">💌</span>초대 문구</span><textarea rows={7} maxLength={1000} value={settings.message} onChange={event => update("message", event.target.value)} /></label>
           <p>예시를 선택하면 아래 문구에 적용돼요. 적용 후 자유롭게 수정할 수 있어요.</p>
-          {publicUrl ? <a href={publicUrl} target="_blank" rel="noreferrer">발행 초대장 주소 확인</a>
-            : <p>발행 주소 설정을 확인할 수 없어 QR 코드를 표시하지 못해요.</p>}
         </>}
         <div className="dd-poster-page-navigation" aria-label="편집 페이지 이동">
           {page > 1 ? <button type="button" onClick={() => goToPage(page - 1)}>← 이전</button> : <span />}
