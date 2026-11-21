@@ -78,6 +78,7 @@ export default function PosterEditor({ slug }) {
   const [capture, setCapture] = useState(null);
   const captureRoot = useRef(null);
   const toolsRoot = useRef(null);
+  const downloadMenuRoot = useRef(null);
   const exportLock = useRef(false);
   useEffect(() => {
     const controller = new AbortController();
@@ -166,14 +167,23 @@ export default function PosterEditor({ slug }) {
   return <main className="dd-poster-editor">
     <header className="dd-poster-top"><div><a href="/my-invitations">← 내 초대장</a><h1>게시용 초대장</h1></div>
       <button type="button" className="dd-poster-save" onClick={save} disabled={saving || exporting}>{saving ? "저장 중…" : "저장하기"}</button></header>
-    <div className="dd-poster-downloads" aria-busy={exporting}>
-      {[1, 2, 3].map(number => <button key={number} type="button" disabled={saving || exporting}
-        onClick={() => exportPng(`page${number}`)}><span>{number}. {PAGES[number - 1]}</span><svg aria-hidden="true" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span>다운로드</span></button>)}
-      <button type="button" disabled={saving || exporting} onClick={() => exportPng("all")}><span>전체 3페이지</span><svg aria-hidden="true" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span>다운로드</span></button>
-    </div>
     {notice && <p className="dd-poster-notice" role="status">{notice}</p>}
     <nav className="dd-poster-tabs" aria-label="포스터 페이지">{PAGES.map((label, index) =>
       <button key={label} type="button" aria-pressed={page === index + 1} onClick={() => setPage(index + 1)}>{index + 1}. {label}</button>)}</nav>
+    <div className="dd-poster-download-bar" aria-busy={exporting}>
+      <details className="dd-poster-download-menu" ref={downloadMenuRoot}>
+        <summary aria-disabled={saving || exporting} onClick={event => { if (saving || exporting) event.preventDefault(); }}>
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3"/></svg>
+          {exporting ? "다운로드 중…" : "이미지 다운로드"} <span aria-hidden="true">⌄</span>
+        </summary>
+        <div className="dd-poster-download-options">
+          {[1, 2, 3].map(number => <button key={number} type="button" disabled={saving || exporting}
+            onClick={() => { downloadMenuRoot.current?.removeAttribute("open"); exportPng(`page${number}`); }}>{number}. {PAGES[number - 1]} PNG</button>)}
+          <button type="button" disabled={saving || exporting}
+            onClick={() => { downloadMenuRoot.current?.removeAttribute("open"); exportPng("all"); }}>전체 3페이지 PNG</button>
+        </div>
+      </details>
+    </div>
     <div className="dd-poster-workspace">
       <fieldset ref={toolsRoot} className="dd-poster-tools" disabled={saving || exporting} aria-label="포스터 편집">
         {page === 1 && <label>디자인<select value={draft.designKey} onChange={event => setDraft({ ...draft, designKey: event.target.value })}>
