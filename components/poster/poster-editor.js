@@ -77,6 +77,7 @@ export default function PosterEditor({ slug }) {
   const [exporting, setExporting] = useState(false);
   const [capture, setCapture] = useState(null);
   const captureRoot = useRef(null);
+  const toolsRoot = useRef(null);
   const exportLock = useRef(false);
   useEffect(() => {
     const controller = new AbortController();
@@ -85,6 +86,10 @@ export default function PosterEditor({ slug }) {
     }).catch(error => { if (!controller.signal.aborted) setFailure(error); });
     return () => controller.abort();
   }, [slug]);
+  const goToPage = nextPage => {
+    setPage(nextPage);
+    toolsRoot.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
   const publicUrl = data?.source.publicUrl;
   useEffect(() => {
     if (!publicUrl) return;
@@ -170,7 +175,7 @@ export default function PosterEditor({ slug }) {
     <nav className="dd-poster-tabs" aria-label="포스터 페이지">{PAGES.map((label, index) =>
       <button key={label} type="button" aria-pressed={page === index + 1} onClick={() => setPage(index + 1)}>{index + 1}. {label}</button>)}</nav>
     <div className="dd-poster-workspace">
-      <fieldset className="dd-poster-tools" disabled={saving || exporting} aria-label="포스터 편집">
+      <fieldset ref={toolsRoot} className="dd-poster-tools" disabled={saving || exporting} aria-label="포스터 편집">
         {page === 1 && <label>디자인<select value={draft.designKey} onChange={event => setDraft({ ...draft, designKey: event.target.value })}>
           {Object.entries(DESIGNS).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>}
         {page === 1 && <>
@@ -223,6 +228,11 @@ export default function PosterEditor({ slug }) {
           {publicUrl ? <a href={publicUrl} target="_blank" rel="noreferrer">발행 초대장 주소 확인</a>
             : <p>발행 주소 설정을 확인할 수 없어 QR 코드를 표시하지 못해요.</p>}
         </>}
+        <div className="dd-poster-page-navigation" aria-label="편집 페이지 이동">
+          {page > 1 ? <button type="button" onClick={() => goToPage(page - 1)}>← 이전</button> : <span />}
+          <span className="dd-poster-page-progress">{page} / 3</span>
+          {page < 3 ? <button type="button" onClick={() => goToPage(page + 1)}>다음 →</button> : <span />}
+        </div>
       </fieldset>
       <div className="dd-poster-preview" aria-label={PAGES[page - 1] + " 미리보기"}>
         <PosterPage page={page} designKey={draft.designKey} settings={settings} source={source} gallery={gallery}
