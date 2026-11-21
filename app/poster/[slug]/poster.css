@@ -198,14 +198,16 @@
 /* The source PNG includes a checkerboard placeholder, not actual alpha transparency.
    Position the user's photo directly over that placeholder, within its printed white frame. */
 .dd-poster-playful-pop.dd-poster-page-1 .dd-poster-cover-frame{
-  position:absolute;z-index:2;left:12.2%;top:29.6%;width:74.8%;height:25.8%;
-  padding:0;border:0;background:transparent;box-shadow:none;transform:rotate(-3.8deg);
-  overflow:hidden;
+  position:absolute;z-index:2;left:11.230%;top:32.747%;width:74.121%;height:24.615%;
+  transform-origin:0 0;transform:matrix(1,-0.069531,0.050579,1,0,0);
+  --photo-mask:polygon(0.000% 8.199%,10.256% 0.679%,10.805% 0.000%,98.814% 0.000%,99.670% 99.284%,0.000% 97.067%);
+  padding:0;border:0;background:transparent;box-shadow:none;
 }
 .dd-poster-playful-pop.dd-poster-page-1 .dd-poster-cover-frame::before,
 .dd-poster-playful-pop.dd-poster-page-1 .dd-poster-cover-frame::after{content:none;display:none}
 .dd-poster-playful-pop.dd-poster-page-1 .dd-poster-cover-frame .dd-poster-image{
   width:100%;height:100%;aspect-ratio:auto;border:0;background:#f9e7d9;
+  overflow:hidden;clip-path:var(--photo-mask);
 }
 .dd-poster-playful-pop.dd-poster-page-1 .dd-playful-name-tag{
   position:absolute;z-index:3;left:17%;top:58.7%;width:66%;height:8.7%;
@@ -259,12 +261,30 @@
 }
 .dd-poster-playful-pop.dd-poster-page-2::after{content:none}
 .dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-main-photo{
-  position:absolute;z-index:2;left:7.5%;top:26.7%;width:82.1%;height:35.4%;
-  overflow:hidden;transform:rotate(-3deg);background:#fff2d7;
+  position:absolute;z-index:2;left:6.356%;top:27.911%;width:83.404%;height:35.900%;
+  transform-origin:0 0;transform:matrix(1,-0.062149,0.052071,1,0,0);
+  --photo-mask:polygon(0.000% 0.000%,67.064% 0.000%,67.398% 4.304%,74.268% 4.026%,85.708% 3.784%,97.382% 4.064%,97.769% 3.928%,97.668% 0.074%,98.814% 0.000%,99.041% 99.501%,0.000% 98.814%);
 }
 .dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-main-photo .dd-poster-image,
 .dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-small-photo .dd-poster-image{
   width:100%;height:100%;aspect-ratio:auto;border:0;background:#f7e5d8;
+  overflow:hidden;clip-path:var(--photo-mask);
+}
+/* Keep the rotated outer wrappers so the existing captions retain their geometry. */
+.dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-small-photo-1 .dd-poster-image{
+  position:absolute;left:3.143%;top:0.316%;width:101.271%;height:95.958%;
+  transform-origin:0 0;transform:matrix(1.004276,-0.005217,0.012645,1.004926,0,0);
+  --photo-mask:polygon(0.000% 0.000%,25.236% 0.000%,25.150% 6.2%,47.970% 5.3%,68.824% 3.35%,69.684% 2.046%,68.621% 0.126%,98.814% 0.000%,98.773% 99.263%,0.000% 98.814%);
+}
+.dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-small-photo-2 .dd-poster-image{
+  position:absolute;left:-0.681%;top:0.860%;width:105.085%;height:100.360%;
+  transform-origin:0 0;transform:matrix(1.002456,0.020677,-0.012885,1.002048,0,0);
+  --photo-mask:polygon(0.000% 0.000%,17.527% 0.000%,17.892% 5.955%,47.764% 5.764%,66.480% 5.586%,66.459% 0.000%,73.701% 0.000%,98.814% 0.000%,99.185% 98.352%,0.000% 98.814%);
+}
+.dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-small-photo-3 .dd-poster-image{
+  position:absolute;left:0.114%;top:-2.765%;width:102.119%;height:99.480%;
+  transform-origin:0 0;transform:matrix(1.001141,-0.015228,0.017779,1.00123,0,0);
+  --photo-mask:polygon(0.000% 0.000%,23.783% 0.000%,24.319% 5.664%,44.444% 4.983%,66.248% 3.518%,66.012% 0.007%,98.814% 0.000%,99.632% 98.858%,0.000% 98.814%);
 }
 .dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-main-caption{
   position:absolute;z-index:3;top:66.6%;left:9%;width:82%;
@@ -361,14 +381,16 @@
 }
 .dd-poster-bold-pop-art.dd-poster-page-1::after{content:none}
 .dd-poster-bold-pop-art.dd-poster-page-1 .dd-poster-cover-frame{
-  position:absolute;z-index:2;left:14.2%;top:23.5%;width:72.0%;height:32.0%;
-  margin:0;padding:0;border:0;box-shadow:none;transform:rotate(-5deg);background:transparent;
+  position:absolute;z-index:2;left:13.965%;top:27.148%;width:71.057%;height:31.054%;
+  transform-origin:0 0;transform:matrix(1,-0.135167,0.045559,1,0,0);
+  --photo-mask:polygon(0.000% 5.660%,5.124% 2.778%,10.167% 0.091%,98.814% 0.000%,99.006% 99.407%,82.660% 99.07%,82.630% 96.138%,13.770% 96.318%,13.733% 97.360%,0.000% 97.067%);
+  margin:0;padding:0;border:0;box-shadow:none;background:transparent;
 }
 .dd-poster-bold-pop-art.dd-poster-page-1 .dd-poster-cover-frame::before,
 .dd-poster-bold-pop-art.dd-poster-page-1 .dd-poster-cover-frame::after{content:none;display:none}
 .dd-poster-bold-pop-art.dd-poster-page-1 .dd-poster-cover-frame .dd-poster-image{
   width:100%;height:100%;box-sizing:border-box;
-  border:0.9cqw solid #fff;background:transparent;overflow:hidden;
+  border:0;background:transparent;overflow:hidden;clip-path:var(--photo-mask);
 }
 .dd-poster-bold-pop-art.dd-poster-page-1 .dd-playful-name-tag{
   position:absolute;z-index:3;left:26%;top:54.8%;width:48%;height:6.5%;
