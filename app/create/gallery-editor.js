@@ -190,7 +190,7 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
   const locked = disabled || busy || !loaded;
   return <section className="form-section gallery-editor" aria-labelledby="gallery-title" aria-busy={busy}>
     <h2 id="gallery-title">우리의 순간들 <small>{photos.length} / 20</small></h2>
-    <p>우리의 소중한 순간들을 사진으로 채워 보세요. (최대 20장)<br /><span style={{display:"inline-block",marginTop:5,fontSize:11,lineHeight:1.5,color:"#72849A"}}>회사 게시용 초대장에도 활용하려면 사진을 4장 이상 등록해 주세요.</span></p>
+    <p><span style={{fontSize:"calc(1em - 1px)"}}>우리의 소중한 순간들을 사진으로 채워 보세요. (최대 20장)</span><br /><span style={{display:"inline-block",marginTop:5,fontSize:11,lineHeight:1.5,color:"#72849A"}}>회사 게시용 초대장에도 활용하려면 사진을 4장 이상 등록해 주세요.</span></p>
     {!slug ? <><p>초대장을 한 번 저장한 뒤 갤러리를 시작할 수 있어요.</p><button type="button" className="save-button" disabled={disabled} onClick={() => onSaveInvitation()}>초대장 저장하고 시작</button></> : <>
       <label className="form-field"><span>갤러리 사진 추가</span><input type="file" multiple accept="image/jpeg,image/png,image/webp" disabled={locked} onChange={selectPhotos} aria-describedby="gallery-help" /></label>
       <p id="gallery-help">최대 20장 · JPG, PNG, WEBP · 사진당 15MB 이하<br />사진 아래 ↕ 손잡이를 끌거나 앞·뒤 버튼으로 순서를 바꿀 수 있어요.</p>
