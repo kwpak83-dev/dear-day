@@ -13,7 +13,7 @@ const runResult=(run)=>{
  for(const [field,label] of [["skipped","생략"],["unconfirmed","미확정"]]){
    if(typeof summary[field]==="number")details.push(`${label} ${summary[field]}건`);
  }
- return {status:run.http_status>=400||run.failed_count>0?"오류 확인":run.result_mode==="disabled"?"비활성":run.result_mode==="dry-run"?"모의 실행":run.result_mode==="execute"||run.result_mode==="enroll-only"?"정상 실행":"상태 미확인",details:details.join(" · ")};
+ return {status:run.http_status>=400||run.failed_count>0?"오류 확인":Number(summary.unconfirmed)>0?"결과 확인 필요":run.result_mode==="disabled"?"비활성":run.result_mode==="dry-run"?"모의 실행":run.result_mode==="execute"||run.result_mode==="enroll-only"?"정상 실행":"상태 미확인",details:details.join(" · ")};
 };
 const cell={padding:"10px 8px",borderBottom:"1px solid #e9e2dc",textAlign:"left",fontSize:13};
 const short=(value)=>value?value.slice(0,8)+"…":"-";
