@@ -2391,13 +2391,16 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .classic-information-body>strong,
 .modern-information-body>strong,
 .romantic-information>strong{
-  width:min(100%,280px);
+  --dd-place-venue-max-width:280px;
+  max-width:var(--dd-place-venue-max-width);
   margin-left:auto;
   margin-right:auto;
   box-sizing:border-box;
-  text-align:center;
   overflow-wrap:break-word;
   word-break:keep-all;
+}
+:is(.classic-information-body,.modern-information-body,.romantic-information) > :is(strong,p:not(.dd-address-detail,.classic-address-detail)){
+  text-align:center;
 }
 .dd-address-detail{white-space:pre-wrap;}
 
@@ -4202,24 +4205,17 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   padding-bottom:max(0px,var(--dd-section-place-bottom,0px));
 }
 /* Keep map's own layout untouched; adjust PLACE text inset only. */
-.dd-template-section-safe-area.dd-safe-enabled-place :is(.classic-information-body,.modern-information-body,.romantic-information) > :is(strong,p,.dd-address-detail) {
+.dd-template-section-safe-area.dd-safe-enabled-place :is(.classic-information-body,.modern-information-body,.romantic-information) > p {
   margin-left:var(--dd-section-place-left,0px);
   margin-right:var(--dd-section-place-right,0px);
 }
-/* PLACE venue titles are always centered. The configurable body typography
-   also targets strong elements and can otherwise override the venue rule with
-   --dd-body-align (e.g. left), even when the surrounding address is centered. */
-.dd-template-typography :is(.classic-information-body,.modern-information-body,.romantic-information) > strong {
-  text-align:center;
-}
-/* A capped venue-name block must remain centered inside PLACE. The section
-   safe-area offsets may shift its visual center, but must not replace the
-   auto margins that center the 280px block. */
+/* Center the capped venue name in the same inset area as the address. */
 .dd-template-section-safe-area.dd-safe-enabled-place :is(.classic-information-body,.modern-information-body,.romantic-information) > strong {
-  margin-left:auto;
-  margin-right:auto;
-  position:relative;
-  left:calc((var(--dd-section-place-left,0px) - var(--dd-section-place-right,0px)) / 2);
+  --dd-place-left:var(--dd-section-place-left,0px);
+  --dd-place-right:var(--dd-section-place-right,0px);
+  --dd-place-extra:max(0px,(100% - var(--dd-place-left) - var(--dd-place-right) - var(--dd-place-venue-max-width)) / 2);
+  margin-left:calc(var(--dd-place-left) + var(--dd-place-extra));
+  margin-right:calc(var(--dd-place-right) + var(--dd-place-extra));
 }
 .dd-template-section-safe-area.dd-safe-enabled-gallery .invitation-gallery {
   padding-top:max(0px,var(--dd-section-gallery-top,0px));
