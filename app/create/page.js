@@ -15,6 +15,7 @@ import { BODY_STYLE_PALETTES, normalizeBodyStyleOverrides } from "../../lib/body
 import BodyStyleLivePreview from "../../components/invitation/body-style-live-preview";
 import InvitationMessagePreview from "../../components/invitation/invitation-message-preview";
 import TemplatePreviewCanvas from "../../components/invitation/template-preview-canvas";
+import HeroFrameCarousel from "../../components/invitation/hero-frame-carousel";
 import AutoHeightMessageTextarea from "./auto-height-message-textarea";
 import InvitationMap from "../../components/invitation/invitation-map";
 import ShareActions from "../../components/share-actions";
