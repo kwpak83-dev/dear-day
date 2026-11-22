@@ -24,11 +24,22 @@ export async function GET(request) {
   if(!Number.isSafeInteger(page)||page<1||page>1000)return Response.json({error:"잘못된 페이지"},{status:400});
   const since=days==="all"?null:new Date(Date.now()-Number(days)*86400000).toISOString();
   try{
-    let audits=db.from("invitation_deletion_audit").select("*",{count:"exact"}).order("recorded_at",{ascending:false}).order("id",{ascending:false}).range((page-1)*20,page*20-1);
-    let jobs=db.from("invitation_storage_cleanup_jobs").select("id,event_id,owner_id,bucket,status,attempts,last_error,created_at,updated_at,next_attempt_at",{count:"exact"}).order("updated_at",{ascending:false}).range((page-1)*20,page*20-1);
-    if(since){audits=audits.gte("recorded_at",since);jobs=jobs.gte("updated_at",since);}
-    if(search){audits=audits.eq("event_id",search);jobs=jobs.eq("event_id",search);}
-    const [a,j]=await Promise.all([audits,jobs]);
+    const offset=(page-1)*20;
+    const auditBase=()=>{let q=db.from("invitation_deletion_audit");if(since)q=q.gte("recorded_at",since);if(search)q=q.eq("event_id",search);return q;};
+    const jobBase=()=>{let q=db.from("invitation_storage_cleanup_jobs");if(since)q=q.gte("updated_at",since);if(search)q=q.eq("event_id",search);return q;};
+    // Count before paging: PostgREST returns 416 for a range beyond the last row.
+    const [auditCountResult,jobCountResult]=await Promise.all([
+      auditBase().select("id",{count:"exact",head:true}),
+      jobBase().select("id",{count:"exact",head:true})
+    ]);
+    if(auditCountResult.error)throw Object.assign(new Error("audit count query failed"),{queryStage:"audit",dbCode:auditCountResult.error.code,dbMessage:auditCountResult.error.message});
+    if(jobCountResult.error)throw Object.assign(new Error("storage count query failed"),{queryStage:"storage-jobs",dbCode:jobCountResult.error.code,dbMessage:jobCountResult.error.message});
+    const auditTotal=auditCountResult.count||0;
+    const jobTotal=jobCountResult.count||0;
+    const [a,j]=await Promise.all([
+      offset<auditTotal?auditBase().select("*").order("recorded_at",{ascending:false}).order("id",{ascending:false}).range(offset,offset+19):Promise.resolve({data:[],error:null}),
+      offset<jobTotal?jobBase().select("id,event_id,owner_id,bucket,status,attempts,last_error,created_at,updated_at,next_attempt_at").order("updated_at",{ascending:false}).order("id",{ascending:false}).range(offset,offset+19):Promise.resolve({data:[],error:null})
+    ]);
     if(a.error)throw Object.assign(new Error("audit query failed"),{queryStage:"audit",dbCode:a.error.code,dbMessage:a.error.message});
     if(j.error)throw Object.assign(new Error("storage jobs query failed"),{queryStage:"storage-jobs",dbCode:j.error.code,dbMessage:j.error.message});
     const counts={};
@@ -42,7 +53,13 @@ export async function GET(request) {
     }
     const auditPage=a.data||[];
     const auditByEvent=new Map(auditPage.filter(x=>x.event_id).map(x=>[x.event_id,x]));
-    const auditTotal=a.count||0;
+    // Photo jobs may refer to audits on another page or outside the selected period.
+    const missingEventIds=[...new Set((j.data||[]).map(x=>x.event_id).filter(id=>id&&!auditByEvent.has(id)))];
+    if(missingEventIds.length){
+      const metadata=await db.from("invitation_deletion_audit").select("event_id,event_title,event_starts_at,recorded_at,id").in("event_id",missingEventIds).order("recorded_at",{ascending:false}).order("id",{ascending:false}).limit(1000);
+      if(metadata.error)throw Object.assign(new Error("audit metadata query failed"),{queryStage:"audit-metadata",dbCode:metadata.error.code,dbMessage:metadata.error.message});
+      for(const row of metadata.data||[])if(!auditByEvent.has(row.event_id))auditByEvent.set(row.event_id,row);
+    }
     let completedQuery=db.from("invitation_deletion_audit").select("id",{count:"exact",head:true}).eq("outcome","completed");
     if(since)completedQuery=completedQuery.gte("recorded_at",since);
     if(search)completedQuery=completedQuery.eq("event_id",search);
@@ -78,7 +95,7 @@ export async function GET(request) {
       runs,runLogsAvailable,uploadReservationsEnabled:process.env.INVITATION_UPLOAD_RESERVATIONS_READY==="true",
       audits:auditPage.map(x=>({...x,created_at:auditTime(x),loginEmail:emailByOwner.get(x.owner_id)||null,userName:nameByOwner.get(x.owner_id)||null})),auditTotal,
       jobs:(j.data||[]).map(({last_error,...job})=>({...job,loginEmail:emailByOwner.get(job.owner_id)||null,userName:nameByOwner.get(job.owner_id)||null,event_title:auditByEvent.get(job.event_id)?.event_title||null,event_starts_at:auditByEvent.get(job.event_id)?.event_starts_at||null,errorFlag:Boolean(last_error)})),
-      jobTotal:j.count||0,counts,completed:completedCount,page,auditTruncated:false,auditUndated:0
+      jobTotal,counts,completed:completedCount,page,auditTruncated:false,auditUndated:0
     },{headers:{"Cache-Control":"no-store"}});
   }catch(error){
     console.error("Deletion logs query failed",{stage:error.queryStage,code:error.dbCode,message:error.dbMessage||error.message});
