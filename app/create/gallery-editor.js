@@ -193,19 +193,19 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
     <p><span style={{fontSize:"calc(1em - 1px)"}}>우리의 소중한 순간들을 사진으로 채워 보세요. (최대 20장)</span><br /><span style={{display:"inline-block",marginTop:5,fontSize:11,lineHeight:1.5,color:"#72849A"}}>회사 게시용 초대장에도 활용하려면 사진을 4장 이상 등록해 주세요.</span></p>
     {!slug ? <><p>초대장을 한 번 저장한 뒤 갤러리를 시작할 수 있어요.</p><button type="button" className="save-button" disabled={disabled} onClick={() => onSaveInvitation()}>초대장 저장하고 시작</button></> : <>
       <label className="form-field"><span>갤러리 사진 추가</span><input type="file" multiple accept="image/jpeg,image/png,image/webp" disabled={locked} onChange={selectPhotos} aria-describedby="gallery-help" /></label>
-      <p id="gallery-help">최대 20장 · JPG, PNG, WEBP · 사진당 15MB 이하<br />사진 아래 ↕ 손잡이를 끌거나 앞·뒤 버튼으로 순서를 바꿀 수 있어요.</p>
+      <p id="gallery-help">최대 20장 · JPG, PNG, WEBP · 사진당 15MB 이하<br />사진 아래 ‘순서 이동’을 누른 채 원하는 위치로 끌어 놓으세요.</p>
       {progress && <div className="gallery-progress" role="status"><span>{progress.label} {progress.done + 1} / {progress.total}</span><progress value={progress.done} max={progress.total} /></div>}
       {pending > 0 && <p>{pending}장 처리 대기 중이에요. 미완료 업로드는 15분 후 새로고침하면 정리돼요.</p>}
       <div className="gallery-editor-grid" ref={grid}>
         {photos.map((photo, index) => <article key={photo.id} data-gallery-id={photo.id} className={`gallery-tile${dragging?.over === photo.id ? " gallery-drop-target" : ""}${dragging?.id === photo.id ? " gallery-dragging" : ""}`}>
           <img src={photo.thumbnailUrl||photo.url} alt={`갤러리 사진 ${index + 1}`} loading="lazy" decoding="async" width="300" height="300" draggable={false} />
-          <div className="gallery-tile-actions"><button type="button" className="gallery-drag-handle" aria-label={`${index + 1}번 사진 순서 이동 손잡이`} disabled={locked} onPointerDown={event => {
+          <div className="gallery-tile-actions"><button type="button" className="gallery-drag-handle" aria-label={`${index + 1}번 사진 순서 이동. 누른 채 다른 사진 위치로 끌어 놓으세요`} title="누른 채 끌어서 순서 변경" disabled={locked} onPointerDown={event => {
             if (event.button !== 0 || operation.current) return;
             event.currentTarget.setPointerCapture(event.pointerId);
             drag.current = { id: photo.id, over: photo.id, pointer: event.pointerId }; setDragging({ id: photo.id, over: photo.id });
-          }} onPointerMove={pointerMove} onPointerUp={event => finishDrag(event)} onPointerCancel={event => finishDrag(event, true)}>↕</button>
+          }} onPointerMove={pointerMove} onPointerUp={event => finishDrag(event)} onPointerCancel={event => finishDrag(event, true)}><span aria-hidden="true" className="gallery-drag-icon">⠿</span><span className="gallery-drag-label">순서 이동</span></button>
           <span>{index + 1}</span><button type="button" disabled={locked} onClick={() => remove(photo)} aria-label={`${index + 1}번 사진 삭제`}>삭제</button></div>
-          <div className="gallery-order-buttons"><button type="button" disabled={locked || index === 0} onClick={() => move(index, index - 1)} aria-label={`${index + 1}번 사진 앞으로`}>← 앞</button><button type="button" disabled={locked || index === photos.length - 1} onClick={() => move(index, index + 1)} aria-label={`${index + 1}번 사진 뒤로`}>뒤 →</button></div>
+          
         </article>)}
       </div>
       {loaded && !photos.length && !busy && <p className="gallery-empty">아직 등록한 갤러리 사진이 없어요.</p>}
