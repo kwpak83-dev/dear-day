@@ -5165,7 +5165,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 
 /* HERO frame picker: single large centered cover, with adjacent covers peeking in. */
-.create-page .dd-design-picker-dialog-hero{width:min(100%,760px);max-height:min(96dvh,980px)}
+.create-page .dd-design-picker-dialog-hero{width:min(100%,760px);height:min(90dvh,850px);max-height:min(96dvh,980px)}
 .create-page .dd-hero-carousel{--dd-hero-slide-width:min(64vw,340px);--dd-hero-slide-gap:14px;--dd-hero-slide-step:calc(var(--dd-hero-slide-width) + var(--dd-hero-slide-gap));display:flex;flex-direction:column;min-height:0;flex:1;padding:12px 0 16px;outline-offset:-3px}
 .create-page .dd-hero-carousel-window{position:relative;overflow:hidden;flex:1;min-height:0;width:100%;touch-action:pan-y;user-select:none}
 .create-page .dd-hero-carousel-track{position:absolute;top:0;bottom:0;left:0;display:flex;align-items:center;gap:var(--dd-hero-slide-gap);width:max-content;transition:transform .3s ease}
