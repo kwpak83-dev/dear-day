@@ -4206,6 +4206,12 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   margin-left:var(--dd-section-place-left,0px);
   margin-right:var(--dd-section-place-right,0px);
 }
+/* PLACE venue titles are always centered. The configurable body typography
+   also targets strong elements and can otherwise override the venue rule with
+   --dd-body-align (e.g. left), even when the surrounding address is centered. */
+.dd-template-typography :is(.classic-information-body,.modern-information-body,.romantic-information) > strong {
+  text-align:center;
+}
 /* A capped venue-name block must remain centered inside PLACE. The section
    safe-area offsets may shift its visual center, but must not replace the
    auto margins that center the 280px block. */
