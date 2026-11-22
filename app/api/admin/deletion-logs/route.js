@@ -53,13 +53,17 @@ export async function GET(request) {
     }
     const auditPage=a.data||[];
     const auditByEvent=new Map();
-    for(const row of auditPage)if(row.event_id&&!auditByEvent.has(row.event_id))auditByEvent.set(row.event_id,row);
-    // Photo jobs may refer to audits on another page or outside the selected period.
-    const missingEventIds=[...new Set((j.data||[]).map(x=>x.event_id).filter(id=>id&&!auditByEvent.has(id)))];
-    if(missingEventIds.length){
-      const metadata=await db.from("invitation_deletion_audit").select("event_id,event_title,event_starts_at,recorded_at,id").in("event_id",missingEventIds).order("recorded_at",{ascending:false}).order("id",{ascending:false}).limit(1000);
-      if(metadata.error)throw Object.assign(new Error("audit metadata query failed"),{queryStage:"audit-metadata",dbCode:metadata.error.code,dbMessage:metadata.error.message});
-      for(const row of metadata.data||[])if(!auditByEvent.has(row.event_id))auditByEvent.set(row.event_id,row);
+    // Always resolve the latest audit for each photo job, regardless of audit pagination.
+    const jobEventIds=[...new Set((j.data||[]).map(x=>x.event_id).filter(Boolean))];
+    const metadataResults=await Promise.all(jobEventIds.map(eventId=>
+      db.from("invitation_deletion_audit").select("event_id,event_title,event_starts_at")
+        .eq("event_id",eventId).order("recorded_at",{ascending:false})
+        .order("id",{ascending:false}).limit(1)
+    ));
+    for(const result of metadataResults){
+      if(result.error)throw Object.assign(new Error("audit metadata query failed"),{queryStage:"audit-metadata",dbCode:result.error.code,dbMessage:result.error.message});
+      const row=result.data?.[0];
+      if(row)auditByEvent.set(row.event_id,row);
     }
     let completedQuery=db.from("invitation_deletion_audit").select("id",{count:"exact",head:true}).eq("outcome","completed");
     if(since)completedQuery=completedQuery.gte("recorded_at",since);
