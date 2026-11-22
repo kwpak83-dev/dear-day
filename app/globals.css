@@ -5184,3 +5184,10 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .dd-hero-carousel-empty-state{text-align:center;padding:30px}
 @media(max-width:760px){.create-page .dd-design-picker-dialog-hero{height:min(92dvh,850px);max-height:92dvh}.create-page .dd-hero-carousel{--dd-hero-slide-width:70vw;--dd-hero-slide-gap:10px;padding:10px 0 14px}.create-page .dd-hero-carousel-slide{padding:5px}.create-page .dd-hero-carousel-navigation{padding:10px 16px 8px}}
 @media(prefers-reduced-motion:reduce){.create-page .dd-hero-carousel-track,.create-page .dd-hero-carousel-slide{transition:none}}
+
+
+/* Body theme selection: short guidance below the currently selected design. */
+.create-page .dd-body-theme-selection-info{display:flex;flex:1;min-width:0;flex-direction:column;gap:6px}
+.create-page .dd-body-theme-auto-help{display:block;font-family:Pretendard,sans-serif;font-size:11px;font-weight:400;line-height:1.55;color:#8b8582;word-break:keep-all}
+.create-page .dd-design-picker-row:has(.dd-body-theme-selection-info){align-items:center;gap:12px}
+.create-page .dd-design-picker-row:has(.dd-body-theme-selection-info) .dd-design-picker-launch{flex-shrink:0}
