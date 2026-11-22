@@ -5,6 +5,16 @@ import AdminDesignNav from "../admin-design-nav";
 
 const fmt=(value)=>value?new Date(value).toLocaleString("ko-KR",{timeZone:"Asia/Seoul",hour12:false}):"-";
 const statusLabel={pending:"대기",retry:"재시도",done:"완료",failed:"실패·보존"};
+const runModeLabel={execute:"실행","enroll-only":"일정 등록","dry-run":"모의 실행",disabled:"비활성"};
+const runCountLabel={schedule:"검사 건수",cleanup:"삭제 건수","storage-cleanup":"제거 건수"};
+const runResult=(run)=>{
+ const summary=run.result_summary||{};
+ const details=[`모드: ${runModeLabel[run.result_mode]||run.result_mode||"미확인"}`];
+ for(const [field,label] of [["skipped","생략"],["unconfirmed","미확정"]]){
+   if(typeof summary[field]==="number")details.push(`${label} ${summary[field]}건`);
+ }
+ return {status:run.http_status>=400||run.failed_count>0?"오류 확인":run.result_mode==="disabled"?"비활성":run.result_mode==="dry-run"?"모의 실행":run.result_mode==="execute"||run.result_mode==="enroll-only"?"정상 실행":"상태 미확인",details:details.join(" · ")};
+};
 const cell={padding:"10px 8px",borderBottom:"1px solid #e9e2dc",textAlign:"left",fontSize:13};
 const short=(value)=>value?value.slice(0,8)+"…":"-";
 const emailCell={...cell,maxWidth:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"};
@@ -53,8 +63,8 @@ export default function DeletionLogsPage(){
   </div>
   <h2 style={{fontSize:21}}>매일 자동삭제 실행 이력</h2>
   {!data?.runLogsAvailable&&<p style={{fontSize:13,color:"#8c5a2c"}}>실행 이력 테이블이 아직 적용되지 않았습니다. Supabase 마이그레이션 적용 후부터 기록됩니다.</p>}
-  <div style={{overflowX:"auto",marginBottom:28}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:680}}><thead><tr>{["실행 일시","작업","결과","처리 건수","실패 건수"].map(x=><th key={x} style={cell}>{x}</th>)}</tr></thead><tbody>
-   {(data?.runs||[]).map(x=><tr key={x.id}><td style={cell}>{fmt(x.finished_at)}</td><td style={cell}>{{schedule:"만료 일정 확인",cleanup:"초대장 자동삭제","storage-cleanup":"사진·BGM 정리"}[x.task]||x.task}</td><td style={cell}>{x.http_status>=400?"실패":x.result_mode==="disabled"?"비활성":"정상"} (HTTP {x.http_status})</td><td style={cell}>{x.processed_count}</td><td style={cell}>{x.failed_count}</td></tr>)}
+  <div style={{overflowX:"auto",marginBottom:28}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:680}}><thead><tr>{["실행 일시","작업","결과","작업 건수","실패 건수"].map(x=><th key={x} style={cell}>{x}</th>)}</tr></thead><tbody>
+   {(data?.runs||[]).map(x=><tr key={x.id}><td style={cell}>{fmt(x.finished_at)}</td><td style={cell}>{{schedule:"만료 일정 확인",cleanup:"초대장 자동삭제","storage-cleanup":"사진·BGM 정리"}[x.task]||x.task}</td><td style={cell}>{runResult(x).status} (HTTP {x.http_status})<div style={{fontSize:11,color:"#68748a"}}>{runResult(x).details}</div></td><td style={cell}>{runCountLabel[x.task]||"처리 건수"}: {x.processed_count}</td><td style={cell}>{x.failed_count}</td></tr>)}
    {!loading&&!data?.runs?.length&&<tr><td colSpan={5} style={cell}>조회된 자동 실행 기록이 없습니다.</td></tr>}
   </tbody></table></div>
   {!!data?.auditUndated&&<p style={{fontSize:12,color:"#a36522"}}>기존 삭제 감사 기록 {data.auditUndated}건은 날짜 정보가 없어 조회 기간과 관계없이 표시됩니다. 날짜를 임의로 추정하지 않았습니다.</p>}
