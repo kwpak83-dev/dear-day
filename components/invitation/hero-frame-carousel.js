@@ -8,6 +8,7 @@ export default function HeroFrameCarousel({ options, selectedId, getThumbnail, o
   const startX = useRef(null);
   const count = options.length;
   const current = options[index] || null;
+  const isApplied = current?.id === selectedId;
 
   useEffect(() => {
     setIndex(Math.max(0, options.findIndex(item => item.id === selectedId)));
@@ -35,6 +36,7 @@ export default function HeroFrameCarousel({ options, selectedId, getThumbnail, o
           {options.map((hero, itemIndex) => {
             const thumbnail = getThumbnail(hero);
             return <button key={hero.id} type="button" className={`dd-hero-carousel-slide${itemIndex === index ? " is-active" : ""}`} aria-label={`${hero.name} 디자인 보기`} aria-current={itemIndex === index ? "true" : undefined} tabIndex={itemIndex === index ? 0 : -1} onClick={() => setIndex(itemIndex)}>
+              {hero.id === selectedId && <span className="dd-hero-carousel-applied-badge" aria-label="현재 적용 중인 디자인">✓ 현재 적용 중</span>}
               <div className="dd-hero-carousel-image">
                 {thumbnail ? <img src={thumbnail} alt={hero.name + " 디자인 미리보기"} loading={Math.abs(itemIndex-index)<2?"eager":"lazy"}/> : <span className="dd-hero-carousel-empty">Dear Day<br/>{designType}</span>}
               </div>
@@ -47,8 +49,8 @@ export default function HeroFrameCarousel({ options, selectedId, getThumbnail, o
         <div><strong>{current?.name}</strong><span>{index + 1} / {count}</span></div>
         <button type="button" onClick={() => move(1)} disabled={index === count-1} aria-label="다음 디자인">›</button>
       </div>
-      <button type="button" className="dd-hero-carousel-confirm" onClick={() => onSelect(current.id)}>
-        {current.id === selectedId ? "선택된 디자인 적용하기" : "이 디자인으로 선택하기"}
+      <button type="button" className={`dd-hero-carousel-confirm${isApplied ? " is-applied" : ""}`} disabled={isApplied} onClick={() => onSelect(current.id)}>
+        {isApplied ? "✓ 현재 적용된 디자인" : "이 디자인으로 선택하기"}
       </button>
     </> : <p className="dd-hero-carousel-empty-state">선택 가능한 {designType}이 없어요.</p>}
   </div>;
