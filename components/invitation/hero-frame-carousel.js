@@ -31,7 +31,7 @@ export default function HeroFrameCarousel({ options, selectedId, getThumbnail, o
   return <div className="dd-hero-carousel" onKeyDown={handleKeyDown} tabIndex={0} aria-label="HERO 프레임 디자인 탐색">
     {count ? <>
       <div className="dd-hero-carousel-window" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-        <div className="dd-hero-carousel-track" style={{transform:`translateX(calc(50% - ${index} * var(--dd-hero-slide-step) - var(--dd-hero-slide-width) / 2))`}}>
+        <div className="dd-hero-carousel-track" style={{left:"50%",transform:`translateX(calc(-1 * (${index} * var(--dd-hero-slide-step) + var(--dd-hero-slide-width) / 2)))`}}>
           {options.map((hero, itemIndex) => {
             const thumbnail = getThumbnail(hero);
             return <button key={hero.id} type="button" className={`dd-hero-carousel-slide${itemIndex === index ? " is-active" : ""}`} aria-label={`${hero.name} 디자인 보기`} aria-current={itemIndex === index ? "true" : undefined} tabIndex={itemIndex === index ? 0 : -1} onClick={() => setIndex(itemIndex)}>
