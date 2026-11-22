@@ -23,6 +23,31 @@ export const POST = handle(async (request, context) => {
   return json({ reservations: rows.map(row => ({ id: row.id, hash: row.content_hash, state: row.gallery_state })) });
 });
 
+async function verifyReadyUpload({ supabase, event, user }, row, hash) {
+  if (process.env.INVITATION_UPLOAD_RESERVATIONS_READY !== "true") return;
+  const path = `${user.id}/gallery/${event.id}/${row.id}.jpg`;
+  const unconfirmed = () => new GalleryError("사진 업로드 기록을 확인하지 못했어요. 같은 사진으로 다시 시도해 주세요.", 503);
+  if (row.storage_path !== path) throw unconfirmed();
+
+  const readReservation = () => supabase.from("invitation_upload_reservations").select("id,status")
+    .eq("event_id", event.id).eq("owner_id", user.id).eq("bucket", GALLERY_BUCKET).eq("storage_path", path).maybeSingle();
+  const { data: reservation, error } = await readReservation();
+  if (error || !reservation) throw unconfirmed();
+  if (reservation.status === "uploaded") return;
+  if (reservation.status !== "reserved") throw unconfirmed();
+
+  const { data: object, error: storageError } = await supabase.storage.from(GALLERY_BUCKET).download(path);
+  if (storageError || !object || object.size > MAX_PHOTO_BYTES ||
+      createHash("sha256").update(Buffer.from(await object.arrayBuffer())).digest("hex") !== hash) {
+    throw unconfirmed();
+  }
+  if (await finishReservedUpload(supabase, user.id, reservation, true)) return;
+
+  // Another retry may have completed the same reservation while the object was checked.
+  const { data: current, error: readError } = await readReservation();
+  if (readError || current?.id !== reservation.id || current.status !== "uploaded") throw unconfirmed();
+}
+
 export const PUT = handle(async (request, context) => {
   const id = new URL(request.url).searchParams.get("id");
   if (!/^[0-9a-f-]{36}$/.test(id || "")) throw new GalleryError("사진 정보가 올바르지 않아요.", 400);
@@ -33,7 +58,10 @@ export const PUT = handle(async (request, context) => {
   if (error || !matching || matching.content_hash !== hash) throw new GalleryError("선택한 사진 정보가 일치하지 않아요. 다시 선택해 주세요.", 400);
   const row = await mutateGallery(context, "begin", { id });
   if (!row) throw new GalleryError("사진을 찾지 못했어요.", 404);
-  if (row.gallery_state === "ready") return json({ photo: photoForClient(context.supabase, row), duplicate: true });
+  if (row.gallery_state === "ready") {
+    await verifyReadyUpload(context, row, hash);
+    return json({ photo: photoForClient(context.supabase, row), duplicate: true });
+  }
   const storage = context.supabase.storage;
   const { data: bucket } = await storage.getBucket(GALLERY_BUCKET);
   if (!bucket) {
@@ -48,7 +76,7 @@ export const PUT = handle(async (request, context) => {
   if (uploadError) throw new GalleryError("사진 업로드에 실패했어요. 미완료 파일은 15분 후 갤러리를 열 때 정리돼요.");
   const saved = await mutateGallery(context, "finish", { id });
   if (!(await finishReservedUpload(context.supabase, context.user.id, reservation, true))) {
-    throw new GalleryError("사진 업로드 기록을 확인하지 못했어요. 갤러리를 새로고침해 주세요.", 503);
+    throw new GalleryError("사진 업로드 기록을 확인하지 못했어요. 같은 사진으로 다시 시도해 주세요.", 503);
   }
   return json({ photo: photoForClient(context.supabase, saved) });
 });
