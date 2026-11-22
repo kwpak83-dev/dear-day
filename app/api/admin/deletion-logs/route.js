@@ -25,20 +25,20 @@ export async function GET(request) {
   const since=days==="all"?null:new Date(Date.now()-Number(days)*86400000).toISOString();
   try{
     const offset=(page-1)*20;
-    const auditBase=()=>{let q=db.from("invitation_deletion_audit");if(since)q=q.gte("recorded_at",since);if(search)q=q.eq("event_id",search);return q;};
-    const jobBase=()=>{let q=db.from("invitation_storage_cleanup_jobs");if(since)q=q.gte("updated_at",since);if(search)q=q.eq("event_id",search);return q;};
+    const auditBase=(columns,options)=>{let q=db.from("invitation_deletion_audit").select(columns,options);if(since)q=q.gte("recorded_at",since);if(search)q=q.eq("event_id",search);return q;};
+    const jobBase=(columns,options)=>{let q=db.from("invitation_storage_cleanup_jobs").select(columns,options);if(since)q=q.gte("updated_at",since);if(search)q=q.eq("event_id",search);return q;};
     // Count before paging: PostgREST returns 416 for a range beyond the last row.
     const [auditCountResult,jobCountResult]=await Promise.all([
-      auditBase().select("id",{count:"exact",head:true}),
-      jobBase().select("id",{count:"exact",head:true})
+      auditBase("id",{count:"exact",head:true}),
+      jobBase("id",{count:"exact",head:true})
     ]);
     if(auditCountResult.error)throw Object.assign(new Error("audit count query failed"),{queryStage:"audit",dbCode:auditCountResult.error.code,dbMessage:auditCountResult.error.message});
     if(jobCountResult.error)throw Object.assign(new Error("storage count query failed"),{queryStage:"storage-jobs",dbCode:jobCountResult.error.code,dbMessage:jobCountResult.error.message});
     const auditTotal=auditCountResult.count||0;
     const jobTotal=jobCountResult.count||0;
     const [a,j]=await Promise.all([
-      offset<auditTotal?auditBase().select("*").order("recorded_at",{ascending:false}).order("id",{ascending:false}).range(offset,offset+19):Promise.resolve({data:[],error:null}),
-      offset<jobTotal?jobBase().select("id,event_id,owner_id,bucket,status,attempts,last_error,created_at,updated_at,next_attempt_at").order("updated_at",{ascending:false}).order("id",{ascending:false}).range(offset,offset+19):Promise.resolve({data:[],error:null})
+      offset<auditTotal?auditBase("*").order("recorded_at",{ascending:false}).order("id",{ascending:false}).range(offset,offset+19):Promise.resolve({data:[],error:null}),
+      offset<jobTotal?jobBase("id,event_id,owner_id,bucket,status,attempts,last_error,created_at,updated_at,next_attempt_at").order("updated_at",{ascending:false}).order("id",{ascending:false}).range(offset,offset+19):Promise.resolve({data:[],error:null})
     ]);
     if(a.error)throw Object.assign(new Error("audit query failed"),{queryStage:"audit",dbCode:a.error.code,dbMessage:a.error.message});
     if(j.error)throw Object.assign(new Error("storage jobs query failed"),{queryStage:"storage-jobs",dbCode:j.error.code,dbMessage:j.error.message});
@@ -52,7 +52,8 @@ export async function GET(request) {
       counts[status]=result.count||0;
     }
     const auditPage=a.data||[];
-    const auditByEvent=new Map(auditPage.filter(x=>x.event_id).map(x=>[x.event_id,x]));
+    const auditByEvent=new Map();
+    for(const row of auditPage)if(row.event_id&&!auditByEvent.has(row.event_id))auditByEvent.set(row.event_id,row);
     // Photo jobs may refer to audits on another page or outside the selected period.
     const missingEventIds=[...new Set((j.data||[]).map(x=>x.event_id).filter(id=>id&&!auditByEvent.has(id)))];
     if(missingEventIds.length){
