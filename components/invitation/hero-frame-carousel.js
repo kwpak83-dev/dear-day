@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export default function HeroFrameCarousel({ options, selectedId, getThumbnail, onSelect }) {
+export default function HeroFrameCarousel({ options, selectedId, getThumbnail, onSelect, designType = "HERO 프레임" }) {
   const initialIndex = Math.max(0, options.findIndex(item => item.id === selectedId));
   const [index, setIndex] = useState(initialIndex);
   const startX = useRef(null);
@@ -28,7 +28,7 @@ export default function HeroFrameCarousel({ options, selectedId, getThumbnail, o
     }
   };
 
-  return <div className="dd-hero-carousel" onKeyDown={handleKeyDown} tabIndex={0} aria-label="HERO 프레임 디자인 탐색">
+  return <div className="dd-hero-carousel" onKeyDown={handleKeyDown} tabIndex={0} aria-label={`${designType} 디자인 탐색`}>
     {count ? <>
       <div className="dd-hero-carousel-window" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         <div className="dd-hero-carousel-track" style={{left:"50%",transform:`translateX(calc(-1 * (${index} * var(--dd-hero-slide-step) + var(--dd-hero-slide-width) / 2)))`}}>
@@ -36,7 +36,7 @@ export default function HeroFrameCarousel({ options, selectedId, getThumbnail, o
             const thumbnail = getThumbnail(hero);
             return <button key={hero.id} type="button" className={`dd-hero-carousel-slide${itemIndex === index ? " is-active" : ""}`} aria-label={`${hero.name} 디자인 보기`} aria-current={itemIndex === index ? "true" : undefined} tabIndex={itemIndex === index ? 0 : -1} onClick={() => setIndex(itemIndex)}>
               <div className="dd-hero-carousel-image">
-                {thumbnail ? <img src={thumbnail} alt={hero.name + " 표지 디자인"} loading={Math.abs(itemIndex-index)<2?"eager":"lazy"}/> : <span className="dd-hero-carousel-empty">Dear Day<br/>HERO</span>}
+                {thumbnail ? <img src={thumbnail} alt={hero.name + " 디자인 미리보기"} loading={Math.abs(itemIndex-index)<2?"eager":"lazy"}/> : <span className="dd-hero-carousel-empty">Dear Day<br/>{designType}</span>}
               </div>
             </button>;
           })}
@@ -50,6 +50,6 @@ export default function HeroFrameCarousel({ options, selectedId, getThumbnail, o
       <button type="button" className="dd-hero-carousel-confirm" onClick={() => onSelect(current.id)}>
         {current.id === selectedId ? "선택된 디자인 적용하기" : "이 디자인으로 선택하기"}
       </button>
-    </> : <p className="dd-hero-carousel-empty-state">선택 가능한 HERO 프레임이 없어요.</p>}
+    </> : <p className="dd-hero-carousel-empty-state">선택 가능한 {designType}이 없어요.</p>}
   </div>;
 }
