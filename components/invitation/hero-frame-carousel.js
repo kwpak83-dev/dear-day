@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export default function HeroFrameCarousel({ options, selectedId, getThumbnail, onSelect, designType = "HERO 프레임" }) {
+export default function HeroFrameCarousel({ options, selectedId, getThumbnail, onSelect, onClose, designType = "HERO 프레임" }) {
   const initialIndex = Math.max(0, options.findIndex(item => item.id === selectedId));
   const [index, setIndex] = useState(initialIndex);
   const startX = useRef(null);
@@ -49,7 +49,7 @@ export default function HeroFrameCarousel({ options, selectedId, getThumbnail, o
         <div><strong>{current?.name}</strong><span>{index + 1} / {count}</span></div>
         <button type="button" onClick={() => move(1)} disabled={index === count-1} aria-label="다음 디자인">›</button>
       </div>
-      <button type="button" className={`dd-hero-carousel-confirm${isApplied ? " is-applied" : ""}`} onClick={() => onSelect(current.id)}>
+      <button type="button" className={`dd-hero-carousel-confirm${isApplied ? " is-applied" : ""}`} onClick={() => isApplied ? onClose?.() : onSelect(current.id)}>
         {isApplied ? "✓ 현재 적용된 디자인 · 돌아가기" : "이 디자인으로 선택하기"}
       </button>
     </> : <p className="dd-hero-carousel-empty-state">선택 가능한 {designType}이 없어요.</p>}
