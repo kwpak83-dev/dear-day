@@ -1,3 +1,4 @@
+import { reportExpiredInvitationPhotos } from "../../../../lib/scoped-invitation-storage-worker.mjs";
 import { createClient } from "@supabase/supabase-js";
 export const dynamic = "force-dynamic";
 const auditTime = (row) => row.recorded_at || null;
@@ -96,7 +97,27 @@ export async function GET(request) {
         }
       } catch {}
     }));
+    // Live read-only Storage verification, scoped to the current completed-deletion page.
+    const completedAudits=auditPage.filter(row=>row.outcome==="completed");
+    const verifiedIds=[...new Set(completedAudits.map(row=>row.event_id).filter(Boolean))];
+    const verified=await reportExpiredInvitationPhotos(db,verifiedIds);
+    const verificationById=new Map((verified.photoCleanup||[]).map(row=>[row.eventId,row]));
+    const photoByEvent=new Map();
+    await Promise.all(verifiedIds.map(async eventId=>{
+      const {data:rows,error:photoError}=await db.from("invitation_storage_cleanup_jobs")
+        .select("status").eq("event_id",eventId).eq("bucket","invitation-photos").limit(1000);
+      if(photoError){photoByEvent.set(eventId,{total:null,done:null});return;}
+      // The limit prevents unbounded payloads. Never report partial counts as exact.
+      if(rows.length===1000){photoByEvent.set(eventId,{total:null,done:null});return;}
+      photoByEvent.set(eventId,{total:rows.length,done:rows.filter(row=>row.status==="done").length});
+    }));
+    const photoVerifications=completedAudits.map(row=>({
+      eventId:row.event_id,title:row.event_title||"기록 없음",deletedAt:row.recorded_at,
+      eventStartsAt:row.event_starts_at,verification:verificationById.get(row.event_id)||{status:"unverified"},
+      photoJobs:photoByEvent.get(row.event_id)||{total:null,done:null}
+    }));
     return Response.json({
+      photoVerifications,verifiedAt:new Date().toISOString(),
       runs,runLogsAvailable,uploadReservationsEnabled:process.env.INVITATION_UPLOAD_RESERVATIONS_READY==="true",
       audits:auditPage.map(x=>({...x,created_at:auditTime(x),loginEmail:emailByOwner.get(x.owner_id)||null,userName:nameByOwner.get(x.owner_id)||null})),auditTotal,
       jobs:(j.data||[]).map(({last_error,...job})=>({...job,loginEmail:emailByOwner.get(job.owner_id)||null,userName:nameByOwner.get(job.owner_id)||null,event_title:auditByEvent.get(job.event_id)?.event_title||null,event_starts_at:auditByEvent.get(job.event_id)?.event_starts_at||null,errorFlag:Boolean(last_error)})),
