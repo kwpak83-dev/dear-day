@@ -122,17 +122,19 @@ export async function GET(request) {
     const schedulesByEvent=new Map();
     for(const job of scheduled){const rows=schedulesByEvent.get(job.event_id)||[];rows.push(job);schedulesByEvent.set(job.event_id,rows);}
     const scheduleIssues={missing:0,duplicate:0,dueMismatch:0,invalidDate:0};
-    let validSchedule=0;
     const scheduleDetails=[];
+    let waiting=0,queued=0,overdueReview=0;
+    const now=Date.now();
     for(const event of eligiblePublished){
       const rows=schedulesByEvent.get(event.id)||[];
       const expected=invitationDeletionTime({...event,status:"published"});
-      let reason="normal";
+      let reason="waiting";
       if(expected===null){scheduleIssues.invalidDate++;reason="invalidDate";}
-      else if(rows.length===0){scheduleIssues.missing++;reason="missing";}
       else if(rows.length>1){scheduleIssues.duplicate++;reason="duplicate";}
-      else if(Date.parse(rows[0].due_at)!==expected){scheduleIssues.dueMismatch++;reason="dueMismatch";}
-      else validSchedule++;
+      else if(rows.length===1&&Date.parse(rows[0].due_at)!==expected){scheduleIssues.dueMismatch++;reason="dueMismatch";}
+      else if(rows.length===1){queued++;reason="queued";}
+      else if(expected>now){waiting++;reason="waiting";}
+      else {overdueReview++;reason="overdueReview";}
       scheduleDetails.push({
         eventId:event.id,currentStatus:"published",createdAt:event.created_at,updatedAt:event.updated_at,
         startsAt:event.starts_at,expectedDueAt:expected===null?null:new Date(expected).toISOString(),
@@ -143,7 +145,7 @@ export async function GET(request) {
     const scheduleSummary={
       published:published.length,eligible:eligiblePublished.length,
       excluded:published.length-eligiblePublished.length,
-      scheduled:validSchedule,missingOrMismatch:eligiblePublished.length-validSchedule,
+      waiting,queued,overdueReview,
       issues:scheduleIssues,details:scheduleDetails
     };
     // Live read-only Storage verification, scoped to the current completed-deletion page.
