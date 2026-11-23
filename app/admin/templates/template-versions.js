@@ -10,13 +10,13 @@ import TemplateDraftPreview from "./template-draft-preview";
 
 const slots = [["hero", "Hero"], ["section", "섹션"], ["background", "배경"]];
 const defaults = (assetId) => ({
-  assetId, slot: "hero", xPercent: 0, yPercent: 0, widthPercent: 20,
+  assetId, slot: "hero", xPercent: 0, yPercent: 0, widthPercent: 20, scaleX: 100, scaleY: 100,
   rotationDeg: 0, opacity: 1, zIndex: 1, visible: true,
 });
 const placementFor = (assetId, saved) => {
   const base = defaults(assetId);
   if (!saved || typeof saved !== "object") return base;
-  for (const key of ["slot", "xPercent", "yPercent", "widthPercent", "rotationDeg", "opacity", "zIndex", "visible"]) {
+  for (const key of ["slot", "xPercent", "yPercent", "widthPercent", "scaleX", "scaleY", "rotationDeg", "opacity", "zIndex", "visible"]) {
     if (saved[key] !== undefined) base[key] = saved[key];
   }
   return base;
@@ -590,10 +590,11 @@ export default function TemplateVersions({ templateId, eventKind = "wedding", as
                   <label style={field}>Slot<select style={input} value={placement.slot} onChange={(event) => update(asset.id, "slot", event.target.value)}>{slots.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
                   {[
                     ["xPercent", "X %", 0, 100, 1], ["yPercent", "Y %", 0, 100, 1],
-                    ["widthPercent", "크기 %", 1, 100, 1], ["rotationDeg", "회전 °", -180, 180, 1],
+                    ["widthPercent", "크기 %", 1, 100, 1], ["scaleX", "가로 확대 %", 10, 300, 1], ["scaleY", "세로 확대 %", 10, 300, 1], ["rotationDeg", "회전 °", -180, 180, 1],
                     ["opacity", "투명도", 0, 1, 0.01], ["zIndex", "레이어 순서", 0, 20, 1],
                   ].map(([key, label, min, max, step]) =>
                     <label key={key} style={field}>{label}<input style={input} type="number" required min={min} max={max} step={step} value={placement[key]} onChange={(event) => update(asset.id, key, Number(event.target.value))} /></label>)}
+                  {["scaleX","scaleY"].map(key=><label key={key} style={field}>{key==="scaleX"?"가로 확대 슬라이더":"세로 확대 슬라이더"}: {placement[key]??100}%<input type="range" min={10} max={300} step={1} value={placement[key]??100} onChange={event=>update(asset.id,key,Number(event.target.value))}/></label>)}
                   <label style={{ ...field, alignContent: "center" }}><span>표시</span><input type="checkbox" checked={placement.visible} onChange={(event) => update(asset.id, "visible", event.target.checked)} /></label>
                 </div>
               </div>;

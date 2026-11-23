@@ -106,6 +106,7 @@ function validConfig(value){
       &&typeof layer.id==="string"&&layer.id.length>0&&layer.id.length<=100
       &&typeof layer.assetId==="string"&&uuid.test(layer.assetId)
       &&decimal(layer.x,0,100)&&decimal(layer.y,0,100)&&decimal(layer.width,1,100)
+      &&(layer.scaleX===undefined||decimal(layer.scaleX,10,300))&&(layer.scaleY===undefined||decimal(layer.scaleY,10,300))
       &&decimal(layer.rotation,-180,180)&&decimal(layer.opacity,0,1)
       &&Number.isInteger(layer.zIndex)&&layer.zIndex>=0&&layer.zIndex<=100
       &&typeof layer.visible==="boolean"))return false;
