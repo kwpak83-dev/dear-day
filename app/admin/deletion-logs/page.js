@@ -4,7 +4,7 @@ import { getSupabaseBrowserClient } from "../../../lib/supabase/browser";
 import AdminDesignNav from "../admin-design-nav";
 
 const fmt=(value)=>value?new Date(value).toLocaleString("ko-KR",{timeZone:"Asia/Seoul",hour12:false}):"-";
-const statusLabel={pending:"대기",retry:"재시도",done:"완료",failed:"실패·보존"};
+const statusLabel={pending:"대기",retry:"재시도",done:"완료",failed:"실패(확인 필요)"};
 const runModeLabel={execute:"실행","enroll-only":"일정 등록","dry-run":"모의 실행",disabled:"비활성"};
 const runCountLabel={schedule:"검사 건수",cleanup:"삭제 건수","storage-cleanup":"제거 건수"};
 const runResult=(run)=>{
@@ -42,7 +42,7 @@ export default function DeletionLogsPage(){
    }catch(e){setError(e.message);setData(null);}finally{setLoading(false);}
  },[days,eventId,page]);
  useEffect(()=>{void load();},[load]);
- const summary=[["초대장 삭제 완료",data?.completed],["파일 삭제 완료",data?.counts.done],["파일 삭제 대기",data?.counts.pending],["재시도",data?.counts.retry],["실패·보존",data?.counts.failed]];
+ const summary=[["DB 삭제 완료(건)",data?.completed],["파일 정리 완료(작업)",data?.counts.done],["파일 정리 대기(작업)",data?.counts.pending],["재시도(작업)",data?.counts.retry],["실패(작업)",data?.counts.failed]];
  return <main style={{maxWidth:1100,margin:"28px auto",padding:"0 16px 60px",color:"#26375b"}}>
   <div style={{fontSize:11,letterSpacing:2,color:"#284c9a",fontWeight:700}}>ADMIN · DELETION LOGS</div>
   <h1 style={{fontFamily:"serif",fontSize:"clamp(30px,5vw,46px)",margin:"10px 0"}}>초대장 삭제 로그 관리</h1>
@@ -61,6 +61,8 @@ export default function DeletionLogsPage(){
   <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:10,margin:"18px 0 30px"}}>
    {summary.map(([label,value])=><div key={label} style={{padding:17,border:"1px solid #e1e5ed",borderRadius:12,background:"#fff"}}><div style={{fontSize:12,color:"#6d778a"}}>{label}</div><strong style={{display:"block",fontSize:27,marginTop:6}}>{loading?"…":value??"-"}</strong></div>)}
   </div>
+  <p style={{fontSize:12,color:"#68748a",marginTop:-20,marginBottom:28}}>DB 삭제 완료는 삭제 감사 기록 건수이며, 파일 정리 수치는 개별 Storage 정리 작업 행 수입니다. 실제 파일 수나 초대장 수와 같지 않을 수 있습니다. 파일 작업 통계는 최근 갱신일 기준으로 집계합니다.</p>
+  {(data?.counts?.failed||0)>0&&<p role="status" style={{fontSize:13,color:"#8c5a2c",background:"#fff8ec",padding:"12px 14px",borderRadius:8}}>파일 정리 실패 작업 {data.counts.failed}건이 조회됩니다. 이는 Storage에 실제 파일이 {data.counts.failed}개 남아 있다는 의미가 아닙니다. 아래 사진·BGM 정리 기록의 상태·진단을 확인하고, 필요하면 해당 초대장 ID로 검색하세요.</p>}
   <h2 style={{fontSize:21}}>매일 자동삭제 실행 이력</h2>
   {!data?.runLogsAvailable&&<p style={{fontSize:13,color:"#8c5a2c"}}>실행 이력 테이블이 아직 적용되지 않았습니다. Supabase 마이그레이션 적용 후부터 기록됩니다.</p>}
   <div style={{overflowX:"auto",marginBottom:28}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:680}}><thead><tr>{["실행 일시","작업","결과","작업 건수","실패 건수"].map(x=><th key={x} style={cell}>{x}</th>)}</tr></thead><tbody>
@@ -83,6 +85,6 @@ export default function DeletionLogsPage(){
    <button disabled={page===1||loading} onClick={()=>setPage(x=>x-1)}>이전</button><span>{page} 페이지</span>
    <button disabled={loading||(!data?.audits?.length&&!data?.jobs?.length)||(page*20>=Math.max(data?.auditTotal||0,data?.jobTotal||0))} onClick={()=>setPage(x=>x+1)}>다음</button>
   </div>
-  <p style={{marginTop:24,color:"#7b8494",fontSize:12}}>삭제 완료는 DB 기록 기준입니다. 파일 삭제는 별도 작업 상태가 ‘완료’일 때만 완료로 표시합니다. 예약 작업의 실행 결과는 상단 자동삭제 실행 이력에서 확인할 수 있습니다. 기록은 새 이력 테이블 적용 후 실행부터 쌓입니다.</p>
+  <p style={{marginTop:24,color:"#7b8494",fontSize:12}}>초대장 DB 삭제 완료와 Storage 파일 정리 완료는 별개의 지표입니다. 파일 정리 작업의 완료 상태는 해당 작업 처리 결과를 뜻하며, 초대장 전체 사진의 잔여 파일 0개 검증과는 다릅니다. 자동 실행 이력의 작업 건수는 워커가 기록한 processed_count 기준이며 실제 삭제 건수와 다를 수 있습니다. 기록은 이력 테이블 적용 후 실행부터 쌓입니다.</p>
  </main>;
 }
