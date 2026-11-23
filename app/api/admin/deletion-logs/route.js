@@ -134,7 +134,7 @@ export async function GET(request) {
       else if(Date.parse(rows[0].due_at)!==expected){scheduleIssues.dueMismatch++;reason="dueMismatch";}
       else validSchedule++;
       scheduleDetails.push({
-        eventId:event.id,createdAt:event.created_at,updatedAt:event.updated_at,
+        eventId:event.id,currentStatus:"published",createdAt:event.created_at,updatedAt:event.updated_at,
         startsAt:event.starts_at,expectedDueAt:expected===null?null:new Date(expected).toISOString(),
         bookedDueAt:rows.length===1?rows[0].due_at:null,
         bookingStatus:rows.length===1?rows[0].status:null,reason
