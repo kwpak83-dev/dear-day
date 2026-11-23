@@ -1,4 +1,16 @@
 "use client";
+const EVENT_DATE_WARNING = "행사 날짜와 시간이 이미 지났어요. 미래 날짜와 시간으로 변경한 후 발행해 주세요.";
+const todayInKorea = () => {
+  const parts = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date());
+  const part = type => parts.find(item => item.type === type)?.value;
+  return `${part("year")}-${part("month")}-${part("day")}`;
+};
+const isPastEventStart = (date, time) => {
+  if (!date || !time) return false;
+  const start = new Date(`${date}T${time}:00+09:00`).getTime();
+  return Number.isFinite(start) && start <= Date.now();
+};
+
 import { isEventReadOnly } from "../../lib/invitation-retention";
 import CreditBalance from "../../components/credit-balance";
 import { HERO_FONTS } from "../../lib/hero-fonts";
@@ -64,28 +76,28 @@ function TransportAutoTextarea({ value, onChange, placeholder }) {
 
 const DEVELOPMENT_TEMPLATE_IDS = new Set(Object.values(TEMPLATE_IDS));
 const WEDDING_MESSAGE_EXAMPLES = [
-  { label: "따뜻한 인사", text: "서로 다른 길을 걸어온 두 사람이\n이제 하나의 길을 함께 걸으려 합니다.\n소중한 분들을 모시고 기쁨을 나누고 싶습니다.\n귀한 걸음으로 축복해 주세요." },
-  { label: "정중한 인사", text: "저희 두 사람이 사랑과 믿음으로\n한 가정을 이루게 되었습니다.\n소중한 분들을 모시고 뜻깊은 시작을 함께하고자 하오니\n참석하시어 축복해 주시면 감사하겠습니다." },
-  { label: "짧고 심플하게", text: "저희 두 사람,\n평생을 함께하기로 약속했습니다.\n새로운 시작의 순간을 함께해 주세요." },
-  { label: "감성적인 인사", text: "함께한 시간이 쌓여 사랑이 되었고,\n이제 그 사랑으로 한 가정을 이루려 합니다.\n저희의 새로운 시작을\n따뜻한 마음으로 축복해 주세요." },
+  { label: "따뜻한 인사", text: "서로 다른 길을 걸어온\n두 사람이\n이제 하나의 길을\n함께 걸으려 합니다.\n소중한 분들을 모시고\n기쁨을 나누고 싶습니다.\n귀한 걸음으로\n축복해 주세요." },
+  { label: "정중한 인사", text: "저희 두 사람이\n사랑과 믿음으로\n한 가정을 이루게 되었습니다.\n소중한 분들을 모시고\n뜻깊은 시작을\n함께하고자 하오니\n참석하시어\n축복해 주시면 감사하겠습니다." },
+  { label: "짧고 심플하게", text: "저희 두 사람,\n평생을 함께하기로\n약속했습니다.\n새로운 시작의 순간을\n함께해 주세요." },
+  { label: "감성적인 인사", text: "함께한 시간이 쌓여\n사랑이 되었고,\n이제 그 사랑으로\n한 가정을 이루려 합니다.\n저희의 새로운 시작을\n따뜻한 마음으로\n축복해 주세요." },
 ];
 const FIRST_BIRTHDAY_MESSAGE_EXAMPLES = [
-  { label: "따뜻한 초대", text: "우리 아이의 첫 번째 생일에 소중한 분들을 초대합니다.\n함께해 주시고 따뜻한 축복을 나누어 주세요." },
-  { label: "감사한 마음", text: "작고 소중한 아이가 저희에게 온 지 어느덧 한 해가 되었습니다.\n첫 번째 생일의 행복한 순간을 감사한 분들과 함께하고 싶습니다." },
-  { label: "첫돌의 순간", text: "첫 웃음, 첫 걸음, 그리고 첫 번째 생일.\n하루하루 사랑으로 자라온 우리 아이의 특별한 날에 소중한 분들을 초대합니다." },
+  { label: "따뜻한 초대", text: "우리 아이의 첫 번째 생일에\n소중한 분들을 초대합니다.\n함께해 주시고\n따뜻한 축복을 나누어 주세요." },
+  { label: "감사한 마음", text: "작고 소중한 아이가\n저희에게 온 지\n어느덧 한 해가 되었습니다.\n첫 번째 생일의\n행복한 순간을\n감사한 분들과\n함께하고 싶습니다." },
+  { label: "첫돌의 순간", text: "첫 웃음, 첫 걸음,\n그리고 첫 번째 생일.\n하루하루 사랑으로 자라온\n우리 아이의 특별한 날에\n소중한 분들을 초대합니다." },
 ];
 const BIRTHDAY_MESSAGE_EXAMPLES = [
-  { label: "밝고 신나는 초대", text: "신나는 생일 파티가 열려요!\n함께 웃고 놀며 즐거운 추억을 만들어요.\n생일 파티에 꼭 놀러 와 주세요!" },
-  { label: "친구들에게", text: "친구들아, 내 생일 파티에 초대할게!\n맛있는 간식도 먹고 신나게 놀자.\n너희와 함께하면 더 행복한 생일이 될 거야!" },
-  { label: "따뜻한 초대", text: "소중한 우리 아이의 생일을 맞아\n작은 파티를 준비했습니다.\n함께 자리해 주셔서 즐거운 시간을 나눠 주세요." },
-  { label: "짧고 귀엽게", text: "오늘의 주인공은 바로 나!\n웃음 가득한 생일 파티에 놀러 오세요.\n우리 함께 신나게 즐겨요!" },
+  { label: "밝고 신나는 초대", text: "신나는 생일 파티가 열려요!\n함께 웃고 놀며\n즐거운 추억을 만들어요.\n생일 파티에\n꼭 놀러 와 주세요!" },
+  { label: "친구들에게", text: "친구들아,\n내 생일 파티에 초대할게!\n맛있는 간식도 먹고\n신나게 놀자.\n너희와 함께하면\n더 행복한 생일이 될 거야!" },
+  { label: "따뜻한 초대", text: "소중한 우리 아이의\n생일을 맞아\n작은 파티를 준비했습니다.\n함께 자리해 주셔서\n즐거운 시간을 나눠 주세요." },
+  { label: "짧고 귀엽게", text: "오늘의 주인공은 바로 나!\n웃음 가득한 생일 파티에\n놀러 오세요.\n우리 함께 신나게 즐겨요!" },
 ];
 const MILESTONE_BIRTHDAY_MESSAGE_EXAMPLES = [
-  { label: "정중한 초대", text: "늘 베풀어 주신 사랑과 은혜에 감사드리며,\n소중한 분들을 모시고 뜻깊은 자리를 마련하였습니다.\n바쁘시더라도 참석하시어 기쁨을 함께 나누어 주시면 감사하겠습니다." },
-  { label: "가족의 감사", text: "한평생 가족을 위해 사랑과 정성을 아끼지 않으신\n부모님의 뜻깊은 생신을 맞아 작은 자리를 마련했습니다.\n소중한 걸음으로 함께하시어 따뜻한 축복을 나누어 주세요." },
-  { label: "짧고 품격 있게", text: "소중한 인연과 함께 걸어온 세월에 감사하며\n뜻깊은 생신을 축하하는 자리를 마련했습니다.\n귀한 걸음으로 자리를 빛내 주시면 감사하겠습니다." },
-  { label: "감사와 축복", text: "지나온 세월의 아름다운 순간들을 돌아보며\n감사와 축복을 나누고자 합니다.\n사랑하는 가족과 소중한 분들을 모시고 마련한 자리에\n함께해 주시면 큰 기쁨이겠습니다." },
-  { label: "따뜻한 초대", text: "함께한 시간만큼 깊어진 사랑과 감사의 마음을 담아\n특별한 하루를 준비했습니다.\n편안한 마음으로 오셔서 웃음과 따뜻한 추억을 함께 만들어 주세요." },
+  { label: "정중한 초대", text: "늘 베풀어 주신\n사랑과 은혜에 감사드리며,\n소중한 분들을 모시고\n뜻깊은 자리를\n마련하였습니다.\n바쁘시더라도 참석하시어\n기쁨을 함께 나누어 주시면\n감사하겠습니다." },
+  { label: "가족의 감사", text: "한평생 가족을 위해\n사랑과 정성을\n아끼지 않으신 부모님의\n뜻깊은 생신을 맞아\n작은 자리를 마련했습니다.\n소중한 걸음으로 함께하시어\n따뜻한 축복을 나누어 주세요." },
+  { label: "짧고 품격 있게", text: "소중한 인연과 함께\n걸어온 세월에 감사하며\n뜻깊은 생신을 축하하는\n자리를 마련했습니다.\n귀한 걸음으로\n자리를 빛내 주시면\n감사하겠습니다." },
+  { label: "감사와 축복", text: "지나온 세월의\n아름다운 순간들을 돌아보며\n감사와 축복을 나누고자 합니다.\n사랑하는 가족과\n소중한 분들을 모시고\n마련한 자리에\n함께해 주시면\n큰 기쁨이겠습니다." },
+  { label: "따뜻한 초대", text: "함께한 시간만큼\n깊어진 사랑과\n감사의 마음을 담아\n특별한 하루를 준비했습니다.\n편안한 마음으로 오셔서\n웃음과 따뜻한 추억을\n함께 만들어 주세요." },
 ];
 function HeroEditorPreview({ invitation, eventKind, templateId, templateConfig, templateAssets }) {
   const previewRef = useRef(null);
@@ -1199,6 +1211,21 @@ export default function CreateInvitation() {
         </div>
       </Field>;
     }
+    if (field.key === "date") {
+      const today = todayInKorea();
+      const pastSavedDate = invitation.date && invitation.date < today;
+      return <Field key={field.key} label={field.label} fieldKey="date">
+        <input type="date" min={today} value={invitation.date || ""} onChange={event => {
+          const nextDate = event.target.value;
+          if (nextDate && nextDate < todayInKorea()) {
+            showSavedToast("오늘 이전 날짜는 선택할 수 없어요.", { validation: true });
+            return;
+          }
+          update("date", nextDate);
+        }} />
+        {pastSavedDate && <p role="alert" style={{ color: "#c3483e", fontSize: 12, margin: "6px 0 0" }}>오늘 이전 날짜는 선택할 수 없어요. 행사 날짜를 변경해 주세요.</p>}
+      </Field>;
+    }
     if (field.key === "birthDate") return <BirthDateField key={field.key} label={field.label} value={invitation.birthDate || ""} onChange={value => update("birthDate", value)} />;
     if (field.type === "venue") return <div key={field.key}><Field label={field.label || "장소명"} fieldKey="venue"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onCompositionEnd={(e) => commitTextInput("venue", e)} onBlur={(e) => commitTextInput("venue", e)} onKeyDown={(e) => e.key === "Enter" && !e.nativeEvent.isComposing && e.keyCode !== 229 && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results"><div className="place-results-heading"><strong>검색 결과</strong><span>{placeResults.length}건</span></div><div className="place-results-list">{placeResults.map((place) => <button className="place-result-option" type="button" key={[place.mapx, place.mapy, place.title].join("-")} onClick={() => selectPlace(place)}><span className="place-result-pin" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a86c60" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg></span><span className="place-result-details"><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></span><span className="place-result-chevron" aria-hidden="true">›</span></button>)}</div><p className="place-search-guide">원하는 장소가 없다면 지역명을 함께 입력해 검색해 주세요.</p></div>}<Field label="기본주소" fieldKey="venueAddress"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onCompositionEnd={(e) => commitTextInput("venueAddress", e)} onBlur={(e) => commitTextInput("venueAddress", e)} onKeyDown={(e) => e.key === "Enter" && !e.nativeEvent.isComposing && e.keyCode !== 229 && (e.preventDefault(), geocodeAddress(e.currentTarget.value))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>검색</button></div></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} onCompositionEnd={(e) => commitTextInput("venueDetail", e)} onBlur={(e) => commitTextInput("venueDetail", e)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={setMapContainer} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div>{transportMatrix.state !== "none" && <div className="form-section"><div className="dd-share-card-heading"><div><h2>🚗 {transportMatrix.label}</h2><p>교통 및 주차 안내를 설정해요.</p>{transportNotice && <p role="status" aria-live="polite">{transportNotice}</p>}</div><label className="dd-share-switch"><input type="checkbox" checked={transportMatrix.state === "required" || invitation.transportGuideEnabled === true} disabled={transportMatrix.state === "required"} onChange={event => update("transportGuideEnabled", event.target.checked)} aria-label={transportMatrix.label + " 사용"} /><span className="dd-share-switch-track" aria-hidden="true" /></label></div>{(transportMatrix.state === "required" || invitation.transportGuideEnabled === true) && <div className="dd-transport-guide-editor">{[["transportPublicEnabled","transportPublic","🚇 대중교통","지하철·버스 등 대중교통 이용 방법을 입력하세요."],["transportCarEnabled","transportCar","🚙 자가용 이용 시","자가용 이용 시 찾아오는 방법을 입력하세요."],["transportParkingEnabled","transportParking","🅿️ 주차 안내","주차 위치·무료 주차 시간 등을 입력하세요."]].map(([enabledKey,valueKey,label,placeholder])=><div className="dd-transport-guide-editor-item" key={enabledKey}><label className="dd-transport-guide-item-toggle"><input type="checkbox" checked={invitation[enabledKey] === true} onChange={event => update(enabledKey,event.target.checked)} /> {label}</label>{invitation[enabledKey] === true && <TransportAutoTextarea placeholder={placeholder} value={invitation[valueKey] || ""} onChange={value => update(valueKey, value)} />}</div>)}</div>}</div>}</div>;
     if (field.type === "textarea") {
@@ -1446,6 +1473,20 @@ export default function CreateInvitation() {
     window.location.assign(`/?login=required&returnUrl=${encodeURIComponent(returnPath)}`);
   };
   const validateForPublish = () => {
+    if (isPastEventStart(invitation.date, invitation.time) || (invitation.date && invitation.date < todayInKorea())) {
+      setFlowNotice(EVENT_DATE_WARNING);
+      showSavedToast(EVENT_DATE_WARNING, { validation: true });
+      if (previewOpen) closePreview();
+      setEditorStep(0);
+      window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+        const target = document.querySelector('[data-field-key="date"]');
+        if (!target) return;
+        let ancestor = target.closest("details");
+        while (ancestor) { ancestor.open = true; ancestor = ancestor.parentElement?.closest("details"); }
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+      }));
+      return false;
+    }
     const unfilledPhotoSlots = activePhotoSlots.filter(layer => !invitation.heroSlotPhotos?.[layer.id]);
     if (unfilledPhotoSlots.length) {
       const message = `HERO 사진 ${unfilledPhotoSlots.length}장을 더 등록해 주세요.`;
@@ -1513,6 +1554,7 @@ export default function CreateInvitation() {
   };
   const publish = async () => {
     if (submitting || photoBusy.current || galleryBusy || eventStatus === "published") return;
+    if (!validateForPublish()) return;
     setSubmitting("publish");
     setFlowNotice("");
     try {

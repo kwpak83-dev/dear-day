@@ -128,11 +128,13 @@ function validDecorations(value) {
         !uuid.test(item.assetId || "") || ids.has(item.assetId) ||
         !decorationSlots.has(item.slot) ||
         !decimal(item.xPercent, 0, 100) || !decimal(item.yPercent, 0, 100) ||
-        !decimal(item.widthPercent, 1, 100) || !decimal(item.rotationDeg, -180, 180) ||
+        !decimal(item.widthPercent, 1, 100) ||
+        (item.scaleX !== undefined && !decimal(item.scaleX, 10, 300)) ||
+        (item.scaleY !== undefined && !decimal(item.scaleY, 10, 300)) || !decimal(item.rotationDeg, -180, 180) ||
         !decimal(item.opacity, 0, 1) ||
         !Number.isInteger(item.zIndex) || item.zIndex < 0 || item.zIndex > 20 ||
         typeof item.visible !== "boolean" ||
-        Object.keys(item).some((key) => !["assetId", "slot", "xPercent", "yPercent", "widthPercent", "rotationDeg", "opacity", "zIndex", "visible"].includes(key))) return false;
+        Object.keys(item).some((key) => !["assetId", "slot", "xPercent", "yPercent", "widthPercent", "scaleX", "scaleY", "rotationDeg", "opacity", "zIndex", "visible"].includes(key))) return false;
     ids.add(item.assetId);
   }
   return true;
@@ -174,6 +176,7 @@ export async function PATCH(request) {
   const decorations = body.decorations.map((item) => ({
     assetId: item.assetId, slot: item.slot, xPercent: item.xPercent,
     yPercent: item.yPercent, widthPercent: item.widthPercent,
+    scaleX: item.scaleX ?? 100, scaleY: item.scaleY ?? 100,
     rotationDeg: item.rotationDeg, opacity: item.opacity,
     zIndex: item.zIndex, visible: item.visible,
   }));
