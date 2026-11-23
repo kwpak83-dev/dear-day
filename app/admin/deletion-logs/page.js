@@ -79,6 +79,21 @@ export default function DeletionLogsPage(){
    {(data?.jobs||[]).map(x=><tr key={x.id}><td style={compactCell}>{fmt(x.updated_at)}</td><td style={compactCell}>{x.userName||"확인 불가"}</td><EmailCell email={x.loginEmail}/><td style={emailCell} title={x.event_title||"기록 없음"}>{x.event_title||"기록 없음"}</td><td style={compactCell}>{fmt(x.event_starts_at)}</td><td style={compactCell} title={x.event_id}>{short(x.event_id)}</td><td style={compactCell}>{x.bucket==="invitation-photos"?"사진":"BGM"}</td><td style={compactCell}>{statusLabel[x.status]||x.status}</td><td style={compactCell}>{x.attempts}</td><td style={compactCell}>{x.errorFlag?"확인 필요":"-"}</td></tr>)}
    {!loading&&!data?.jobs?.length&&<tr><td colSpan={10} style={cell}>조회된 파일 정리 기록이 없습니다.</td></tr>}
   </tbody></table></div>
+  <h2 style={{fontSize:21,marginTop:30}}>초대장별 Supabase 사진 삭제 검증</h2>
+  <div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:700}}>
+    <thead><tr>{["초대장","사진 정리 대상","사진 정리 완료","Supabase 검증","결과"].map(label=><th key={label} style={cell}>{label}</th>)}</tr></thead>
+    <tbody>{(data?.photoVerifications||[]).map(row=>{
+      const v=row.verification||{},status=v.status;
+      const result=status==="verified_zero"?"삭제 확인":status==="failed"?"삭제 실패":status==="pending"?"정리 대기":status==="unverified"?"검증 기록 없음":"검증 불가";
+      const color=status==="verified_zero"?"#226a4c":status==="failed"?"#b33b38":"#9a6700";
+      return <tr key={row.eventId}><td style={cell} title={row.eventId}>{row.title||row.eventId}</td>
+        <td style={cell}>{row.photoJobs?.total??"확인 불가"}</td><td style={cell}>{row.photoJobs?.done??"확인 불가"}</td>
+        <td style={cell}>{v.remaining===false?"잔여 0":v.remaining===true?"잔여 있음":"확인 불가"}</td>
+        <td style={{...cell,color,fontWeight:600}}>{result}</td></tr>;
+    })}
+    {!loading&&!data?.photoVerifications?.length&&<tr><td colSpan={5} style={cell}>조회 기간에 검증할 삭제 완료 초대장이 없습니다.</td></tr>}</tbody>
+  </table></div>
+  <p style={{fontSize:12,color:"#7b8494",marginTop:10}}>사진 정리 작업 상태와 실제 Supabase Storage 잔여 파일을 함께 확인합니다. 조회 전용이며 BGM은 사진 집계에 포함하지 않습니다. 검증 시각: {fmt(data?.verifiedAt)}</p>
   <div style={{display:"flex",gap:12,alignItems:"center",justifyContent:"center",marginTop:24}}>
    <button disabled={page===1||loading} onClick={()=>setPage(x=>x-1)}>이전</button><span>{page} 페이지</span>
    <button disabled={loading||(!data?.audits?.length&&!data?.jobs?.length)||(page*20>=Math.max(data?.auditTotal||0,data?.jobTotal||0))} onClick={()=>setPage(x=>x+1)}>다음</button>

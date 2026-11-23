@@ -1,3 +1,5 @@
+import { invitationDeletionTime } from "../../../../lib/invitation-retention";
+import { reportExpiredInvitationPhotos } from "../../../../lib/scoped-invitation-storage-worker.mjs";
 import { createClient } from "@supabase/supabase-js";
 export const dynamic = "force-dynamic";
 const auditTime = (row) => row.recorded_at || null;
@@ -71,7 +73,7 @@ export async function GET(request) {
     const completedResult=await completedQuery;
     if(completedResult.error)throw Object.assign(new Error("completed audit count query failed"),{queryStage:"audit-count",dbCode:completedResult.error.code,dbMessage:completedResult.error.message});
     const completedCount=completedResult.count||0;
-    const runQuery=db.from("invitation_retention_run_logs").select("id,task,started_at,finished_at,http_status,result_mode,processed_count,failed_count,result_summary").order("finished_at",{ascending:false}).limit(30);
+    const runQuery=db.from("invitation_retention_run_logs").select("id,task,started_at,finished_at,http_status,result_mode,processed_count,failed_count,result_summary").order("finished_at",{ascending:false}).limit(days==="all"?300:days==="30"?150:60);
     const runResult=await runQuery;
     const runLogsAvailable=!runResult.error;
     if(runResult.error && runResult.error.code!=="42P01" && runResult.error.code!=="PGRST205")console.warn("Retention run history unavailable",runResult.error.code);
@@ -96,7 +98,77 @@ export async function GET(request) {
         }
       } catch {}
     }));
+    // Current published invitation / retention schedule reconciliation.
+    // Query each source independently: matching totals alone do not prove matching event IDs.
+    const published=[];
+    for(let start=0;;start+=500){
+      const {data:chunk,error:publishedError}=await db.from("events")
+        .select("id,starts_at,created_at,updated_at,service_expires_at,retention_v2,retention_delete_eligible")
+        .eq("status","published").range(start,start+499);
+      if(publishedError)throw Object.assign(new Error("published invitation query failed"),{queryStage:"published",dbCode:publishedError.code,dbMessage:publishedError.message});
+      published.push(...chunk);
+      if(chunk.length<500)break;
+    }
+    const eligiblePublished=published.filter(row=>row.retention_v2===true&&row.retention_delete_eligible===true);
+    const scheduled=[];
+    // Avoid oversized PostgREST IN filters. Read only jobs for current eligible events.
+    for(let i=0;i<eligiblePublished.length;i+=100){
+      const ids=eligiblePublished.slice(i,i+100).map(row=>row.id);
+      const {data:chunk,error:scheduleError}=await db.from("invitation_deletion_jobs")
+        .select("event_id,due_at,status").in("event_id",ids);
+      if(scheduleError)throw Object.assign(new Error("deletion schedule query failed"),{queryStage:"schedule",dbCode:scheduleError.code,dbMessage:scheduleError.message});
+      scheduled.push(...chunk);
+    }
+    const schedulesByEvent=new Map();
+    for(const job of scheduled){const rows=schedulesByEvent.get(job.event_id)||[];rows.push(job);schedulesByEvent.set(job.event_id,rows);}
+    const scheduleIssues={missing:0,duplicate:0,dueMismatch:0,invalidDate:0};
+    const scheduleDetails=[];
+    let waiting=0,queued=0,overdueReview=0;
+    const now=Date.now();
+    for(const event of eligiblePublished){
+      const rows=schedulesByEvent.get(event.id)||[];
+      const expected=invitationDeletionTime({...event,status:"published"});
+      let reason="waiting";
+      if(expected===null){scheduleIssues.invalidDate++;reason="invalidDate";}
+      else if(rows.length>1){scheduleIssues.duplicate++;reason="duplicate";}
+      else if(rows.length===1&&Date.parse(rows[0].due_at)!==expected){scheduleIssues.dueMismatch++;reason="dueMismatch";}
+      else if(rows.length===1){queued++;reason="queued";}
+      else if(expected>now){waiting++;reason="waiting";}
+      else {overdueReview++;reason="overdueReview";}
+      scheduleDetails.push({
+        eventId:event.id,currentStatus:"published",createdAt:event.created_at,updatedAt:event.updated_at,
+        startsAt:event.starts_at,expectedDueAt:expected===null?null:new Date(expected).toISOString(),
+        bookedDueAt:rows.length===1?rows[0].due_at:null,
+        bookingStatus:rows.length===1?rows[0].status:null,reason
+      });
+    }
+    const scheduleSummary={
+      published:published.length,eligible:eligiblePublished.length,
+      excluded:published.length-eligiblePublished.length,
+      waiting,queued,overdueReview,
+      issues:scheduleIssues,details:scheduleDetails
+    };
+    // Live read-only Storage verification, scoped to the current completed-deletion page.
+    const completedAudits=auditPage.filter(row=>row.outcome==="completed");
+    const verifiedIds=[...new Set(completedAudits.map(row=>row.event_id).filter(Boolean))];
+    const verified=await reportExpiredInvitationPhotos(db,verifiedIds);
+    const verificationById=new Map((verified.photoCleanup||[]).map(row=>[row.eventId,row]));
+    const photoByEvent=new Map();
+    await Promise.all(verifiedIds.map(async eventId=>{
+      const {data:rows,error:photoError}=await db.from("invitation_storage_cleanup_jobs")
+        .select("status").eq("event_id",eventId).eq("bucket","invitation-photos").limit(1000);
+      if(photoError){photoByEvent.set(eventId,{total:null,done:null});return;}
+      // The limit prevents unbounded payloads. Never report partial counts as exact.
+      if(rows.length===1000){photoByEvent.set(eventId,{total:null,done:null});return;}
+      photoByEvent.set(eventId,{total:rows.length,done:rows.filter(row=>row.status==="done").length});
+    }));
+    const photoVerifications=completedAudits.map(row=>({
+      eventId:row.event_id,title:row.event_title||"기록 없음",deletedAt:row.recorded_at,
+      eventStartsAt:row.event_starts_at,verification:verificationById.get(row.event_id)||{status:"unverified"},
+      photoJobs:photoByEvent.get(row.event_id)||{total:null,done:null}
+    }));
     return Response.json({
+      photoVerifications,scheduleSummary,verifiedAt:new Date().toISOString(),
       runs,runLogsAvailable,uploadReservationsEnabled:process.env.INVITATION_UPLOAD_RESERVATIONS_READY==="true",
       audits:auditPage.map(x=>({...x,created_at:auditTime(x),loginEmail:emailByOwner.get(x.owner_id)||null,userName:nameByOwner.get(x.owner_id)||null})),auditTotal,
       jobs:(j.data||[]).map(({last_error,...job})=>({...job,loginEmail:emailByOwner.get(job.owner_id)||null,userName:nameByOwner.get(job.owner_id)||null,event_title:auditByEvent.get(job.event_id)?.event_title||null,event_starts_at:auditByEvent.get(job.event_id)?.event_starts_at||null,errorFlag:Boolean(last_error)})),

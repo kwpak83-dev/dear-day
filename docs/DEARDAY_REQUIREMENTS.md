@@ -756,3 +756,15 @@
 3. 편집기 0개 구매 준비 중 UI, 마이페이지 이용권 현황, 관리자 화면.
 4. 테스트: 관리자 권한, 지급/회수, 만료, 다중 탭·중복 클릭, 최초 발행/수정/재공개, 기존 발행 데이터, 0개 구매 준비 중, DB 오류 시 롤백.
 - 개발은 **`dev` 브랜치에만** 적용한다. `main` 병합·운영 배포는 사용자가 별도로 명시적으로 지시한 경우에만 진행한다.
+
+
+## 29. 초대장 만료 후 DB·Storage 삭제 실증 결과 (2026-11-23)
+
+- 검증 대상: 더미 발행 초대장 「박테스트1 & 이테스트2의 초대장」, event ID `13978eb6-6d23-4eeb-8fdb-4930677943de`.
+- 사전 확인: `invitation_upload_reservations`의 `uploaded` 기록 20건, `invitation-photos`의 해당 Storage 객체 20개 존재 확인.
+- 실험 방법: 운영 DB에서 테스트 초대장 하나의 행사일·서비스 만료일을 과거로 변경하고, `invitation_deletion_jobs`에 만료된 `pending` 작업을 수동 등록. 이후 인증된 `testEventId` 범위 제한 API로 DB 및 Storage 삭제 워커를 순차 호출.
+- DB 삭제 결과: `/api/retention/cleanup` 응답 `scanned=1`, `eligible=1`, `deleted=1`, `failed=0`.
+- Storage 삭제 결과: `/api/retention/storage-cleanup` 1차 `removed=10`, 2차 `removed=10`; 각각 `failed=0`. 최종 `photoCleanup.status=verified_zero`, `pending=0`, `photoVerifiedZero=1`, `photoNeedsReview=0`.
+- Supabase Dashboard의 해당 `gallery/` 및 `photo/` 폴더에서 실제 사진 파일이 모두 삭제된 것을 직접 확인.
+- 검증 범위: **수동으로 만료 조건과 예약을 구성한 1개 더미 초대장에 대한 삭제 파이프라인의 실제 동작**을 검증함. 정상 발행 시 자동 예약 생성, 매일 Cron 자동 호출 및 모든 초대장 유형의 완전한 회귀 검증을 이 실험만으로 입증한 것은 아님.
+- 테스트 후 조치: Vercel `RETENTION_SCOPED_TEST_EVENT_ID`를 무효 UUID로 변경하여 대상 지정 해제. 전용 인증키 제거 및 변경 환경변수 Production 반영 여부는 별도 확인이 필요함. 일반 보존·삭제 Cron과 운영 활성화 스위치는 유지.
