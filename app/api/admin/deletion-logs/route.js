@@ -100,7 +100,7 @@ export async function GET(request) {
     // Current published invitation / retention schedule reconciliation.
     // Query each source independently: matching totals alone do not prove matching event IDs.
     const published=[];
-    for(let start=0;start<10000;start+=500){
+    for(let start=0;;start+=500){
       const {data:chunk,error:publishedError}=await db.from("events")
         .select("id,starts_at,service_expires_at,retention_v2,retention_delete_eligible")
         .eq("status","published").range(start,start+499);
