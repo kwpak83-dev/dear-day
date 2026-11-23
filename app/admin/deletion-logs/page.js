@@ -10,10 +10,10 @@ const runCountLabel={schedule:"검사 건수",cleanup:"삭제 건수","storage-c
 const runResult=(run)=>{
  const summary=run.result_summary||{};
  const details=[`모드: ${runModeLabel[run.result_mode]||run.result_mode||"미확인"}`];
- for(const [field,label] of [["skipped","생략"],["unconfirmed","미확정"]]){
+ for(const [field,label] of [["skipped","생략"],["unconfirmed","미확정"],["photoVerifiedZero","잔여 사진 0개 확인"],["photoNeedsReview","사진 정리 확인 필요"]]){
    if(typeof summary[field]==="number")details.push(`${label} ${summary[field]}건`);
  }
- return {status:run.http_status>=400||run.failed_count>0?"오류 확인":Number(summary.unconfirmed)>0?"결과 확인 필요":run.result_mode==="disabled"?"비활성":run.result_mode==="dry-run"?"모의 실행":run.result_mode==="execute"||run.result_mode==="enroll-only"?"정상 실행":"상태 미확인",details:details.join(" · ")};
+ return {status:run.http_status>=400||run.failed_count>0?"오류 확인":Number(summary.unconfirmed)>0||Number(summary.photoNeedsReview)>0?"결과 확인 필요":run.result_mode==="disabled"?"비활성":run.result_mode==="dry-run"?"모의 실행":run.result_mode==="execute"||run.result_mode==="enroll-only"?"정상 실행":"상태 미확인",details:details.join(" · ")};
 };
 const cell={padding:"10px 8px",borderBottom:"1px solid #e9e2dc",textAlign:"left",fontSize:13};
 const short=(value)=>value?value.slice(0,8)+"…":"-";
@@ -69,7 +69,7 @@ export default function DeletionLogsPage(){
   </tbody></table></div>
   {!!data?.auditUndated&&<p style={{fontSize:12,color:"#a36522"}}>기존 삭제 감사 기록 {data.auditUndated}건은 날짜 정보가 없어 조회 기간과 관계없이 표시됩니다. 날짜를 임의로 추정하지 않았습니다.</p>}
   {data?.auditTruncated&&<p style={{fontSize:12,color:"#a36522"}}>감사 기록이 1,000건을 초과해 일부 기록이 조회되지 않을 수 있습니다.</p>}
-  <h2 style={{fontSize:21}}>초대장 삭제 기록 <small style={{fontSize:13,fontWeight:400}}>총 {data?.auditTotal??"-"}건</small></h2>
+  <h2 style={{fontSize:21}}>초대장 DB 삭제 기록 <small style={{fontSize:13,fontWeight:400}}>총 {data?.auditTotal??"-"}건</small></h2>
   <div style={{overflowX:"auto",marginBottom:28}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:1280,tableLayout:"fixed"}}><colgroup><col style={{width:165}}/><col style={{width:100}}/><col style={{width:240}}/><col style={{width:170}}/><col style={{width:160}}/><col style={{width:110}}/><col style={{width:115}}/><col style={{width:90}}/><col style={{width:120}}/></colgroup><thead><tr>{["삭제 일시","사용자 이름","로그인 ID (이메일)","초대장 제목","행사 일시","초대장 ID","구분","결과","파일 정리 대상"].map(x=><th key={x} style={cell}>{x}</th>)}</tr></thead><tbody>
    {(data?.audits||[]).map((x,i)=><tr key={x.event_id+"-"+i}><td style={compactCell}>{fmt(x.created_at)}</td><td style={compactCell}>{x.userName||"확인 불가"}</td><EmailCell email={x.loginEmail}/><td style={emailCell} title={x.event_title||"기록 없음"}>{x.event_title||"기록 없음"}</td><td style={compactCell}>{fmt(x.event_starts_at)}</td><td style={cell} title={x.event_id}>{short(x.event_id)}</td><td style={cell}>{x.details?.startsWith("Owner deletion committed")?"수동 삭제":"자동·기타"}</td><td style={cell}>{x.outcome==="completed"?"완료":x.outcome}</td><td style={cell}>{x.storage_cleanup_eligible?"대상":"비대상"}</td></tr>)}
    {!loading&&!data?.audits?.length&&<tr><td colSpan={9} style={cell}>조회된 삭제 기록이 없습니다.</td></tr>}

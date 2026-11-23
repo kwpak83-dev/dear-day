@@ -77,5 +77,28 @@ test("PGlite executes retention migrations and tests WebP claim ownership, reser
     assert.deepEqual(autoQueue.map(row=>row.storage_path),[dedicated]);
     assert.equal((await db.query("select count(*)::int n from invitation_storage_object_references where event_id=$1 and storage_path=$2",[survivor,sharedLedger])).rows[0].n,1);
     assert.equal((await db.query("select count(*)::int n from events where id=$1",[expired])).rows[0].n,0);
+
+    await executeFile(db,new URL("../supabase/migrations/202611120001_gallery_thumbnail_path.sql",import.meta.url));
+    await executeFile(db,new URL("../supabase/migrations/202611230002_verify_expired_invitation_photo_cleanup.sql",import.meta.url));
+    const next = randomUUID();
+    await db.query("insert into events(id,owner_id,kind,status,slug,title,updated_at) values($1,$2,'wedding','draft',$3,'Legacy upload fixture',now()-interval '40 days')", [next,owner,"expired-"+next]);
+    const inventoryPhoto = `${owner}/photo/${next}/${randomUUID()}.jpg`;
+    const flatPath = `${owner}/${randomUUID()}.jpg`;
+    await db.query("insert into storage.objects(bucket_id,name) values('invitation-photos',$1),('invitation-photos',$2)",[inventoryPhoto,flatPath]);
+    await db.query("insert into invitation_storage_object_references(event_id,bucket,storage_path) values($1,'invitation-photos',$2)",[next,flatPath]);
+    assert.equal((await db.query("select reconcile_invitation_deletion_schedule(array[$1::uuid]) count",[next])).rows[0].count,1);
+    const nextJob = (await db.query("select id from invitation_deletion_jobs where event_id=$1",[next])).rows[0];
+    const nextClaim = (await db.query("select claim_token from claim_invitation_deletion_job($1)",[nextJob.id])).rows[0];
+    assert.equal((await db.query("select finalize_invitation_deletion($1,$2) ok",[nextJob.id,nextClaim.claim_token])).rows[0].ok,true);
+    const auditHolds = (await db.query("select photo_cleanup_holds from invitation_deletion_audit where event_id=$1",[next])).rows[0];
+    assert.deepEqual(auditHolds.photo_cleanup_holds,[{path:flatPath,reason:"unverified_path"}]);
+    const [inventoryJob] = (await db.query("select id,storage_path from invitation_storage_cleanup_jobs where event_id=$1",[next])).rows;
+    assert.equal(inventoryJob.storage_path,inventoryPhoto);
+    const [inventoryClaim] = (await db.query("select * from claim_scoped_invitation_storage_cleanup($1)",[inventoryJob.id])).rows;
+    assert.equal(inventoryClaim.storage_path,inventoryPhoto);
+    assert.equal((await db.query("select settle_scoped_invitation_storage_cleanup($1,$2,true) ok",[inventoryJob.id,inventoryClaim.attempt])).rows[0].ok,false);
+    await db.query("delete from storage.objects where bucket_id='invitation-photos' and name=$1",[inventoryPhoto]);
+    assert.equal((await db.query("select settle_scoped_invitation_storage_cleanup($1,$2,true) ok",[inventoryJob.id,inventoryClaim.attempt])).rows[0].ok,true);
+    await assert.rejects(db.query("insert into storage.objects(bucket_id,name) values('invitation-photos',$1)",[`${owner}/photo/${next}/${randomUUID()}.webp`]),/Expired invitation photo directory is fenced/);
   }finally{await db.close()}
 });

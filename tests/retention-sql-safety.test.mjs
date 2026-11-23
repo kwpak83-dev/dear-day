@@ -58,7 +58,7 @@ test("cleanup recovery RPC matches the bounded SQL transition", async () => {
   assert.match(recovery, /for update skip locked/i);
   assert.match(recovery, /set status = 'failed', claim_token = null, claimed_at = null,\s*lease_expires_at = null/);
   assert.match(cleanup, /\.lt\("attempts", 10\)\.lte\("due_at", now\)\.lte\("next_attempt_at", now\)/);
-  assert.ok(cleanup.indexOf("if (!claimed)") < cleanup.indexOf("const files = await planFiles"));
+  assert.match(cleanup, /if \(!claimed\)[\s\S]+const files = \[\.\.\.collect/);
 });
 
 test("schedule reconciliation locks the job then reads the current event deadline", async () => {

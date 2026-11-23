@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
-import { runScopedStorageCleanup } from "../lib/scoped-invitation-storage-worker.mjs";
+import { processScopedStorageJob, runScopedStorageCleanup } from "../lib/scoped-invitation-storage-worker.mjs";
 
 const target = "a527a271-5fac-4bb8-b3a4-cf6ed7a44e8c";
 const other = "11111111-1111-4111-8111-111111111111";
@@ -34,7 +34,12 @@ function fakeDb() {
       assert.equal(name, "settle_scoped_invitation_storage_cleanup");
       return { data: true, error: null };
     },
-    storage: { from() { return { async remove(paths) { state.removals.push(...paths); return { error: null }; } }; } },
+    storage: { from() { return {
+      async info() {
+        return state.removals.length ? { error: { status: 404, code: "NoSuchKey" } } : { data: {} };
+      },
+      async remove(paths) { state.removals.push(...paths); return { error: null }; },
+    }; } },
   };
   return { db, state };
 }
@@ -46,6 +51,37 @@ test("event-scoped worker only claims jobs belonging to the selected event", asy
   assert.ok(state.filters.filter(([key]) => key === "event_id").every(([,value]) => value === target));
   assert.deepEqual(state.claims, [1]);
   assert.equal(result.removed, 1);
+});
+
+test("photo cleanup requires an explicit missing-object response before settling success", async () => {
+  const missing = { status: 404, code: "NoSuchKey" };
+  const cases = [
+    { before: missing, succeeds: true, removes: 0 },
+    { after: missing, succeeds: true, removes: 1 },
+    { after: null, succeeds: false, removes: 1 },
+    { after: { status: 404, code: "NoSuchBucket", message: "Bucket not found" }, succeeds: false, removes: 1 },
+    { before: { status: 403, code: "AccessDenied" }, succeeds: false, removes: 0 },
+    { removeError: new Error("network"), succeeds: false, removes: 1 },
+  ];
+  for (const { before, after, removeError, succeeds, removes } of cases) {
+    let calls = 0;
+    let deletes = 0;
+    let settled;
+    const db = {
+      async rpc(name, args) {
+        if (name.startsWith("claim")) return { data: [{ bucket: "invitation-photos", storage_path: "object.jpg", attempt: 1 }] };
+        settled = args.p_succeeded;
+        return { data: true };
+      },
+      storage: { from: () => ({
+        async info() { return { data: {}, error: calls++ === 0 ? before : after }; },
+        async remove() { deletes++; return { error: removeError }; },
+      }) },
+    };
+    assert.equal(await processScopedStorageJob(db, 1), succeeds ? "removed" : "failed");
+    assert.equal(settled, succeeds);
+    assert.equal(deletes, removes);
+  }
 });
 
 test("production cleanup requires an event ID or a separate global rollout gate", () => {
