@@ -43,9 +43,9 @@ export default function DeletionLogsPage(){
   const unverified=rows.filter(row=>row.verification.status!=="verified_zero").length;
   const summary=[
     ["현재 발행 초대장",schedule?.published,"현재 발행 상태"],
-    ["30일 만료 삭제 예정",schedule?.eligible,"삭제 정책 적용 대상"],
-    ["삭제 예약 정상",schedule?.scheduled,"ID·예정일 일치"],
-    ["삭제 예약 누락·불일치",schedule?.missingOrMismatch,"0건이어야 정상"],
+    ["30일 만료 대기",schedule?.waiting,"아직 삭제 기한 전"],
+    ["만료 후 삭제 큐 등록",schedule?.queued,"만료 후 작업 큐"],
+    ["만료 후 확인 필요",schedule?.overdueReview,"배치·감사 기록 추가 확인"],
     ["만료 초대장 삭제 완료",audits.filter(row=>row.outcome==="completed"&&!row.details?.startsWith("Owner deletion committed")).length,"현재 페이지 · 자동·기타 포함"],
     ["사진 삭제 검증 완료",verified,"현재 페이지 · Storage 잔여 0"]
   ];
@@ -75,21 +75,21 @@ export default function DeletionLogsPage(){
     <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(155px,1fr))",gap:10,margin:"18px 0 12px"}}>
       {summary.map(([label,value,description])=><div key={label} style={{padding:15,border:"1px solid #e1e5ed",borderRadius:12,background:"#fff"}}>
         <div style={{fontSize:12,color:"#6d778a"}}>{label}</div>
-        <strong style={{display:"block",fontSize:26,marginTop:6,color:label==="삭제 예약 누락·불일치"&&value>0?"#b33b38":"#26375b"}}>{loading?"…":value??"-"}</strong>
+        <strong style={{display:"block",fontSize:26,marginTop:6,color:label==="만료 후 확인 필요"&&value>0?"#b33b38":"#26375b"}}>{loading?"…":value??"-"}</strong>
         <div style={{fontSize:11,color:"#7b8494"}}>{description}</div>
       </div>)}
     </div>
-    <p style={{fontSize:12,color:"#68748a"}}>발행·예약 지표는 현재 전체 기준입니다. 예약 검증은 실제 자동삭제 배치와 동일한 행사일 + 30일(한국시간 00:00) 기준입니다. 발행 중 정책 제외 {schedule?.excluded??"-"}건 · 예약 없음 {schedule?.issues?.missing??"-"}건 · 날짜 불일치 {schedule?.issues?.dueMismatch??"-"}건 · 중복 {schedule?.issues?.duplicate??"-"}건 · 날짜 없음 {schedule?.issues?.invalidDate??"-"}건. 삭제 완료·사진 검증은 선택 기간의 현재 페이지 기준이며, 30일 만료만의 확정 집계는 아닙니다.</p>
+    <p style={{fontSize:12,color:"#68748a"}}>미래 만료 초대장은 삭제 큐가 없어도 정상입니다. 삭제 큐는 만료 시각 이후 배치에서 생성됩니다. 만료 후 확인 필요는 실제 장애 확정이 아니며, 배치 실행·DB 삭제 감사 기록과 대조해야 합니다. 발행 중 정책 제외 {schedule?.excluded??"-"}건 · 날짜 불일치 {schedule?.issues?.dueMismatch??"-"}건 · 중복 {schedule?.issues?.duplicate??"-"}건.</p>
     <details style={{marginTop:15,padding:"12px 14px",border:"1px solid #dfe4ee",borderRadius:10}}>
-      <summary style={{cursor:"pointer",fontWeight:700,fontSize:14}}>삭제 예약 8건 등 개별 진단 보기 (조회 전용)</summary>
-      <p style={{fontSize:12,color:"#68748a"}}>현재 발행 상태인 초대장만 표시합니다. 생성일은 발행일과 다를 수 있습니다. 초대장 생성·수정 시각과 예약 상태를 비교합니다. 수정 이전 데이터인지 추정할 수 있지만, 정확한 배포 전후 판정에는 수정 코드 배포 시각이 필요합니다.</p>
+      <summary style={{cursor:"pointer",fontWeight:700,fontSize:14}}>만료 일정 개별 현황 보기 (조회 전용)</summary>
+      <p style={{fontSize:12,color:"#68748a"}}>현재 발행 중인 자동삭제 대상만 표시합니다. 만료 전 예약 없음은 정상입니다. 생성일은 발행일과 다를 수 있습니다. 수정 이전 데이터인지 추정할 수 있지만, 정확한 배포 전후 판정에는 수정 코드 배포 시각이 필요합니다.</p>
       <div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:820}}>
         <thead><tr>{["초대장 ID","현재 상태","생성일","마지막 수정","행사일","삭제 예정일","예약 상태"].map(label=><th key={label} style={cell}>{label}</th>)}</tr></thead>
         <tbody>{(schedule?.details||[]).map(row=><tr key={row.eventId}>
           <td style={cell} title={row.eventId}>{row.eventId.slice(0,8)}… <button type="button" onClick={()=>navigator.clipboard?.writeText(row.eventId)} style={{fontSize:11}}>복사</button></td>
           <td style={cell}><strong style={{color:"#226a4c"}}>{row.currentStatus==="published"?"발행 완료":"상태 확인"}</strong></td><td style={cell}>{date(row.createdAt)}</td><td style={cell}>{date(row.updatedAt)}</td>
           <td style={cell}>{date(row.startsAt)}</td><td style={cell}>{date(row.expectedDueAt)}</td>
-          <td style={cell}>{({normal:"정상",missing:"예약 없음",duplicate:"중복 예약",dueMismatch:"예정일 불일치",invalidDate:"행사일 없음"})[row.reason]||"확인 필요"}</td>
+          <td style={cell}>{({waiting:"만료 대기 (정상)",queued:"삭제 큐 등록",overdueReview:"만료 후 확인 필요",duplicate:"중복 예약",dueMismatch:"예정일 불일치",invalidDate:"행사일 없음"})[row.reason]||"확인 필요"}</td>
         </tr>)}</tbody>
       </table></div>
     </details>
