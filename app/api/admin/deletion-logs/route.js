@@ -103,7 +103,7 @@ export async function GET(request) {
     const published=[];
     for(let start=0;;start+=500){
       const {data:chunk,error:publishedError}=await db.from("events")
-        .select("id,starts_at,service_expires_at,retention_v2,retention_delete_eligible")
+        .select("id,starts_at,created_at,updated_at,service_expires_at,retention_v2,retention_delete_eligible")
         .eq("status","published").range(start,start+499);
       if(publishedError)throw Object.assign(new Error("published invitation query failed"),{queryStage:"published",dbCode:publishedError.code,dbMessage:publishedError.message});
       published.push(...chunk);
@@ -123,20 +123,28 @@ export async function GET(request) {
     for(const job of scheduled){const rows=schedulesByEvent.get(job.event_id)||[];rows.push(job);schedulesByEvent.set(job.event_id,rows);}
     const scheduleIssues={missing:0,duplicate:0,dueMismatch:0,invalidDate:0};
     let validSchedule=0;
+    const scheduleDetails=[];
     for(const event of eligiblePublished){
       const rows=schedulesByEvent.get(event.id)||[];
       const expected=invitationDeletionTime({...event,status:"published"});
-      if(expected===null){scheduleIssues.invalidDate++;continue;}
-      if(rows.length===0){scheduleIssues.missing++;continue;}
-      if(rows.length>1){scheduleIssues.duplicate++;continue;}
-      if(Date.parse(rows[0].due_at)!==expected){scheduleIssues.dueMismatch++;continue;}
-      validSchedule++;
+      let reason="normal";
+      if(expected===null){scheduleIssues.invalidDate++;reason="invalidDate";}
+      else if(rows.length===0){scheduleIssues.missing++;reason="missing";}
+      else if(rows.length>1){scheduleIssues.duplicate++;reason="duplicate";}
+      else if(Date.parse(rows[0].due_at)!==expected){scheduleIssues.dueMismatch++;reason="dueMismatch";}
+      else validSchedule++;
+      scheduleDetails.push({
+        eventId:event.id,createdAt:event.created_at,updatedAt:event.updated_at,
+        startsAt:event.starts_at,expectedDueAt:expected===null?null:new Date(expected).toISOString(),
+        bookedDueAt:rows.length===1?rows[0].due_at:null,
+        bookingStatus:rows.length===1?rows[0].status:null,reason
+      });
     }
     const scheduleSummary={
       published:published.length,eligible:eligiblePublished.length,
       excluded:published.length-eligiblePublished.length,
       scheduled:validSchedule,missingOrMismatch:eligiblePublished.length-validSchedule,
-      issues:scheduleIssues
+      issues:scheduleIssues,details:scheduleDetails
     };
     // Live read-only Storage verification, scoped to the current completed-deletion page.
     const completedAudits=auditPage.filter(row=>row.outcome==="completed");
