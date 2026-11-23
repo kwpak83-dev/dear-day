@@ -97,6 +97,35 @@ export async function GET(request) {
         }
       } catch {}
     }));
+    // Current published invitation / retention schedule reconciliation.
+    // Query each source independently: matching totals alone do not prove matching event IDs.
+    const published=[];
+    for(let start=0;start<10000;start+=500){
+      const {data:chunk,error:publishedError}=await db.from("events")
+        .select("id,starts_at,service_expires_at,retention_v2,retention_delete_eligible")
+        .eq("status","published").range(start,start+499);
+      if(publishedError)throw Object.assign(new Error("published invitation query failed"),{queryStage:"published",dbCode:publishedError.code,dbMessage:publishedError.message});
+      published.push(...chunk);
+      if(chunk.length<500)break;
+    }
+    const eligiblePublished=published.filter(row=>row.retention_v2===true&&row.retention_delete_eligible===true);
+    const scheduled=[];
+    for(let start=0;start<10000;start+=500){
+      const {data:chunk,error:scheduleError}=await db.from("invitation_deletion_jobs")
+        .select("event_id,due_at,status").in("event_id",eligiblePublished.length?eligiblePublished.map(row=>row.id):["00000000-0000-0000-0000-000000000000"])
+        .range(start,start+499);
+      if(scheduleError)throw Object.assign(new Error("deletion schedule query failed"),{queryStage:"schedule",dbCode:scheduleError.code,dbMessage:scheduleError.message});
+      scheduled.push(...chunk);
+      if(chunk.length<500)break;
+    }
+    const schedulesByEvent=new Map();
+    for(const job of scheduled){const rows=schedulesByEvent.get(job.event_id)||[];rows.push(job);schedulesByEvent.set(job.event_id,rows);}
+    const validSchedule=eligiblePublished.filter(event=>{
+      const rows=schedulesByEvent.get(event.id)||[];
+      const expected=event.service_expires_at;
+      return rows.length===1&&Boolean(expected)&&Date.parse(rows[0].due_at)===Date.parse(expected);
+    }).length;
+    const scheduleSummary={published:published.length,eligible:eligiblePublished.length,scheduled:validSchedule,missingOrMismatch:eligiblePublished.length-validSchedule};
     // Live read-only Storage verification, scoped to the current completed-deletion page.
     const completedAudits=auditPage.filter(row=>row.outcome==="completed");
     const verifiedIds=[...new Set(completedAudits.map(row=>row.event_id).filter(Boolean))];
@@ -117,7 +146,7 @@ export async function GET(request) {
       photoJobs:photoByEvent.get(row.event_id)||{total:null,done:null}
     }));
     return Response.json({
-      photoVerifications,verifiedAt:new Date().toISOString(),
+      photoVerifications,scheduleSummary,verifiedAt:new Date().toISOString(),
       runs,runLogsAvailable,uploadReservationsEnabled:process.env.INVITATION_UPLOAD_RESERVATIONS_READY==="true",
       audits:auditPage.map(x=>({...x,created_at:auditTime(x),loginEmail:emailByOwner.get(x.owner_id)||null,userName:nameByOwner.get(x.owner_id)||null})),auditTotal,
       jobs:(j.data||[]).map(({last_error,...job})=>({...job,loginEmail:emailByOwner.get(job.owner_id)||null,userName:nameByOwner.get(job.owner_id)||null,event_title:auditByEvent.get(job.event_id)?.event_title||null,event_starts_at:auditByEvent.get(job.event_id)?.event_starts_at||null,errorFlag:Boolean(last_error)})),
