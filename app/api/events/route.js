@@ -351,6 +351,9 @@ export async function POST(request) {
   if (publish && !["draft", "paid", "published"].includes(existing.status)) return json({ error: "현재 상태에서는 초대장을 발행할 수 없어요." }, 409);
   // First publication consumes a credit and publishes atomically in PostgreSQL.
   if (publish && existing.status !== "published") {
+    if (!startsAt || new Date(startsAt).getTime() <= Date.now()) {
+      return json({ error: "행사 날짜와 시간이 이미 지났어요. 미래 날짜와 시간으로 변경한 후 발행해 주세요.", code: "PAST_EVENT_DATE" }, 400);
+    }
     const dates = calculateRetentionDates(startsAt);
     if (!dates) return json({ error: "행사 날짜와 시간을 확인해 주세요." }, 400);
     const { data: result, error: publishError } = await supabase.rpc("credit_publish_invitation", {

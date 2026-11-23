@@ -1,4 +1,16 @@
 "use client";
+const EVENT_DATE_WARNING = "행사 날짜와 시간이 이미 지났어요. 미래 날짜와 시간으로 변경한 후 발행해 주세요.";
+const todayInKorea = () => {
+  const parts = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date());
+  const part = type => parts.find(item => item.type === type)?.value;
+  return `${part("year")}-${part("month")}-${part("day")}`;
+};
+const isPastEventStart = (date, time) => {
+  if (!date || !time) return false;
+  const start = new Date(`${date}T${time}:00+09:00`).getTime();
+  return Number.isFinite(start) && start <= Date.now();
+};
+
 import { isEventReadOnly } from "../../lib/invitation-retention";
 import CreditBalance from "../../components/credit-balance";
 import { HERO_FONTS } from "../../lib/hero-fonts";
@@ -1199,6 +1211,21 @@ export default function CreateInvitation() {
         </div>
       </Field>;
     }
+    if (field.key === "date") {
+      const today = todayInKorea();
+      const pastSavedDate = invitation.date && invitation.date < today;
+      return <Field key={field.key} label={field.label} fieldKey="date">
+        <input type="date" min={today} value={invitation.date || ""} onChange={event => {
+          const nextDate = event.target.value;
+          if (nextDate && nextDate < todayInKorea()) {
+            showSavedToast("오늘 이전 날짜는 선택할 수 없어요.", { validation: true });
+            return;
+          }
+          update("date", nextDate);
+        }} />
+        {pastSavedDate && <p role="alert" style={{ color: "#c3483e", fontSize: 12, margin: "6px 0 0" }}>오늘 이전 날짜는 선택할 수 없어요. 행사 날짜를 변경해 주세요.</p>}
+      </Field>;
+    }
     if (field.key === "birthDate") return <BirthDateField key={field.key} label={field.label} value={invitation.birthDate || ""} onChange={value => update("birthDate", value)} />;
     if (field.type === "venue") return <div key={field.key}><Field label={field.label || "장소명"} fieldKey="venue"><div className="place-search"><input placeholder="웨딩홀, 식당, 회사, 행사장 등을 검색하세요" value={invitation.venue || ""} onChange={(e) => update("venue", e.target.value)} onCompositionEnd={(e) => commitTextInput("venue", e)} onBlur={(e) => commitTextInput("venue", e)} onKeyDown={(e) => e.key === "Enter" && !e.nativeEvent.isComposing && e.keyCode !== 229 && (e.preventDefault(), searchPlaces())} /><button type="button" onClick={searchPlaces}>{searching ? "검색 중" : "검색"}</button></div></Field>{placeResults.length > 0 && <div className="place-results"><div className="place-results-heading"><strong>검색 결과</strong><span>{placeResults.length}건</span></div><div className="place-results-list">{placeResults.map((place) => <button className="place-result-option" type="button" key={[place.mapx, place.mapy, place.title].join("-")} onClick={() => selectPlace(place)}><span className="place-result-pin" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a86c60" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg></span><span className="place-result-details"><strong>{place.title.replace(/<[^>]+>/g, "")}</strong><span>{place.roadAddress || place.address}</span></span><span className="place-result-chevron" aria-hidden="true">›</span></button>)}</div><p className="place-search-guide">원하는 장소가 없다면 지역명을 함께 입력해 검색해 주세요.</p></div>}<Field label="기본주소" fieldKey="venueAddress"><div className="place-search"><input placeholder="도로명주소를 입력하세요" value={invitation.venueAddress || ""} onChange={(e) => update("venueAddress", e.target.value)} onCompositionEnd={(e) => commitTextInput("venueAddress", e)} onBlur={(e) => commitTextInput("venueAddress", e)} onKeyDown={(e) => e.key === "Enter" && !e.nativeEvent.isComposing && e.keyCode !== 229 && (e.preventDefault(), geocodeAddress(e.currentTarget.value))} /><button type="button" onClick={() => geocodeAddress(invitation.venueAddress)}>검색</button></div></Field><Field label="상세주소"><input placeholder="동·호수, 층, 홀 이름 등을 입력하세요" value={invitation.venueDetail || ""} onChange={(e) => update("venueDetail", e.target.value)} onCompositionEnd={(e) => commitTextInput("venueDetail", e)} onBlur={(e) => commitTextInput("venueDetail", e)} /></Field>{invitation.venueAddress && <div className="venue-address"><span>{[invitation.venueAddress, invitation.venueBuilding, invitation.venueDetail].filter(Boolean).join(" ")}</span><button type="button" onClick={copyAddress}>{addressCopied ? "복사됨" : "주소 복사"}</button></div>}<div className="venue-map"><div ref={setMapContainer} className="venue-map-canvas" /><div className="venue-map-bottom"><span>{mapClientId ? mapNotice : "지도 연결을 준비 중이에요."}</span></div></div>{transportMatrix.state !== "none" && <div className="form-section"><div className="dd-share-card-heading"><div><h2>🚗 {transportMatrix.label}</h2><p>교통 및 주차 안내를 설정해요.</p>{transportNotice && <p role="status" aria-live="polite">{transportNotice}</p>}</div><label className="dd-share-switch"><input type="checkbox" checked={transportMatrix.state === "required" || invitation.transportGuideEnabled === true} disabled={transportMatrix.state === "required"} onChange={event => update("transportGuideEnabled", event.target.checked)} aria-label={transportMatrix.label + " 사용"} /><span className="dd-share-switch-track" aria-hidden="true" /></label></div>{(transportMatrix.state === "required" || invitation.transportGuideEnabled === true) && <div className="dd-transport-guide-editor">{[["transportPublicEnabled","transportPublic","🚇 대중교통","지하철·버스 등 대중교통 이용 방법을 입력하세요."],["transportCarEnabled","transportCar","🚙 자가용 이용 시","자가용 이용 시 찾아오는 방법을 입력하세요."],["transportParkingEnabled","transportParking","🅿️ 주차 안내","주차 위치·무료 주차 시간 등을 입력하세요."]].map(([enabledKey,valueKey,label,placeholder])=><div className="dd-transport-guide-editor-item" key={enabledKey}><label className="dd-transport-guide-item-toggle"><input type="checkbox" checked={invitation[enabledKey] === true} onChange={event => update(enabledKey,event.target.checked)} /> {label}</label>{invitation[enabledKey] === true && <TransportAutoTextarea placeholder={placeholder} value={invitation[valueKey] || ""} onChange={value => update(valueKey, value)} />}</div>)}</div>}</div>}</div>;
     if (field.type === "textarea") {
@@ -1446,6 +1473,20 @@ export default function CreateInvitation() {
     window.location.assign(`/?login=required&returnUrl=${encodeURIComponent(returnPath)}`);
   };
   const validateForPublish = () => {
+    if (isPastEventStart(invitation.date, invitation.time) || (invitation.date && invitation.date < todayInKorea())) {
+      setFlowNotice(EVENT_DATE_WARNING);
+      showSavedToast(EVENT_DATE_WARNING, { validation: true });
+      if (previewOpen) closePreview();
+      setEditorStep(0);
+      window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+        const target = document.querySelector('[data-field-key="date"]');
+        if (!target) return;
+        let ancestor = target.closest("details");
+        while (ancestor) { ancestor.open = true; ancestor = ancestor.parentElement?.closest("details"); }
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+      }));
+      return false;
+    }
     const unfilledPhotoSlots = activePhotoSlots.filter(layer => !invitation.heroSlotPhotos?.[layer.id]);
     if (unfilledPhotoSlots.length) {
       const message = `HERO 사진 ${unfilledPhotoSlots.length}장을 더 등록해 주세요.`;
@@ -1513,6 +1554,7 @@ export default function CreateInvitation() {
   };
   const publish = async () => {
     if (submitting || photoBusy.current || galleryBusy || eventStatus === "published") return;
+    if (!validateForPublish()) return;
     setSubmitting("publish");
     setFlowNotice("");
     try {
