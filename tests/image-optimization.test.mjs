@@ -22,7 +22,7 @@ const source=(await readFile(new URL("../app/api/notice-photo/route.js",import.m
 test("isolated notice HTTP handler preserves MIME/extensions, rejects mismatch, and reports WebP retry signal",async()=>{
   const uploads=[];let fail=false;
   const db={auth:{getUser:async()=>({data:{user:{id:owner}}})},from(){const q={select:()=>q,eq:()=>q,maybeSingle:async()=>({data:{id:event}})};return q;},storage:{from:()=>({upload:async(path,bytes,options)=>{uploads.push({path,options});return {error:fail?{message:"fixture"}:null};},getPublicUrl:path=>({data:{publicUrl:`https://fixture.test/${path}`}})})}};
-  const handler=runInNewContext(source+'\nPOST',{Buffer,URL,Response,randomUUID:()=>id,createClient:()=>db,reserveUploadIfEnabled:async()=>({enabled:false}),finishReservedUpload:async()=>true,process:{env:{NEXT_PUBLIC_SUPABASE_URL:"https://fixture.test",SUPABASE_SERVICE_ROLE_KEY:"fixture"}}});
+  const handler=runInNewContext(source+'\nPOST',{Buffer,URL,Response,randomUUID:()=>id,createClient:()=>db,reserveUpload:async()=>({id:"fixture-reservation"}),finishReservedUpload:async()=>true,process:{env:{NEXT_PUBLIC_SUPABASE_URL:"https://fixture.test",SUPABASE_SERVICE_ROLE_KEY:"fixture"}}});
   const request=(mime,bytes)=>new Request('https://fixture.test/api/notice-photo',{method:'POST',headers:{authorization:'Bearer fixture','x-event-slug':'fixture-slug','content-type':mime},body:bytes});
   for(const [mime,bytes,ext]of [["image/jpeg",Buffer.from([255,216,255,0]),"jpg"],["image/webp",Buffer.from("RIFF0000WEBP"),"webp"]]){
     const response=await handler(request(mime,bytes));assert.equal(response.status,200);
@@ -72,7 +72,7 @@ test("browser measures real canvas encoders without contacting Storage",{skip:pr
       const share=await image(await api.prepareKakaoSharePhoto(normal));check(share.width===1200&&share.height===600,'Kakao ratio');
       canvas.width=32;canvas.height=32;const tiny=new File([await new Promise(r=>canvas.toBlob(r,'image/png'))],'tiny.png',{type:'image/png'});check((await api.optimizeHeroImageWithReport(tiny)).file===tiny,'small original');
       let rejected=false;try{await api.preparePhoto(new File([new Uint8Array(15*1024*1024+1)],'huge.png',{type:'image/png'}))}catch{rejected=true}check(rejected,'input limit');
-      const calls=[];const upload=new Function('prepareHeroPhoto','fetch','uploadEventSlug','return ('+editor.trim().replace(/;$/,'')+')')(async()=>({photo:new Blob(['w'],{type:'image/webp'}),jpeg:new Blob(['j'],{type:'image/jpeg'}),format:'webp'}),async(_,o)=>{calls.push(o.headers['Content-Type']);return calls.length===1?Response.json({error:'WEBP_UPLOAD_FAILED'},{status:500}):Response.json({url:'https://fixture.test/photo.jpg'})},async()=>'fixture');
+      const calls=[];const upload=new Function('prepareHeroPhoto','fetch','ensureEventSlugForUpload','return ('+editor.trim().replace(/;$/,'')+')')(async()=>({photo:new Blob(['w'],{type:'image/webp'}),jpeg:new Blob(['j'],{type:'image/jpeg'}),format:'webp'}),async(_,o)=>{calls.push(o.headers['Content-Type']);return calls.length===1?Response.json({error:'WEBP_UPLOAD_FAILED'},{status:500}):Response.json({url:'https://fixture.test/photo.jpg'})},async()=>'fixture');
       check(await upload(normal,{access_token:'fixture'})==='https://fixture.test/photo.jpg','JPEG retry');check(calls.join(',')==='image/webp,image/jpeg','retry MIME');check(urls.size===0,'object URL cleanup');
       return {rows,normal:n,kakao:share,retry:calls,objectURLs:urls.size};
     },{prepare,hero,body,sample,editor});

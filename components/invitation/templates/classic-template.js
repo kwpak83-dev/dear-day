@@ -134,7 +134,7 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
       <ClassicHeading eyebrow="PLACE">{wedding ? "오시는 길" : "오시는 길"}</ClassicHeading>
       <div className="classic-information-body">
         {venue && <strong>{venue}</strong>}
-        {address && <p>{splitVenueAddress ? <>{addressMatch[1]}<br /><span style={{display:"inline-block",paddingLeft:16}}>{venue}</span></> : address}</p>}
+        {address && <p>{splitVenueAddress ? <>{addressMatch[1]}<br />{venue}</> : address}</p>}
         {addressDetail && <p className="classic-address-detail" style={splitVenueAddress ? {paddingLeft:16} : undefined}>{addressDetail}</p>}
         {placeActions}
       </div>

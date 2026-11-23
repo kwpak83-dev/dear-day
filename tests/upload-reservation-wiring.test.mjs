@@ -8,7 +8,7 @@ test("all editor photo/BGM POST calls supply event slug",async()=>{
   const calls=[...src.matchAll(/fetch\("\/api\/(photos|bgm-upload)"\s*,\s*\{[\s\S]*?\}\)/g)]
     .filter(m=>/method\s*:\s*"POST"/.test(m[0]));
   assert.ok(calls.length >= 3,"expected shared photo upload, HERO upload and BGM upload calls");
-  for(const call of calls)assert.match(call[0],/"X-Event-Slug"\s*:\s*await uploadEventSlug\(\)/);
+  for(const call of calls)assert.match(call[0],/"X-Event-Slug"\s*:\s*(?:await (?:uploadEventSlug|ensureEventSlugForUpload)\(\)|slug)/);
 });
 test("gallery reserves in DB before sending Storage bytes",async()=>{
   const route=await read("app/api/gallery/route.js");
@@ -19,13 +19,17 @@ test("gallery reserves in DB before sending Storage bytes",async()=>{
 test("photo, notice and BGM uploads reserve before upload and finalize after",async()=>{
   for(const path of ["app/api/photos/route.js","app/api/notice-photo/route.js","app/api/bgm-upload/route.js"]){
     const src=await read(path);
-    assert.ok(src.indexOf("reserveUploadIfEnabled(")<src.indexOf(".upload(path"),path);
+    const reserve = path.includes("bgm") ? "reserveUploadIfEnabled(" : "reserveUpload(";
+    assert.ok(src.indexOf(reserve)>=0 && src.indexOf(reserve)<src.indexOf(".upload(path"),path);
     assert.ok(src.indexOf(".upload(path")<src.indexOf("finishReservedUpload("),path);
   }
 });
-test("reservation feature is opt-in, physical deletion stays disabled",async()=>{
+test("only the BGM path uses opt-in reservations; photo uploads require them",async()=>{
   const helper=await read("lib/invitation-upload-reservation.js");
   assert.match(helper,/INVITATION_UPLOAD_RESERVATIONS_READY !== "true"/);
+  for(const path of ["app/api/photos/route.js","app/api/notice-photo/route.js","app/api/gallery/route.js"]) {
+    assert.doesNotMatch(await read(path), /reserveUploadIfEnabled|INVITATION_UPLOAD_RESERVATIONS_READY/);
+  }
   assert.doesNotMatch(helper,/\.remove\s*\(/);
 });
 
@@ -41,7 +45,7 @@ test("manual and scheduled deletion both collect reservation rows",async()=>{
   assert.match(sql,/where event_id=p_event and owner_id=p_owner/);
   assert.match(sql,/where event_id=v_event\.id and owner_id=v_event\.owner_id/);
 });
-test("first upload saves an event when the client opt-in is enabled",async()=>{
+test("first photo upload can save an event without the BGM opt-in",async()=>{
   const helper=await read("lib/invitation-upload-reservation.js");
   assert.match(helper,/x-event-slug/);
   assert.match(helper,/초대장을 먼저 임시저장/);

@@ -89,10 +89,6 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
     const files = Array.from(event.target.files || []);
     event.target.value = "";
     if (!files.length || !loaded) return;
-    // Reject the entire selection before decoding, reserving rows or uploading any bytes.
-    if (photos.length + pending + files.length > LIMIT) {
-      setNotice(`갤러리에는 최대 20장까지 등록할 수 있어요. 현재 ${photos.length + pending}장이 등록 또는 처리 중이에요.`); return;
-    }
     if (!start()) return;
     const targetSlug = slug;
     const errors = [];
@@ -102,7 +98,8 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
     setFailures([]);
     try {
       const prepared = [];
-      const known = new Set(photos.map(photo => photo.hash));
+      const known = new Map(photos.map(photo => [photo.hash, photo.id]));
+      const selected = new Set();
       const missingThumbnails = new Set(photos.filter(photo => !photo.thumbnailUrl).map(photo => photo.hash));
       for (let index = 0; index < files.length; index++) {
         setProgress({ label: "사진 준비 중", done: index, total: files.length });
@@ -110,30 +107,36 @@ export default function GalleryEditor({ slug, disabled, onSaveInvitation, onBusy
           const blob = await preparePhoto(files[index], { maxSide: 1400, quality: 0.78 });
           const digest = await crypto.subtle.digest("SHA-256", await blob.arrayBuffer());
           const hash = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, "0")).join("");
-          if (known.has(hash)) {
-            if(missingThumbnails.delete(hash))prepared.push({blob,hash,name:files[index].name});
-            else duplicates++;
+          if (selected.has(hash)) {
+            duplicates++;
             continue;
           }
-          known.add(hash); prepared.push({ blob, hash, name: files[index].name });
+          selected.add(hash);
+          prepared.push({ blob, hash, name: files[index].name });
         } catch (error) { errors.push(`${files[index].name}: ${error.message}`); }
       }
       if (prepared.length) {
-        const { reservations } = await request("POST", { hashes: prepared.map(photo => photo.hash) }, undefined, targetSlug);
+        const newHashes = prepared.filter(photo => !known.has(photo.hash)).map(photo => photo.hash);
+        if (newHashes.length && photos.length + pending + newHashes.length > LIMIT) {
+          setNotice(`갤러리에는 최대 20장까지 등록할 수 있어요. 현재 ${photos.length + pending}장이 등록 또는 처리 중이에요.`);
+          return;
+        }
+        const { reservations } = newHashes.length
+          ? await request("POST", { hashes: newHashes }, undefined, targetSlug)
+          : { reservations: [] };
         for (let index = 0; index < prepared.length; index++) {
           const photo = prepared[index];
           setProgress({ label: "사진 업로드 중", done: index, total: prepared.length });
-          const reservation = reservations.find(row => row.hash === photo.hash);
+          const knownId = known.get(photo.hash);
+          const reservation = knownId ? { id: knownId, state: "ready" } : reservations.find(row => row.hash === photo.hash);
           try {
             if (!reservation || ["uploading", "deleting"].includes(reservation.state)) throw new Error("이 사진을 처리 중이에요. 잠시 후 새로고침해 주세요.");
-            if (reservation.state === "ready") {
-              duplicates++;
+            const result = await request("PUT", photo.blob, reservation.id, targetSlug);
+            if (!knownId || missingThumbnails.has(photo.hash)) {
               try { await uploadThumbnail(photo.blob,reservation.id,targetSlug); } catch { thumbnailFailures++; }
-              continue;
             }
-            await request("PUT", photo.blob, reservation.id, targetSlug);
-            try { await uploadThumbnail(photo.blob,reservation.id,targetSlug); } catch { thumbnailFailures++; }
-            added++;
+            if (result.duplicate) duplicates++;
+            else added++;
           } catch (error) { errors.push(`${photo.name}: ${error.message}`); }
         }
       }

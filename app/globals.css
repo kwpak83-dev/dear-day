@@ -2391,13 +2391,16 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .classic-information-body>strong,
 .modern-information-body>strong,
 .romantic-information>strong{
-  width:min(100%,280px);
+  --dd-place-venue-max-width:280px;
+  max-width:var(--dd-place-venue-max-width);
   margin-left:auto;
   margin-right:auto;
   box-sizing:border-box;
-  text-align:center;
   overflow-wrap:break-word;
   word-break:keep-all;
+}
+:is(.classic-information-body,.modern-information-body,.romantic-information) > :is(strong,p:not(.dd-address-detail,.classic-address-detail)){
+  text-align:center;
 }
 .dd-address-detail{white-space:pre-wrap;}
 
@@ -4202,9 +4205,17 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
   padding-bottom:max(0px,var(--dd-section-place-bottom,0px));
 }
 /* Keep map's own layout untouched; adjust PLACE text inset only. */
-.dd-template-section-safe-area.dd-safe-enabled-place :is(.classic-information-body,.modern-information-body,.romantic-information) > :is(strong,p,.dd-address-detail) {
+.dd-template-section-safe-area.dd-safe-enabled-place :is(.classic-information-body,.modern-information-body,.romantic-information) > p {
   margin-left:var(--dd-section-place-left,0px);
   margin-right:var(--dd-section-place-right,0px);
+}
+/* Center the capped venue name in the same inset area as the address. */
+.dd-template-section-safe-area.dd-safe-enabled-place :is(.classic-information-body,.modern-information-body,.romantic-information) > strong {
+  --dd-place-left:var(--dd-section-place-left,0px);
+  --dd-place-right:var(--dd-section-place-right,0px);
+  --dd-place-extra:max(0px,(100% - var(--dd-place-left) - var(--dd-place-right) - var(--dd-place-venue-max-width)) / 2);
+  margin-left:calc(var(--dd-place-left) + var(--dd-place-extra));
+  margin-right:calc(var(--dd-place-right) + var(--dd-place-extra));
 }
 .dd-template-section-safe-area.dd-safe-enabled-gallery .invitation-gallery {
   padding-top:max(0px,var(--dd-section-gallery-top,0px));
@@ -5165,7 +5176,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 
 /* HERO frame picker: single large centered cover, with adjacent covers peeking in. */
-.create-page .dd-design-picker-dialog-hero{width:min(100%,760px);max-height:min(96dvh,980px)}
+.create-page .dd-design-picker-dialog-hero{width:min(100%,760px);height:min(90dvh,850px);max-height:min(96dvh,980px)}
 .create-page .dd-hero-carousel{--dd-hero-slide-width:min(64vw,340px);--dd-hero-slide-gap:14px;--dd-hero-slide-step:calc(var(--dd-hero-slide-width) + var(--dd-hero-slide-gap));display:flex;flex-direction:column;min-height:0;flex:1;padding:12px 0 16px;outline-offset:-3px}
 .create-page .dd-hero-carousel-window{position:relative;overflow:hidden;flex:1;min-height:0;width:100%;touch-action:pan-y;user-select:none}
 .create-page .dd-hero-carousel-track{position:absolute;top:0;bottom:0;left:0;display:flex;align-items:center;gap:var(--dd-hero-slide-gap);width:max-content;transition:transform .3s ease}

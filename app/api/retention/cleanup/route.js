@@ -3,6 +3,7 @@ import { withRetentionRunLog } from "../../../../lib/retention-run-log.mjs";
 import { timingSafeEqual } from "node:crypto";
 import { invitationDeletionTime } from "../../../../lib/invitation-retention";
 import { retentionTestScope } from "../../../../lib/retention-test-scope.mjs";
+import { reportExpiredInvitationPhotos } from "../../../../lib/scoped-invitation-storage-worker.mjs";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -40,23 +41,6 @@ async function required(query) {
   if (error) throw error;
   return data;
 }
-async function planFiles(db, event, url) {
-  const paths = collect({ cover: event.cover_image_url, settings: event.settings }, url, event.owner_id);
-  const media = await required(db.from("event_media").select("storage_path").eq("event_id", event.id));
-  for (const row of media) if (row.storage_path?.startsWith(event.owner_id + "/"))
-    paths.set(PHOTO + ":" + row.storage_path, { bucket: PHOTO, storage_path: row.storage_path });
-  for (const prefix of [`${event.owner_id}/notice/${event.id}`, `${event.owner_id}/gallery/${event.id}`]) {
-    for (let offset = 0; ; offset += 100) {
-      const files = await required(db.storage.from(PHOTO).list(prefix, { limit: 100, offset }));
-      for (const file of files) if (file.id) {
-        const path = prefix + "/" + file.name;
-        paths.set(PHOTO + ":" + path, { bucket: PHOTO, storage_path: path });
-      }
-      if (files.length < 100) break;
-    }
-  }
-  return [...paths.values()];
-}
 async function handleRetentionRequest(request) {
   const testEventId = retentionTestScope(request, process.env);
   if (testEventId === false || (!testEventId && !authorized(request))) return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -90,6 +74,7 @@ async function handleRetentionRequest(request) {
       .or(`status.in.(pending,retry),and(status.eq.processing,lease_expires_at.lt.${now})`)
       .order("due_at", { ascending: true }).limit(10);
     const jobs = await required(testEventId ? jobsQuery.eq("event_id", testEventId).is("events.paid_at", null) : jobsQuery);
+    const finalizedEvents = [];
     for (const job of jobs) {
       report.scanned++;
       try {
@@ -113,7 +98,9 @@ async function handleRetentionRequest(request) {
         const claimed = claims?.[0];
         if (!claimed) { report.skipped++; continue; }
         try {
-          const files = await planFiles(db, event, url);
+          // The RPC inventories Storage and photo ledgers under the event lock.
+          // Keep URLs from the current configuration as supplemental evidence.
+          const files = [...collect({ cover: event.cover_image_url, settings: event.settings }, url, event.owner_id).values()];
           // The RPC checks the current claim, locks the event, writes the file
           // ledger and audit, then deletes the DB event in ONE transaction.
           // Storage deletion is deliberately deferred to a separate, gated worker.
@@ -124,6 +111,7 @@ async function handleRetentionRequest(request) {
             p_files: files,
           }));
           if (finalized !== true) throw new Error("Deletion claim expired or event changed");
+          finalizedEvents.push(job.event_id);
           report.deleted++;
         } catch (error) {
           await required(db.rpc("retry_invitation_deletion_job", { p_job_id: job.id, p_claim_token: claimed.claim_token, p_error: String(error.message || error) }));
@@ -134,7 +122,7 @@ async function handleRetentionRequest(request) {
         report.errors.push({ eventId: job.event_id, error: String(error.message || error).slice(0, 180) });
       }
     }
-    return Response.json(report, { headers: { "Cache-Control": "no-store" } });
+    return Response.json({ ...report, ...await reportExpiredInvitationPhotos(db, finalizedEvents) }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("Retention cleanup worker failed", error);
     return Response.json({ error: "Retention cleanup worker failed" }, { status: 500 });

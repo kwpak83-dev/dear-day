@@ -125,7 +125,7 @@ test("API enforces owner and expiry, maps revision conflicts and returns missing
   }
 });
 
-test("wedding account groups match the invitation's couple and parent rows", async () => {
+test("wedding account groups include only the selected couple account", async () => {
   const { posterAccounts } = await import("../lib/poster-server.js");
   const settings = { groom: "신랑 이름", groomAccount: " 123 ", groomFatherAccount: "456",
     groomFatherName: "아버지 이름", groomMotherAccount: " ", brideAccount: "789" };
@@ -134,7 +134,6 @@ test("wedding account groups match the invitation's couple and parent rows", asy
   assert.deepEqual(posterAccounts(settings, config("optional"), "groom"), {
     groom: { label: "신랑 가족", rows: [
       { label: "신랑", number: "123", bank: "", holder: "신랑 이름" },
-      { label: "신랑 아버지", number: "456", bank: "", holder: "아버지 이름" },
     ] },
   });
   assert.equal(posterAccounts(settings, null, "bride").bride.rows.length, 1);
