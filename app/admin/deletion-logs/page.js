@@ -50,12 +50,37 @@ export default function DeletionLogsPage(){
     ["사진 삭제 검증 완료",verified,"현재 페이지 · Storage 잔여 0"]
   ];
   const runRows=(data?.runs||[]).filter(row=>["schedule","cleanup","storage-cleanup"].includes(row.task));
-  const runName={schedule:"만료 일정 확인",cleanup:"초대장 자동삭제","storage-cleanup":"사진·BGM 정리"};
-  const runCount=run=>{
+  const kstDay=value=>value?new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Seoul",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(value)):"";
+  const runNumber=run=>{
+    if(!run)return null;
     const v=run.result_summary||{};
-    const keys=run.task==="schedule"?[["검사",v.scanned],["등록",v.enrolled]]:run.task==="cleanup"?[["삭제",v.deleted]]:[["제거",v.removed]];
-    const exact=keys.filter(([,n])=>typeof n==="number");
-    return exact.length?exact.map(([label,n])=>label+" "+n+"건").join(" · "):"처리 "+run.processed_count+"건";
+    const field=run.task==="schedule"?"scanned":run.task==="cleanup"?"deleted":"removed";
+    return typeof v[field]==="number"?v[field]:typeof run.processed_count==="number"?run.processed_count:null;
+  };
+  const groupedRuns=new Map();
+  for(const run of runRows){
+    const day=kstDay(run.finished_at||run.started_at);
+    if(!day)continue;
+    if(!groupedRuns.has(day))groupedRuns.set(day,{day});
+    const group=groupedRuns.get(day);
+    // Newest execution of each task is representative; any failed attempt remains visible.
+    if(!group[run.task])group[run.task]=run;
+    if(run.http_status>=400||run.failed_count>0)group.hasFailure=true;
+  }
+  const dailyRuns=[...groupedRuns.values()].sort((a,b)=>b.day.localeCompare(a.day));
+  const taskResult=(run,verb)=>{
+    if(!run)return "기록 없음";
+    if(run.result_mode==="dry-run")return "모의 실행";
+    if(run.result_mode==="disabled")return "비활성";
+    const n=runNumber(run);
+    return n===null?"건수 확인 불가":n+"건 "+verb;
+  };
+  const dailyStatus=group=>{
+    if(group.hasFailure)return "오류 확인";
+    const tasks=["schedule","cleanup","storage-cleanup"].map(task=>group[task]);
+    if(tasks.some(run=>!run))return "기록 누락";
+    if(tasks.some(run=>run.result_mode==="dry-run"||run.result_mode==="disabled"))return "모의·비활성";
+    return "정상";
   };
   const byId=new Map(rows.map(row=>[row.eventId,row]));
   return <main style={{maxWidth:1100,margin:"28px auto",padding:"0 16px 60px",color:"#26375b"}}>
@@ -94,11 +119,18 @@ export default function DeletionLogsPage(){
       </table></div>
     </details>
     <h2 style={{fontSize:20,marginTop:30}}>매일 자동삭제 실행 이력</h2>
-    <div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:620}}>
-      <thead><tr>{["실행 일시","작업","처리 건수","결과"].map(label=><th key={label} style={cell}>{label}</th>)}</tr></thead>
-      <tbody>{runRows.map(run=><tr key={run.id}><td style={cell}>{date(run.finished_at)}</td><td style={cell}>{runName[run.task]}</td><td style={cell}>{runCount(run)}</td><td style={cell}>{run.http_status>=400||run.failed_count>0?"오류 확인":run.result_mode==="disabled"?"비활성":run.result_mode==="dry-run"?"모의 실행":"정상"}</td></tr>)}
-      {!loading&&!runRows.length&&<tr><td colSpan={4} style={cell}>조회된 실행 이력이 없습니다.</td></tr>}</tbody>
+    <div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:650}}>
+      <thead><tr>{["실행 날짜","만료 일정 확인","초대장 삭제","사진·BGM 정리","종합 결과"].map(label=><th key={label} style={cell}>{label}</th>)}</tr></thead>
+      <tbody>{dailyRuns.map(group=><tr key={group.day}>
+        <td style={cell}>{group.day}</td>
+        <td style={cell}>{taskResult(group.schedule,"검사")}</td>
+        <td style={cell}>{taskResult(group.cleanup,"삭제")}</td>
+        <td style={cell}>{taskResult(group["storage-cleanup"],"제거")}</td>
+        <td style={{...cell,color:dailyStatus(group)==="정상"?"#226a4c":"#b33b38",fontWeight:600}}>{dailyStatus(group)}</td>
+      </tr>)}
+      {!loading&&!dailyRuns.length&&<tr><td colSpan={5} style={cell}>조회된 실행 이력이 없습니다.</td></tr>}</tbody>
     </table></div>
+    <p style={{fontSize:12,color:"#7b8494",marginTop:8}}>한국시간 날짜별로 묶어 표시합니다. 같은 날 여러 번 실행한 경우 각 작업의 최신 실행 건수를 보여주며, 오류가 있었던 실행은 종합 결과에 반영합니다. 실행 기록이 없으면 정상으로 표시하지 않습니다.</p>
     <h2 style={{fontSize:20,marginTop:32}}>초대장 DB 삭제 기록 <small style={{fontSize:13,fontWeight:400}}>총 {data?.auditTotal??"-"}건</small></h2>
     <div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:620}}>
       <thead><tr>{["삭제 일시","초대장 제목","삭제 구분","결과"].map(label=><th key={label} style={cell}>{label}</th>)}</tr></thead>
