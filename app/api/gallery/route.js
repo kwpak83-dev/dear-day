@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { reserveUploadIfEnabled, finishReservedUpload } from "../../../lib/invitation-upload-reservation";
+import { reserveUpload, finishReservedUpload } from "../../../lib/invitation-upload-reservation";
 import { galleryContext, mutateGallery, readGallery, cleanupGallery, readPhotoBytes, photoForClient, GalleryError, GALLERY_BUCKET, MAX_PHOTO_BYTES } from "../../../lib/gallery-server";
 
 export const maxDuration = 60;
@@ -24,7 +24,6 @@ export const POST = handle(async (request, context) => {
 });
 
 async function verifyReadyUpload({ supabase, event, user }, row, hash) {
-  if (process.env.INVITATION_UPLOAD_RESERVATIONS_READY !== "true") return;
   const path = `${user.id}/gallery/${event.id}/${row.id}.jpg`;
   const unconfirmed = () => new GalleryError("사진 업로드 기록을 확인하지 못했어요. 같은 사진으로 다시 시도해 주세요.", 503);
   if (row.storage_path !== path) throw unconfirmed();
@@ -68,7 +67,7 @@ export const PUT = handle(async (request, context) => {
     const { error: createError } = await storage.createBucket(GALLERY_BUCKET, { public: true, fileSizeLimit: MAX_PHOTO_BYTES, allowedMimeTypes: ["image/jpeg", "image/webp"] });
     if (createError && !(await storage.getBucket(GALLERY_BUCKET)).data) throw new GalleryError("사진 저장 공간을 준비하지 못했어요.", 503);
   }
-  const reservation = await reserveUploadIfEnabled(context.supabase, context.user.id, request,
+  const reservation = await reserveUpload(context.supabase, context.user.id, request,
     GALLERY_BUCKET, row.storage_path, context.event.id);
   if (reservation.error) throw new GalleryError(reservation.error, reservation.status);
   const { error: uploadError } = await storage.from(GALLERY_BUCKET).upload(row.storage_path, bytes, { contentType: "image/jpeg", upsert: false });

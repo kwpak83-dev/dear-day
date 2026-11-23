@@ -22,7 +22,7 @@ const source=(await readFile(new URL("../app/api/notice-photo/route.js",import.m
 test("isolated notice HTTP handler preserves MIME/extensions, rejects mismatch, and reports WebP retry signal",async()=>{
   const uploads=[];let fail=false;
   const db={auth:{getUser:async()=>({data:{user:{id:owner}}})},from(){const q={select:()=>q,eq:()=>q,maybeSingle:async()=>({data:{id:event}})};return q;},storage:{from:()=>({upload:async(path,bytes,options)=>{uploads.push({path,options});return {error:fail?{message:"fixture"}:null};},getPublicUrl:path=>({data:{publicUrl:`https://fixture.test/${path}`}})})}};
-  const handler=runInNewContext(source+'\nPOST',{Buffer,URL,Response,randomUUID:()=>id,createClient:()=>db,reserveUploadIfEnabled:async()=>({enabled:false}),finishReservedUpload:async()=>true,process:{env:{NEXT_PUBLIC_SUPABASE_URL:"https://fixture.test",SUPABASE_SERVICE_ROLE_KEY:"fixture"}}});
+  const handler=runInNewContext(source+'\nPOST',{Buffer,URL,Response,randomUUID:()=>id,createClient:()=>db,reserveUpload:async()=>({id:"fixture-reservation"}),finishReservedUpload:async()=>true,process:{env:{NEXT_PUBLIC_SUPABASE_URL:"https://fixture.test",SUPABASE_SERVICE_ROLE_KEY:"fixture"}}});
   const request=(mime,bytes)=>new Request('https://fixture.test/api/notice-photo',{method:'POST',headers:{authorization:'Bearer fixture','x-event-slug':'fixture-slug','content-type':mime},body:bytes});
   for(const [mime,bytes,ext]of [["image/jpeg",Buffer.from([255,216,255,0]),"jpg"],["image/webp",Buffer.from("RIFF0000WEBP"),"webp"]]){
     const response=await handler(request(mime,bytes));assert.equal(response.status,200);

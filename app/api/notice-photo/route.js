@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { randomUUID } from "node:crypto";
-import { reserveUploadIfEnabled, finishReservedUpload } from "../../../lib/invitation-upload-reservation";
+import { reserveUpload, finishReservedUpload } from "../../../lib/invitation-upload-reservation";
 const fail = (error, status) => Response.json({ error }, { status });
 export async function POST(request) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -33,7 +33,7 @@ export async function POST(request) {
   const validWebp = bytes.length >= 12 && bytes.toString("ascii", 0, 4) === "RIFF" && bytes.toString("ascii", 8, 12) === "WEBP";
   if ((mime === "image/jpeg" && !validJpeg) || (mime === "image/webp" && !validWebp)) return fail("올바른 이미지가 아니에요.", 400);
   const path = `${user.id}/notice/${event.id}/${randomUUID()}.${mime === "image/webp" ? "webp" : "jpg"}`;
-  const reservation = await reserveUploadIfEnabled(supabase, user.id, request, "invitation-photos", path, event.id);
+  const reservation = await reserveUpload(supabase, user.id, request, "invitation-photos", path, event.id);
   if (reservation.error) return fail(reservation.error, reservation.status);
   const { error } = await supabase.storage.from("invitation-photos").upload(path, bytes, { contentType: mime, upsert: false });
   if (!(await finishReservedUpload(supabase, user.id, reservation, !error))) {

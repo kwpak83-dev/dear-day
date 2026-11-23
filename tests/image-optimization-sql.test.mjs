@@ -31,6 +31,8 @@ test("PGlite executes retention migrations and tests WebP claim ownership, reser
       await executeFile(db,new URL('./sql/'+file,import.meta.url));
     const sql=await readFile(new URL('../supabase/migrations/202611120004_notice_webp_cleanup_scope.sql',import.meta.url),'utf8');
     await db.exec(sql);await db.exec(sql);
+    const photoAuditSql=await readFile(new URL('../supabase/migrations/202611230001_audit_unqueued_photo_references.sql',import.meta.url),'utf8');
+    await db.exec(photoAuditSql);await db.exec(photoAuditSql);
     await db.exec("set request.jwt.claim.role='service_role'");
     const owner='88888888-8888-4888-8888-888888888888',event=randomUUID(),survivor=randomUUID();
     await db.query("insert into events(id,owner_id,kind,status,slug,title) values($1,$3,'wedding','draft',$4,'Image fixture'),($2,$3,'wedding','draft',$5,'Protected')",[event,survivor,owner,'image-'+event,'protected-'+survivor]);
@@ -54,5 +56,26 @@ test("PGlite executes retention migrations and tests WebP claim ownership, reser
     // The cleanup RPC does not remove bytes. Shared references and the survivor persist.
     assert.equal((await db.query('select count(*)::int n from events where id=$1',[survivor])).rows[0].n,1);
     assert.equal((await db.query("select has_function_privilege('authenticated','public.claim_scoped_invitation_storage_cleanup(bigint)','execute') allowed")).rows[0].allowed,false);
+
+    const expired = randomUUID();
+    await db.exec("update invitation_retention_creation_gate set enroll_new_events=true where singleton");
+    await db.query("insert into events(id,owner_id,kind,status,slug,title,updated_at) values($1,$2,'wedding','draft',$3,'Expired fixture',now()-interval '40 days')", [expired,owner,"expired-"+expired]);
+    const dedicated = `${owner}/photo/${expired}/${randomUUID()}.webp`;
+    const ledgerOnly = `${owner}/ledger-only.jpg`;
+    const sharedLedger = `${owner}/shared-ledger.jpg`;
+    await db.query("select finish_invitation_upload(reserve_invitation_upload($1,$2,'invitation-photos',$3),$2,true)", [expired,owner,dedicated]);
+    await db.query("insert into invitation_storage_object_references(event_id,bucket,storage_path) values($1,'invitation-photos',$3),($1,'invitation-photos',$4),($1,'invitation-photos',$5),($2,'invitation-photos',$5)", [expired,survivor,dedicated,ledgerOnly,sharedLedger]);
+    assert.equal((await db.query("select reconcile_invitation_deletion_schedule(array[$1::uuid]) count",[expired])).rows[0].count,1);
+    const job = (await db.query("select id from invitation_deletion_jobs where event_id=$1",[expired])).rows[0];
+    const claim = (await db.query("select claim_token from claim_invitation_deletion_job($1)",[job.id])).rows[0];
+    assert.equal((await db.query("select finalize_invitation_deletion($1,$2) ok",[job.id,claim.claim_token])).rows[0].ok,true);
+    const autoAudit = (await db.query("select details from invitation_deletion_audit where event_id=$1",[expired])).rows[0];
+    const snapshot = JSON.parse(autoAudit.details.split("\nPreserved photo references: ")[1]);
+    assert.deepEqual(snapshot.map(row=>row.path), [ledgerOnly,sharedLedger]);
+    assert.ok(snapshot.every(row=>row.reason==="reference_not_queued"));
+    const autoQueue = (await db.query("select storage_path from invitation_storage_cleanup_jobs where event_id=$1",[expired])).rows;
+    assert.deepEqual(autoQueue.map(row=>row.storage_path),[dedicated]);
+    assert.equal((await db.query("select count(*)::int n from invitation_storage_object_references where event_id=$1 and storage_path=$2",[survivor,sharedLedger])).rows[0].n,1);
+    assert.equal((await db.query("select count(*)::int n from events where id=$1",[expired])).rows[0].n,0);
   }finally{await db.close()}
 });

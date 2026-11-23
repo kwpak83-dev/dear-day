@@ -6,12 +6,12 @@ import { createClient } from "@supabase/supabase-js";
 
 const read = path => readFile(new URL(path, import.meta.url), "utf8");
 const helperSource = (await read("../lib/invitation-upload-reservation.js")).replaceAll("export ", "");
-const makeHelpers = new Function("process", `${helperSource}\nreturn { reserveUploadIfEnabled, finishReservedUpload };`);
+const makeHelpers = new Function("process", `${helperSource}\nreturn { reserveUpload, finishReservedUpload };`);
 const source = (await read("../app/api/gallery/route.js")).replace(/^import .*$/gm, "");
 const makeHandlers = new Function("dependencies", `
   const { createHash, galleryContext, mutateGallery, readGallery, cleanupGallery,
     readPhotoBytes, photoForClient, GalleryError, GALLERY_BUCKET, MAX_PHOTO_BYTES,
-    reserveUploadIfEnabled, finishReservedUpload, process } = dependencies;
+    reserveUpload, finishReservedUpload, process } = dependencies;
   ${source.replaceAll("export const", "const")}
   return { PUT, PATCH, DELETE };
 `);
@@ -43,6 +43,7 @@ function fixture({ enabled = true, published = false, ...options } = {}) {
         return response(match ? [{ id: reservation.id, status: reservation.status }] : []);
       }
       if (name === "reserve_invitation_upload") {
+        if (options.denyReservation) return response(null);
         const args = JSON.parse(request.body);
         reservation = existing("reserved", { event_id: args.p_event, owner_id: args.p_owner, bucket: args.p_bucket, storage_path: args.p_path });
         return response(reservation.id);
@@ -56,7 +57,12 @@ function fixture({ enabled = true, published = false, ...options } = {}) {
       }
       if (pathname === `/storage/v1/bucket/${bucket}`) return response({ id: bucket });
       if (pathname.endsWith(`/${bucket}/${path}`)) {
-        if (request.method === "POST") { calls.push("upload"); object = bytes; return response({ Key: path }); }
+        if (request.method === "POST") {
+          calls.push("upload");
+          if (options.uploadError) return Response.json({ message: "fixture upload failed" }, { status: 500 });
+          object = bytes;
+          return response({ Key: path });
+        }
         calls.push("download");
         return object ? new Response(object) : new Response(null, { status: 404 });
       }
@@ -123,6 +129,16 @@ test("T04 uploaded reservation preserves the duplicate response without a downlo
   assert.ok(!f.calls.includes("download") && !f.calls.includes("finish_invitation_upload"));
 });
 
+test("retry after losing the success response never uploads or reserves twice", async () => {
+  const f = fixture();
+  await f.call();
+  assert.equal((await (await f.call()).json()).duplicate, true);
+  assert.deepEqual(f.reservation, existing("uploaded"));
+  for (const name of ["reserve_invitation_upload", "upload", "finish_invitation_upload"]) {
+    assert.equal(f.calls.filter(call => call === name).length, 1);
+  }
+});
+
 for (const [name, options] of [
   ["T05 no reservation", {}],
   ["T06 different owner", { reservation: existing("reserved", { owner_id: event }) }],
@@ -157,10 +173,23 @@ test("T12/T13 reorder and deletion preserve the upload reservation", async () =>
   assert.deepEqual(f.calls, ["reorder", "delete", "cleanup"]);
 });
 
-test("T15 disabled reservation mode preserves the legacy duplicate response", async () => {
-  const f = fixture({ ready: true, enabled: false });
-  assert.equal((await (await f.call()).json()).duplicate, true);
-  assert.deepEqual(f.calls, ["event_media", "begin"]);
+test("photos still reserve when the BGM rollout flag is disabled", async () => {
+  const f = fixture({ enabled: false });
+  assert.equal((await f.call()).status, 200);
+  assert.deepEqual(f.reservation, existing("uploaded"));
+});
+
+test("reservation rejection blocks Storage upload", async () => {
+  const f = fixture({ denyReservation: true });
+  assert.equal((await f.call()).status, 409);
+  assert.ok(!f.calls.includes("upload"));
+});
+
+test("an unsuccessful Storage upload leaves the reservation unconfirmed", async () => {
+  const f = fixture({ uploadError: true });
+  assert.equal((await f.call()).status, 500);
+  assert.deepEqual(f.reservation, existing("reserved"));
+  assert.ok(!f.calls.includes("finish_invitation_upload"));
 });
 
 test("T16 persistent RPC failures remain retryable and return errors", async () => {

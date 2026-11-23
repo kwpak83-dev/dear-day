@@ -683,7 +683,7 @@ export default function CreateInvitation() {
       // WebP is optional: existing Supabase buckets may allow JPEG only.
       const prepared = await prepareHeroPhoto(file);
       const send = async (photo, mime) => {
-        const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": await uploadEventSlug(), "Content-Type": mime, Authorization: "Bearer " + session.access_token }, body: photo });
+        const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": await ensureEventSlugForUpload(), "Content-Type": mime, Authorization: "Bearer " + session.access_token }, body: photo });
         const result = await response.json().catch(() => ({}));
         return { response, result };
       };
@@ -711,7 +711,7 @@ export default function CreateInvitation() {
   const uploadEditorPhoto = async (file, session) => {
     const prepared = await prepareHeroPhoto(file);
     const send = async (body, mime) => {
-      const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": await uploadEventSlug(), "Content-Type": mime, Authorization: "Bearer " + session.access_token }, body });
+      const response = await fetch("/api/photos", { method: "POST", headers: { "X-Event-Slug": await ensureEventSlugForUpload(), "Content-Type": mime, Authorization: "Bearer " + session.access_token }, body });
       return { response, result: await response.json().catch(() => ({})) };
     };
     let { response, result } = await send(prepared.photo, prepared.format === "webp" ? "image/webp" : "image/jpeg");
@@ -816,7 +816,8 @@ export default function CreateInvitation() {
     finally { photoBusy.current = false; setUploadingPhoto(false); }
   };
   const kakaoSaveRevision = useRef(0);
-  const kakaoSaveBusy = useRef(false);
+  const kakaoSaveBusy = useRef(null);
+  const confirmedKakaoUpload = useRef(null);
   const uploadKakaoSharePhoto = (event) => {
     const file = event.target.files?.[0];
     event.target.value = "";
@@ -835,8 +836,10 @@ export default function CreateInvitation() {
     if (!kakaoCrop?.file) return;
     const revision = ++kakaoSaveRevision.current;
     const timer = window.setTimeout(async () => {
-      if (kakaoSaveBusy.current || photoBusy.current || submitting || galleryBusy) return;
-      kakaoSaveBusy.current = true;
+      if (kakaoSaveBusy.current) await kakaoSaveBusy.current;
+      if (revision !== kakaoSaveRevision.current || photoBusy.current || submitting || galleryBusy) return;
+      let release;
+      kakaoSaveBusy.current = new Promise(resolve => { release = resolve; });
       photoBusy.current = true;
       setUploadingPhoto(true);
       setKakaoSharePhotoNotice("공유 이미지 자동 저장 중...");
@@ -846,27 +849,38 @@ export default function CreateInvitation() {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) throw new Error("로그인 후 사진을 첨부할 수 있어요.");
         const photo = await prepareKakaoSharePhoto(kakaoCrop.file, 50, kakaoCropY);
-        const response = await fetch("/api/photos", {
-          method: "POST",
-          headers: { "X-Event-Slug": await uploadEventSlug(), "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token },
-          body: photo,
-        });
-        const result = await response.json().catch(() => ({}));
-        if (!response.ok || !result.url) throw new Error(result.error || "사진 업로드에 실패했어요.");
+        const slug = await ensureEventSlugForUpload();
+        const digest = await crypto.subtle.digest("SHA-256", await photo.arrayBuffer());
+        const hash = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, "0")).join("");
+        if (revision !== kakaoSaveRevision.current) return;
+        const cached = confirmedKakaoUpload.current;
+        let imageUrl = cached?.ownerId === session.user.id && cached.slug === slug && cached.hash === hash ? cached.url : null;
+        if (!imageUrl) {
+          const response = await fetch("/api/photos", {
+            method: "POST",
+            headers: { "X-Event-Slug": slug, "Content-Type": "image/jpeg", Authorization: "Bearer " + session.access_token },
+            body: photo,
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || !result.url) throw new Error(result.error || "사진 업로드에 실패했어요.");
+          imageUrl = result.url;
+          confirmedKakaoUpload.current = { ownerId: session.user.id, slug, hash, url: imageUrl };
+        }
         if (revision === kakaoSaveRevision.current) {
-          setInvitation(current => ({ ...current, kakaoShareImageUrl: result.url }));
+          setInvitation(current => ({ ...current, kakaoShareImageUrl: imageUrl }));
           setKakaoSharePhotoNotice("이미지 자동 저장 완료 · 초대장에 반영하려면 임시 저장 또는 수정사항 반영을 눌러 주세요.");
         }
       } catch (error) {
         if (revision === kakaoSaveRevision.current) setKakaoSharePhotoNotice(error.message || "공유 이미지 저장에 실패했어요.");
       } finally {
-        kakaoSaveBusy.current = false;
         photoBusy.current = false;
         setUploadingPhoto(false);
+        kakaoSaveBusy.current = null;
+        release();
       }
     }, 700);
     return () => window.clearTimeout(timer);
-  }, [kakaoCrop, kakaoCropY, submitting, galleryBusy]);
+  }, [kakaoCrop, kakaoCropY, eventSlug, submitting, galleryBusy]);
   const updateNotice = (key, value) => setInvitation(current => ({ ...current, notice: { ...normalizeNotice(current.notice), [key]: value } }));
   const [noticeUploadBusy, setNoticeUploadBusy] = useState(false);
   const [noticeUploadMessage, setNoticeUploadMessage] = useState("");
