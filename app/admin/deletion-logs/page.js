@@ -79,7 +79,7 @@ export default function DeletionLogsPage(){
         <div style={{fontSize:11,color:"#7b8494"}}>{description}</div>
       </div>)}
     </div>
-    <p style={{fontSize:12,color:"#68748a"}}>발행·예약 지표는 현재 전체 기준, 삭제 완료·사진 검증은 선택 기간의 현재 페이지 기준입니다. 삭제 완료 건수는 수동 삭제를 제외한 자동·기타 기록이며, 30일 만료만의 확정 집계는 아닙니다.</p>
+    <p style={{fontSize:12,color:"#68748a"}}>발행·예약 지표는 현재 전체 기준입니다. 예약 검증은 실제 자동삭제 배치와 동일한 행사일 + 30일(한국시간 00:00) 기준입니다. 발행 중 정책 제외 {schedule?.excluded??"-"}건 · 예약 없음 {schedule?.issues?.missing??"-"}건 · 날짜 불일치 {schedule?.issues?.dueMismatch??"-"}건 · 중복 {schedule?.issues?.duplicate??"-"}건 · 날짜 없음 {schedule?.issues?.invalidDate??"-"}건. 삭제 완료·사진 검증은 선택 기간의 현재 페이지 기준이며, 30일 만료만의 확정 집계는 아닙니다.</p>
     <h2 style={{fontSize:20,marginTop:30}}>매일 자동삭제 실행 이력</h2>
     <div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:620}}>
       <thead><tr>{["실행 일시","작업","처리 건수","결과"].map(label=><th key={label} style={cell}>{label}</th>)}</tr></thead>
