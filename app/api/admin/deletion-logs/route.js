@@ -1,3 +1,4 @@
+import { invitationDeletionTime } from "../../../../lib/invitation-retention";
 import { reportExpiredInvitationPhotos } from "../../../../lib/scoped-invitation-storage-worker.mjs";
 import { createClient } from "@supabase/supabase-js";
 export const dynamic = "force-dynamic";
@@ -110,22 +111,33 @@ export async function GET(request) {
     }
     const eligiblePublished=published.filter(row=>row.retention_v2===true&&row.retention_delete_eligible===true);
     const scheduled=[];
-    for(let start=0;start<10000;start+=500){
+    // Avoid oversized PostgREST IN filters. Read only jobs for current eligible events.
+    for(let i=0;i<eligiblePublished.length;i+=100){
+      const ids=eligiblePublished.slice(i,i+100).map(row=>row.id);
       const {data:chunk,error:scheduleError}=await db.from("invitation_deletion_jobs")
-        .select("event_id,due_at,status").in("event_id",eligiblePublished.length?eligiblePublished.map(row=>row.id):["00000000-0000-0000-0000-000000000000"])
-        .range(start,start+499);
+        .select("event_id,due_at,status").in("event_id",ids);
       if(scheduleError)throw Object.assign(new Error("deletion schedule query failed"),{queryStage:"schedule",dbCode:scheduleError.code,dbMessage:scheduleError.message});
       scheduled.push(...chunk);
-      if(chunk.length<500)break;
     }
     const schedulesByEvent=new Map();
     for(const job of scheduled){const rows=schedulesByEvent.get(job.event_id)||[];rows.push(job);schedulesByEvent.set(job.event_id,rows);}
-    const validSchedule=eligiblePublished.filter(event=>{
+    const scheduleIssues={missing:0,duplicate:0,dueMismatch:0,invalidDate:0};
+    let validSchedule=0;
+    for(const event of eligiblePublished){
       const rows=schedulesByEvent.get(event.id)||[];
-      const expected=event.service_expires_at;
-      return rows.length===1&&Boolean(expected)&&Date.parse(rows[0].due_at)===Date.parse(expected);
-    }).length;
-    const scheduleSummary={published:published.length,eligible:eligiblePublished.length,scheduled:validSchedule,missingOrMismatch:eligiblePublished.length-validSchedule};
+      const expected=invitationDeletionTime({...event,status:"published"});
+      if(expected===null){scheduleIssues.invalidDate++;continue;}
+      if(rows.length===0){scheduleIssues.missing++;continue;}
+      if(rows.length>1){scheduleIssues.duplicate++;continue;}
+      if(Date.parse(rows[0].due_at)!==expected){scheduleIssues.dueMismatch++;continue;}
+      validSchedule++;
+    }
+    const scheduleSummary={
+      published:published.length,eligible:eligiblePublished.length,
+      excluded:published.length-eligiblePublished.length,
+      scheduled:validSchedule,missingOrMismatch:eligiblePublished.length-validSchedule,
+      issues:scheduleIssues
+    };
     // Live read-only Storage verification, scoped to the current completed-deletion page.
     const completedAudits=auditPage.filter(row=>row.outcome==="completed");
     const verifiedIds=[...new Set(completedAudits.map(row=>row.event_id).filter(Boolean))];
