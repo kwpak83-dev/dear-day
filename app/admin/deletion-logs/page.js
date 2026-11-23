@@ -80,6 +80,19 @@ export default function DeletionLogsPage(){
       </div>)}
     </div>
     <p style={{fontSize:12,color:"#68748a"}}>발행·예약 지표는 현재 전체 기준입니다. 예약 검증은 실제 자동삭제 배치와 동일한 행사일 + 30일(한국시간 00:00) 기준입니다. 발행 중 정책 제외 {schedule?.excluded??"-"}건 · 예약 없음 {schedule?.issues?.missing??"-"}건 · 날짜 불일치 {schedule?.issues?.dueMismatch??"-"}건 · 중복 {schedule?.issues?.duplicate??"-"}건 · 날짜 없음 {schedule?.issues?.invalidDate??"-"}건. 삭제 완료·사진 검증은 선택 기간의 현재 페이지 기준이며, 30일 만료만의 확정 집계는 아닙니다.</p>
+    <details style={{marginTop:15,padding:"12px 14px",border:"1px solid #dfe4ee",borderRadius:10}}>
+      <summary style={{cursor:"pointer",fontWeight:700,fontSize:14}}>삭제 예약 8건 등 개별 진단 보기 (조회 전용)</summary>
+      <p style={{fontSize:12,color:"#68748a"}}>초대장 생성·수정 시각과 예약 상태를 비교합니다. 수정 이전 데이터인지 추정할 수 있지만, 정확한 배포 전후 판정에는 수정 코드 배포 시각이 필요합니다.</p>
+      <div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:820}}>
+        <thead><tr>{["초대장 ID","생성일","마지막 수정","행사일","삭제 예정일","예약 상태"].map(label=><th key={label} style={cell}>{label}</th>)}</tr></thead>
+        <tbody>{(schedule?.details||[]).map(row=><tr key={row.eventId}>
+          <td style={cell} title={row.eventId}>{row.eventId.slice(0,8)}… <button type="button" onClick={()=>navigator.clipboard?.writeText(row.eventId)} style={{fontSize:11}}>복사</button></td>
+          <td style={cell}>{date(row.createdAt)}</td><td style={cell}>{date(row.updatedAt)}</td>
+          <td style={cell}>{date(row.startsAt)}</td><td style={cell}>{date(row.expectedDueAt)}</td>
+          <td style={cell}>{({normal:"정상",missing:"예약 없음",duplicate:"중복 예약",dueMismatch:"예정일 불일치",invalidDate:"행사일 없음"})[row.reason]||"확인 필요"}</td>
+        </tr>)}</tbody>
+      </table></div>
+    </details>
     <h2 style={{fontSize:20,marginTop:30}}>매일 자동삭제 실행 이력</h2>
     <div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:620}}>
       <thead><tr>{["실행 일시","작업","처리 건수","결과"].map(label=><th key={label} style={cell}>{label}</th>)}</tr></thead>
