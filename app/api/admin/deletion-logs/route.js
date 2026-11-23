@@ -73,7 +73,7 @@ export async function GET(request) {
     const completedResult=await completedQuery;
     if(completedResult.error)throw Object.assign(new Error("completed audit count query failed"),{queryStage:"audit-count",dbCode:completedResult.error.code,dbMessage:completedResult.error.message});
     const completedCount=completedResult.count||0;
-    const runQuery=db.from("invitation_retention_run_logs").select("id,task,started_at,finished_at,http_status,result_mode,processed_count,failed_count,result_summary").order("finished_at",{ascending:false}).limit(30);
+    const runQuery=db.from("invitation_retention_run_logs").select("id,task,started_at,finished_at,http_status,result_mode,processed_count,failed_count,result_summary").order("finished_at",{ascending:false}).limit(days==="all"?300:days==="30"?150:60);
     const runResult=await runQuery;
     const runLogsAvailable=!runResult.error;
     if(runResult.error && runResult.error.code!=="42P01" && runResult.error.code!=="PGRST205")console.warn("Retention run history unavailable",runResult.error.code);
