@@ -1,3 +1,5 @@
+import { fitPosterMessage } from "../../lib/poster-message-fit";
+
 const WIDTH = 540;
 const HEIGHT = 960;
 const SCALE = 2;
@@ -184,7 +186,10 @@ export async function renderPosterPng(pages) {
   const photos = new Map();
   try {
     await document.fonts.ready;
-    for (const page of pages) checkLayout(page);
+    for (const page of pages) {
+      fitPosterMessage(page.querySelector(".dd-poster-message"));
+      checkLayout(page);
+    }
     const embeddedFonts = await Promise.all([...pages].map(embeddedPosterFonts));
     const { toCanvas } = await import("html-to-image");
     result.width = WIDTH * SCALE;
