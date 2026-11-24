@@ -5224,3 +5224,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Wrap PLACE addresses at word boundaries, preserving the configured typography and insets. */
 :is(.classic-information-body,.modern-information-body,.romantic-information)>:is(.dd-place-address,.classic-address-detail,.dd-address-detail){word-break:keep-all;overflow-wrap:break-word}
+
+/* Mobile-only line breaks in the invitation guide. */
+.my-page .dd-my-guide-mobile-break{display:none}
+@media(max-width:600px){.my-page .dd-my-guide-mobile-break{display:initial}.my-page .dd-my-guide-body li{word-break:keep-all;overflow-wrap:break-word}}
