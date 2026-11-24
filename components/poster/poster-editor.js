@@ -58,6 +58,15 @@ async function request(slug, options = {}, endpoint = "") {
   return body;
 }
 
+function withMainPhoto(poster, gallery) {
+  const selection = poster.settings.gallery;
+  const available = new Set(gallery.map(photo => photo.id));
+  const valid = selection.photos.filter(photo => available.has(photo.mediaId));
+  const mainMediaId = valid.some(photo => photo.mediaId === selection.mainMediaId)
+    ? selection.mainMediaId : valid[0]?.mediaId ?? null;
+  return { ...poster, settings: { ...poster.settings, gallery: { ...selection, mainMediaId } } };
+}
+
 function Crop({ value, onChange }) {
   return <div className="dd-poster-crop">{[
     ["x", "좌우 위치", 0, 100, 1], ["y", "상하 위치", 0, 100, 1], ["zoom", "확대", 1, 3, .01],
@@ -84,7 +93,7 @@ export default function PosterEditor({ slug }) {
   useEffect(() => {
     const controller = new AbortController();
     request(slug, { signal: controller.signal }).then(result => {
-      if (!controller.signal.aborted) { setData(result); setDraft(result.poster); }
+      if (!controller.signal.aborted) { setData(result); setDraft(withMainPhoto(result.poster, result.gallery)); }
     }).catch(error => { if (!controller.signal.aborted) setFailure(error); });
     return () => controller.abort();
   }, [slug]);
@@ -100,7 +109,10 @@ export default function PosterEditor({ slug }) {
     return () => { active = false; };
   }, [publicUrl, slug]);
 
-  const update = (key, value) => setDraft(current => ({ ...current, settings: { ...current.settings, [key]: value } }));
+  const update = (key, value) => setDraft(current => {
+    const next = { ...current, settings: { ...current.settings, [key]: value } };
+    return key === "gallery" ? withMainPhoto(next, data.gallery) : next;
+  });
   const save = async () => {
     setSaving(true);
     setNotice("");
