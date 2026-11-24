@@ -90,10 +90,50 @@ export default function PosterEditor({ slug }) {
   const toolsRoot = useRef(null);
   const downloadMenuRoot = useRef(null);
   const exportLock = useRef(false);
+  const savedSnapshot = useRef(null);
+  const dirtyRef = useRef(false);
+  const skipExit = useRef(false);
+  const saveLock = useRef(false);
+  const [exitDestination, setExitDestination] = useState(null);
+  const snapshot = poster => JSON.stringify([poster.designKey, poster.settings]);
+  dirtyRef.current = !!draft && savedSnapshot.current !== null && snapshot(draft) !== savedSnapshot.current;
+  const ready = !!draft;
+  useEffect(() => {
+    if (!ready) return;
+    const marker = "dearday-poster-guard";
+    const pushGuard = () => window.history.pushState({ ...(window.history.state || {}), deardayOverlay: marker }, "", window.location.href);
+    if (window.history.state?.deardayOverlay !== marker) pushGuard();
+    const onBack = () => {
+      if (skipExit.current) return;
+      if (window.history.state?.deardayOverlay !== marker) pushGuard();
+      if (dirtyRef.current || saveLock.current) setExitDestination({ type: "back" });
+      else { skipExit.current = true; window.history.go(-2); }
+    };
+    const onUnload = event => {
+      if (!skipExit.current && (dirtyRef.current || saveLock.current)) { event.preventDefault(); event.returnValue = ""; }
+    };
+    window.addEventListener("popstate", onBack);
+    window.addEventListener("beforeunload", onUnload);
+    return () => {
+      window.removeEventListener("popstate", onBack);
+      window.removeEventListener("beforeunload", onUnload);
+    };
+  }, [ready, slug]);
+  const completeExit = destination => {
+    skipExit.current = true;
+    setExitDestination(null);
+    if (destination.type === "back") window.history.go(-2);
+    else window.location.assign(destination.href);
+  };
+  const requestExit = event => {
+    if (!dirtyRef.current && !saveLock.current) return;
+    event.preventDefault();
+    setExitDestination({ type: "url", href: event.currentTarget.href });
+  };
   useEffect(() => {
     const controller = new AbortController();
     request(slug, { signal: controller.signal }).then(result => {
-      if (!controller.signal.aborted) { setData(result); setDraft(withMainPhoto(result.poster, result.gallery)); }
+      if (!controller.signal.aborted) { const initial = withMainPhoto(result.poster, result.gallery); savedSnapshot.current = snapshot(initial); setData(result); setDraft(initial); }
     }).catch(error => { if (!controller.signal.aborted) setFailure(error); });
     return () => controller.abort();
   }, [slug]);
@@ -114,18 +154,24 @@ export default function PosterEditor({ slug }) {
     return key === "gallery" ? withMainPhoto(next, data.gallery) : next;
   });
   const save = async () => {
+    if (saveLock.current || exportLock.current) return false;
+    saveLock.current = true;
     setSaving(true);
     setNotice("");
     try {
       const result = await request(slug, { method: "PUT", body: JSON.stringify({
         designKey: draft.designKey, settings: draft.settings, expectedRevision: draft.revision,
       }) });
-      setDraft(result.poster);
+      const saved = withMainPhoto(result.poster, data.gallery);
+      savedSnapshot.current = snapshot(saved);
+      dirtyRef.current = false;
+      setDraft(saved);
       setNotice("저장했어요.");
+      return true;
     } catch (error) {
-      if (["unavailable", "expired", "not_found", "login_required"].includes(error.code)) setFailure(error);
-      else setNotice(error.message);
-    } finally { setSaving(false); }
+      setNotice(error.message || "저장에 실패했어요. 다시 시도해 주세요.");
+      return false;
+    } finally { saveLock.current = false; setSaving(false); }
   };
 
   const exportPng = async scope => {
@@ -179,7 +225,7 @@ export default function PosterEditor({ slug }) {
   };
 
   return <main className="dd-poster-editor">
-    <header className="dd-poster-top"><div><a href="/my-invitations">← 내 초대장</a></div>
+    <header className="dd-poster-top"><div><a href="/my-invitations" onClick={requestExit}>← 내 초대장</a></div>
       <button type="button" className="dd-poster-save" onClick={save} disabled={saving || exporting}>{saving ? "저장 중…" : "저장하기"}</button></header>
     <div className="dd-poster-heading"><h1>회사 게시용 초대장</h1><p className="dd-poster-header-description">편집을 완료후 이미지를 다운받아 회사 게시판에 바로 업로드 해주세요</p></div>
     {notice && <p className="dd-poster-notice" role="status">{notice}</p>}
@@ -289,6 +335,7 @@ export default function PosterEditor({ slug }) {
       {!floatingPreviewOpen && <button type="button" className="dd-poster-mobile-preview-toggle"
         onClick={() => setFloatingPreviewOpen(true)} aria-expanded={false}>◉ 편집용 미리보기</button>}
     </div>
+    {exitDestination && <div className="modal-backdrop dd-exit-confirm-backdrop" role="presentation"><div className="dd-exit-confirm-card" role="dialog" aria-modal="true" aria-labelledby="dd-poster-exit-title"><h2 id="dd-poster-exit-title">저장하지 않은 변경사항이 있어요</h2><p>지금 나가면 입력하거나 수정한 내용이 사라질 수 있어요.</p><div className="dd-exit-confirm-actions"><button type="button" disabled={saving || exporting} onClick={async () => { if (await save()) completeExit(exitDestination); else setExitDestination(null); }}>저장하고 나가기</button><button type="button" disabled={saving || exporting} onClick={() => completeExit(exitDestination)}>저장하지 않고 나가기</button><button type="button" disabled={saving} onClick={() => setExitDestination(null)}>계속 편집하기</button></div></div></div>}
     {capture && <div className="dd-poster-capture" ref={captureRoot} aria-hidden="true">
       {capture.pages.map(number => <PosterPage key={number} page={number} {...capture.poster} capture
         source={capture.source} gallery={capture.gallery} qrUrl={capture.qrUrl} />)}
