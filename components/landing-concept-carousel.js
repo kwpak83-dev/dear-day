@@ -1,11 +1,36 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
-const NAMES = ["더블프레임", "인생3컷", "영화포스터1", "영화포스터2", "Christians Wedding", "Spring Bloosom Day"];
+const NAMES = ["프레임1","더블프레임1","인생3컷","영화포스터1","영화포스터3","Spring Blossom Day","Our Winter Wonderland","Christians Wedding"];
 const normalize = (s) => String(s || "").normalize("NFKC").toLowerCase().replace(/[^a-z0-9가-힣]/g, "");
 const ALIASES = [
- ["더블프레임"],["인생3컷","인생세컷"],["영화포스터1"],["영화포스터2"],
- ["christianswedding","christianwedding"],["springbloosomday","springblossomday"]
+  [
+    "프레임1"
+  ],
+  [
+    "더블프레임1"
+  ],
+  [
+    "인생3컷",
+    "인생세컷"
+  ],
+  [
+    "영화포스터1"
+  ],
+  [
+    "영화포스터3"
+  ],
+  [
+    "springblossomday",
+    "springbloosomday"
+  ],
+  [
+    "ourwinterwonderland"
+  ],
+  [
+    "christianswedding",
+    "christianwedding"
+  ]
 ];
 export default function LandingConceptCarousel() {
  const [items,setItems]=useState([]);

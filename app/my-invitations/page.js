@@ -161,9 +161,9 @@ export default function MyInvitations() {
           <ul>
             <li>결제 후 직접 발행하면 공유 링크가 활성화됩니다.</li>
             <li>초대장 수정은 <strong>행사 시작 전까지</strong> 가능합니다.</li>
-            <li><strong>행사일 30일 후 자동 삭제</strong>되니, 필요한 사진과 내용은 미리 백업해 주세요.</li>
-            <li>삭제 예정일은 마이페이지에서 확인할 수 있으며, D-7·D-1에 안내됩니다.</li>
-            <li>발행 후 수정·템플릿 변경 시 이용권은 추가 차감되지 않습니다.</li>
+            <li><strong>행사일 30일 후 자동 삭제</strong>되니, 필요한 사진과 내용은<br className="dd-my-guide-mobile-break" /> 미리 백업해 주세요.</li>
+            <li>삭제 예정일은 마이페이지에서 확인할 수 있으며,<br className="dd-my-guide-mobile-break" /> D-7·D-1에 안내됩니다.</li>
+            <li>발행 후 수정·템플릿 변경 시 이용권은<br className="dd-my-guide-mobile-break" /> 추가 차감되지 않습니다.</li>
           </ul>
           <div className="dd-my-guide-event"><strong>🎁 오픈 기념 포토리뷰 이벤트 (예정)</strong><p><span style={{ color: "#03C75A", fontWeight: 600 }}>네이버 구매 포토리뷰</span> 별다섯개 후기 작성 시<br /><strong style={{ color: "#D97745", fontWeight: 700 }}>100% 이용권 1개 추가 증정</strong> 예정!<br />돌잔치·자녀 생일·부모님 칠순 초대장에도 활용해 보세요.</p></div>
         </div>
