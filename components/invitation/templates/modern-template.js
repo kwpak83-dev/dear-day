@@ -91,7 +91,7 @@ export default function ModernTemplate({ presentation, eventKind, templateConfig
       <div className="modern-information-body">
         {schedule && <time>{schedule}</time>}
         {venue && <strong>{venue}</strong>}
-        {address && <p>{address}</p>}
+        {address && <p className="dd-place-address">{address}</p>}
         {addressDetail && <p className="dd-address-detail">{addressDetail}</p>}
         {placeActions}
       </div>

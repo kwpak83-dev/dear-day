@@ -5221,3 +5221,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Subtle definition for light invitation card buttons. */
 .my-page .dd-my-card-actions>a:not(:first-child),.my-page .dd-my-card-actions>button,.my-page .dd-my-card-more{border-color:#E2DCD6;box-shadow:0 2px 6px rgba(91,77,67,.12)}
+
+/* Wrap PLACE addresses at word boundaries, preserving the configured typography and insets. */
+:is(.classic-information-body,.modern-information-body,.romantic-information)>:is(.dd-place-address,.classic-address-detail,.dd-address-detail){word-break:keep-all;overflow-wrap:break-word}

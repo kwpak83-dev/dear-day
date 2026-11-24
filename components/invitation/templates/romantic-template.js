@@ -91,7 +91,7 @@ export default function RomanticTemplate({ presentation, eventKind, templateConf
       <SectionHeading eyebrow={wedding ? "WEDDING INFORMATION" : "EVENT INFORMATION"}>{wedding ? "예식 안내" : "행사 안내"}</SectionHeading>
       {schedule && <time>{schedule}</time>}
       {venue && <strong>{venue}</strong>}
-      {address && <p>{address}</p>}
+      {address && <p className="dd-place-address">{address}</p>}
       {addressDetail && <p className="dd-address-detail">{addressDetail}</p>}
       {placeActions}
     </section>}
