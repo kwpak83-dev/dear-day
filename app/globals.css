@@ -5218,3 +5218,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .gallery-tile .gallery-drag-label{font-size:11px;color:#80594d}
 .create-page .gallery-tile-actions>span{font-size:12px}
 .create-page .gallery-tile-actions>button:last-child{min-width:35px;padding:0 3px}
+
+/* Subtle definition for light invitation card buttons. */
+.my-page .dd-my-card-actions>a:not(:first-child),.my-page .dd-my-card-actions>button,.my-page .dd-my-card-more{border-color:#E2DCD6;box-shadow:0 2px 6px rgba(91,77,67,.12)}
