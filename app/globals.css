@@ -277,10 +277,10 @@ h1,h2,h3,p { margin-top:0; }h1,h2 { font-family:Georgia, "Times New Roman", seri
 .my-page .dd-my-card-date{margin:0;font-size:13px;line-height:1.6;color:#666;overflow-wrap:anywhere}
 .my-page .dd-my-card-retention{margin:0;font-size:11px;line-height:1.6;color:#888;overflow-wrap:anywhere}
 .my-page .dd-my-card-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
-.my-page .dd-my-card-actions>a,.my-page .dd-my-card-actions>button{display:inline-flex;align-items:center;justify-content:center;flex:1 1 110px;min-width:0;min-height:44px;box-sizing:border-box;border:1px solid #dedede;border-radius:9px;background:#fff;padding:10px 12px;color:#333;font:700 12px/1.5 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;text-align:center;text-decoration:none;cursor:pointer;overflow-wrap:anywhere}
-.my-page .dd-my-card-actions>a:first-child{background:#242424;border-color:#242424;color:#fff}
+.my-page .dd-my-card-actions>a,.my-page .dd-my-card-actions>button{display:inline-flex;align-items:center;justify-content:center;flex:1 1 110px;min-width:0;min-height:44px;box-sizing:border-box;border:1px solid #F6F6F6;border-radius:9px;background:#F6F6F6;padding:10px 12px;color:#5B4D43;font:600 12px/1.5 "Pretendard","Pretendard Variable","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:0;text-align:center;text-decoration:none;cursor:pointer;overflow-wrap:anywhere}
+.my-page .dd-my-card-actions>a:first-child{background:#5B4D43;border-color:#5B4D43;color:#fff}
 .my-page .dd-my-card-management{border-top:1px solid #eee;padding-top:12px;margin-top:6px}
-.my-page .dd-my-card-more{display:inline-flex;align-items:center;justify-content:center;min-height:44px;box-sizing:border-box;padding:10px 14px;border:1px solid #dedede;border-radius:9px;background:#fff;color:#555;font:700 12px/1.5 Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;cursor:pointer}
+.my-page .dd-my-card-more{display:inline-flex;align-items:center;justify-content:center;min-height:44px;box-sizing:border-box;padding:10px 14px;border:1px solid #F6F6F6;border-radius:9px;background:#F6F6F6;color:#5B4D43;font:600 12px/1.5 "Pretendard","Pretendard Variable","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;letter-spacing:0;cursor:pointer}
 .my-page .dd-my-card-menu{display:grid;min-width:0;box-sizing:border-box;margin-top:8px;padding:6px;border:1px solid #e5e5e5;border-radius:10px;background:#fafafa}
 .my-page .dd-my-card-menu[hidden]{display:none}
 .my-page .dd-my-card-menu .dd-share-actions-menu{display:grid;gap:0;margin:0;min-width:0}
@@ -5218,3 +5218,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .gallery-tile .gallery-drag-label{font-size:11px;color:#80594d}
 .create-page .gallery-tile-actions>span{font-size:12px}
 .create-page .gallery-tile-actions>button:last-child{min-width:35px;padding:0 3px}
+
+/* Subtle definition for light invitation card buttons. */
+.my-page .dd-my-card-actions>a:not(:first-child),.my-page .dd-my-card-actions>button,.my-page .dd-my-card-more{border-color:#E2DCD6;box-shadow:0 2px 6px rgba(91,77,67,.12)}

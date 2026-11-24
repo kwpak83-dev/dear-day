@@ -1,5 +1,6 @@
 import { Alex_Brush, Cinzel, Gowun_Dodum, Hi_Melody } from "next/font/google";
 import "./globals.css";
+import DeveloperToolGuard from "../components/developer-tool-guard";
 
 const alexBrush = Alex_Brush({
   weight: "400",
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         {children}
+        {process.env.VERCEL_ENV === "production" && <DeveloperToolGuard />}
       </body>
     </html>
   );

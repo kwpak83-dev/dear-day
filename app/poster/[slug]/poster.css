@@ -226,7 +226,7 @@
   margin:0;font:700 2.9cqw/1.1 Georgia,serif;
 }
 .dd-poster-playful-pop.dd-poster-page-1 .dd-playful-event-details{
-  position:absolute;z-index:3;left:27.5%;top:71.0%;width:61.6%;height:13%;
+  position:absolute;z-index:3;left:27.5%;top:70.25%;width:61.6%;height:13%;
   display:grid;grid-template-rows:repeat(3,3.9cqw);row-gap:3.8cqw;
   font:700 3.05cqw/1.15 Arial,"Malgun Gothic",sans-serif;text-align:left;color:#3b241b;
 }
@@ -287,9 +287,9 @@
   --photo-mask:polygon(0.000% 0.000%,23.783% 0.000%,24.319% 1.0%,44.444% 1.0%,66.248% 0.8%,66.012% 0.007%,98.814% 0.000%,99.632% 98.858%,0.000% 98.814%);
 }
 .dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-main-caption{
-  position:absolute;z-index:3;top:66.6%;left:9%;width:82%;
+  position:absolute;z-index:3;top:65.6%;left:9%;width:82%;height:3%;
   display:flex;align-items:center;justify-content:center;margin:0;
-  font:900 4.2cqw/1.2 Arial,"Malgun Gothic",sans-serif;color:#241512;
+  font:600 3.97cqw/1.2 Arial,"Malgun Gothic",sans-serif;color:#241512;
   text-align:center;
 }
 .dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-main-caption span{
@@ -315,8 +315,9 @@
   left:68%;transform:rotate(-2deg);
 }
 .dd-poster-playful-pop.dd-poster-page-2 .dd-playful-gallery-small-photo figcaption{
-  position:absolute;top:112%;left:-3%;width:106%;margin:0;
-  font:800 2.6cqw/1.1 Arial,"Malgun Gothic",sans-serif;
+  position:absolute;top:108%;left:0;width:100%;height:14%;margin:0;
+  display:flex;align-items:center;justify-content:center;box-sizing:border-box;
+  font:600 2.8cqw/1.1 Arial,"Malgun Gothic",sans-serif;
   color:#241512;text-align:center;overflow-wrap:anywhere;
 }
 

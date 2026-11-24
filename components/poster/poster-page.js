@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
+import { fitPosterMessage } from "../../lib/poster-message-fit";
 
 export const DESIGNS = {
   "playful-pop": "Playful Pop",
@@ -50,9 +51,18 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
   const english = [settings.englishNames.groom.trim(), settings.englishNames.bride.trim()].filter(Boolean).join(" & ");
   const schedule = [source.date, source.time].filter(Boolean).join(" · ");
   const coverSchedule = artCover ? playfulCoverSchedule(source.date, source.time) : null;
-  const messageLines = settings.message.split("\n").length;
-  const messageSize = messageLines > 18 || settings.message.length > 400
-    ? Math.max(1.85, Math.min(2.8, 78 / messageLines)) : undefined;
+  const messageRef = useRef(null);
+  useLayoutEffect(() => {
+    const message = messageRef.current;
+    if (!message) return;
+    let active = true;
+    const fit = () => { if (active) fitPosterMessage(message); };
+    fit();
+    const observer = new ResizeObserver(fit);
+    observer.observe(message.parentElement);
+    document.fonts.ready.then(fit);
+    return () => { active = false; observer.disconnect(); };
+  }, [page, designKey, settings.message]);
 
   return <article className={`dd-poster-paper dd-poster-${designKey} dd-poster-page-${page}`} data-poster-page={page}>
     
@@ -101,8 +111,7 @@ export default function PosterPage({ page, designKey, settings, source, gallery,
     </>)}
     {page === 3 && <>
       {designKey !== "playful-pop" && designKey !== "bold-pop-art" && designKey !== "modern-editorial" && <h2>You're Invited</h2>}
-      <div className="dd-poster-message-card"><p className="dd-poster-message" data-dense={messageSize !== undefined}
-        style={messageSize && { fontSize: `${messageSize}cqw` }}>{settings.message}</p></div>
+      <div className="dd-poster-message-card"><p className="dd-poster-message" ref={messageRef}>{settings.message}</p></div>
       {qrUrl ? <img className="dd-poster-qr" src={qrUrl} alt="발행 초대장 QR 코드" />
         : <p className="dd-poster-qr-unavailable">QR 코드를 표시할 수 없어요.</p>}
       <p className="dd-poster-signature dd-poster-qr-guide">휴대폰 카메라로 스캔하면<br />모바일 청첩장이 열려요<svg className="dd-poster-qr-heart" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21.2 10.55 19.9C5.4 15.25 2 12.17 2 8.4 2 5.32 4.42 2.9 7.5 2.9c1.74 0 3.41.81 4.5 2.09a5.98 5.98 0 0 1 4.5-2.09C19.58 2.9 22 5.32 22 8.4c0 3.77-3.4 6.85-8.55 11.51L12 21.2Z"/></svg></p>
