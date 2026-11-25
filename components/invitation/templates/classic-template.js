@@ -50,7 +50,7 @@ function ClassicDateSection({ eventDate, eventTime, title, wedding, eventKind })
   </section>;
 }
 
-export default function ClassicTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, weddingContacts, bgmControl, screenEffect, afterMessage, children }) {
+export default function ClassicTemplate({ presentation, eventKind, templateConfig, templateAssets, placeActions, weddingContacts, bgmControl, screenEffect, afterMessage, children, sectionPreview }) {
   const { kindLabel, title, detail, note, eventDate, eventTime, heroSchedule, schedule, venue, address, addressDetail, message, coverPhotoUrl, groomRelation, brideRelation } = presentation;
   const wedding = eventKind === "wedding";
   const couple = wedding ? title.split(" & ").map((value) => value.trim()).filter(Boolean) : [];
@@ -79,7 +79,14 @@ export default function ClassicTemplate({ presentation, eventKind, templateConfi
   const showIllustration = Boolean(renderConfig.illustrationMode && renderConfig.heroBackgroundConfigured);
   const hasHeroVisual = showCoverPhoto || showIllustration;
 
-  return <article className={`invitation-template invitation-template-classic classic-001 dd-event-${eventKind}${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.heroConfigured ? " dd-template-hero-configured" : ""}${renderConfig.typographyConfigured ? " dd-template-typography" : ""}${renderConfig.colorsConfigured ? " dd-template-colors" : ""}${renderConfig.buttonStyleConfigured ? " dd-template-button-style" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}${renderConfig.centerPanelConfigured ? " dd-template-center-panel" : ""}${renderConfig.decorationsConfigured ? " dd-template-decorated" : ""}${renderConfig.sectionClasses}${renderConfig.safeAreaClass}${templateConfig?.effects?.scrollReveal && templateConfig.effects.scrollReveal !== "none" ? ` dd-reveal-initial dd-reveal-${templateConfig.effects.scrollReveal}` : ""}`} style={renderConfig.rootStyle}>
+  const rootClassName = `invitation-template invitation-template-classic classic-001 dd-event-${eventKind}${renderConfig.configured ? " dd-template-configured" : ""}${renderConfig.heroConfigured ? " dd-template-hero-configured" : ""}${renderConfig.typographyConfigured ? " dd-template-typography" : ""}${renderConfig.colorsConfigured ? " dd-template-colors" : ""}${renderConfig.buttonStyleConfigured ? " dd-template-button-style" : ""}${renderConfig.backgroundConfigured ? " dd-template-background" : ""}${renderConfig.centerPanelConfigured ? " dd-template-center-panel" : ""}${renderConfig.decorationsConfigured ? " dd-template-decorated" : ""}${renderConfig.sectionClasses}${renderConfig.safeAreaClass}${templateConfig?.effects?.scrollReveal && templateConfig.effects.scrollReveal !== "none" ? ` dd-reveal-initial dd-reveal-${templateConfig.effects.scrollReveal}` : ""}`;
+  if(sectionPreview) return <article className={rootClassName} style={renderConfig.rootStyle}>
+    {invitationFontStylesheets(templateConfig).map(href=><link key={href} rel="stylesheet" href={href}/>)}
+    <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="background" />
+    {screenEffect}
+    {sectionPreview}
+  </article>;
+  return <article className={rootClassName} style={renderConfig.rootStyle}>
     <TemplateConfigDecorations config={templateConfig} assets={templateAssets} slot="background" />
     <TemplateConfigEffects mode={templateConfig?.effects?.scrollReveal} trigger={templateConfig?.effects?.scrollRevealTrigger} />
     {bgmControl}

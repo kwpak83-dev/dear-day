@@ -24,7 +24,7 @@ export const TEMPLATE_REGISTRY = {
   [TEMPLATE_IDS.modern]: ModernTemplate,
 };
 
-export default function InvitationRenderer({ invitation, eventKind, eventTypeConfig, templateId, templateConfig, templateAssets, userBgmUrl, placeActions, afterMessage, children }) {
+export default function InvitationRenderer({ invitation, eventKind, eventTypeConfig, templateId, templateConfig, templateAssets, userBgmUrl, placeActions, afterMessage, children, previewSection }) {
   const Template = TEMPLATE_REGISTRY[templateId] || ClassicTemplate;
   const basePresentation = getInvitationPresentation(invitation, eventKind);
   const matrixFields = eventTypeConfig?.fields || {};
@@ -116,5 +116,6 @@ export default function InvitationRenderer({ invitation, eventKind, eventTypeCon
   const defaultUserScreenEffect = { motion: "fall", count: 12, minSize: 18, maxSize: 24, minDuration: 20, maxDuration: 25, sway: 40, rotate: true, opacity: 0.8 };
   const screenEffect = mode === "background" ? templateScreenEffect : mode === "user" ? { ...defaultUserScreenEffect, ...(templateScreenEffect || {}), ornament: selectedOrnament } : mode === "legacy-blossom" ? { ornament: "blossom", motion: "flutter", count: 10, minSize: 14, maxSize: 28, minDuration: 10, maxDuration: 18, sway: 35, rotate: true, opacity: 0.75 } : null;
   const effectConfig = { ...normalizedConfig, effects: { ...normalizedConfig.effects, screenEffect } };
+  if (["coupleIntro","loveStory"].includes(previewSection)) return <Template presentation={presentation} eventKind="wedding" templateConfig={{...normalizedConfig,effects:{...normalizedConfig.effects,scrollReveal:"none"}}} templateAssets={resolvedAssets} sectionPreview={<div className="dd-wedding-after-message">{previewSection==="coupleIntro"?<CoupleIntro invitation={invitation}/>:<LoveStory invitation={invitation}/>}</div>} screenEffect={<TemplateScreenEffect config={effectConfig} assets={resolvedAssets}/>}/>;
   return <Template presentation={presentation} templateConfig={normalizedConfig} templateAssets={resolvedAssets} eventKind={eventKind || invitation.eventKind || "wedding"} placeActions={placeActions} weddingContacts={(eventKind || invitation.eventKind) === "wedding" ? null : <WeddingContacts invitation={invitation} eventTypeConfig={eventTypeConfig} />} bgmControl={bgmMode === "background" && normalizedConfig.bgm?.mode === "shared" ? <SharedTemplateBgm trackId={normalizedConfig.bgm.assetId} /> : <TemplateBgm src={bgmUrl} />} screenEffect={<TemplateScreenEffect config={effectConfig} assets={resolvedAssets} />} afterMessage={(eventKind || invitation.eventKind) === "wedding" ? <div className="dd-wedding-after-message">{afterMessage}<WeddingContacts invitation={invitation} eventTypeConfig={eventTypeConfig} /><CoupleIntro invitation={{ ...invitation, eventKind: "wedding" }} /><LoveStory invitation={{ ...invitation, eventKind: "wedding" }} /></div> : afterMessage}>{children}</Template>;
 }

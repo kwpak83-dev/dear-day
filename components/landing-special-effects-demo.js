@@ -16,6 +16,24 @@ export default function LandingSpecialEffectsDemo(){
  const [coverReplay,setCoverReplay]=useState(0);
  const introStageRef=useRef(null);
  const demoRef=useRef(null);
+ const tabsRef=useRef(null);
+ const hintSeenRef=useRef(false);
+ const hintTimerRef=useRef(null);
+ const [showHint,setShowHint]=useState(false);
+ useEffect(()=>{
+  const node=tabsRef.current;
+  if(!node||typeof IntersectionObserver==="undefined")return;
+  const observer=new IntersectionObserver(entries=>{
+   if(hintSeenRef.current||!entries.some(entry=>entry.isIntersecting))return;
+   hintSeenRef.current=true;
+   setShowHint(true);
+   hintTimerRef.current=setTimeout(()=>setShowHint(false),5000);
+   observer.disconnect();
+  },{threshold:0.5});
+  observer.observe(node);
+  return()=>{observer.disconnect();clearTimeout(hintTimerRef.current);};
+ },[]);
+ const dismissHint=()=>{hintSeenRef.current=true;clearTimeout(hintTimerRef.current);setShowHint(false);};
  const [nearViewport,setNearViewport]=useState(false);
  const [introStageWidth,setIntroStageWidth]=useState(310);
  const [data,setData]=useState(null);
@@ -91,8 +109,11 @@ export default function LandingSpecialEffectsDemo(){
   return()=>{cancelled=true;};
  },[introFontId,tab]);
  return <div ref={demoRef} className="dd-landing-effects-demo">
+  <div className="dd-landing-effects-hint-anchor" ref={tabsRef}>
+   {showHint&&<div className="dd-landing-effects-hint" role="status">👆 인트로, 표지, 배경 및 효과를 직접 눌러보세요!</div>}
   <div className="dd-landing-effects-tabs" role="group" aria-label="초대장 연출 미리보기">
-   {TABS.map(([id,label])=><button key={id} type="button" className={tab===id?"is-active":""} aria-pressed={tab===id} onClick={()=>{setTab(id);if(id==="intro")setIntroReplay(value=>value+1);if(id==="cover")setCoverReplay(value=>value+1)}}>{label}</button>)}
+   {TABS.map(([id,label])=><button key={id} type="button" className={tab===id?"is-active":""} aria-pressed={tab===id} onClick={()=>{dismissHint();setTab(id);if(id==="intro")setIntroReplay(value=>value+1);if(id==="cover")setCoverReplay(value=>value+1)}}>{label}</button>)}
+  </div>
   </div>
   <div ref={introStageRef} className={`dd-landing-effects-stage dd-landing-effects-stage--${tab}`} aria-live="polite">
    {tab==="intro" ? intro && introFontReady ? <div className="dd-landing-effects-intro-real" style={{backgroundColor:intro.backgroundColor}}>

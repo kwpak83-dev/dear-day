@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { invitationPreviewWidth } from "../../lib/invitation-preview-layout.mjs";
 
 const DESIGN_WIDTH = 390;
@@ -25,14 +25,18 @@ export default function TemplatePreviewCanvas({
   const [layoutWidth, setLayoutWidth] = useState(DESIGN_WIDTH);
   const [height, setHeight] = useState(undefined);
 
-  useEffect(() => {
+  const [measured, setMeasured] = useState(false);
+
+  useLayoutEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
     const measure = () => {
       const width = (fixedDesignWidth || (desktopFixedWidth && window.innerWidth >= 801)) ? DESIGN_WIDTH : matchPublicViewport ? invitationPreviewWidth(window.innerWidth) : DESIGN_WIDTH;
+      if (stage.clientWidth <= 0) return;
       const nextScale = Math.min(1, stage.clientWidth / width);
       setLayoutWidth(width);
       setScale(nextScale);
+      setMeasured(true);
       if ((matchPublicViewport || fixedDesignWidth) && canvasRef.current) setHeight(canvasRef.current.offsetHeight * nextScale);
     };
     measure();
@@ -51,7 +55,7 @@ export default function TemplatePreviewCanvas({
       <div
         ref={canvasRef}
         className={`dd-template-preview-canvas full-invitation-renderer dd-bgm-public-style ${canvasClassName}`.trim()}
-        style={{ ...(matchPublicViewport || fixedDesignWidth ? { position:"relative", left:"50%", margin:0, transform:`translateX(-50%) scale(${scale})`, transformOrigin:"top center" } : { zoom:scale }), width: layoutWidth, "--dd-template-preview-layout-width": `${layoutWidth}px`, "--dd-message-preview-layout-width": `${layoutWidth}px` }}
+        style={{ visibility: measured ? "visible" : "hidden", ...(matchPublicViewport || fixedDesignWidth ? { position:"relative", left:"50%", margin:0, transform:`translateX(-50%) scale(${scale})`, transformOrigin:"top center" } : { zoom:scale }), width: layoutWidth, "--dd-template-preview-layout-width": `${layoutWidth}px`, "--dd-message-preview-layout-width": `${layoutWidth}px` }}
       >
         {children}
       </div>
