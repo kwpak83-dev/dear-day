@@ -3514,3 +3514,7 @@
 .landing-v2 .dd-landing-effects-hint::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:7px solid transparent;border-top-color:#51463e;border-bottom:0}
 @keyframes dd-effects-hint-in{from{opacity:0;transform:translate(-50%,6px)}to{opacity:1;transform:translate(-50%,0)}}
 @media(prefers-reduced-motion:reduce){.landing-v2 .dd-landing-effects-hint{animation:none}}
+
+/* Allow the feature 03 hint to extend above its preview card. */
+.landing-v2 .dd-feature-effects .dd-feature-visual,
+.landing-v2 .dd-feature-effects .dd-feature-demo{overflow:visible}
