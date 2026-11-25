@@ -22,6 +22,14 @@ import ExtendedEventInfo from "../../../components/invitation/extended-event-inf
 import { cache } from "react";
 import { selectCardShareImage } from "../../../lib/card-share-image";
 
+// Keep browser zoom disabled only on published invitation pages.
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 
 
 function withTopAlignedHeroFallback(selected, settings, hero, slug, updatedAt) {
@@ -262,7 +270,7 @@ export default async function InvitationPage({ params, searchParams }) {
   const existingShareFallback = event.cover_image_url || invitation.heroImageUrl || invitation.hero_image_url || galleryPhotos[0]?.url || "";
   const shareImage = withTopAlignedHeroFallback(selectCardShareImage(settings, templateConfig, existingShareFallback), settings, templateConfig?.hero, slug, event.updated_at);
 
-  return <main className={`public-invitation shared-public-invitation${waitForNoticeBeforeHeroIntro ? " dd-hero-intro-waits-for-notice" : ""}`}>
+  return <main style={{ touchAction: "pan-x pan-y" }} className={`public-invitation shared-public-invitation${waitForNoticeBeforeHeroIntro ? " dd-hero-intro-waits-for-notice" : ""}`}>
     {ownerView && <nav className="owner-return-nav" aria-label="DearDay 관리 화면으로 돌아가기"><a href="/my-invitations">내 초대장</a><a href="/">DearDay 홈</a></nav>}
     {matrixFields.notice?.state !== "none" && <InvitationNotice notice={effectiveNotice} slug={slug} imageUrl={settings.notice?.imagePath ? supabase.storage.from("invitation-photos").getPublicUrl(settings.notice.imagePath).data.publicUrl : null} />}
     <div className="full-invitation-renderer dd-bgm-public-style" data-share-capture-details="" data-card-share-title={getInvitationPresentation(invitation, invitation.eventKind).heroTitle || getInvitationTitle(invitation, invitation.eventKind)} data-card-share-schedule={getInvitationPresentation(invitation, invitation.eventKind).heroSchedule} data-card-share-venue={getInvitationPresentation(invitation, invitation.eventKind).venue} data-card-share-kind={getInvitationPresentation(invitation, invitation.eventKind).kindLabel}><InvitationRenderer invitation={invitation} eventKind={invitation.eventKind} eventTypeConfig={eventTypeConfig} templateId={invitation.templateId} templateConfig={templateConfig} templateAssets={templateAssets} userBgmUrl={userBgmUrl} placeActions={<><AddressCopy invitation={invitation} /><InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView deferUntilVisible /></>}>
