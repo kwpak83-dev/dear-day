@@ -5231,3 +5231,21 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 
 /* Wedding section previews share the public template root and viewport layout. */
 .dd-wedding-section-preview .dd-wedding-section-preview-canvas .invitation-template{width:100%;max-width:none;min-height:0;overflow:hidden}
+
+/* Mobile single-photo HERO adjustment dialog. */
+.dd-single-photo-open,.dd-single-photo-backdrop{display:none}
+@media(max-width:767px){
+.dd-single-photo-desktop{display:none}
+.dd-single-photo-open{display:block;width:100%;margin:10px 0}
+.dd-single-photo-backdrop{display:flex}
+.dd-single-photo-modal .dd-hero-text-modal-preview{min-height:0;overflow:hidden}
+.dd-single-photo-modal .hero-editor-live-preview{height:100%;max-height:100%;min-height:0;margin:0;box-sizing:border-box;overflow:hidden}
+.dd-single-photo-modal .dd-single-photo-controls{display:grid;gap:7px;max-height:48dvh;padding:8px 14px;overflow-y:auto}
+.dd-single-photo-controls label:has(input[type=range]){display:grid!important;grid-template-columns:minmax(112px,auto) minmax(0,1fr);align-items:center;gap:8px!important;font-size:12px!important}
+.dd-single-photo-controls input[type=range]{accent-color:#5b4d43;margin:0;min-width:0}
+.dd-single-photo-controls p{font-size:11px!important;line-height:1.4}
+.dd-single-photo-controls select{width:100%;min-width:0}
+.dd-single-photo-controls .save-button{font-size:12px;padding:6px 10px}
+.dd-single-photo-footer{flex:none;padding:8px 14px;border-top:1px solid #eee9e5}
+.dd-single-photo-footer button{width:100%;background:#5b4d43;color:white;border-color:#5b4d43}
+}
