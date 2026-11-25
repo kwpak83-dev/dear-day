@@ -4632,7 +4632,7 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-couple-preview-header{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid #eee2dc;font-size:14px;color:#5c4842}
 .dd-couple-preview-header button{font-size:25px;line-height:1;border:0;background:transparent;color:inherit;cursor:pointer}
 .dd-couple-preview-body{overflow:auto;min-height:0;background:#fff}
-.dd-couple-preview-body .dd-couple-intro{padding:32px 20px 42px}
+.dd-couple-preview-body:not(.dd-wedding-section-preview) .dd-couple-intro{padding:32px 20px 42px}
 
 /* Compact account selection rows in the user invitation editor only. */
 .create-page .account-editor.dd-account-choice{margin-bottom:10px;padding:12px 14px}
@@ -5228,3 +5228,6 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 /* Mobile-only line breaks in the invitation guide. */
 .my-page .dd-my-guide-mobile-break{display:none}
 @media(max-width:600px){.my-page .dd-my-guide-mobile-break{display:initial}.my-page .dd-my-guide-body li{word-break:keep-all;overflow-wrap:break-word}}
+
+/* Wedding section previews share the public template root and viewport layout. */
+.dd-wedding-section-preview .dd-wedding-section-preview-canvas .invitation-template{width:100%;max-width:none;min-height:0;overflow:hidden}
