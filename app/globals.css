@@ -5256,3 +5256,19 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-hero-wording-modal .dd-hero-text-modal-nav button{background:#F6F6F6;border-color:#F6F6F6;color:#5B4D43;font-family:Pretendard,sans-serif;font-size:14px;font-weight:600;box-shadow:0 2px 6px rgba(91,77,67,.12)}
 .dd-hero-wording-modal .dd-hero-text-modal-nav button.is-primary{background:#5B4D43;border-color:#5B4D43;color:#fff}
 .dd-hero-wording-modal .dd-hero-text-modal-nav button:disabled{opacity:.35;box-shadow:none}
+
+/* HERO wording: opt-in adjustment controls */
+.dd-hero-wording-modal .dd-hero-adjustment-help{margin:0;color:#888;font-size:11px;line-height:1.5}
+.dd-hero-wording-modal .dd-hero-adjustment-field{display:grid;gap:7px;min-width:0;font-size:12px;color:#655a53}
+.dd-hero-wording-modal .dd-hero-adjustment-toggle{display:flex;align-items:center;gap:4px;min-width:0;font-size:12px;color:#655a53;cursor:pointer}
+.dd-hero-wording-modal .dd-hero-adjustment-toggle input[type="checkbox"]{width:13px;height:13px;flex:0 0 13px;margin:0;accent-color:#5b4d43}
+.dd-hero-wording-modal input[type="range"]:disabled{opacity:.45;pointer-events:none;accent-color:#aaa}
+@media(max-width:600px){.dd-hero-wording-modal .dd-hero-adjustment-field{gap:4px}.dd-hero-wording-modal .dd-hero-adjustment-toggle{font-size:11px;gap:3px}.dd-hero-wording-modal .dd-hero-text-modal-center{padding-inline:5px}}
+
+/* User HERO wording entry: explicit editing action */
+.create-page .dd-hero-display-card{display:grid;gap:10px;padding:16px;border:1px solid #dfcbb5;border-radius:16px;background:#fffaf4;margin-top:10px}
+.create-page .dd-hero-display-card-title{display:flex;align-items:center;gap:9px;color:#493b30;font-size:15px}
+.create-page .dd-hero-display-card-title span{display:flex;align-items:center;color:#a18160;flex-shrink:0}
+.create-page .dd-hero-display-card p{margin:0;color:#92775d;font-size:12px;line-height:1.5}
+.create-page .dd-hero-display-card-button{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;min-height:44px;padding:10px 12px;border:0;border-radius:9px;background:#5B4D43;color:#fff;font:inherit;font-size:14px;font-weight:600;cursor:pointer;touch-action:manipulation}
+.create-page .dd-hero-display-card-button:focus-visible{outline:2px solid #5B4D43;outline-offset:3px}
