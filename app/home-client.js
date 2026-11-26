@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../lib/supabase/browser";
 import { DEFAULT_AUTH_RETURN_PATH, getSafeAuthReturnPath } from "../lib/auth-return-url";
 import DearDayLogo from "../components/dearday-logo";
+import DearDayDesktopHeader from "../components/dearday-desktop-header";
 import DearDayMobileDrawer from "../components/dearday-mobile-drawer";
 import InvitationProgram from "../components/invitation/invitation-program";
 import { PROGRAM_DEFAULTS, normalizeProgram } from "../lib/invitation-program";
@@ -171,15 +172,13 @@ export default function Home() {
     setAuthLoading("naver");
     window.location.assign(`/api/auth/naver?returnUrl=${encodeURIComponent(returnPath)}`);
   };
-  const providerLabel = "네이버 로그인";
   const signOut = async () => { const supabase = getSupabaseBrowserClient(); if (supabase) await supabase.auth.signOut(); setUser(null); setMenuOpen(false); };
   const comingSoon = () => { setNotice("준비 중인 기능이에요."); window.setTimeout(() => setNotice(""), 2200); };
 
   return <main className="landing-v2">
+    <DearDayDesktopHeader user={user} canManageAdmin={canManageAdmin} onLogin={()=>openLogin()} onSignOut={signOut} />
     <header className="landing-header">
       <a className="landing-brand" href="#top" aria-label="DearDay 홈"><DearDayLogo /></a>
-      <nav className="landing-nav" aria-label="주요 메뉴"><a href="/templates">템플릿 둘러보기</a><a href="#how">초대장 체험하기</a><span aria-disabled="true" title="네이버 스마트스토어 준비 중" style={{cursor:"not-allowed",opacity:.55}}>이용권 구매</span><a href={user ? "/my-inquiries" : "/?login=required&returnUrl=%2Fmy-inquiries"}>문의하기</a></nav>
-      <div className="landing-actions">{user ? <><span>{providerLabel}</span><a href="/my-invitations">마이페이지</a>{canManageAdmin && <a href="/admin/credits" aria-label="관리자 페이지">관리자 페이지</a>}<button onClick={signOut}>로그아웃</button></> : <><button className="search-button" onClick={comingSoon} aria-label="검색">⌕</button><i /><button onClick={() => openLogin()}>로그인</button></>}<button className="landing-cta" onClick={() => window.location.assign("/templates")}>지금, 초대장 만들기 →</button></div>
       <div className="landing-mobile-actions"><button aria-label="검색" onClick={comingSoon}>⌕</button><button className="landing-menu" aria-label="메뉴 열기" onClick={() => setMenuOpen(!menuOpen)}>☰</button></div>
       <a className="landing-mobile-invitations" href={user ? "/my-invitations" : "/?login=required&returnUrl=%2Fmy-invitations"} aria-label="내 초대장" title="내 초대장"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" aria-hidden="true"><defs><linearGradient id="dd-sealed-envelope" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#fffaf3"/><stop offset="1" stopColor="#e8d7c7"/></linearGradient></defs><rect x="2.5" y="4" width="19" height="16" rx="2.3" fill="url(#dd-sealed-envelope)" stroke="#d5bfae" strokeWidth=".8"/><path d="M3.5 5.5 12 12.2l8.5-6.7M3.5 18.5l6.3-6.1M20.5 18.5l-6.3-6.1" stroke="#c9ad98" strokeWidth=".85" strokeLinejoin="round"/><circle cx="12" cy="12.2" r="2.15" fill="#a87856" stroke="#d6b18d" strokeWidth=".65"/><circle cx="12" cy="12.2" r="1.3" fill="none" stroke="#e8cfb3" strokeWidth=".45"/><path d="M12 11.2v2M11.3 11.8l.7-.6.7.6" stroke="#e8cfb3" strokeWidth=".45" strokeLinecap="round"/></svg></a>
       <DearDayMobileDrawer open={menuOpen} onClose={() => setMenuOpen(false)} user={user} canManageAdmin={canManageAdmin} onStart={start} onLogin={() => openLogin()} onSignOut={signOut} />
