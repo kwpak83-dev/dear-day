@@ -1,6 +1,9 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import DearDayLogo from "../../components/dearday-logo";
+import DearDayMobileDrawer from "../../components/dearday-mobile-drawer";
+import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
+import "../landing-refresh.css";
 import "./collection-showcase.css";
 import { completedTemplateCategoryToEventKind } from "../../lib/completed-template-sample";
 
@@ -10,6 +13,38 @@ const categories=[["wedding","결혼식"],["first-birthday","돌잔치"],["birth
 export default function TemplateCollectionPage(){
  const [items,setItems]=useState([]);
  const [menuOpen,setMenuOpen]=useState(false);
+  const [user, setUser] = useState(null);
+  const [canManageAdmin, setCanManageAdmin] = useState(false);
+  useEffect(() => {
+    const supabase = getSupabaseBrowserClient();
+    if (!supabase) return;
+    supabase.auth.getSession().then(({data}) => setUser(data.session?.user || null)).catch(() => {});
+    const {data:{subscription}} = supabase.auth.onAuthStateChange((_event, session) => setUser(session?.user || null));
+    return () => subscription.unsubscribe();
+  }, []);
+  useEffect(() => {
+    let active = true;
+    setCanManageAdmin(false);
+    if (!user?.id) return;
+    (async () => {
+      try {
+        const supabase = getSupabaseBrowserClient();
+        const {data:{session}} = await supabase.auth.getSession();
+        if (!session || session.user.id !== user.id) return;
+        const response = await fetch("/api/admin/menu-access", {headers:{Authorization:"Bearer "+session.access_token},cache:"no-store"});
+        const result = response.ok ? await response.json() : null;
+        if (active) setCanManageAdmin(result?.canManage === true);
+      } catch { if (active) setCanManageAdmin(false); }
+    })();
+    return () => { active = false; };
+  }, [user?.id]);
+  const signOut = async () => {
+    const supabase = getSupabaseBrowserClient();
+    if (supabase) await supabase.auth.signOut();
+    setMenuOpen(false);
+    window.location.assign("/");
+  };
+
  const [category,setCategory]=useState("wedding");
  const [loading,setLoading]=useState(true);
  const [ready,setReady]=useState(false);
@@ -112,14 +147,15 @@ export default function TemplateCollectionPage(){
  const previewUrl=selected?`/templates/${encodeURIComponent(selected.template_key)}`:"/templates";
  return <main className="dd-collection-page dd-showcase-page">
   <header className="dd-showcase-header">
-   <button type="button" className="dd-showcase-menu-toggle" aria-label={menuOpen ? "메뉴 닫기" : "메뉴 열기"} aria-expanded={menuOpen} aria-controls="dd-showcase-menu" onClick={()=>setMenuOpen(v=>!v)}>
+   <button type="button" className="dd-showcase-menu-toggle" aria-label={menuOpen ? "메뉴 닫기" : "메뉴 열기"} aria-expanded={menuOpen} onClick={()=>setMenuOpen(v=>!v)}>
     <span/><span/><span/>
    </button>
    <a href="/" aria-label="DearDay 메인으로" className="dd-showcase-brand"><DearDayLogo /></a>
    <a href="/" className="dd-showcase-home">홈으로 ↗</a>
-   <a href="/my-invitations" className="dd-showcase-invitations" aria-label="내 초대장" title="내 초대장"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" aria-hidden="true"><defs><linearGradient id="dd-sealed-envelope" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#fffaf3"/><stop offset="1" stopColor="#e8d7c7"/></linearGradient></defs><rect x="2.5" y="4" width="19" height="16" rx="2.3" fill="url(#dd-sealed-envelope)" stroke="#d5bfae" strokeWidth=".8"/><path d="M3.5 5.5 12 12.2l8.5-6.7M3.5 18.5l6.3-6.1M20.5 18.5l-6.3-6.1" stroke="#c9ad98" strokeWidth=".85" strokeLinejoin="round"/><circle cx="12" cy="12.2" r="2.15" fill="#a87856" stroke="#d6b18d" strokeWidth=".65"/><circle cx="12" cy="12.2" r="1.3" fill="none" stroke="#e8cfb3" strokeWidth=".45"/><path d="M12 11.2v2M11.3 11.8l.7-.6.7.6" stroke="#e8cfb3" strokeWidth=".45" strokeLinecap="round"/></svg></a>
+   <a href={user ? "/my-invitations" : "/?login=required&returnUrl=%2Fmy-invitations"} className="dd-showcase-invitations" aria-label="내 초대장" title="내 초대장"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" aria-hidden="true"><defs><linearGradient id="dd-sealed-envelope" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#fffaf3"/><stop offset="1" stopColor="#e8d7c7"/></linearGradient></defs><rect x="2.5" y="4" width="19" height="16" rx="2.3" fill="url(#dd-sealed-envelope)" stroke="#d5bfae" strokeWidth=".8"/><path d="M3.5 5.5 12 12.2l8.5-6.7M3.5 18.5l6.3-6.1M20.5 18.5l-6.3-6.1" stroke="#c9ad98" strokeWidth=".85" strokeLinejoin="round"/><circle cx="12" cy="12.2" r="2.15" fill="#a87856" stroke="#d6b18d" strokeWidth=".65"/><circle cx="12" cy="12.2" r="1.3" fill="none" stroke="#e8cfb3" strokeWidth=".45"/><path d="M12 11.2v2M11.3 11.8l.7-.6.7.6" stroke="#e8cfb3" strokeWidth=".45" strokeLinecap="round"/></svg></a>
    {menuOpen&&<><button type="button" className="dd-showcase-menu-backdrop" aria-label="메뉴 닫기" onClick={()=>setMenuOpen(false)}/><nav id="dd-showcase-menu" className="dd-showcase-menu-panel" aria-label="사이트 메뉴"><a href="/">홈</a><a href="/templates" onClick={()=>setMenuOpen(false)}>템플릿 컬렉션</a><a href="/create">초대장 만들기</a></nav></>}
   </header>
+  <div className="dd-collection-mobile-drawer"><DearDayMobileDrawer open={menuOpen} onClose={()=>setMenuOpen(false)} user={user} canManageAdmin={canManageAdmin} onStart={()=>window.location.assign("/create")} onLogin={()=>window.location.assign("/?login=required&returnUrl=%2Ftemplates")} onSignOut={signOut} /></div>
   <section className="dd-showcase-intro"><h1 className="dd-showcase-kicker">DEARDAY · TEMPLATE COLLECTION</h1></section>
   <nav className="dd-showcase-categories" aria-label="초대장 유형">{categories.filter(([v])=>v).map(([v,n])=><button type="button" key={v} className={category===v?"active":""} aria-pressed={category===v} onClick={()=>selectCategory(v)}>{n}</button>)}</nav>
   {loading?<div className="dd-showcase-message" role="status">디자인을 불러오는 중이에요.</div>:items.length===0?<div className="dd-showcase-message"><strong>현재 공개된 템플릿이 없어요.</strong><p>다른 카테고리를 선택해 보세요.</p><button onClick={()=>selectCategory("")}>전체 템플릿 보기</button></div>:<>

@@ -622,3 +622,11 @@
 @media(min-width:801px){
  .dd-showcase-page .dd-showcase-poster{aspect-ratio:3/5.25!important;height:auto!important}
 }
+
+/* Use the shared site drawer on mobile; retain the desktop menu. */
+.dd-collection-mobile-drawer{display:none}
+@media(max-width:700px){
+ .dd-collection-mobile-drawer{display:block}
+ .dd-showcase-page .dd-showcase-menu-backdrop,.dd-showcase-page .dd-showcase-menu-panel{display:none!important}
+ .dd-showcase-page .dd-showcase-menu-toggle{border:0!important;box-shadow:none!important}
+}
