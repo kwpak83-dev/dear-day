@@ -625,7 +625,7 @@
 
 /* Use the shared site drawer on mobile; retain the desktop menu. */
 .dd-collection-mobile-drawer{display:none}
-@media(max-width:700px){
+@media(max-width:800px){
  .dd-collection-mobile-drawer{display:block}
  .dd-showcase-page .dd-showcase-menu-backdrop,.dd-showcase-page .dd-showcase-menu-panel{display:none!important}
  .dd-showcase-page .dd-showcase-menu-toggle{border:0!important;box-shadow:none!important}

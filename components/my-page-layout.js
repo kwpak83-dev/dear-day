@@ -7,6 +7,7 @@ const QUICK_TABS_HIDE_SCROLL_Y = 60;
 const QUICK_TABS_SHOW_SCROLL_Y = 8;
 import DearDayLogo from "./dearday-logo";
 import CreditBalance from "./credit-balance";
+import DearDayDesktopHeader from "./dearday-desktop-header";
 import DearDayMobileDrawer from "./dearday-mobile-drawer";
 import { getSupabaseBrowserClient } from "../lib/supabase/browser";
 import "../app/landing-refresh.css";
@@ -21,7 +22,6 @@ function QuickTabIcon({ type }) {
 const menuItems = [
   { key: "invitations", label: "내 초대장", href: "/my-invitations" },
   { key: "guests", label: "하객 관리", href: "/guest-management" },
-  { key: "billing", label: "결제 / 보관" },
   { key: "profile", label: "내 정보", href: "/my-profile" },
   { key: "inquiries", label: "문의내역", href: "/my-inquiries" },
 ];
@@ -70,15 +70,15 @@ export default function MyPageLayout({ current, children }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   return <main className="my-page member-page">
+    <DearDayDesktopHeader user={user} canManageAdmin={canManageAdmin} onLogin={()=>window.location.assign("/?login=required")} onSignOut={signOut} />
     <header className="create-header dd-member-topbar">
       <button type="button" className="dd-member-menu-toggle" aria-label="메뉴 열기" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span /><span /><span /></button>
       <a className="brand dd-member-brand" href="/" aria-label="DearDay 홈"><DearDayLogo /></a>
       <a className="dd-member-envelope" href="/my-invitations" aria-label="내 초대장" title="내 초대장"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="2.3" fill="#f8ede0" stroke="#d5bfae" strokeWidth=".8"/><path d="M3.5 5.5 12 12.2l8.5-6.7M3.5 18.5l6.3-6.1M20.5 18.5l-6.3-6.1" stroke="#c9ad98" strokeWidth=".85" strokeLinejoin="round"/><circle cx="12" cy="12.2" r="2.15" fill="#a87856" stroke="#d6b18d" strokeWidth=".65"/><circle cx="12" cy="12.2" r="1.3" fill="none" stroke="#e8cfb3" strokeWidth=".45"/></svg></a>
-      <div className="create-user my-page-header-actions"><a className="my-page-header-button primary" href="/templates">새 초대장 만들기</a><a className="my-page-header-button" href="/">나가기</a></div>
       <DearDayMobileDrawer open={menuOpen} onClose={() => setMenuOpen(false)} user={user} canManageAdmin={canManageAdmin} current={current} onStart={() => window.location.assign("/templates")} onLogin={() => window.location.assign("/?login=required")} onSignOut={signOut} />
     </header>
     <nav className={`dd-member-quick-tabs${quickTabsHidden ? " is-hidden" : ""}`} aria-label="마이페이지 빠른 메뉴">
-      {menuItems.slice(0, 3).map(item => item.href
+      {menuItems.slice(0, 2).map(item => item.href
         ? <a key={item.key} href={item.href} className={current === item.key ? "active" : ""} aria-current={current === item.key ? "page" : undefined}><QuickTabIcon type={item.key} /><span>{item.label}</span></a>
         : <span key={item.key} aria-disabled="true"><QuickTabIcon type={item.key} /><span>{item.label}</span></span>)}
     </nav>
