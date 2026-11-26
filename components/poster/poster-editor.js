@@ -1,4 +1,5 @@
 "use client";
+import MobileInputController from "../mobile-input-controller";
 
 import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
@@ -225,6 +226,7 @@ export default function PosterEditor({ slug }) {
   };
 
   return <main className="dd-poster-editor">
+    <MobileInputController rootSelector=".dd-poster-editor" fieldSelector=".dd-poster-tools" />
     <header className="dd-poster-top"><div><a href="/my-invitations" onClick={requestExit}>← 내 초대장</a></div>
       <button type="button" className="dd-poster-save" onClick={save} disabled={saving || exporting}>{saving ? "저장 중…" : "저장하기"}</button></header>
     <div className="dd-poster-heading"><h1>회사 게시용 초대장</h1><p className="dd-poster-header-description">편집을 완료후 이미지를 다운받아 회사 게시판에 바로 업로드 해주세요</p></div>

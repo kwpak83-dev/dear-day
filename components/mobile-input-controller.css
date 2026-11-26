@@ -1,0 +1,9 @@
+.dd-mobile-input-bar{position:fixed;z-index:2147483000;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 12px;background:#faf7f4;border-top:1px solid #ded5cd;box-shadow:0 -2px 8px #00000012;box-sizing:border-box;font-family:Pretendard,sans-serif}
+.dd-mobile-input-bar button{flex:1;min-height:44px;border:0;border-radius:7px;background:transparent;color:#5b4d43;font-size:14px;font-weight:600;touch-action:manipulation}
+.dd-mobile-input-bar button:last-child{background:#5b4d43;color:white}
+.dd-mobile-input-bar button:disabled{opacity:.35}
+@media(max-width:800px) and (pointer:coarse){
+.create-page[data-mobile-input-active] .dd-preview-float,.dd-poster-editor[data-mobile-input-active] .dd-poster-mobile-preview{visibility:hidden;pointer-events:none}
+.create-page[data-mobile-input-active] .editor-panel,.dd-poster-editor[data-mobile-input-active] .dd-poster-tools{scroll-margin-bottom:64px}
+.create-page[data-mobile-input-active] .dd-hero-wording-modal .dd-hero-text-modal-controls{scroll-padding-bottom:60px}
+}
