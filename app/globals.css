@@ -5256,3 +5256,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-hero-wording-modal .dd-hero-text-modal-nav button{background:#F6F6F6;border-color:#F6F6F6;color:#5B4D43;font-family:Pretendard,sans-serif;font-size:14px;font-weight:600;box-shadow:0 2px 6px rgba(91,77,67,.12)}
 .dd-hero-wording-modal .dd-hero-text-modal-nav button.is-primary{background:#5B4D43;border-color:#5B4D43;color:#fff}
 .dd-hero-wording-modal .dd-hero-text-modal-nav button:disabled{opacity:.35;box-shadow:none}
+
+/* HERO wording: opt-in adjustment controls */
+.dd-hero-wording-modal .dd-hero-adjustment-help{margin:0;color:#888;font-size:11px;line-height:1.5}
+.dd-hero-wording-modal .dd-hero-adjustment-field{display:grid;gap:7px;min-width:0;font-size:12px;color:#655a53}
+.dd-hero-wording-modal .dd-hero-adjustment-toggle{display:flex;align-items:center;gap:4px;min-width:0;font-size:12px;color:#655a53;cursor:pointer}
+.dd-hero-wording-modal .dd-hero-adjustment-toggle input[type="checkbox"]{width:13px;height:13px;flex:0 0 13px;margin:0;accent-color:#5b4d43}
+.dd-hero-wording-modal input[type="range"]:disabled{opacity:.45;pointer-events:none;accent-color:#aaa}
+@media(max-width:600px){.dd-hero-wording-modal .dd-hero-adjustment-field{gap:4px}.dd-hero-wording-modal .dd-hero-adjustment-toggle{font-size:11px;gap:3px}.dd-hero-wording-modal .dd-hero-text-modal-center{padding-inline:5px}}
