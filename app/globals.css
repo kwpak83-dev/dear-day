@@ -5264,3 +5264,15 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .dd-hero-wording-modal .dd-hero-adjustment-toggle input[type="checkbox"]{width:13px;height:13px;flex:0 0 13px;margin:0;accent-color:#5b4d43}
 .dd-hero-wording-modal input[type="range"]:disabled{opacity:.45;pointer-events:none;accent-color:#aaa}
 @media(max-width:600px){.dd-hero-wording-modal .dd-hero-adjustment-field{gap:4px}.dd-hero-wording-modal .dd-hero-adjustment-toggle{font-size:11px;gap:3px}.dd-hero-wording-modal .dd-hero-text-modal-center{padding-inline:5px}}
+
+/* User HERO wording entry: highlight required review */
+.create-page .dd-custom-accordion.dd-hero-display-accordion{background:#faf3e9;border:1px solid #d9c4a8;border-radius:16px}
+.create-page .dd-hero-display-accordion>summary{gap:10px;padding:14px 16px;min-height:72px}
+.create-page .dd-hero-display-accordion>summary .dd-hero-display-icon{display:flex;flex-direction:row;align-items:center;justify-content:center;flex:0 0 42px;width:42px;height:42px;border-radius:10px;background:#efe2d0;color:#98754f}
+.create-page .dd-hero-display-accordion>summary .dd-hero-display-copy{display:flex;flex:1;flex-direction:column;gap:5px;min-width:0}
+.create-page .dd-hero-display-accordion>summary .dd-hero-display-title{display:flex;flex-direction:row;align-items:center;flex-wrap:wrap;gap:6px}
+.create-page .dd-hero-display-accordion>summary .dd-hero-display-title strong{color:#493b30;font-size:15px}
+.create-page .dd-hero-display-accordion>summary .dd-hero-display-required{display:inline-flex;align-items:center;background:#f1dfc6;color:#805725;border-radius:5px;padding:3px 6px;font-size:10px;font-weight:700;line-height:1.2;white-space:nowrap}
+.create-page .dd-hero-display-accordion>summary small{color:#806b59;font-size:12px;line-height:1.5}
+.create-page .dd-hero-display-accordion>summary .dd-accordion-chevron{color:#98754f;flex-shrink:0}
+@media(max-width:360px){.create-page .dd-hero-display-accordion>summary{padding:12px;gap:8px}.create-page .dd-hero-display-accordion>summary .dd-hero-display-icon{flex-basis:36px;width:36px;height:36px}}
