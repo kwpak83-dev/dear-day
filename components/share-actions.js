@@ -1,5 +1,6 @@
 "use client";
 
+import { PUBLIC_ORIGIN } from "../lib/public-origin.js";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { prepareKakaoImage } from "../lib/kakao-share-image";
@@ -128,7 +129,7 @@ export default function ShareActions({ path, title = "DearDay 초대장", text, 
       }
       const Kakao = await loadKakaoSdk();
       if (!Kakao.isInitialized()) Kakao.init(jsKey);
-      const url = new URL(path, "https://dear-day-seven.vercel.app").toString();
+      const url = new URL(path, PUBLIC_ORIGIN).toString();
       const content = {
         title,
         description: text || "초대장을 확인해 주세요.",

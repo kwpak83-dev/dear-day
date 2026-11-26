@@ -1,3 +1,4 @@
+import { PUBLIC_ORIGIN } from "../../../lib/public-origin.js";
 import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
 import { preload } from "react-dom";
@@ -35,7 +36,7 @@ export const viewport = {
 function withTopAlignedHeroFallback(selected, settings, hero, slug, updatedAt) {
   if (settings?.kakaoShareImageUrl || hero?.mode === "illustration" || !selected?.imageUrl) return selected;
   // Use the stable public production domain, not a deployment-specific VERCEL_URL.
-  const origin = "https://dear-day-seven.vercel.app";
+  const origin = PUBLIC_ORIGIN;
   const version = updatedAt ? `?v=${encodeURIComponent(new Date(updatedAt).getTime())}` : "";
   return { ...selected, fallbackImageUrl: selected.imageUrl, imageUrl: `${origin}/invite/${encodeURIComponent(slug)}/share-fallback.png${version}`, imageWidth: 1200, imageHeight: 630 };
 }
