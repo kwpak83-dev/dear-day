@@ -3523,3 +3523,8 @@
 .landing-v2 .dd-landing-greeting-real-preview{width:100%;min-width:0;max-height:55dvh;overflow:auto}
 .landing-v2 .dd-landing-greeting-real-preview .dd-message-preview-inline-label{display:none}
 .landing-v2 .dd-landing-greeting-real-preview .dd-message-preview-inline{padding:0;margin:0;border:0;background:transparent}
+
+
+/* Static first frame behind the hero video layers, including before hydration. */
+.landing-v2 .dd-cinematic-hero .dd-hero-media .dd-hero-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;pointer-events:none;display:block!important}
+.landing-v2 .dd-cinematic-hero.dd-hero-variant-c .dd-hero-media .dd-hero-poster{position:absolute!important;inset:auto!important;top:13px!important;left:13px!important;width:calc(100% - 26px)!important;height:calc(100% - 49px)!important;aspect-ratio:auto!important;object-fit:cover!important}
