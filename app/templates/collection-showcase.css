@@ -661,3 +661,13 @@
  .dd-showcase-page .dd-showcase-actions :is(a,button) svg{width:13px!important;height:13px!important}
  .dd-showcase-page .dd-showcase-hint-pill{margin-top:4px!important}
 }
+
+/* Compact desktop collection heading and keep the interaction hint visible. */
+@media(min-width:801px){
+ .dd-showcase-page .dd-showcase-intro{padding-top:5px!important;padding-bottom:4px!important}
+ .dd-showcase-page .dd-showcase-intro .dd-showcase-kicker{font-size:11px!important;line-height:1.2!important;margin:0!important}
+ .dd-showcase-page .dd-showcase-categories{gap:7px!important;padding-block:2px!important;margin-bottom:0!important}
+ .dd-showcase-page .dd-showcase-categories button{font-size:9.5px!important;padding:5px 11px!important;line-height:1.2!important}
+ .dd-showcase-page .dd-showcase-hint-pill{margin-top:3px!important;margin-bottom:0!important}
+ .dd-collection-page.dd-showcase-page{padding-bottom:4px!important}
+}
