@@ -16,7 +16,7 @@ export default function LandingCoverMarquee({items, title, emptyText, ariaLabel}
    const first=track.children[0], copy=track.children[items.length];
    const distance=copy&&first?copy.offsetLeft-first.offsetLeft:0;
    if(visible&&!document.hidden&&!reduced.matches&&!paused.current&&!touch.current&&!stoppedRef.current&&distance>0){
-    if(last)pos=(pos+Math.min(now-last,50)*0.1)%distance;
+    if(last)pos=(pos+Math.min(now-last,50)*0.07)%distance;
     track.style.transform="translate3d("+(-pos)+"px,0,0)";
     last=now;
    }else last=0;
