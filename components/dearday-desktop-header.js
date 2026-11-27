@@ -7,7 +7,7 @@ export default function DearDayDesktopHeader({user,onLogin,current=""}) {
     <a className="dd-desktop-brand" href="/" aria-label="DearDay 홈"><DearDayLogo /></a>
     <nav className="dd-desktop-nav" aria-label="주요 메뉴">
       <a href="/templates" aria-current={current==="templates"?"page":undefined}>템플릿 둘러보기</a>
-      <a href="/#how">초대장 체험하기</a>
+      <a href="/#how-desktop">초대장 체험하기</a>
       <span aria-disabled="true" title="네이버 스마트스토어 준비 중">이용권 구매</span>
       <a href={user?"/my-inquiries":"/?login=required&returnUrl=%2Fmy-inquiries"}>문의하기</a>
     </nav>
