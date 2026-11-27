@@ -3529,3 +3529,12 @@
 /* Paint the first frame behind the video without adding a DOM layer. */
 .landing-v2 .dd-cinematic-hero .dd-hero-media{background-image:url("/landing/dearday-seaside-hero-poster.webp")!important;background-repeat:no-repeat!important;background-position:center!important;background-size:cover!important}
 .landing-v2 .dd-cinematic-hero.dd-hero-variant-c .dd-hero-media{background-origin:border-box!important;background-position:13px 13px!important;background-size:calc(100% - 26px) calc(100% - 49px)!important}
+
+
+/* Continuous cover marquee: features 01 and 08 only. */
+.landing-v2 .dd-cover-marquee .dd-cover-marquee-viewport{width:100%;overflow:hidden}
+.landing-v2 .dd-cover-marquee .dd-cover-marquee-track{position:relative;width:100%;overflow:visible;scroll-snap-type:none;scroll-padding-inline:0!important;padding-left:0!important;padding-right:0!important;touch-action:pan-y;align-items:flex-start;will-change:transform}
+.landing-v2 .dd-cover-marquee .dd-cover-marquee-track::before,.landing-v2 .dd-cover-marquee .dd-cover-marquee-track::after{display:none!important;content:none!important}
+.landing-v2 .dd-cover-marquee .dd-concept-carousel-card{opacity:1;scroll-snap-align:none;transition:none}
+.landing-v2 .dd-cover-marquee-toggle{display:block;margin:0 auto 4px;border:0;background:transparent;color:#967b6d;font-size:10px;cursor:pointer}
+@media(prefers-reduced-motion:reduce){.landing-v2 .dd-cover-marquee .dd-cover-marquee-viewport{overflow-x:auto}.landing-v2 .dd-cover-marquee .dd-cover-marquee-track{transform:none!important}.landing-v2 .dd-cover-marquee .dd-concept-carousel-card[aria-hidden="true"]{display:none}.landing-v2 .dd-cover-marquee-toggle{display:none}}
