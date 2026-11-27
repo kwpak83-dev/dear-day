@@ -7,7 +7,7 @@
  .dd-desktop-brand{display:flex;align-items:center;flex:none}
  .dd-desktop-header .dd-desktop-brand .dearday-logo,.dd-desktop-header .dd-desktop-brand img{display:block;width:101px!important;height:42px!important;max-width:101px!important;max-height:42px!important;object-fit:contain!important}
  .dd-desktop-nav,.dd-desktop-actions{display:flex;align-items:center;gap:clamp(12px,1.8vw,28px);font-size:14px}
- .dd-desktop-nav{justify-content:flex-start;flex:1}
+ .dd-desktop-nav{justify-content:flex-start;flex:1;margin-left:32px}
  .dd-desktop-nav [aria-disabled=true]{color:#999;cursor:not-allowed}
  .dd-desktop-nav a[aria-current=page]{font-weight:700;color:#594b40}
  .dd-desktop-actions{flex:none;gap:16px}
@@ -18,6 +18,7 @@
  .dd-desktop-header{gap:10px;padding:0 14px}
  .dd-desktop-header .dd-desktop-brand .dearday-logo,.dd-desktop-header .dd-desktop-brand img{width:78px!important;height:33px!important;max-width:78px!important;max-height:33px!important}
  .dd-desktop-nav,.dd-desktop-actions{font-size:12px;gap:12px}
+ .dd-desktop-nav{margin-left:16px}
 }
 @media(max-width:800px){
  .my-page.member-page .dd-member-quick-tabs{grid-template-columns:repeat(2,minmax(0,1fr))!important}
