@@ -2208,13 +2208,20 @@
 }
 
 /* Keep the last decoded frame visible until the next preloaded hero video is playing. */
+.landing-v2 .dd-cinematic-hero .dd-hero-media .dd-hero-poster{display:block!important;pointer-events:none}
 .landing-v2 .dd-cinematic-hero .dd-hero-media .dd-hero-video.dd-hero-video-layer{opacity:0!important;transition:opacity .32s ease!important;pointer-events:none!important}
 .landing-v2 .dd-cinematic-hero .dd-hero-media .dd-hero-video.dd-hero-video-layer.dd-hero-video-active{opacity:1!important}
 @media(prefers-reduced-motion:reduce){.landing-v2 .dd-cinematic-hero .dd-hero-media .dd-hero-video.dd-hero-video-layer{transition:none!important}}
 
+/* Fade the incoming Polaroid video over the opaque outgoing frame. */
+@media(prefers-reduced-motion:no-preference){
+.landing-v2 .dd-cinematic-hero.dd-hero-variant-c .dd-hero-media .dd-hero-video.dd-hero-video-layer{transition:opacity 0s linear .32s!important}
+.landing-v2 .dd-cinematic-hero.dd-hero-variant-c .dd-hero-media .dd-hero-video.dd-hero-video-layer.dd-hero-video-active{z-index:1!important;transition:opacity .32s ease!important}
+}
+
 @media(max-width:800px){
 .landing-v2 .dd-cinematic-hero.dd-hero-variant-c .dd-hero-media::before{content:""!important;display:block!important;width:100%!important;aspect-ratio:4/3!important;height:auto!important;background:none!important}
-.landing-v2 .dd-cinematic-hero.dd-hero-variant-c .dd-hero-media .dd-hero-video.dd-hero-video-layer{position:absolute!important;inset:auto!important;top:13px!important;left:13px!important;width:calc(100% - 26px)!important;height:calc(100% - 49px)!important;aspect-ratio:auto!important;object-fit:cover!important}
+.landing-v2 .dd-cinematic-hero.dd-hero-variant-c .dd-hero-media .dd-hero-video:is(.dd-hero-video-layer,.dd-hero-poster){position:absolute!important;inset:auto!important;top:13px!important;left:13px!important;width:calc(100% - 26px)!important;height:calc(100% - 49px)!important;aspect-ratio:auto!important;object-fit:cover!important}
 }
 
 /* Use the same Korean typeface as the editor header for the landing tagline. */
@@ -3524,11 +3531,6 @@
 .landing-v2 .dd-landing-greeting-real-preview .dd-message-preview-inline-label{display:none}
 .landing-v2 .dd-landing-greeting-real-preview .dd-message-preview-inline{padding:0;margin:0;border:0;background:transparent}
 
-
-
-/* Paint the first frame behind the video without adding a DOM layer. */
-.landing-v2 .dd-cinematic-hero .dd-hero-media{background-image:url("/landing/dearday-seaside-hero-poster.webp")!important;background-repeat:no-repeat!important;background-position:center!important;background-size:cover!important}
-.landing-v2 .dd-cinematic-hero.dd-hero-variant-c .dd-hero-media{background-origin:border-box!important;background-position:13px 13px!important;background-size:calc(100% - 26px) calc(100% - 49px)!important}
 
 
 /* Continuous cover marquee: features 01 and 08 only. */
