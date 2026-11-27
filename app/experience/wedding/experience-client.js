@@ -8,6 +8,7 @@ import TransportGuide from "../../../components/invitation/transport-guide";
 import ParentsIntro from "../../../components/invitation/parents-intro";
 import GrowthTimeline from "../../../components/invitation/growth-timeline";
 import ExtendedEventInfo from "../../../components/invitation/extended-event-info";
+import DearDayLogo from "../../../components/dearday-logo";
 import DearDayBrandFooter from "../../../components/invitation/dearday-brand-footer";
 import ShareActions from "../../../components/share-actions";
 import Gallery from "../../invite/[slug]/gallery";
@@ -19,6 +20,13 @@ import { EXPERIENCE_CHANNEL, EXPERIENCE_TEMPLATE_KEY, EXPERIENCE_TARGETS, isExpe
 import "./experience.css";
 
 export default function WeddingExperience() {
+  const [standalone, setStandalone] = useState(false);
+  useEffect(() => {
+    const direct = window.parent === window;
+    setStandalone(direct);
+    document.documentElement.classList.toggle("dd-experience-standalone", direct);
+    return () => document.documentElement.classList.remove("dd-experience-standalone");
+  }, []);
   const [state, setState] = useState({ data: null, error: false });
   const [attempt, setAttempt] = useState(0);
   const [visualReady, setVisualReady] = useState(false);
@@ -136,9 +144,14 @@ export default function WeddingExperience() {
       });
     };
     window.addEventListener("message", receive);
-    // A demo never navigates links or submits forms, even when activated with a keyboard.
+    // Keep demo actions blocked; allow only explicit standalone site navigation.
     const blockLink = event => {
-      if (!event.target.closest?.("a[href]")) return;
+      const link = event.target.closest?.("a[href]");
+      if (!link) return;
+      if (window.parent === window && (link.closest(".dd-experience-navigation, .dd-experience-end-actions") || link.closest(".dearday-brand-footer"))) {
+        const url = new URL(link.href, window.location.href);
+        if (url.origin === window.location.origin && ["/", "/templates", "/create"].includes(url.pathname)) return;
+      }
       event.preventDefault(); event.stopImmediatePropagation();
       showToast("체험 화면에서는 전화·문자를 사용할 수 없어요.");
     };
@@ -154,13 +167,14 @@ export default function WeddingExperience() {
     };
   }, [data, state.error, visualReady]);
 
-  if (!data) return <main className="dd-experience-page-status" role={state.error ? "alert" : "status"}>{state.error ? <><p>초대장을 불러오지 못했어요.</p><button type="button" onClick={() => setAttempt(value => value + 1)}>다시 시도</button></> : "초대장을 불러오는 중이에요."}</main>;
+  const navigation = standalone && <nav className="dd-experience-navigation" aria-label="디어데이 이동 메뉴"><a className="dd-experience-home-logo" href="/" aria-label="디어데이 홈으로"><DearDayLogo compact /></a><a className="dd-experience-action" href="/">홈으로</a><a className="dd-experience-action is-primary" href="/templates">디자인 둘러보기</a></nav>;
+  if (!data) return <>{navigation}<main className="dd-experience-page-status" role={state.error ? "alert" : "status"}>{state.error ? <><p>초대장을 불러오지 못했어요.</p><button type="button" onClick={() => setAttempt(value => value + 1)}>다시 시도</button></> : "초대장을 불러오는 중이에요."}</main></>;
   const { item, templateConfig, templateAssets, eventTypeConfig } = data;
   const fields = eventTypeConfig.fields || {};
   const invitation = { ...sampleContentToInvitation(item.sample_content, item.category, { coverPhotoUrl: templateAssets?.heroPhotoUrl || item.sample_content.hero_image_url || "", templateId: item.body_template_id, heroPresetId: item.hero_preset_id }), bgmMode: "none" };
   const config = { ...templateConfig, hero: { ...templateConfig.hero, intro: { ...templateConfig.hero?.intro, enabled: false } } };
   const gallery = (invitation.galleryImages || []).map((url, index) => ({ id: `experience-${index}`, url }));
-  return <main ref={rootRef} className="public-invitation shared-public-invitation dd-landing-experience-document">
+  return <>{navigation}<main ref={rootRef} className="public-invitation shared-public-invitation dd-landing-experience-document">
     {notice && <p className="dd-experience-page-notice" role="status">{notice}</p>}
     <TemplatePreviewCanvas fixedDesignWidth stageClassName="dd-experience-preview-stage" canvasClassName="dd-experience-preview-canvas"><InvitationRenderer invitation={invitation} eventKind="wedding" eventTypeConfig={eventTypeConfig} templateId={item.body_template_id} templateConfig={config} templateAssets={templateAssets} placeActions={<InvitationMap address={invitation.venueAddress} venue={invitation.venue} staticView deferUntilVisible />}>
       <div className="public-invitation-sections">
@@ -175,5 +189,6 @@ export default function WeddingExperience() {
         <DearDayBrandFooter />
       </div>
     </InvitationRenderer></TemplatePreviewCanvas>
-  </main>;
+    {standalone && <div className="dd-experience-end-actions"><a className="dd-experience-action" href="/templates">디자인 둘러보기</a><a className="dd-experience-action is-primary" href="/create">무료 시안 만들기 <span aria-hidden="true">↗</span></a></div>}
+  </main></>;
 }
