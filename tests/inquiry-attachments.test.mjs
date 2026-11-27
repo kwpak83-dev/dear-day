@@ -25,6 +25,7 @@ test("real Supabase client gates customer reads and administrator API/count sepa
   }
   let user = owner;
   let allowed = false;
+  let lookupFails = false;
   const calls = [];
   const original = globalThis.fetch;
   t.after(() => { globalThis.fetch = original; });
@@ -34,6 +35,14 @@ test("real Supabase client gates customer reads and administrator API/count sepa
     calls.push(url.pathname);
     if (url.pathname === "/auth/v1/user") return Response.json({ id: user });
     if (url.pathname.endsWith("/rpc/is_admin")) return Response.json(allowed);
+    if (url.pathname === "/auth/v1/admin/users/" + owner) return lookupFails
+      ? Response.json({ message: "lookup failed" }, { status: 500 })
+      : Response.json({ id: owner, user_metadata: { full_name: "Test Member" } });
+    if (url.pathname === "/auth/v1/admin/users") return Response.json({ users: [{ id: owner, user_metadata: { full_name: "Test Member" } }] });
+    if (allowed && url.pathname === "/rest/v1/inquiries" && options.method !== "HEAD") {
+      if (url.searchParams.has("or")) assert.ok(url.searchParams.get("or").includes(owner));
+      return Response.json([{ id, user_id: owner, title: "question", attachments: [] }], { headers: { "content-range": "0-0/1" } });
+    }
     if (options.method === "HEAD") return new Response(null, { headers: { "content-range": "0-1/2" } });
     assert.equal(url.pathname, "/rest/v1/inquiries");
     assert.equal(url.searchParams.get("user_id"), "eq." + owner);
@@ -57,6 +66,12 @@ test("real Supabase client gates customer reads and administrator API/count sepa
   assert.equal((await adminList(request(adminPath))).status, 403);
   allowed = true;
   assert.deepEqual(await (await badge()).json(), { canManage: true, pendingInquiries: 2 });
+  const list = async suffix => (await adminList(request(adminPath + suffix))).json();
+  assert.equal((await list("")).inquiries[0].memberName, "Test Member");
+  assert.equal((await list("?search=Test")).inquiries[0].memberName, "Test Member");
+  lookupFails = true;
+  assert.equal((await list("")).inquiries[0].memberName, "이름 없음");
+  assert.equal(calls.includes("/rest/v1/profiles"), false);
 });
 
 test("checks bytes, format, count and decoded dimensions before upload", async () => {
