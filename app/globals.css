@@ -5282,3 +5282,12 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  .my-page.member-page .dd-member-desktop-account>a,.my-page.member-page .dd-member-desktop-account>button{display:flex;align-items:center;box-sizing:border-box;min-height:43px;width:100%;padding:10px 12px;border:0;border-radius:9px;background:transparent;color:#707070;font-family:inherit;font-size:13px;font-weight:400;line-height:inherit;text-align:left;text-decoration:none;cursor:pointer}
  .my-page.member-page .dd-member-desktop-account>a:hover,.my-page.member-page .dd-member-desktop-account>button:hover{background:#f1f1f1;color:#242424}
 }
+
+@media (min-width:801px){
+ .my-page.member-page .dd-member-menu-label{display:flex;align-items:center;gap:10px}
+ .my-page.member-page .member-navigation .dd-member-menu-label>svg,.my-page.member-page .dd-member-desktop-account svg{width:19px;height:19px;flex:none;color:#b88e7c}
+ .my-page.member-page .member-navigation nav>a.active .dd-member-menu-label>svg{color:#fff}
+ .my-page.member-page .member-navigation nav>a.active .dd-member-menu-label>svg path[fill]:not([fill="none"]){fill:currentColor}
+ .my-page.member-page .dd-member-desktop-account{border-top:1px solid #e2dcd5;padding-top:7px}
+ .my-page.member-page .dd-member-desktop-account>a,.my-page.member-page .dd-member-desktop-account>button{gap:10px}
+}

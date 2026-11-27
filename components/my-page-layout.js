@@ -8,7 +8,7 @@ const QUICK_TABS_SHOW_SCROLL_Y = 8;
 import DearDayLogo from "./dearday-logo";
 import CreditBalance from "./credit-balance";
 import DearDayDesktopHeader from "./dearday-desktop-header";
-import DearDayMobileDrawer from "./dearday-mobile-drawer";
+import DearDayMobileDrawer, { DrawerIcon } from "./dearday-mobile-drawer";
 import { getSupabaseBrowserClient } from "../lib/supabase/browser";
 import "../app/landing-refresh.css";
 
@@ -88,9 +88,9 @@ export default function MyPageLayout({ current, children }) {
         <h1>마이페이지</h1>
         <CreditBalance variant="menu"/>
         <nav aria-label="마이페이지 메뉴">{menuItems.map((item) => item.href
-          ? <a key={item.key} href={item.href} className={current === item.key ? "active" : ""} aria-current={current === item.key ? "page" : undefined}>{item.label}</a>
+          ? <a key={item.key} href={item.href} className={current === item.key ? "active" : ""} aria-current={current === item.key ? "page" : undefined}><span className="dd-member-menu-label"><DrawerIcon name={{invitations:"saved",guests:"account",profile:"account",inquiries:"inquiry"}[item.key]} />{item.label}</span></a>
           : <span key={item.key} aria-disabled="true"><b>{item.label}</b><small>준비중</small></span>)}</nav>
-        <div className="dd-member-desktop-account">{canManageAdmin&&<a href="/admin/credits">관리자 페이지</a>}<button type="button" onClick={signOut}>로그아웃</button></div>
+        <div className="dd-member-desktop-account">{canManageAdmin&&<a href="/admin/credits"><DrawerIcon name="admin" />관리자 페이지</a>}<button type="button" onClick={signOut}><DrawerIcon name="logout" />로그아웃</button></div>
       </aside>
       <div className="member-page-content">{children}</div>
     </div>
