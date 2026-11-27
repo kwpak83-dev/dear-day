@@ -5291,3 +5291,10 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  .my-page.member-page .dd-member-desktop-account{border-top:1px solid #e2dcd5;padding-top:7px}
  .my-page.member-page .dd-member-desktop-account>a,.my-page.member-page .dd-member-desktop-account>button{gap:10px}
 }
+
+/* Desktop member status colors: warm DearDay palette. */
+@media (min-width:801px){
+ .my-page.member-page .member-navigation nav>a.active{background:#594B40;border-color:#594B40;color:#fff}
+ .my-page.member-page .dd-my-card-badge--published{background:#857361;border-color:#857361;color:#fff}
+ .my-page.member-page .dd-my-card-badge--draft{background:#F5E9DD;border-color:#E5D3C1;color:#85664D}
+}
