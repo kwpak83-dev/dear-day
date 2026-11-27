@@ -61,15 +61,16 @@ export async function GET(request) {
   }
   let query = db.from("inquiries").select("id,user_id,category,title,status,created_at,answered_at,attachments", { count: "exact" });
   if (status !== "all") query = query.eq("status", status);
+  let memberSearchLimited = false;
   if (search) {
     const literal = search.replace(/[\\%_*]/g, char => char === "*" ? " " : "\\" + char);
     const term = `%${literal}%`;
     let matches;
     try { matches = await searchMembers(db, search); }
-    catch { return failure(); }
-    if (matches.limited) return json({ error: "회원 검색 범위가 너무 넓어요. 검색어를 더 길게 입력해 주세요." }, 400);
+    catch { matches = { ids: [], limited: true }; }
+    memberSearchLimited = matches.limited;
     const escaped = term.replace(/[\\"]/g, "\\$&");
-    const ids = matches.ids;
+    const ids = memberSearchLimited ? [] : matches.ids;
     query = ids.length ? query.or(`title.ilike."${escaped}",user_id.in.(${ids.join(",")})`) : query.ilike("title", term);
   }
 
@@ -89,7 +90,7 @@ export async function GET(request) {
     inquiries: rows.map(({ attachments, ...row }) => ({
       ...row, attachmentCount: Array.isArray(attachments) ? attachments.length : 0, memberName: names.get(row.user_id) || "이름 없음",
     })),
-    pending: pending.count, answered: answered.count, page, hasMore: (list.count || 0) > page * pageSize,
+    memberSearchLimited, pending: pending.count, answered: answered.count, page, hasMore: (list.count || 0) > page * pageSize,
   });
 }
 
