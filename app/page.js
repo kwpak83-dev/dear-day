@@ -1,10 +1,13 @@
 import Home from "./home-client";
 import { PUBLIC_ORIGIN } from "../lib/public-origin";
 
-const title = "디어데이 | 감성 모바일 초대장";
-const description = "몇 분 만에 완성하는 나만의 감성 모바일 초대장";
+const title = "디어데이 | 감성 모바일청첩장 & 초대장";
+const description = "결혼식부터 특별한 행사까지, 소중한 날을 담는 나만의 초대장.";
 
 export const metadata = {
+  title: "디어데이 | 감성 모바일청첩장 & 초대장 만들기",
+  description: "셀프 모바일청첩장부터 돌잔치, 생일, 환갑·칠순·팔순, 모임·행사, 개업까지. 다양한 감성 템플릿으로 나만의 모바일 초대장을 쉽고 간편하게 만들어 보세요.",
+  alternates: { canonical: PUBLIC_ORIGIN },
   openGraph: {
     title,
     description,
@@ -14,6 +17,46 @@ export const metadata = {
   },
 };
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": PUBLIC_ORIGIN + "/#organization",
+      name: "디어데이",
+      alternateName: "DearDay",
+      url: PUBLIC_ORIGIN,
+      logo: PUBLIC_ORIGIN + "/dearday-logo-black.png",
+    },
+    {
+      "@type": "WebSite",
+      "@id": PUBLIC_ORIGIN + "/#website",
+      name: "디어데이",
+      alternateName: "DearDay",
+      url: PUBLIC_ORIGIN,
+      inLanguage: "ko",
+      publisher: { "@id": PUBLIC_ORIGIN + "/#organization" },
+    },
+    {
+      "@type": "Service",
+      "@id": PUBLIC_ORIGIN + "/#service",
+      name: "모바일청첩장 및 모바일 초대장 제작",
+      url: PUBLIC_ORIGIN,
+      description: metadata.description,
+      serviceType: ["모바일청첩장", "돌잔치 초대장", "생일 초대장", "환갑·칠순·팔순 초대장", "모임·행사 초대장", "개업 초대장"],
+      provider: { "@id": PUBLIC_ORIGIN + "/#organization" },
+    },
+  ],
+};
+
 export default function Page() {
-  return <Home />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
+      />
+      <Home />
+    </>
+  );
 }
