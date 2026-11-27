@@ -41,6 +41,44 @@ export default function LandingInvitationExperience() {
     return () => observer.disconnect();
   }, []);
 
+  // Align the mobile demo once per downward approach, without trapping upward scrolling.
+  useEffect(() => {
+    const mobile = window.matchMedia("(max-width: 800px)");
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let lastY = window.scrollY;
+    let armed = true;
+    let timer;
+    const onScroll = () => {
+      clearTimeout(timer);
+      const y = window.scrollY;
+      const down = y > lastY;
+      lastY = y;
+      if (!mobile.matches || reduced.matches) return;
+      const controls = sectionRef.current?.querySelector(".dd-experience-controls");
+      if (!controls) return;
+      const top = controls.getBoundingClientRect().top;
+      if (top > window.innerHeight * 0.65) armed = true;
+      if (!down || !armed || top <= 8 || top > window.innerHeight * 0.4) return;
+      timer = window.setTimeout(() => {
+        if (!mobile.matches || reduced.matches || !armed) return;
+        const offset = controls.getBoundingClientRect().top - 8;
+        if (offset <= 0 || offset > window.innerHeight * 0.4) return;
+        armed = false;
+        window.scrollTo({ top: window.scrollY + offset, behavior: "smooth" });
+      }, 160);
+    };
+    const cancel = () => clearTimeout(timer);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("touchstart", cancel, { passive: true });
+    window.addEventListener("resize", cancel);
+    return () => {
+      cancel();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("touchstart", cancel);
+      window.removeEventListener("resize", cancel);
+    };
+  }, []);
+
   useEffect(() => {
     const receive = event => {
       if (event.origin !== window.location.origin || event.source !== frameRef.current?.contentWindow || event.data?.channel !== EXPERIENCE_CHANNEL) return;
