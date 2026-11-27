@@ -41,6 +41,44 @@ export default function LandingInvitationExperience() {
     return () => observer.disconnect();
   }, []);
 
+  // Align the mobile demo once per downward approach, without trapping upward scrolling.
+  useEffect(() => {
+    const mobile = window.matchMedia("(max-width: 800px)");
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let lastY = window.scrollY;
+    let armed = true;
+    let timer;
+    const onScroll = () => {
+      clearTimeout(timer);
+      const y = window.scrollY;
+      const down = y > lastY;
+      lastY = y;
+      if (!mobile.matches || reduced.matches) return;
+      const controls = sectionRef.current?.querySelector(".dd-experience-controls");
+      if (!controls) return;
+      const top = controls.getBoundingClientRect().top;
+      if (top > window.innerHeight * 0.65) armed = true;
+      if (!down || !armed || top <= 8 || top > window.innerHeight * 0.4) return;
+      timer = window.setTimeout(() => {
+        if (!mobile.matches || reduced.matches || !armed) return;
+        const offset = controls.getBoundingClientRect().top - 8;
+        if (offset <= 0 || offset > window.innerHeight * 0.4) return;
+        armed = false;
+        window.scrollTo({ top: window.scrollY + offset, behavior: "smooth" });
+      }, 160);
+    };
+    const cancel = () => clearTimeout(timer);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("touchstart", cancel, { passive: true });
+    window.addEventListener("resize", cancel);
+    return () => {
+      cancel();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("touchstart", cancel);
+      window.removeEventListener("resize", cancel);
+    };
+  }, []);
+
   useEffect(() => {
     const receive = event => {
       if (event.origin !== window.location.origin || event.source !== frameRef.current?.contentWindow || event.data?.channel !== EXPERIENCE_CHANNEL) return;
@@ -68,7 +106,7 @@ export default function LandingInvitationExperience() {
   return <section ref={sectionRef} className="dd-detail-section dd-experience" id="how">
     <div className="landing-shell">
       <header className="dd-detail-heading"><p className="dd-section-eyebrow">EXPLORE DEARDAY</p><h2>직접 경험하는 특별한 초대장</h2><p className="dd-experience-description">궁금한 기능을 선택하고 실제 초대장을 체험해 보세요.</p><p className="dd-experience-disclaimer" id="dd-experience-disclaimer" role="status">{notice || "체험 화면에서는 실제 등록과 외부 이동이 제한됩니다."}</p></header>
-      <div className="dd-experience-stage"><div className="dd-experience-stack"><div className="dd-experience-controls"><select id="dd-experience-feature" aria-label="체험할 기능" aria-describedby="dd-experience-disclaimer" value={feature} onChange={event => setFeature(event.target.value)}>{EXPERIENCE_FEATURES.map(([key, label]) => <option value={key} key={key}>{label}</option>)}</select></div><div className="dd-experience-desktop-controls"><span className="dd-experience-eyebrow">EXPERIENCE</span><h3>초대장 기능 <span className="dd-experience-title-highlight">체험하기</span></h3><p>원하는 기능을 선택하면 왼쪽 초대장에서 바로 확인할 수 있어요.</p><div className="dd-experience-feature-buttons">{EXPERIENCE_FEATURES.map(([key, label]) => <button key={key} type="button" className={`dd-experience-feature-button${feature === key ? " is-active" : ""}`} aria-pressed={feature === key} aria-describedby="dd-experience-disclaimer" onClick={() => setFeature(key)}><ExperienceFeatureIcon name={key} /><span>{label}</span></button>)}</div></div>
+      <div className="dd-experience-stage" id="how-desktop"><div className="dd-experience-stack"><div className="dd-experience-controls"><select id="dd-experience-feature" aria-label="체험할 기능" aria-describedby="dd-experience-disclaimer" value={feature} onChange={event => setFeature(event.target.value)}>{EXPERIENCE_FEATURES.map(([key, label]) => <option value={key} key={key}>{label}</option>)}</select></div><div className="dd-experience-desktop-controls"><span className="dd-experience-eyebrow">EXPERIENCE</span><h3>초대장 기능 <span className="dd-experience-title-highlight">체험하기</span></h3><p>원하는 기능을 선택하면 왼쪽 초대장에서 바로 확인할 수 있어요.</p><div className="dd-experience-feature-buttons">{EXPERIENCE_FEATURES.map(([key, label]) => <button key={key} type="button" className={`dd-experience-feature-button${feature === key ? " is-active" : ""}`} aria-pressed={feature === key} aria-describedby="dd-experience-disclaimer" onClick={() => setFeature(key)}><ExperienceFeatureIcon name={key} /><span>{label}</span></button>)}</div></div>
       <div className="dd-experience-phone" aria-busy={!ready && !error}>
         {active && <iframe key={attempt} ref={frameRef} src="/experience/wedding" title="Double2 결혼식 초대장 체험" loading="lazy" sandbox="allow-scripts allow-same-origin" onLoad={() => frameRef.current?.contentWindow?.postMessage({ channel: EXPERIENCE_CHANNEL, type: "connect" }, window.location.origin)} />}
         {!ready && <div className="dd-experience-status" role={error ? "alert" : "status"}>{error ? <><p>초대장 체험을 불러오지 못했어요.</p><button type="button" onClick={() => { setReady(false); setError(false); setNotice(""); setAttempt(value => value + 1); }}>다시 시도</button></> : <PublishedInvitationLoading preview message="초대장을 준비하고 있어요" />}</div>}

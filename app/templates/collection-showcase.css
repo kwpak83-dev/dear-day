@@ -630,3 +630,11 @@
  .dd-showcase-page .dd-showcase-menu-backdrop,.dd-showcase-page .dd-showcase-menu-panel{display:none!important}
  .dd-showcase-page .dd-showcase-menu-toggle{border:0!important;box-shadow:none!important}
 }
+
+/* Desktop uses the shared header only. Keep the mobile header on mobile. */
+@media (min-width: 801px) {
+  .dd-collection-page.dd-showcase-page > .dd-showcase-header,
+  .dd-collection-page.dd-showcase-page > .dd-collection-mobile-drawer {
+    display: none !important;
+  }
+}

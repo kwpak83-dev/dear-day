@@ -159,7 +159,7 @@ export default function MyInvitations() {
         <summary className="dd-my-guide-title"><span aria-hidden="true">🔔</span><strong>안내드립니다</strong><span className="dd-my-guide-chevron" aria-hidden="true">⌄</span></summary>
         <div className="dd-my-guide-body">
           <ul>
-            <li>결제 후 직접 발행하면 공유 링크가 활성화됩니다.</li>
+            <li>이용권 구매 후 발행하면 공유 링크가 활성화 됩니다.</li>
             <li>초대장 수정은 <strong>행사 시작 전까지</strong> 가능합니다.</li>
             <li><strong>행사일 30일 후 자동 삭제</strong>되니, 필요한 사진과 내용은<br className="dd-my-guide-mobile-break" /> 미리 백업해 주세요.</li>
             <li>삭제 예정일은 마이페이지에서 확인할 수 있으며,<br className="dd-my-guide-mobile-break" /> D-7·D-1에 안내됩니다.</li>

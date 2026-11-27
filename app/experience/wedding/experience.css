@@ -38,3 +38,23 @@ html:has(.dd-landing-experience-document) body::-webkit-scrollbar {
 html.dd-experience-desktop-embed .invitation-bottom-sheet--program .invitation-bottom-sheet-content {
   zoom: .7;
 }
+
+/* Standalone experience only: navigation, brand buttons and fixed-menu clearance. */
+html.dd-experience-standalone .dd-experience-navigation{position:sticky;top:0;z-index:90;display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 12px;background:#fffdfb;border-bottom:1px solid #e8e1db;box-sizing:border-box}
+.dd-experience-home-logo{display:flex;align-items:center;margin-right:4px;width:86px;flex-shrink:0}
+.dd-experience-home-logo img{width:100%;height:auto}
+.dd-experience-action{display:flex;align-items:center;justify-content:center;gap:5px;min-height:38px;padding:8px 12px;box-sizing:border-box;border:1px solid #F6F6F6;border-radius:9px;background:#F6F6F6;color:#5B4D43;font:600 13px/1.4 Pretendard,sans-serif;text-decoration:none;white-space:nowrap;box-shadow:0 2px 6px rgba(91,77,67,.12)}
+.dd-experience-action.is-primary{background:#5B4D43;border-color:#5B4D43;color:#fff}
+.dd-experience-action:focus-visible,.dd-experience-home-logo:focus-visible{outline:2px solid #5B4D43;outline-offset:3px}
+html.dd-experience-standalone .dd-landing-experience-document.public-invitation{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+.dd-experience-end-actions{display:grid;gap:10px;width:min(390px,100%);margin:0 auto;padding:16px;box-sizing:border-box}
+.dd-experience-end-actions .dd-experience-action{min-height:46px;font-size:15px}
+html.dd-experience-standalone .dd-experience-preview-canvas{scroll-margin-top:64px}
+html.dd-experience-standalone .invitation-quick-menu.invitation-quick-menu--modern{width:min(390px,calc(100% - 24px))!important;max-width:390px!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important}
+@media(max-width:360px){.dd-experience-home-logo{width:65px}.dd-experience-navigation .dd-experience-action{font-size:12px;padding-inline:8px}}
+
+/* Constrain the wordmark itself, not just its flex item. */
+.dd-experience-navigation .dd-experience-home-logo{width:112px;margin-right:8px;min-width:0}
+.dd-experience-navigation .dd-experience-home-logo .dearday-logo{display:block;width:100%!important;min-width:0!important;max-width:100%!important;margin:0!important}
+.dd-experience-navigation .dd-experience-home-logo .dearday-logo-wordmark-image{display:block;width:100%!important;min-width:0!important;max-width:100%!important;height:auto!important;margin:0!important;transform:none!important}
+@media(max-width:380px){.dd-experience-navigation .dd-experience-home-logo{width:88px;margin-right:2px}.dd-experience-navigation .dd-experience-action{padding-inline:8px;font-size:12px}}

@@ -5272,3 +5272,44 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
 .create-page .dd-hero-display-card p{margin:0;color:#92775d;font-size:12px;line-height:1.5}
 .create-page .dd-hero-display-card-button{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;min-height:44px;padding:10px 12px;border:0;border-radius:9px;background:#5B4D43;color:#fff;font:inherit;font-size:14px;font-weight:600;cursor:pointer;touch-action:manipulation}
 .create-page .dd-hero-display-card-button:focus-visible{outline:2px solid #5B4D43;outline-offset:3px}
+
+/* Compact desktop member layout; pin the entire sidebar below shared header. */
+@media (min-width:801px){
+ .my-page.member-page .member-navigation{position:sticky;top:56px;align-self:start;box-sizing:border-box;padding:36px 0 20px;max-height:calc(100dvh - 56px);overflow-y:auto}
+ .my-page.member-page .member-navigation nav{position:static}
+ .my-page.member-page .member-page-content .my-content,.my-page.member-page .member-page-content .guest-management-content{padding-top:18px}
+ .my-page.member-page .dd-member-desktop-account{display:grid;gap:7px;margin-top:7px}
+ .my-page.member-page .dd-member-desktop-account>a,.my-page.member-page .dd-member-desktop-account>button{display:flex;align-items:center;box-sizing:border-box;min-height:43px;width:100%;padding:10px 12px;border:0;border-radius:9px;background:transparent;color:#707070;font-family:inherit;font-size:13px;font-weight:400;line-height:inherit;text-align:left;text-decoration:none;cursor:pointer}
+ .my-page.member-page .dd-member-desktop-account>a:hover,.my-page.member-page .dd-member-desktop-account>button:hover{background:#f1f1f1;color:#242424}
+}
+
+@media (min-width:801px){
+ .my-page.member-page .dd-member-menu-label{display:flex;align-items:center;gap:10px}
+ .my-page.member-page .member-navigation .dd-member-menu-label>svg,.my-page.member-page .dd-member-desktop-account svg{width:19px;height:19px;flex:none;color:#b88e7c}
+ .my-page.member-page .member-navigation nav>a.active .dd-member-menu-label>svg{color:#fff}
+ .my-page.member-page .member-navigation nav>a.active .dd-member-menu-label>svg path[fill]:not([fill="none"]){fill:currentColor}
+ .my-page.member-page .dd-member-desktop-account{border-top:1px solid #e2dcd5;padding-top:7px}
+ .my-page.member-page .dd-member-desktop-account>a,.my-page.member-page .dd-member-desktop-account>button{gap:10px}
+}
+
+/* Desktop member status colors: warm DearDay palette. */
+@media (min-width:801px){
+ .my-page.member-page .member-navigation nav>a.active{background:#594B40;border-color:#594B40;color:#fff}
+ .my-page.member-page .dd-my-card-badge--published{background:#857361;border-color:#857361;color:#fff}
+ .my-page.member-page .dd-my-card-badge--draft{background:#F5E9DD;border-color:#E5D3C1;color:#85664D}
+}
+
+/* Compact desktop member sidebar; retain scrolling on short viewports. */
+@media (min-width:801px){
+ .my-page.member-page .member-navigation{padding:22px 0 10px;scrollbar-gutter:auto}
+ .my-page.member-page .member-navigation>p{margin-bottom:4px}
+ .my-page.member-page .member-navigation>h1{margin-bottom:17px}
+ .my-page.member-page .member-navigation .dd-credit-menu-card{padding:7px 8px!important;margin-bottom:5px!important}
+ .my-page.member-page .member-navigation .dd-credit-menu-card>a{padding:1px 2px 3px!important}
+ .my-page.member-page .member-navigation .dd-credit-menu-description{font-size:9px!important;letter-spacing:-.045em;line-height:1.3!important;margin:2px 0 5px!important;white-space:normal}
+ .my-page.member-page .member-navigation .dd-credit-menu-purchase{min-height:30px!important;padding:4px 6px!important;gap:6px!important;font-size:12px!important}
+ .my-page.member-page .member-navigation nav{gap:4px}
+ .my-page.member-page .member-navigation nav>a,.my-page.member-page .member-navigation nav>span{min-height:36px;padding:6px 12px}
+ .my-page.member-page .dd-member-desktop-account{gap:4px;margin-top:4px;padding-top:4px}
+ .my-page.member-page .dd-member-desktop-account>a,.my-page.member-page .dd-member-desktop-account>button{min-height:36px;padding:6px 12px}
+}
