@@ -1,8 +1,8 @@
 import Home from "./home-client";
 import { PUBLIC_ORIGIN } from "../lib/public-origin";
 
-const title = "디어데이 | 감성 모바일 초대장";
-const description = "몇 분 만에 완성하는 나만의 감성 모바일 초대장";
+const title = "디어데이 | 감성 모바일청첩장 & 초대장";
+const description = "결혼식부터 특별한 행사까지, 소중한 날을 담는 나만의 초대장.";
 
 export const metadata = {
   openGraph: {
