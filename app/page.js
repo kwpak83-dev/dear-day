@@ -6,7 +6,7 @@ const description = "결혼식부터 특별한 행사까지, 소중한 날을 �
 
 export const metadata = {
   title: "디어데이 | 감성 모바일청첩장 & 초대장 만들기",
-  description: "셀프 모바일청첩장부터 돌잔치, 생일, 환갑·칠순·팔순, 모임·행사, 개업까지. 다양한 감성 템플릿으로 나만의 모바일 초대장을 쉽고 간편하게 만들어 보세요.",
+  description: "셀프 모바일청첩장 만들기, 돌잔치·생일·환갑·칠순·팔순·모임·개업 초대장까지. 디어데이에서 감성 모바일 초대장을 만들어 보세요.",
   verification: { other: { "naver-site-verification": "be2212e2019fa5387da2d5c4994f4f08306c996c" } },
   alternates: { canonical: PUBLIC_ORIGIN },
   openGraph: {
