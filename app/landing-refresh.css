@@ -3579,3 +3579,9 @@
 
 /* Keep desktop TOP control above the floating quick actions. */
 @media(min-width:801px){.landing-v2 .dd-landing-top-button{bottom:calc(88px + env(safe-area-inset-bottom,0px))}}
+
+/* Desktop HERO only: lighter, more compact primary actions. */
+@media(min-width:801px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-buttons{width:min(100%,224px)!important;max-width:224px!important}
+ .landing-v2 .dd-hero-variant-c .dd-hero-button{height:41px!important;min-height:41px!important;padding:7px 14px!important;font-size:13.5px!important}
+}
