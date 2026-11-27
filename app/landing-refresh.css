@@ -3576,3 +3576,6 @@
  .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-feature-demo{width:100%;max-width:none;min-width:0;box-sizing:border-box}
  .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-cover-marquee .dd-concept-carousel-card{flex:0 0 min(236px,75%)}
 }
+
+/* Keep desktop TOP control above the floating quick actions. */
+@media(min-width:801px){.landing-v2 .dd-landing-top-button{bottom:calc(88px + env(safe-area-inset-bottom,0px))}}
