@@ -199,6 +199,7 @@ export default function Home() {
     <section className={`landing-hero dd-cinematic-hero dd-hero-variant-${heroVariant}`} id="top">
       <div className="dd-paper-scene" aria-hidden="true"><span className="dd-paper-sheet dd-paper-sheet-left" /><span className="dd-paper-sheet dd-paper-sheet-right" /><span className="dd-leaf-shadow dd-leaf-shadow-top" /><span className="dd-leaf-shadow dd-leaf-shadow-bottom" /></div>
       <div className="dd-hero-media">
+      <img src="/landing/dearday-seaside-hero-poster.webp" alt="" aria-hidden="true" fetchPriority="high" className="dd-hero-video dd-hero-poster" />
       <video ref={(node) => { heroVideoRefs.current[0] = node; }} className={`dd-hero-video dd-hero-video-layer${heroVideoIndex === 0 ? " dd-hero-video-active" : ""}`} autoPlay muted playsInline preload="auto" aria-hidden="true" onPlaying={(event) => revealHeroVideo(event, 0)} onEnded={() => advanceHeroVideo(0)}>
         <source src="/landing/dearday-seaside-hero.mp4" type="video/mp4" />
       </video>
