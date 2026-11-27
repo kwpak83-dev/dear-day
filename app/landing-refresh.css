@@ -2837,7 +2837,7 @@
 
 
 /* SMART RSVP vector/text demo: crisp at every device pixel ratio. */
-.landing-v2 .dd-landing-rsvp-scroll{height:330px;text-align:left;background:#f5f7fa;font-size:11px;color:#192c43}
+.landing-v2 .dd-landing-rsvp-scroll{height:450px;text-align:left;background:#f5f7fa;font-size:11px;color:#192c43}
 .landing-v2 .dd-rsvp-live,.landing-v2 .dd-rsvp-guestbook{padding:10px 9px 16px;min-width:0}
 .landing-v2 .dd-rsvp-live-status{color:#ae806b;font-size:10px;margin:0 0 8px}
 .landing-v2 .dd-rsvp-live-summary{padding:13px 11px;border-radius:15px;background:white;box-shadow:0 1px 12px #1b2b4010}
