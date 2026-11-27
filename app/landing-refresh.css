@@ -3561,3 +3561,9 @@
  .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-concept-carousel-card{flex:0 0 60vw!important}
  .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-cover-marquee-toggle{margin:4px auto 8px}
 }
+
+/* Mobile feature 03: fit the background/effect preview to its body thumbnail. */
+@media(max-width:800px){
+ .landing-v2 .dd-feature-effects .dd-landing-effects-stage--effect:has(> .dd-landing-effects-photo){height:auto;min-height:0;aspect-ratio:auto}
+ .landing-v2 .dd-feature-effects .dd-landing-effects-stage--effect > .dd-landing-effects-photo{display:block;width:100%;height:auto;max-height:350px;object-fit:cover;object-position:top center}
+}
