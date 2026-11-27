@@ -18,7 +18,7 @@ export function DrawerIcon({name}) {
  return <svg {...common}>{shapes[name]}</svg>;
 }
 
-export default function DearDayMobileDrawer({open,onClose,user,canManageAdmin=false,onStart,onLogin,onSignOut,current=""}) {
+export default function DearDayMobileDrawer({open,onClose,user,canManageAdmin=false,pendingInquiries=null,onStart,onLogin,onSignOut,current=""}) {
  return <div className="landing-v2 dd-shared-drawer-root">      {open && <div className="dd-drawer-layer">
         <button className="dd-drawer-backdrop" type="button" aria-label="메뉴 닫기" onClick={() => onClose()} />
         <nav className="landing-mobile-nav dd-home-drawer" aria-label="DearDay 메뉴">
@@ -30,7 +30,7 @@ export default function DearDayMobileDrawer({open,onClose,user,canManageAdmin=fa
           <a className="dd-drawer-link" href="/#how-desktop" onClick={() => onClose()}><span><DrawerIcon name="experience" /></span>초대장 체험하기 <b>›</b></a>
           {!user && <button type="button" className="dd-drawer-link" onClick={openSmartstorePurchase} style={{width:"100%",textAlign:"left",background:"transparent",border:0,fontFamily:"inherit"}}><span className="dd-drawer-store-icon"><img src="/naver-smartstore-icon.svg" alt="" width="32" height="18" /></span><span>이용권 구매<small>네이버 스마트스토어</small></span><b>›</b></button>}
           <a className="dd-drawer-link" href={user ? "/my-inquiries" : "/?login=required&returnUrl=%2Fmy-inquiries"} onClick={() => onClose()}><span><DrawerIcon name="inquiry" /></span>문의내역 <b>›</b></a>
-          {canManageAdmin && <><div style={{borderTop:"1px solid #e9e2dc",margin:"16px 0 8px"}}/><a className="dd-drawer-link" href="/admin/credits" onClick={() => onClose()}><span><DrawerIcon name="admin" /></span>관리자 페이지 <b>›</b></a></>}
+          {canManageAdmin && <><div style={{borderTop:"1px solid #e9e2dc",margin:"16px 0 8px"}}/><a className="dd-drawer-link" href="/admin/credits" onClick={() => onClose()}><span><DrawerIcon name="admin" /></span>관리자 페이지 <b>›</b></a><a className={`dd-drawer-link${current === "manage-inquiries" ? " active" : ""}`} aria-current={current === "manage-inquiries" ? "page" : undefined} href="/manage-inquiries" onClick={onClose}><span><DrawerIcon name="inquiry" /></span>고객 문의 관리{pendingInquiries > 0 ? <b className="inquiry-count-badge" aria-label={pendingInquiries + "건 답변 대기"}>{pendingInquiries}</b> : <b>›</b>}</a></>}
           {user && <><a className="dd-drawer-link" href="/guest-management" aria-current={current === "guests" ? "page" : undefined} onClick={() => onClose()}><span><DrawerIcon name="account" /></span>하객 관리 <b>›</b></a></>}
           <div className="dd-drawer-bottom">{user ? <button type="button" onClick={() => {onClose();onSignOut();}}>로그아웃</button> : <button type="button" onClick={() => {onClose();onLogin();}}>로그인</button>}</div>
         </nav>

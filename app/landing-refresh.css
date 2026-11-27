@@ -2121,7 +2121,7 @@
  .landing-v2 .dd-floating-quick a span, .landing-v2 .dd-floating-quick button span{font-size:14px}
  .landing-v2 .dd-floating-quick button{appearance:none;font-family:inherit;line-height:normal;cursor:pointer;}
 @media(min-width:801px){
- .landing-v2 .dd-floating-quick{left:auto;right:28px;bottom:28px;width:380px;max-width:calc(100vw - 56px);box-sizing:border-box;}
+ .landing-v2 .dd-floating-quick{left:auto;right:28px;bottom:8px;width:380px;max-width:calc(100vw - 56px);box-sizing:border-box;}
 }
 @media(prefers-reduced-motion:reduce){
  .landing-v2 .dd-floating-quick{transition:none!important}
@@ -2208,13 +2208,20 @@
 }
 
 /* Keep the last decoded frame visible until the next preloaded hero video is playing. */
+.landing-v2 .dd-cinematic-hero .dd-hero-media .dd-hero-poster{display:block!important;pointer-events:none}
 .landing-v2 .dd-cinematic-hero .dd-hero-media .dd-hero-video.dd-hero-video-layer{opacity:0!important;transition:opacity .32s ease!important;pointer-events:none!important}
 .landing-v2 .dd-cinematic-hero .dd-hero-media .dd-hero-video.dd-hero-video-layer.dd-hero-video-active{opacity:1!important}
 @media(prefers-reduced-motion:reduce){.landing-v2 .dd-cinematic-hero .dd-hero-media .dd-hero-video.dd-hero-video-layer{transition:none!important}}
 
+/* Fade the incoming Polaroid video over the opaque outgoing frame. */
+@media(prefers-reduced-motion:no-preference){
+.landing-v2 .dd-cinematic-hero.dd-hero-variant-c .dd-hero-media .dd-hero-video.dd-hero-video-layer{transition:opacity 0s linear .32s!important}
+.landing-v2 .dd-cinematic-hero.dd-hero-variant-c .dd-hero-media .dd-hero-video.dd-hero-video-layer.dd-hero-video-active{z-index:1!important;transition:opacity .32s ease!important}
+}
+
 @media(max-width:800px){
 .landing-v2 .dd-cinematic-hero.dd-hero-variant-c .dd-hero-media::before{content:""!important;display:block!important;width:100%!important;aspect-ratio:4/3!important;height:auto!important;background:none!important}
-.landing-v2 .dd-cinematic-hero.dd-hero-variant-c .dd-hero-media .dd-hero-video.dd-hero-video-layer{position:absolute!important;inset:auto!important;top:13px!important;left:13px!important;width:calc(100% - 26px)!important;height:calc(100% - 49px)!important;aspect-ratio:auto!important;object-fit:cover!important}
+.landing-v2 .dd-cinematic-hero.dd-hero-variant-c .dd-hero-media .dd-hero-video:is(.dd-hero-video-layer,.dd-hero-poster){position:absolute!important;inset:auto!important;top:13px!important;left:13px!important;width:calc(100% - 26px)!important;height:calc(100% - 49px)!important;aspect-ratio:auto!important;object-fit:cover!important}
 }
 
 /* Use the same Korean typeface as the editor header for the landing tagline. */
@@ -2837,7 +2844,7 @@
 
 
 /* SMART RSVP vector/text demo: crisp at every device pixel ratio. */
-.landing-v2 .dd-landing-rsvp-scroll{height:330px;text-align:left;background:#f5f7fa;font-size:11px;color:#192c43}
+.landing-v2 .dd-landing-rsvp-scroll{height:450px;text-align:left;background:#f5f7fa;font-size:11px;color:#192c43}
 .landing-v2 .dd-rsvp-live,.landing-v2 .dd-rsvp-guestbook{padding:10px 9px 16px;min-width:0}
 .landing-v2 .dd-rsvp-live-status{color:#ae806b;font-size:10px;margin:0 0 8px}
 .landing-v2 .dd-rsvp-live-summary{padding:13px 11px;border-radius:15px;background:white;box-shadow:0 1px 12px #1b2b4010}
@@ -3526,6 +3533,55 @@
 
 
 
-/* Paint the first frame behind the video without adding a DOM layer. */
-.landing-v2 .dd-cinematic-hero .dd-hero-media{background-image:url("/landing/dearday-seaside-hero-poster.webp")!important;background-repeat:no-repeat!important;background-position:center!important;background-size:cover!important}
-.landing-v2 .dd-cinematic-hero.dd-hero-variant-c .dd-hero-media{background-origin:border-box!important;background-position:13px 13px!important;background-size:calc(100% - 26px) calc(100% - 49px)!important}
+/* Continuous cover marquee: features 01 and 08 only. */
+.landing-v2 .dd-cover-marquee .dd-cover-marquee-viewport{width:100%;overflow:hidden}
+.landing-v2 .dd-cover-marquee .dd-cover-marquee-track{position:relative;width:100%;overflow:visible;scroll-snap-type:none;scroll-padding-inline:0!important;padding-left:0!important;padding-right:0!important;touch-action:pan-y;align-items:flex-start;will-change:transform}
+.landing-v2 .dd-cover-marquee .dd-cover-marquee-track::before,.landing-v2 .dd-cover-marquee .dd-cover-marquee-track::after{display:none!important;content:none!important}
+.landing-v2 .dd-cover-marquee .dd-concept-carousel-card{opacity:1;scroll-snap-align:none;transition:none}
+.landing-v2 .dd-cover-marquee-toggle{display:block;margin:0 auto 4px;border:0;background:transparent;color:#967b6d;font-size:10px;cursor:pointer}
+@media(prefers-reduced-motion:reduce){.landing-v2 .dd-cover-marquee .dd-cover-marquee-viewport{overflow-x:auto}.landing-v2 .dd-cover-marquee .dd-cover-marquee-track{transform:none!important}.landing-v2 .dd-cover-marquee .dd-concept-carousel-card[aria-hidden="true"]{display:none}.landing-v2 .dd-cover-marquee-toggle{display:none}}
+
+
+/* Mobile full-bleed cover showcases: features 01 and 08 only. */
+@media(max-width:800px){
+ .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions){
+  background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;overflow:visible!important;
+ }
+ .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-feature-visual{
+  box-sizing:border-box!important;width:100vw!important;max-width:none!important;align-self:center!important;
+  padding:0!important;min-height:0!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:hidden!important;
+ }
+ .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-feature-demo{
+  width:100%!important;max-width:none!important;min-height:0!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+ }
+ .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-feature-demo-content{
+  width:100%!important;padding:0!important;min-height:0!important;box-sizing:border-box!important;
+ }
+ .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-feature-demo-kicker{display:none!important}
+ .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-concept-carousel-header{justify-content:center;padding:6px 14px 10px}
+ .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-cover-marquee-track{gap:20px!important;padding-top:6px!important;padding-bottom:12px!important}
+ .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-concept-carousel-card{flex:0 0 60vw!important}
+ .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-cover-marquee-toggle{margin:4px auto 8px}
+}
+
+/* Mobile feature 03: fit the background/effect preview to its body thumbnail. */
+@media(max-width:800px){
+ .landing-v2 .dd-feature-effects .dd-landing-effects-stage--effect:has(> .dd-landing-effects-photo){height:auto;min-height:0;aspect-ratio:auto}
+ .landing-v2 .dd-feature-effects .dd-landing-effects-stage--effect > .dd-landing-effects-photo{display:block;width:100%;height:auto;max-height:350px;object-fit:cover;object-position:top center}
+}
+
+/* Desktop only: widen cover marquee frames without enlarging portrait cards. */
+@media(min-width:801px){
+ .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-feature-visual{padding-inline:12px;min-width:0}
+ .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-feature-demo{width:100%;max-width:none;min-width:0;box-sizing:border-box}
+ .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-cover-marquee .dd-concept-carousel-card{flex:0 0 min(236px,75%)}
+}
+
+/* Keep desktop TOP control above the floating quick actions. */
+@media(min-width:801px){.landing-v2 .dd-landing-top-button{bottom:calc(88px + env(safe-area-inset-bottom,0px))}}
+
+/* Desktop HERO only: lighter, more compact primary actions. */
+@media(min-width:801px){
+ .landing-v2 .dd-hero-variant-c .dd-hero-buttons{width:min(100%,224px)!important;max-width:224px!important}
+ .landing-v2 .dd-hero-variant-c .dd-hero-button{height:41px!important;min-height:41px!important;padding:7px 14px!important;font-size:13.5px!important}
+}
