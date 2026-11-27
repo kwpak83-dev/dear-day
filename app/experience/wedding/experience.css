@@ -52,3 +52,9 @@ html.dd-experience-standalone .dd-landing-experience-document.public-invitation{
 html.dd-experience-standalone .dd-experience-preview-canvas{scroll-margin-top:64px}
 html.dd-experience-standalone .invitation-quick-menu.invitation-quick-menu--modern{width:min(390px,calc(100% - 24px))!important;max-width:390px!important;left:50%!important;right:auto!important;transform:translateX(-50%)!important}
 @media(max-width:360px){.dd-experience-home-logo{width:65px}.dd-experience-navigation .dd-experience-action{font-size:12px;padding-inline:8px}}
+
+/* Constrain the wordmark itself, not just its flex item. */
+.dd-experience-navigation .dd-experience-home-logo{width:112px;margin-right:8px;min-width:0}
+.dd-experience-navigation .dd-experience-home-logo .dearday-logo{display:block;width:100%!important;min-width:0!important;max-width:100%!important;margin:0!important}
+.dd-experience-navigation .dd-experience-home-logo .dearday-logo-wordmark-image{display:block;width:100%!important;min-width:0!important;max-width:100%!important;height:auto!important;margin:0!important;transform:none!important}
+@media(max-width:380px){.dd-experience-navigation .dd-experience-home-logo{width:88px;margin-right:2px}.dd-experience-navigation .dd-experience-action{padding-inline:8px;font-size:12px}}
