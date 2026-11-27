@@ -3569,3 +3569,10 @@
  .landing-v2 .dd-feature-effects .dd-landing-effects-stage--effect:has(> .dd-landing-effects-photo){height:auto;min-height:0;aspect-ratio:auto}
  .landing-v2 .dd-feature-effects .dd-landing-effects-stage--effect > .dd-landing-effects-photo{display:block;width:100%;height:auto;max-height:350px;object-fit:cover;object-position:top center}
 }
+
+/* Desktop only: widen cover marquee frames without enlarging portrait cards. */
+@media(min-width:801px){
+ .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-feature-visual{padding-inline:12px;min-width:0}
+ .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-feature-demo{width:100%;max-width:none;min-width:0;box-sizing:border-box}
+ .landing-v2 .dd-features .dd-feature:is(.dd-feature-theme,.dd-feature-occasions) .dd-cover-marquee .dd-concept-carousel-card{flex:0 0 min(236px,75%)}
+}
