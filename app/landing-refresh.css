@@ -3523,3 +3523,9 @@
 .landing-v2 .dd-landing-greeting-real-preview{width:100%;min-width:0;max-height:55dvh;overflow:auto}
 .landing-v2 .dd-landing-greeting-real-preview .dd-message-preview-inline-label{display:none}
 .landing-v2 .dd-landing-greeting-real-preview .dd-message-preview-inline{padding:0;margin:0;border:0;background:transparent}
+
+
+
+/* Paint the first frame behind the video without adding a DOM layer. */
+.landing-v2 .dd-cinematic-hero .dd-hero-media{background-image:url("/landing/dearday-seaside-hero-poster.webp")!important;background-repeat:no-repeat!important;background-position:center!important;background-size:cover!important}
+.landing-v2 .dd-cinematic-hero.dd-hero-variant-c .dd-hero-media{background-origin:border-box!important;background-position:13px 13px!important;background-size:calc(100% - 26px) calc(100% - 49px)!important}

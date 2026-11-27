@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "../lib/supabase/browser";
 import { DEFAULT_AUTH_RETURN_PATH, getSafeAuthReturnPath } from "../lib/auth-return-url";
 import DearDayLogo from "../components/dearday-logo";
@@ -51,6 +51,7 @@ export default function Home() {
     return () => { cancelled = true; };
   }, []);
   const heroVideoRefs = useRef([null, null]);
+  const heroFrameRequests = useRef(new WeakMap());
   const [heroVideoIndex, setHeroVideoIndex] = useState(null);
   const [heroExtraVideoAvailable, setHeroExtraVideoAvailable] = useState(true);
   const [authOpen, setAuthOpen] = useState(false);
@@ -136,19 +137,50 @@ export default function Home() {
     return () => window.removeEventListener("scroll", updateTopVisibility);
   }, []);
 
-  const revealHeroVideo = (event, index) => {
-    const video = event.currentTarget;
+  const cancelHeroFrame = useCallback((video) => {
+    const request = heroFrameRequests.current.get(video);
+    if (request === undefined) return;
+    heroFrameRequests.current.delete(video);
+    video.cancelVideoFrameCallback?.(request);
+  }, []);
+
+  const revealHeroVideo = useCallback((video, index) => {
+    if (heroVideoRefs.current[index] !== video || video.paused || video.ended ||
+        heroFrameRequests.current.has(video)) return;
     const reveal = () => {
-      if (heroVideoRefs.current[index] === video && !video.paused) setHeroVideoIndex(index);
+      if (heroVideoRefs.current[index] === video && !video.paused && !video.ended) {
+        setHeroVideoIndex(index);
+      }
     };
     if (typeof video.requestVideoFrameCallback === "function") {
-      video.requestVideoFrameCallback(reveal);
+      const request = video.requestVideoFrameCallback(() => {
+        if (heroFrameRequests.current.get(video) !== request) return;
+        heroFrameRequests.current.delete(video);
+        reveal();
+      });
+      heroFrameRequests.current.set(video, request);
     } else {
       reveal();
     }
-  };
+  }, []);
 
-  const advanceHeroVideo = (finishedIndex) => {
+  const attachFirstHeroVideo = useCallback((video) => {
+    const previous = heroVideoRefs.current[0];
+    if (previous) cancelHeroFrame(previous);
+    heroVideoRefs.current[0] = video;
+    if (!video) return;
+    // Native autoplay can start or finish before React attaches media handlers.
+    if (video.ended) {
+      video.currentTime = 0;
+      video.play()?.catch(() => {});
+    } else if (!video.paused && video.readyState >= video.HAVE_CURRENT_DATA) {
+      revealHeroVideo(video, 0);
+    }
+  }, [cancelHeroFrame, revealHeroVideo]);
+
+  const advanceHeroVideo = (finishedVideo, finishedIndex) => {
+    if (heroVideoRefs.current[finishedIndex] !== finishedVideo || !finishedVideo.ended) return;
+    cancelHeroFrame(finishedVideo);
     const nextIndex = heroExtraVideoAvailable ? 1 - finishedIndex : 0;
     const nextVideo = heroVideoRefs.current[nextIndex];
     if (!nextVideo) return;
@@ -199,10 +231,10 @@ export default function Home() {
     <section className={`landing-hero dd-cinematic-hero dd-hero-variant-${heroVariant}`} id="top">
       <div className="dd-paper-scene" aria-hidden="true"><span className="dd-paper-sheet dd-paper-sheet-left" /><span className="dd-paper-sheet dd-paper-sheet-right" /><span className="dd-leaf-shadow dd-leaf-shadow-top" /><span className="dd-leaf-shadow dd-leaf-shadow-bottom" /></div>
       <div className="dd-hero-media">
-      <video ref={(node) => { heroVideoRefs.current[0] = node; }} className={`dd-hero-video dd-hero-video-layer${heroVideoIndex === 0 ? " dd-hero-video-active" : ""}`} autoPlay muted playsInline preload="auto" aria-hidden="true" onPlaying={(event) => revealHeroVideo(event, 0)} onEnded={() => advanceHeroVideo(0)}>
+      <video ref={attachFirstHeroVideo} className={`dd-hero-video dd-hero-video-layer${heroVideoIndex === 0 ? " dd-hero-video-active" : ""}`} autoPlay muted playsInline preload="auto" aria-hidden="true" onPlaying={(event) => revealHeroVideo(event.currentTarget, 0)} onEnded={(event) => advanceHeroVideo(event.currentTarget, 0)}>
         <source src="/landing/dearday-seaside-hero.mp4" type="video/mp4" />
       </video>
-      <video ref={(node) => { heroVideoRefs.current[1] = node; }} className={`dd-hero-video dd-hero-video-layer${heroVideoIndex === 1 ? " dd-hero-video-active" : ""}`} muted playsInline preload="none" aria-hidden="true" onPlaying={(event) => revealHeroVideo(event, 1)} onEnded={() => advanceHeroVideo(1)} onError={() => handleHeroVideoError(1)}>
+      <video ref={(node) => { heroVideoRefs.current[1] = node; }} className={`dd-hero-video dd-hero-video-layer${heroVideoIndex === 1 ? " dd-hero-video-active" : ""}`} muted playsInline preload="none" aria-hidden="true" onPlaying={(event) => revealHeroVideo(event.currentTarget, 1)} onEnded={(event) => advanceHeroVideo(event.currentTarget, 1)} onError={() => handleHeroVideoError(1)}>
         <source src="/landing/dearday-seaside-extra.mp4" type="video/mp4" />
       </video>
       <div className="dd-hero-shade" aria-hidden="true" />
