@@ -87,6 +87,7 @@ export default function ManageInquiries() {
             <button type="submit" disabled={loading}>검색</button>
           </form>
         </div>
+        {!loading && list.memberSearchLimited && <p className="my-notice" role="status">회원명 검색이 제한되어 문의 제목 검색 결과만 표시해요. 잠시 후 다시 시도해 주세요.</p>}
         {list.inquiries.length ? <div className="inquiry-list">{list.inquiries.map(row => <button type="button" key={row.id} disabled={loading} onClick={() => openDetail(row.id)}>
           <span className="inquiry-category">{row.memberName} · {inquiryCategory(row.category)}</span>
           <strong>{row.title}</strong>
