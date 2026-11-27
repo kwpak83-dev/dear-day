@@ -51,7 +51,7 @@ export default function Home() {
     return () => { cancelled = true; };
   }, []);
   const heroVideoRefs = useRef([null, null]);
-  const [heroVideoIndex, setHeroVideoIndex] = useState(0);
+  const [heroVideoIndex, setHeroVideoIndex] = useState(null);
   const [heroExtraVideoAvailable, setHeroExtraVideoAvailable] = useState(true);
   const [authOpen, setAuthOpen] = useState(false);
   const [authMessage, setAuthMessage] = useState("");
@@ -136,6 +136,18 @@ export default function Home() {
     return () => window.removeEventListener("scroll", updateTopVisibility);
   }, []);
 
+  const revealHeroVideo = (event, index) => {
+    const video = event.currentTarget;
+    const reveal = () => {
+      if (heroVideoRefs.current[index] === video && !video.paused) setHeroVideoIndex(index);
+    };
+    if (typeof video.requestVideoFrameCallback === "function") {
+      video.requestVideoFrameCallback(reveal);
+    } else {
+      reveal();
+    }
+  };
+
   const advanceHeroVideo = (finishedIndex) => {
     const nextIndex = heroExtraVideoAvailable ? 1 - finishedIndex : 0;
     const nextVideo = heroVideoRefs.current[nextIndex];
@@ -187,10 +199,10 @@ export default function Home() {
     <section className={`landing-hero dd-cinematic-hero dd-hero-variant-${heroVariant}`} id="top">
       <div className="dd-paper-scene" aria-hidden="true"><span className="dd-paper-sheet dd-paper-sheet-left" /><span className="dd-paper-sheet dd-paper-sheet-right" /><span className="dd-leaf-shadow dd-leaf-shadow-top" /><span className="dd-leaf-shadow dd-leaf-shadow-bottom" /></div>
       <div className="dd-hero-media">
-      <video ref={(node) => { heroVideoRefs.current[0] = node; }} className={`dd-hero-video dd-hero-video-layer${heroVideoIndex === 0 ? " dd-hero-video-active" : ""}`} autoPlay muted playsInline preload="auto" aria-hidden="true" onPlaying={() => setHeroVideoIndex(0)} onEnded={() => advanceHeroVideo(0)}>
+      <video ref={(node) => { heroVideoRefs.current[0] = node; }} className={`dd-hero-video dd-hero-video-layer${heroVideoIndex === 0 ? " dd-hero-video-active" : ""}`} autoPlay muted playsInline preload="auto" aria-hidden="true" onPlaying={(event) => revealHeroVideo(event, 0)} onEnded={() => advanceHeroVideo(0)}>
         <source src="/landing/dearday-seaside-hero.mp4" type="video/mp4" />
       </video>
-      <video ref={(node) => { heroVideoRefs.current[1] = node; }} className={`dd-hero-video dd-hero-video-layer${heroVideoIndex === 1 ? " dd-hero-video-active" : ""}`} muted playsInline preload="none" aria-hidden="true" onPlaying={() => setHeroVideoIndex(1)} onEnded={() => advanceHeroVideo(1)} onError={() => handleHeroVideoError(1)}>
+      <video ref={(node) => { heroVideoRefs.current[1] = node; }} className={`dd-hero-video dd-hero-video-layer${heroVideoIndex === 1 ? " dd-hero-video-active" : ""}`} muted playsInline preload="none" aria-hidden="true" onPlaying={(event) => revealHeroVideo(event, 1)} onEnded={() => advanceHeroVideo(1)} onError={() => handleHeroVideoError(1)}>
         <source src="/landing/dearday-seaside-extra.mp4" type="video/mp4" />
       </video>
       <div className="dd-hero-shade" aria-hidden="true" />
