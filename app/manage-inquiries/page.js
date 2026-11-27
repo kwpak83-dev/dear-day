@@ -82,7 +82,7 @@ export default function ManageInquiries() {
           <div role="group" aria-label="답변 상태">
             {filters.map(([key, label]) => <button type="button" key={key} aria-pressed={status === key} disabled={loading} onClick={() => { setStatus(key); setPage(1); }}>{label}</button>)}
           </div>
-          <form onSubmit={event => { event.preventDefault(); setPage(1); setSubmittedSearch(search.trim()); }}>
+          <form onSubmit={event => { event.preventDefault(); setPage(1); setSubmittedSearch(search.trim()); setRefresh(value => value + 1); }}>
             <input aria-label="회원명 또는 문의 제목" placeholder="회원명 또는 문의 제목" maxLength={100} value={search} onChange={event => setSearch(event.target.value)} />
             <button type="submit" disabled={loading}>검색</button>
           </form>
