@@ -6,7 +6,7 @@
  .dd-desktop-header a,.dd-desktop-header button{font:inherit;color:inherit;text-decoration:none;border:0;background:none;cursor:pointer}
  .dd-desktop-brand{display:flex;align-items:center;flex:none}
  .dd-desktop-header .dd-desktop-brand .dearday-logo,.dd-desktop-header .dd-desktop-brand img{display:block;width:101px!important;height:42px!important;max-width:101px!important;max-height:42px!important;object-fit:contain!important}
- .dd-desktop-nav,.dd-desktop-actions{display:flex;align-items:center;gap:clamp(12px,1.8vw,28px);font-size:14px}
+ .dd-desktop-nav,.dd-desktop-actions{display:flex;align-items:center;gap:clamp(12px,1.8vw,28px);font-size:12px}
  .dd-desktop-nav{justify-content:flex-start;flex:1;margin-left:32px}
  .dd-desktop-nav [aria-disabled=true]{color:#999;cursor:not-allowed}
  .dd-desktop-nav a[aria-current=page]{font-weight:700;color:#594b40}
@@ -26,7 +26,7 @@
 
 @media(min-width:801px){
  .dd-desktop-mypage{display:inline-flex;align-items:center;gap:7px}
- .dd-desktop-mypage svg{flex:none;display:block}
+ .dd-desktop-mypage svg{flex:none;display:block;width:22px;height:22px}
  .landing-v2 #how{scroll-margin-top:56px}
  .landing-v2 #how-desktop{scroll-margin-top:68px}
  .dd-member-desktop-account{display:flex;flex-direction:column;gap:12px;margin-top:20px}
