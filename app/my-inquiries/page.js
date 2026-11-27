@@ -1,41 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MyPageLayout from "../../components/my-page-layout";
-import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
-
-const categoryOptions = [
-  ["invitation", "초대장 이용"],
-  ["payment", "결제 / 환불"],
-  ["account", "계정"],
-  ["issue", "오류 / 불편"],
-  ["other", "기타"],
-];
-const categoryLabel = (value) => categoryOptions.find(([key]) => key === value)?.[1] || "기타";
-const statusLabel = (value) => value === "answered" ? "답변완료" : "답변대기";
-const formatDate = (value) => value && !Number.isNaN(new Date(value).getTime())
-  ? new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium" }).format(new Date(value)) : "-";
-
-async function inquiryRequest(path, options = {}) {
-  const supabase = getSupabaseBrowserClient();
-  const { data: { session } } = supabase ? await supabase.auth.getSession() : { data: {} };
-  if (!session) {
-    const error = new Error("로그인이 만료되었어요. 다시 로그인해 주세요.");
-    error.status = 401;
-    throw error;
-  }
-  const response = await fetch(path, {
-    ...options,
-    headers: { Authorization: `Bearer ${session.access_token}`, ...(options.body ? { "Content-Type": "application/json" } : {}) },
-  });
-  const result = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    const error = new Error(result.error || "문의를 처리하지 못했어요. 다시 시도해 주세요.");
-    error.status = response.status;
-    throw error;
-  }
-  return result;
-}
+import { inquiryRequest } from "../../lib/inquiry-browser";
+import { inquiryTypes as categoryOptions, inquiryCategory as categoryLabel, inquiryStatus as statusLabel, inquiryDate as formatDate } from "../../lib/inquiry-policy";
+import InquiryPhotoInput from "../../components/inquiry-photo-input";
+import InquiryPhotos from "../../components/inquiry-photos";
 
 export default function MyInquiries() {
   const [inquiries, setInquiries] = useState([]);
@@ -47,6 +17,9 @@ export default function MyInquiries() {
   const [submitting, setSubmitting] = useState(false);
   const [loginRequired, setLoginRequired] = useState(false);
   const [notice, setNotice] = useState("");
+  const [files, setFiles] = useState([]);
+  const [preparing, setPreparing] = useState(false);
+  const busy = useRef({ preparing: false, submitting: false });
   const [form, setForm] = useState({ category: "", title: "", content: "" });
 
   useEffect(() => {
@@ -77,19 +50,25 @@ export default function MyInquiries() {
 
   const submit = async (event) => {
     event.preventDefault();
-    if (submitting) return;
+    if (busy.current.submitting || busy.current.preparing) return;
     const title = form.title.trim();
     const content = form.content.trim();
     if (!form.category || !title || !content) return setNotice("문의 유형, 제목, 내용을 모두 입력해 주세요.");
     if (title.length > 100 || content.length > 2000) return setNotice("제목과 문의 내용의 글자 수를 확인해 주세요.");
+    busy.current.submitting = true;
     setSubmitting(true);
     setNotice("");
     try {
-      const result = await inquiryRequest("/api/inquiries", {
-        method: "POST",
-        body: JSON.stringify({ category: form.category, title, content }),
-      });
-      setInquiries((current) => [result.inquiry, ...current]);
+      const fields = { category: form.category, title, content };
+      let body = JSON.stringify(fields);
+      if (files.length) {
+        body = new FormData();
+        Object.entries(fields).forEach(([key, value]) => body.append(key, value));
+        files.forEach(file => body.append("photos", file, "attachment.webp"));
+      }
+      const result = await inquiryRequest("/api/inquiries", { method: "POST", body });
+      setInquiries((current) => [{ id: result.inquiry.id, title, category: form.category, status: result.inquiry.status, created_at: result.inquiry.created_at }, ...current]);
+      setFiles([]);
       setSelected(result.inquiry);
       setForm({ category: "", title: "", content: "" });
       setView("detail");
@@ -98,6 +77,7 @@ export default function MyInquiries() {
       if (error.status === 401) setLoginRequired(true);
       setNotice(error.message);
     } finally {
+      busy.current.submitting = false;
       setSubmitting(false);
     }
   };
@@ -122,7 +102,9 @@ export default function MyInquiries() {
         <label>문의 유형<select value={form.category} onChange={(event) => setForm((current) => ({ ...current, category: event.target.value }))} required><option value="">선택해 주세요</option>{categoryOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
         <label>제목<input value={form.title} onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))} maxLength={100} required /></label>
         <label>문의 내용<textarea value={form.content} onChange={(event) => setForm((current) => ({ ...current, content: event.target.value }))} maxLength={2000} rows={8} required /></label>
-        <div className="inquiry-actions"><button type="button" onClick={() => { setNotice(""); setView("list"); }} disabled={submitting}>취소</button><button type="submit" className="inquiry-primary" disabled={submitting}>{submitting ? "등록 중..." : "문의 등록"}</button></div>
+        <InquiryPhotoInput files={files} setFiles={setFiles} disabled={submitting}
+          onBusy={value => { busy.current.preparing = value; setPreparing(value); }} />
+        <div className="inquiry-actions"><button type="button" onClick={() => { setNotice(""); setFiles([]); setView("list"); }} disabled={submitting || preparing}>취소</button><button type="submit" className="inquiry-primary" disabled={submitting || preparing}>{submitting ? "등록 중..." : "문의 등록"}</button></div>
       </form>}
 
       {!loginRequired && view === "detail" && selected && <article className="inquiry-detail">
@@ -131,6 +113,10 @@ export default function MyInquiries() {
         <h2>{selected.title}</h2>
         <div className="inquiry-meta"><time>{formatDate(selected.created_at)}</time><b>{statusLabel(selected.status)}</b></div>
         <p className="inquiry-body">{selected.content}</p>
+        <InquiryPhotos photos={selected.attachments} onRefresh={async () => {
+          const result = await inquiryRequest(`/api/inquiries?id=${encodeURIComponent(selected.id)}`);
+          setSelected(result.inquiry);
+        }} />
         <section className="inquiry-replies"><h3>답변</h3>{selected.replies?.length ? selected.replies.map((reply) => <div key={reply.id}><time>{formatDate(reply.created_at)}</time><p>{reply.content}</p></div>) : <p>답변을 준비하고 있습니다.</p>}</section>
       </article>}
     </section>

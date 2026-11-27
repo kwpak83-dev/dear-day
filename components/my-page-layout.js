@@ -11,6 +11,7 @@ import DearDayDesktopHeader from "./dearday-desktop-header";
 import DearDayMobileDrawer, { DrawerIcon } from "./dearday-mobile-drawer";
 import { getSupabaseBrowserClient } from "../lib/supabase/browser";
 import "../app/landing-refresh.css";
+import "../app/inquiries.css";
 
 function QuickTabIcon({ type }) {
   const common = { width: 17, height: 17, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.7, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true };
@@ -26,9 +27,10 @@ const menuItems = [
   { key: "inquiries", label: "문의내역", href: "/my-inquiries" },
 ];
 
-export default function MyPageLayout({ current, children }) {
+export default function MyPageLayout({ current, children, inquiryRefresh = 0 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [pendingInquiries, setPendingInquiries] = useState(null);
   const [canManageAdmin, setCanManageAdmin] = useState(false);
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();
@@ -40,19 +42,23 @@ export default function MyPageLayout({ current, children }) {
   useEffect(() => {
     let active = true;
     setCanManageAdmin(false);
+    setPendingInquiries(null);
     if (!user?.id) return;
     (async () => {
       try {
         const supabase = getSupabaseBrowserClient();
         const {data:{session}} = await supabase.auth.getSession();
         if (!session || session.user.id !== user.id) return;
-        const response = await fetch("/api/admin/menu-access", {headers:{Authorization:"Bearer "+session.access_token},cache:"no-store"});
+        const response = await fetch("/api/admin/menu-access?inquiries=1", {headers:{Authorization:"Bearer "+session.access_token},cache:"no-store"});
         const result = response.ok ? await response.json() : null;
-        if (active) setCanManageAdmin(result?.canManage === true);
+        if (active) {
+          setCanManageAdmin(result?.canManage === true);
+          setPendingInquiries(result?.pendingInquiries ?? null);
+        }
       } catch { if (active) setCanManageAdmin(false); }
     })();
     return () => { active = false; };
-  }, [user?.id]);
+  }, [user?.id, inquiryRefresh]);
   const signOut = async () => {
     const supabase = getSupabaseBrowserClient();
     if (supabase) await supabase.auth.signOut();
@@ -75,7 +81,7 @@ export default function MyPageLayout({ current, children }) {
       <button type="button" className="dd-member-menu-toggle" aria-label="메뉴 열기" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span /><span /><span /></button>
       <a className="brand dd-member-brand" href="/" aria-label="DearDay 홈"><DearDayLogo /></a>
       <a className="dd-member-envelope" href="/my-invitations" aria-label="내 초대장" title="내 초대장"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="2.3" fill="#f8ede0" stroke="#d5bfae" strokeWidth=".8"/><path d="M3.5 5.5 12 12.2l8.5-6.7M3.5 18.5l6.3-6.1M20.5 18.5l-6.3-6.1" stroke="#c9ad98" strokeWidth=".85" strokeLinejoin="round"/><circle cx="12" cy="12.2" r="2.15" fill="#a87856" stroke="#d6b18d" strokeWidth=".65"/><circle cx="12" cy="12.2" r="1.3" fill="none" stroke="#e8cfb3" strokeWidth=".45"/></svg></a>
-      <DearDayMobileDrawer open={menuOpen} onClose={() => setMenuOpen(false)} user={user} canManageAdmin={canManageAdmin} current={current} onStart={() => window.location.assign("/templates")} onLogin={() => window.location.assign("/?login=required")} onSignOut={signOut} />
+      <DearDayMobileDrawer open={menuOpen} onClose={() => setMenuOpen(false)} user={user} canManageAdmin={canManageAdmin} pendingInquiries={pendingInquiries} current={current} onStart={() => window.location.assign("/templates")} onLogin={() => window.location.assign("/?login=required")} onSignOut={signOut} />
     </header>
     <nav className={`dd-member-quick-tabs${quickTabsHidden ? " is-hidden" : ""}`} aria-label="마이페이지 빠른 메뉴">
       {menuItems.slice(0, 2).map(item => item.href
@@ -90,7 +96,7 @@ export default function MyPageLayout({ current, children }) {
         <nav aria-label="마이페이지 메뉴">{menuItems.map((item) => item.href
           ? <a key={item.key} href={item.href} className={current === item.key ? "active" : ""} aria-current={current === item.key ? "page" : undefined}><span className="dd-member-menu-label">{item.key === "guests" ? <QuickTabIcon type="guests" /> : <DrawerIcon name={{invitations:"saved",profile:"account",inquiries:"inquiry"}[item.key]} />}{item.label}</span></a>
           : <span key={item.key} aria-disabled="true"><b>{item.label}</b><small>준비중</small></span>)}</nav>
-        <div className="dd-member-desktop-account">{canManageAdmin&&<a href="/admin/credits"><DrawerIcon name="admin" />관리자 페이지</a>}<button type="button" onClick={signOut}><DrawerIcon name="logout" />로그아웃</button></div>
+        <div className="dd-member-desktop-account">{canManageAdmin&&<><a href="/admin/credits"><DrawerIcon name="admin" />관리자 페이지</a><a href="/manage-inquiries" className={current === "manage-inquiries" ? "active" : undefined} aria-current={current === "manage-inquiries" ? "page" : undefined}><DrawerIcon name="inquiry" />고객 문의 관리{pendingInquiries > 0 && <span className="inquiry-count-badge" aria-label={pendingInquiries + "건 답변 대기"}>{pendingInquiries}</span>}</a></>}<button type="button" onClick={signOut}><DrawerIcon name="logout" />로그아웃</button></div>
       </aside>
       <div className="member-page-content">{children}</div>
     </div>
