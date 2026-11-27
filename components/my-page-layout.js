@@ -88,7 +88,7 @@ export default function MyPageLayout({ current, children }) {
         <h1>마이페이지</h1>
         <CreditBalance variant="menu"/>
         <nav aria-label="마이페이지 메뉴">{menuItems.map((item) => item.href
-          ? <a key={item.key} href={item.href} className={current === item.key ? "active" : ""} aria-current={current === item.key ? "page" : undefined}><span className="dd-member-menu-label"><DrawerIcon name={{invitations:"saved",guests:"account",profile:"account",inquiries:"inquiry"}[item.key]} />{item.label}</span></a>
+          ? <a key={item.key} href={item.href} className={current === item.key ? "active" : ""} aria-current={current === item.key ? "page" : undefined}><span className="dd-member-menu-label">{item.key === "guests" ? <QuickTabIcon type="guests" /> : <DrawerIcon name={{invitations:"saved",profile:"account",inquiries:"inquiry"}[item.key]} />}{item.label}</span></a>
           : <span key={item.key} aria-disabled="true"><b>{item.label}</b><small>준비중</small></span>)}</nav>
         <div className="dd-member-desktop-account">{canManageAdmin&&<a href="/admin/credits"><DrawerIcon name="admin" />관리자 페이지</a>}<button type="button" onClick={signOut}><DrawerIcon name="logout" />로그아웃</button></div>
       </aside>
