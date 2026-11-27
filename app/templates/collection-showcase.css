@@ -638,3 +638,17 @@
     display: none !important;
   }
 }
+
+/* Desktop collection: fit the preview and actions within the viewport. */
+@media(min-width:801px){
+ .dd-collection-page.dd-showcase-page{min-height:calc(100svh - 66px);padding-bottom:12px!important}
+ .dd-showcase-page .dd-showcase-stage{--dd-card-width:min(19.2vw,272px,max(140px,calc((100svh - 250px) * 0.5714286)));max-width:1500px}
+ .dd-showcase-page .dd-showcase-slide{flex:0 0 var(--dd-card-width)!important;transform:scale(.95);opacity:.9}
+ .dd-showcase-page .dd-showcase-slide.is-active{transform:scale(1);opacity:1}
+ .dd-showcase-page .dd-showcase-track{scroll-padding-inline:calc((100% - var(--dd-card-width))/2)!important;padding-inline:calc((100% - var(--dd-card-width))/2)!important;padding-bottom:10px!important}
+ .dd-showcase-page .dd-showcase-intro .dd-showcase-kicker{font-size:14px!important}
+ .dd-showcase-page .dd-showcase-selected{padding-bottom:4px!important}
+ .dd-showcase-page .dd-showcase-counter{margin-bottom:4px!important}
+ .dd-showcase-page .dd-showcase-actions{margin-top:8px!important}
+ .dd-showcase-page .dd-showcase-hint-pill{margin-top:6px!important}
+}
