@@ -90,6 +90,7 @@ export default function MyPageLayout({ current, children }) {
         <nav aria-label="마이페이지 메뉴">{menuItems.map((item) => item.href
           ? <a key={item.key} href={item.href} className={current === item.key ? "active" : ""} aria-current={current === item.key ? "page" : undefined}>{item.label}</a>
           : <span key={item.key} aria-disabled="true"><b>{item.label}</b><small>준비중</small></span>)}</nav>
+        <div className="dd-member-desktop-account">{canManageAdmin&&<a href="/admin/credits">관리자 페이지</a>}<button type="button" onClick={signOut}>로그아웃</button></div>
       </aside>
       <div className="member-page-content">{children}</div>
     </div>

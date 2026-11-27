@@ -2,30 +2,32 @@
 .dd-desktop-header{display:none}
 @media(min-width:801px){
  .landing-v2 > .landing-header,.dd-showcase-page > .dd-showcase-header,.my-page.member-page > .dd-member-topbar{display:none!important}
- .dd-desktop-header{box-sizing:border-box;display:flex;position:relative;z-index:60;align-items:center;justify-content:space-between;gap:clamp(10px,2vw,32px);height:72px;padding:0 clamp(16px,2.5vw,40px);background:#fff;border-bottom:1px solid #eee6de;font-family:Pretendard,"Noto Sans KR",Arial,sans-serif;color:#343230;white-space:nowrap}
+ .dd-desktop-header{box-sizing:border-box;display:flex;position:sticky;top:0;z-index:60;align-items:center;justify-content:space-between;gap:clamp(10px,2vw,32px);height:56px;padding:0 max(16px,calc((100% - 1120px)/2));background:#fff;border-bottom:1px solid #eee6de;font-family:Pretendard,"Noto Sans KR",Arial,sans-serif;color:#343230;white-space:nowrap}
  .dd-desktop-header a,.dd-desktop-header button{font:inherit;color:inherit;text-decoration:none;border:0;background:none;cursor:pointer}
  .dd-desktop-brand{display:flex;align-items:center;flex:none}
- .dd-desktop-header .dd-desktop-brand .dearday-logo,.dd-desktop-header .dd-desktop-brand img{display:block;width:144px!important;height:60px!important;max-width:144px!important;max-height:60px!important;object-fit:contain!important}
+ .dd-desktop-header .dd-desktop-brand .dearday-logo,.dd-desktop-header .dd-desktop-brand img{display:block;width:101px!important;height:42px!important;max-width:101px!important;max-height:42px!important;object-fit:contain!important}
  .dd-desktop-nav,.dd-desktop-actions{display:flex;align-items:center;gap:clamp(12px,1.8vw,28px);font-size:14px}
- .dd-desktop-nav{justify-content:center;flex:1}
+ .dd-desktop-nav{justify-content:flex-start;flex:1}
  .dd-desktop-nav [aria-disabled=true]{color:#999;cursor:not-allowed}
  .dd-desktop-nav a[aria-current=page]{font-weight:700;color:#594b40}
  .dd-desktop-actions{flex:none;gap:16px}
  .dd-desktop-actions>button,.dd-desktop-account>button{padding:8px 0}
- .dd-desktop-header .dd-desktop-cta{background:#594b40;color:#fff;border-radius:999px;padding:13px 20px;font-weight:700}
- .dd-desktop-account{position:relative}
- .dd-desktop-account-panel{position:absolute;top:calc(100% + 12px);right:0;width:230px;box-sizing:border-box;background:#fff;border:1px solid #e7e1da;border-radius:12px;padding:10px;box-shadow:0 12px 30px #0002;display:flex;flex-direction:column;gap:3px;white-space:normal}
- .dd-desktop-account-panel>a:not(:first-child),.dd-desktop-account-panel>button{display:block;text-align:left;padding:11px 12px;border-radius:6px;font-size:13px}
- .dd-desktop-account-panel>a:hover,.dd-desktop-account-panel>button:hover{background:#f7f3ef}
- .dd-desktop-account-panel .dd-desktop-account-divider{border-top:1px solid #eee6de;border-radius:0}
  .dd-desktop-header a:focus-visible,.dd-desktop-header button:focus-visible{outline:2px solid #a87856;outline-offset:3px}
 }
 @media(min-width:801px) and (max-width:1100px){
  .dd-desktop-header{gap:10px;padding:0 14px}
- .dd-desktop-header .dd-desktop-brand .dearday-logo,.dd-desktop-header .dd-desktop-brand img{width:112px!important;height:47px!important;max-width:112px!important;max-height:47px!important}
+ .dd-desktop-header .dd-desktop-brand .dearday-logo,.dd-desktop-header .dd-desktop-brand img{width:78px!important;height:33px!important;max-width:78px!important;max-height:33px!important}
  .dd-desktop-nav,.dd-desktop-actions{font-size:12px;gap:12px}
- .dd-desktop-header .dd-desktop-cta{padding:11px 13px}
 }
 @media(max-width:800px){
  .my-page.member-page .dd-member-quick-tabs{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
+
+@media(min-width:801px){
+ .dd-desktop-mypage{display:inline-flex;align-items:center;gap:7px}
+ .dd-desktop-mypage svg{flex:none;display:block}
+ .landing-v2 #how{scroll-margin-top:56px}
+ .dd-member-desktop-account{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+ .dd-member-desktop-account button{font:inherit;color:inherit;background:none;border:0;text-align:left;cursor:pointer;padding:0}
+}
+@media(max-width:800px){.dd-member-desktop-account{display:none}}
