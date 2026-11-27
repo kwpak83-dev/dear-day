@@ -1,6 +1,7 @@
 "use client";
 import DearDayLogo from "./dearday-logo";
 import CreditBalance from "./credit-balance";
+import {openSmartstorePurchase} from "../lib/smartstore-config";
 export function DrawerIcon({name}) {
  const common={width:24,height:24,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:1.6,strokeLinecap:"round",strokeLinejoin:"round","aria-hidden":true};
  const shapes={
@@ -27,7 +28,7 @@ export default function DearDayMobileDrawer({open,onClose,user,canManageAdmin=fa
           {user && <div className="dd-drawer-credit"><CreditBalance variant="menu" /></div>}<p className="dd-drawer-label">SERVICE</p>
           <a className="dd-drawer-link" href="/templates" onClick={() => onClose()}><span><DrawerIcon name="templates" /></span>템플릿 둘러보기 <b>›</b></a>
           <a className="dd-drawer-link" href="/#how-desktop" onClick={() => onClose()}><span><DrawerIcon name="experience" /></span>초대장 체험하기 <b>›</b></a>
-          <div className="dd-drawer-link dd-drawer-disabled" aria-disabled="true"><span className="dd-drawer-store-icon"><img src="/naver-smartstore-icon.svg" alt="" width="32" height="18" /></span><span>이용권 구매<small>네이버 스마트스토어 · 준비 중</small></span><b>›</b></div>
+          {!user && <button type="button" className="dd-drawer-link" onClick={openSmartstorePurchase} style={{width:"100%",textAlign:"left",background:"transparent",border:0,fontFamily:"inherit"}}><span className="dd-drawer-store-icon"><img src="/naver-smartstore-icon.svg" alt="" width="32" height="18" /></span><span>이용권 구매<small>네이버 스마트스토어</small></span><b>›</b></button>}
           <a className="dd-drawer-link" href={user ? "/my-inquiries" : "/?login=required&returnUrl=%2Fmy-inquiries"} onClick={() => onClose()}><span><DrawerIcon name="inquiry" /></span>문의내역 <b>›</b></a>
           {canManageAdmin && <><div style={{borderTop:"1px solid #e9e2dc",margin:"16px 0 8px"}}/><a className="dd-drawer-link" href="/admin/credits" onClick={() => onClose()}><span><DrawerIcon name="admin" /></span>관리자 페이지 <b>›</b></a></>}
           {user && <><a className="dd-drawer-link" href="/guest-management" aria-current={current === "guests" ? "page" : undefined} onClick={() => onClose()}><span><DrawerIcon name="account" /></span>하객 관리 <b>›</b></a></>}
