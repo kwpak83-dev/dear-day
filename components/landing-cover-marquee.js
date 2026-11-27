@@ -25,15 +25,15 @@ export default function LandingCoverMarquee({items, title, emptyText, ariaLabel}
   frame=requestAnimationFrame(tick);
   return()=>{observer.disconnect();cancelAnimationFrame(frame)};
  },[items.length]);
- return <div ref={rootRef} className="dd-concept-carousel dd-cover-marquee" onMouseEnter={()=>{paused.current=true}} onMouseLeave={()=>{paused.current=false}} onTouchStart={()=>{touch.current=true}} onTouchEnd={()=>{touch.current=false}} onTouchCancel={()=>{touch.current=false}}>
+ return <div ref={rootRef} className="dd-concept-carousel dd-cover-marquee"  onTouchStart={()=>{touch.current=true}} onTouchEnd={()=>{touch.current=false}} onTouchCancel={()=>{touch.current=false}}>
   <div className="dd-concept-carousel-header"><strong>{title}</strong></div>
-  {items.length?<><div className="dd-cover-marquee-viewport" aria-label={ariaLabel}>
+  {items.length?<><div className="dd-cover-marquee-viewport" aria-label={ariaLabel} onPointerEnter={e=>{if(e.pointerType==="mouse")paused.current=true}} onPointerLeave={()=>{paused.current=false}}>
    <div ref={trackRef} className="dd-concept-carousel-track dd-cover-marquee-track">
     {(items.length>1?[...items,...items]:items).map((item,index)=><div className="dd-concept-carousel-card" key={item.id+"-"+index} aria-hidden={index>=items.length?true:undefined}>
      <div className="dd-concept-carousel-image">{item.thumbnail_1_url?<img src={item.thumbnail_1_url} alt={index>=items.length?"":item.label+" 초대장 표지"} loading="lazy" draggable="false"/>:<div className="dd-concept-carousel-empty">DearDay</div>}</div>
      <span>{item.label}</span>
     </div>)}
    </div>
-  </div>{items.length>1&&<button type="button" className="dd-cover-marquee-toggle" onClick={()=>{stoppedRef.current=!stoppedRef.current;setStopped(stoppedRef.current)}}>{stopped?"자동 이동 재생":"자동 이동 정지"}</button>}</>:<div className="dd-concept-carousel-loading">{emptyText}</div>}
+  </div>{items.length>1&&<button type="button" className="dd-cover-marquee-toggle" onClick={()=>{stoppedRef.current=!stoppedRef.current;paused.current=false;touch.current=false;setStopped(stoppedRef.current)}}>{stopped?"자동 이동 재생":"자동 이동 정지"}</button>}</>:<div className="dd-concept-carousel-loading">{emptyText}</div>}
  </div>;
 }
