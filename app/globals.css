@@ -5298,3 +5298,18 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  .my-page.member-page .dd-my-card-badge--published{background:#857361;border-color:#857361;color:#fff}
  .my-page.member-page .dd-my-card-badge--draft{background:#F5E9DD;border-color:#E5D3C1;color:#85664D}
 }
+
+/* Compact desktop member sidebar; retain scrolling on short viewports. */
+@media (min-width:801px){
+ .my-page.member-page .member-navigation{padding:22px 0 10px;scrollbar-gutter:auto}
+ .my-page.member-page .member-navigation>p{margin-bottom:4px}
+ .my-page.member-page .member-navigation>h1{margin-bottom:17px}
+ .my-page.member-page .member-navigation .dd-credit-menu-card{padding:7px 8px!important;margin-bottom:5px!important}
+ .my-page.member-page .member-navigation .dd-credit-menu-card>a{padding:1px 2px 3px!important}
+ .my-page.member-page .member-navigation .dd-credit-menu-description{font-size:9px!important;letter-spacing:-.045em;line-height:1.3!important;margin:2px 0 5px!important;white-space:normal}
+ .my-page.member-page .member-navigation .dd-credit-menu-purchase{min-height:30px!important;padding:4px 6px!important;gap:6px!important;font-size:12px!important}
+ .my-page.member-page .member-navigation nav{gap:4px}
+ .my-page.member-page .member-navigation nav>a,.my-page.member-page .member-navigation nav>span{min-height:36px;padding:6px 12px}
+ .my-page.member-page .dd-member-desktop-account{gap:4px;margin-top:4px;padding-top:4px}
+ .my-page.member-page .dd-member-desktop-account>a,.my-page.member-page .dd-member-desktop-account>button{min-height:36px;padding:6px 12px}
+}
