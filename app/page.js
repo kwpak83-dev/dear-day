@@ -17,6 +17,46 @@ export const metadata = {
   },
 };
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": PUBLIC_ORIGIN + "/#organization",
+      name: "디어데이",
+      alternateName: "DearDay",
+      url: PUBLIC_ORIGIN,
+      logo: PUBLIC_ORIGIN + "/dearday-logo-black.png",
+    },
+    {
+      "@type": "WebSite",
+      "@id": PUBLIC_ORIGIN + "/#website",
+      name: "디어데이",
+      alternateName: "DearDay",
+      url: PUBLIC_ORIGIN,
+      inLanguage: "ko",
+      publisher: { "@id": PUBLIC_ORIGIN + "/#organization" },
+    },
+    {
+      "@type": "Service",
+      "@id": PUBLIC_ORIGIN + "/#service",
+      name: "모바일청첩장 및 모바일 초대장 제작",
+      url: PUBLIC_ORIGIN,
+      description: metadata.description,
+      serviceType: ["모바일청첩장", "돌잔치 초대장", "생일 초대장", "환갑·칠순·팔순 초대장", "모임·행사 초대장", "개업 초대장"],
+      provider: { "@id": PUBLIC_ORIGIN + "/#organization" },
+    },
+  ],
+};
+
 export default function Page() {
-  return <Home />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
+      />
+      <Home />
+    </>
+  );
 }
