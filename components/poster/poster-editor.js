@@ -1,7 +1,7 @@
 "use client";
 import MobileInputController from "../mobile-input-controller";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import PosterPage, { DESIGNS } from "./poster-page";
@@ -74,6 +74,22 @@ function Crop({ value, onChange }) {
   ].map(([key, label, min, max, step]) => <label key={key}>{label} <output>{value[key]}</output>
     <input type="range" min={min} max={max} step={step} value={value[key]}
       onChange={event => onChange({ ...value, [key]: Number(event.target.value) })} /></label>)}</div>;
+}
+
+function FloatingPosterPreview(props) {
+  const viewportRef = useRef(null);
+  useLayoutEffect(() => {
+    const viewport = viewportRef.current;
+    const resize = width => viewport.style.setProperty("--dd-poster-preview-scale", String(width / 540));
+    resize(viewport.getBoundingClientRect().width);
+    const observer = new ResizeObserver(([entry]) => resize(entry.contentRect.width));
+    observer.observe(viewport);
+    return () => observer.disconnect();
+  }, []);
+
+  return <div className="dd-poster-mobile-preview-paper" ref={viewportRef}>
+    <div className="dd-poster-mobile-preview-stage"><PosterPage {...props} /></div>
+  </div>;
 }
 
 export default function PosterEditor({ slug }) {
@@ -332,9 +348,9 @@ export default function PosterEditor({ slug }) {
       {floatingPreviewOpen && <section className="dd-poster-mobile-preview-panel" aria-label={PAGES[page - 1] + " 편집용 미리보기"}>
         <div className="dd-poster-mobile-preview-head"><span className="dd-poster-mobile-preview-heading"><strong>{page}. {PAGES[page - 1]}</strong><small>보면서 편집하세요</small></span>
           <button type="button" onClick={() => setFloatingPreviewOpen(false)} aria-label="미리보기 접기">✕</button></div>
-        <div className="dd-poster-mobile-preview-paper"><PosterPage page={page} designKey={draft.designKey}
+        <FloatingPosterPreview page={page} designKey={draft.designKey}
           settings={settings} source={source} gallery={gallery}
-          qrUrl={qr?.publicUrl === publicUrl ? qr?.url : null} /></div>
+          qrUrl={qr?.publicUrl === publicUrl ? qr?.url : null} />
       </section>}
       {!floatingPreviewOpen && <button type="button" className="dd-poster-mobile-preview-toggle"
         onClick={() => setFloatingPreviewOpen(true)} aria-expanded={false}>◉ 편집용 미리보기</button>}

@@ -746,8 +746,9 @@
   .dd-poster-mobile-preview-panel{width:min(43vw,185px);padding:7px;background:#fff;border:1px solid #ded7e0;border-radius:13px;box-shadow:0 8px 30px #21162645}
   .dd-poster-mobile-preview-head{display:flex;align-items:center;justify-content:space-between;gap:3px;margin-bottom:6px;font-size:10px;font-weight:700;color:#3b3040}
   .dd-poster-editor .dd-poster-mobile-preview-head button{flex:none;padding:3px 6px;border:0;background:transparent;font-size:14px;line-height:1}
-  .dd-poster-mobile-preview-paper{width:100%;container-type:inline-size;overflow:hidden;border-radius:5px;box-shadow:0 1px 5px #0002;pointer-events:none}
-  .dd-poster-mobile-preview-paper>.dd-poster-paper{width:100%}
+  .dd-poster-mobile-preview-paper{position:relative;width:100%;aspect-ratio:9/16;overflow:hidden;border-radius:5px;box-shadow:0 1px 5px #0002;pointer-events:none}
+  .dd-poster-mobile-preview-stage{position:absolute;top:0;left:0;width:540px;height:960px;container-type:inline-size;transform:scale(var(--dd-poster-preview-scale,0));transform-origin:top left}
+  .dd-poster-mobile-preview-stage>.dd-poster-paper{height:100%}
   .dd-poster-editor{padding-bottom:90px}
 }
 
