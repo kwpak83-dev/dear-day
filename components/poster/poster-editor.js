@@ -9,7 +9,7 @@ import DearDayLoading from "../dearday-loading";
 import { downloadPosterJpg, posterQr, renderPosterJpg } from "./poster-export";
 
 // Enable this for the external-browser guide if native KakaoTalk JPG downloads fail.
-const BLOCK_KAKAOTALK_JPG_DOWNLOAD = false;
+const BLOCK_KAKAOTALK_JPG_DOWNLOAD = true;
 
 const DEFAULT_CROP = { x: 50, y: 50, zoom: 1 };
 const PHOTO_CAPTION_EXAMPLES = ["함께라서 행복한 순간", "기쁜 날의 약속", "꽃으로 채운 자리", "소중한 순간들"];
