@@ -3585,3 +3585,7 @@
  .landing-v2 .dd-hero-variant-c .dd-hero-buttons{width:min(100%,224px)!important;max-width:224px!important}
  .landing-v2 .dd-hero-variant-c .dd-hero-button{height:41px!important;min-height:41px!important;padding:7px 14px!important;font-size:13.5px!important}
 }
+
+/* Feature title line breaks are mobile-only. */
+.landing-v2 .dd-feature-title-break{display:none}
+@media(max-width:800px){.landing-v2 .dd-feature-title-break{display:inline}}
