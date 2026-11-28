@@ -1,10 +1,12 @@
-import { fitPosterMessage } from "../../lib/poster-message-fit";
+import { fitPosterMessage } from "../../lib/poster-message-fit.js";
 
 const WIDTH = 540;
 const HEIGHT = 960;
 const SCALE = 2;
+const JPEG_TYPE = "image/jpeg";
+const JPEG_QUALITY = 0.95;
 const PHOTO_ERROR = "출력에 필요한 사진을 불러오지 못했어요. 사진을 확인하고 다시 시도해 주세요.";
-const CANVAS_ERROR = "PNG를 만들지 못했어요. 브라우저의 여유 메모리를 확보하고, 합본 대신 페이지별로 다시 시도해 주세요.";
+const CANVAS_ERROR = "JPG를 만들지 못했어요. 브라우저의 여유 메모리를 확보하고, 합본 대신 페이지별로 다시 시도해 주세요.";
 
 export async function posterQr(publicUrl, slug) {
   const url = new URL(publicUrl);
@@ -72,8 +74,8 @@ async function preparePhoto(image, photos) {
     image.src = raster;
     await image.decode();
   } catch (error) {
-    console.error("[poster PNG] photo rasterization failed", error);
-    throw new Error("사진 변환 중 오류가 발생했어요. 개발자 도구 Console에서 [poster PNG] 오류를 확인해 주세요.");
+    console.error("[poster JPG] photo rasterization failed", error);
+    throw new Error("사진 변환 중 오류가 발생했어요. 개발자 도구 Console에서 [poster JPG] 오류를 확인해 주세요.");
   } finally {
     releaseCanvas(canvas);
     URL.revokeObjectURL(url);
@@ -83,7 +85,7 @@ async function preparePhoto(image, photos) {
 function checkLayout(page) {
   const { width, height, top, bottom } = page.getBoundingClientRect();
   if (Math.abs(width - WIDTH) > 0.5 || Math.abs(height - HEIGHT) > 0.5) {
-    throw new Error(`PNG 출력 크기 오류: ${width.toFixed(1)}×${height.toFixed(1)} (예상 ${WIDTH}×${HEIGHT}).`);
+    throw new Error(`JPG 출력 크기 오류: ${width.toFixed(1)}×${height.toFixed(1)} (예상 ${WIDTH}×${HEIGHT}).`);
   }
   const message = page.querySelector(".dd-poster-message");
   if (message && message.scrollHeight > message.clientHeight) {
@@ -143,11 +145,11 @@ async function embeddedPosterFonts(page) {
   }
   const matched = faces.filter(face => face.family === family);
   if (!matched.length) {
-    console.error("[poster PNG] self-hosted font not found", {
+    console.error("[poster JPG] self-hosted font not found", {
       family, availableFonts: [...new Set(faces.map(face => face.family))],
       computedFont: getComputedStyle(text || page).fontFamily
     });
-    throw new Error("포스터 자체 호스팅 폰트를 찾지 못했어요. Console의 [poster PNG] 로그를 확인해 주세요.");
+    throw new Error("포스터 자체 호스팅 폰트를 찾지 못했어요. Console의 [poster JPG] 로그를 확인해 주세요.");
   }
   return (await Promise.all(matched.map(async face => {
     let css = face.css;
@@ -161,7 +163,7 @@ async function embeddedPosterFonts(page) {
     }
     const remaining = [...css.matchAll(/url\(([^)]+)\)/g)];
     if (remaining.some(match => !/^["\']?data:font\/|^["\']?data:application\/|^["\']?data:binary\//.test(match[1].trim()))) {
-      throw new Error("포스터 폰트가 PNG에 포함되지 않았어요.");
+      throw new Error("포스터 폰트가 JPG에 포함되지 않았어요.");
     }
     return css;
   }))).join("\n");
@@ -180,7 +182,7 @@ function freezePosterLayout(page) {
   return () => { for (const reset of restore) reset(); };
 }
 
-export async function renderPosterPng(pages) {
+export async function renderPosterJpg(pages) {
   if (!pages.length) throw new Error(CANVAS_ERROR);
   const result = document.createElement("canvas");
   const photos = new Map();
@@ -195,6 +197,8 @@ export async function renderPosterPng(pages) {
     result.width = WIDTH * SCALE;
     result.height = HEIGHT * SCALE * pages.length;
     const context = canvasContext(result);
+    context.fillStyle = "#fff";
+    context.fillRect(0, 0, result.width, result.height);
     for (const [index, page] of pages.entries()) {
       let canvas;
       let unfreeze = () => {};
@@ -211,11 +215,11 @@ export async function renderPosterPng(pages) {
               canvasContext(canvas).getImageData(0, 0, 1, 1).data[3] !== 255) throw new Error(CANVAS_ERROR);
           context.drawImage(canvas, 0, index * HEIGHT * SCALE);
         } catch (error) {
-          console.error(`[poster PNG] page ${index + 1} canvas conversion failed`, error);
+          console.error(`[poster JPG] page ${index + 1} canvas conversion failed`, error);
           if (error instanceof Error && error.message !== CANVAS_ERROR) {
-            throw new Error(`${index + 1}페이지 PNG 변환 오류: ${error.message}`);
+            throw new Error(`${index + 1}페이지 JPG 변환 오류: ${error.message}`);
           }
-          throw new Error(`${index + 1}페이지 PNG 변환에 실패했어요. 개발자 도구 Console에서 [poster PNG] 오류를 확인해 주세요.`);
+          throw new Error(`${index + 1}페이지 JPG 변환에 실패했어요. 개발자 도구 Console에서 [poster JPG] 오류를 확인해 주세요.`);
         }
       } finally {
         unfreeze();
@@ -223,8 +227,9 @@ export async function renderPosterPng(pages) {
         for (const image of images) image.removeAttribute("src");
       }
     }
-    return await new Promise(resolve => result.toBlob(resolve, "image/png")).then(blob => {
+    return await new Promise(resolve => result.toBlob(resolve, JPEG_TYPE, JPEG_QUALITY)).then(blob => {
       if (!blob) throw new Error(CANVAS_ERROR);
+      if (blob.type !== JPEG_TYPE) throw new Error("이 브라우저에서 JPG 인코딩을 지원하지 않아요. 다른 브라우저에서 다시 시도해 주세요.");
       return blob;
     });
   } finally {
@@ -233,11 +238,12 @@ export async function renderPosterPng(pages) {
   }
 }
 
-export function downloadPosterPng(blob, slug, scope) {
+export function downloadPosterJpg(blob, slug, scope) {
+  if (blob?.type !== JPEG_TYPE) throw new Error("다운로드할 JPG 이미지가 올바르지 않아요.");
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `${slug}-poster-${scope === "all" ? "pages-1-3" : scope}.png`;
+  link.download = `${slug}-poster-${scope === "all" ? "pages-1-3" : scope}.jpg`;
   document.body.append(link);
   link.click();
   link.remove();

@@ -2,6 +2,40 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { registerHooks } from "node:module";
 import { checkExport, missingMedia, parsePoster } from "../lib/poster-validation.mjs";
+import { downloadPosterJpg } from "../components/poster/poster-export.js";
+
+test("JPG downloads reject other formats, use JPG filenames and revoke their object URLs", t => {
+  assert.throws(() => downloadPosterJpg(null, "test", "all"), /JPG/);
+  assert.throws(() => downloadPosterJpg(new Blob([], { type: "image/png" }), "test", "page1"), /JPG/);
+
+  const originalDocument = globalThis.document;
+  t.after(() => {
+    if (originalDocument === undefined) delete globalThis.document;
+    else globalThis.document = originalDocument;
+  });
+  const clicks = [];
+  const removals = [];
+  globalThis.document = {
+    body: { append() {} },
+    createElement: () => ({
+      click() { clicks.push([this.download, this.href]); },
+      remove() { removals.push(this.href); },
+    }),
+  };
+  const revoke = t.mock.method(URL, "revokeObjectURL");
+  const pending = [];
+  t.mock.method(globalThis, "setTimeout", (callback, delay) => pending.push([callback, delay]));
+  const jpeg = new Blob([Uint8Array.of(255, 216, 255)], { type: "image/jpeg" });
+  downloadPosterJpg(jpeg, "test", "page2");
+  downloadPosterJpg(jpeg, "test", "all");
+  assert.deepEqual(clicks.map(([name]) => name), ["test-poster-page2.jpg", "test-poster-pages-1-3.jpg"]);
+  assert.deepEqual(removals, clicks.map(([, href]) => href));
+  for (const [callback, delay] of pending) {
+    assert.equal(delay, 30000);
+    callback();
+  }
+  assert.deepEqual(revoke.mock.calls.map(call => call.arguments[0]), removals);
+});
 
 const ids = Array.from({ length: 4 }, (_, i) => `00000000-0000-4000-8000-00000000000${i}`);
 const photos = ids.map(mediaId => ({ mediaId }));
