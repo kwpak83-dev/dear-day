@@ -6,7 +6,10 @@ import { flushSync } from "react-dom";
 import { getSupabaseBrowserClient } from "../../lib/supabase/browser";
 import PosterPage, { DESIGNS } from "./poster-page";
 import DearDayLoading from "../dearday-loading";
-import { downloadPosterPng, posterQr, renderPosterPng } from "./poster-export";
+import { downloadPosterJpg, posterQr, renderPosterJpg } from "./poster-export";
+
+// Enable this for the external-browser guide if native KakaoTalk JPG downloads fail.
+const BLOCK_KAKAOTALK_JPG_DOWNLOAD = false;
 
 const DEFAULT_CROP = { x: 50, y: 50, zoom: 1 };
 const PHOTO_CAPTION_EXAMPLES = ["함께라서 행복한 순간", "기쁜 날의 약속", "꽃으로 채운 자리", "소중한 순간들"];
@@ -240,12 +243,12 @@ export default function PosterEditor({ slug }) {
     } finally { saveLock.current = false; setSaving(false); }
   };
 
-  const exportPng = async scope => {
+  const exportJpg = async scope => {
     if (exportLock.current || saving) return;
-    if (/KAKAOTALK/i.test(navigator.userAgent)) { setDownloadGuide(true); return; }
+    if (BLOCK_KAKAOTALK_JPG_DOWNLOAD && /KAKAOTALK/i.test(navigator.userAgent)) { setDownloadGuide(true); return; }
     exportLock.current = true;
     setExporting(true);
-    setNotice("PNG를 만드는 중이에요…");
+    setNotice("JPG를 만드는 중이에요…");
     try {
       const result = await request(slug, { method: "POST", body: JSON.stringify({
         scope, designKey: draft.designKey, settings: draft.settings,
@@ -253,12 +256,12 @@ export default function PosterEditor({ slug }) {
       const pages = scope === "all" ? [1, 2, 3] : [Number(scope.at(-1))];
       const qrUrl = pages.includes(3) ? await posterQr(result.source.publicUrl, slug) : null;
       flushSync(() => setCapture({ ...result, pages, qrUrl }));
-      const blob = await renderPosterPng(captureRoot.current.querySelectorAll("[data-poster-page]"));
-      downloadPosterPng(blob, slug, scope);
-      setNotice("PNG 다운로드를 시작했어요.");
+      const blob = await renderPosterJpg(captureRoot.current.querySelectorAll("[data-poster-page]"));
+      downloadPosterJpg(blob, slug, scope);
+      setNotice("JPG 다운로드를 시작했어요.");
     } catch (error) {
-      setNotice(error instanceof TypeError ? "PNG를 만들지 못했어요. 연결 상태를 확인하고 다시 시도해 주세요."
-        : error.message || "PNG를 만들지 못했어요. 다시 시도해 주세요.");
+      setNotice(error instanceof TypeError ? "JPG를 만들지 못했어요. 연결 상태를 확인하고 다시 시도해 주세요."
+        : error.message || "JPG를 만들지 못했어요. 다시 시도해 주세요.");
     } finally {
       setCapture(null);
       setExporting(false);
@@ -322,9 +325,9 @@ export default function PosterEditor({ slug }) {
         </summary>
         <div className="dd-poster-download-options">
           {[1, 2, 3].map(number => <button key={number} type="button" disabled={saving || exporting}
-            onClick={() => { downloadMenuRoot.current?.removeAttribute("open"); exportPng(`page${number}`); }}>{number}. {PAGES[number - 1]} PNG</button>)}
+            onClick={() => { downloadMenuRoot.current?.removeAttribute("open"); exportJpg(`page${number}`); }}>{number}. {PAGES[number - 1]} JPG</button>)}
           <button type="button" disabled={saving || exporting}
-            onClick={() => { downloadMenuRoot.current?.removeAttribute("open"); exportPng("all"); }}>전체 3페이지 PNG</button>
+            onClick={() => { downloadMenuRoot.current?.removeAttribute("open"); exportJpg("all"); }}>전체 3페이지 JPG</button>
         </div>
       </details>
     </div>
@@ -403,7 +406,7 @@ export default function PosterEditor({ slug }) {
       {!previewVisible && <button type="button" className="dd-poster-mobile-preview-toggle"
         onClick={() => setFloatingPreviewOpen(true)} aria-expanded={false}>◉ 편집용 미리보기</button>}
     </div>
-    {downloadGuide && <div className="modal-backdrop dd-exit-confirm-backdrop" role="presentation"><div className="dd-exit-confirm-card" role="dialog" aria-modal="true" aria-labelledby="dd-poster-download-title"><h2 id="dd-poster-download-title">이미지 다운로드 안내</h2><p>카카오톡 내부 브라우저에서는 PNG 다운로드가 제한돼요. 편집 내용을 저장한 뒤 외부 브라우저에서 열어 다운로드해 주세요. 다시 로그인이 필요할 수 있어요.</p><div className="dd-exit-confirm-actions"><button type="button" disabled={saving} onClick={async () => { if (dirtyRef.current && !(await save())) return; window.location.href = "kakaotalk://web/openExternal?url=" + encodeURIComponent(window.location.href); }}>저장 후 외부 브라우저에서 열기</button><button type="button" disabled={saving} onClick={() => setDownloadGuide(false)}>닫기</button></div><p>이동하지 않으면 카카오톡 메뉴에서 다른 브라우저로 열기를 선택해 주세요.</p></div></div>}
+    {downloadGuide && <div className="modal-backdrop dd-exit-confirm-backdrop" role="presentation"><div className="dd-exit-confirm-card" role="dialog" aria-modal="true" aria-labelledby="dd-poster-download-title"><h2 id="dd-poster-download-title">이미지 다운로드 안내</h2><p>카카오톡 내부 브라우저에서는 JPG 다운로드가 제한돼요. 편집 내용을 저장한 뒤 외부 브라우저에서 열어 다운로드해 주세요. 다시 로그인이 필요할 수 있어요.</p><div className="dd-exit-confirm-actions"><button type="button" disabled={saving} onClick={async () => { if (dirtyRef.current && !(await save())) return; window.location.href = "kakaotalk://web/openExternal?url=" + encodeURIComponent(window.location.href); }}>저장 후 외부 브라우저에서 열기</button><button type="button" disabled={saving} onClick={() => setDownloadGuide(false)}>닫기</button></div><p>이동하지 않으면 카카오톡 메뉴에서 다른 브라우저로 열기를 선택해 주세요.</p></div></div>}
     {exitDestination && <div className="modal-backdrop dd-exit-confirm-backdrop" role="presentation"><div className="dd-exit-confirm-card" role="dialog" aria-modal="true" aria-labelledby="dd-poster-exit-title"><h2 id="dd-poster-exit-title">저장하지 않은 변경사항이 있어요</h2><p>지금 나가면 입력하거나 수정한 내용이 사라질 수 있어요.</p><div className="dd-exit-confirm-actions"><button type="button" disabled={saving || exporting} onClick={async () => { if (await save()) completeExit(exitDestination); else setExitDestination(null); }}>저장하고 나가기</button><button type="button" disabled={saving || exporting} onClick={() => completeExit(exitDestination)}>저장하지 않고 나가기</button><button type="button" disabled={saving} onClick={() => setExitDestination(null)}>계속 편집하기</button></div></div></div>}
     {capture && <div className="dd-poster-capture" ref={captureRoot} aria-hidden="true">
       {capture.pages.map(number => <PosterPage key={number} page={number} {...capture.poster} capture
