@@ -3596,3 +3596,6 @@
  .landing-v2 .dd-cover-marquee-touch-help{display:block;margin:2px 12px 4px;text-align:center;font-size:11px;font-weight:400;line-height:1.5;color:#888}
 }
 @media(prefers-reduced-motion:reduce){.landing-v2 .dd-cover-marquee-touch-help{display:none}}
+
+/* Keep the hand icon inline with the touch guidance, overriding global SVG layout. */
+.landing-v2 .dd-cover-marquee-touch-help > svg{display:inline-block!important;width:12px!important;height:12px!important;vertical-align:-2px;margin:0 4px 0 0;position:static;flex:none}
