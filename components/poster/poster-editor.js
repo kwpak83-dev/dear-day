@@ -87,6 +87,7 @@ export default function PosterEditor({ slug }) {
   const [qr, setQr] = useState(null);
   const [exporting, setExporting] = useState(false);
   const [capture, setCapture] = useState(null);
+  const [downloadGuide, setDownloadGuide] = useState(false);
   const captureRoot = useRef(null);
   const toolsRoot = useRef(null);
   const downloadMenuRoot = useRef(null);
@@ -177,6 +178,7 @@ export default function PosterEditor({ slug }) {
 
   const exportPng = async scope => {
     if (exportLock.current || saving) return;
+    if (/KAKAOTALK/i.test(navigator.userAgent)) { setDownloadGuide(true); return; }
     exportLock.current = true;
     setExporting(true);
     setNotice("PNG를 만드는 중이에요…");
@@ -337,6 +339,7 @@ export default function PosterEditor({ slug }) {
       {!floatingPreviewOpen && <button type="button" className="dd-poster-mobile-preview-toggle"
         onClick={() => setFloatingPreviewOpen(true)} aria-expanded={false}>◉ 편집용 미리보기</button>}
     </div>
+    {downloadGuide && <div className="modal-backdrop dd-exit-confirm-backdrop" role="presentation"><div className="dd-exit-confirm-card" role="dialog" aria-modal="true" aria-labelledby="dd-poster-download-title"><h2 id="dd-poster-download-title">이미지 다운로드 안내</h2><p>카카오톡 내부 브라우저에서는 PNG 다운로드가 제한돼요. 편집 내용을 저장한 뒤 외부 브라우저에서 열어 다운로드해 주세요. 다시 로그인이 필요할 수 있어요.</p><div className="dd-exit-confirm-actions"><button type="button" disabled={saving} onClick={async () => { if (dirtyRef.current && !(await save())) return; window.location.href = "kakaotalk://web/openExternal?url=" + encodeURIComponent(window.location.href); }}>저장 후 외부 브라우저에서 열기</button><button type="button" disabled={saving} onClick={() => setDownloadGuide(false)}>닫기</button></div><p>이동하지 않으면 카카오톡 메뉴에서 다른 브라우저로 열기를 선택해 주세요.</p></div></div>}
     {exitDestination && <div className="modal-backdrop dd-exit-confirm-backdrop" role="presentation"><div className="dd-exit-confirm-card" role="dialog" aria-modal="true" aria-labelledby="dd-poster-exit-title"><h2 id="dd-poster-exit-title">저장하지 않은 변경사항이 있어요</h2><p>지금 나가면 입력하거나 수정한 내용이 사라질 수 있어요.</p><div className="dd-exit-confirm-actions"><button type="button" disabled={saving || exporting} onClick={async () => { if (await save()) completeExit(exitDestination); else setExitDestination(null); }}>저장하고 나가기</button><button type="button" disabled={saving || exporting} onClick={() => completeExit(exitDestination)}>저장하지 않고 나가기</button><button type="button" disabled={saving} onClick={() => setExitDestination(null)}>계속 편집하기</button></div></div></div>}
     {capture && <div className="dd-poster-capture" ref={captureRoot} aria-hidden="true">
       {capture.pages.map(number => <PosterPage key={number} page={number} {...capture.poster} capture
