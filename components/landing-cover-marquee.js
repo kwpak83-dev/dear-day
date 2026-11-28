@@ -44,6 +44,6 @@ export default function LandingCoverMarquee({items, title, emptyText, ariaLabel,
      <span>{item.label}</span>
     </div>)}
    </div>
-  </div>{swipe&&items.length>1&&<p className="dd-cover-marquee-touch-help">터치하면 멈추고, 좌우로 밀어 다른 디자인을 볼 수 있어요.</p>}{items.length>1&&<button type="button" className="dd-cover-marquee-toggle" onClick={()=>{stoppedRef.current=!stoppedRef.current;paused.current=false;touch.current=false;setStopped(stoppedRef.current)}}>{stopped?"자동 이동 재생":"자동 이동 정지"}</button>}</>:<div className="dd-concept-carousel-loading">{emptyText}</div>}
+  </div>{swipe&&items.length>1&&<p className="dd-cover-marquee-touch-help"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" style={{verticalAlign:"-2px",marginRight:4}}><path d="M8 13V5a2 2 0 0 1 4 0v7-8a2 2 0 0 1 4 0v8-6a2 2 0 0 1 4 0v10a6 6 0 0 1-6 6h-2a6 6 0 0 1-5-3l-4-6a2 2 0 0 1 3-2l2 2Z"/></svg>터치하면 멈추고, 좌우로 밀어 다른 디자인을 볼 수 있어요.</p>}{items.length>1&&<button type="button" className="dd-cover-marquee-toggle" onClick={()=>{stoppedRef.current=!stoppedRef.current;paused.current=false;touch.current=false;setStopped(stoppedRef.current)}}>{stopped?"자동 이동 재생":"자동 이동 정지"}</button>}</>:<div className="dd-concept-carousel-loading">{emptyText}</div>}
  </div>;
 }
