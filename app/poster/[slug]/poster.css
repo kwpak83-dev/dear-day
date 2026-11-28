@@ -892,3 +892,6 @@
 .dd-poster-modern-editorial.dd-poster-page-3 .dd-poster-qr-guide{
   top:78%;font-size:2.7cqw;line-height:1.5;
 }
+
+/* Keep poster typography proportional in embedded mobile browsers. */
+.dd-poster-paper,.dd-poster-paper *{-webkit-text-size-adjust:none;text-size-adjust:none}
