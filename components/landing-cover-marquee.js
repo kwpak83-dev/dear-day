@@ -1,10 +1,11 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
-export default function LandingCoverMarquee({items, title, emptyText, ariaLabel}) {
+export default function LandingCoverMarquee({items, title, emptyText, ariaLabel, speed=70, swipe=false}) {
  const rootRef=useRef(null), trackRef=useRef(null), paused=useRef(false), touch=useRef(false);
  const [stopped,setStopped]=useState(false);
  const stoppedRef=useRef(false);
+ const drag=useRef(null), shift=useRef(0);
  useEffect(()=>{
   const root=rootRef.current, track=trackRef.current;
   if(!root||!track||items.length<2)return;
@@ -15,8 +16,13 @@ export default function LandingCoverMarquee({items, title, emptyText, ariaLabel}
   const tick=(now)=>{
    const first=track.children[0], copy=track.children[items.length];
    const distance=copy&&first?copy.offsetLeft-first.offsetLeft:0;
+   if(distance>0&&!reduced.matches&&shift.current){
+    pos=((pos+shift.current)%distance+distance)%distance;
+    shift.current=0;
+    track.style.transform="translate3d("+(-pos)+"px,0,0)";
+   }
    if(visible&&!document.hidden&&!reduced.matches&&!paused.current&&!touch.current&&!stoppedRef.current&&distance>0){
-    if(last)pos=(pos+Math.min(now-last,50)*0.07)%distance;
+    if(last)pos=(pos+Math.min(now-last,50)*speed/1000)%distance;
     track.style.transform="translate3d("+(-pos)+"px,0,0)";
     last=now;
    }else last=0;
@@ -24,10 +30,14 @@ export default function LandingCoverMarquee({items, title, emptyText, ariaLabel}
   };
   frame=requestAnimationFrame(tick);
   return()=>{observer.disconnect();cancelAnimationFrame(frame)};
- },[items.length]);
+ },[items.length,speed]);
  return <div ref={rootRef} className="dd-concept-carousel dd-cover-marquee"  onTouchStart={()=>{touch.current=true}} onTouchEnd={()=>{touch.current=false}} onTouchCancel={()=>{touch.current=false}}>
   <div className="dd-concept-carousel-header"><strong>{title}</strong></div>
-  {items.length?<><div className="dd-cover-marquee-viewport" aria-label={ariaLabel} onPointerEnter={e=>{if(e.pointerType==="mouse")paused.current=true}} onPointerLeave={()=>{paused.current=false}}>
+  {items.length?<><div className="dd-cover-marquee-viewport" aria-label={ariaLabel}
+   onTouchStart={e=>{if(swipe&&e.touches.length===1&&!window.matchMedia("(prefers-reduced-motion: reduce)").matches){const p=e.touches[0];drag.current={x:p.clientX,y:p.clientY,axis:null}}}}
+   onTouchMove={e=>{const d=drag.current;if(!swipe||!d||e.touches.length!==1){drag.current=null;return}const p=e.touches[0],dx=p.clientX-d.x,dy=p.clientY-d.y;if(!d.axis){if(Math.max(Math.abs(dx),Math.abs(dy))<8)return;d.axis=Math.abs(dx)>Math.abs(dy)?"x":"y"}if(d.axis==="x"){shift.current-=dx;d.x=p.clientX;d.y=p.clientY}}}
+   onTouchEnd={()=>{drag.current=null}} onTouchCancel={()=>{drag.current=null}}
+   onPointerEnter={e=>{if(e.pointerType==="mouse")paused.current=true}} onPointerLeave={()=>{paused.current=false}}>
    <div ref={trackRef} className="dd-concept-carousel-track dd-cover-marquee-track">
     {(items.length>1?[...items,...items]:items).map((item,index)=><div className="dd-concept-carousel-card" key={item.id+"-"+index} aria-hidden={index>=items.length?true:undefined}>
      <div className="dd-concept-carousel-image">{item.thumbnail_1_url?<img src={item.thumbnail_1_url} alt={index>=items.length?"":item.label+" 초대장 표지"} loading="lazy" draggable="false"/>:<div className="dd-concept-carousel-empty">DearDay</div>}</div>
