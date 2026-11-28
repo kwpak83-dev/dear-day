@@ -68,11 +68,12 @@ function withMainPhoto(poster, gallery) {
   return { ...poster, settings: { ...poster.settings, gallery: { ...selection, mainMediaId } } };
 }
 
-function Crop({ value, onChange }) {
+function Crop({ value, onChange, onAdjustStart }) {
   return <div className="dd-poster-crop">{[
     ["x", "좌우 위치", 0, 100, 1], ["y", "상하 위치", 0, 100, 1], ["zoom", "확대", 1, 3, .01],
   ].map(([key, label, min, max, step]) => <label key={key}>{label} <output>{value[key]}</output>
     <input type="range" min={min} max={max} step={step} value={value[key]}
+      onPointerDown={onAdjustStart}
       onChange={event => onChange({ ...value, [key]: Number(event.target.value) })} /></label>)}</div>;
 }
 
@@ -97,6 +98,53 @@ export default function PosterEditor({ slug }) {
   const [draft, setDraft] = useState(null);
   const [page, setPage] = useState(1);
   const [floatingPreviewOpen, setFloatingPreviewOpen] = useState(false);
+  const [autoPreviewOpen, setAutoPreviewOpen] = useState(false);
+  const autoTimer = useRef(null);
+  const activePointer = useRef(null);
+  const previewVisible = floatingPreviewOpen || autoPreviewOpen;
+  const stopAutoPreview = () => {
+    clearTimeout(autoTimer.current);
+    activePointer.current = null;
+    setAutoPreviewOpen(false);
+  };
+  const startAutoPreview = event => {
+    if (!window.matchMedia("(max-width:800px)").matches || event.button !== 0) return;
+    clearTimeout(autoTimer.current);
+    activePointer.current = event.pointerId;
+    setAutoPreviewOpen(true);
+  };
+  useEffect(() => {
+    const finish = event => {
+      if (activePointer.current !== event.pointerId) return;
+      activePointer.current = null;
+      clearTimeout(autoTimer.current);
+      if (event.type === "pointercancel") setAutoPreviewOpen(false);
+      else autoTimer.current = setTimeout(() => setAutoPreviewOpen(false), 700);
+    };
+    const reset = () => {
+      clearTimeout(autoTimer.current);
+      activePointer.current = null;
+      setAutoPreviewOpen(false);
+    };
+    const visibility = () => { if (document.hidden) reset(); };
+    const media = window.matchMedia("(max-width:800px)");
+    const resize = () => { if (!media.matches) reset(); };
+    window.addEventListener("pointerup", finish, true);
+    window.addEventListener("pointercancel", finish, true);
+    window.addEventListener("blur", reset);
+    document.addEventListener("visibilitychange", visibility);
+    window.addEventListener("resize", resize);
+    return () => {
+      clearTimeout(autoTimer.current);
+      activePointer.current = null;
+      window.removeEventListener("pointerup", finish, true);
+      window.removeEventListener("pointercancel", finish, true);
+      window.removeEventListener("blur", reset);
+      document.removeEventListener("visibilitychange", visibility);
+      window.removeEventListener("resize", resize);
+    };
+  }, [page, slug]);
+  useEffect(() => { setAutoPreviewOpen(false); }, [page, slug]);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
   const [failure, setFailure] = useState(null);
@@ -294,7 +342,7 @@ export default function PosterEditor({ slug }) {
             {gallery.map((item, i) => <option key={item.id} value={item.id}>갤러리 사진 {i + 1}</option>)}</select></label>
           <p className="dd-poster-cover-help">사진이 2장 이상 들어가는 표지는 갤러리에서 직접 선택해 주세요. 다른 표지도 원하는 사진으로 변경할 수 있어요.</p>
           {!(cover.source === "auto" ? source.autoCoverUrl : available.has(cover.mediaId)) && <p className="dd-poster-cover-warning">현재 표지 사진이 없어 갤러리에서 선택해야 해요.</p>}
-          <Crop value={cover.crop} onChange={crop => patchCover({ crop })} />
+          <Crop onAdjustStart={startAutoPreview} value={cover.crop} onChange={crop => patchCover({ crop })} />
           <label><input type="checkbox" checked={cover.grayscale} onChange={event => patchCover({ grayscale: event.target.checked })} /> 흑백 사진</label>
           <label><span className="dd-poster-field-title"><span aria-hidden="true">💌</span>계좌정보</span><select value={settings.accountSide} onChange={event => update("accountSide", event.target.value)}>
             <option value="none">숨김</option><option value="groom">신랑 측</option><option value="bride">신부 측</option><option value="both">양측 모두</option>
@@ -316,7 +364,7 @@ export default function PosterEditor({ slug }) {
             <label><input type="radio" name="poster-main-photo" disabled={!available.has(photo.mediaId)}
               checked={selection.mainMediaId === photo.mediaId} onChange={() => update("gallery", { ...selection, mainMediaId: photo.mediaId })} /> 메인 사진</label>
             <label><span className="dd-poster-field-title"><span aria-hidden="true">✏️</span>사진 캡션</span><input maxLength={80} value={photo.caption} onChange={event => patchPhoto(photo.mediaId, { caption: event.target.value })} /></label>
-            <Crop value={photo.crop} onChange={crop => patchPhoto(photo.mediaId, { crop })} />
+            <Crop onAdjustStart={startAutoPreview} value={photo.crop} onChange={crop => patchPhoto(photo.mediaId, { crop })} />
           </section>)}
         </>}
         {page === 3 && <>
@@ -345,14 +393,14 @@ export default function PosterEditor({ slug }) {
       </div>
     </div>
     <div className="dd-poster-mobile-preview" aria-label="모바일 플로팅 미리보기">
-      {floatingPreviewOpen && <section className="dd-poster-mobile-preview-panel" aria-label={PAGES[page - 1] + " 편집용 미리보기"}>
+      {previewVisible && <section style={autoPreviewOpen && !floatingPreviewOpen ? { pointerEvents: "none" } : undefined} className="dd-poster-mobile-preview-panel" aria-label={PAGES[page - 1] + " 편집용 미리보기"}>
         <div className="dd-poster-mobile-preview-head"><span className="dd-poster-mobile-preview-heading"><strong>{page}. {PAGES[page - 1]}</strong><small>보면서 편집하세요</small></span>
-          <button type="button" onClick={() => setFloatingPreviewOpen(false)} aria-label="미리보기 접기">✕</button></div>
+          <button type="button" style={autoPreviewOpen && !floatingPreviewOpen ? { pointerEvents: "none" } : undefined} onClick={() => { stopAutoPreview(); setFloatingPreviewOpen(false); }} aria-label="미리보기 접기">✕</button></div>
         <FloatingPosterPreview page={page} designKey={draft.designKey}
           settings={settings} source={source} gallery={gallery}
           qrUrl={qr?.publicUrl === publicUrl ? qr?.url : null} />
       </section>}
-      {!floatingPreviewOpen && <button type="button" className="dd-poster-mobile-preview-toggle"
+      {!previewVisible && <button type="button" className="dd-poster-mobile-preview-toggle"
         onClick={() => setFloatingPreviewOpen(true)} aria-expanded={false}>◉ 편집용 미리보기</button>}
     </div>
     {downloadGuide && <div className="modal-backdrop dd-exit-confirm-backdrop" role="presentation"><div className="dd-exit-confirm-card" role="dialog" aria-modal="true" aria-labelledby="dd-poster-download-title"><h2 id="dd-poster-download-title">이미지 다운로드 안내</h2><p>카카오톡 내부 브라우저에서는 PNG 다운로드가 제한돼요. 편집 내용을 저장한 뒤 외부 브라우저에서 열어 다운로드해 주세요. 다시 로그인이 필요할 수 있어요.</p><div className="dd-exit-confirm-actions"><button type="button" disabled={saving} onClick={async () => { if (dirtyRef.current && !(await save())) return; window.location.href = "kakaotalk://web/openExternal?url=" + encodeURIComponent(window.location.href); }}>저장 후 외부 브라우저에서 열기</button><button type="button" disabled={saving} onClick={() => setDownloadGuide(false)}>닫기</button></div><p>이동하지 않으면 카카오톡 메뉴에서 다른 브라우저로 열기를 선택해 주세요.</p></div></div>}
