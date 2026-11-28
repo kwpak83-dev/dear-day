@@ -5313,3 +5313,11 @@ body:has(.dd-admin-theme-page){background:#f5f9ff;color:#172b51}
  .my-page.member-page .dd-member-desktop-account{gap:4px;margin-top:4px;padding-top:4px}
  .my-page.member-page .dd-member-desktop-account>a,.my-page.member-page .dd-member-desktop-account>button{min-height:36px;padding:6px 12px}
 }
+
+/* Keep wording navigation visible while only the fields scroll on mobile. */
+.dd-hero-wording-modal .dd-hero-wording-scroll{display:contents}
+@media(max-width:599px){
+  .dd-hero-wording-modal .dd-hero-text-modal-controls{display:flex;flex-direction:column;min-height:0;overflow:hidden;padding:0}
+  .dd-hero-wording-modal .dd-hero-wording-scroll{display:block;flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior-y:contain;padding:8px 14px 10px}
+  .dd-hero-wording-modal .dd-hero-text-modal-nav{flex:0 0 auto;margin:0;padding:7px 14px 10px;background:#fff;border-top:1px solid #eee9e5}
+}
