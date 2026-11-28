@@ -44,6 +44,6 @@ export default function LandingCoverMarquee({items, title, emptyText, ariaLabel,
      <span>{item.label}</span>
     </div>)}
    </div>
-  </div>{items.length>1&&<button type="button" className="dd-cover-marquee-toggle" onClick={()=>{stoppedRef.current=!stoppedRef.current;paused.current=false;touch.current=false;setStopped(stoppedRef.current)}}>{stopped?"자동 이동 재생":"자동 이동 정지"}</button>}</>:<div className="dd-concept-carousel-loading">{emptyText}</div>}
+  </div>{swipe&&items.length>1&&<p className="dd-cover-marquee-touch-help">터치하면 멈추고, 좌우로 밀어 다른 디자인을 볼 수 있어요.</p>}{items.length>1&&<button type="button" className="dd-cover-marquee-toggle" onClick={()=>{stoppedRef.current=!stoppedRef.current;paused.current=false;touch.current=false;setStopped(stoppedRef.current)}}>{stopped?"자동 이동 재생":"자동 이동 정지"}</button>}</>:<div className="dd-concept-carousel-loading">{emptyText}</div>}
  </div>;
 }
