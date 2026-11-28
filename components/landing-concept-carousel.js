@@ -14,5 +14,5 @@ export default function LandingConceptCarousel() {
    }).catch(()=>{});
   return()=>controller.abort();
  },[]);
- return <LandingCoverMarquee items={items} title="다채로운 콘셉트" emptyText="콘셉트 표지를 불러오는 중이에요." ariaLabel="디어데이 콘셉트 초대장 표지"/>;
+ return <LandingCoverMarquee items={items} speed={100} swipe title="다채로운 콘셉트" emptyText="콘셉트 표지를 불러오는 중이에요." ariaLabel="디어데이 콘셉트 초대장 표지"/>;
 }
